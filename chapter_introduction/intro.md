@@ -21,7 +21,7 @@ in every conceivable circumstance.
 *Çok yakın zamana kadar, günlük olarak kullandığımız neredeyse tüm bilgisayar programları yazılım mühendisleri tarafından basit prensipler çerçevesinde geliştirilirdi. 
 Örnek olarak bir e-ticaret platformunu ele alalım.
 Birkaç saat beyaz tahta önünde beyin fırtınası yapılarak muhtemelen şuna benzer bir çözüm ortaya çıkarılır:
-(i) kullanıcılar bir web tarayıcısı ya da mobil uygulama üzerinde çalışan bir arayüz üzerinden uygulama ile etkileşime girecek
+(i) kullanıcılar bir web tarayıcısı ya da mobil uygulama arayüzü üzerinden uygulama ile etkileşime girecek
 (ii) uygulama üzerinde kullanıcıların oturumunu takip etmek ve tarihsel işlemlerini kayıt altına almak için ticari bir veri tabanı kullanılacak
 (iii) uygulamanın kalbinde ise iş mantığı (ya da uygulamanın beyni), birçok sunucu üzerinde paralel çalışarak, akla gelebilecek her duruma karşılık hangi aksiyonu alması gerektiğini ayrıntılarıyla planlayacak.*
 
