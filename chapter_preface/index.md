@@ -435,13 +435,13 @@ kitabı tartışabileceğiniz ve sorularınıza cevap bulabileceğiniz
 bölüm altındaki forum bağlantılarını takip edin.
 
 :begin_tab:`mxnet`
-[Discussions](https://discuss.d2l.ai/t/18)
+[Tartışmalar](https://discuss.d2l.ai/t/18)
 :end_tab:
 
 :begin_tab:`pytorch`
-[Discussions](https://discuss.d2l.ai/t/20)
+[Tartışmalar](https://discuss.d2l.ai/t/20)
 :end_tab:
 
 :begin_tab:`tensorflow`
-[Discussions](https://discuss.d2l.ai/t/186)
+[Tartışmalar](https://discuss.d2l.ai/t/186)
 :end_tab:
