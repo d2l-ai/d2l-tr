@@ -114,7 +114,7 @@ olarak hem de internette bir web sitesi olarak erişilebilir olmasını istiyoru
 Şu anda bu taleplere tam olarak uygun hiçbir alet ve iş akışı yok, bu yüzden
 kendimiz bir araya getirmek zorunda kaldık.
 Yaklaşımımızı ayrıntılı olarak şurada
-açıklıyoruz :numref: `sec_how_to_contribute`.
+açıklıyoruz :numref:`sec_how_to_contribute`.
 Kaynağı paylaşmak ve düzenlemelere izin vermek için GitHub'a,
 kod, denklemler ve metin karıştırmak için Jupyter not defterlerine,
 çoklu çıktılar oluşturmak için bir oluşturma motoru olarak Sphinx'e ve
@@ -172,7 +172,7 @@ Bu, özellikle, temel eğitimlerde, belirli bir katmanda veya eniyileyicide
 gerçekleşen her şeyi anlamanızı istediğimizde ortaya çıkar.
 Bu durumlarda, genellikle örneğin iki versiyonunu sunacağız:
 Bir tanesi her şeyi sıfırdan uyguladığımız, sadece NumPy arayüzüne ve
-otomatik turev almaya dayanani ve diğeri ise Gluon kullanarak kısaca kodunu
+otomatik türev almaya dayananı ve diğeri ise Gluon kullanarak kısaca kodunu
 yazdığımız daha pratik bir örneği.
 Size bazı bileşenlerin nasıl çalıştığını öğrettikten sonra, Gluon sürümünü
 sonraki derslerde kullanıyoruz.
@@ -295,7 +295,7 @@ PyTorch, araştırma topluluğunda son derece popüler olan açık kaynaklı der
 öğrenme çerçevesidir.
 Bu kitaptaki tüm kodlar en yeni PyTorch kapsamında testlerden geçmiştir.
 Ancak, derin öğrenmenin hızla gelişmesi nedeniyle, *basılı sürümündeki* bazı
-kodlar PyTorch'in gelecekteki sürümlerinde düzgün çalışmayabilir.
+kodlar PyTorch'un gelecekteki sürümlerinde düzgün çalışmayabilir.
 Ancak, çevrimiçi sürümü güncel tutmayı planlıyoruz.
 Böyle bir sorunla karşılaşırsanız, kodunuzu ve çalışma zamanı ortamınızı
 güncellemek için lütfen şuraya danışın :ref:`chap_installation`.
@@ -308,9 +308,9 @@ Modülleri PyTorch'tan şu şekilde içe aktarıyoruz.
 Bu kitaptaki kodun çoğu TensorFlow'a dayanmaktadır.
 PyTorch, araştırma topluluğunda son derece popüler olan açık kaynaklı derin
 öğrenme çerçevesidir.
-Bu kitaptaki tüm kodlar en yeni Tensorflow kapsamında testlerden geçmiştir.
+Bu kitaptaki tüm kodlar en yeni TensorFlow kapsamında testlerden geçmiştir.
 Ancak, derin öğrenmenin hızla gelişmesi nedeniyle, *basılı sürümündeki* bazı
-kodlar Tensorflow'un gelecekteki sürümlerinde düzgün çalışmayabilir.
+kodlar TensorFlow'un gelecekteki sürümlerinde düzgün çalışmayabilir.
 Ancak, çevrimiçi sürümü güncel tutmayı planlıyoruz.
 Böyle bir sorunla karşılaşırsanız, kodunuzu ve çalışma zamanı ortamınızı
 güncellemek için lütfen şuraya danışın :ref:`chap_installation`.
@@ -435,13 +435,13 @@ kitabı tartışabileceğiniz ve sorularınıza cevap bulabileceğiniz
 bölüm altındaki forum bağlantılarını takip edin.
 
 :begin_tab:`mxnet`
-[Discussions](https://discuss.d2l.ai/t/18)
+[Tartışmalar](https://discuss.d2l.ai/t/18)
 :end_tab:
 
 :begin_tab:`pytorch`
-[Discussions](https://discuss.d2l.ai/t/20)
+[Tartışmalar](https://discuss.d2l.ai/t/20)
 :end_tab:
 
 :begin_tab:`tensorflow`
-[Discussions](https://discuss.d2l.ai/t/186)
+[Tartışmalar](https://discuss.d2l.ai/t/186)
 :end_tab:
