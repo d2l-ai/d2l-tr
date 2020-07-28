@@ -1,0 +1,728 @@
+<head>
+  <style>
+h1, .side-doc-outline  {
+    display: none;
+}
+.document .page-content {
+    width: 100%;
+}
+h2, h3, h4 {
+    letter-spacing: 2px;
+}
+.mdl-grid {
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    padding: 150px 0 0 0;
+}
+h2.toc {
+    padding: 150px 0 0 0;
+}
+
+.header h2 {
+    font-size: 2rem;
+    padding-bottom: 35px;
+}
+
+.header p {
+    font-size: 1.25rem;
+    letter-spacing: 0px;
+    line-height: 1.5rempx;
+    padding-bottom: 10px;
+}
+
+.header .mdl-button {
+  margin: 0px 10px;
+  letter-spacing: 2px;
+  font-size: 16px;
+  margin: 1rem 1.5rem;
+  height: 40px;
+  width: 120px;
+}
+.author-item {
+  max-width: 300px;
+}
+.author-item h3 {
+    padding-top: 25px;
+    padding-bottom: 10px;
+}
+.author-item img {
+    border-radius: 50%;
+    width: 120px;
+}
+.authors h4 {
+    width: 100%;
+}
+
+.authors h2 {
+    padding-bottom: 18px;
+}
+
+.running-item  {
+  max-width: 300px;
+}
+
+.running-item img {
+  height: 40px;
+}
+
+.running-item p {
+    padding: 20px;
+}
+
+.running.mdl-grid {
+padding: 20px 0 0 0;
+}
+
+.logos img {
+display: inline;
+max-height: 70px;
+max-width: 100px;
+margin-left: auto;
+margin-right: auto;
+}
+
+.logos {
+padding-top: 1em;
+padding-bottom: 2em;
+}
+
+.logos .mdl-grid {
+padding: 0;
+}
+
+.features .logos .mdl-cell {
+padding: 10px 0;
+}
+
+
+.features .mdl-cell {
+    padding: 0 36px;
+}
+.features h2, .features-2 h2 {
+    padding-bottom: 24px;
+}
+.features-2 p {
+    padding: 0 200px;
+}
+.institute.mdl-grid {
+    padding: 24px;
+}
+.institute .mdl-cell {
+    text-align: left;
+    padding: 0;
+}
+#map {
+    height: 400px;
+    width: 100%;
+}
+#mapimg {
+    width: 100%;
+}
+a {
+  font-size: normal;
+}
+
+@media (max-width: 1000px) {
+    .mdl-grid, h2.toc {
+        padding: 50px 0 0 0;
+    }
+    .header img, .features-2 img {
+        max-width: 300px;
+    }
+    .header .mdl-cell--1-col {
+        display: none;
+    }
+    .features img {
+        max-width: 350px;
+    }
+    .features-2 p {
+        padding: 0 24px;
+    }
+.features .mdl-cell {
+    padding: 0 8px;
+}
+}
+
+.collapsible {
+    background-color: #EEE;
+    color: black;
+    cursor: pointer;
+    padding: 6px;
+    width: 100%;
+    border: none;
+    text-align: left;
+    outline: none;
+    font-size: 16px;
+}
+.collapsible-active, .collapsible:hover {
+    background-color: #DDD;
+}
+.expansion {
+    padding: 3px 6px;
+    max-height: 0;
+    overflow: hidden;
+    transition: max-height 0.2s ease-out;
+}
+
+    </style>
+</head>
+
+
+<div class = "mdl-grid header">
+  <div class = "mdl-cell mdl-cell--3-col">
+    <img src="_images/front.png" class="img-fluid" alt="">
+  </div>
+  <div class = "mdl-cell mdl-cell--1-col">
+  </div>
+  <div class = "mdl-cell mdl-cell--5-col mdl-cell--middle">
+    <h2>Dive into Deep Learning</h2>
+    <p>An <b>interactive</b> deep learning book with code, math, and
+      discussions <br><br>Provides <b>NumPy/MXNet</b>, <b>PyTorch</b>, and <b>TensorFlow</b>
+      implementations
+    </p>
+  </div>
+</div>
+
+<div class="mdl-grid">
+  <div>
+    <h3>Announcements</h3>
+    <div align="left">
+    <ul>
+      <li> [July 2020] We have added TensorFlow implementations up to Chapter 7 (Modern CNNs). </li>
+      <li> [June, 2020] We have added PyTorch implementations up to Chapter 7 (Modern CNNs). </li>
+      <li> [Apr, 2020] We have re-organized
+        <a href="chapter_natural-language-processing-pretraining/index.html">Chapter: NLP pretraining</a>
+        and <a href="chapter_natural-language-processing-applications/index.html">Chapter: NLP applications</a>,
+        and added sections of
+        BERT (<a href="chapter_natural-language-processing-pretraining/bert.html">model</a>,
+        <a href="chapter_natural-language-processing-pretraining/bert-dataset.html">data</a>,
+        <a href="chapter_natural-language-processing-pretraining/bert-pretraining.html">pretraining</a>,
+        <a href="chapter_natural-language-processing-applications/finetuning-bert.html">fine-tuning</a>,
+        <a href="chapter_natural-language-processing-applications/natural-language-inference-bert.html">application</a>)
+        and natural language inference (<a href="chapter_natural-language-processing-applications/natural-language-inference-and-dataset.html">data</a>,
+        <a href="chapter_natural-language-processing-applications/natural-language-inference-attention.html">model</a>).
+        To keep track of the latest updates,
+        please follow D2L's <a href="https://github.com/d2l-ai/d2l-en">open-source project</a>.
+      </li>
+      <li> [Dec, 2019] All the code has been rewritten with the NumPy API.
+      Check out new instructions to run this book on <a href="#jupyter">Amazon SageMaker and Google Colab</a>.
+      </li>
+    <li>
+      [Oct, 2019] We have improved <a href="chapter_preliminaries/index.html">Chapter: Preliminaries</a>,
+      added <a href="chapter_recommender-systems/index.html">Chapter: Recommender Systems</a> and
+      <a href="chapter_appendix-mathematics-for-deep-learning/index.html">Appendix: Mathematics for Deep Learning</a>.
+    </li>
+    <li>[Jul, 2019]
+      The Chinese version is the <a href="https://raw.githubusercontent.com/d2l-ai/d2l-zh/master/img/frontpage/jd-190715-en.png">No. 1 best seller</a> of new books in "Computers and Internet" at the largest Chinese online bookstore.
+    </li>
+    <li>[May, 2019]
+      Slides, Jupyter notebooks, assignments, and videos of the Berkeley course can be found at the
+      <a href="https://courses.d2l.ai/berkeley-stat-157/syllabus.html">syllabus page</a>.
+    </li>
+    </ul>
+    </div>
+  </div>
+</div>
+
+<div class = "authors mdl-grid" id = "author" >
+  <div class = "author-group-title mdl-cell mdl-cell--12-col mdl-cell--top">
+  <h2>Authors</h2>
+  </div>
+  <div class = "mdl-cell mdl-cell--3-col mdl-cell--top">
+    <div class="author-item">
+      <img src="./_images/aston.jpg"/>
+      <h3><a href="https://www.astonzhang.com/">Aston Zhang</a></h3>
+      <p>Amazon Senior Scientist</p>
+    </div>
+  </div>
+
+  <div class = "mdl-cell mdl-cell--3-col mdl-cell--top">
+    <div class="author-item">
+      <img src="./_images/zack.jpg"/>
+      <h3><a href="http://zacklipton.com/">Zack C. Lipton</a></h3>
+      <p>Amazon Scientist<br>
+        CMU Assistant Professor
+        </p>
+    </div>
+  </div>
+  <div class = "mdl-cell mdl-cell--3-col mdl-cell--top">
+    <div class="author-item">
+      <img src="./_images/mu.jpg"/>
+      <h3><a href="https://www.cs.cmu.edu/~muli/">Mu Li</a></h3>
+      <p>Amazon Principal Scientist
+        </p>
+    </div>
+  </div>
+  <div class = "mdl-cell mdl-cell--3-col mdl-cell--top">
+    <div class="author-item">
+      <img src="./_images/alex.jpg"/>
+      <h3><a href="https://alex.smola.org/">Alex J. Smola</a></h3>
+      <p>Amazon VP/Distinguished Scientist
+        </p>
+    </div>
+  </div>
+  <div class = "author-group-title mdl-cell mdl-cell--12-col mdl-cell--top">
+  <h2>Chapter Authors</h2>
+  </div>
+  <div class = "mdl-cell mdl-cell--3-col mdl-cell--top">
+    <div class="author-item">
+      <img src="./_images/brent.jpg"/>
+      <h3><a href="https://twitter.com/brentwerness?lang=en">Brent Werness</a></h3>
+      <p>Amazon Research Scientist<br><i><a href="http://d2l.ai/chapter_appendix-mathematics-for-deep-learning/index.html">Mathematics
+        for Deep Learning</a></i></p>
+    </div>
+  </div>
+  <div class = "mdl-cell mdl-cell--3-col mdl-cell--top">
+    <div class="author-item">
+      <img src="./_images/rachel.jpeg"/>
+      <h3><a href="https://www.linkedin.com/in/rachelsonghu/">Rachel Hu</a></h3>
+      <p> Amazon Applied Scientist<br><i><a href="http://d2l.ai/chapter_appendix-mathematics-for-deep-learning/index.html">Mathematics
+        for Deep Learning</a></i></p>
+    </div>
+  </div>
+  <div class = "mdl-cell mdl-cell--3-col mdl-cell--top">
+    <div class="author-item">
+      <img src="./_images/shuai.jpg"/>
+      <h3><a href="https://shuaizhang.tech/">Shuai Zhang</a></h3>
+      <p>Postdoctoral Researcher at ETH Zürich
+        <br><i><a href="http://d2l.ai/chapter_recommender-systems/index.html">Recommender Systems</a></i></p>
+    </div>
+  </div>
+
+  <div class = "mdl-cell mdl-cell--3-col mdl-cell--top">
+    <div class="author-item">
+      <img src="./_images/yi.jpg"/>
+      <h3><a href="https://vanzytay.github.io/">Yi Tay</a></h3>
+      <p>Google Research Scientist
+        <br><i><a href="http://d2l.ai/chapter_recommender-systems/index.html">Recommender Systems</a></i></p>
+    </div>
+  </div>
+
+  <div class = "author-group-title mdl-cell mdl-cell--12-col mdl-cell--top">
+    <h2>Framework Adaptation Authors</h2>
+  </div>
+  <div class = "mdl-cell mdl-cell--3-col mdl-cell--top">
+    <div class="author-item">
+      <img src="./_images/anirudh.jpg"/>
+      <h3><a href="https://github.com/AnirudhDagar">Anirudh Dagar</a></h3>
+      <p>IIT Roorkee Student<br><i>PyTorch Adaptation</i></p>
+    </div>
+  </div>
+  <div class = "mdl-cell mdl-cell--3-col mdl-cell--top">
+    <div class="author-item">
+      <img src="https://terrytangyuan.github.io/img/avatar.jpg"/>
+      <h3><a href="https://terrytangyuan.github.io/about/">Yuan Tang</a></h3>
+      <p>Ant Group Senior Engineer<br><i>TensorFlow Adaptation</i></p>
+    </div>
+  </div>
+
+  <h3> We thank all the <a href="https://github.com/d2l-ai/d2l-en/graphs/contributors">community contributors</a><br>for making this open source book better for everyone.</h3>
+  <h4><a href="https://github.com/d2l-ai/d2l-en#contribute-learn-how">Contribute to the book.</a></h4>
+  <a class="github-button" href="https://github.com/d2l-ai/d2l-en" data-icon="octicon-star" data-size="large" data-show-count="true" aria-label="Star d2l-ai/d2l-en on GitHub">Star</a>
+  <a class="github-button" href="https://github.com/d2l-ai/d2l-en/fork" data-icon="octicon-repo-forked" data-size="large" data-show-count="true" aria-label="Fork d2l-ai/d2l-en on GitHub">Fork</a>
+</div>
+
+<div class = "features mdl-grid">
+  <div id = "jupyter" class = "mdl-cell mdl-cell--5-col mdl-cell--middle">
+    <div class="content">
+      <h2>Each section is an executable Jupyter notebook</h2>
+      <p>You can modify the code and tune hyperparameters to get instant
+      feedback to accumulate practical experiences in deep learning.</p>
+      <div class = "mdl-grid running">
+        <div class="running-item">
+          <a href="./chapter_installation/index.html">
+            <img src="./_images/laptop_jupyter.png"/>
+            <p>Run<br>locally</p>
+        </div>
+        <div class="running-item">
+          <a href="./chapter_appendix-tools-for-deep-learning/sagemaker.html">
+            <img src="./_images/logos/sagemaker.png"/>
+            <p>Amazon<br>SageMaker</p>
+          </a>
+        </div>
+        <div class="running-item">
+          <a href="./chapter_appendix-tools-for-deep-learning/colab.html">
+            <img src="./_images/logos/colab.png" />
+            <p>Google<br>Colab</p>
+          </a>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class = "mdl-cell mdl-cell--7-col">
+  <img src="_images/notebook.gif">
+  </div>
+</div>
+
+<div class = "features-2 mdl-grid">
+  <h2>Mathematics + Figures + Code </h2>
+  <p>We offer an interactive learning experience with mathematics, figures,
+  code, text, and discussions, where concepts and techniques are illustrated
+    and implemented with experiments on real data sets.
+  </p>
+
+  <div class = "mdl-cell mdl-cell--4-col">
+    <img src="_images/eq.jpg"/>
+  </div>
+  <div class = "mdl-cell mdl-cell--4-col">
+    <img src="_images/figure.jpg"/>
+  </div>
+  <div class = "mdl-cell mdl-cell--4-col">
+    <img src="_images/code.jpg"/>
+  </div>
+</div>
+
+<div class = "features mdl-grid">
+  <div class = "mdl-cell mdl-cell--7-col">
+    <img src="_images/forum.gif">
+  </div>
+  <div class = "mdl-cell mdl-cell--5-col mdl-cell--middle">
+    <div class="content">
+      <h2>Active <a href="https://discuss.mxnet.io">community</a> support</h2>
+      <p>You can discuss and learn with thousands of peers in the community
+        through the link provided in each section.
+        </p>
+    </div>
+  </div>
+</div>
+
+<div class="features mdl-grid">
+  <div id = "textbook" class = "mdl-cell mdl-cell--12-col">
+    <h2>D2L as a textbook or a reference book</h2>
+    <div id = "logos" class="logos">
+      <div class="mdl-grid">
+        <div class = "mdl-cell mdl-cell--2-col"> <img src="./_images/logos/cmu.png" /> </div>
+        <div class = "mdl-cell mdl-cell--2-col"> <img src="./_images/logos/Duke_University_logo.svg" /> </div>
+        <div class = "mdl-cell mdl-cell--2-col"> <img src="./_images/logos/emory.png" /> </div>
+        <div class = "mdl-cell mdl-cell--2-col"> <img src="./_images/logos/fudan.svg" /></div>
+        <div class = "mdl-cell mdl-cell--2-col"> <img src="./_images/logos/gazi.png" /></div>
+        <div class = "mdl-cell mdl-cell--2-col"> <img src="./_images/logos/georgia_tech.svg" /></div>
+        <div class = "mdl-cell mdl-cell--2-col"> <img src="./_images/logos/Habib_University.png" /></div>
+        <div class = "mdl-cell mdl-cell--2-col"> <img src="./_images/logos/HIT.png" /></div>
+        <div class = "mdl-cell mdl-cell--2-col"> <img src="./_images/logos/hasso-plattner-institute.png" /></div>
+        <div class = "mdl-cell mdl-cell--2-col"> <img src="./_images/logos/hangzhou-dianzi.png" /></div>
+        <div class = "mdl-cell mdl-cell--2-col"> <img src="./_images/logos/Hiroshima-univ.png" /></div>
+        <div class = "mdl-cell mdl-cell--2-col"> <img src="./_images/logos/HKUST.png" /></div>
+        <div class = "mdl-cell mdl-cell--2-col"> <img src="./_images/logos/Hust.png" /></div>
+        <div class = "mdl-cell mdl-cell--2-col"> <img src="./_images/logos/Imperial_college_london.svg" /></div>
+        <div class = "mdl-cell mdl-cell--2-col"> <img src="./_images/logos/IIT-bombay.png" /></div>
+        <div class = "mdl-cell mdl-cell--2-col"> <img src="./_images/logos/IIT_Kanpur.svg" /></div>
+        <div class = "mdl-cell mdl-cell--2-col"> <img src="./_images/logos/IIT_Kharagpur_Logo.svg" /></div>
+        <div class = "mdl-cell mdl-cell--2-col"> <img src="./_images/logos/Indian_Institute_of_Technology_Mandi_Logo.png" /></div>
+        <div class = "mdl-cell mdl-cell--2-col"> <img src="./_images/logos/IIT_Ropar.png" /></div>
+        <div class = "mdl-cell mdl-cell--2-col"> <img src="./_images/logos/Indraprastha_Institute_of_Information_Technology_Delhi_Logo.png" /></div>
+        <div class = "mdl-cell mdl-cell--2-col"> <img src="./_images/logos/isen.png" /></div>
+        <div class = "mdl-cell mdl-cell--2-col"> <img src="./_images/logos/Istanbul_Technical_University.svg" /></div>
+        <div class = "mdl-cell mdl-cell--2-col"> <img src="./_images/logos/KAUST_Logo.svg" /></div>
+        <div class = "mdl-cell mdl-cell--2-col"> <img src="./_images/logos/kyungpook-national.png" /></div>
+        <div class = "mdl-cell mdl-cell--2-col"> <img src="./_images/logos/lancaster-university.png" /></div>
+        <div class = "mdl-cell mdl-cell--2-col"> <img src="./_images/logos/mit.svg" /></div>
+        <div class = "mdl-cell mdl-cell--2-col"> <img src="./_images/logos/mcgill.png" /></div>
+        <div class = "mdl-cell mdl-cell--2-col"> <img src="./_images/logos/Monash-shield.png" /></div>
+        <div class = "mdl-cell mdl-cell--2-col"> <img src="./_images/logos/national_chung_hsing.png" /></div>
+        <div class = "mdl-cell mdl-cell--2-col"> <img src="./_images/logos/NITTTR.png" /></div>
+        <div class = "mdl-cell mdl-cell--2-col"> <img src="./_images/logos/National_Institute_of_Technology,_Warangal_logo.png" /></div>
+        <div class = "mdl-cell mdl-cell--2-col"> <img src="./_images/logos/national_taiwan.png" /></div>
+        <div class = "mdl-cell mdl-cell--2-col"> <img src="./_images/logos/National_United_University.svg" /></div>
+        <div class = "mdl-cell mdl-cell--2-col"> <img src="./_images/logos/nus.png" /></div>
+        <div class = "mdl-cell mdl-cell--2-col"> <img src="./_images/logos/Nazarbayev_University.png" /></div>
+        <div class = "mdl-cell mdl-cell--2-col"> <img src="./_images/logos/northeastern.svg" /></div>
+        <div class = "mdl-cell mdl-cell--2-col"> <img src="./_images/logos/Ohio_University_seal.svg" /></div>
+        <div class = "mdl-cell mdl-cell--2-col"> <img src="./_images/logos/peking.svg" /></div>
+        <div class = "mdl-cell mdl-cell--2-col"> <img src="./_images/logos/Pontificia_Universidad_Catolica_de_Chile.svg" /></div>
+        <div class = "mdl-cell mdl-cell--2-col"> <img src="./_images/logos/Portland_State_University_seal.svg" /></div>
+        <div class = "mdl-cell mdl-cell--2-col"> <img src="./_images/logos/Rutgers_University_seal.svg" /></div>
+        <div class = "mdl-cell mdl-cell--2-col"> <img src="./_images/logos/sapienza.png" /></div>
+        <div class = "mdl-cell mdl-cell--2-col"> <img src="./_images/logos/sjtu.png" /></div>
+        <div class = "mdl-cell mdl-cell--2-col"> <img src="./_images/logos/Shanghai_University_of_Finance_and_Economics.png" /></div>
+        <div class = "mdl-cell mdl-cell--2-col"> <img src="./_images/logos/Sogang_Univ_logotype.png" /></div>
+        <div class = "mdl-cell mdl-cell--2-col"> <img src="./_images/logos/stanford.png" /></div>
+        <div class = "mdl-cell mdl-cell--2-col"> <img src="./_images/logos/Stevens_Institute_of_Technology.svg" /></div>
+        <div class = "mdl-cell mdl-cell--2-col"> <img src="./_images/logos/tudelft.png" /></div>
+        <div class = "mdl-cell mdl-cell--2-col"> <img src="./_images/logos/tamu.png" /></div>
+        <div class = "mdl-cell mdl-cell--2-col"> <img src="./_images/logos/University_of_Texas_at_Austin_logo.svg" /></div>
+        <div class = "mdl-cell mdl-cell--2-col"> <img src="./_images/logos/tsinghua.png" /></div>
+        <div class = "mdl-cell mdl-cell--2-col"> <img src="./_images/logos/UC3M.svg" /></div>
+        <div class = "mdl-cell mdl-cell--2-col"> <img src="./_images/logos/Universidad-Nacional-de-Colombia-Sede-Manizales.png" /></div>
+        <div class = "mdl-cell mdl-cell--2-col"> <img src="./_images/logos/UFMG.png" /></div>
+        <div class = "mdl-cell mdl-cell--2-col"> <img src="./_images/logos/University_of_Brescia.svg" /></div>
+        <div class = "mdl-cell mdl-cell--2-col"> <img src="./_images/logos/catania.png" /></div>
+        <div class = "mdl-cell mdl-cell--2-col"> <img src="./_images/logos/Universitat-Heidelberg.png" /></div>
+        <div class = "mdl-cell mdl-cell--2-col"> <img src="./_images/logos/West_University_of_Timisoara.png" /></div>
+        <div class = "mdl-cell mdl-cell--2-col"> <img src="./_images/logos/University_of_Arkansas_seal.svg" /></div>
+        <div class = "mdl-cell mdl-cell--2-col"> <img src="./_images/logos/UC-Berkeley.png" /></div>
+        <div class = "mdl-cell mdl-cell--2-col"> <img src="./_images/logos/ucla.png" /></div>
+        <div class = "mdl-cell mdl-cell--2-col"> <img src="./_images/logos/UCSD_logo.png" /></div>
+        <div class = "mdl-cell mdl-cell--2-col"> <img src="./_images/logos/ucsb.png" /></div>
+        <div class = "mdl-cell mdl-cell--2-col"> <img src="./_images/logos/uiuc.png" /></div>
+        <div class = "mdl-cell mdl-cell--2-col"> <img src="./_images/logos/u_maryland.svg" /></div>
+        <div class = "mdl-cell mdl-cell--2-col"> <img src="./_images/logos/Minnesota_twin_city.svg" /></div>
+        <div class = "mdl-cell mdl-cell--2-col"> <img src="./_images/logos/UNewHampshire.png" /></div>
+        <div class = "mdl-cell mdl-cell--2-col"> <img src="./_images/logos/unc_chapel_hill.svg" /></div>
+        <div class = "mdl-cell mdl-cell--2-col"> <img src="./_images/logos/upenn.png" /></div>
+        <div class = "mdl-cell mdl-cell--2-col"> <img src="./_images/logos/USTC.svg" /></div>
+        <div class = "mdl-cell mdl-cell--2-col"> <img src="./_images/logos/University_of_Technology_Sydney.png" /></div>
+        <div class = "mdl-cell mdl-cell--2-col"> <img src="./_images/logos/uw.png" /></div>
+        <div class = "mdl-cell mdl-cell--2-col"> <img src="./_images/logos/university-of-waterloo.png" /></div>
+        <div class = "mdl-cell mdl-cell--2-col"> <img src="./_images/logos/Univerzita-Komenskeho-v-Bratislave.png" /></div>
+        <div class = "mdl-cell mdl-cell--2-col"> <img src="./_images/logos/vietnamese-german.png" /></div>
+        <div class = "mdl-cell mdl-cell--2-col"> <img src="./_images/logos/Yunnan_University.png" /></div>
+        <div class = "mdl-cell mdl-cell--2-col"> <img src="./_images/logos/UPC.svg" /></div>
+        <div class = "mdl-cell mdl-cell--2-col"> <img src="./_images/logos/Zhejiang_University.svg" /></div>
+      </div>
+    </div>
+    <div id="mapimg"><img src="./_images/map.png" /></div>
+
+    <!--beginning of the map-->
+    <!--
+    <div id="map"></div>
+    <script>
+      function initMap() {
+        var map = new google.maps.Map(document.getElementById('map'), {
+          zoom: 2,
+          center: new google.maps.LatLng(10.8, 180.3),
+          mapTypeId: 'terrain'
+        });
+
+      var locations = [
+        ['Carnegie Mellon University', 41.443279, -79.943889],
+        ['Duke University', 36.001443, -78.938250],
+        ['Emory University', 33.797164, -84.322272],
+        ['Fudan University', 31.297640, 121.503629],
+        ['Gazi Üniversitesi', 39.941808, 32.823059],
+        ['Georgia Institute of Technology', 33.775444, -84.396371],
+        ['Habib University', 24.905933, 67.138266],
+        ['Harbin Institute of Technology', 45.747036, 126.633527],
+        ['Hasso-Plattner-Institut', 52.397485, 13.132519],
+        ['Hangzhou Dianzi University', 30.288456, 120.140527],
+        ['Hong Kong University of Science and Technology', 22.336678, 114.265412],
+        ['Huazhong University of Science and Technology', 30.513226, 114.420726],
+        ['Hiroshima University',  34.402183, 132.713900],
+        ['Imperial College London', 51.498741, -0.174802],
+        ['Indian Institute of Technology Bombay', 19.134282, 72.912646],
+        ['Indian Institute of Kanpur', 26.512224, 80.233533],
+        ['Indian Institute of Technology Kharagpur', 22.314590, 87.310477],
+        ['Indian Institute of Technology Mandi', 31.775372, 76.986182],
+        ['Indian Institute of Technology Ropar',  30.976563, 76.538215],
+        ['Indraprastha Institute of Information Technology, Delhi', 28.545440, 77.273419],
+        ['Institut Supérieur De L electronique Et Du Numérique', 48.407048, -4.495404],
+        ['İstanbul Teknik Üniversitesi', 41.105424, 29.025383],
+        ['King Abdullah University of Science and Technology', 22.309455, 39.104804],
+        ['Kyungpook National University', 35.888949, 128.610718],
+        ['Lancaster University', 54.009934, -2.785905],
+        ['Massachusetts Institute of Technology', 42.360281, -71.093098],
+        ['McGill University', 45.504939, -73.577136],
+        ['Monash University', -37.915704, 145.152934],
+        ['National Chung Hsing University', 24.123679, 120.675380],
+        ['National Institute of Technical Teachers Training & Research', 30.729031, 76.807565],
+        ['National Institute of Technology, Warangal', 17.983721, 79.530946],
+        ['National Taiwan University', 25.017350, 121.539655],
+        ['National United University', 24.545702, 120.811728],
+        ['National University of Singapore', 1.296520, 103.776442],
+        ['Nazarbayev University', 51.090618, 71.398175],
+        ['Northeastern University', 42.339386, -71.089279],
+        ['Ohio University', 39.324372, -82.101379 ],
+        ['Peking University', 39.987012, 116.305112],
+        ['Pontificia Universidad Católica de Chile', -33.441277, -70.640809],
+        ['Portland State University', 45.511132, -122.683424],
+        ['Rutgers, The State University of New Jersey', 40.500694, -74.447496],
+        ['Sapienza Università di Roma', 41.903379, 12.514557],
+        ['Shanghai Jiao Tong University', 31.024733, 121.433617],
+        ['Shanghai University of Finance and Economics',31.306851, 121.493008],
+        ['Sogang University', 37.550944, 126.941024],
+        ['Stanford University',  37.427526, -122.169740],
+        ['Stevens Institute of Technology', 40.745038, -74.024795],
+        ['Technische Universiteit Delft', 51.996068, 4.375953],
+        ['Texas A&M University', 30.617810, -96.333042],
+        ['The University of Texas at Austin', 30.284631, -97.733939],
+        ['Tsinghua University', 39.999700, 116.326473],
+        ['Universidad Carlos III de Madrid', 40.316874, -3.727607],
+        ['Universidad Nacional de Colombia Sede Manizales',  5.056096, -75.491125],
+        ['Universidade Federal de Minas Gerais', -19.871207, -43.967403],
+        ['Università degli Studi di Brescia', 45.538091, 10.218809],
+        ['Università degli Studi di Catania', 37.503557, 15.086512],
+        ['Universität Heidelberg',  49.419049, 8.670228],
+        ['Universitatea de Vest din Timișoara', 45.746810, 21.231822],
+        ['University of Arkansas', 36.068646, -94.175019],
+        ['University of California, Berkeley', 37.872119, -122.259398],
+        ['University of California, Los Angeles', 34.068512, -118.444870],
+        ['University of California, San Diego', 32.879952, -117.234003],
+        ['University of California, Santa Barbara', 34.413981, -119.849795],
+        ['University of Illinois at Urbana-Champaign', 40.102379, -88.227408],
+        ['University of Maryland',38.987052, -76.943692],
+        ['University of Minnesota, Twin Cities', 44.973929, -93.227836],
+        ['University of New Hampshire',43.138784, -70.937798],
+        ['University of North Carolina at Chapel Hill',35.905182, -79.046044],
+        ['University of Pennsylvania',  39.952211, -75.193235],
+        ['University of Science and Technology of China', 31.822004, 117.281182],
+        ['University of Technology Sydney', -33.883371, 151.200612],
+        ['University of Washington',47.660589, -122.315527],
+        ['University of Waterloo',43.472278, -80.544707],
+        ['Univerzita Komenského v Bratislave',  48.141170, 17.115943],
+        ['Vietnamese-German University', 11.054337, 106.665432],
+        ['Yunnan University',25.053496, 102.703883],
+        ['Universitat Politècnica de Catalunya', 41.387674, 2.113366],
+        ['Zhejiang University', 30.308629, 120.086156],
+      ];
+      for (var i = 0; i < locations.length; i++) {
+        var loc = locations[i];
+        var marker = new google.maps.Marker({
+          position: {lat: loc[1], lng: loc[2]},
+          map: map,
+          label: {text: loc[0], fontSize: '0px', color: 'black', fontWeight: 'bold'}
+        });
+        google.maps.event.addListener(marker, "mouseover", function(evt) {
+         label = this.getLabel();
+         label.fontSize = '12px';
+         this.setLabel(label);
+        });
+        google.maps.event.addListener(marker, "mouseout", function(evt) {
+         label = this.getLabel();
+         label.fontSize = '0px';
+         this.setLabel(label);
+        });
+      }
+    }
+    </script>
+    <script async defer
+    src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDHVyB-dRW3fhSdUmy3lqoiaNjV9JVUR4M&callback=initMap">
+    </script>
+    -->
+    <!--end of the map-->
+
+    <button class="collapsible">
+        <center>[+] <i>Click here to show the full list. </i></center>
+    </button>
+    <div class="expansion">
+    <div class="institute mdl-grid">
+        Carnegie Mellon University<br>
+        Duke University<br>
+        Emory University<br>
+        Fudan University<br>
+        Gazi Üniversitesi<br>
+        Georgia Institute of Technology<br>
+        Habib University<br>
+        Harbin Institute of Technology<br>
+        Hasso-Plattner-Institut<br>
+        Hangzhou Dianzi University<br>
+        Hiroshima University<br>
+        Hong Kong University of Science and Technology<br>
+        Huazhong University of Science and Technology<br>
+        Imperial College London<br>
+        Indian Institute of Technology Bombay<br>
+        Indian Institute of Technology Kanpur<br>
+        Indian Institute of Technology Kharagpur<br>
+        Indian Institute of Technology Mandi<br>
+        Indian Institute of Technology Ropar<br>
+        Indraprastha Institute of Information Technology, Delhi<br>
+        Institut Supérieur De L'electronique Et Du Numérique<br>
+        İstanbul Teknik Üniversitesi<br>
+        King Abdullah University of Science and Technology<br>
+        Kyungpook National University<br>
+        Lancaster University<br>
+        Massachusetts Institute of Technology<br>
+        McGill University<br>
+        Monash University<br>
+        National Chung Hsing University<br>
+        National Institute of Technical Teachers Training&amp;Research<br>
+        National Institute of Technology, Warangal<br>
+        National Taiwan University<br>
+        National United University<br>
+        National University of Singapore<br>
+        Nazarbayev University<br>
+        Northeastern University<br>
+        Ohio University<br>
+        Peking University<br>
+        Pontificia Universidad Católica de Chile<br>
+        Portland State University<br>
+        Rutgers, The State University of New Jersey<br>
+        Sapienza Università di Roma<br>
+        Shanghai Jiao Tong University<br>
+        Shanghai University of Finance and Economics<br>
+        Sogang University<br>
+        Stanford University<br>
+        Stevens Institute of Technology<br>
+        Technische Universiteit Delft<br>
+        Texas A&amp;M University<br>
+        The University of Texas at Austin<br>
+        Tsinghua University<br>
+        Universidad Carlos III de Madrid<br>
+        Universidad Nacional de Colombia Sede Manizales<br>
+        Universidade Federal de Minas Gerais<br>
+        Università degli Studi di Brescia<br>
+        Università degli Studi di Catania<br>
+        Universität Heidelberg<br>
+        Universitatea de Vest din Timișoara<br>
+        University of Arkansas<br>
+        University of California, Berkeley<br>
+        University of California, Los Angeles<br>
+        University of California, San Diego<br>
+        University of California, Santa Barbara<br>
+        University of Illinois at Urbana-Champaign<br>
+        University of Maryland<br>
+        University of Minnesota, Twin Cities<br>
+        University of New Hampshire<br>
+        University of North Carolina at Chapel Hill<br>
+        University of Pennsylvania<br>
+        University of Science and Technology of China<br>
+        University of Technology Sydney<br>
+        University of Washington<br>
+        University of Waterloo<br>
+        Univerzita Komenského v Bratislave<br>
+        Vietnamese-German University<br>
+        Yunnan University<br>
+        Universitat Politècnica de Catalunya<br>
+        Zhejiang University
+    </div> <!-- mdl-grid -->
+    </div>
+
+    <h4>If you use D2L to teach (or plan to) and would like to receive a hardcopy, please contact us at <a href="mailto:d2lbook.en@gmail.com">d2lbook.en@gmail.com</a>.</h4>
+
+    <!-- reverse the changes by google map... -->
+    <style>
+      a { font-weight: 400; }
+    </style>
+    </div>
+</div>
+
+<div class="mdl-grid">
+  <div>
+    <h3>BibTeX entry for citing the book</h3>
+    <br>
+    <div align="left">
+      <div class="highlight-python notranslate">
+        <div class="highlight">
+          <tt>
+            <pre>@book{zhang2020dive,
+    title={Dive into Deep Learning},
+    author={Aston Zhang and Zachary C. Lipton and Mu Li and Alexander J. Smola},
+    note={\url{https://d2l.ai}},
+    year={2020}
+}</pre>
+          </tt>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<h2 class="toc"> Table of contents </h2>
+
+<script>
+var coll = document.getElementsByClassName("collapsible");
+var i;
+for (i = 0; i < coll.length; i++) {
+  coll[i].addEventListener("click", function() {
+    this.classList.toggle("collapsible-active");
+    var content = this.nextElementSibling;
+    if (content.style.maxHeight){
+      content.style.maxHeight = null;
+    } else {
+      content.style.maxHeight = content.scrollHeight + "px";
+    }
+  });
+}
+</script>
+
+<script async defer src="https://buttons.github.io/buttons.js"></script>
