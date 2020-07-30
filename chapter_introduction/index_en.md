@@ -1,182 +1,326 @@
-# Giriş
+# Introduction
 :label:`chap_introduction`
 
+Until recently, nearly every computer program that we interact with daily
+was coded by software developers from first principles.
+Say that we wanted to write an application to manage an e-commerce platform.  After huddling around a whiteboard for a few hours to ponder the problem,
+we would come up with the broad strokes of a working solution that might probably look something like this:
+(i) users interact with the application through an interface
+running in a web browser or mobile application;
+(ii) our application interacts with a commercial-grade database engine
+to keep track of each user's state and maintain records
+of historical transactions; and (iii) at the heart of our application,
+the *business logic* (you might say, the *brains*) of our application
+spells out in methodical detail the appropriate action
+that our program should take in every conceivable circumstance.
 
-Yakın zamana kadar, günlük etkileşimde bulunduğumuz hemen hemen her bilgisayar programı basit prensiplerle yazılım geliştiricileri tarafından kodlandı.
-Bir e-ticaret platformunu yönetmek için bir uygulama yazmak istediğimizi varsayalım. Soruna kafa yorarak birkaç saat boyunca bir beyaz tahta etrafında toplandıktan sonra, muhtemelen kabaca böyle bir şeye benzeyebilecek bir çalışma çözümü buluruz:
-(i) Kullanıcılar bir web tarayıcısında veya mobil uygulamada çalışan bir arabirim aracılığıyla uygulama ile etkileşimde bulunurlar,
-(ii) uygulamamız, her kullanıcının durumunu takip etmek ve geçmiş işlemlerin kayıtlarını tutmak için ticari düzeyde bir veritabanı motoruyla etkileşime girer ve (iii) uygulamamızın merkezinde, uygulamamızın *iş mantığı* (*beyinleri* diyebilirsiniz) yöntemsel olarak ayrıntılı bir şekilde programımızın akla gelebilecek her durumda gerçekleştirmesi gereken eylemi açıklar.
+To build the *brains* of our application,
+we'd have to step through every possible corner case
+that we anticipate encountering, devising appropriate rules.
+Each time a customer clicks to add an item to their shopping cart,
+we add an entry to the shopping cart database table,
+associating that user's ID with the requested product’s ID.
+While few developers ever get it completely right the first time
+(it might take some test runs to work out the kinks),
+for the most part, we could write such a program from first principles
+and confidently launch it *before ever seeing a real customer*.
+Our ability to design automated systems from first principles
+that drive functioning products and systems, often in novel situations,
+is a remarkable cognitive feat.
+And when you are able to devise solutions that work $100\%$ of the time,
+*you should not be using machine learning*.
 
+Fortunately for the growing community of machine learning (ML) scientists,
+many tasks that we would like to automate
+do not bend so easily to human ingenuity.
+Imagine huddling around the whiteboard with the smartest minds you know,
+but this time you are tackling one of the following problems:
 
-Uygulamamızın *beyinlerini* oluşturmak için karşılaşacağımızı tahmin ettiğimiz her köşe vakasına adım atmamız ve uygun kuralları belirlediğimiz gerekir.
-Bir müşteri alışveriş sepetine bir öğe eklemek için her tıkladığında, alışveriş sepeti veritabanı tablosuna bu kullanıcının kimliğini istenen ürünün kimliği ile ilişkilendirerek bir girdi ekleriz.
-Sadece birkaç geliştirici ilk seferinde tamamen doğru hale getirebilirken (karışıklıkları çözmek için bazı test çalışmaları gerekebilir), çoğunlukla, *önceden gerçek bir müşteri bile görmeden* böyle bir programı basit prensiplerle yazabilir ve güvenle başlatabiliriz.
-Genellikle de yeni durumlarda, işlevsel ürün ve sistemleri yönlendiren otomatik sistemleri basit prensiplerden tasarlama yeteneğimiz, dikkate değer bir bilişsel başarıdır.
-Ayrıca zamanının $\%100$'ünde çalışan çözümler tasarlayabildiğinizde, *makine öğrenmesi kullanmamalısınız*.
+* Write a program that predicts tomorrow's weather given geographic
+information, satellite images, and a trailing window of past weather.
+* Write a program that takes in a question, expressed in free-form text, and
+ answers it correctly.
+* Write a program that given an image can identify all the people it contains,
+ drawing outlines around each.
+* Write a program that presents users with products that they are likely to
+  enjoy but unlikely, in the natural course of browsing, to encounter.
 
+In each of these cases, even elite programmers
+are incapable of coding up solutions from scratch.
+The reasons for this can vary. Sometimes the program
+that we are looking for follows a pattern that changes over time,
+and we need our programs to adapt.
+In other cases, the relationship (say between pixels,
+and abstract categories) may be too complicated,
+requiring thousands or millions of computations
+that are beyond our conscious understanding
+(even if our eyes manage the task effortlessly).
+ML is the study of powerful
+techniques that can *learn* from *experience*.
+As an ML algorithm accumulates more experience,
+typically in the form of observational data or
+interactions with an environment, its performance improves.
+Contrast this with our deterministic e-commerce platform,
+which performs according to the same business logic,
+no matter how much experience accrues,
+until the developers themselves *learn* and decide
+that it is time to update the software.
+In this book, we will teach you the fundamentals of machine learning,
+and focus in particular on deep learning, a powerful set of techniques
+driving innovations in areas as diverse as computer vision,
+natural language processing, healthcare, and genomics.
 
-Neyse ki, giderek artan makine öğrenmesi (MÖ) bilim insanları topluluğu için, otomatikleştirmek istediğimiz birçok görev insan yaratıcılığına bu kadar kolay boyun eğmiyor.
-Beyaz tahta etrafında bildiğiniz en akıllı zihinlerle toplandığınızı hayal edin, ancak bu sefer aşağıdaki sorunlardan birini ele alıyorsunuz:
+## A Motivating Example
 
-* Coğrafi bilgi, uydu görüntüleri ve yakın bir zaman penceresindeki geçmiş hava koşullarını göz önüne alındığında yarının hava durumunu tahmin eden bir program yazma.
-* Serbest biçimli metinle ifade edilen bir soruyu alan ve onu doğru cevaplayan bir program yazma.
-* Verilen bir imgedeki, her birinin etrafında çerçeve çizerek, içerdiği tüm insanları tanımlayabilen bir program yazma.
-* Kullanıcılara keyif alabilecekleri ancak sıradan gezinmeleri esnasında karşılaşma olasılıkları yüksek olmayan ürünler sunan bir program yazma.
+Before we could begin writing, the authors of this book,
+like much of the work force, had to become caffeinated.
+We hopped in the car and started driving.
+Using an iPhone, Alex called out "Hey Siri",
+awakening the phone's voice recognition system.
+Then Mu commanded "directions to Blue Bottle coffee shop".
+The phone quickly displayed the transcription of his command.
+It also recognized that we were asking for directions
+and launched the Maps application to fulfill our request.
+Once launched, the Maps app identified a number of routes.
+Next to each route, the phone displayed a predicted transit time.
+While we fabricated this story for pedagogical convenience,
+it demonstrates that in the span of just a few seconds,
+our everyday interactions with a smart phone
+can engage several machine learning models.
 
+Imagine just writing a program to respond to a *wake word*
+like "Alexa", "Okay, Google" or "Siri".
+Try coding it up in a room by yourself
+with nothing but a computer and a code editor,
+as illustrated in :numref:`fig_wake_word`.
+How would you write such a program from first principles?
+Think about it... the problem is hard.
+Every second, the microphone will collect roughly 44,000 samples.
+Each sample is a measurement of the amplitude of the sound wave.
+What rule could map reliably from a snippet of raw audio to confident predictions ``{yes, no}`` on whether the snippet contains the wake word?
+If you are stuck, do not worry.
+We do not know how to write such a program from scratch either.
+That is why we use ML.
 
-Bu vakaların her birinde, seçkin programcılar bile çözümleri sıfırdan kodlayamazlar.
-Bunun nedenleri değişebilir. Bazen aradığımız program zaman içinde değişen bir kalıp takip eder ve programlarımızın adapte olması gerekir.
-Diğer durumlarda, ilişki (pikseller ve soyut kategoriler arasında) çok karmaşık olabilir ve bilinçli anlayışımızın ötesinde binlerce veya milyonlarca hesaplama gerektirebilir.
-(ki gözlerimiz görevi zahmetsizce yönetse bile). MÖ *deneyimlerden öğrenebilen* güçlü tekniklerin incelenmesidir.
-Bir MÖ algoritması, tipik olarak gözlemsel veriler veya bir çevre ile etkileşimler şeklinde, daha fazla deneyim biriktirdikçe performansı artar.
-Bunu, ne kadar deneyim kazanırsa kazansın, geliştiricilerin kendileri *öğrenip* yazılımın güncellenme zamanının geldiğine karar verene kadar, aynı iş mantığına göre çalışan gerekirci (deterministik) e-ticaret platformumuzla karşılaştırın.
-Bu kitapta size makine öğrenmesinin temellerini öğreteceğiz ve özellikle de bilgisayarlı görme, doğal dil işleme, sağlık ve genomik gibi farklı alanlarda yenilikleri yönlendiren güçlü bir teknikler kümesine, yani derin öğrenmeye odaklanacağız.
-
-
-## Motive Edici Bir Örnek
-
-Yazmaya başlamadan önce, biz bu kitabın yazarları, işgücünün çoğu gibi, kafeinli olmak zorundaydık.
-Arabaya bindik ve araba kullanmaya başladık.
-Alex, bir iPhone kullanıp telefonun ses tanıma sistemini uyandırarak "Hey Siri" diye seslendi.
-Sonra Mu "Blue Bottle kafesine yol tarifi" komutunu verdi.
-Telefon komutun uyarlamasını (transkripsiyonunu) hızlı bir şekilde gösterdi.
-Ayrıca yol tarifini istediğimizi fark etti ve talebimizi yerine getirmek için Maps (Haritalar) uygulamasını başlattı.
-Bir kez başlatıldığında, Haritalar uygulaması bir dizi rota belirledi.
-Her rotanın yanında, telefon tahmini bir yol süresi gösterdi.
-Biz bu hikayeyi pedagojik (eğitbilimsel) rahatlık için üretirken, sadece birkaç saniye içinde, bir akıllı telefondaki günlük etkileşimlerimizin birkaç makine öğrenmesi modeliyle işbirligi yaptığını gösteriyoruz.
-
-
-"Alexa", "Tamam, Google" veya "Siri" gibi bir *uyandırma kelimesine* yanıt vermek için bir program yazdığınızı düşünün.
-Bir odada kendiniz bir bilgisayar ve kod düzenleyicisinden başka bir şey olmadan kodlamayı deneyin :numref:`fig_wake_word`.
-Böyle bir programı basit ilkelerden (prensiplerden) nasıl yazarsınız?
-Bir düşünün ... problem zor.
-Mikrofon her saniye yaklaşık 44.000 örnek toplayacaktır.
-Her örnek, ses dalgasının genliğinin bir ölçümüdür.
-Hangi kural güvenilir bir şekilde, ses parçasının uyandırma sözcüğünü içerip içermediğine bağlı olarak bir ham ses parçasından emin ``{evet, hayır}`` tahminlerine eşleme yapabilir?
-Sıkıştıysanız endişelenmeyin.
-Böyle bir programı nasıl sıfırdan yazacağımızı bilmiyoruz.
-Bu yüzden MÖ kullanıyoruz.
-
-
-![Bir uyandırma kelimesi tanıma. ](../img/wake-word.svg)
+![Identify an awake word.](../img/wake-word.svg)
 :label:`fig_wake_word`
 
-Olayın özünü şöyle açıklayabiliriz.
-Çoğu zaman, bir bilgisayara girdilerden çıktılara nasıl eşleştirebileceğini açıklayamayı bilmediğimizde bile, kendimiz yine de bu bilişsel başarıyı gerçekleştirebiliyoruz.
-Diğer bir deyişle, "Alexa" kelimesini tanımak için *bir bilgisayarı nasıl programlayacağınızı* bilmeseniz bile siz *kendiniz* "Alexa" kelimesini tanıyabilirsiniz.
-Bu yetenekle donanmış bizler ses örnekleri içeren büyük bir *veri kümesi* toplayabilir ve uyandırma kelimesini *içerenleri* ve *içermeyenleri* etiketleyebiliriz.
-MÖ yaklaşımında, uyandırma kelimelerini tanımak için *açıktan* bir sistem tasarlamaya çalışmayız.
-Bunun yerine, davranışı bir miktar *parametre* ile belirlenen esnek bir program tanımlarız.
-Ardından, veri kümesini, ilgili görevdeki performans ölçüsüne göre, programımızın performansını artıran en iyi parametre kümesini belirlemek için kullanırız.
+Here's the trick.
+Often, even when we do not know how to tell a computer
+explicitly how to map from inputs to outputs,
+we are nonetheless capable of performing the cognitive feat ourselves.
+In other words, even if you do not know
+*how to program a computer* to recognize the word "Alexa",
+you yourself *are able* to recognize the word "Alexa".
+Armed with this ability, we can collect a huge *dataset*
+containing examples of audio and label those that *do*
+and that *do not* contain the wake word.
+In the ML approach, we do not attempt to design a system
+*explicitly* to recognize wake words.
+Instead, we define a flexible program
+whose behavior is determined by a number of *parameters*.
+Then we use the dataset to determine the best possible set of parameters, those that improve the performance of our program
+with respect to some measure of performance on the task of interest.
 
-Parametreleri, çevirerek programın davranışını değiştirebileceğimiz düğmeler olarak düşünebilirsiniz.
-Parametreleri sabitlendiğinde, programa *model* diyoruz.
-Sadece parametreleri manipüle ederek üretebileceğimiz tüm farklı programlara (girdi-çıktı eşlemeleri) *model ailesi* denir.
-Ve parametreleri seçmek için veri kümemizi kullanan *başkalaşım (meta) programına* *öğrenme algoritması* denir.
+You can think of the parameters as knobs that we can turn,
+manipulating the behavior of the program.
+Fixing the parameters, we call the program a *model*.
+The set of all distinct programs (input-output mappings)
+that we can produce just by manipulating the parameters
+is called a *family* of models.
+And the *meta-program* that uses our dataset
+to choose the parameters is called a *learning algorithm*.
 
-Devam etmeden ve öğrenme algoritmasını kullanmadan önce, sorunu kesin olarak tanımlamalı, girdi ve çıktıların kesin doğasını tespit etmeli ve uygun bir model ailesi seçmeliyiz.
-Bu durumda, modelimiz *girdi* olarak bir ses parçasını alır ve *çıktı* olarak ``{evet, hayır}`` arasında bir seçim oluşturur.
-Her şey plana göre giderse, modelin parçanın uyandırma kelimesini içerip içermediğine dair tahminleri genellikle doğru olacaktır.
+Before we can go ahead and engage the learning algorithm,
+we have to define the problem precisely,
+pinning down the exact nature of the inputs and outputs,
+and choosing an appropriate model family.
+In this case, our model receives a snippet of audio as *input*,
+and it generates a selection among ``{yes, no}`` as *output*.
+If all goes according to plan the model's guesses will
+typically be correct as to whether (or not) the snippet contains the wake word.
 
+If we choose the right family of models,
+then there should exist one setting of the knobs
+such that the model fires ``yes`` every time it hears the word "Alexa".  Because the exact choice of the wake word is arbitrary,
+we will probably need a model family sufficiently rich that,
+via another setting of the knobs, it could fire ``yes``
+only upon hearing the word "Apricot".
+We expect that the same model family should be suitable
+for *"Alexa" recognition* and *"Apricot" recognition*
+because they seem, intuitively, to be similar tasks.
+However, we might need a different family of models entirely
+if we want to deal with fundamentally different inputs or outputs,
+say if we wanted to map from images to captions,
+or from English sentences to Chinese sentences.
 
-Doğru model ailesini seçersek, o zaman model her "Alexa" kelimesini her duyduğunda ``evet``i seçecek düğmelerin bir ayarı olmalıdır.
-Uyandırma kelimesinin kesin seçimi keyfi olduğundan, muhtemelen yeterince zengin bir model ailesine ihtiyacımız olacak, öyle ki düğmelerin başka bir ayarı ile, sadece "Kayısı" kelimesini duyduktan sonra da ``evet`` seçilebilsin.
-Aynı model ailesinin *"Alexa"yı tanıma* ve *"Kayısı"yı tanıma* için uygun olması beklenir, çünkü sezgisel olarak benzer görevler gibi görünüyorlar.
-Bununla birlikte, temel olarak farklı girdiler veya çıktılarla uğraşmak istiyorsak, resimlerden altyazılara veya İngilizce cümlelerden Çince cümlelere eşlemek istiyorsak mesela, tamamen farklı bir model ailesine ihtiyacımız olabilir.
+As you might guess, if we just set all of the knobs randomly,
+it is not likely that our model will recognize "Alexa",
+"Apricot", or any other English word.
+In deep learning, the *learning* is the process
+by which we discover the right setting of the knobs
+coercing the desired behavior from our model.
 
-Tahmin edebileceğiniz gibi, tüm düğmeleri rastgele bir şekilde ayarlarsak, modelimizin "Alexa", "Kayısı" veya başka bir İngilizce kelimeyi tanıması muhtemel değildir.
-Derin öğrenmede, *öğrenme*, modelimizi istenen davranışa zorlayan düğmelerin doğru ayarını keşfettiğimiz süreçtir.
+As shown in :numref:`fig_ml_loop`, the training process usually looks like this:
 
-Gösterildiği gibi :numref:`fig_ml_loop`, eğitim süreci genellikle şöyle görünür:
+1. Start off with a randomly initialized model that cannot do anything useful.
+1. Grab some of your labeled data (e.g., audio snippets and corresponding ``{yes, no}`` labels)
+1. Tweak the knobs so the model sucks less with respect to those examples
+1. Repeat until the model is awesome.
 
-1. Yararlı bir şey yapamayan rastgele başlatılan bir model ile başlayın.
-1. Etiketli verilerinizin bir kısmını alın (örneğin, ses parçaları ve onlara karşılık gelen ``{evet, hayır}`` etiketleri).
-1. Modelin bu örneklere göre daha az hata yapması için düğmeleri değiştirin.
-1. Model harika olana kadar tekrarlayın.
-
-
-[Tipik bir eğitim süreci.](../img/ml-loop.svg)
+![A typical training process. ](../img/ml-loop.svg)
 :label:`fig_ml_loop`
 
-Özetlemek gerekirse, bir uyandırma kelimesi tanıyıcısını kodlamak yerine, büyük bir etiketli veri kümesi *sunarsak* uyandırma sözcüklerini tanımayı *öğrenebilen* bir program kodlarız.
-Bu eylemi bir programın davranışını ona bir veri kümesi sunup *veri ile programlayarak* belirleme gibi düşünebilirsiniz.
-Makine öğrenme sistemimize, aşağıdaki resimler gibi, birçok kedi ve köpek örneği sağlayarak bir kedi dedektörü "programlayabiliriz":
-
+To summarize, rather than code up a wake word recognizer,
+we code up a program that can *learn* to recognize wake words,
+*if we present it with a large labeled dataset*.
+You can think of this act of determining a program's behavior
+by presenting it with a dataset as *programming with data*.
+We can "program" a cat detector by providing our machine learning system
+with many examples of cats and dogs, such as the images below:
 
 |cat|cat|dog|dog|
 |:---------------:|:---------------:|:---------------:|:---------------:|
 |![cat3](../img/cat3.jpg)|![](../img/cat2.jpg)|![](../img/dog1.jpg)|![](../img/dog2.jpg)|
 
+This way the detector will eventually learn to emit a very large positive number if it is a cat, a very large negative number if it is a dog,
+and something closer to zero if it is not sure,
+and this barely scratches the surface of what ML can do.
 
-Bu şekilde dedektör, sonunda, bir kedi ise çok büyük bir pozitif sayı, bir köpekse çok büyük bir negatif sayı ve emin değilse sıfıra daha yakın bir şey yaymayı öğrenir ve bu,  MÖ'nin neler yapabileceğinin ancak yüzeyini kazır.
+Deep learning is just one among many popular methods
+for solving machine learning problems.
+Thus far, we have only talked about machine learning broadly
+and not deep learning. To see why deep learning is important,
+we should pause for a moment to highlight a couple of crucial points.
 
-Derin öğrenme, makine öğrenmesi problemlerini çözmek için mevcut birçok popüler yöntemden sadece biridir.
-Şimdiye kadar, derin öğrenme değil, yalnızca geniş kapsamlı makine öğrenmesi hakkında konuştuk. Derin öğrenmenin neden önemli olduğunu görmek amacıyla, birkaç önemli noktayı vurgulamak için bir anlığına durmalıyız.
+First, the problems that we have discussed thus far---learning
+from the raw audio signal, the raw pixel values of images,
+or mapping between sentences of arbitrary lengths and
+their counterparts in foreign languages---are problems
+where deep learning excels and where traditional ML methods faltered.
+Deep models are *deep* in precisely the sense
+that they learn many *layers* of computation.
+It turns out that these many-layered (or hierarchical) models
+are capable of addressing low-level perceptual data
+in a way that previous tools could not.
+In bygone days, the crucial part of applying ML to these problems
+consisted of coming up with manually-engineered ways
+of transforming the data into some form amenable to *shallow* models.
+One key advantage of deep learning is that it replaces not
+only the *shallow* models at the end of traditional learning pipelines,
+but also the labor-intensive process of feature engineering.
+Second, by replacing much of the *domain-specific preprocessing*,
+deep learning has eliminated many of the boundaries
+that previously separated computer vision, speech recognition,
+natural language processing, medical informatics, and other application areas,
+offering a unified set of tools for tackling diverse problems.
 
-Birincisi, şu ana kadar tartıştığımız problemler --- ham ses sinyalinden, görüntülerin ham piksel değerlerinden öğrenmek veya keyfi uzunluktaki cümleleri yabancı dillerdeki muadilleri arasında eşlemek --- derin öğrenmenin üstün olduğu ve geleneksel MÖ metotlarının sendelediği problemlerdir.
-Derin modeller, birçok hesaplama *katmanını* öğrenmeleri anlamında *derindir*.
-Bu çok katmanlı (veya hiyerarşik) modellerin, düşük seviyeli algısal verileri önceki araçların yapamayacağı bir şekilde ele alabildiği ortaya çıkıyor.
-Eski günlerde, MÖ'yi bu sorunlara uygulamanın en önemli kısmı, verileri *sığ* modellere uygun bir biçime dönüştürmek için elle (manuel olarak) tasarlanmış yolları bulmaktan oluşuyordu.
-Derin öğrenmenin önemli bir avantajı, sadece geleneksel öğrenme üretim hatlarının sonundaki *sığ* modellerin değil, aynı zamanda öznitelik mühendisliğinin emek yoğun sürecinin de yerini almasıdır.
-İkincisi,  derin öğrenme, *alana özgü önişlemlemenin* çoğunu eleyerek, daha önce bilgisayarlı görme, konuşma tanıma, doğal dil işleme, tıbbi bilişim ve diğer uygulama alanlarını ayıran sınırların çoğunu ortadan kaldırıp, çeşitli sorunlarla mücadelede ortak kullanılabilecek bir küme araç sunar.
 
-## Temel Bileşenler: Veri, Modeller ve Algoritmalar
+## The Key Components: Data, Models, and Algorithms
 
-*Uyandırma kelimesi* örneğimizde, ses parçaları ve ikili etiketlerden oluşan bir veri kümesi tanımladık ve parçalardan sınıflandırmalara bir eşlemeyi yaklaşık olarak nasıl eğitebileceğimize dair çok ciddi olmayan bir izlenim verdik.
-Bu tarz problem, etiketlerinin bilindiği örneklerden oluşan bir veri kümesinin verildiği ve bilinen *girdiler* in belirli bir bilinmeyen *etiket* ini öngörmeye çalıştığımız, *gözetimli öğrenme* olarak adlandırılır ve bu birçok *çeşit* makine öğrenme problemlerinden sadece bir tanesidir.
-Bir sonraki bölümde, farklı MÖ sorunlarına derinlemesine bakacağız.
-İlk olarak, ne tür bir MÖ problemi olursa olsun, bizi takip edecek bazı temel bileşenlere daha fazla ışık tutmak istiyoruz:
+In our *wake-word* example, we described a dataset
+consisting of audio snippets and binary labels, and we
+gave a hand-wavy sense of how we might *train*
+a model to approximate a mapping from snippets to classifications.
+This sort of problem, where we try to predict a designated unknown *label*
+given known *inputs*, given a dataset consisting of examples,
+for which the labels are known is called *supervised learning*,
+and it is just one among many *kinds* of machine learning problems.
+In the next section, we will take a deep dive into the different ML problems.
+First, we'd like to shed more light on some core components
+that will follow us around, no matter what kind of ML problem we take on:
 
-1. Öğrenebileceğimiz *veriler*.
-2. Verilerin nasıl dönüştürüleceğine dair bir *model*.
-3. Modelimizin *kötülüğünü* ölçen bir *yitim* işlevi.
-4. Kaybı en aza indirmede modelin parametrelerini ayarlamak için bir *algoritma*.
+1. The *data* that we can learn from.
+2. A *model* of how to transform the data.
+3. A *loss* function that quantifies the *badness* of our model.
+4. An *algorithm* to adjust the model's parameters to minimize the loss.
 
 
-### Veri
+### Data
 
-Veri bilimini veri olmadan yapamayacağınızı söylemeye gerek yok.
-Tam olarak veriyi neyin oluşturduğunu düşünerek yüzlerce sayfayı doldurabiliriz, ancak şimdilik pratik tarafta hata yapacağız ve bizi ilgilendiren temel özelliklere odaklanacağız.
-Genellikle *örnekler* (*veri noktaları*, *örneklemler* veya *misaller* olarak da adlandırılır) derlemesiyle ilgileniriz.
-Verilerle yararlı bir şekilde çalışmak için, genellikle uygun bir sayısal temsil (gösterim) bulmamız gerekir.
-Her *örnek* tipik olarak *öznitelikler* adı verilen sayısal özelliklerden oluşur.
-Yukarıdaki gözetimli öğrenme problemlerinde özel bir özellik *hedef* tahmini olarak adlandırılır (bazen *etiket* veya *bağımlı değişken* olarak da adlandırılır).
-Modelin tahminlerini yapması gereken verilmiş özellikler daha sonra *öznitelikler* (veya bazen *girdiler*, *öndeğişkenler* veya *bağımsız değişkenler*) olarak adlandırılabilir.
+It might go without saying that you cannot do data science without data.
+We could lose hundreds of pages pondering what precisely constitutes data,
+but for now, we will err on the practical side
+and focus on the key properties to be concerned with.
+Generally, we are concerned with a collection of *examples*
+(also called *data points*, *samples*, or *instances*).
+In order to work with data usefully, we typically
+need to come up with a suitable numerical representation.
+Each *example* typically consists of a collection
+of numerical attributes called *features*.
+In the supervised learning problems above,
+a special feature is designated as the prediction *target*,
+(sometimes called the *label* or *dependent variable*).
+The given features from which the model must make its predictions
+can then simply be called the *features*,
+(or often, the *inputs*, *covariates*, or *independent variables*).
 
-Eğer görüntü verileriyle çalışıyorsak, her bir fotoğraf, her bir pikselin parlaklığına karşılık gelen sıralı bir sayısal değerler listesi ile temsil edilen bir *örnek* oluşturabilir.
-$200\times 200$ bir renkli fotoğraf, her bir uzamsal konum için kırmızı, yeşil ve mavi kanalların parlaklığına karşılık gelen $200\times200\times3=120000$ sayısal değerden oluşur.
-Daha geleneksel bir görevde, yaş, yaşamsal belirtiler, teşhisler vb. gibi standart bir dizi özellik göz önüne alındığında, bir hastanın hayatta kalıp kalmayacağını tahmin etmeye çalışabiliriz.
+If we were working with image data,
+each individual photograph might constitute an *example*,
+each represented by an ordered list of numerical values
+corresponding to the brightness of each pixel.
+A $200\times 200$ color photograph would consist of $200\times200\times3=120000$
+numerical values, corresponding to the brightness
+of the red, green, and blue channels for each spatial location.
+In a more traditional task, we might try to predict
+whether or not a patient will survive,
+given a standard set of features such as age, vital signs, diagnoses, etc.
 
-Her örnek aynı sayıda sayısal değerle karakterize edildiğinde, verilerin *sabit uzunluklu* vektörlerden oluştuğunu söylüyoruz ve vektörlerin (sabit) uzunluğunu
-verilerin *boyutluluğu* olarak tanımlıyoruz.
-Tahmin edebileceğiniz gibi, sabit uzunluk uygun bir özellik olabilir.
-Mikroskopi görüntülerinde kanseri tanımak için bir model eğitmek istersek, sabit uzunluktaki girdiler endişelenecek şeylerin sayısının bir tane azaldığı anlamına gelir.
+When every example is characterized by the same number of numerical values,
+we say that the data consists of *fixed-length* vectors
+and we describe the (constant) length of the vectors
+as the *dimensionality* of the data.
+As you might imagine, fixed-length can be a convenient property.
+If we wanted to train a model to recognize cancer in microscopy images,
+fixed-length inputs mean we have one less thing to worry about.
 
-Ancak, tüm veriler kolayca sabit uzunluklu vektörler olarak gösterilemez.
-Mikroskop görüntülerinin standart ekipmanlardan gelmesini beklesek de, internetten toplanan görüntülerin aynı çözünürlük veya şekil ile ortaya çıkmasını bekleyemeyiz.
-Görüntüler için, hepsini standart bir boyuta kırpmayı düşünebiliriz, ancak bu strateji bizi bir yere kadar götürür.
-Kırpılan bölümlerde bilgi kaybetme riskiyle karşı karşıyayız.
-Ayrıca, metin verileri sabit uzunluklu gösterimlere daha inatçı bir şekilde direnir.
-Amazon, IMDB veya TripAdvisor gibi e-ticaret sitelerine bırakılan müşteri yorumlarını düşünün.
-Bazıları kısadır: "berbat!". Diğerleri sayfalara yayılır.
-Geleneksel yöntemlere göre derin öğrenmenin en büyük avantajlarından biri, modern modellerin *değişen uzunluktaki* verileri işleyebileceği göreceli yetenektir.
+However, not all data can easily be represented as fixed-length vectors.
+While we might expect microscope images to come from standard equipment,
+we cannot expect images mined from the Internet
+to all show up with the same resolution or shape.
+For images, we might consider cropping them all to a standard size,
+but that strategy only gets us so far.
+We risk losing information in the cropped out portions.
+Moreover, text data resists fixed-length representations even more stubbornly.
+Consider the customer reviews left on e-commerce sites
+like Amazon, IMDB, or TripAdvisor.
+Some are short: "it stinks!". Others ramble for pages.
+One major advantage of deep learning over traditional methods
+is the comparative grace with which modern models
+can handle *varying-length* data.
 
-Genel olarak, ne kadar fazla veriye sahip olursak işimiz o kadar kolay olur.
-Daha fazla veriye sahip olduğumuzda, daha güçlü modeller eğitebilir ve önceden tasarlanmış varsayımlara daha az bel bağlayabiliriz.
-(Nispeten) küçükten büyük verilere rejim (düzen) değişikliği, modern derin öğrenmenin başarısına önemli bir katkıda bulunmaktadır.
-İşin özünden bahsedersek, derin öğrenmedeki en heyecan verici modellerin çoğu büyük veri kümeleri olmadan çalışmaz.
-Bazıları düşük veri düzeninde çalışır, ancak geleneksel yaklaşımlardan daha iyi değildir.
+Generally, the more data we have, the easier our job becomes.
+When we have more data, we can train more powerful models
+and rely less heavily on pre-conceived assumptions.
+The regime change from (comparatively) small to big data
+is a major contributor to the success of modern deep learning.
+To drive the point home, many of the most exciting models in deep learning do not work without large datasets.
+Some others work in the low-data regime,
+but are no better than traditional approaches.
 
-Son olarak, çok fazla veriye sahip olmak ve onu akıllıca işlemek yeterli değildir.
-*Doğru* verilere ihtiyacımız vardır. Veriler hatalarla doluysa veya seçilen özellikler hedefteki ilgili miktarı öngörmüyorsa, öğrenme başarısız olacaktır.
-Durum şu klişe ile iyi betimlenebilir: *çöp içeri, çöp dışarı*.
-Ayrıca, kötü tahmin performansı tek olası sonuç değildir.
-Tahminli polislik, özgeçmiş taraması ve borç verme için kullanılan risk modelleri gibi makine öğrenmesinin hassas uygulamalarında, özellikle çöp verilerinin sonuçlarına karşı dikkatli olmalıyız.
-Yaygın bir hata modu, bazı insan gruplarının eğitim verilerinde temsil edilmediği veri kümelerinde gerçekleşir.
-Gerçek hayatta, daha önce hiç siyah ten görmemiş bir cilt kanseri tanıma sistemi uyguladığınızı düşünün.
-Başarısızlık ayrıca veriler sadece bazı grupları az temsil etmediğinde değil, aynı zamanda toplumsal önyargıları yansıttığı zaman da meydana gelebilir.
-Örneğin, özgeçmişleri taramak için kullanılacak bir öngörü modeli eğitmek için geçmiş işe alım kararları kullanılıyorsa, makine öğrenme modelleri yanlışlıkla tarihi adaletsizlikleri yakalayıp onları otomatikleştirebilir.
-Tüm bunların, veri bilimcisi aktif olarak komplo kurmadan ve hatta o farkında olmadan gerçekleşebileceğini unutmayın.
+Finally, it is not enough to have lots of data and to process it cleverly.
+We need the *right* data. If the data is full of mistakes,
+or if the chosen features are not predictive
+of the target quantity of interest, learning is going to fail.
+The situation is captured well by the cliché: *garbage in, garbage out*.
+Moreover, poor predictive performance is not the only potential consequence.
+In sensitive applications of machine learning,
+like predictive policing, resumé screening, and risk models used for lending,
+we must be especially alert to the consequences of garbage data.
+One common failure mode occurs in datasets where some groups of people
+are unrepresented in the training data.
+Imagine applying a skin cancer recognition system in the wild
+that had never seen black skin before.
+Failure can also occur when the data
+does not merely under-represent some groups
+but reflects societal prejudices.
+For example, if past hiring decisions are used to train a predictive model
+that will be used to screen resumes,
+then machine learning models could inadvertently
+capture and automate historical injustices.
+Note that this can all happen without the data scientist
+actively conspiring, or even being aware.
+
 
 ### Models
 
