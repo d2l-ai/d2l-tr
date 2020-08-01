@@ -232,105 +232,61 @@ Bir kez veri kaynağı ve gösterim, bir model ve iyi tanımlanmış bir amaç f
 Sinir ağları için en popüler optimizasyon algoritmaları, gradyan (eğim) alçaltma olarak adlandırılan bir yaklaşımı izler. Kısacası, her adımda, her bir parametre için, bu parametreyi sadece küçük bir miktar bozarsanız eğitim kümesi kaybının nasıl hareket edeceğini (değişeceğini) kontrol ederler.
 Daha sonra parametreyi kaybı azaltan yönde güncellerler.
 
-## Kinds of Machine Learning
+## Makine Öğrenmesi Çeşitleri
 
-In the following sections, we discuss a few *kinds*
-of machine learning problems in greater detail.
-We begin with a list of *objectives*, i.e.,
-a list of things that we would like machine learning to do.
-Note that the objectives are complemented
-with a set of techniques of *how* to accomplish them,
-including types of data, models, training techniques, etc.
-The list below is just a sampling of the problems ML can tackle
-to motivate the reader and provide us with some common language
-for when we talk about more problems throughout the book.
+Aşağıdaki bölümlerde, birkaç *çeşit* makine öğrenmesi problemini daha ayrıntılı olarak tartışacağız.
+*Hedeflerin* bir listesiyle, yani makine öğrenmesinin yapmasını istediğimiz şeylerin bir listesiyle başlıyoruz.
+Hedeflerin, veri türleri, modeller, eğitim teknikleri vb. dahil olmak üzere, *nasıl*  başarılabileceğine dair bir dizi teknik ile tamamlandığını unutmayın.
+Aşağıdaki liste, okuyucuyu motive etmek ve kitap boyunca daha fazla sorun hakkında konuştuğumuzda bize ortak bir dil sağlamak için MÖ'nün uğraşabileceği sorunların sadece bir örneğidir.
 
-### Supervised learning
+### Gözetimli öğrenme
 
-Supervised learning addresses the task of
-predicting *targets* given *inputs*.
-The targets, which we often call *labels*, are generally denoted by *y*.
-The input data, also called the *features* or covariates,
-are typically denoted $\mathbf{x}$.
-Each (input, target) pair is called an *example* or *instance*.
-Sometimes, when the context is clear, we may use the term examples,
-to refer to a collection of inputs,
-even when the corresponding targets are unknown.
-We denote any particular instance with a subscript, typically $i$,
-for instance ($\mathbf{x}_i, y_i$).
-A dataset is a collection of $n$ instances $\{\mathbf{x}_i, y_i\}_{i=1}^n$.
-Our goal is to produce a model $f_\theta$ that maps any input $\mathbf{x}_i$
- to a prediction $f_{\theta}(\mathbf{x}_i)$.
+Gözetimli öğrenme *girdiler* verildiğinde *hedefleri* tahmin etme görevini ele alır.
+Sık sık *etiket* adını verdiğimiz hedefler genellikle *y* ile gösterilir.
+*Öznitellikler* veya eş değişkenler olarak da adlandırılan girdi verilerini genellikle $\mathbf{x}$ olarak belirtiriz.
+Her (girdi, hedef) çiftine *örnek* veya *misal* denir.
+Bazen, bağlam açık olduğunda, bir girdi topluluğuna atıfta bulunmak için örnekler terimini kullanabiliriz,
+karşılık gelen hedefler bilinmese bile.
+Belirli bir örneği, mesela $i$, bir altindis ile gösteririz, örneğin ($\mathbf{x}_i,y_i$).
+Veri kümesi, $n$ taneli örnekli, $\{\mathbf{x}_i, y_i\}_{i=1}^n$, bir topluluktur.
+Hedefimiz, $\mathbf{x}_i$ girdisini $f_{\theta}(\mathbf{x}_i)$ tahminiyle eşleyen bir $f_\theta$ modeli üretmektir.
 
-To ground this description in a concrete example,
-if we were working in healthcare,
-then we might want to predict whether or not
-a patient would have a heart attack.
-This observation, *heart attack* or *no heart attack*,
-would be our label $y$.
-The input data $\mathbf{x}$ might be vital signs
-such as heart rate, diastolic and systolic blood pressure, etc.
+Bu açıklamayı somut bir örneğe oturtalım; sağlık hizmetlerinde çalışıyorsak, bir hastanın kalp krizi geçirip geçirmeyeceğini tahmin etmek isteyebiliriz.
+Bu gözlem, *kalp krizi* veya *kalp krizi yok*, $y$ etiketimiz olacaktır.
+$\mathbf{x}$ girdi verileri, kalp atış hızı, diyastolik ve sistolik kan basıncı gibi hayati belirtiler olabilir.
 
-The supervision comes into play because for choosing the parameters $\theta$, we (the supervisors) provide the model with a dataset
-consisting of *labeled examples* ($\mathbf{x}_i, y_i$),
-where each example $\mathbf{x}_i$ is matched with the correct label.
+Burada gözetim devreye girer, çünkü $\theta$ parametrelerini seçmek için, biz (gözetimciler) modele *etiketli örnekleri* ($\mathbf{x}_i,y_i$) içeren bir veri kümesi sağlıyoruz, ki bu kümedeki her örnek, $\mathbf{x}_i$, doğru etiketle eşleştirilmiştir.
 
-In probabilistic terms, we typically are interested in estimating
-the conditional probability $P(y|x)$.
-While it is just one among several paradigms within machine learning,
-supervised learning accounts for the majority of successful
-applications of machine learning in industry.
-Partly, that is because many important tasks
-can be described crisply as estimating the probability
-of something unknown given a particular set of available data:
+Olasılıksal terimlerle, tipik olarak koşullu olasılığı, $P(y|x)$, tahmin etmekle ilgileniyoruz.
+Makine öğrenmesi içindeki birçok paradigmadan sadece biri olsa da, gözetimli öğrenme, makine öğrenmesinin endüstrideki başarılı uygulamalarının çoğunu oluşturur.
+Kısmen, bunun nedeni, birçok önemli görevin, belirli bir mevcut veri kümesi göz önüne alındığında bilinmeyen bir şeyin olasılığını tahmin etmek gibi net bir şekilde tanımlanabilmesidir; örneğin:
 
-* Predict cancer vs not cancer, given a CT image.
-* Predict the correct translation in French, given a sentence in English.
-* Predict the price of a stock next month based on this month's financial reporting data.
+* CT görüntüsü verildiğinde kansere karşı kanser olmama tahmini.
+* İngilizce bir cümle verildiğinde Fransızca doğru çevirisinin tahmini.
+* Bir  hisse senedinin gelecek aydaki fiyatının bu ayın finansal raporlama verilerine dayalı tahmini.
 
-Even with the simple description "predict targets from inputs"
-supervised learning can take a great many forms
-and require a great many modeling decisions,
-depending on (among other considerations) the type, size,
-and the number of inputs and outputs.
-For example, we use different models to process sequences
-(like strings of text or time series data)
-and for processing fixed-length vector representations.
-We will visit many of these problems in depth
-throughout the first 9 parts of this book.
+Basit bir tanımla bile "girdilerden hedefleri tahmin et" diye tanımladığımız gözetimli öğrenme çok çeşitli şekillerde olabilir, (diğer hususların yanı sıra) girdilerin ve çıktıların türüne, boyutuna ve sayısına bağlı olarak çok sayıda modelleme kararı gerektirebilir.
+Örneğin, dizileri işlemek için (metin dizeleri veya zaman serisi verileri gibi) farklı ve sabit uzunluklu vektör temsillerini işlemek için farklı modeller kullanırız.
+Bu kitabın ilk 9 bölümünde bu sorunların birçoğunu derinlemesine ziyaret edeceğiz.
 
-Informally, the learning process looks something like this:
-Grab a big collection of examples for which the covariates are known
-and select from them a random subset,
-acquiring the ground truth labels for each.
-Sometimes these labels might be available data that has already been collected
-(e.g., did a patient die within the following year?)
-and other times we might need to employ human annotators to label the data,
-(e.g., assigning images to categories).
+Gayri resmi olarak, öğrenme süreci şöyle görünür:
+Ortak değişkenlerin bilindiği büyük bir örnek koleksiyonu alın ve her biri için doğru değer etiketlerini alarak rastgele bir altküme seçin.
+Bazen bu etiketler zaten toplanmış verilerde olabilir (örn. Bir hasta sonraki yıl içinde öldü mü?) ve diğer zamanlarda verileri etiketlemek için insanların yorumlamalarını kullanmamız gerekebilir (örn. Görüntülere kategori atama).
 
-Together, these inputs and corresponding labels comprise the training set.
-We feed the training dataset into a supervised learning algorithm,
-a function that takes as input a dataset
-and outputs another function, *the learned model*.
-Finally, we can feed previously unseen inputs to the learned model,
-using its outputs as predictions of the corresponding label.
-The full process is drawn in :numref:`fig_supervised_learning`.
+Bu girdiler ve karşılık gelen etiketler birlikte eğitim kümesini oluştururlar.
+Eğitim veri kümesini gözetimli bir öğrenme algoritmasına besleriz; veri kümesini girdi olarak alır ve başka bir işlev, *öğrenilen model*, verir.
+Son olarak, çıktılarını karşılık gelen etiketin tahminleri olarak kullanarak önceden görülmemiş girdileri öğrenilen modele besleyebiliriz.
+Tüm süreç şöyle çizilebilir :numref:`fig_supervised_learning`.
 
-![Supervised learning.](../img/supervised-learning.svg)
+![Gözetimli öğrenme.](../img/supervised-learning.svg)
 :label:`fig_supervised_learning`
 
+#### Bağlanım
 
-#### Regression
-
-Perhaps the simplest supervised learning task
-to wrap your head around is *regression*.
-Consider, for example, a set of data harvested
-from a database of home sales.
-We might construct a table, where each row corresponds to a different house,
-and each column corresponds to some relevant attribute,
-such as the square footage of a house, the number of bedrooms, the number of bathrooms, and the number of minutes (walking) to the center of town.
-In this dataset, each *example* would be a specific house,
-and the corresponding *feature vector* would be one row in the table.
+Belki de kafanıza sokmak için en basit gözetimli öğrenme görevi *bağlanım*'dır.
+Örneğin, ev satışları veritabanından toplanan bir veri kümesini düşünün.
+Her sıranın farklı bir eve karşılık geldiği bir tablo oluşturabiliriz ve her sütun, bir evin alanı, yatak odası sayısı, banyo sayısı ve şehir merkezine (yürüyüş) dakika sayısı  gibi ilgili bazı özelliklere karşılık gelir.
+Bu veri kümesinde, her *örnek* belirli bir ev olacaktır ve karşılık gelen *öznitelik vektörü* tabloda bir satır olacaktır.
 
 If you live in New York or San Francisco,
 and you are not the CEO of Amazon, Google, Microsoft, or Facebook,
