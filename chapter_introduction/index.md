@@ -62,7 +62,7 @@ Bu yüzden MÖ kullanıyoruz.
 :label:`fig_wake_word`
 
 Olayın özünü şöyle açıklayabiliriz.
-Çoğu zaman, bir bilgisayara girdilerden çıktılara nasıl eşleştirebileceğini açıklayamayı bilmediğimizde bile, kendimiz yine de bu bilişsel başarıyı gerçekleştirebiliyoruz.
+Çoğu zaman, bir bilgisayara girdilerden çıktılara nasıl eşleştirebileceğini açıklayamayı bilmediğimiz de bile, kendimiz yine de bu bilişsel başarıyı gerçekleştirebiliyoruz.
 Diğer bir deyişle, "Alexa" kelimesini tanımak için *bir bilgisayarı nasıl programlayacağınızı* bilmeseniz bile siz *kendiniz* "Alexa" kelimesini tanıyabilirsiniz.
 Bu yetenekle donanmış bizler ses örnekleri içeren büyük bir *veri kümesi* toplayabilir ve uyandırma kelimesini *içerenleri* ve *içermeyenleri* etiketleyebiliriz.
 MÖ yaklaşımında, uyandırma kelimelerini tanımak için *açıktan* bir sistem tasarlamaya çalışmayız.
@@ -103,7 +103,7 @@ Bu eylemi bir programın davranışını ona bir veri kümesi sunup *veri ile pr
 Makine öğrenme sistemimize, aşağıdaki resimler gibi, birçok kedi ve köpek örneği sağlayarak bir kedi dedektörü "programlayabiliriz":
 
 
-|cat|cat|dog|dog|
+|kedi|kedi|köpek|köpek|
 |:---------------:|:---------------:|:---------------:|:---------------:|
 |![cat3](../img/cat3.jpg)|![](../img/cat2.jpg)|![](../img/dog1.jpg)|![](../img/dog2.jpg)|
 
@@ -144,7 +144,7 @@ Yukarıdaki gözetimli öğrenme problemlerinde özel bir özellik *hedef* tahmi
 Modelin tahminlerini yapması gereken verilmiş özellikler daha sonra *öznitelikler* (veya bazen *girdiler*, *öndeğişkenler* veya *bağımsız değişkenler*) olarak adlandırılabilir.
 
 Eğer görüntü verileriyle çalışıyorsak, her bir fotoğraf, her bir pikselin parlaklığına karşılık gelen sıralı bir sayısal değerler listesi ile temsil edilen bir *örnek* oluşturabilir.
-$200\times 200$ bir renkli fotoğraf, her bir uzamsal konum için kırmızı, yeşil ve mavi kanalların parlaklığına karşılık gelen $200\times200\times3=120000$ sayısal değerden oluşur.
+$200\times200$ bir renkli fotoğraf, her bir uzamsal konum için kırmızı, yeşil ve mavi kanalların parlaklığına karşılık gelen $200\times200\times3=120000$ sayısal değerden oluşur.
 Daha geleneksel bir görevde, yaş, yaşamsal belirtiler, teşhisler vb. gibi standart bir dizi özellik göz önüne alındığında, bir hastanın hayatta kalıp kalmayacağını tahmin etmeye çalışabiliriz.
 
 Her örnek aynı sayıda sayısal değerle karakterize edildiğinde, verilerin *sabit uzunluklu* vektörlerden oluştuğunu söylüyoruz ve vektörlerin (sabit) uzunluğunu
@@ -178,102 +178,59 @@ Başarısızlık ayrıca veriler sadece bazı grupları az temsil etmediğinde d
 Örneğin, özgeçmişleri taramak için kullanılacak bir öngörü modeli eğitmek için geçmiş işe alım kararları kullanılıyorsa, makine öğrenme modelleri yanlışlıkla tarihi adaletsizlikleri yakalayıp onları otomatikleştirebilir.
 Tüm bunların, veri bilimcisi aktif olarak komplo kurmadan ve hatta o farkında olmadan gerçekleşebileceğini unutmayın.
 
-### Models
+
+### Modeller
 
 
-Most machine learning involves *transforming* the data in some sense.
-We might want to build a system that ingests photos and predicts *smiley-ness*.
-Alternatively, we might want to ingest a set of sensor readings
-and predict how *normal* vs *anomalous* the readings are.
-By *model*, we denote the computational machinery for ingesting data
-of one type, and spitting out predictions of a possibly different type.
-In particular, we are interested in statistical models
-that can be estimated from data.
-While simple models are perfectly capable of addressing
-appropriately simple problems the problems
-that we focus on in this book stretch the limits of classical methods.
-Deep learning is differentiated from classical approaches
-principally by the set of powerful models that it focuses on.
-These models consist of many successive transformations of the data
-that are chained together top to bottom, thus the name *deep learning*.
-On our way to discussing deep neural networks,
-we will discuss some more traditional methods.
+Çoğu makine öğrenmesi, verileri bir anlamda *dönüştürmeyi* içerir.
+Fotoğrafları yiyen ve *güleryüzlülük* tahmin eden bir sistem kurmak isteyebiliriz.
+Alternatif olarak, bir dizi sensör okuması almak ve okumaların *normal* ve *anormal* değerlerini tahmin etmek isteyebiliriz.
+*Model* ile, bir tipteki verileri alana ve muhtemelen farklı tipte tahminler veren hesaplama makinelerini belirtiyoruz.
+Özellikle verilerden tahmin yapabilecek istatistiksel modellerle ilgileniyoruz.
+Basit modeller, uygun şekilde basit problemleri mükemmel bir şekilde çözebilirken, bu kitapta odaklandığımız problemler klasik yöntemlerin sınırlarını aşmaktadır.
+Derin öğrenme, klasik yaklaşımlardan, esas olarak odaklandığı güçlü modeller kümesi ile ayrılır.
+Bu modeller, yukarıdan aşağıya zincirlenmiş verilerin art arda dönüşümlerinden oluşur, bu nedenle adları *derin öğrenme*.
+Derin sinir ağlarını tartışırken, bazı geleneksel yöntemleri de tartışacağız.
 
+### Amaç işlevleri
 
-###  Objective functions
+Daha önce, makine öğrenmesini "deneyimden öğrenme" olarak tanıttık.
+Burada *öğrenme* ile zamanla bazı görevlerde *iyileştirme* yi kastediyoruz.
+Peki kim neyin bir iyileştirme oluşturduğunu söyleyecek?
+Modelimizi güncellemeyi önerebileceğimizi düşünebilirsiniz ve bazı insanlar önerilen güncellemenin bir iyileştirme mi yoksa bir düşüş mü oluşturduğuna katılmayabilir.
 
-Earlier, we introduced machine learning as "learning from experience".
-By *learning* here, we mean *improving* at some task over time.
-But who is to say what constitutes an improvement?
-You might imagine that we could propose to update our model,
-and some people might disagree on whether the proposed update
-constituted an improvement or a decline.
+Resmi bir matematiksel öğrenme makinesi sistemi geliştirmek için modellerimizin ne kadar iyi (ya da kötü) olduğuna dair kurallı ölçümlere ihtiyacımız var.
+Makine öğrenmesi ve daha genel olarak optimizasyonda (eniyilemede), bunları amaç işlevleri olarak adlandırıyoruz.
+Yaygın kanı olarak, genellikle objektif fonksiyonları tanımlarız, böylece *daha alt* *daha iyi* olur.
+Bu sadece bir yaygın kanı. Daha yüksekken daha iyi olan herhangi bir $f$ işlevini alabilir ve $f'$ işlevini, niteliksel olarak özdeş $f' = -f$ şekilde ayarlayarak daha düşükken daha iyi yeni bir işleve dönüştürebilirsiniz.
+Düşük daha iyi olduğu için, bu işlevlere bazen *yitim işlevleri* veya *maliyet işlevleri* denir.
 
-In order to develop a formal mathematical system of learning machines,
-we need to have formal measures of how good (or bad) our models are.
-In machine learning, and optimization more generally,
-we call these objective functions.
-By convention, we usually define objective functions
-so that *lower* is *better*.
-This is merely a convention. You can take any function $f$
-for which higher is better, and turn it into a new function $f'$
-that is qualitatively identical but for which lower is better
-by setting $f' = -f$.
-Because lower is better, these functions are sometimes called
-*loss functions* or *cost functions*.
+Sayısal değerleri tahmin etmeye çalışırken, en yaygın amaç fonksiyonu hata karesi $(y-\hat{y})^2$'dır.
+Sınıflandırma için en yaygın amaç fonksiyonu, hata oranını, yani tahminlerimizin gerçeğe değere uymadığı örneklerin oranını, en aza indirmektir.
+Bazı hedeflerin (hata karesi gibi) optimize edilmesi kolaydır.
+Diğerlerinin (hata oranı gibi) türevlerinin alınamaması veya diğer başka zorluklar nedeniyle doğrudan optimize edilmesi zordur.
+Bu durumlarda, *vekil amaç* optimize etmek yaygındır.
 
-When trying to predict numerical values,
-the most common objective function is squared error $(y-\hat{y})^2$.
-For classification, the most common objective is to minimize error rate,
-i.e., the fraction of instances on which
-our predictions disagree with the ground truth.
-Some objectives (like squared error) are easy to optimize.
-Others (like error rate) are difficult to optimize directly,
-owing to non-differentiability or other complications.
-In these cases, it is common to optimize a *surrogate objective*.
+Tipik olarak, yitim fonksiyonu modelin parametrelerine göre tanımlanır ve veri kümesine bağlıdır.
+Modelimizin parametrelerinin en iyi değerleri, eğitim için toplanan *örneklerden* oluşan bir *eğitim kümesinde* meydana gelen kaybı en aza indirerek öğrenilir.
+Bununla birlikte, eğitim verilerinde iyi performans gösterilmesi, (görülmeyen) test verileri üzerinde iyi performans göstereceğimizi garanti etmez.
+Bu nedenle, genellikle mevcut verileri iki parçaya ayırmak isteyeceğiz: Eğitim verileri (model parametrelerini bulmak için) ve test verileri (değerlendirme için tutulan), ayrıca aşağıdaki iki sonucu rapor edeceğiz:
 
-Typically, the loss function is defined
-with respect to the model's parameters
-and depends upon the dataset.
-The best values of our model's parameters are learned
-by minimizing the loss incurred on a *training set*
-consisting of some number of *examples* collected for training.
-However, doing well on the training data
-does not guarantee that we will do well on (unseen) test data.
-So we will typically want to split the available data into two partitions:
-the training data (for fitting model parameters)
-and the test data (which is held out for evaluation),
-reporting the following two quantities:
+* ** Eğitim Hatası: **
+Modelin eğitildiği verilerdeki hatadır.
+Bunu, bir öğrencinin gerçek bir sınava hazırlamak için girdiği uygulama sınavlarındaki puanları gibi düşünebilirsiniz.
+Sonuçlar cesaret verici olsa bile, bu final sınavında başarıyı garanti etmez.
+* ** Test Hatası: **
+Bu, görünmeyen bir test kümesinde oluşan hatadır.
+Bu, eğitim hatasından önemli ölçüde sapabilir.
+Bir model eğitim verileri üzerinde iyi performans gösterdiğinde, ancak bunu görünmeyen verilere genelleştiremediğinde, buna *aşırı öğrenme* diyoruz.
+Gerçek yaşamda, bu, uygulama sınavlarında başarılı olunmasına rağmen gerçek sınavda çakmak gibidir.
 
- * **Training Error:**
- The error on that data on which the model was trained.
- You could think of this as being like
- a student's scores on practice exams
- used to prepare for some real exam.
- Even if the results are encouraging,
- that does not guarantee success on the final exam.
- * **Test Error:** This is the error incurred on an unseen test set.
- This can deviate significantly from the training error.
- When a model performs well on the training data
- but fails to generalize to unseen data,
- we say that it is *overfitting*.
- In real-life terms, this is like flunking the real exam
- despite doing well on practice exams.
+### Optimizasyon (Eniyileme) algoritmaları
 
-
-### Optimization algorithms
-
-Once we have got some data source and representation,
-a model, and a well-defined objective function,
-we need an algorithm capable of searching
-for the best possible parameters for minimizing the loss function.
-The most popular optimization algorithms for neural networks
-follow an approach called gradient descent.
-In short, at each step, they check to see, for each parameter,
-which way the training set loss would move
-if you perturbed that parameter just a small amount.
-They then update the parameter in the direction that reduces the loss.
-
+Bir kez veri kaynağı ve gösterim, bir model ve iyi tanımlanmış bir amaç fonksiyona sahip olduktan sonra, yitim fonksiyonunu en aza indirmek için mümkün olan en iyi parametreleri arayabilen bir algoritmaya ihtiyacımız var.
+Sinir ağları için en popüler optimizasyon algoritmaları, gradyan (eğim) alçaltma olarak adlandırılan bir yaklaşımı izler. Kısacası, her adımda, her bir parametre için, bu parametreyi sadece küçük bir miktar bozarsanız eğitim kümesi kaybının nasıl hareket edeceğini (değişeceğini) kontrol ederler.
+Daha sonra parametreyi kaybı azaltan yönde güncellerler.
 
 ## Kinds of Machine Learning
 
