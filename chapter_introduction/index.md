@@ -288,104 +288,62 @@ Belki de kafanıza sokmak için en basit gözetimli öğrenme görevi *bağlanı
 Her sıranın farklı bir eve karşılık geldiği bir tablo oluşturabiliriz ve her sütun, bir evin alanı, yatak odası sayısı, banyo sayısı ve şehir merkezine (yürüyüş) dakika sayısı  gibi ilgili bazı özelliklere karşılık gelir.
 Bu veri kümesinde, her *örnek* belirli bir ev olacaktır ve karşılık gelen *öznitelik vektörü* tabloda bir satır olacaktır.
 
-If you live in New York or San Francisco,
-and you are not the CEO of Amazon, Google, Microsoft, or Facebook,
-the (sq. footage, no. of bedrooms, no. of bathrooms, walking distance)
-feature vector for your home might look something like: $[100, 0, .5, 60]$.
-However, if you live in Pittsburgh, it might look more like $[3000, 4, 3, 10]$.
-Feature vectors like this are essential
-for most classic machine learning algorithms.
-We will continue to denote the feature vector corresponding
-to any example $i$ as $\mathbf{x}_i$ and we can compactly refer
-to the full table containing all of the feature vectors as $X$.
+New York veya San Francisco'da yaşıyorsanız ve Amazon, Google, Microsoft veya Facebook'un CEO'su değilseniz, (metrekare bilgileri, yatak odası sayısı, banyo sayısı, yürüme mesafesi) eviniz için vektör özelliği şuna benzeyebilir: $[100, 0, .5, 60]$.
+Ancak, Pittsburgh'da yaşıyorsanız, daha çok $[3000, 4, 3, 10]$ gibi görünebilir.
+Bunun gibi öznitelik vektörleri, çoğu klasik makine öğrenmesi algoritması için gereklidir.
+$i$ örneğine karşılık gelen özellik vektörünü $\mathbf{x}_i$ olarak göstermeye devam edeceğiz ve tüm özellik vektörlerini içeren tam tabloya $X$ olarak kastedeceğiz.
 
-What makes a problem a *regression* is actually the outputs.
-Say that you are in the market for a new home.
-You might want to estimate the fair market value of a house,
-given some features like these.
-The target value, the price of sale, is a *real number*.
-If you remember the formal definition of the reals
-you might be scratching your head now.
-Homes probably never sell for fractions of a cent,
-let alone prices expressed as irrational numbers.
-In cases like this, when the target is actually discrete,
-but where the rounding takes place on a sufficiently fine scale,
-we will abuse language just a bit and continue to describe
-our outputs and targets as real-valued numbers.
+Bir problemi *bağlanım* yapan aslında çıktılardır.
+Yeni bir ev için pazarda olduğunuzu varsayalım.
+Bunun gibi bazı öznitelikler göz önüne alındığında, bir evin adil piyasa değerini tahmin etmek isteyebilirsiniz.
+Hedef değer, satış fiyatı, bir *gerçel sayıdır*.
+Gerçel sayıların resmi tanımını hatırlarsanız, şimdi başınızı kaşıyor olabilirsiniz.
+Fiyatların irrasyonel sayılar olarak ifade edilmesini birakin, evler muhtemelen asla bir cent'in kesirine satmazlar.
+Bu gibi durumlarda, hedefin aslında ayrık olduğunda, ancak yuvarlamanın yeterince iyi bir ölçekte gerçekleştiği durumlarda, dili biraz kötüye kullanacağız ve çıktılarımızı ve hedeflerimizi gerçel-değerli sayılar olarak tanımlamaya devam edeceğiz.
 
+Tek hedefi $y_i$ (mesela $\mathbf{x}_i $ örneğine karşılık gelir) ve tüm hedefler kümesini $\mathbf{y}$ ($X$ tüm örneklerine karşılık gelir) olarak belirtiriz.
+Hedeflerimiz belirli bir aralıkta keyfi değerler aldığında buna bir bağlanım problenim diyoruz.
+Hedefimiz, tahminleri gerçek hedef değerlerine çok yakın olan bir model üretmektir.
+Bir örnekler için öngörülen hedefi $\hat{y}_i$ diye belirtiriz.
+Gösterim sizi rahatsız ediyorsa endişelenmeyin.
+Sonraki bölümlerde daha ayrıntılı olarak açacağız.
 
-We denote any individual target $y_i$
-(corresponding to example $\mathbf{x}_i$)
-and the set of all targets $\mathbf{y}$
-(corresponding to all examples $X$).
-When our targets take on arbitrary values in some range,
-we call this a regression problem.
-Our goal is to produce a model whose predictions
-closely approximate the actual target values.
-We denote the predicted target for any instance $\hat{y}_i$.
-Do not worry if the notation is bogging you down.
-We will unpack it more thoroughly in the subsequent chapters.
-
-
-Lots of practical problems are well-described regression problems.
-Predicting the rating that a user will assign to a movie
-can be thought of as a regression problem
-and if you designed a great algorithm to accomplish this feat in 2009,
-you might have won the [1-million-dollar Netflix prize](https://en.wikipedia.org/wiki/Netflix_Prize).
-Predicting the length of stay for patients in the hospital
-is also a regression problem.
 A good rule of thumb is that any *How much?* or *How many?* problem
 should suggest regression.
 
-* "How many hours will this surgery take?": *regression*
-* "How many dogs are in this photo?": *regression*.
+Birçok pratik problem iyi tanımlanmış bağlanım problemleridir.
+Bir kullanıcının bir filme atayacağı puanı tahmin etmek bir bağlanım sorunu olarak düşünülebilir ve 2009'da bu özelliği gerçekleştirmek için harika bir algoritma tasarlasaydınız, [1 milyon dolarlık Netflix ödülünü](https: //en.wikipedia.org/wiki/Netflix_Prize) kazanmış olabilirsiniz .
+Hastanedeki hastalar için kalış süresinin öngörülmesi de bir bağlanım sorunudur.
+Pratik bir kural; herhangi bir *Ne kadar?* veya *Kaç tane?* problemi bağlanım içerir.
 
-However, if you can easily pose your problem as "Is this a _ ?",
-then it is likely, classification, a different kind
-of supervised problem that we will cover next.
-Even if you have never worked with machine learning before,
-you have probably worked through a regression problem informally.
-Imagine, for example, that you had your drains repaired
-and that your contractor spent $x_1=3$ hours
-removing gunk from your sewage pipes.
-Then she sent you a bill of $y_1 = \$350$.
-Now imagine that your friend hired the same contractor for $x_2 = 2$ hours
-and that she received a bill of $y_2 = \$250$.
-If someone then asked you how much to expect
-on their upcoming gunk-removal invoice
-you might make some reasonable assumptions,
-such as more hours worked costs more dollars.
-You might also assume that there is some base charge
-and that the contractor then charges per hour.
-If these assumptions held true, then given these two data points,
-you could already identify the contractor's pricing structure:
-\$100 per hour plus \$50 to show up at your house.
-If you followed that much then you already understand
-the high-level idea behind linear regression
-(and you just implicitly designed a linear model with a bias term).
+* "Bu ameliyat kaç saat sürecek?": *Bağlanım*
+* "Bu fotoğrafta kaç köpek var?": *Bağlanım*.
 
-In this case, we could produce the parameters
-that exactly matched the contractor's prices.
-Sometimes that is not possible, e.g., if some of
-the variance owes to some factors besides your two features.
-In these cases, we will try to learn models
-that minimize the distance between our predictions and the observed values.
-In most of our chapters, we will focus on one of two very common losses,
-the L1 loss
-where
+Ancak, sorununuzu "Bu bir _ mi?" olarak kolayca ortaya koyabiliyorsanız, muhtemelen, daha sonra ele alacağımız, farklı bir tür gözetimli problem olabilir.
+Daha önce hiç makine öğrenmesi ile çalışmamış olsanız bile, muhtemelen gayri ihtiyari olarak bir bağlanım problemi ile çalışmışsınızdır.
+Örneğin, giderlerinizin onarıldığını ve personelin kanalizasyon borularınızdan pisliği temizlemek için $x_1=3$ saat harcadığını düşünün.
+Sonra size $y_1=350\$$ tutarında bir fatura gönderdi.
+Şimdi arkadaşınızın aynı personelini $x_2=2$ saat kiraladığını ve $y_2=250\$$ fatura aldığını düşünün.
+Birisi size yaklaşan pislik temizleme faturasında ne kadar bekleyeceğinizi sorarsa, bazı makul varsayımlar yapabilirsiniz,
+daha fazla çalışma saati daha fazla dolar maliyeti gibi.
+Ayrıca bir baz ücretin olduğunu ve personelin saatlik ücret aldığını varsayabilirsiniz.
+Bu varsayımlar geçerliyse, bu iki veri noktası göz önüne alındığında, personelin fiyatlandırma yapısını zaten tanımlayabilirsiniz: Saat başı 100\$ artı evinizde görünmesi için 50\$.
+Eğer buraya kadar izleyebildiyseniz, doğrusal bağlanım arkasındaki üst-kademe fikri zaten anlıyorsunuz (ve dolaylı olarak bir ekdeğer (bias) terimli doğrusal bir model tasarladınız).
+
+Bu durumda, personelin fiyatlarına tam olarak uyan parametreleri üretebiliriz.
+Bazen bu mümkün olmayabilir; örneğin, varyansın bir kısmı iki özniteliğinizin yanı sıra bazı diğer faktörlere borçluysa.
+Bu durumlarda, tahminlerimiz ile gözlenen değerler arasındaki mesafeyi en aza indiren modelleri öğrenmeye çalışacağız.
+Bölümlerimizin çoğunda, iki yaygın kayıptan birine, L1 kaybına
 
 $$l(y, y') = \sum_i |y_i-y_i'|$$
 
-and the least mean squares loss, or
-L2 loss
-where
+ve en küçük ortalama kareler kaybı veya L2 kaybına
 
 $$l(y, y') = \sum_i (y_i - y_i')^2.$$
 
-As we will see later, the $L_2$ loss corresponds to the assumption
-that our data was corrupted by Gaussian noise,
-whereas the $L_1$ loss corresponds to an assumption
-of noise from a Laplace distribution.
+odaklanacağız.
+
+Daha sonra göreceğimiz gibi, $L_2$ kaybı (yitimi), verilerimizin Gauss gürültüsü tarafından bozulduğu varsayımına karşılık gelirken, $L_1$ kaybı, Laplace dağılımından kaynaklanan bir gürültü varsayımına karşılık gelir.
 
 #### Classification
 
