@@ -404,95 +404,47 @@ Genellikle buna *hiyerarşik sınıflandırma* denir.
 
 Hayvan sınıflandırması durumunda, bir kanişi bir schnauzer (bir tür Alman köpeği) ile karıştırmak o kadar kötü olmayabilir, ancak modelimiz bir dinozor ile bir fino köpeğini karıştırırsa büyük bir ceza ödeyecektir.
 Hangi hiyerarşinin alakalı olduğu, modeli nasıl kullanmayı planladığınıza bağlı olabilir.
-Örneğin, çıngıraklı yılanlar ve garter yılanları filogenetik ağaçta yakın olabilir, ancak bir garter yılanını için bir çıngıraklı ile karıştırmak ölümcül olabilir.
+Örneğin, çıngıraklı yılanlar ve garter yılanları filogenetik ağaçta yakın olabilir, ancak bir garter yılanını bir çıngıraklı ile karıştırmak ölümcül olabilir.
 
-#### Tagging
+#### Etiketleme (Tagging)
 
-Some classification problems do not fit neatly
-into the binary or multiclass classification setups.
-For example, we could train a normal binary classifier
-to distinguish cats from dogs.
-Given the current state of computer vision,
-we can do this easily, with off-the-shelf tools.
-Nonetheless, no matter how accurate our model gets,
-we might find ourselves in trouble when the classifier
-encounters an image of the Town Musicians of Bremen.
+Bazı sınıflandırma sorunları, ikili veya çok sınıflı sınıflandırma ayarlarına tam olarak uymaz.
+Örneğin, kedileri köpeklerden ayırmak için normal bir ikili sınıflandırıcı eğitebiliriz.
+Bilgisayarlı görmenin mevcut durumu göz önüne alındığında, bunu hali-hazırda araçlarla kolayca yapabiliriz.
+Bununla birlikte, modelimiz ne kadar doğru olursa olsun, sınıflandırıcı Bremen Mızıkacılarının bir görüntüsüyle karşılaştığında kendimizi ufak bir belada bulabiliriz.
 
-![A cat, a rooster, a dog and a donkey](../img/stackedanimals.jpg)
+![Bir kedi, bir horoz, bir köpek ve bir eşek](../img/stackedanimals.jpg)
 :width:`300px`
 
+Gördüğünüz gibi, resimde bir kedi ve bir horoz, bir köpek, bir eşek ve bir kuş, arka planda bazı ağaçlar var.
+Nihayetinde modelimizle ne yapmak istediğimize bağlı olarak, bunu ikili bir sınıflandırma problemi olarak ele almak pek anlamlı olmayabilir.
+Bunun yerine, modele görüntünün bir kediyi *ve* bir köpeği *ve* bir eşeği *ve* bir horozu *ve* bir kuşu tasvir ettiğini söyleme seçeneği vermek isteyebiliriz.
 
-As you can see, there is a cat in the picture,
-and a rooster, a dog, a donkey, and a bird,
-with some trees in the background.
-Depending on what we want to do with our model
-ultimately, treating this as a binary classification problem
-might not make a lot of sense.
-Instead, we might want to give the model the option of
-saying the image depicts a cat *and* a dog *and* a donkey
-*and* a rooster *and* a bird.
+*Karşılıklı olarak münhasır olmayan* sınıfları tahmin etmeyi öğrenme problemine çoklu etiket sınıflandırması denir.
+Otomatik etiketleme sorunları genellikle en iyi çoklu etiket sınıflandırma sorunları olarak tanımlanır.
+Kullanıcıların bir teknoloji blogundaki yayınlara uygulayabilecekleri etiketleri, örneğin "makine öğrenmesi", "teknoloji", "araçlar", "programlama dilleri", "linux", "bulut bilişim", "AWS" gibi, düşünün.
+Tipik bir makalede 5-10 etiket uygulanabilir, çünkü bu kavramlar birbiriyle ilişkilidir.
+"Bulut bilişim" hakkındaki gönderilerin "AWS"den bahsetmesi muhtemeldir ve "makine öğrenmesi" ile ilgili gönderiler de "programlama dilleri" ile ilgili olabilir.
 
-The problem of learning to predict classes that are
-*not mutually exclusive* is called multi-label classification.
-Auto-tagging problems are typically best described
-as multi-label classification problems.
-Think of the tags people might apply to posts on a tech blog,
-e.g., "machine learning", "technology", "gadgets",
-"programming languages", "linux", "cloud computing", "AWS".
-A typical article might have 5-10 tags applied
-because these concepts are correlated.
-Posts about "cloud computing" are likely to mention "AWS"
-and posts about "machine learning" could also deal
-with "programming languages".
+Ayrıca, makalelerin doğru etiketlenmesinin önemli olduğu biyomedikal literatürle uğraşırken bu tür bir sorunla uğraşmak zorundayız, çünkü bu araştırmacıların literatürde kapsamlı incelemeler yapmasına izin veriyor.
+(Amerikan) Ulusal Tıp Kütüphanesi'nde, bir dizi profesyonel yorumlayıcı, PubMed'de endekslenen her makaleyi, kabaca 28 bin etiketlik bir koleksiyon olan MeSH'den ilgili terimlerle ilişkilendirmek için gözden geçiriyor.
+Bu zaman alıcı bir süreçtir ve yorumlayıcıların genellikle arşivleme ve etiketleme arasında bir yıllık bir gecikmesi vardır.
+Makine öğrenimi burada, her makaleye uygun bir manuel (elle) incelemeye sahip oluncaya kadar geçici etiketler sağlamak için kullanılabilir.
+Gerçekten de, birkaç yıl boyunca, BioASQ organizasyonu tam olarak bunu yapmak için [bir yarışma düzenledi](http://bioasq.org/).
 
-We also have to deal with this kind of problem when dealing
-with the biomedical literature, where correctly tagging articles is important
-because it allows researchers to do exhaustive reviews of the literature.
-At the National Library of Medicine, a number of professional annotators
-go over each article that gets indexed in PubMed
-to associate it with the relevant terms from MeSH,
-a collection of roughly 28k tags.
-This is a time-consuming process and the
-annotators typically have a one year lag between archiving and tagging.
-Machine learning can be used here to provide provisional tags
-until each article can have a proper manual review.
-Indeed, for several years, the BioASQ organization
-has [hosted a competition](http://bioasq.org/) to do precisely this.
+#### Arama ve sıralama
 
+Bazen her örneği bir kovaya veya gerçek bir değere atamak istemiyoruz. Bilgi geri çağırma alanında, bir dizi maddeye bir sıralama uygulamak istiyoruz.
+Örneğin, web aramasını ele alalım, hedef belirli bir sayfanın bir sorgu için alakalı olup olmadığını belirlemekten daha ziyade, birçok arama sonuçlarından hangisinin belirli bir kullanıcı için *en alakalı* olduğunu belirlemektir.
+Alakalı arama sonuçlarının sırasına gerçekten önem veriyoruz ve öğrenme algoritmamızın daha geniş bir gruptan sıralanmış alt kümeleri üretmesi gerekiyor.
+Başka bir deyişle, alfabeden ilk 5 harfi üretmemiz istenirse, `` A B C D E`` ve `` C A B E D`` döndürme arasında bir fark vardır.
+Sonuç kümesi aynı olsa bile, küme içindeki sıralama önemlidir.
 
-#### Search and ranking
-
-Sometimes we do not just want to assign each example to a bucket
-or to a real value. In the field of information retrieval,
-we want to impose a ranking on a set of items.
-Take web search for example, the goal is less to determine whether
-a particular page is relevant for a query, but rather,
-which one of the plethora of search results is *most relevant*
-for a particular user.
-We really care about the ordering of the relevant search results
-and our learning algorithm needs to produce ordered subsets
-of elements from a larger set.
-In other words, if we are asked to produce the first 5 letters from the alphabet, there is a difference
-between returning ``A B C D E`` and ``C A B E D``.
-Even if the result set is the same,
-the ordering within the set matters.
-
-One possible solution to this problem is to first assign
-to every element in the set a corresponding relevance score
-and then to retrieve the top-rated elements.
-[PageRank](https://en.wikipedia.org/wiki/PageRank),
-the original secret sauce behind the Google search engine
-was an early example of such a scoring system but it was
-peculiar in that it did not depend on the actual query.
-Here they relied on a simple relevance filter
-to identify the set of relevant items
-and then on PageRank to order those results
-that contained the query term.
-Nowadays, search engines use machine learning and behavioral models
-to obtain query-dependent relevance scores.
-There are entire academic conferences devoted to this subject.
-
-
+Bu soruna olası bir çözüm, önce kümedeki her bir öğeye, ona karşılık gelen bir uygunluk puanı atamak ve daha sonra en yüksek dereceli öğeleri almaktır.
+[PageRank](https://en.wikipedia.org/wiki/PageRank), Google arama motorunun arkasındaki esas gizli bileşen, böyle bir puanlama sisteminin erken bir örneğiydi, fakat tuhaf tarafı gerçek sorguya bağlı değildi.
+Burada, ilgili öğelerin kümesini tanımlamak için basit bir alaka filtresine ve ardından sorgu terimini içeren sonuçları sıralamak için PageRank'e güveniyorlardı.
+Günümüzde arama motorları, sorguya bağlı alaka düzeyi puanlarını belirlemek için makine öğrenmesi ve davranışsal modeller kullanmaktadır.
+Sadece bu konuyla ilgili akademik konferanslar vardır.
 
 #### Recommender systems
 :label:`subsec_recommender_systems`
