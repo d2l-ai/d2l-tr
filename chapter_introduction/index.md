@@ -345,117 +345,66 @@ odaklanacağız.
 
 Daha sonra göreceğimiz gibi, $L_2$ kaybı (yitimi), verilerimizin Gauss gürültüsü tarafından bozulduğu varsayımına karşılık gelirken, $L_1$ kaybı, Laplace dağılımından kaynaklanan bir gürültü varsayımına karşılık gelir.
 
-#### Classification
+#### Sınıflandırma
 
-While regression models are great for addressing *how many?* questions,
-lots of problems do not bend comfortably to this template.
-For example, a bank wants to add check scanning to its mobile app.
-This would involve the customer snapping a photo of a check
-with their smart phone's camera
-and the machine learning model would need to be able
-to automatically understand text seen in the image.
-It would also need to understand hand-written text to be even more robust.
-This kind of system is referred to as optical character recognition (OCR),
-and the kind of problem it addresses is called *classification*.
-It is treated with a different set of algorithms
-than those used for regression (although many techniques will carry over).
+Bağlanım modelleri *kaç tane?* sorusunu ele almak için mükemmel olsa da, birçok sorun bu şablona rahatça uymaz.
+Örneğin, bir banka mobil uygulamasına çek taraması eklemek istiyor.
+Bu, müşterinin akıllı telefonunun kamerasıyla bir çekin fotoğrafını çekmesini içerir ve makine öğrenmesi modelinin görüntüde görülen metni otomatik olarak anlaması gerektirir.
+Daha dirençli olması için elle yazılmış metni de anlaması gerekir.
+Bu tür sisteme optik karakter tanıma (OKT) denir ve ele aldığı sorunun türüne *sınıflandırma* denir.
+Bağlanım için kullanılanlardan farklı bir algoritma seti ile işlenir (birçok teknik buraya taşınacak olsa da).
 
-In classification, we want our model to look at a feature vector,
-e.g., the pixel values in an image,
-and then predict which category (formally called *classes*),
-among some (discrete) set of options, an example belongs.
-For hand-written digits, we might have 10 classes,
-corresponding to the digits 0 through 9.
-The simplest form of classification is when there are only two classes,
-a problem which we call binary classification.
-For example, our dataset $X$ could consist of images of animals
-and our *labels* $Y$ might be the classes $\mathrm{\{cat, dog\}}$.
-While in regression, we sought a *regressor* to output a real value $\hat{y}$,
-in classification, we seek a *classifier*, whose output $\hat{y}$ is the predicted class assignment.
+Sınıflandırmada, modelimizin bir öznitelik vektörüne, örneğin bir görüntüdeki piksel değerlerine bakmasını ve ardından bazı (ayrık) seçenekler kümesi arasından hangi kategoriye (aslen *sınıflar* olarak adlandırılırlar) ait olduğunu tahmin etmesini istiyoruz.
+Elle yazılmış rakamlar için, 0 ile 9 arasındaki rakamlara karşılık gelen 10 sınıfımız olabilir.
+Sınıflandırmanın en basit şekli, sadece iki sınıf olduğunda, ikili sınıflandırma dediğimiz bir problemdir.
+Örneğin, $X$ veri kümemiz hayvanların görüntülerinden oluşabilir ve *etiketlerimiz*, $Y$, $\mathrm{\{kedi, köpek\}}$ sınıfları olabilir.
+Bağlanımdayken, gerçel bir değer, $\hat{y}$, çıkarmak için bir *bağlanımcı* aradık, sınıflandırmada, $\hat{y}$ çıkışı öngörülen sınıf ataması olan bir *sınıflandırıcı* arıyoruz.
 
-For reasons that we will get into as the book gets more technical,
-it can be hard to optimize a model that can only output
-a hard categorical assignment, e.g., either *cat* or *dog*.
-In these cases, it is usually much easier to instead express
-our model in the language of probabilities.
-Given an example $x$, our model assigns a probability $\hat{y}_k$
-to each label $k$. Because these are probabilities,
-they need to be positive numbers and add up to $1$
-and thus we only need $K-1$ numbers
-to assign probabilities of $K$ categories.
-This is easy to see for binary classification.
-If there is a $0.6$ ($60\%$) probability that an unfair coin comes up heads,
-then there is a $0.4$ ($40\%$) probability that it comes up tails.
-Returning to our animal classification example,
-a classifier might see an image and output the probability
-that the image is a cat $P(y=\text{cat} \mid x) = 0.9$.
-We can interpret this number by saying that the classifier
-is $90\%$ sure that the image depicts a cat.
-The magnitude of the probability for the predicted class
-conveys one notion of uncertainty.
-It is not the only notion of uncertainty
-and we will discuss others in more advanced chapters.
+Kitap daha teknik hale geldikçe gireceğimiz nedenlerden ötürü, yalnızca kategorik bir atama, örneğin *kedi* veya *köpek* çıktısı, alabilen bir modeli optimize etmek zor olabilir.
+Bu tür durumlarda, modelimizi olasılıklar dilinde ifade etmek genellikle daha kolaydır.
+Bir örnek, $x$, verildiğinde, modelimiz her bir $k$ etiketine $\hat{y}_k$ olasılığı atar. Bunlar olasılıklar olduğundan, pozitif sayılar olmalı ve $1$'e toplanabilmeliler ve bu nedenle $K$ kategorinin olasılıklarını atamak için sadece $K-1$ tane değere ihtiyacımız var.
+Bunu ikili sınıflandırma için görmek kolaydır.
+Eğer hileli bir madalyonun $0.6$ ($\%60$) tura çıkma olasılığı varsa, o zaman yazı ortaya çıkma olasılığı $0.4$ ($\%40 $) olabilir.
+Hayvan sınıflandırma örneğimize dönersek, bir sınıflandırıcı bir görüntü görebilir ve görüntünün bir kedi olma olasılığını $P(y=\text{kedi} \mid x) = 0.9$ çıkarabilir.
+Bu sayıyı, sınıflandırıcının görüntünün bir kediyi gösterdiğinden $\%90$ emin olduğunu söyleyerek yorumlayabiliriz.
+Öngörülen sınıf için olasılığın büyüklüğü bir çeşit belirsizlik taşır.
+Bu tek mevcut belirsizlik kavramı değildir ve diğerlerini de daha ileri bölümlerde tartışacağız.
 
-When we have more than two possible classes,
-we call the problem *multiclass classification*.
-Common examples include hand-written character recognition
-`[0, 1, 2, 3 ... 9, a, b, c, ...]`.
-While we attacked regression problems by trying
-to minimize the L1 or L2 loss functions,
-the common loss function for classification problems is called cross-entropy.
+İkiden fazla olası sınıfımız olduğunda, soruna *çok sınıflı sınıflandırma* diyoruz.
+Yaygın örnekler arasında elle yazılmış karakter tanıma, `[0, 1, 2, 3 ... 9, a, b, c, ...]`, yer alır.
+Bağlanım sorunlarına saldırırken L1 veya L2 yitim işlevlerini en aza indirmeye çalışırız; sınıflandırma sorunları için genel olan kayıp işlevine de çapraz düzensizlik (entropi) deriz.
 
-Note that the most likely class is not necessarily
-the one that you are going to use for your decision.
-Assume that you find this beautiful mushroom in your backyard
-as shown in :numref:`fig_death_cap`.
+En olası sınıfın kararınız için kullanacağınız esas sınıf olmak zorunda olmadığını unutmayın.
+Bu güzel mantarı arka bahçenizde :numref:`fig_death_cap`de gösterildiği gibi bulduğunuzu varsayın .
 
-![Death cap---do not eat!](../img/death_cap.jpg)
+![Ölüm tehlikesi --- yemeyin!](../img/death_cap.jpg)
 :width:`200px`
 :label:`fig_death_cap`
 
-Now, assume that you built a classifier and trained it
-to predict if a mushroom is poisonous based on a photograph.
-Say our poison-detection classifier outputs
-$P(y=\mathrm{death cap}|\mathrm{image}) = 0.2$.
-In other words, the classifier is $80\%$ sure
-that our mushroom *is not* a death cap.
-Still, you'd have to be a fool to eat it.
-That is because the certain benefit of a delicious dinner
-is not worth a $20\%$ risk of dying from it.
-In other words, the effect of the *uncertain risk*
-outweighs the benefit by far. We can look at this more formally.
-Basically, we need to compute the expected risk that we incur,
-i.e., we need to multiply the probability of the outcome
-with the benefit (or harm) associated with it:
+
+Şimdi, bir sınıflandırıcı oluşturduğunuzu ve bir mantarın bir fotoğrafa göre zehirli olup olmadığını tahmin etmek için eğittiğinizi varsayın.
+Zehir tespit sınıflandırıcısının $P(y=\mathrm{ölüm tehlikesi}|\mathrm{image}) = 0.2$ sonucunu verdiğini varsayalım.
+Başka bir deyişle, sınıflandırıcı, mantarımızın ölüm sınırında *olmadığından* $\%80$ emindir.
+Yine de, yemek için aptal olmalısın.
+Çünkü lezzetli bir akşam yemeğinin belirli bir yararı, ondan ölme riski olan $\%20$ değerine değmez.
+Başka bir deyişle, *belirsiz riskin* etkisi faydadan çok daha fazladır. Buna daha kurallı bakabiliriz.
+Temel olarak, maruz kaldığımız beklenen riski hesaplamamız gerekir, yani sonucun olasılığını, bununla ilişkili fayda (veya zarar) ile çarpmamız gerekir:
 
 $$L(\mathrm{action}| x) = E_{y \sim p(y| x)}[\mathrm{loss}(\mathrm{action},y)].$$
 
-Hence, the loss $L$ incurred by eating the mushroom
-is $L(a=\mathrm{eat}| x) = 0.2 * \infty + 0.8 * 0 = \infty$,
-whereas the cost of discarding it is
-$L(a=\mathrm{discard}| x) = 0.2 * 0 + 0.8 * 1 = 0.8$.
+Bu nedenle, mantar yiyerek meydana gelen $L$ kaybı $L(a=\mathrm{ye}| x) = 0.2 * \infty + 0.8 * 0 = \infty$, oysa atılma maliyeti $L(a=\mathrm{at}| x) = 0.2 * 0 + 0.8 * 1 = 0.8$.
 
-Our caution was justified: as any mycologist would tell us,
-the above mushroom actually *is* a death cap.
-Classification can get much more complicated than just
-binary, multiclass, or even multi-label classification.
-For instance, there are some variants of classification
-for addressing hierarchies.
-Hierarchies assume that there exist some relationships among the many classes.
-So not all errors are equal---if we must err, we would prefer
-to misclassify to a related class rather than to a distant class.
-Usually, this is referred to as *hierarchical classification*.
-One early example is due to [Linnaeus](https://en.wikipedia.org/wiki/Carl_Linnaeus), who organized the animals in a hierarchy.
+Dikkatimiz haklıydı: herhangi bir mantarbilimcinin bize söyleyeceği gibi, yukarıdaki mantar aslında *ölümcüldür*.
+Sınıflandırma sadece ikili sınıflandırmadan çok daha karmaşık hale gelebilir; çok sınıflı ve hatta çoklu etiketli.
+Örneğin, hiyerarşilere yönelik bazı değişik sınıflandırmalar vardır.
+Hiyerarşiler birçok sınıf arasında bazı ilişkilerin olduğunu varsayar.
+Bu yüzden tüm hatalar eşit değildir - eğer hata yapacaksak, uzak bir sınıf yerine ilgili bir sınıfa yanlış sınıflamayı tercih ederiz.
+Genellikle buna *hiyerarşik sınıflandırma* denir.
+İlk örneklerden biri, hayvanları bir hiyerarşide düzenleyen [Linnaeus](https://en.wikipedia.org/wiki/Carl_Linnaeus)'tır.
 
-In the case of animal classification,
-it might not be so bad to mistake a poodle for a schnauzer,
-but our model would pay a huge penalty
-if it confused a poodle for a dinosaur.
-Which hierarchy is relevant might depend
-on how you plan to use the model.
-For example, rattle snakes and garter snakes
-might be close on the phylogenetic tree,
-but mistaking a rattler for a garter could be deadly.
+Hayvan sınıflandırması durumunda, bir kanişi bir schnauzer (bir tür Alman köpeği) ile karıştırmak o kadar kötü olmayabilir, ancak modelimiz bir dinozor ile bir fino köpeğini karıştırırsa büyük bir ceza ödeyecektir.
+Hangi hiyerarşinin alakalı olduğu, modeli nasıl kullanmayı planladığınıza bağlı olabilir.
+Örneğin, çıngıraklı yılanlar ve garter yılanları filogenetik ağaçta yakın olabilir, ancak bir garter yılanını için bir çıngıraklı ile karıştırmak ölümcül olabilir.
 
 #### Tagging
 
