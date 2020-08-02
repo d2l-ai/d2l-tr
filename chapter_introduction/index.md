@@ -446,278 +446,157 @@ Burada, ilgili öğelerin kümesini tanımlamak için basit bir alaka filtresine
 Günümüzde arama motorları, sorguya bağlı alaka düzeyi puanlarını belirlemek için makine öğrenmesi ve davranışsal modeller kullanmaktadır.
 Sadece bu konuyla ilgili akademik konferanslar vardır.
 
-#### Recommender systems
+#### Tavsiye sistemleri
 :label:`subsec_recommender_systems`
 
-Recommender systems are another problem setting
-that is related to search and ranking.
-The problems are similar insofar as the goal
-is to display a set of relevant items to the user.
-The main difference is the emphasis on *personalization*
-to specific users in the context of recommender systems.
-For instance, for movie recommendations,
-the results page for a SciFi fan and the results page
-for a connoisseur of Peter Sellers comedies might differ significantly.
-Similar problems pop up in other recommendation settings,
-e.g., for retail products, music, or news recommendation.
+Tavsiye sistemleri, arama ve sıralama ile ilgili başka bir problem ailesidir.
+Amaç, kullanıcıya ilgili bir dizi öğeyi görüntülemek olduğu sürece benzer problemlerdir.
+Temel fark, tavsiye sistemleri bağlamında, belirli kullanıcılara *kişiselleştirme* vurgusu yapılmasıdır.
+Mesela, film önerilerinde, bir SciFi hayranı için sonuçlar sayfası ile Peter Sellers komedileri uzmanı için sonuçlar sayfası önemli ölçüde farklılıklar gösterebilir.
+Perakende satış ürünleri, müzik veya haber önerileri gibi diğer öneri gruplarında da benzer sorunlar ortaya çıkar.
 
-In some cases, customers provide explicit feedback communicating
-how much they liked a particular product
-(e.g., the product ratings and reviews on Amazon, IMDB, GoodReads, etc.).
-In some other cases, they provide implicit feedback,
-e.g., by skipping titles on a playlist,
-which might indicate dissatisfaction but might just indicate
-that the song was inappropriate in context.
-In the simplest formulations, these systems are trained
-to estimate some score $y_{ij}$, such as an estimated rating
-or the probability of purchase, given a user $u_i$ and product $p_j$.
+Bazı durumlarda, müşteriler belirli bir ürünü ne kadar sevdiklerini bildiren açık geri bildirimler sağlar (ör. Amazon, IMDB, GoodReads, vb. Üzerindeki ürün puanları ve incelemeleri).
+Diğer bazı durumlarda, örneğin bir müzik çalma listesindeki başlıkları atlama, memnuniyetsizliği de, şarkının o anki bağlamında uygunsuz olduğunu da gösterebilecek (gizli) örtük geri bildirim sağlarlar.
+En basit formülasyonlarda, bu sistemler $u_i$ kullanıcısı ve $p_j$ ürünü göz önüne alındığında tahmini bir derecelendirme veya satın alma olasılığını, $y_ {ij}$, tahmin etmek üzere eğitilir.
 
-Given such a model, then for any given user,
-we could retrieve the set of objects with the largest scores $y_{ij}$,
-which could then be recommended to the customer.
-Production systems are considerably more advanced and take
-detailed user activity and item characteristics into account
-when computing such scores. :numref:`fig_deeplearning_amazon` is an example
-of deep learning books recommended by Amazon based on personalization algorithms tuned to capture the author's preferences.
+Böyle bir model göz önüne alındığında, herhangi bir kullanıcı için, en yüksek puanları $y_ {ij}$ olan ve daha sonra müşteriye önerilebilecek nesneler kümesini bulabiliriz.
+Üretim sistemleri oldukça ileri düzeydedir ve bu puanları hesaplarken ayrıntılı kullanıcı etkinliği ve öğenin özelliklerini dikkate alır. :numref:`fig_deeplearning_amazon` imgesi, yazarın tercihlerini yakalamak için ayarlanan kişiselleştirme algoritmalarına dayanarak Amazon tarafından önerilen derin öğrenme kitaplarına bir örnektir.
 
-![Deep learning books recommended by Amazon.](../img/deeplearning_amazon.png)
+![Amazon tarafından önerilen derin öğrenme kitapları.](../img/deeplearning_amazon.png)
 :label:`fig_deeplearning_amazon`
 
-Despite their tremendous economic value, recommendation systems
-naively built on top of predictive models
-suffer some serious conceptual flaws.
-To start, we only observe *censored feedback*.
-Users preferentially rate movies that they feel strongly about:
-you might notice that items receive many 5 and 1 star ratings
-but that there are conspicuously few 3-star ratings.
-Moreover, current purchase habits are often a result
-of the recommendation algorithm currently in place,
-but learning algorithms do not always take this detail into account.
-Thus it is possible for feedback loops to form
-where a recommender system preferentially pushes an item
-that is then taken to be better (due to greater purchases)
-and in turn is recommended even more frequently.
-Many of these problems about how to deal with censoring,
-incentives, and feedback loops, are important open research questions.
+Muazzam ekonomik değerlerine rağmen, tahminci modeller üzerine saf olarak inşa edilmiş tavsiye sistemleri bazı ciddi kavramsal kusurlara maruz kalmaktadırlar.
+Öncelikle sadece *sansürlü geri bildirim* gözlemliyoruz.
+Kullanıcılar tercih ettikleri filmleri özellikle güçlü bir şekilde hissettiklerine göre derecelendirir: Öğelerin çok sayıda 5 ve 1 yıldız derecelendirmesi aldığını, ancak dikkat çekici derecede az 3 yıldızlı derecelendirme olduğunu fark edebilirsiniz.
+Ayrıca, mevcut satın alma alışkanlıkları genellikle şu anda mevcut olan tavsiye algoritmasının bir sonucudur, ancak öğrenme algoritmaları bu ayrıntıyı her zaman dikkate almazlar.
+Bu nedenle, bir geri bildirim döngüsünün oluşması mümkündür: Bir tavsiye sistemi, daha sonra daha iyi olması için (daha büyük satın alımlar nedeniyle), alınan bir öğeyi tercihli olarak yukarı iter ve daha da sık tavsiye edilmesine neden olur.
+Sansür, teşvikler ve geri bildirim döngüleri ile nasıl başa çıkılacağı gibi ilgili bu tarz sorunların birçoğu önemli açık araştırma konularıdır.
 
-#### Sequence Learning
+#### Dizi Öğrenimi
 
-So far, we have looked at problems where we have
-some fixed number of inputs and produce a fixed number of outputs.
-Before we considered predicting home prices from a fixed set of features: square footage, number of bedrooms,
-number of bathrooms, walking time to downtown.
-We also discussed mapping from an image (of fixed dimension)
-to the predicted probabilities that it belongs to each
-of a fixed number of classes, or taking a user ID and a product ID,
-and predicting a star rating. In these cases,
-once we feed our fixed-length input
-into the model to generate an output,
-the model immediately forgets what it just saw.
+Şimdiye kadar, sabit sayıda girdimiz olan ve sabit sayıda çıktı üreten sorunlara baktık.
+Öncesinde ev fiyatlarını sabit bir dizi özellikten tahmin ettik: Metrekare alanları, yatak odası sayısı, banyo sayısı, şehir merkezine yürüme süresi.
+Ayrıca, bir görüntüyü (sabit boyutlu), sabit sayıda sınıfın hangi birine ait olduğu tahmin eden olasılıklarla eşlemeyi veya bir kullanıcı kimliği ve ürün kimliği alarak bir yıldız derecelendirmesi tahmin etmeyi tartıştık. Bu durumlarda, sabit uzunluklu girdimizi bir çıktı üretmek için modele beslediğimizde, model hemen gördüklerini hemen unutur.
 
-This might be fine if our inputs truly all have the same dimensions
-and if successive inputs truly have nothing to do with each other.
-But how would we deal with video snippets?
-In this case, each snippet might consist of a different number of frames.
-And our guess of what is going on in each frame might be much stronger
-if we take into account the previous or succeeding frames.
-Same goes for language. One popular deep learning problem
-is machine translation: the task of ingesting sentences
-in some source language and predicting their translation in another language.
+Girdilerimizin hepsi aynı boyutlara sahipse ve birbirini takip eden girdilerin birbirleriyle hiçbir ilgisi yoksa, bu iyi olabilir.
+Ancak video parçalarıyla nasıl başa çıkardık?
+Bu durumda, her parça farklı sayıda çerçeveden oluşabilir.
+Ayrıca önceki veya sonraki kareleri dikkate alırsak, her karede neler olup bittiğine dair tahminimiz çok daha güçlü olabilir. Aynı şey dil için de geçerli. Popüler bir derin öğrenme sorunu, makine çevirisidir: Bazı kaynak dilde cümleleri alma ve başka bir dilde çevirilerini tahmin etme görevidir.
 
-These problems also occur in medicine.
-We might want a model to monitor patients in the intensive care unit
-and to fire off alerts if their risk of death
-in the next 24 hours exceeds some threshold.
-We definitely would not want this model to throw away
-everything it knows about the patient history each hour
-and just make its predictions based on the most recent measurements.
+Bu problemler tıpta da görülür.
+Yoğun bakım ünitesindeki hastaları izlemek ve önümüzdeki 24 saat içinde ölüm riskleri belli bir eşiği aşarsa, uyarıcıları tetiklemek için bir model isteyebiliriz.
+Bu modelin her saatteki hasta geçmişi hakkında bildiği her şeyi atmasını ve sadece en son ölçümlere dayanarak tahminlerini yapmasını kesinlikle istemeyiz.
 
-These problems are among the most exciting applications of machine learning
-and they are instances of *sequence learning*.
-They require a model to either ingest sequences of inputs
-or to emit sequences of outputs (or both!).
-These latter problems are sometimes referred to as ``seq2seq`` problems.  Language translation is a ``seq2seq`` problem.
-Transcribing text from the spoken speech is also a ``seq2seq`` problem.
-While it is impossible to consider all types of sequence transformations,
-a number of special cases are worth mentioning:
+Bu problemler makine öğrenmesinin en heyecan verici uygulamaları arasındadır ve *dizi öğrenmenin* örnekleridir.
+Girdilerin dizilerini almak veya çıkış dizilerini (veya her ikisini!) saçmak için bir modele ihtiyaç duyarlar.
+Bu ikinci tip problemlere bazen ``seq2seq`` problemleri denir. Dil çevirisi bir ``seq2seq`` problemidir.
+Sözlü konuşmadan metine kopyalama da bir ``seq2seq`` problemidir.
+Her türlü dizi dönüşümünü anlatmak mümkün olmasa da, bir dizi özel durumdan bahsetmeye değer:
 
-**Tagging and Parsing**. This involves annotating a text sequence with attributes.
-In other words, the number of inputs and outputs is essentially the same.
-For instance, we might want to know where the verbs and subjects are.
-Alternatively, we might want to know which words are the named entities.
-In general, the goal is to decompose and annotate text based on structural
-and grammatical assumptions to get some annotation.
-This sounds more complex than it actually is.
-Below is a very simple example of annotating a sentence
-with tags indicating which words refer to named entities.
+**Etiketleme ve Ayrıştırma**. Bu, nitelikleri olan bir metin dizisine açıklama eklemeyi içerir.
+Başka bir deyişle, girdi ve çıktıların sayısı aslında aynıdır.
+Örneğin, fiillerin ve öznelerin nerede olduğunu bilmek isteyebiliriz.
+Alternatif olarak, hangi kelimelerin adlandırılmış varlıklar olduğunu bilmek isteyebiliriz.
+Genel olarak amaç, bir açıklama almak için yapısal ve dilbilgisel varsayımlara dayalı olarak metni ayrıştırmak ve açıklama eklemektir.
+Bu aslında olduğundan daha karmaşıkmış gibi geliyor.
+Aşağıdaki çok basit bir örnek, hangi kelimelerin adlandırılmış varlıkları ifade ettiğini belirten etiketleri bir cümleye açıklama olarak eklemeyi gösterir.
 
 ```text
-Tom has dinner in Washington with Sally.
-Ent  -    -    -     Ent      -    Ent
+Tom'un Washington'da Sally ile akşam yemeği var.
+Var      Var          Var  -    -     -      -
 ```
 
-
-**Automatic Speech Recognition**. With speech recognition, the input sequence $x$
-is an audio recording of a speaker (shown in :numref:`fig_speech`), and the output $y$
-is the textual transcript of what the speaker said.
-The challenge is that there are many more audio frames
-(sound is typically sampled at 8kHz or 16kHz)
-than text, i.e., there is no 1:1 correspondence between audio and text,
-since thousands of samples correspond to a single spoken word.
-These are ``seq2seq`` problems where the output is much shorter than the input.
+**Otomatik Konuşma Tanıma**. Konuşma tanımada, $x$ girdi dizisi bir hoparlörün ses kaydıdır (:numref:`fig_speech`da gösterilen) ve $y$ çıktısı konuşmacının söylediklerinin metne dökümüdür.
+Buradaki zorluk, metinden çok daha fazla ses karesi çerçevesi olması (ses genellikle 8kHz veya 16kHz'de örneklenmiştir), yani ses ve metin arasında 1:1 karşılık olmamasıdır, çünkü binlerce sesli örnek tek bir sözlü kelimeye karşılık gelir.
+Bunlar, çıktının girdiden çok daha kısa olduğu ``seq2seq`` problemleridir.
 
 ![`-D-e-e-p- L-ea-r-ni-ng-`](../img/speech.png)
 :width:`700px`
 :label:`fig_speech`
 
-**Text to Speech**. Text-to-Speech (TTS) is the inverse of speech recognition.
-In other words, the input $x$ is text
-and the output $y$ is an audio file.
-In this case, the output is *much longer* than the input.
-While it is easy for *humans* to recognize a bad audio file,
-this is not quite so trivial for computers.
+**Metinden Konuşmaya**. Metinden-Konuşmaya, konuşma tanımanın tersidir.
+Başka bir deyişle, $x$ girdisi metindir ve $y$ çıktısı bir ses dosyasıdır.
+Bu durumda, çıktı girdiden *çok daha uzun* olur.
+*İnsanların* kötü bir ses dosyasını tanıması kolay olsa da, bu bilgisayarlar için o kadar da bariz değildir.
 
-**Machine Translation**. Unlike the case of speech recognition, where corresponding
-inputs and outputs occur in the same order (after alignment),
-in machine translation, order inversion can be vital.
-In other words, while we are still converting one sequence into another,
-neither the number of inputs and outputs nor the order
-of corresponding data points are assumed to be the same.
-Consider the following illustrative example
-of the peculiar tendency of Germans
-to place the verbs at the end of sentences.
+**Makine Çevirisi**. Karşılık gelen girdi ve çıktıların aynı sırada (hizalamadan sonra) gerçekleştiği konuşma tanıma durumundan farklı olarak, makine çevirisinde, sırayı ters çevirme hayati önem taşıyabilir.
+Başka bir deyişle, bir diziyi diğerine dönüştürürken, ne girdi ve çıktıların sayısı ne de karşılık gelen veri noktalarının sırası aynı kabul edilmektedir.
+Almanların fiilleri cümle sonuna yerleştirme eğiliminin aşağıdaki açıklayıcı örneğini düşünün.
 
 ```text
-German:           Haben Sie sich schon dieses grossartige Lehrwerk angeschaut?
-English:          Did you already check out this excellent tutorial?
+Almanca:          Haben Sie sich schon dieses grossartige Lehrwerk angeschaut?
+İngilizce:        Did you already check out this excellent tutorial?
 Wrong alignment:  Did you yourself already this excellent tutorial looked-at?
 ```
+İlgili birçok sorun diğer öğrenme görevlerinde ortaya çıkar.
+Örneğin, bir kullanıcının bir Web sayfasını okuma sırasını belirlemek iki boyutlu bir düzen analizi sorunudur.
+Diyalog sorunları her türlü ek komplikasyon ortaya çıkarır: Bir sonrasında ne söyleneceğini belirlemede, gerçek dünya bilgisini ve uzun zamansal mesafelerde konuşmanın önceki durumunu dikkate almayı gerektirmek gibi. Bu aktif bir araştırma alanıdır.
 
 
-Many related problems pop up in other learning tasks.
-For instance, determining the order in which a user
-reads a Webpage is a two-dimensional layout analysis problem.
-Dialogue problems exhibit all kinds of additional complications,
-where determining what to say next requires taking into account
-real-world knowledge and the prior state of the conversation
-across long temporal distances. This is an active area of research.
+### Gözetimsiz öğrenme
 
+Şimdiye kadarki tüm örnekler *Gözetimli Öğrenme*, yani, modeli hem öznitelikleri hem de karşılık gelen hedef değerleri içeren dev bir veri kümesi ile beslediğimiz durumlarla ilgilidir.
+Gözetimli öğreniciyi son derece uzmanlaşmış bir işe ve son derece konuşkan bir patrona sahip olmak gibi düşünebilirsiniz.
+Patron omzunuzun üzerinden bakar ve siz durumlardan eylemlere eşlemeyi öğrenene kadar her durumda tam olarak ne yapacağınızı söyler.
+Böyle bir patron için çalışmak oldukça tatsızdır.
+Öte yandan, bu patronu memnun etmek kolaydır.
+Deseni mümkün olduğunca çabuk tanır ve eylemlerini taklit edersiniz.
 
-### Unsupervised learning
+Tamamen zıt bir şekilde, ne yapmanızı istediğini bilmeyen bir patron için çalışmak sinir bozucu olabilir.
+Ancak, bir veri bilimcisi olmayı planlıyorsanız, buna alışsanız iyi olur.
+Patron size sadece dev bir veri dökümü verebilir ve *onunla veri bilimi yapmanızı söyleyebilir!* Bu kulağa belirsiz geliyor çünkü öyle.
+Bu sorun sınıfına *gözetimsiz öğrenme* diyoruz ve sorabileceğimiz soruların türü ve sayısı yalnızca yaratıcılığımızla sınırlıdır.
+Daha sonraki bölümlerde bir dizi denetimsiz öğrenme tekniğini ele alacağız. Şimdilik iştahınızı hafifletmek için sormak isteyebileceğiniz birkaç sorudan bahsediyoruz:
 
-All the examples so far were related to *Supervised Learning*,
-i.e., situations where we feed the model a giant dataset
-containing both the features and corresponding target values.
-You could think of the supervised learner as having
-an extremely specialized job and an extremely anal boss.
-The boss stands over your shoulder and tells you exactly what to do
-in every situation until you learn to map from situations to actions.
-Working for such a boss sounds pretty lame.
-On the other hand, it is easy to please this boss.
-You just recognize the pattern as quickly as possible
-and imitate their actions.
+* Verileri doğru bir şekilde özetleyen az sayıda ilk örnek (prototip) bulabilir miyiz?
+Bir dizi fotoğraf verildiğinde, onları manzara fotoğrafları, köpek resimleri, bebekler, kediler, dağ zirveleri vb. olarak gruplandırabilir miyiz?
+Benzer şekilde, kullanıcıların göz atma etkinliği koleksiyonu göz önüne alındığında, onları benzer davranışa sahip kullanıcılara ayırabilir miyiz?
+Bu sorun genellikle *kümeleme* olarak bilinir.
+* Verilerin ilgili özelliklerini doğru bir şekilde yakalayan az sayıda parametre bulabilir miyiz?
+Bir topun yörüngeleri, topun hızı, çapı ve kütlesi ile oldukça iyi tanımlanmıştır.
+Terziler, kıyafetlerin uyması amacıyla insan vücudunun şeklini oldukça doğru bir şekilde tanımlayan az sayıda parametre geliştirmiştir.
+Bu problemlere *altuzay tahmini* problemleri denir.
+Bağımlılık doğrusal ise, buna *ana bileşen analizi* denir.
+* (Keyfi olarak yapılandırılmış) Nesnelerin Öklid uzayında (yani, $\mathbb{R}^n$ vektör uzayında) sembolik özelliklerinin iyi eşleştirilebileceği bir temsili var mı?
+Buna *temsil öğrenme* denir ve varlıkları ve onların ilişkilerini, Roma $-$ İtalya $+$ Fransa $=$ Paris gibi, tanımlamak için kullanılır.
+* Gözlemlediğimiz verilerin çoğunun temel nedenlerinin bir açıklaması var mı?
+Örneğin, konut fiyatları, kirlilik, suç, yer, eğitim, maaşlar vb. ile ilgili demografik verilerimiz varsa, bunların deneysel verilerine dayanarak nasıl ilişkili olduğunu bulabilir miyiz? *Nedensellik* ve *olasılıksal grafik modeller* ile ilgili alanlar bu sorunu ele almaktadır.
+* Gözetimsiz öğrenmedeki bir diğer önemli ve heyecan verici gelişme, *üretici çekişmeli ağların* (GAN'lar) ortaya çıkmasıdır.
+Bunlar bize verileri, görüntüler ve ses gibi karmaşık yapılandırılmış verileri bile, sentezlemek için yöntemsel bir yol sunar.
+Temel istatistiksel mekanizmalar, gerçek ve sahte verilerin aynı olup olmadığını kontrol etmek için kullanılan testlerdir.
+Onlara birkaç not defteri ayıracağız.
 
-In a completely opposite way, it could be frustrating
-to work for a boss who has no idea what they want you to do.
-However, if you plan to be a data scientist, you'd better get used to it.
-The boss might just hand you a giant dump of data and tell you to *do some data science with it!* This sounds vague because it is.
-We call this class of problems *unsupervised learning*,
-and the type and number of questions we could ask
-is limited only by our creativity.
-We will address a number of unsupervised learning techniques
-in later chapters. To whet your appetite for now,
-we describe a few of the questions you might ask:
+### Bir Ortamla Etkileşim
 
-* Can we find a small number of prototypes
-that accurately summarize the data?
-Given a set of photos, can we group them into landscape photos,
-pictures of dogs, babies, cats, mountain peaks, etc.?
-Likewise, given a collection of users' browsing activity,
-can we group them into users with similar behavior?
-This problem is typically known as *clustering*.
-* Can we find a small number of parameters
-that accurately capture the relevant properties of the data?
-The trajectories of a ball are quite well described
-by velocity, diameter, and mass of the ball.
-Tailors have developed a small number of parameters
-that describe human body shape fairly accurately
-for the purpose of fitting clothes.
-These problems are referred to as *subspace estimation* problems.
-If the dependence is linear, it is called *principal component analysis*.
-* Is there a representation of (arbitrarily structured) objects
-in Euclidean space (i.e., the space of vectors in $\mathbb{R}^n$)
-such that symbolic properties can be well matched?
-This is called *representation learning* and it is used
-to describe entities and their relations,
-such as Rome $-$ Italy $+$ France $=$ Paris.
-* Is there a description of the root causes
-of much of the data that we observe?
-For instance, if we have demographic data
-about house prices, pollution, crime, location,
-education, salaries, etc., can we discover
-how they are related simply based on empirical data?
-The fields concerned with *causality* and
-*probabilistic graphical models* address this problem.
-* Another important and exciting recent development in unsupervised learning
-is the advent of *generative adversarial networks* (GANs).
-These give us a procedural way to synthesize data,
-even complicated structured data like images and audio.
-The underlying statistical mechanisms are tests
-to check whether real and fake data are the same.
-We will devote a few notebooks to them.
+Şimdiye kadar, verilerin gerçekte nereden geldiğini veya bir makine öğrenmesi modeli bir çıktı oluşturduğunda gerçekte *ne olduğunu* tartışmadık.
+Çünkü gözetimli öğrenme ve gözetimsiz öğrenme bu konuları çok karmaşık bir şekilde ele almaz.
+Her iki durumda da, büyük bir veri yığınını önceden alıyoruz, ardından bir daha çevre ile etkileşime girmeden desen tanıma makinelerimizi harekete geçiriyoruz.
+Tüm öğrenme, algoritma ortamdan ayrıldıktan sonra gerçekleştiği için, buna bazen *çevrimdışı öğrenme* denir.
+Gözetimli öğrenme için süreç şuna benzer :numref:`fig_data_collection`.
 
-
-### Interacting with an Environment
-
-So far, we have not discussed where data actually comes from,
-or what actually *happens* when a machine learning model generates an output.
-That is because supervised learning and unsupervised learning
-do not address these issues in a very sophisticated way.
-In either case, we grab a big pile of data upfront,
-then set our pattern recognition machines in motion
-without ever interacting with the environment again.
-Because all of the learning takes place
-after the algorithm is disconnected from the environment,
-this is sometimes called *offline learning*.
-For supervised learning, the process looks like :numref:`fig_data_collection`.
-
-![Collect data for supervised learning from an environment.](../img/data-collection.svg)
+![Bir ortamdan gözetimli öğrenme için veri toplama.](../img/data-collection.svg)
 :label:`fig_data_collection`
 
-This simplicity of offline learning has its charms.
-The upside is we can worry about pattern recognition
-in isolation, without any distraction from these other problems.
-But the downside is that the problem formulation is quite limiting.
-If you are more ambitious, or if you grew up reading Asimov's Robot Series,
-then you might imagine artificially intelligent bots capable
-not only of making predictions, but of taking actions in the world.
-We want to think about intelligent *agents*, not just predictive *models*.
-That means we need to think about choosing *actions*,
-not just making *predictions*. Moreover, unlike predictions,
-actions actually impact the environment.
-If we want to train an intelligent agent,
-we must account for the way its actions might
-impact the future observations of the agent.
+Çevrimdışı öğrenmenin bu basitliğinin cazibesi vardır.
+Bunun olumu kısmı, bu diğer sorunlardan herhangi bir dikkat dağılmadan, sadece örüntü tanıma konusu ile tek başına ilgilenebiliriz.
+Ancak olumsuz tarafı, formülasyonun oldukça kısıtlayıcı olmasıdır.
+Daha hırslıysanız ya da Asimov'un Robot Serisi'ni okuyarak büyüdüyseniz, sadece tahminler yapmakla kalmayıp, dünyada hareket edebilecek yapay zeka botları hayal edebilirsiniz.
+Sadece *modelleri* değil, akıllı *etmenleri (ajanları)* de düşünmek istiyoruz.
+Bu, sadece *tahminler* yapmakla kalmayıp, *eylemleri* seçmeyi düşünmemiz gerektiği anlamına gelir. Dahası, öngörülerin aksine, eylemler aslında çevreyi etkiler.
+Akıllı bir ajanı eğitmek istiyorsak, eylemlerinin ajanın gelecekteki gözlemlerini nasıl etkileyebileceğini hesaba katmalıyız.
 
+Bir çevre ile etkileşimi dikkate almak, bir dizi yeni modelleme sorusu açar.
+Çevre:
 
-Considering the interaction with an environment
-opens a whole set of new modeling questions.
-Does the environment:
+* Daha önceden ne yaptığımızı hatırlıyor mu?
+* Bize bir konuşma tanıyıcıya metin okuyan bir kullanıcı gibi yardım etmek ister mi?
+* Bizi yenmek mi istiyor, yani spam filtreleme (spam göndericilere karşı) veya oyun oynama (rakiplere karşı) gibi rakip bir ortam mı?
+* Umursumuyor mu (birçok durumda olduğu gibi)?
+* Değişen dinamiklere sahip mi (gelecekteki veriler her zaman geçmişe benziyor mu doğal olarak veya otomatik araçlarımıza yanıt olarak zaman içinde değişiyor mu)?
 
-* Remember what we did previously?
-* Want to help us, e.g., a user reading text into a speech recognizer?
-* Want to beat us, i.e., an adversarial setting like spam filtering (against spammers) or playing a game (vs an opponent)?
-* Not care (as in many cases)?
-* Have shifting dynamics (does future data always resemble the past or do the patterns change over time, either naturally or in response to our automated tools)?
-
-This last question raises the problem of *distribution shift*,
-(when training and test data are different).
-It is a problem that most of us have experienced
-when taking exams written by a lecturer,
-while the homeworks were composed by her TAs.
-We will briefly describe reinforcement learning and adversarial learning,
-two settings that explicitly consider interaction with an environment.
-
+Bu son soru *dağılım kayması* sorununu gündeme getirmektedir (eğitim ve test verileri farklı olduğunda).
+Bu bir öğretim üyesi tarafından hazırlanan yazılıya girerken yaşadığımız bir problemdir, çünkü ödevler asistanlar tarafından oluşturulmuştur.
+Bir çevreyle etkileşimi açıkça dikkate alan iki ortam olan pekiştirmeli öğrenmeyi ve çekişmeli öğrenmeyi kısaca anlatacağız.
 
 ### Reinforcement learning
 
