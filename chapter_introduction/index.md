@@ -598,463 +598,209 @@ Bu son soru *dağılım kayması* sorununu gündeme getirmektedir (eğitim ve te
 Bu bir öğretim üyesi tarafından hazırlanan yazılıya girerken yaşadığımız bir problemdir, çünkü ödevler asistanlar tarafından oluşturulmuştur.
 Bir çevreyle etkileşimi açıkça dikkate alan iki ortam olan pekiştirmeli öğrenmeyi ve çekişmeli öğrenmeyi kısaca anlatacağız.
 
-### Reinforcement learning
+### Pekiştirmeli öğrenme
 
-If you are interested in using machine learning
-to develop an agent that interacts with an environment
-and takes actions, then you are probably going to wind up
-focusing on *reinforcement learning* (RL).
-This might include applications to robotics,
-to dialogue systems, and even to developing AI for video games.
-*Deep reinforcement learning* (DRL), which applies
-deep neural networks to RL problems, has surged in popularity.
-The breakthrough [deep Q-network that beat humans at Atari games using only the visual input](https://www.wired.com/2015/02/google-ai-plays-atari-like-pros/),
-and the [AlphaGo program that dethroned the world champion at the board game Go](https://www.wired.com/2017/05/googles-alphago-trounces-humans-also-gives-boost/) are two prominent examples.
+Bir ortamla etkileşime giren ve eylemler yapan bir ajan geliştirmek için makine öğrenmesini kullanmakla ilgileniyorsanız, muhtemelen *pekiştirmeli öğrenimi* (PÖ) konusuna odaklanacaksınız.
+Bu, robotik, diyalog sistemleri ve hatta video oyunları için YZ geliştirme uygulamalarını içerebilir.
+Derin sinir ağlarını PÖ problemlerine uygulayan *derin pekiştirmel öğrenme* (DPÖ) popülerlik kazanmıştır.
+Bu atılımda [yalnızca görsel girdileri kullanarak Atari oyunlarında insanları yenen derin Q-ağ](https://www.wired.com/2015/02/google-ai-plays-atari-like-pros/) ve [Go oyunu dünya şampiyonunu tahtından indiren AlphaGo programı](https://www.wired.com/2017/05/googles-alphago-trounces-humans-also-gives-boost/) iki önemli örnektir.
 
-Reinforcement learning gives a very general statement of a problem,
-in which an agent interacts with an environment over a series of *timesteps*.
-At each timestep $t$, the agent receives some observation $o_t$
-from the environment and must choose an action $a_t$
-that is subsequently transmitted back to the environment
-via some mechanism (sometimes called an actuator).
-Finally, the agent receives a reward $r_t$ from the environment.
-The agent then receives a subsequent observation,
-and chooses a subsequent action, and so on.
-The behavior of an RL agent is governed by a *policy*.
-In short, a *policy* is just a function that maps
-from observations (of the environment) to actions.
-The goal of reinforcement learning is to produce a good policy.
+Pekiştirmeli öğrenmede, bir ajanın bir dizi *zaman adımı* üzerinde bir çevre ile etkileşime girdiği çok genel bir sorun ifade edilir.
+$T$ her bir zaman adımında, etmen ortamdan $o_t$ gözlemini alır ve daha sonra bir mekanizma (bazen çalıştırıcı (aktüatör) olarak da adlandırılır) aracılığıyla çevreye geri iletilecek bir $a_t$ eylemi seçmelidir.
+Son olarak, temsilci ortamdan bir ödül, $r_t$, alır.
+Etmen daha sonra bir gözlem alır ve bir sonraki eylemi seçer, vb.
+Bir PÖ etmenin davranışı bir *politika* tarafından yönetilir.
+Kısacası, bir *politika*, sadece, gözlemlerden (çevrenin) eylemlere eşlenen bir fonksiyondur.
+Pekiştirmeli öğrenmenin amacı iyi bir politika üretmektir.
 
-![The interaction between reinforcement learning and an environment.](../img/rl-environment.svg)
+![Pekiştirmeli öğrenme ve çevre arasındaki etkileşim.](../img/rl-environment.svg)
 
-It is hard to overstate the generality of the RL framework.
-For example, we can cast any supervised learning problem as an RL problem.
-Say we had a classification problem.
-We could create an RL agent with one *action* corresponding to each class.
-We could then create an environment which gave a reward
-that was exactly equal to the loss function
-from the original supervised problem.
+PÖ çerçevesinin genelliğini abartmak zordur.
+Örneğin, herhangi bir gözetimli öğrenme problemini bir PÖ problemine dönüştürebiliriz.
+Diyelim ki bir sınıflandırma problemimiz var.
+Her sınıfa karşılık gelen bir *eylem* ile bir PÖ etmeni oluşturabiliriz.
+Daha sonra, orijinal gözetimli problemin yitim fonksiyonuna tam olarak eşit olan bir ödül veren bir ortam yaratabiliriz.
 
-That being said, RL can also address many problems
-that supervised learning cannot.
-For example, in supervised learning we always expect
-that the training input comes associated with the correct label.
-But in RL, we do not assume that for each observation,
-the environment tells us the optimal action.
-In general, we just get some reward.
-Moreover, the environment may not even tell us which actions led to the reward.
+Bununla birlikte, PÖ, gözetimli öğrenmenin yapamadığı birçok sorunu da ele alabilir.
+Örneğin, gözetimli öğrenmede her zaman eğitim girdisinin doğru etiketle ilişkilendirilmesini bekleriz.
+Ancak PÖ'de, her gözlem için çevrenin bize en uygun eylemi söylediğini varsaymıyoruz.
+Genel olarak, sadece bir ödül alırız.
+Dahası, çevre bize hangi eylemlerin ödüle yol açtığını bile söylemeyebilir.
 
-Consider for example the game of chess.
-The only real reward signal comes at the end of the game
-when we either win, which we might assign a reward of 1,
-or when we lose, which we could assign a reward of -1.
-So reinforcement learners must deal with the *credit assignment problem*:
-determining which actions to credit or blame for an outcome.
-The same goes for an employee who gets a promotion on October 11.
-That promotion likely reflects a large number
-of well-chosen actions over the previous year.
-Getting more promotions in the future requires figuring out
-what actions along the way led to the promotion.
+Örneğin satranç oyununu düşünün.
+Tek gerçek ödül sinyali, oyunun sonunda ya kazandığımızda 1, ya da kaybettiğimizde -1 diye gelir.
+Bu yüzden pekiştirmeli öğreniciler *kredi atama problemi* ile ilgilenmelidir: Bir sonuç için hangi eylemlerin beğeni toplayacağını veya suçlanacağını belirleme.
+Aynı şey 11 Ekim'de terfi alan bir çalışan için de geçerli.
+Bu terfi büyük olasılıkla bir önceki yılda itibaren çok sayıda iyi seçilmiş eylemi yansıtmaktadır.
+Gelecekte daha fazla terfi almak için zaman boyunca hangi eylemlerin terfiye yol açtığını bulmak gerekir.
 
-Reinforcement learners may also have to deal
-with the problem of partial observability.
-That is, the current observation might not
-tell you everything about your current state.
-Say a cleaning robot found itself trapped
-in one of many identical closets in a house.
-Inferring the precise location (and thus state) of the robot
-might require considering its previous observations before entering the closet.
+Pekiştirmeli öğreniciler de kısmi gözlenebilirlik sorunuyla uğraşmak zorunda kalabilirler.
+Yani, mevcut gözlem size mevcut durumunuz hakkında her şeyi söylemeyebilir.
+Diyelim ki bir temizlik robotu kendini bir evdeki birçok aynı dolaptan birinde sıkışmış buldu.
+Robotun kesin yerini (ve dolayısıyla durumunu) bulmak, dolaba girmeden önce önceki gözlemlerini dikkate almayı gerektirebilir.
 
-Finally, at any given point, reinforcement learners
-might know of one good policy,
-but there might be many other better policies
-that the agent has never tried.
-The reinforcement learner must constantly choose
-whether to *exploit* the best currently-known strategy as a policy,
-or to *explore* the space of strategies,
-potentially giving up some short-run reward in exchange for knowledge.
+Son olarak, herhangi bir noktada, pekiştirmeli öğreniciler iyi bir politika biliyor olabilir, ancak etmenin hiç denemediği daha iyi politikalar olabilir.
+Pekiştirmeli öğrenici ya sürekli olarak politika olarak şu anda bilinen en iyi stratejiyi *sömürmeyi* veya stratejiler alanını *keşfetmeyi*, yani potansiyel olarak bilgi karşılığında kısa vadede ödül vermeyi, seçmelidir.
 
+#### MKS'ler, haydutlar ve arkadaşlar
 
-#### MDPs, bandits, and friends
+Genel pekiştirme öğrenme sorunu çok genel bir ortamdır.
+Eylemler sonraki gözlemleri etkiler.
+Ödüller yalnızca seçilen eylemlere karşılık gelir.
+Ortam tamamen veya kısmen gözlenebilir.
+Tüm bu karmaşıklığı bir kerede hesaplamak çok fazla araştırmacı isteyebilir.
+Dahası, her pratik sorun tüm bu karmaşıklığı sergilemez.
+Sonuç olarak, araştırmacılar pekiştirmeli öğrenme sorunlarının bir dizi *özel vakasını* incelemişlerdir.
 
-The general reinforcement learning problem
-is a very general setting.
-Actions affect subsequent observations.
-Rewards are only observed corresponding to the chosen actions.
-The environment may be either fully or partially observed.
-Accounting for all this complexity at once may ask too much of researchers.
-Moreover, not every practical problem exhibits all this complexity.
-As a result, researchers have studied a number of
-*special cases* of reinforcement learning problems.
+Ortam tam olarak gözlemlendiğinde, PÖ sorununa *Markov Karar Süreci* (MKS) diyoruz.
+Durum önceki eylemlere bağlı olmadığında, soruna *bağlamsal bir kollu kumar makinesi sorunu* diyoruz.
+Durum yoksa, sadece başlangıçta bilinmeyen ödülleri olan bir dizi kullanılabilir eylem, bu sorun klasik *çok kollu kumar makinesi problemidir*.
 
-When the environment is fully observed,
-we call the RL problem a *Markov Decision Process* (MDP).
-When the state does not depend on the previous actions,
-we call the problem a *contextual bandit problem*.
-When there is no state, just a set of available actions
-with initially unknown rewards, this problem
-is the classic *multi-armed bandit problem*.
+## Kökenler
 
+Birçok derin öğrenme yöntemi yeni icatlar olmasına rağmen, yüzyıllar boyunca insanlar verileri analiz etme ve gelecekteki sonuçları tahmin etme arzusundaydılar.
+Aslında, doğa bilimlerinin çoğunun kökenleri budur.
+Örneğin, Bernoulli dağılımı [Jacob Bernoulli (1655-1705)](https://en.wikipedia.org/wiki/Jacob_Bernoulli) ve Gaussian dağılımı [Carl Friedrich Gauss (1777-1855)](https://en.wikipedia.org/wiki/Carl_Friedrich_Gauss) tarafından keşfedildi.
+Örneğin, bugün hala sigorta hesaplamalarından tıbbi teşhislere kadar sayısız problem için kullanılan en düşük kareler ortalaması algoritmasını icat etti.
+Bu araçlar doğa bilimlerinde deneysel bir yaklaşıma yol açmıştır - örneğin, Ohm'un bir dirençteki akım ve voltajla ilgili yasası doğrusal bir modelle mükemmel bir şekilde tanımlanmıştır.
 
+Orta çağlarda bile, matematikçilerin tahminlerde keskin bir sezgileri vardı.
+Örneğin, [Jacob Köbel (1460-1533)](https://www.maa.org/press/periodicals/convergence/mathematical-treasures-jacob-kobels-geometry)'ün geometri kitabı ortalama ayak uzunluğunu elde etmek 16 erkek yetişkinin ayak uzunluğunu ortalamayı göstermektedir.
 
-## Roots
-
-Although many deep learning methods are recent inventions,
-humans have held the desire to analyze data
-and to predict future outcomes for centuries.
-In fact, much of natural science has its roots in this.
-For instance, the Bernoulli distribution is named after
-[Jacob Bernoulli (1655-1705)](https://en.wikipedia.org/wiki/Jacob_Bernoulli), and the Gaussian distribution was discovered
-by [Carl Friedrich Gauss (1777-1855)](https://en.wikipedia.org/wiki/Carl_Friedrich_Gauss).
-He invented, for instance, the least mean squares algorithm,
-which is still used today for countless problems
-from insurance calculations to medical diagnostics.
-These tools gave rise to an experimental approach
-in the natural sciences---for instance, Ohm's law
-relating current and voltage in a resistor
-is perfectly described by a linear model.
-
-Even in the middle ages, mathematicians had a keen intuition of estimates.
-For instance, the geometry book of [Jacob Köbel (1460-1533)](https://www.maa.org/press/periodicals/convergence/mathematical-treasures-jacob-kobels-geometry) illustrates
-averaging the length of 16 adult men's feet to obtain the average foot length.
-
-![Estimating the length of a foot](../img/koebel.jpg)
+![Ayak uzunluğunu tahmin etme.](../img/koebel.jpg)
 :width:`500px`
 :label:`fig_koebel`
 
-:numref:`fig_koebel` illustrates how this estimator works.
-The 16 adult men were asked to line up in a row, when leaving church.
-Their aggregate length was then divided by 16
-to obtain an estimate for what now amounts to 1 foot.
-This "algorithm" was later improved to deal with misshapen feet---the
-2 men with the shortest and longest feet respectively were sent away,
-averaging only over the remainder.
-This is one of the earliest examples of the trimmed mean estimate.
+:numref:`fig_koebel` bu tahmincinin nasıl çalıştığını gösterir.
+16 yetişkin erkekten kiliseden ayrılırken üst üste dizilmeleri istendi.
+Daha sonra toplam uzunlukları günümüzdeki 1 ayak (foot) birimine ilişkin bir tahmin elde etmek için 16'ya bölündü.
+Bu "algoritma" daha sonra biçimsiz ayaklarla başa çıkmak için de düzenlendi - sırasıyla en kısa ve en uzun ayakları olan 2 adam gönderildi, sadece geri kalanların ortalaması alındı.
+Bu, kırpılmış ortalama tahminin en eski örneklerinden biridir.
 
-Statistics really took off with the collection and availability of data.
-One of its titans, [Ronald Fisher (1890-1962)](https://en.wikipedia.org/wiki/Ronald_Fisher), contributed significantly to its theory
-and also its applications in genetics.
-Many of his algorithms (such as Linear Discriminant Analysis)
-and formula (such as the Fisher Information Matrix)
-are still in frequent use today (even the Iris dataset
-that he released in 1936 is still used sometimes
-to illustrate machine learning algorithms).
-Fisher was also a proponent of eugenics,
-which should remind us that the morally dubious use of data science
-has as long and enduring a history as its productive use
-in industry and the natural sciences.
+İstatistikler gerçekten verilerin toplanması ve kullanılabilirliği ile başladı.
+Dev isimlerden biri [Ronald Fisher (1890-1962)](https://en.wikipedia.org/wiki/Ronald_Fisher), istatistik teorisine ve aynı zamanda genetikteki uygulamalarına önemli katkıda bulundu.
+Algoritmalarının çoğu (Doğrusal Ayırtaç Analizi gibi) ve formülü (Fisher Information Matrix gibi) günümüzde hala sık kullanılmaktadır (1936'da piyasaya sürdüğü İris veri kümesi bile, bazen makine öğrenme algoritmalarını göstermek için hala kullanılıyor).
+Fisher aynı zamanda, veri biliminin ahlaki olarak şüpheli kullanımının, endüstride ve doğa bilimlerinde verimli kullanımı kadar uzun ve kalıcı bir geçmişi olduğunu hatırlatan bir öjeni (doğum ile kalıtımsal olarak istenen özelliklere sahip bireylerin üremesine çalışan bilim dalı) savunucusuydu.
 
-A second influence for machine learning came from Information Theory
-[(Claude Shannon, 1916-2001)](https://en.wikipedia.org/wiki/Claude_Shannon) and the Theory of computation via [Alan Turing (1912-1954)](https://en.wikipedia.org/wiki/Alan_Turing).
-Turing posed the question "can machines think?”
-in his famous paper [Computing machinery and intelligence](https://en.wikipedia.org/wiki/Computing_Machinery_and_Intelligence) (Mind, October 1950).
-In what he described as the Turing test, a machine
-can be considered intelligent if it is difficult
-for a human evaluator to distinguish between the replies
-from a machine and a human based on textual interactions.
+Makine öğrenmesi için ikinci bir etki, [(Claude Shannon, 1916-2001)](https://en.wikipedia.org/wiki/Claude_Shannon) aracılığıyla Bilgi Teorisi ve [Alan Turing (1912-1954)](https://en.wikipedia.org/wiki/Alan_Turing) aracılığıyla Hesaplama Teorisi'nden geldi. .
+Turing, ünlü makalesinde "makineler düşünebilir mi?" diye sordu [Computing machinery and intelligence](https://en.wikipedia.org/wiki/Computing_Machinery_and_Intelligence) (Mind, Ekim 1950).
+Turing testi olarak tanımladığı şeyde, bir insan değerlendiricinin metin etkileşimlerine dayanarak cevapların bir makineden mi ve bir insan mı geldiğini arasında ayırt etmesinin zor olması durumunda, bir makine akıllı kabul edilebilir.
 
-Another influence can be found in neuroscience and psychology.
-After all, humans clearly exhibit intelligent behavior.
-It is thus only reasonable to ask whether one could explain
-and possibly reverse engineer this capacity.
-One of the oldest algorithms inspired in this fashion
-was formulated by [Donald Hebb (1904-1985)](https://en.wikipedia.org/wiki/Donald_O._Hebb).
-In his groundbreaking book The Organization of Behavior :cite:`Hebb.Hebb.1949`,
-he posited that neurons learn by positive reinforcement.
-This became known as the Hebbian learning rule.
-It is the prototype of Rosenblatt's perceptron learning algorithm
-and it laid the foundations of many stochastic gradient descent algorithms
-that underpin deep learning today: reinforce desirable behavior
-and diminish undesirable behavior to obtain good settings
-of the parameters in a neural network.
+Nörobilim ve psikolojide de başka bir etki bulunabilir.
+Sonuçta, insanlar açıkça akıllı davranış sergilerler.
+Bu nedenle, sadece bu beceriyi açıklayıp tersine mühendislik yapıp yapamayacağını sormak mantıklıdır.
+Bu şekilde esinlenen en eski algoritmalardan biri [Donald Hebb (1904-1985)](https://en.wikipedia.org/wiki/Donald_O._Hebb) tarafından formüle edildi.
+Çığır Açan "Davranış Örgütlenmesi :cite:`Hebb.Hebb.1949` adlı kitabında, nöronların pozitif pekiştirme ile öğrendiklerini ileri sürdü.
+Bu Hebbian öğrenme kuralı olarak biliniyordu.
+Rosenblatt'ın algılayıcı öğrenme algoritmasının ilk örneğidir ve bugün derin öğrenmeyi destekleyen birçok rassal eğim inişi (stochastic gradient descent) algoritmasının temellerini atmıştır: sinir ağındaki parametrelerin iyi ayarlarını elde etmek için arzu edilen davranışı güçlendirmek ve istenmeyen davranışı zayıflatmak.
 
-Biological inspiration is what gave *neural networks* their name.
-For over a century (dating back to the models of Alexander Bain, 1873
-and James Sherrington, 1890), researchers have tried to assemble
-computational circuits that resemble networks of interacting neurons.
-Over time, the interpretation of biology has become less literal
-but the name stuck. At its heart, lie a few key principles
-that can be found in most networks today:
+*Sinir ağlarına* adını veren şey biyolojik ilhamdir.
+Yüzyılı aşkın bir süredir (Alexander Bain, 1873 ve James Sherrington, 1890 modellerine kadar geri gider) araştırmacılar, etkileşen nöron ağlarına benzeyen hesaplama devreleri oluşturmaya çalıştılar.
+Zamanla, biyolojinin yorumu daha az gerçek hale geldi, ancak isim yapıştı. Özünde, bugün çoğu ağda bulunabilecek birkaç temel ilke yatmaktadır:
 
-* The alternation of linear and nonlinear processing units, often referred to as *layers*.
-* The use of the chain rule (also known as *backpropagation*) for adjusting parameters in the entire network at once.
+* Genellikle *katmanlar* olarak adlandırılan doğrusal ve doğrusal olmayan işlem birimlerinin değişimi.
+* Tüm ağdaki parametreleri bir kerede ayarlamak için zincir kuralının (*geri yayma (backpropagation)* olarak da bilinir) kullanımı.
 
-After initial rapid progress, research in neural networks
-languished from around 1995 until 2005.
-This was due to a number of reasons.
-Training a network is computationally very expensive.
-While RAM was plentiful at the end of the past century,
-computational power was scarce.
-Second, datasets were relatively small.
-In fact, Fisher's Iris dataset from 1932
-was a popular tool for testing the efficacy of algorithms.
-MNIST with its 60,000 handwritten digits was considered huge.
+İlk hızlı ilerlemeden sonra, sinir ağlarındaki araştırmalar 1995'ten 2005'e kadar yavaşladı.
+Bunun birkaç nedeni vardır.
+Bir ağın eğitimi hesaplamaya göre çok pahalıdır.
+RAM (Rasgele Erişim Belleği) geçen yüzyılın sonunda bol miktarda bulunurken, hesaplama gücü azdı.
+İkincisi, veri kümeleri nispeten küçüktü.
+Aslında, Fisher'in 1932'deki Iris veri kümesi algoritmaların etkinliğini test etmek için popüler bir araçtır.
+MNIST, 60.000 el yazısı rakam ile devasa sayılırdı.
 
-Given the scarcity of data and computation,
-strong statistical tools such as Kernel Methods,
-Decision Trees and Graphical Models proved empirically superior.
-Unlike neural networks, they did not require weeks to train
-and provided predictable results with strong theoretical guarantees.
+Veri ve hesaplama kıtlığı göz önüne alındığında, Çekirdek (Kernel) Yöntemleri, Karar Ağaçları ve Grafik Modeller gibi güçlü istatistiksel araçlar deneysel olarak daha üstün oldu.
+Sinir ağlarından farklı olarak, eğitim için haftalar gerektirmediler ve güçlü teorik garantilerle öngörülebilir sonuçlar verdiler.
 
-## The Road to Deep Learning
+## Derin Öğrenmeye Giden Yol
 
-Much of this changed with the ready availability of large amounts of data,
-due to the World Wide Web, the advent of companies serving
-hundreds of millions of users online, a dissemination of cheap,
-high-quality sensors, cheap data storage (Kryder's law),
-and cheap computation (Moore's law), in particular in the form of GPUs, originally engineered for computer gaming.
-Suddenly algorithms and models that seemed computationally infeasible
-became relevant (and vice versa).
-This is best illustrated in :numref:`tab_intro_decade`.
+Bunların çoğu, yüz milyonlarca kullanıcıya çevrimiçi hizmet veren şirketlerin gelişi, ucuz ve yüksek kaliteli sensörlerin yayılması, ucuz veri depolama (Kryder yasası) ve özellikle bilgisayar oyunları için tasarlanan GPU'ları kullanan ucuz hesaplama (Moore yasası) maliyeti ile değişti.
+Aniden, hesaplamaya elverişli görünmeyen algoritmalar ve modeller bariz hale geldi (ve tersi).
+Bu en iyi şekilde :numref:`tab_intro_decade`de gösterilmiştir .
 
-:Dataset vs. computer memory and computational power
+: Veri kümesi ve bilgisayar belleği ve hesaplama gücü
 
-|Decade|Dataset|Memory|Floating Point Calculations per Second|
+|On Yıl|Veri Kümesi|Bellek|Saniyede Yüzer (Floating) Sayı Hesaplaması|
 |:--|:-|:-|:-|
-|1970|100 (Iris)|1 KB|100 KF (Intel 8080)|
-|1980|1 K (House prices in Boston)|100 KB|1 MF (Intel 80186)|
-|1990|10 K (optical character recognition)|10 MB|10 MF (Intel 80486)|
-|2000|10 M (web pages)|100 MB|1 GF (Intel Core)|
-|2010|10 G (advertising)|1 GB|1 TF (Nvidia C2050)|
-|2020|1 T (social network)|100 GB|1 PF (Nvidia DGX-2)|
+| 1970 | 100 (İris) | 1 KB | 100 KF (Intel 8080) |
+1980 | 1 K (Boston'daki ev fiyatları) | 100 KB | 1 MF (Intel 80186) |
+| 1990 | 10 K (optik karakter tanıma) | 10 MB | 10 MF (Intel 80486) |
+| 2000 | 10 M (web sayfaları) | 100 MB | 1 GF (Intel Core) |
+| 2010 | 10 G (reklam) | 1 GB | 1 TF (Nvidia C2050) |
+| 2020 | 1 T (sosyal ağ) | 100 GB | 1 PF (Nvidia DGX-2) |
 :label:`tab_intro_decade`
 
-It is evident that RAM has not kept pace with the growth in data.
-At the same time, the increase in computational power
-has outpaced that of the data available.
-This means that statistical models needed to become more memory efficient
-(this is typically achieved by adding nonlinearities)
-while simultaneously being able to spend more time
-on optimizing these parameters, due to an increased compute budget.
-Consequently, the sweet spot in machine learning and statistics
-moved from (generalized) linear models and kernel methods to deep networks.
-This is also one of the reasons why many of the mainstays
-of deep learning, such as multilayer perceptrons
-:cite:`McCulloch.Pitts.1943`, convolutional neural networks
-:cite:`LeCun.Bottou.Bengio.ea.1998`, Long Short-Term Memory
-:cite:`Hochreiter.Schmidhuber.1997`,
-and Q-Learning :cite:`Watkins.Dayan.1992`,
-were essentially "rediscovered" in the past decade,
-after laying comparatively dormant for considerable time.
+RAM'in veri büyümesine ayak uyduramadığı açıktır.
+Aynı zamanda, hesaplama gücündeki artış mevcut verilerinkinden daha fazladır.
+Bu, istatistiksel işlemlerin bellekte daha verimli hale gelmesi (bu genellikle doğrusal olmayan özellikler ekleyerek elde edilir) ve aynı zamanda, artan bir hesaplama bütçesi nedeniyle bu parametreleri optimize etmek için daha fazla zaman harcanması gerektiği anlamına gelir.
+Sonuç olarak, makine öğrenmesi ve istatistikteki tatlı nokta (genelleştirilmiş) doğrusal modellerden ve çekirdek yöntemlerinden derin ağlara taşındı.
+Bu aynı zamanda derin öğrenmenin dayanak noktalarının, çok katmanlı algılayıcılar :cite:`McCulloch.Pitts.1943`, evrişimli sinir ağları :cite:`LeCun.Bottou.Bengio.ea.1998`, Uzun Kısa Süreli Bellek :cite:`Hochreiter.Schmidhuber.1997` ve Q-Öğrenme :cite:` Watkins.Dayan.1992` gibi, oldukça uzun bir süre nispeten uykuda kaldıktan sonra, esasen "yeniden keşfedilme"sindeki birçok nedenden biridir.
 
-The recent progress in statistical models, applications, and algorithms,
-has sometimes been likened to the Cambrian Explosion:
-a moment of rapid progress in the evolution of species.
-Indeed, the state of the art is not just a mere consequence
-of available resources, applied to decades old algorithms.
-Note that the list below barely scratches the surface
-of the ideas that have helped researchers achieve tremendous progress
-over the past decade.
+İstatistiksel modeller, uygulamalar ve algoritmalardaki son gelişmeler bazen Kambriyen (Cambrian) Patlaması'na benzetildi: Türlerin evriminde hızlı bir ilerleme anı.
+Gerçekten de, en son teknoloji, sadece, onlarca yıllık algoritmaların mevcut kaynaklara uygulanmasının bir sonucu değildir.
+Aşağıdaki listen, araştırmacıların son on yılda muazzam bir ilerleme kaydetmesine yardımcı olan fikirlerin sadece yüzeyine ışık tutmaktadir.
 
-* Novel methods for capacity control, such as Dropout
-  :cite:`Srivastava.Hinton.Krizhevsky.ea.2014`
-  have helped to mitigate the danger of overfitting.
-  This was achieved by applying noise injection :cite:`Bishop.1995`
-  throughout the network, replacing weights by random variables
-  for training purposes.
-* Attention mechanisms solved a second problem
-  that had plagued statistics for over a century:
-  how to increase the memory and complexity of a system without
-  increasing the number of learnable parameters.
-  :cite:`Bahdanau.Cho.Bengio.2014` found an elegant solution
-  by using what can only be viewed as a learnable pointer structure.
-  Rather than having to remember an entire sentence, e.g.,
-  for machine translation in a fixed-dimensional representation,
-  all that needed to be stored was a pointer to the intermediate state
-  of the translation process. This allowed for significantly
-  increased accuracy for long sentences, since the model
-  no longer needed to remember the entire sentence before
-  commencing the generation of a new sentence.
-* Multi-stage designs, e.g., via the Memory Networks (MemNets)
-  :cite:`Sukhbaatar.Weston.Fergus.ea.2015` and the Neural Programmer-Interpreter :cite:`Reed.De-Freitas.2015`
-  allowed statistical modelers to describe iterative approaches to reasoning. These tools allow for an internal state of the deep network
-  to be modified repeatedly, thus carrying out subsequent steps
-  in a chain of reasoning, similar to how a processor
-  can modify memory for a computation.
-* Another key development was the invention of GANs
-  :cite:`Goodfellow.Pouget-Abadie.Mirza.ea.2014`.
-  Traditionally, statistical methods for density estimation
-  and generative models focused on finding proper probability distributions
-  and (often approximate) algorithms for sampling from them.
-  As a result, these algorithms were largely limited by the lack of
-  flexibility inherent in the statistical models.
-  The crucial innovation in GANs was to replace the sampler
-  by an arbitrary algorithm with differentiable parameters.
-  These are then adjusted in such a way that the discriminator
-  (effectively a two-sample test) cannot distinguish fake from real data.
-  Through the ability to use arbitrary algorithms to generate data,
-  it opened up density estimation to a wide variety of techniques.
-  Examples of galloping Zebras :cite:`Zhu.Park.Isola.ea.2017`
-  and of fake celebrity faces :cite:`Karras.Aila.Laine.ea.2017`
-  are both testimony to this progress.
-  Even amateur doodlers can produce
-  photorealistic images based on just sketches that describe
-  how the layout of a scene looks like :cite:`Park.Liu.Wang.ea.2019`.
-* In many cases, a single GPU is insufficient to process
-  the large amounts of data available for training.
-  Over the past decade the ability to build parallel
-  distributed training algorithms has improved significantly.
-  One of the key challenges in designing scalable algorithms
-  is that the workhorse of deep learning optimization,
-  stochastic gradient descent, relies on relatively
-  small minibatches of data to be processed.
-  At the same time, small batches limit the efficiency of GPUs.
-  Hence, training on 1024 GPUs with a minibatch size of,
-  say 32 images per batch amounts to an aggregate minibatch
-  of 32k images. Recent work, first by Li :cite:`Li.2017`,
-  and subsequently by :cite:`You.Gitman.Ginsburg.2017`
-  and :cite:`Jia.Song.He.ea.2018` pushed the size up to 64k observations,
-  reducing training time for ResNet50 on ImageNet to less than 7 minutes.
-  For comparison---initially training times were measured in the order of days.
-* The ability to parallelize computation has also contributed quite crucially
-  to progress in reinforcement learning, at least whenever simulation is an
-  option. This has led to significant progress in computers achieving
-  superhuman performance in Go, Atari games, Starcraft, and in physics
-  simulations (e.g., using MuJoCo). See e.g.,
-  :cite:`Silver.Huang.Maddison.ea.2016` for a description
-  of how to achieve this in AlphaGo. In a nutshell,
-  reinforcement learning works best if plenty of (state, action, reward) triples are available, i.e., whenever it is possible to try out lots of things to learn how they relate to each
-  other. Simulation provides such an avenue.
-* Deep Learning frameworks have played a crucial role
-  in disseminating ideas. The first generation of frameworks
-  allowing for easy modeling encompassed
-  [Caffe](https://github.com/BVLC/caffe),
-  [Torch](https://github.com/torch), and
-  [Theano](https://github.com/Theano/Theano).
-  Many seminal papers were written using these tools.
-  By now, they have been superseded by
-  [TensorFlow](https://github.com/tensorflow/tensorflow),
-  often used via its high level API [Keras](https://github.com/keras-team/keras), [CNTK](https://github.com/Microsoft/CNTK), [Caffe 2](https://github.com/caffe2/caffe2), and [Apache MxNet](https://github.com/apache/incubator-mxnet). The third generation of tools, namely imperative tools for deep learning,
-  was arguably spearheaded by [Chainer](https://github.com/chainer/chainer),
-  which used a syntax similar to Python NumPy to describe models.
-  This idea was adopted by both [PyTorch](https://github.com/pytorch/pytorch),
-  the [Gluon API](https://github.com/apache/incubator-mxnet) of MXNet, and [Jax](https://github.com/google/jax).
-  It is the latter group that this course uses to teach deep learning.
+* Bırakma (dropout) gibi kapasite kontrolüne yönelik yeni yöntemler :cite:`Srivastava.Hinton.Krizhevsky.ea.2014`, aşırı öğrenme tehlikesini azaltmaya yardımcı oldu.
+  Bu, ağ boyunca gürültü zerk edilerek (enjeksiyon) sağlandı, :cite:`Bishop.1995`, eğitim amaçlı ağırlıkları rastgele değişkenlerle değiştirdi.
+* Dikkat mekanizmaları, yüzyılı aşkın bir süredir istatistikleri rahatsız eden ikinci bir sorunu çözdü: Öğrenilebilir parametre sayısını artırmadan bir sistemin belleğini ve karmaşıklığını nasıl artırabiliriz. :cite:`Bahdanau.Cho.Bengio.2014` sadece öğrenilebilir bir işaretçi yapısı olarak görülebilecek zarif bir çözüm buldu.
+  Bir cümlenin tamamını hatırlamak yerine, örneğin, sabit boyutlu bir gösterimdeki makine çevirisi için, depolanması gereken tek şey, çeviri işleminin ara durumunu gösteren bir işaretçiydi. Bu, modelin artık yeni bir cümle oluşturulmadan önce tüm cümleyi hatırlaması gerekmediğinden, uzun cümleler için önemli ölçüde artırılmış doğruluğa izin verdi.
+* Çok aşamalı tasarımlar, örneğin, Bellek Ağları (MemNets) aracılığıyla :cite:`Sukhbaatar.Weston.Fergus.ea.2015` ve Sinir Programcısı-Tercüman (Neural Programmer-Interpreter) :cite:`Reed.De-Freitas.2015`  istatistiksel modelcilerin yinelemeli yaklaşımlar ile akıl yürütme tanımlamasına izin verdi. Bu araçlar, derin ağın dahili bir durumunun tekrar tekrar değiştirilmesine izin verir; bir işlemcinin bir hesaplama için belleği değiştirmesine benzer şekilde, böylece bir akıl yürütme zincirinde sonraki adımlar gerçekleştirilebilir.
+* Bir başka önemli gelişme de (GAN) ÜÇA'ların icadıdır :cite:`Goodfellow.Pouget-Abadie.Mirza.ea.2014`. Geleneksel olarak, yoğunluk tahmini için istatistiksel yöntemler ve üretici modeller, uygun olasılık dağılımlarını ve bunlardan örnekleme için (genellikle yaklaşık) algoritmaları bulmaya odaklanmıştır. Sonuç olarak, bu algoritmalar büyük ölçüde istatistiksel modellerin doğasında var olan esneklik eksikliği ile sınırlıydı. ÜÇA'lardaki en önemli yenilik, örnekleyiciyi türevlenebilir parametrelere sahip rastgele bir algoritma ile değiştirmekti. Bunlar daha sonra, ayırıcın (aslen ikili-örneklem testi) sahte verileri gerçek verilerden ayırt edemeyeceği şekilde ayarlanır. Veri üretmek için rasgele algoritmalar kullanma yeteneği sayesinde yoğunluk tahminini çok çeşitli tekniklere açmıştır. Dörtnala Zebralar :cite:`Zhu.Park.Isola.ea.2017` ve sahte ünlü yüzler :cite:`Karras.Aila.Laine.ea.2017` örnekleri bu ilerlemenin kanıtıdır. Amatör karalamacılar bile, bir sahnenin düzeninin nasıl göründüğünü açıklayan eskizlere dayanan fotogerçekçi görüntüler üretebilir :cite:`Park.Liu.Wang.ea.2019`.
+* Çoğu durumda, tek bir GPU eğitim için mevcut olan büyük miktarda veriyi işlemek için yetersizdir. Son on yılda, paralel dağıtılmış eğitim algoritmaları oluşturma yeteneği önemli ölçüde gelişmiştir. Ölçeklenebilir algoritmaların tasarlanmasındaki temel zorluklardan biri, derin öğrenme optimizasyonunun ana öğesinin, rassal eğim inişinin, işlenecek verilerin nispeten küçük mini-grup'larına (minibatch) dayanmasıdır. Aynı zamanda, küçük gruplar GPU'ların verimliliğini sınırlar. Bu nedenle, 1024 GPU'nun eğitimindeki mini-grup büyüklüğü, örneğin toplu iş başına 32 resim diyelim, toplam 32 bin resim anlamına gelir. Son çalışmalarda, önce Li :cite:`Li.2017` ve ardından :cite:`You.Gitman.Ginsburg.2017` ve :cite:`Jia.Song.He.ea.2018` boyutu 64 bin gözleme yükselterek, ImageNet'teki ResNet50 için eğitim süresini 7 dakikadan daha az bir sürede azalttılar. Karşılaştırma için - başlangıçta eğitim süreleri günlere göre ölçülmüştü.
+* Hesaplamayı paralel hale getirme yeteneği, en azından simülasyon (benzetim) bir seçenek olduğunda, pekiştirmeli öğrenmedeki ilerlemeye oldukça önemli bir katkıda bulunmuştur. Bu önemli ilerlemelerle Go, Atari oyunları, Starcraft ve fizik simülasyonlarında (örn. MuJoCo kullanarak) insanüstü performans elde eden bilgisayarlara yol açtı. AlphaGo'da bunun nasıl yapılacağına ilişkin açıklama için bakınız :cite:`Silver.Huang.Maddison.ea.2016`. Özetle, pek çok (durum, eylem, ödül) üçlük mevcutsa, yani birbirleriyle nasıl ilişkilendiklerini öğrenmek için birçok şeyi denemek mümkün olduğunda pekiştirmeli öğrenme en iyi sonucu verir. Benzetim böyle bir yol sağlar.
+* Derin Öğrenme çerçeveleri fikirlerin yayılmasında önemli bir rol oynamıştır. Kapsamlı modellemeyi kolaylaştıran ilk nesil çerçeveler: [Caffe](https://github.com/BVLC/caffe), [Torch](https://github.com/torch) ve [Theano](https: / /github.com/Theano/Theano). Bu araçlar kullanılarak birçok yeni ufuklar açan makale yazılmıştır. Şimdiye kadar yerlerini [TensorFlow](https://github.com/tensorflow/tensorflow) ve onu da genellikle yüksek düzey API aracılığıyla kullanan [Keras](https://github.com/keras-team/keras), [CNTK](https://github.com/Microsoft/CNTK), [Caffe 2](https://github.com/caffe2/caffe2) ve [Apache MxNet](https://github.com/ apache'nin / inkübatör-mxnet) aldı. Üçüncü nesil araçlara, yani derin öğrenme için zorunlu araçlar, modelleri tanımlamak için Python NumPy'ye benzer bir sözdizimi kullanan [Chainer](https://github.com/chainer/chainer) öncülük etti. Bu fikir hem [PyTorch](https://github.com/pytorch/pytorch), hem [Gluon API](https://github.com/apache/incubator-mxnet) MXNet ve [Jax](https://github.com/google/jax) tarafından benimsenmiştir. Bu derste derin öğrenmeyi öğretmek için kullanılan ikinci gruptur.
 
-The division of labor between systems researchers building better tools
-and statistical modelers building better networks
-has greatly simplified things. For instance,
-training a linear logistic regression model
-used to be a nontrivial homework problem,
-worthy to give to new machine learning
-PhD students at Carnegie Mellon University in 2014.
-By now, this task can be accomplished with less than 10 lines of code,
-putting it firmly into the grasp of programmers.
+Daha iyi araçlar üreten sistem araştırmacıları ve daha iyi ağlar inşa eden istatistiksel modelciler arasındaki işbölümü, işleri basitleştirdi. Örneğin, doğrusal bir lojistik regresyon modelinin eğitilmesi, 2014 yılında Carnegie Mellon Üniversitesi'nde yeni makine öğrenmesi doktora öğrencilerine bir ödev problemi vermeğe değer bariz olmayan bir problemdi. Şimdilerde, sıkı bir programcı kavrayışını içine katarak, bu görev 10'dan az kod satırı ile gerçekleştirilebilir.
 
-## Success Stories
+## Başarı Öyküleri
 
-Artificial Intelligence has a long history of delivering results
-that would be difficult to accomplish otherwise.
-For instance, mail is sorted using optical character recognition.
-These systems have been deployed since the 90s
-(this is, after all, the source of the famous MNIST and USPS sets of handwritten digits).
-The same applies to reading checks for bank deposits and scoring
-creditworthiness of applicants.
-Financial transactions are checked for fraud automatically.
-This forms the backbone of many e-commerce payment systems,
-such as PayPal, Stripe, AliPay, WeChat, Apple, Visa, MasterCard.
-Computer programs for chess have been competitive for decades.
-Machine learning feeds search, recommendation, personalization
-and ranking on the Internet. In other words, artificial intelligence
-and machine learning are pervasive, albeit often hidden from sight.
+Yapay Zeka, aksi takdirde başarılması zor olacak, sonuçları dağıtmak için uzun bir geçmişe sahiptir.
+Örneğin, postalar optik karakter tanıma kullanılarak sıralanır.
+Bu sistemler 90'lardan beri kullanılmaktadır (bu, sonuçta, ünlü MNIST ve USPS el yazısı rakam kümelerinin kaynağıdır).
+Aynı şey banka mevduatları için çek okuma ve başvuru sahiplerinin kredi değerliliğini puanlanma için de geçerlidir.
+Finansal işlemler otomatik olarak sahtekarlığa karşı kontrol edilir.
+Bu, PayPal, Stripe, AliPay, WeChat, Apple, Visa, MasterCard gibi birçok e-ticaret ödeme sisteminin bel kemiğini oluşturur.
+Bilgisayar satranç programları onlarca yıldır rekabetçidir.
+Makine öğrenimi, internette arama, öneri, kişiselleştirme ve sıralamayı besler. Başka bir deyişle, yapay zeka ve makine öğrenmesi, çoğu zaman gözden gizli olsa da, yaygındır.
 
-It is only recently that AI has been in the limelight, mostly due to
-solutions to problems that were considered intractable previously.
+Sadece son zamanlarda YZ, çoğunlukla daha önce zorlu olarak kabul edilen sorunlara çözümlerinden dolayı ilgi odağı olmuştur.
 
-* Intelligent assistants, such as Apple's Siri, Amazon's Alexa, or Google's
-  assistant are able to answer spoken questions with a reasonable degree of
-  accuracy. This includes menial tasks such as turning on light switches (a boon to the disabled) up to making barber's appointments and offering phone support dialog. This is likely the most noticeable sign that AI is affecting our lives.
-* A key ingredient in digital assistants is the ability to recognize speech
-  accurately. Gradually the accuracy of such systems has increased to the point
-  where they reach human parity :cite:`Xiong.Wu.Alleva.ea.2018` for certain
-  applications.
-* Object recognition likewise has come a long way. Estimating the object in a
-  picture was a fairly challenging task in 2010. On the ImageNet benchmark
-  :cite:`Lin.Lv.Zhu.ea.2010` achieved a top-5 error rate of 28%. By 2017,
-  :cite:`Hu.Shen.Sun.2018` reduced this error rate to 2.25%. Similarly, stunning
-  results have been achieved for identifying birds, or diagnosing skin cancer.
-* Games used to be a bastion of human intelligence.
-  Starting from TDGammon [23], a program for playing Backgammon
-  using temporal difference (TD) reinforcement learning,
-  algorithmic and computational progress has led to algorithms
-  for a wide range of applications. Unlike Backgammon,
-  chess has a much more complex state space and set of actions.
-  DeepBlue beat Garry Kasparov, Campbell et al.
-  :cite:`Campbell.Hoane-Jr.Hsu.2002`, using massive parallelism,
-  special purpose hardware and efficient search through the game tree.
-  Go is more difficult still, due to its huge state space.
-  AlphaGo reached human parity in 2015, :cite:`Silver.Huang.Maddison.ea.2016` using Deep Learning combined with Monte Carlo tree sampling.
-  The challenge in Poker was that the state space is
-  large and it is not fully observed (we do not know the opponents'
-  cards). Libratus exceeded human performance in Poker using efficiently
-  structured strategies :cite:`Brown.Sandholm.2017`.
-  This illustrates the impressive progress in games
-  and the fact that advanced algorithms played a crucial part in them.
-* Another indication of progress in AI is the advent of self-driving cars
-  and trucks. While full autonomy is not quite within reach yet,
-  excellent progress has been made in this direction,
-  with companies such as Tesla, NVIDIA,
-  and Waymo shipping products that enable at least partial autonomy.
-  What makes full autonomy so challenging is that proper driving
-  requires the ability to perceive, to reason and to incorporate rules
-  into a system. At present, deep learning is used primarily
-  in the computer vision aspect of these problems.
-  The rest is heavily tuned by engineers.
+* Apple'ın Siri, Amazon'un Alexa veya Google asistanı gibi akıllı asistanlar sözlü soruları makul bir doğrulukla cevaplayabilir. Bu, ışık anahtarlarını (devre dışı bırakılan bir nimet) açmadan, berber randevuları ayarlamaya ve telefon destek iletişim diyalogu sunmaya kadar önemli görevleri içerir. Bu muhtemelen YZ'nın hayatlarımızı etkilediğinin en belirgin işaretidir.
+* Dijital asistanların önemli bir bileşeni, konuşmayı doğru bir şekilde tanıma yeteneğidir. Yavaş yavaş bu tür sistemlerin doğruluğu, belirli uygulamalar için insan paritesine ulaştığı noktaya kadar artmıştır :cite:`Xiong.Wu.Alleva.ea.2018`.
+* Nesne tanıma da aynı şekilde uzun bir yol kat etti. Bir resimdeki nesneyi tahmin etmek 2010 yılında oldukça zor bir işti. ImageNet karşılaştırmalı değerlendirmesinde :cite:`Lin.Lv.Zhu.ea.2010` %28'lik bir ilk 5 hata oranına ulaştı. 2017 itibariyle :cite:`Hu.Shen.Sun.2018` bu hata oranını %2.25'e düşürdü. Benzer şekilde, kuşları tanımlamada veya cilt kanserini teşhis etmede çarpıcı sonuçlar elde edilmiştir.
+* Oyunlar eskiden insan zekasının kalesi idi. TDGammon'dan [23] başlayarak, Tavla oynamak için zamansal fark (ZF) pekiştirmeli öğrenme kullanan bir program, algoritmik ve hesaplamalı ilerleme, çok çeşitli uygulamalar için algoritmalara yol açmıştır. Tavla'nın aksine, satranç çok daha karmaşık bir durum uzayına ve bir dizi eyleme sahiptir. DeepBlue, Garry Kasparov'u, Campbell ve ark. :cite:`Campbell.Hoane-Jr.Hsu.2002`, büyük paralellik, özel amaçlı donanım ve oyun ağacında verimli arama kullanarak yendi. Büyük durum uzayı nedeniyle Go hala daha zor. AlphaGo, 2015 yılında insan paritesine ulaştı :cite:`Silver.Huang.Maddison.ea.2016`, derin öğrenmeyi Monte Carlo ağaç örneklemesi ile birlikte kullandı. Poker'deki zorluk, durum uzayının geniş olması ve tam olarak gözlenmemesidir (rakiplerin kartlarını bilmiyoruz). Libratus, etkin bir şekilde yapılandırılmış stratejiler kullanarak Poker'deki insan performansını aştı :cite:`Brown.Sandholm.2017`. Bu, oyunlardaki etkileyici ilerlemeyi ve gelişmiş algoritmaların oyunlarda önemli bir rol oynadığını göstermektedir.
+* Yapay zekadaki ilerlemenin bir başka göstergesi, kendi kendine giden otomobil ve kamyonların ortaya çıkışıdır. Tam özerklik henüz tam olarak ulaşılamamasına rağmen, Tesla, NVIDIA ve Waymo nakliye ürünleri gibi şirketlerle en azından kısmi özerkliğe olanak tanıyan mükemmel bir ilerleme kaydedildi. Tam özerkliği bu kadar zorlaştıran şey, uygun sürüşün, kuralları algılama, akıl yürütme ve kuralları bir sisteme dahil etme yeteneğini gerektirmesidir. Günümüzde, derin öğrenme bu sorunların öncelikle bilgisayarlı görme alanında kullanılmaktadır. Geri kalanlar mühendisler tarafından yoğun bir şekilde ince ayarlanmıştır.
 
-Again, the above list barely scratches the surface of where machine learning has impacted practical applications. For instance, robotics, logistics, computational biology, particle physics, and astronomy owe some of their most impressive recent advances at least in parts to machine learning. ML is thus becoming a ubiquitous tool for engineers and scientists.
+Yine, yukarıdaki liste, makine öğreniminin pratik uygulamaları etkilediği yüzeylere çok az ışık tutmaktadır. Örneğin, robotik, lojistik, hesaplamalı biyoloji, parçacık fiziği ve astronomi, en etkileyici son gelişmelerinden bazılarını en azından kısmen makine öğrenimine borçludur. MÖ böylece mühendisler ve bilim insanları için her yerde mevcut bir araç haline geliyor.
 
-Frequently, the question of the AI apocalypse, or the AI singularity
-has been raised in non-technical articles on AI.
-The fear is that somehow machine learning systems
-will become sentient and decide independently from their programmers
-(and masters) about things that directly affect the livelihood of humans.
-To some extent, AI already affects the livelihood of humans
-in an immediate way---creditworthiness is assessed automatically,
-autopilots mostly navigate vehicles, decisions about
-whether to grant bail use statistical data as input.
-More frivolously, we can ask Alexa to switch on the coffee machine.
+YZ ile ilgili teknik olmayan makalelerde, YZ kıyameti veya YZ tekilliği sorunu sıkça gündeme gelmiştir.
+Korku, bir şekilde makine öğrenme sistemlerinin, insanların geçimini doğrudan etkileyen şeyler hakkında programcılarından (ve ustalarından) bağımsız bir şekilde  duyarlı (akıllı) olacağına ve karar vereceğinedir.
+Bir dereceye kadar, YZ zaten insanların geçimini şimdiden etkiliyor - kredibilite otomatik olarak değerlendiriliyor, otomatik pilotlar çoğunlukla taşıtları yönlendiriyor, kefalet vermeye istatistiksel veri kullanarak karar veriyor.
+Daha anlamsızcası, Alexa'dan kahve makinesini açmasını isteyebiliriz.
 
-Fortunately, we are far from a sentient AI system
-that is ready to manipulate its human creators (or burn their coffee).
-First, AI systems are engineered, trained and deployed in a specific,
-goal-oriented manner. While their behavior might give the illusion
-of general intelligence, it is a combination of rules, heuristics
-and statistical models that underlie the design.
-Second, at present tools for *artificial general intelligence*
-simply do not exist that are able to improve themselves,
-reason about themselves, and that are able to modify,
-extend and improve their own architecture
-while trying to solve general tasks.
+Neyse ki, insan yaratıcılarını manipüle etmeye (veya kahvelerini yakmaya) hazır, duyarlı bir YZ sisteminden çok uzaktayız. İlk olarak, YZ sistemleri belirli, hedefe yönelik bir şekilde tasarlanır, eğitilir ve devreye alınır. Davranışları genel zeka yanılsamasını verebilse de, tasarımın altında yatan kuralların, sezgisel ve istatistiksel modellerin birleşimleridirler.
+İkincisi, şu anda, *yapay genel zeka* için, kendilerini geliştirebilen, kendileriyle ilgili akıl yürüten ve genel görevleri çözmeye çalışırken kendi mimarilerini değiştirebilen, genişletebilen ve geliştirebilen araçlar yoktur.
 
-A much more pressing concern is how AI is being used in our daily lives.
-It is likely that many menial tasks fulfilled by truck drivers
-and shop assistants can and will be automated.
-Farm robots will likely reduce the cost for organic farming
-but they will also automate harvesting operations.
-This phase of the industrial revolution
-may have profound consequences on large swaths of society
-(truck drivers and shop assistants are some
-of the most common jobs in many states).
-Furthermore, statistical models, when applied without care
-can lead to racial, gender or age bias and raise
-reasonable concerns about procedural fairness
-if automated to drive consequential decisions.
-It is important to ensure that these algorithms are used with care.
-With what we know today, this strikes us a much more pressing concern
-than the potential of malevolent superintelligence to destroy humanity.
+Çok daha acil bir endişe YZ'nın günlük yaşamımızda nasıl kullanıldığıdır.
+Kamyon şoförleri ve mağaza asistanları tarafından yerine getirilen birçok önemli görevin otomatikleştirilebileceği ve otomatikleştirileceği muhtemeldir.
+Çiftlik robotları büyük olasılıkla organik tarım maliyetini düşürecek, ayrıca hasat işlemlerini de otomatikleştirecek.
+Sanayi devriminin bu aşamasının toplumun büyük kesimlerinde derin sonuçları olabilir (kamyon şoförleri ve mağaza asistanları birçok ülkedeki en yaygın işlerden ikisi).
+Ayrıca, istatistiksel modeller, dikkatsizce uygulandığında ırksal, cinsiyet veya yaş yanlılığına yol açabilir ve sonuç kararları otomatik hale getirildiklerinde usul adaleti konusunda makul endişeler doğurabilir.
+Bu algoritmaların dikkatle kullanılmasını sağlamak önemlidir.
+Bugün bildiklerimizle, bu bize, kötü niyetli bir süper zekanın insanlığı yok etme potansiyelinden çok daha acil bir endişe gibi getiriyor.
 
-## Summary
+## Özet
 
-* Machine learning studies how computer systems can leverage *experience* (often data) to improve performance at specific tasks. It combines ideas from statistics, data mining, artificial intelligence, and optimization. Often, it is used as a means of implementing artificially-intelligent solutions.
-* As a class of machine learning, representational learning focuses on how to automatically find the appropriate way to represent data. This is often accomplished by a progression of learned transformations.
-* Much of the recent progress in deep learning has been triggered by an abundance of data arising from cheap sensors and Internet-scale applications, and by significant progress in computation, mostly through GPUs.
-* Whole system optimization is a key component in obtaining good performance. The availability of efficient deep learning frameworks has made design and implementation of this significantly easier.
+* Makine öğrenmesi, belirli görevlerde performansı artırmak için bilgisayar sistemlerinin *deneyiminden* (genellikle veri) nasıl yararlanabileceğini inceler. İstatistik, veri madenciliği, yapay zeka ve optimizasyon fikirlerini birleştirir. Genellikle, yapay olarak zeki çözümlerinin uygulanmasında bir araç olarak kullanılır.
+* Bir makine öğrenmesi sınıfı olarak, temsili öğrenme, verileri temsil etmek için uygun yolu otomatik olarak nasıl bulacağınıza odaklanır. Bu genellikle öğrenilen dönüşümlerin ilerlemesi ile gerçekleştirilir.
+* Derin öğrenmedeki son ilerlemenin çoğu, ucuz sensörler ve İnternet ölçekli uygulamalardan kaynaklanan çok sayıda veri ve çoğunlukla GPU'lar aracılığıyla hesaplamadaki önemli ilerleme ile tetiklenmiştir.
+* Tüm sistem optimizasyonu, iyi performans elde etmede önemli bir ana bileşendir. Etkili derin öğrenme çerçevelerinin mevcudiyeti, bunun tasarımını ve uygulamasını önemli ölçüde kolaylaştırmıştır.
 
-## Exercises
+## Alıştırmalar
 
-1. Which parts of code that you are currently writing could be "learned", i.e., improved by learning and automatically determining design choices that are made in your code? Does your code include heuristic design choices?
-1. Which problems that you encounter have many examples for how to solve them, yet no specific way to automate them? These may be prime candidates for using deep learning.
-1. Viewing the development of artificial intelligence as a new industrial revolution, what is the relationship between algorithms and data? Is it similar to steam engines and coal (what is the fundamental difference)?
-1. Where else can you apply the end-to-end training approach? Physics? Engineering? Econometrics?
+1. Şu anda yazdığınız kodun hangi bölümleri "öğrenilebilir", yani kodunuzda yapılan tasarım seçimleri öğrenilerek ve otomatik olarak belirlenerek geliştirilebilir? Kodunuzda sezgisel (heuristic) tasarım seçenekleri var mı?
+1. Hangi karşılaştığınız sorunlarda nasıl çözüleceğine dair birçok örnek var, ancak bunları otomatikleştirmenin belirli bir yolu yok? Bunlar derin öğrenmeyi kullanmaya aday olabilirler.
+1. Yapay zekanın gelişimini yeni bir sanayi devrimi olarak görürsek algoritmalar ve veriler arasındaki ilişki nedir? Buhar motorlarına ve kömüre benzer mi (temel fark nedir)?
+1. Uçtan uca eğitim yaklaşımını başka nerede uygulayabilirsiniz? Fizik? Mühendislik? Ekonometri?
 
-[Discussions](https://discuss.d2l.ai/t/22)
+[Tartışmalar](https://discuss.d2l.ai/t/22)
