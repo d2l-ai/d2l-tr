@@ -141,7 +141,7 @@ torch.zeros(2, 3, 4)
 tf.zeros((2, 3, 4))
 ```
 
-Similarly, we can create tensors with each element set to 1 as follows:
+Benzer şekilde, her bir eleman 1'e ayarlanmış şekilde tensörler oluşturabiliriz:
 
 ```{.python .input}
 np.ones((2, 3, 4))
@@ -157,10 +157,10 @@ torch.ones((2, 3, 4))
 tf.ones((2, 3, 4))
 ```
 
-Often, we want to randomly sample the values for each element in a tensor from some probability distribution.
-For example, when we construct arrays to serve as parameters in a neural network, we will typically initialize their values randomly.
-The following snippet creates a tensor with shape (3, 4).
-Each of its elements is randomly sampled from a standard Gaussian (normal) distribution with a mean of 0 and a standard deviation of 1.
+Genellikle, bir tensördeki her eleman için değerleri bir olasılık dağılımından rastgele örneklemek isteriz.
+Örneğin, bir sinir ağında parametre görevi görecek dizileri oluşturduğumuzda, değerlerini genellikle rastgele başlatırız.
+Aşağıdaki kod parçası (3, 4) şekilli bir tensör oluşturur .
+Elemanlarının her biri ortalaması 0 ve standart sapması 1 olan standart Gauss (normal) dağılımından rastgele örneklenir.
 
 ```{.python .input}
 np.random.normal(0, 1, size=(3, 4))
@@ -176,8 +176,8 @@ torch.randn(3, 4)
 tf.random.normal(shape=[3, 4])
 ```
 
-We can also specify the exact values for each element in the desired tensor by supplying a Python list (or list of lists) containing the numerical values.
-Here, the outermost list corresponds to axis 0, and the inner list to axis 1.
+Sayısal değerleri içeren bir Python listesi (veya liste listesi) sağlayarak istenen tensördeki her eleman için kesin değerleri de belirleyebiliriz.
+Burada, en dıştaki liste 0. eksene, içteki liste ise 1. eksene karşılık gelir.
 
 ```{.python .input}
 np.array([[2, 1, 4, 3], [1, 2, 3, 4], [4, 3, 2, 1]])
@@ -193,25 +193,25 @@ torch.tensor([[2, 1, 4, 3], [1, 2, 3, 4], [4, 3, 2, 1]])
 tf.constant([[2, 1, 4, 3], [1, 2, 3, 4], [4, 3, 2, 1]])
 ```
 
-## Operations
+## İşlemler
 
-This book is not about software engineering.
-Our interests are not limited to simply reading and writing data from/to arrays.
-We want to perform mathematical operations on those arrays.
-Some of the simplest and most useful operations are the *elementwise* operations.
-These apply a standard scalar operation to each element of an array.
-For functions that take two arrays as inputs, elementwise operations apply some standard binary operator on each pair of corresponding elements from the two arrays.
-We can create an elementwise function from any function that maps from a scalar to a scalar.
+Bu kitap yazılım mühendisliği ile ilgili değildir.
+İlgi alanlarımız basitçe dizilerden/dizilere veri okumak ve yazmakla sınırlı değildir.
+Bu diziler üzerinde matematiksel işlemler yapmak istiyoruz.
+En basit ve en kullanışlı işlemlerden bazıları *eleman-yönlü (elementwise)* işlemlerdir.
+Bunlar bir dizinin her elemanına standart bir sayıl (skaler) operasyon uygular.
+İki diziyi girdi olarak alan işlevler için, eleman-yönlü işlemler iki diziden karşılık gelen her bir elaman çiftine standart bir ikili operatör uygular.
+Sayıldan sayıla (skalerden skalere) eşleşen herhangi bir fonksiyondan eleman-yönlü bir fonksiyon oluşturabiliriz.
 
-In mathematical notation, we would denote such a *unary* scalar operator (taking one input) by the signature $f: \mathbb{R} \rightarrow \mathbb{R}$.
-This just means that the function is mapping from any real number ($\mathbb{R}$) onto another.
-Likewise, we denote a *binary* scalar operator (taking two real inputs, and yielding one output) by the signature $f: \mathbb{R}, \mathbb{R} \rightarrow \mathbb{R}$.
-Given any two vectors $\mathbf{u}$ and $\mathbf{v}$ *of the same shape*, and a binary operator $f$, we can produce a vector $\mathbf{c} = F(\mathbf{u},\mathbf{v})$ by setting $c_i \gets f(u_i, v_i)$ for all $i$, where $c_i, u_i$, and $v_i$ are the $i^\mathrm{th}$ elements of vectors $\mathbf{c}, \mathbf{u}$, and $\mathbf{v}$.
-Here, we produced the vector-valued $F: \mathbb{R}^d, \mathbb{R}^d \rightarrow \mathbb{R}^d$ by *lifting* the scalar function to an elementwise vector operation.
+Matematiksel gösterimde, böyle bir *tekli* skaler işlemi (bir girdi alarak) $f: \mathbb{R} \rightarrow \mathbb{R}$ imzasıyla ifade ederiz.
+Bu, işlevin herhangi bir gerçel sayıdan ($\mathbb{R}$) diğerine eşlendiği anlamına gelir.
+Benzer şekilde, $f: \mathbb{R}, \mathbb{R} \rightarrow \mathbb{R}$ imzası ile bir *ikili* skaler operatörü (iki gerçel girdi alarak ve bir çıktı verir) belirtiriz.
+*Aynı şekilli* iki  $\mathbf{u}$ ve $\mathbf{v}$ vektörü ve $f$ ikili operatörü verildiğinde, tüm $i$ler için $c_i \gets f(u_i, v_i)$ ayarlayarak $\mathbf{c} = F(\mathbf{u},\mathbf{v})$ vektörünü üretebiliriz; burada $c_i, u_i$ ve $v_i$, $\mathbf{c}, \mathbf{u} $ ve $\mathbf{v}$ vektörlerinin $i.$ elemanlarıdır.
+Burada, skaler fonksiyonu eleman-yönlü bir vektör işlemini *yükselterek* vektör değerli $F: \mathbb{R}^d, \mathbb{R}^d \rightarrow \mathbb{R}^d$ ürettik.
 
-The common standard arithmetic operators (`+`, `-`, `*`, `/`, and `**`) have all been *lifted* to elementwise operations for any identically-shaped tensors of arbitrary shape.
-We can call elementwise operations on any two tensors of the same shape.
-In the following example, we use commas to formulate a 5-element tuple, where each element is the result of an elementwise operation.
+Ortak standart aritmetik operatörler (`+`, `-`,` * `,`/` ve `**`), rastgele şekile sahip herhangi bir benzer şekilli tansörler için eleman-yönlü işlemlere *yükseltilmiştir*.
+Aynı şekle sahip herhangi iki tansör üzerinde eleman-yönlü işlemleri çağırabiliriz.
+Aşağıdaki örnekte, 5 öğeli bir grubu formüle etmek için virgül kullanıyoruz, her öğe eleman-yönlü bir işlemin sonucudur.
 
 ```{.python .input}
 x = np.array([1, 2, 4, 8])
@@ -233,7 +233,7 @@ y = tf.constant([2.0, 2, 2, 2])
 x + y, x - y, x * y, x / y, x ** y  # The ** operator is exponentiation
 ```
 
-Many more operations can be applied elementwise, including unary operators like exponentiation.
+Üs alma gibi tekli operatörler de dahil olmak üzere, çok daha fazla işlem eleman-yönlü olarak uygulanabilir.
 
 ```{.python .input}
 np.exp(x)
@@ -249,13 +249,13 @@ torch.exp(x)
 tf.exp(x)
 ```
 
-In addition to elementwise computations, we can also perform linear algebra operations, including vector dot products and matrix multiplication.
-We will explain the crucial bits of linear algebra (with no assumed prior knowledge) in :numref:`sec_linear-algebra`.
+Eleman-yönlü hesaplamalara ek olarak, vektör iç çarpımı ve matris çarpımı dahil olmak üzere doğrusal cebir işlemleri de gerçekleştirebiliriz.
+Doğrusal cebirin önemli parçalarını (varsayılmış hiçbir ön bilgi olmadan) şu şekilde açıklayacağız :numref:`sec_linear-algebra`.
 
-We can also *concatenate* multiple tensors together, stacking them end-to-end to form a larger tensor.
-We just need to provide a list of tensors and tell the system along which axis to concatenate.
-The example below shows what happens when we concatenate two matrices along rows (axis 0, the first element of the shape) vs. columns (axis 1, the second element of the shape).
-We can see that the first output tensor's axis-0 length ($6$) is the sum of the two input tensors' axis-0 lengths ($3 + 3$); while the second output tensor's axis-1 length ($8$) is the sum of the two input tensors' axis-1 lengths ($4 + 4$).
+Ayrıca birden fazla tensörü bir araya getirip daha büyük bir tensör oluşturmak için uçtan uca *istifleyebiliriz*.
+Sadece tensörlerin bir listesini vermeli ve sisteme hangi eksende birleştireceklerini söylemeliyiz.
+Aşağıdaki örnek, satırlar (eksen 0, şeklin ilk öğesi) ile sütunlar (eksen 1, şeklin ikinci öğesi) boyunca iki matrisi birleştirdiğimizde ne olacağını gösterir.
+İlk çıktı tensörünün eksen-0 uzunluğunun ($6$) iki girdi tensörünün eksen-0 uzunluklarının ($3 + 3$) toplamı olduğunu görebiliriz; ikinci çıktı tensörünün eksen-1 uzunluğu ($8$) iki girdi tensörünün eksen-1 uzunluklarının ($4 + 4$) toplamıdır.
 
 ```{.python .input}
 x = np.arange(12).reshape(3, 4)
@@ -277,16 +277,16 @@ y = tf.constant([[2.0, 1, 4, 3], [1, 2, 3, 4], [4, 3, 2, 1]])
 tf.concat([x, y], axis=0), tf.concat([x, y], axis=1)
 ```
 
-Sometimes, we want to construct a binary tensor via *logical statements*.
-Take `x == y` as an example.
-For each position, if `x` and `y` are equal at that position, the corresponding entry in the new tensor takes a value of 1, meaning that the logical statement `x == y` is true at that position; otherwise that position takes 0.
+Bazen, *mantıksal ifadeler* aracılığıyla bir ikili tensör oluşturmak isteriz.
+Örnek olarak `x == y`yi ele alalım.
+Her konum için, eğer `x` ve `y` bu konumda eşitse, yeni tensördeki karşılık gelen girdi 1 değerini alır, yani mantıksal ifade `x == y` o konumda doğrudur; aksi halde bu pozisyon 0 değerini alır.
 
 ```{.python .input}
 #@tab all
 x == y
 ```
 
-Summing all the elements in the tensor yields a tensor with only one element.
+Tensördeki tüm elemanların toplanması, sadece bir elemanlı bir tensör verir.
 
 ```{.python .input}
 #@tab mxnet, pytorch
@@ -298,15 +298,14 @@ x.sum()
 tf.reduce_sum(x)
 ```
 
-## Broadcasting Mechanism
+## Yayma Mekanizması
 :label:`subsec_broadcasting`
 
-In the above section, we saw how to perform elementwise operations on two tensors of the same shape. Under certain conditions, even when shapes differ, we can still perform elementwise operations by invoking the *broadcasting mechanism*.
-This mechanism works in the following way: First, expand one or both arrays by copying elements appropriately so that after this transformation, the two tensors have the same shape.
-Second, carry out the elementwise operations on the resulting arrays.
+Yukarıdaki bölümde, aynı şekle sahip iki tensör üzerinde eleman-yönlü işlemlerin nasıl yapıldığını gördük. Belli koşullar altında, şekiller farklı olsa bile, *yayma mekanizmasını* çağırarak yine de eleman-yönlü işlemler gerçekleştirebiliriz.
+Bu mekanizma şu şekilde çalışır: İlk olarak, bir veya her iki diziyi elemanları uygun şekilde kopyalayarak genişletin, böylece bu dönüşümden sonra iki tensör aynı şekle sahip olur.
+İkincisi, sonuç dizileri üzerinde eleman-yönlü işlemleri gerçekleştirin.
 
-In most cases, we broadcast along an axis where an array
-initially only has length 1, such as in the following example:
+Çoğu durumda, bir dizinin başlangıçta yalnızca 1 uzunluğuna sahip olduğu bir eksen boyunca yayın yaparız, aşağıdaki gibi:
 
 ```{.python .input}
 a = np.arange(3).reshape(3, 1)
@@ -328,28 +327,28 @@ b = tf.reshape(tf.range(2), (1, 2))
 a, b
 ```
 
-Since `a` and `b` are $3\times1$ and $1\times2$ matrices respectively, their shapes do not match up if we want to add them.
-We *broadcast* the entries of both matrices into a larger $3\times2$ matrix as follows: for matrix `a` it replicates the columns and for matrix `b` it replicates the rows before adding up both elementwise.
+`a` ve `b` sırasıyla $3\times1$ ve $1\times2$ matrisler olduğundan, onları toplamak istiyorsak şekilleri uyuşmaz.
+Her iki matrisin girdilerini aşağıdaki gibi daha büyük bir $3\times2$ matrisine *yayınlıyoruz*: Her ikisini de eleman-yönlü eklemeden önce `a` matrisi için sütunlar çoğaltılır ve `b` matrisi için satırlar çoğaltılır.
 
 ```{.python .input}
 #@tab all
 a + b
 ```
 
-## Indexing and Slicing
+## İndisleme ve Dilimleme
 
-Just as in any other Python array, elements in a tensor can be accessed by index.
-As in any Python array, the first element has index 0 and ranges are specified to include the first but *before* the last element.
-As in standard Python lists, we can access elements according to their relative position to the end of the list by using negative indices.
+Diğer tüm Python dizilerinde olduğu gibi, bir tensördeki öğelere indeksle erişilebilir.
+Herhangi bir Python dizisinde olduğu gibi, ilk öğenin dizini 0'dır ve aralıklar ilk öğeyi içerecek ancak son öğeden *öncesi* eklenecek şekilde belirtilir.
+Standart Python listelerinde olduğu gibi, öğelere, negatif endeksler kullanarak listenin sonuna göreceli konumlarına göre erişebiliriz.
 
-Thus, `[-1]` selects the last element and `[1:3]` selects the second and the third elements as follows:
+Böylece, `[-1]` son elemanı seçer ve `[1:3]` ikinci ve üçüncü elemanları aşağıdaki gibi seçer:
 
 ```{.python .input}
 #@tab all
 x[-1], x[1:3]
 ```
 
-Beyond reading, we can also write elements of a matrix by specifying indices.
+Okumanın ötesinde, indisleri belirterek bir matrisin elemanlarını da yazabiliriz.
 
 ```{.python .input}
 #@tab mxnet, pytorch
@@ -363,9 +362,9 @@ x = tf.convert_to_tensor(tf.Variable(x)[1, 2].assign(9))
 x
 ```
 
-If we want to assign multiple elements the same value, we simply index all of them and then assign them the value.
-For instance, `[0:2, :]` accesses the first and second rows, where `:` takes all the elements along axis 1 (column).
-While we discussed indexing for matrices, this obviously also works for vectors and for tensors of more than 2 dimensions.
+Birden fazla öğeye aynı değeri atamak istiyorsak, hepsini indisleriz ve sonra da değer atarız.
+Örneğin, `[0:2, :]` birinci ve ikinci satırlara erişir, burada `:` eksen 1 (sütun) boyunca tüm elemanları alır.
+Biz burada matrisler için indislemeyi tartışırken, anlatılanlar açıkça vektörler ve 2'den fazla boyuttaki tensörler için de geçerlidir.
 
 ```{.python .input}
 #@tab mxnet, pytorch
@@ -381,13 +380,13 @@ x = tf.convert_to_tensor(x_var)
 x
 ```
 
-## Saving Memory
+## Belleği Kaydetme
 
-Running operations can cause new memory to be allocated to host results.
-For example, if we write `y = x + y`, we will dereference the tensor that `y` used to point to and instead point `y` at the newly allocated memory.
-In the following example, we demonstrate this with Python's `id()` function, which gives us the exact address of the referenced object in memory.
-After running `y = y + x`, we will find that `id(y)` points to a different location.
-That is because Python first evaluates `y + x`, allocating new memory for the result and then makes `y` point to this new location in memory.
+Koşturma işlemleri, ana makine sonuçlarına yeni bellek ayrılmasına neden olabilir.
+Örneğin, `y = x + y` yazarsak, `y`yi göstermek için kullanılan tensörden vazgeçer ve bunun yerine yeni verilen bellekteki `y`yi işaret ederiz.
+Aşağıdaki örnekte, bunu, bize bellekteki referans edilen nesnenin tam adresini veren Python'un `id()` fonksiyonu ile gösteriyoruz.
+`y = y + x` komutunu çalıştırdıktan sonra, `id(y)` ifadesinin farklı bir yeri gösterdiğini göreceğiz.
+Bunun nedeni, Python'un önce sonuç için yeni bellek ayırarak `y + x` değerini hesaplayıp ardından `y`'yi bellekteki bu yeni konuma işaret etmesidir.
 
 ```{.python .input}
 #@tab all
@@ -396,16 +395,16 @@ y = y + x
 id(y) == before
 ```
 
-This might be undesirable for two reasons.
-First, we do not want to run around allocating memory unnecessarily all the time.
-In machine learning, we might have hundreds of megabytes of parameters and update all of them multiple times per second.
-Typically, we will want to perform these updates *in place*.
-Second, we might point at the same parameters from multiple variables.
-If we do not update in place, other references will still point to the old memory location, making it possible for parts of our code to inadvertently reference stale parameters.
+Bu iki nedenden dolayı istenmez olabilir.
+Birincisi, her zaman gereksiz yere bellek ayırmaya çalışmak istemiyoruz.
+Makine öğrenmesinde yüzlerce megabayt parametreye sahip olabilir ve hepsini saniyede birkaç kez güncelleyebiliriz.
+Genellikle, bu güncellemeleri *yerinde* yapmak isteyeceğiz.
+İkinci olarak, birden çok değişkenden aynı parametrelere işaret edebiliriz.
+Yerinde güncelleme yapmazsak, diğer referanslar hala eski bellek konumuna işaret eder ve bu da kodumuzun bazı bölümlerinin yanlışlıkla eski parametrelere başvurmasını olası kılar.
 
-Fortunately, performing in-place operations in MXNet is easy.
-We can assign the result of an operation to a previously allocated array with slice notation, e.g., `y[:] = <expression>`.
-To illustrate this concept, we first create a new matrix `z` with the same shape as another `y`, using `zeros_like` to allocate a block of $0$ entries.
+Neyse ki, MXNet'te yerinde işlemler yapmak kolaydır.
+Bir işlemin sonucunu daha önce ayrılmış bir diziye dilim gösterimi ile atayabiliriz, örneğin, `y[:] = <ifade>`.
+Bu kavramı göstermek için, önce başka bir `y` ile aynı şekle sahip yeni bir `z` matrisi yaratıyoruz ve bir blok $0$ girdisi tahsis etmek üzere `zeros_like`yi kullanıyoruz.
 
 ```{.python .input}
 z = np.zeros_like(y)
@@ -430,9 +429,7 @@ z[:].assign(x + y)
 print('id(z):', id(z))
 ```
 
-If the value of `x` is not reused in subsequent computations,
-we can also use `x[:] = x + y` or `x += y`
-to reduce the memory overhead of the operation.
+Sonraki hesaplamalarda `x` değeri yeniden kullanılmazsa, işlemin bellek yükünü azaltmak için `x[:] = x + y` veya `x += y` kullanabiliriz.
 
 ```{.python .input}
 #@tab mxnet, pytorch
@@ -448,11 +445,11 @@ tf.Variable(x).assign(x + y)
 id(x) == before
 ```
 
-## Conversion to Other Python Objects
+## Diğer Python Nesnelerine Dönüştürme
 
-Converting to a NumPy tensor, or vice versa, is easy.
-The converted result does not share memory.
-This minor inconvenience is actually quite important: when you perform operations on the CPU or on GPUs, you do not want to halt computation, waiting to see whether the NumPy package of Python might want to be doing something else with the same chunk of memory.
+NumPy tensörüne dönüştürmek veya tam tersi kolaydır.
+Dönüştürülen sonuç belleği paylaşmaz.
+Bu küçük sıkıntı aslında oldukça önemlidir: CPU veya GPU'larda işlem yaparken, Python'un NumPy paketinin aynı bellek yığınıyla başka bir şey yapmak isteyip istemediğini görmek için hesaplamayı durdurmak istemezsiniz.
 
 ```{.python .input}
 a = x.asnumpy()
@@ -474,7 +471,7 @@ b = tf.constant(a)
 type(a), type(b)
 ```
 
-To convert a size-1 tensor to a Python scalar, we can invoke the `item` function or Python's built-in functions.
+1-boyutlu tensörünü bir Python skalerine (sayılına) dönüştürmek için `item` işlevini veya Python'un yerleşik işlevlerini çağırabiliriz.
 
 ```{.python .input}
 a = np.array([3.5])
@@ -493,13 +490,13 @@ a = tf.constant([3.5]).numpy()
 a, a.item(), float(a), int(a)
 ```
 
-## The `d2l` Package
+## `d2l` Paketi
 
-Throughout the online version of this book, we will provide implementations of multiple frameworks.
-However, different frameworks may be different in their API names or usage.
-To better reuse the same code block across multiple frameworks, we unify a few commonly-used functions in the `d2l` package.
-The comment `#@save` is a special mark where the following function, class, or statements are saved in the `d2l` package.
-For instance, later we can directly invoke `d2l.numpy(a)` to convert a tensor `a`, which can be defined in any supported framework, into a NumPy tensor.
+Bu kitabın çevrimiçi sürümü boyunca, birden çok çerçevenin uygulanmasını sağlayacağız.
+Bununla birlikte, farklı çerçevelerin API adlarında veya kullanımlarında farklı olabilir.
+Aynı kod bloğunu birden çok çerçevede daha iyi kullanmak için, `d2l` paketinde yaygın olarak kullanılan birkaç işlevi birleştiriyoruz.
+`#@save` yorumu (comment), takip eden işlevin, sınıfın veya ifadelerin `d2l` paketine kaydedildiği özel bir işarettir.
+Örneğin, daha sonra, desteklenen herhangi bir çerçevede tanımlanabilen bir tensör `a`'yı bir NumPy tensörüne dönüştürmesi için doğrudan `d2l.numpy(a)`yi çağırabiliriz.
 
 ```{.python .input}
 #@save
@@ -530,28 +527,26 @@ ones = tf.ones
 zeros = tf.zeros
 ```
 
-In the rest of the book, we often define more complicated functions or classes.
-For those that can be used later, we will also save them in the `d2l` package so later they can be directly invoked without being redefined.
+Kitabın geri kalanında genellikle daha karmaşık fonksiyonlar veya sınıflar tanımlarız.
+Daha sonra kullanılabilecekleri `d2l` paketine kaydedeceğiz, böylece daha sonra yeniden tanımlanmadan doğrudan çağrılabilirler.
 
+## Özet
 
-## Summary
+* Derin öğrenme için veri depolamada ve oynama yapmada ana arayüz tensördür ($n$-boyutlu dizi). Temel matematik işlemleri, yayınlama, indeksleme, dilimleme, bellek tasarrufu ve diğer Python nesnelerine dönüştürme gibi çeşitli işlevler sağlar.
 
-* The main interface to store and manipulate data for deep learning is the tensor ($n$-dimensional array). It provides a variety of functionalities including basic mathematics operations, broadcasting, indexing, slicing, memory saving, and conversion to other Python objects.
+## Alıştırmalar
 
-
-## Exercises
-
-1. Run the code in this section. Change the conditional statement `x == y` in this section to `x < y` or `x > y`, and then see what kind of tensor you can get.
-1. Replace the two tensors that operate by element in the broadcasting mechanism with other shapes, e.g., 3-dimensional tensors. Is the result the same as expected?
+1. Bu bölümdeki kodu çalıştırın. Bu bölümdeki `x == y` koşullu ifadesini, `x < y` veya `x > y` olarak değiştirin ve sonra ne tür bir tensör alabileceğinizi görün.
+1. Yayın mekanizmasındaki öğeye göre çalışan iki tensörü, diğer şekillerle, örneğin 3 boyutlu tensörler ile değiştirin. Sonuç beklendiği gibi mi?
 
 :begin_tab:`mxnet`
-[Discussions](https://discuss.d2l.ai/t/26)
+[Tartışmalar](https://discuss.d2l.ai/t/26)
 :end_tab:
 
 :begin_tab:`pytorch`
-[Discussions](https://discuss.d2l.ai/t/27)
+[Tartışmalar](https://discuss.d2l.ai/t/27)
 :end_tab:
 
 :begin_tab:`tensorflow`
-[Discussions](https://discuss.d2l.ai/t/187)
+[Tartışmalar](https://discuss.d2l.ai/t/187)
 :end_tab:
