@@ -335,7 +335,7 @@ Her iki matrisin girdilerini aşağıdaki gibi daha büyük bir $3\times2$ matri
 a + b
 ```
 
-## İndisleme ve Dilimleme
+## İndeksleme ve Dilimleme
 
 Diğer tüm Python dizilerinde olduğu gibi, bir tensördeki öğelere indeksle erişilebilir.
 Herhangi bir Python dizisinde olduğu gibi, ilk öğenin dizini 0'dır ve aralıklar ilk öğeyi içerecek ancak son öğeden *öncesi* eklenecek şekilde belirtilir.
@@ -362,9 +362,9 @@ x = tf.convert_to_tensor(tf.Variable(x)[1, 2].assign(9))
 x
 ```
 
-Birden fazla öğeye aynı değeri atamak istiyorsak, hepsini indisleriz ve sonra da değer atarız.
+Birden fazla öğeye aynı değeri atamak istiyorsak, hepsini indeksleriz ve sonra da değer atarız.
 Örneğin, `[0:2, :]` birinci ve ikinci satırlara erişir, burada `:` eksen 1 (sütun) boyunca tüm elemanları alır.
-Biz burada matrisler için indislemeyi tartışırken, anlatılanlar açıkça vektörler ve 2'den fazla boyuttaki tensörler için de geçerlidir.
+Biz burada matrisler için indekslemeyi tartışırken, anlatılanlar açıkça vektörler ve 2'den fazla boyuttaki tensörler için de geçerlidir.
 
 ```{.python .input}
 #@tab mxnet, pytorch
