@@ -155,22 +155,21 @@ Açıklığa kavuşturmak için, bir *vektörün*  veya *ekseninin* boyutluluğu
 Bununla birlikte, bir tensörün boyutluluğunu, bir tensörün sahip olduğu eksen sayısını ifade etmek için kullanırız.
 Bu anlamda, bir tensörün bazı eksenlerinin boyutluluğu, bu eksenin uzunluğu olacaktır.
 
-## Matrices
+## Matrisler
 
-Just as vectors generalize scalars from order zero to order one, matrices generalize vectors from order one to order two.
-Matrices, which we will typically denote with bold-faced, capital letters (e.g., $\mathbf{X}$, $\mathbf{Y}$, and $\mathbf{Z}$), are represented in code as tensors with two axes.
+Vektörler, skalerleri sıfırdan birinci dereceye kadar genelleştirirken, matrisler de vektörleri birinci dereceden ikinci dereceye genelleştirir.
+Genellikle kalın, büyük harflerle (örn., $\mathbf{X}$, $\mathbf{Y}$, and $\mathbf{Z}$) göstereceğimiz matrisler, kodda iki eksenli tensörler olarak temsil edilir.
 
-In math notation, we use $\mathbf{A} \in \mathbb{R}^{m \times n}$ to express that the matrix $\mathbf{A}$ consists of $m$ rows and $n$ columns of real-valued scalars.
-Visually, we can illustrate any matrix $\mathbf{A} \in \mathbb{R}^{m \times n}$ as a table, where each element $a_{ij}$ belongs to the $i^{\mathrm{th}}$ row and $j^{\mathrm{th}}$ column:
+Matematiksel gösterimde, $\mathbf{A}$ matrisinin gerçel değerli skaler $m$ satır ve $n$ sütundan oluştuğunu ifade etmek için $\mathbf{A} \in \mathbb{R}^{m \times n}$i kullanırız .
+Görsel olarak, herhangi bir $\mathbf{A} \in \mathbb{R}^{m \times n}$ matrisini $a_{ij}$ öğesinin $i.$ satıra ve $j.$ sütuna ait olduğu tablo olarak gösterebiliriz  :
 
 $$\mathbf{A}=\begin{bmatrix} a_{11} & a_{12} & \cdots & a_{1n} \\ a_{21} & a_{22} & \cdots & a_{2n} \\ \vdots & \vdots & \ddots & \vdots \\ a_{m1} & a_{m2} & \cdots & a_{mn} \\ \end{bmatrix}.$$
 :eqlabel:`eq_matrix_def`
 
+Herhangi bir $\mathbf{A} \in \mathbb{R}^{m \times n} için, $\mathbf{A}$ ($m$, $n$) veya $m \times n$ şeklindedir.
+Özellikle, bir matris aynı sayıda satır ve sütuna sahip olduğunda, şekli bir kareye dönüşür; dolayısıyla buna *kare matris* denir.
 
-For any $\mathbf{A} \in \mathbb{R}^{m \times n}$, the shape of $\mathbf{A}$ is ($m$, $n$) or $m \times n$.
-Specifically, when a matrix has the same number of rows and columns, its shape becomes a square; thus, it is called a *square matrix*.
-
-We can create an $m \times n$ matrix by specifying a shape with two components $m$ and $n$ when calling any of our favorite functions for instantiating a tensor.
+Bir tensörü örneklerken, en sevdiğimiz işlevlerden herhangi birini çağırıp $m$ ve $n$ iki bileşeninden oluşan bir şekil belirterek $m \times n$ matrisi oluşturabiliriz.
 
 ```{.python .input}
 A = np.arange(20).reshape(5, 4)
@@ -189,15 +188,15 @@ A = tf.reshape(tf.range(20), (5, 4))
 A
 ```
 
-We can access the scalar element $a_{ij}$ of a matrix $\mathbf{A}$ in :eqref:`eq_matrix_def` by specifying the indices for the row ($i$) and column ($j$), such as $[\mathbf{A}]_{ij}$.
-When the scalar elements of a matrix $\mathbf{A}$, such as in :eqref:`eq_matrix_def`, are not given, we may simply use the lower-case letter of the matrix $\mathbf{A}$ with the index subscript, $a_{ij}$, to refer to $[\mathbf{A}]_{ij}$.
-To keep notation simple, commas are inserted to separate indices only when necessary, such as $a_{2, 3j}$ and $[\mathbf{A}]_{2i-1, 3}$.
+Satır ($i$) ve sütun ($j$) indekslerini belirterek $\mathbf{A}$ matrisinin $a_{ij}$ skaler öğesine erişebiliriz, $[\mathbf{A}]_{ij}$ gibi.
+Bir $\mathbf{A}$ matrisinin skaler elemanları verilmediğinde, örneğin :eqref:`eq_matrix_def` gibi, basitçe $\mathbf{A}$ matrisinin küçük harfli altindislisi $a_{ij}$yi kullanarak $[\mathbf{A}]_{ij}$'ye atıfta bulunuruz.
+Gösterimi basit tutarken indeksleri ayırmak için virgüller yalnızca gerekli olduğunda eklenir, örneğin $a_{2, 3j}$ ve $[\mathbf{A}]_{2i-1, 3}$ gibi.
 
 
-Sometimes, we want to flip the axes.
-When we exchange a matrix's rows and columns, the result is called the *transpose* of the matrix.
-Formally, we signify a matrix $\mathbf{A}$'s transpose by $\mathbf{A}^\top$ and if $\mathbf{B} = \mathbf{A}^\top$, then $b_{ij} = a_{ji}$ for any $i$ and $j$.
-Thus, the transpose of $\mathbf{A}$ in :eqref:`eq_matrix_def` is a $n \times m$ matrix:
+Bazen eksenleri ters çevirmek isteriz.
+Bir matrisin satırlarını ve sütunlarını değiştirdiğimizde çıkan sonuç matrisine *devrik (transpose)* adı verilir.
+Usul olarak, bir $\mathbf{A}$'nin devriğini $\mathbf{A}^\top$ ile gösteririz ve eğer $\mathbf{B} = \mathbf{A}^\top$ ise herhangi bir $i$ and $j$ için $b_{ij} = a_{ji}$'dir.
+Bu nedenle, :eqref:`eq_matrix_def`deki $\mathbf{A}$'in devriği bir $n\times m$ matristir:
 
 $$
 \mathbf{A}^\top =
@@ -209,7 +208,7 @@ $$
 \end{bmatrix}.
 $$
 
-Now we access a matrix's transpose in code.
+Şimdi kodda bir matrisin devriğine erişiyoruz.
 
 ```{.python .input}
 A.T
@@ -225,8 +224,8 @@ A.T
 tf.transpose(A)
 ```
 
-As a special type of the square matrix, a *symmetric matrix* $\mathbf{A}$ is equal to its transpose: $\mathbf{A} = \mathbf{A}^\top$.
-Here we define a symmetric matrix `B`.
+Kare matrisin özel bir türü olarak, bir *simetrik matris* $\mathbf{A}$, devriğine eşittir: $\mathbf{A} = \mathbf{A}^\top$.
+Burada simetrik bir matrisi `B` diye tanımlıyoruz.
 
 ```{.python .input}
 B = np.array([[1, 2, 3], [2, 0, 4], [3, 4, 5]])
@@ -245,7 +244,7 @@ B = tf.constant([[1, 2, 3], [2, 0, 4], [3, 4, 5]])
 B
 ```
 
-Now we compare `B` with its transpose.
+Şimdi `B`yi kendi devriğiyle karşılaştıralım.
 
 ```{.python .input}
 B == B.T
@@ -261,21 +260,21 @@ B == B.T
 B == tf.transpose(B)
 ```
 
-Matrices are useful data structures:
-they allow us to organize data that have different modalities of variation.
-For example, rows in our matrix might correspond to different houses (data instances or data points), while columns might correspond to different attributes.
-This should sound familiar if you have ever used spreadsheet software or have read :numref:`sec_pandas`.
-Thus, although the default orientation of a single vector is a column vector, in a matrix that represents a tabular dataset, it is more conventional to treat each data instance as a row vector in the matrix.
-And, as we will see in later chapters, this convention will enable common deep learning practices.
-For example, along the outermost axis of a tensor, we can access or enumerate minibatches of data instances, or just data instances if no minibatch exists.
+Matrisler yararlı veri yapılarıdır: farklı değişim (varyasyon) kiplerine (modalite) sahip verileri düzenlememize izin verirler.
+Örneğin, matrisimizdeki satırlar farklı evlere (veri örneklerine veya veri noktalarına) karşılık gelirken, sütunlar farklı özniteliklere karşılık gelebilir.
+Daha önce elektronik tablo yazılımı kullandıysanız veya şunu okuduysanız :numref:`sec_pandas`, bu size tanıdık gelecektir .
+Bu nedenle, tek bir vektörün varsayılan yönü bir sütun vektörü olmasına rağmen, bir tablo veri kümesini temsil eden bir matriste, her veri örneğini matristeki bir satır vektörü olarak ele almak daha gelenekseldir.
+Ve sonraki bölümlerde göreceğimiz gibi, bu düzen ortak derin öğrenme tatbikatlarını mümkün kılacaktır.
+Örneğin, bir tensörün en dış ekseni boyunca, veri örneklerinin mini-grup'larına veya  mini-grup yoksa yalnızca veri örneklerine erişebilir veya bir bir sayabiliriz.
 
+## Tensörler (Gereyler)
 
-## Tensors
+Vektörlerin skalerleri genellemesi ve matrislerin vektörleri genellemesi gibi, daha fazla eksenli veri yapıları oluşturabiliriz.
+Tensörler (bu alt bölümdeki "tensörler" cebirsel nesnelere atıfta bulunur) bize rastgele sayıda ekseni olan $n$-boyutlu dizileri tanımlamanın genel bir yolunu verir. Vektörler, örneğin, birinci dereceden tensörlerdir ve matrisler ikinci dereceden tensörlerdir.
+Tensörler, özel bir yazı tipinin büyük harfleriyle (ör. $\mathsf{X}$, $\mathsf{Y}$ ve $\mathsf{Z}$) ve indeksleme mekanizmalarıyla (ör. $X_{ijk}$ ve $[\mathsf{X}]_{1, 2i-1, 3}$), matrislerinkine benzer gösterilir.
 
-Just as vectors generalize scalars, and matrices generalize vectors, we can build data structures with even more axes. Tensors ("tensors" in this subsection refer to algebraic objects) give us a generic way of describing $n$-dimensional arrays with an arbitrary number of axes. Vectors, for example, are first-order tensors, and matrices are second-order tensors.
-Tensors are denoted with capital letters of a special font face (e.g., $\mathsf{X}$, $\mathsf{Y}$, and $\mathsf{Z}$) and their indexing mechanism (e.g., $x_{ijk}$ and $[\mathsf{X}]_{1, 2i-1, 3}$) is similar to that of matrices.
-
-Tensors will become more important when we start working with images, which arrive as $n$-dimensional arrays with 3 axes corresponding to the height, width, and a *channel* axis for stacking the color channels (red, green, and blue). For now, we will skip over higher order tensors and focus on the basics.
+Renk kanallarını (kırmızı, yeşil ve mavi) istiflemek için yükseklik, genişlik ve bir *kanal* eksenine karşılık gelen 3 eksene sahip $n$-boyutlu dizi olarak gelen imgelerle çalışmaya başladığımızda tensörler daha önemli hale gelecektir.
+Şimdilik, daha yüksek dereceli tensörleri atlayacağız ve temellere odaklanacağız.
 
 ```{.python .input}
 X = np.arange(24).reshape(2, 3, 4)
