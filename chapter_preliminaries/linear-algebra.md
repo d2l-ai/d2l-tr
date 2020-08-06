@@ -293,12 +293,12 @@ X = tf.reshape(tf.range(24), (2, 3, 4))
 X
 ```
 
-## Basic Properties of Tensor Arithmetic
+## Tensör Aritmetiğinin Temel Özellikleri
 
-Scalars, vectors, matrices, and tensors ("tensors" in this subsection refer to algebraic objects) of an arbitrary number of axes have some nice properties that often come in handy.
-For example, you might have noticed from the definition of an elementwise operation that any elementwise unary operation does not change the shape of its operand.
-Similarly, given any two tensors with the same shape, the result of any binary elementwise operation will be a tensor of that same shape.
-For example, adding two matrices of the same shape performs elementwise addition over these two matrices.
+Skalerler, vektörler, matrisler ve rasgele sayıda eksenli tensörler (bu alt bölümdeki "tensörler" cebirsel nesnelere atıfta bulunur), çoğu zaman kullanışlı olan bazı güzel özelliklere sahiptir.
+Örneğin, bir eleman-yönlü işlemin tanımından, herhangi bir eleman-yönlü tekli işlemin işlenen nesnenin şeklini değiştirmediğini fark etmiş olabilirsiniz.
+Benzer şekilde, aynı şekle sahip herhangi bir iki tensör göz önüne alındığında, herhangi bir ikili elemanlı işlemin sonucu, gene aynı şekle sahip bir tensör olacaktır.
+Örneğin, aynı şekle sahip iki matris toplama, bu iki matrisin üzerinde eleman-yönlü toplama gerçekleştirir.
 
 ```{.python .input}
 A = np.arange(20).reshape(5, 4)
@@ -320,8 +320,8 @@ B = A  # No cloning of `A` to `B` by allocating new memory
 A, A + B
 ```
 
-Specifically, elementwise multiplication of two matrices is called their *Hadamard product* (math notation $\odot$).
-Consider matrix $\mathbf{B} \in \mathbb{R}^{m \times n}$ whose element of row $i$ and column $j$ is $b_{ij}$. The Hadamard product of matrices $\mathbf{A}$ (defined in :eqref:`eq_matrix_def`) and $\mathbf{B}$
+Özellikle, iki matrisin eleman-yönlü çarpımına *Hadamard çarpımı* (matematik gösterimi $\odot$) denir.
+$i.$ satır ve $j.$ sütununun öğesi $b_{ij} $ olan $\mathbf{B} \in \matrix{R}^{m\times n}$ matrisini düşünün. $\mathbf{A}$ (:eqref:`eq_matrix_def`da tanımlanmıştır) ve $\mathbf{B}$ matrislerinin Hadamard çarpımı:
 
 $$
 \mathbf{A} \odot \mathbf{B} =
@@ -347,7 +347,7 @@ A * B
 A * B
 ```
 
-Multiplying or adding a tensor by a scalar also does not change the shape of the tensor, where each element of the operand tensor will be added or multiplied by the scalar.
+Bir tensörün skaler ile çarpılması veya toplanması, işlenen tensörün her elemanını skaler ile toplayacağından veya çarpacağından tensörün şeklini de değiştirmez.
 
 ```{.python .input}
 a = 2
@@ -369,13 +369,13 @@ X = tf.reshape(tf.range(24), (2, 3, 4))
 a + X, (a * X).shape
 ```
 
-## Reduction
+## İndirgeme
 :label:`subseq_lin-alg-reduction`
 
-One useful operation that we can perform with arbitrary tensors is to calculate the sum of their elements.
-In mathematical notation, we express sums using the $\sum$ symbol.
-To express the sum of the elements in a vector $\mathbf{x}$ of length $d$, we write $\sum_{i=1}^d x_i$.
-In code, we can just call the function for calculating the sum.
+Keyfi tensörlerle gerçekleştirebileceğimiz faydalı işlemlerden biri elemanlarının toplamını hesaplamaktır.
+Matematiksel gösterimde, $\sum$ sembolünü kullanarak toplamları ifade ederiz.
+$d$ uzunluğa sahip $\mathbf{x}$ vektöründeki öğelerin toplamını ifade etmek için $\sum_{i=1}^d x_i $ yazarız.
+Kodda, toplamı hesaplamak için sadece ilgili işlevi çağırabiliriz.
 
 ```{.python .input}
 x = np.arange(4)
@@ -394,8 +394,8 @@ x = tf.range(4, dtype=tf.float32)
 x, tf.reduce_sum(x)
 ```
 
-We can express sums over the elements of tensors of arbitrary shape.
-For example, the sum of the elements of an $m \times n$ matrix $\mathbf{A}$ could be written $\sum_{i=1}^{m} \sum_{j=1}^{n} a_{ij}$.
+Rasgele şekilli tensörlerin elamanları üzerindeki toplamları ifade edebiliriz.
+Örneğin, $m\times n$ matris $\mathbf{A}$ öğelerinin toplamı $\sum_{i=1}^{m} \sum_{j=1}^{n} a_{ij}$ diye yazılabilir.
 
 ```{.python .input}
 A.shape, A.sum()
@@ -411,11 +411,11 @@ A.shape, A.sum()
 A.shape, tf.reduce_sum(A)
 ```
 
-By default, invoking the function for calculating the sum *reduces* a tensor along all its axes to a scalar.
-We can also specify the axes along which the tensor is reduced via summation.
-Take matrices as an example.
-To reduce the row dimension (axis 0) by summing up elements of all the rows, we specify `axis=0` when invoking the function.
-Since the input matrix reduces along axis 0 to generate the output vector, the dimension of axis 0 of the input is lost in the output shape.
+Varsayılan olarak, toplamı hesaplama işlevini çağırmak, tüm eksenleri boyunca bir tensörü skalere *indirger*.
+Toplama yoluyla tensörün indirgendiği eksenleri de belirtebiliriz.
+Örnek olarak matrisleri alın.
+Tüm satırların öğelerini toplayarak satır boyutunu (eksen 0, axis 0) indirgemek için, işlevi çağırırken `axis=0` değerini belirtiriz.
+Girdi matrisi, çıktı vektörü oluşturmak için eksen 0 boyunca indirgendiğinden, girdinin eksen 0 boyutu, çıktının şeklinde kaybolur.
 
 ```{.python .input}
 A_sum_axis0 = A.sum(axis=0)
@@ -434,8 +434,8 @@ A_sum_axis0 = tf.reduce_sum(A, axis=0)
 A_sum_axis0, A_sum_axis0.shape
 ```
 
-Specifying `axis=1` will reduce the column dimension (axis 1) by summing up elements of all the columns.
-Thus, the dimension of axis 1 of the input is lost in the output shape.
+`axis=1` olarak belirtmek, tüm sütunların öğelerini toplayarak sütun boyutunu (eksen 1) azaltacaktır.
+Böylece, girdinin eksen 1 boyutu, çıktının şeklinde kaybolur.
 
 ```{.python .input}
 A_sum_axis1 = A.sum(axis=1)
@@ -454,7 +454,7 @@ A_sum_axis1 = tf.reduce_sum(A, axis=1)
 A_sum_axis1, A_sum_axis1.shape
 ```
 
-Reducing a matrix along both rows and columns via summation is equivalent to summing up all the elements of the matrix.
+Bir matrisin toplama yoluyla hem satırlar hem de sütunlar boyunca indirgenmesi, matrisin tüm öğelerinin toplanmasıyla eşdeğerdir.
 
 ```{.python .input}
 A.sum(axis=[0, 1])  # Same as `A.sum()`
@@ -470,9 +470,9 @@ A.sum(axis=[0, 1])  # Same as `A.sum()`
 tf.reduce_sum(A, axis=[0, 1])  # Same as `tf.reduce_sum(A)`
 ```
 
-A related quantity is the *mean*, which is also called the *average*.
-We calculate the mean by dividing the sum by the total number of elements.
-In code, we could just call the function for calculating the mean on tensors of arbitrary shape.
+İlgili bir miktar da *ortalama*dır.
+Ortalamayı, toplamı toplam eleman sayısına bölerek hesaplıyoruz.
+Kod olarak, keyfi şekildeki tensörlerdeki ortalamanın hesaplanmasında ilgili işlevi çağırabiliriz.
 
 ```{.python .input}
 A.mean(), A.sum() / A.size
@@ -488,7 +488,7 @@ A.mean(), A.sum() / A.numel()
 tf.reduce_mean(A), tf.reduce_sum(A) / tf.size(A).numpy()
 ```
 
-Likewise, the function for calculating the mean can also reduce a tensor along the specified axes.
+Benzer şekilde, ortalama hesaplanma fonksiyonu, belirtilen eksenler boyunca bir tensörü de indirgeyebilir.
 
 ```{.python .input}
 A.mean(axis=0), A.sum(axis=0) / A.shape[0]
@@ -504,10 +504,10 @@ A.mean(axis=0), A.sum(axis=0) / A.shape[0]
 tf.reduce_mean(A, axis=0), tf.reduce_sum(A, axis=0) / A.shape[0]
 ```
 
-### Non-Reduction Sum
+### İndirgemesiz Toplama
 :label:`subseq_lin-alg-non-reduction`
 
-However, sometimes it can be useful to keep the number of axes unchanged when invoking the function for calculating the sum or mean.
+Gene de, bazen toplamı veya ortalamayı hesaplamak için işlevi çağırırken eksen sayısını değiştirmeden tutmak yararlı olabilir.
 
 ```{.python .input}
 sum_A = A.sum(axis=1, keepdims=True)
@@ -526,7 +526,7 @@ sum_A = tf.reduce_sum(A, axis=1, keepdims=True)
 sum_A
 ```
 
-For instance, since `sum_A` still keeps its two axes after summing each row, we can divide `A` by `sum_A` with broadcasting.
+Örneğin, `sum_A` her satırı topladıktan sonra hala iki eksenini koruduğundan,`A`yı yayınlayarak `sum_A` ile bölebiliriz.
 
 ```{.python .input}
 A / sum_A
@@ -542,7 +542,7 @@ A / sum_A
 A / sum_A
 ```
 
-If we want to calculate the cumulative sum of elements of `A` along some axis, say `axis=0` (row by row), we can call the `cumsum` function. This function will not reduce the input tensor along any axis.
+Bir eksen boyunca `A`nın öğelerinin biriktirilmiş (kümülatif) toplamını hesaplamak istiyorsak, `axis=0` diyelim (satır satır),`cumsum` işlevini çağırabiliriz. Bu işlev girdi tensörünü herhangi bir eksen boyunca indirgemez.
 
 ```{.python .input}
 A.cumsum(axis=0)
@@ -558,9 +558,9 @@ A.cumsum(axis=0)
 tf.cumsum(A, axis=0)
 ```
 
-## Dot Products
+## Nokta (İç) Çarpımlar
 
-So far, we have only performed elementwise operations, sums, and averages. And if this was all we could do, linear algebra probably would not deserve its own section. However, one of the most fundamental operations is the dot product. Given two vectors $\mathbf{x}, \mathbf{y} \in \mathbb{R}^d$, their *dot product* $\mathbf{x}^\top \mathbf{y}$ (or $\langle \mathbf{x}, \mathbf{y}  \rangle$) is a sum over the products of the elements at the same position: $\mathbf{x}^\top \mathbf{y} = \sum_{i=1}^{d} x_i y_i$.
+Şimdiye kadar sadece eleman-yönlü işlemler, toplamalar ve ortalamalar gerçekleştirdik. Ve tüm yapabileceğimiz bu olsaydı, doğrusal cebir muhtemelen kendi bölümünü hak etmeyecekti. Bununla birlikte, en temel işlemlerden biri iç çarpımdır. İki vektör $\mathbf{x}, \mathbf{y} \in \mathbb{R}^d$ verildiğinde, *iç çarpımları* $\mathbf{x}^\top \mathbf{y}$ (veya $\langle \mathbf{x}, \mathbf{y}  \rangle$), aynı konumdaki öğelerin çarpımlarının toplamıdır: $\mathbf{x}^\top \mathbf{y} = \sum_{i=1}^{d} x_i y_i$.
 
 ```{.python .input}
 y = np.ones(4)
@@ -579,7 +579,7 @@ y = tf.ones(4, dtype=tf.float32)
 x, y, tf.tensordot(x, y, axes=1)
 ```
 
-Note that we can express the dot product of two vectors equivalently by performing an elementwise multiplication and then a sum:
+İki vektörün nokta çarpımlarını, eleman-yönlü bir çarpma ve ardından bir toplam gerçekleştirerek eşit şekilde ifade edebileceğimizi unutmayın:
 
 ```{.python .input}
 np.sum(x * y)
@@ -595,19 +595,17 @@ torch.sum(x * y)
 tf.reduce_sum(x * y)
 ```
 
-Dot products are useful in a wide range of contexts.
-For example, given some set of values, denoted by a vector $\mathbf{x}  \in \mathbb{R}^d$ and a set of weights denoted by $\mathbf{w} \in \mathbb{R}^d$, the weighted sum of the values in $\mathbf{x}$ according to the weights $\mathbf{w}$
-could be expressed as the dot product $\mathbf{x}^\top \mathbf{w}$.
-When the weights are non-negative and sum to one (i.e., $\left(\sum_{i=1}^{d} {w_i} = 1\right)$), the dot product expresses a *weighted average*.
-After normalizing two vectors to have the unit length, the dot products express the cosine of the angle between them.
-We will formally introduce this notion of *length* later in this section.
+Nokta çarpımları çok çeşitli bağlamlarda kullanışlıdır.
+Örneğin, $\mathbf{x}  \in \mathbb{R}^d$ vektörü ve $\mathbf{w} \in \mathbb{R}^d$ ile belirtilen bir ağırlık kümesi verildiğinde, $\mathbf{x}$ içindeki değerlerin $\mathbf{w}$ ağırlıklarına göre ağırlıklı toplamı $\mathbf{x}^\top \mathbf{w}$ nokta çarpımı olarak ifade edilebilir .
+Ağırlıklar negatif olmadığında ve bire (i.e., $\left(\sum_{i=1}^{d} {w_i} = 1\right)$) toplandığında, nokta çarpımı *ağırlıklı ortalama*yı ifade eder.
+İki vektörü birim uzunluğa sahip olacak şekilde normalleştirdikten sonra, nokta ürünler aralarındaki açının kosinüsünü ifade eder.
+*Uzunluk* kavramını bu bölümün ilerleyen kısımlarında usüle uygun tanıtacağız.
 
+## Matris-Vektör Çarpımları
 
-## Matrix-Vector Products
-
-Now that we know how to calculate dot products, we can begin to understand *matrix-vector products*.
-Recall the matrix $\mathbf{A} \in \mathbb{R}^{m \times n}$ and the vector $\mathbf{x} \in \mathbb{R}^n$ defined and visualized in :eqref:`eq_matrix_def` and :eqref:`eq_vec_def` respectively.
-Let us start off by visualizing the matrix $\mathbf{A}$ in terms of its row vectors
+Artık nokta çarpımlarını nasıl hesaplayacağımızı bildiğimize göre, *matris-vektör çarpımları* anlamaya başlayabiliriz.
+$\mathbf{A} \in \mathbb{R}^{m \times n}$ matrisini ve $\mathbf{x} \in \mathbb{R}^n$ vektörünü sırasıyla tanımladık ve görselleştirdik :eqref: `eq_matrix_def` ve :eqref:`eq_vec_def` .
+$\mathbf{A}$ matrisini satır vektörleriyle görselleştirerek başlayalım.
 
 $$\mathbf{A}=
 \begin{bmatrix}
@@ -617,8 +615,8 @@ $$\mathbf{A}=
 \mathbf{a}^\top_m \\
 \end{bmatrix},$$
 
-where each $\mathbf{a}^\top_{i} \in \mathbb{R}^n$ is a row vector representing the $i^\mathrm{th}$ row of the matrix $\mathbf{A}$.
-The matrix-vector product $\mathbf{A}\mathbf{x}$ is simply a column vector of length $m$, whose $i^\mathrm{th}$ element is the dot product $\mathbf{a}^\top_i \mathbf{x}$:
+burada her $\mathbf{a}^\top_{i} \in \mathbb{R}^n$, $\mathbf{A}$ matrisinin $i .$ satırını temsil eden bir satır vektörüdür.
+Matris-vektör çarpımı $\mathbf{A}\mathbf{x}$, basitçe $i.$ elemanı $\mathbf{a}^\top_i \mathbf{x}$ iç çarpımı olan $m$ uzunluğunda bir sütun vektörüdür.
 
 $$
 \mathbf{A}\mathbf{x}
@@ -636,14 +634,14 @@ $$
 \end{bmatrix}.
 $$
 
-We can think of multiplication by a matrix $\mathbf{A}\in \mathbb{R}^{m \times n}$ as a transformation that projects vectors from $\mathbb{R}^{n}$ to $\mathbb{R}^{m}$.
-These transformations turn out to be remarkably useful.
-For example, we can represent rotations as multiplications by a square matrix.
-As we will see in subsequent chapters, we can also use matrix-vector products to describe the most intensive calculations required when computing each layer in a neural network given the values of the previous layer.
+$\mathbf{A}\in \mathbb{R}^{m \times n}$ matrisi ile çarpmayı vektörleri $\mathbb{R}^{n}$'den $\mathbb{R}^{m} $'e yansıtan bir dönüşüm olarak düşünebiliriz 
+Bu dönüşümler oldukça faydalı oldu.
+Örneğin, döndürmeleri bir kare matrisle çarpma olarak gösterebiliriz.
+Sonraki bölümlerde göreceğimiz gibi, bir önceki katmanın değerleri göz önüne alındığında, bir sinir ağındaki her bir katman hesaplanırken gereken en yoğun hesaplamaları tanımlamak için matris-vektör çarpımlarını da kullanabiliriz.
 
-Expressing matrix-vector products in code with tensors, we use the same `dot` function as for dot products.
-When we call `np.dot(A, x)` with a matrix `A` and a vector `x`, the matrix-vector product is performed.
-Note that the column dimension of `A` (its length along axis 1) must be the same as the dimension of `x` (its length).
+Matris-vektör çarpımlarını tensörlerle kodda ifade ederken, nokta çarpımlarındaki aynı `dot` işlevini kullanırız.
+`A` matrisi ve `x` vektörü ile `np.dot(A, x)` dediğimizde matris-vektör çarpımı gerçekleştirilir.
+`A` sütun boyutunun (eksen 1 boyunca uzunluğu) `x` boyutuyla (uzunluğu) aynı olması gerektiğini unutmayın.
 
 ```{.python .input}
 A.shape, x.shape, np.dot(A, x)
@@ -659,11 +657,11 @@ A.shape, x.shape, torch.mv(A, x)
 A.shape, x.shape, tf.linalg.matvec(A, x)
 ```
 
-## Matrix-Matrix Multiplication
+## Matris-Matris Çarpımı
 
-If you have gotten the hang of dot products and matrix-vector products, then *matrix-matrix multiplication* should be straightforward.
+Eğer nokta ve matris-vektör çarpımlarını anladıysanız, *matris-matris çarpımı* açık olmalıdır.
 
-Say that we have two matrices $\mathbf{A} \in \mathbb{R}^{n \times k}$ and $\mathbf{B} \in \mathbb{R}^{k \times m}$:
+$\mathbf{A} \in \mathbb{R}^{n \times k}$  ve $\mathbf{B} \in \mathbb{R}^{k \times m}$ diye iki matrisimizin olduğunu diyelim:
 
 $$\mathbf{A}=\begin{bmatrix}
  a_{11} & a_{12} & \cdots & a_{1k} \\
@@ -678,9 +676,8 @@ $$\mathbf{A}=\begin{bmatrix}
  b_{k1} & b_{k2} & \cdots & b_{km} \\
 \end{bmatrix}.$$
 
-
-Denote by $\mathbf{a}^\top_{i} \in \mathbb{R}^k$ the row vector representing the $i^\mathrm{th}$ row of the matrix $\mathbf{A}$, and let $\mathbf{b}_{j} \in \mathbb{R}^k$ be the column vector from the $j^\mathrm{th}$ column of the matrix $\mathbf{B}$.
-To produce the matrix product $\mathbf{C} = \mathbf{A}\mathbf{B}$, it is easiest to think of $\mathbf{A}$ in terms of its row vectors and $\mathbf{B}$ in terms of its column vectors:
+$\mathbf{A}$ matrisinin $i.$ satırını temsil eden satır vektörünü $\mathbf{a}^\top_{i}$ ile belirtelim ve $\mathbf{B}$ matrisinin $ j.$ sütunu da $\mathbf{b}_{j}$ olsun.
+$\mathbf{C} = \mathbf{A}\mathbf{B}$ matris çarpımını üretmek için $\mathbf{A}$'yı satır vektörleri ve $\mathbf{B}$'yi sütun vektörleri ile düşünmek en kolay yoldur:
 
 $$\mathbf{A}=
 \begin{bmatrix}
@@ -694,8 +691,7 @@ $$\mathbf{A}=
 \end{bmatrix}.
 $$
 
-
-Then the matrix product $\mathbf{C} \in \mathbb{R}^{n \times m}$ is produced as we simply compute each element $c_{ij}$ as the dot product $\mathbf{a}^\top_i \mathbf{b}_j$:
+Daha sonra, $\mathbf{C} \in \mathbb{R}^{n \times m}$ matris çarpımı her bir $c_ {ij}$ öğesi $\mathbf{a}^\top_i \mathbf{b}_j$ nokta çarpımı hesaplanarak üretilir:
 
 $$\mathbf{C} = \mathbf{AB} = \begin{bmatrix}
 \mathbf{a}^\top_{1} \\
@@ -714,10 +710,10 @@ $$\mathbf{C} = \mathbf{AB} = \begin{bmatrix}
 \end{bmatrix}.
 $$
 
-We can think of the matrix-matrix multiplication $\mathbf{AB}$ as simply performing $m$ matrix-vector products and stitching the results together to form an $n \times m$ matrix.
-In the following snippet, we perform matrix multiplication on `A` and `B`.
-Here, `A` is a matrix with 5 rows and 4 columns, and `B` is a matrix with 4 rows and 3 columns.
-After multiplication, we obtain a matrix with 5 rows and 3 columns.
+Matris-matris çarpımı $\mathbf{AB}$'yi sadece $m$ tane matris-vektör çarpımı gerçekleştirmek ve sonuçları $n\times m$ matrisi oluşturmak için birleştirmek olarak düşünebiliriz.
+Aşağıdaki kod parçasında, `A` ve `B` üzerinde matris çarpımı yapıyoruz.
+Burada `A`, 5 satır ve 4 sütunlu bir matristir ve` B` 4 satır ve 3 sütunlu bir matristir.
+Çarpma işleminden sonra 5 satır ve 3 sütun içeren bir matris elde ederiz.
 
 ```{.python .input}
 B = np.ones(shape=(4, 3))
@@ -736,44 +732,44 @@ B = tf.ones((4, 3), tf.float32)
 tf.matmul(A, B)
 ```
 
-Matrix-matrix multiplication can be simply called *matrix multiplication*, and should not be confused with the Hadamard product.
+Matris-matris çarpımı basitçe *matris çarpımı* olarak adlandırılabilir ve Hadamard çarpımı ile karıştırılmamalıdır.
 
 
-## Norms
+## Normlar (Büyüklükler)
 
-Some of the most useful operators in linear algebra are *norms*.
-Informally, the norm of a vector tells us how *big* a vector is.
-The notion of *size* under consideration here concerns not dimensionality but rather the magnitude of the components.
+Doğrusal cebirde en kullanışlı operatörlerden bazıları *normlardır*.
+Gayri resmi olarak, bir vektörün normu bize bir vektörün ne kadar *büyük* olduğunu söyler.
+Burada ele alınan *ebat* kavramı boyutsallık değil, bileşenlerin büyüklüğü ile ilgilidir.
 
-In linear algebra, a vector norm is a function $f$ that maps a vector to a scalar, satisfying a handful of properties.
-Given any vector $\mathbf{x}$, the first property says that if we scale all the elements of a vector by a constant factor $\alpha$, its norm also scales by the *absolute value* of the same constant factor:
+Doğrusal cebirde, bir vektör normu, bir vektörü bir skalere eşleştiren ve bir avuç dolusu özelliği karşılayan bir $f$ fonksiyonudur.
+Herhangi bir $\mathbf{x}$ vektörü verildiğinde, ilk özellik, bir vektörün tüm elemanlarını sabit bir $\alpha$ çarpanına göre ölçeklendirirsek, normunun da aynı sabit çarpanın *mutlak değerine* göre ölçeklendiğini söyler:
 
 $$f(\alpha \mathbf{x}) = |\alpha| f(\mathbf{x}).$$
 
 
-The second property is the familiar triangle inequality:
+İkinci özellik, tanıdık üçgen eşitsizliğidir:
 
 $$f(\mathbf{x} + \mathbf{y}) \leq f(\mathbf{x}) + f(\mathbf{y}).$$
 
 
-The third property simply says that the norm must be non-negative:
+Üçüncü özellik, normun negatif olmaması gerektiğini söyler:
 
 $$f(\mathbf{x}) \geq 0.$$
 
-That makes sense, as in most contexts the smallest *size* for anything is 0.
-The final property requires that the smallest norm is achieved and only achieved by a vector consisting of all zeros.
+Çoğu bağlamda herhangi bir şey için en küçük *ebat* 0 olduğu için bu mantıklıdır.
+Nihai özellik, en küçük normun sadece ve sadece tüm sıfırlardan oluşan bir vektör tarafından elde edilmesini gerektirir.
 
 $$\forall i, [\mathbf{x}]_i = 0 \Leftrightarrow f(\mathbf{x})=0.$$
 
-You might notice that norms sound a lot like measures of distance.
-And if you remember Euclidean distances (think Pythagoras' theorem) from grade school, then the concepts of non-negativity and the triangle inequality might ring a bell.
-In fact, the Euclidean distance is a norm: specifically it is the $\ell_2$ norm.
-Suppose that the elements in the $n$-dimensional vector $\mathbf{x}$ are $x_1, \ldots, x_n$.
-The $\ell_2$ *norm* of $\mathbf{x}$ is the square root of the sum of the squares of the vector elements:
+Normların mesafe ölçülerine çok benzediğini fark edebilirsiniz.
+Ayrıca eğer ilkokuldan Öklid mesafesini hatırlarsanız (Pisagor teoremini düşünün), o zaman negatif olmama ve üçgen eşitsizlik kavramları zihininizde bir zil çalabilir.
+Aslında Öklid mesafesi bir normdur: özellikle $\ell_2$ normudur.
+$n$ boyutlu vektör, $\mathbf{x}$, içindeki öğelerin $x_1,\ldots,x_n$ olduğunu varsayalım.
+$\mathbf{x}$'ın $\ell_2$ *normu*, vektör öğelerinin karelerinin toplamının kareköküdür:
 
 $$\|\mathbf{x}\|_2 = \sqrt{\sum_{i=1}^n x_i^2},$$
 
-where the subscript $2$ is often omitted in $\ell_2$ norms, i.e., $\|\mathbf{x}\|$ is equivalent to $\|\mathbf{x}\|_2$. In code, we can calculate the $\ell_2$ norm of a vector as follows.
+burada $2$ altindisi genellikle $\ell_2$ normlarında atlanır, yani, $\|\mathbf{x}\|$, $\|\mathbf{x}\|_2$ ile eşdeğerdir. Kodda, bir vektörün $\ell_2$ normunu aşağıdaki gibi hesaplayabiliriz.
 
 ```{.python .input}
 u = np.array([3, -4])
@@ -792,15 +788,13 @@ u = tf.constant([3.0, -4.0])
 tf.norm(u)
 ```
 
-In deep learning, we work more often
-with the squared $\ell_2$ norm.
-You will also frequently encounter the $\ell_1$ *norm*,
-which is expressed as the sum of the absolute values of the vector elements:
+Derin öğrenmede, kare $\ell_2$ normuyla daha sık çalışırız.
+Ayrıca, vektör öğelerinin mutlak değerlerinin toplamı olarak ifade edilen $\ell_1$ *normu* ile de sık karşılaşacaksınız:
 
 $$\|\mathbf{x}\|_1 = \sum_{i=1}^n \left|x_i \right|.$$
 
-As compared with the $\ell_2$ norm, it is less influenced by outliers.
-To calculate the $\ell_1$ norm, we compose the absolute value function with a sum over the elements.
+$\ell_2 $ normuna kıyasla, sıradışı (aykırı) değerlerden daha az etkilenir.
+$\ell_1 $ normunu hesaplamak için, elemanların toplamı üzerinde mutlak değer fonksiyonunu oluştururuz.
 
 ```{.python .input}
 np.abs(u).sum()
@@ -816,17 +810,17 @@ torch.abs(u).sum()
 tf.reduce_sum(tf.abs(u))
 ```
 
-Both the $\ell_2$ norm and the $\ell_1$ norm are special cases of the more general $\ell_p$ *norm*:
+Hem $\ell_2$ normu hem de $\ell_1$ normu, daha genel $\ell_p$ *normu*nun özel durumlarıdır:
 
 $$\|\mathbf{x}\|_p = \left(\sum_{i=1}^n \left|x_i \right|^p \right)^{1/p}.$$
 
-Analogous to $\ell_2$ norms of vectors, the *Frobenius norm* of a matrix $\mathbf{X} \in \mathbb{R}^{m \times n}$ is the square root of the sum of the squares of the matrix elements:
+$\ell_2$ vektör normlarına benzer bir şekilde, $\mathbf{X} \in \mathbb{R}^{m \times n}$ matrisinin *Frobenius normu*, matris elemanlarının karelerin toplamının kare köküdür:
 
 $$\|\mathbf{X}\|_F = \sqrt{\sum_{i=1}^m \sum_{j=1}^n x_{ij}^2}.$$
 
-The Frobenius norm satisfies all the properties of vector norms.
-It behaves as if it were an $\ell_2$ norm of a matrix-shaped vector.
-Invoking the following function will calculate the Frobenius norm of a matrix.
+Frobenius normu, vektör normlarının tüm özelliklerini karşılar.
+Matris şeklindeki bir vektörün bir $\ell_2$ normu gibi davranır.
+Aşağıdaki işlevi çağırmak, bir matrisin Frobenius normunu hesaplar.
 
 ```{.python .input}
 np.linalg.norm(np.ones((4, 9)))
@@ -842,61 +836,58 @@ torch.norm(torch.ones((4, 9)))
 tf.norm(tf.ones((4, 9)))
 ```
 
-### Norms and Objectives
+
+### Normlar ve Hedef (Amaç) Fonksiyonları
 :label:`subsec_norms_and_objectives`
 
-While we do not want to get too far ahead of ourselves, we can plant some intuition already about why these concepts are useful.
-In deep learning, we are often trying to solve optimization problems: *maximize* the probability assigned to observed data; *minimize* the distance between predictions and the ground-truth observations.
-Assign vector representations to items (like words, products, or news articles) such that the distance between similar items is minimized, and the distance between dissimilar items is maximized.
-Oftentimes, the objectives, perhaps the most important components of deep learning algorithms (besides the data), are expressed as norms.
+Kendimizi aşmak istemesek de, şimdiden bu kavramların neden faydalı olduğuna dair bazı sezgiler ekleyebiliriz.
+Derin öğrenmede, genellikle optimizasyon (eniyileme) sorunlarını çözmeye çalışıyoruz: Gözlenen verilere atanan olasılığı *en üst düzeye çıkar*; tahminler ve gerçek-doğru gözlemler arasındaki mesafeyi *en aza indir*.
+Benzer öğeler arasındaki mesafe en aza indirilecek ve benzer olmayan öğeler arasındaki mesafe en üst düzeye çıkarılacak şekilde öğelere (kelimeler, ürünler veya haber makaleleri gibi) vektör ifadeleri ata.
+Çoğu zaman, amaç fonksiyonları, ki belki de derin öğrenme algoritmalarının (verilerin yanı sıra) en önemli bileşenleridir, normlar cinsinden ifade edilir.
 
 
+## Doğrusal Cebir hakkında daha fazla bilgi
 
-## More on Linear Algebra
+Sadece bu bölümde, modern derin öğrenmenin dikkate değer bir bölümünü anlamak için ihtiyaç duyacağınız tüm doğrusal cebiri öğrettik.
+Doğrusal cebirde çok daha fazlası vardır ve daha fazla matematik makine öğrenmesi için yararlıdır.
+Örneğin, matrisler faktörlere ayrılabilir ve bu ayrışmalar gerçek dünya veri kümelerinde düşük boyutlu yapıları ortaya çıkarabilir.
+Veri kümelerindeki yapıyı keşfetmek ve tahmin problemlerini çözmek için matris ayrıştırmalarına ve onların yüksek dereceli tensörlere genellemelerini kullanmaya odaklanan koca makine öğrenmesi alt alanları vardır.
+Ancak bu kitap derin öğrenmeye odaklanmaktadır.
+Gerçek veri kümelerinde faydalı makine öğrenme modelleri uygulayarak ellerinizi kirlettikten sonra daha fazla matematik öğrenmeye çok daha meyilli olacağınıza inanıyoruz.
+Bu nedenle, daha sonra daha fazla matematik tanıtma hakkımızı saklı tutarken, bu bölümü burada toparlayacağız.
 
-In just this section, we have taught you all the linear algebra that you will need to understand a remarkable chunk of modern deep learning.
-There is a lot more to linear algebra and a lot of that mathematics is useful for machine learning.
-For example, matrices can be decomposed into factors, and these decompositions can reveal low-dimensional structure in real-world datasets.
-There are entire subfields of machine learning that focus on using matrix decompositions and their generalizations to high-order tensors to discover structure in datasets and solve prediction problems.
-But this book focuses on deep learning.
-And we believe you will be much more inclined to learn more mathematics once you have gotten your hands dirty deploying useful machine learning models on real datasets.
-So while we reserve the right to introduce more mathematics much later on, we will wrap up this section here.
-
-If you are eager to learn more about linear algebra, you may refer to either :numref:`sec_geometry-linear-algebraic-ops` or other excellent resources :cite:`Strang.1993,Kolter.2008,Petersen.Pedersen.ea.2008`.
-
+Doğrusal cebir hakkında daha fazla bilgi edinmek istiyorsanız, şunlardan birine başvurabilirsiniz :numref:`sec_geometry-linear-cebebraic-ops` veya diğer mükemmel kaynaklar :cite:`Strang.1993,Kolter.2008,Petersen.Pedersen.ea.2008`.
 
 
-## Summary
+## Özet
 
-* Scalars, vectors, matrices, and tensors are basic mathematical objects in linear algebra.
-* Vectors generalize scalars, and matrices generalize vectors.
-* Scalars, vectors, matrices, and tensors have zero, one, two, and an arbitrary number of axes, respectively.
-* A tensor can be reduced along the specified axes by `sum` and `mean`.
-* Elementwise multiplication of two matrices is called their Hadamard product. It is different from matrix multiplication.
-* In deep learning, we often work with norms such as the $\ell_1$ norm, the $\ell_2$ norm, and the Frobenius norm.
-* We can perform a variety of operations over scalars, vectors, matrices, and tensors.
+* Skalerler, vektörler, matrisler ve tensörler doğrusal cebirdeki temel matematiksel nesnelerdir.
+* Vektörler skaleri genelleştirir ve matrisler vektörleri genelleştirir.
+* Skalerler, vektörler, matrisler ve tensörler sırasıyla sıfır, bir, iki ve rastgele sayıda eksene sahiptir.
+* Bir tensör, belirtilen eksenler boyunca "toplam" ve "ortalama" ile indirgenebilir.
+* İki matrisin elementsel olarak çarpılmasına Hadamard çarpımı denir. Matris çarpımından farklıdır.
+* Derin öğrenmede, genellikle $\ell_1$ normu, $\ell_2$ normu ve Frobenius normu gibi normlarla çalışırız.
+* Skalerler, vektörler, matrisler ve tensörler üzerinde çeşitli işlemler gerçekleştirebiliriz.
 
-## Exercises
-
-1. Prove that the transpose of a matrix $\mathbf{A}$'s transpose is $\mathbf{A}$: $(\mathbf{A}^\top)^\top = \mathbf{A}$.
-1. Given two matrices $\mathbf{A}$ and $\mathbf{B}$, show that the sum of transposes is equal to the transpose of a sum: $\mathbf{A}^\top + \mathbf{B}^\top = (\mathbf{A} + \mathbf{B})^\top$.
-1. Given any square matrix $\mathbf{A}$, is $\mathbf{A} + \mathbf{A}^\top$ always symmetric? Why?
-1. We defined the tensor `X` of shape (2, 3, 4) in this section. What is the output of `len(X)`?
-1. For a tensor `X` of arbitrary shape, does `len(X)` always correspond to the length of a certain axis of `X`? What is that axis?
-1. Run `A / A.sum(axis=1)` and see what happens. Can you analyze the reason?
-1. When traveling between two points in Manhattan, what is the distance that you need to cover in terms of the coordinates, i.e., in terms of avenues and streets? Can you travel diagonally?
-1. Consider a tensor with shape (2, 3, 4). What are the shapes of the summation outputs along axis 0, 1, and 2?
-1. Feed a tensor with 3 or more axes to the `linalg.norm` function and observe its output. What does this function compute for tensors of arbitrary shape?
-
+## Alıştırmalar
+1. $\mathbf{A}$'nın devrik bir matrisinin devrik işleminin $\mathbf{A}$:$(\mathbf{A}^\top)^\top = \mathbf{A}$ olduğunu kanıtlayın.
+1. $\mathbf{A}$ ve $\mathbf{B}$ matrisleri verildiğinde, devriklerin toplamının bir toplamın devriğine eşit olduğunu gösterin: $\mathbf{A}^\top + \mathbf{B}^\top = (\mathbf{A} + \mathbf{B})^\top$.
+1. Herhangi bir kare matris $\mathbf{A}$ verildiğinde, $\mathbf{A} + \mathbf{A}^\top$ her zaman simetrik midir? Neden?
+1. Bu bölümde (2, 3, 4) şeklinde `X` tensörünü tanımladık. `len(X)` çıktısı nedir?
+1. Rasgele şekilli bir tensör `X` için, `len(X)` her zaman belirli bir `X` ekseninin uzunluğuna karşılık gelir mi? Bu eksen nedir?
+1. `A / A.sum (axis=1)` komutunu çalıştırın ve ne olduğunu görün. Sebebini analiz edebilir misiniz?
+1. Manhattan'da iki nokta arasında seyahat ederken, koordinatlar açısından, yani cadde ve sokak cinsinden, kat etmeniz gereken mesafe nedir? Çaprazlama seyahat edebilir misiniz?
+1. (2, 3, 4) şekilli bir tensörü düşünün. 0, 1 ve 2 ekseni boyunca toplam çıktılarının şekilleri nelerdir?
+1. 3 veya daha fazla eksenli bir tensörü `linalg.norm` fonksiyonuna besleyin ve çıktısını gözlemleyin. Bu işlev keyfi şekilli tansörler için ne hesaplar?
 
 :begin_tab:`mxnet`
-[Discussions](https://discuss.d2l.ai/t/30)
+[Tartışmalar](https://discuss.d2l.ai/t/30)
 :end_tab:
 
 :begin_tab:`pytorch`
-[Discussions](https://discuss.d2l.ai/t/31)
+[Tartışmalar](https://discuss.d2l.ai/t/31)
 :end_tab:
 
 :begin_tab:`tensorflow`
-[Discussions](https://discuss.d2l.ai/t/196)
+[Tartışmalar](https://discuss.d2l.ai/t/196)
 :end_tab:
