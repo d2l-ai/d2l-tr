@@ -125,9 +125,9 @@ $$\frac{d}{dx} \left[\frac{f(x)}{g(x)}\right] = \frac{g(x) \frac{d}{dx} [f(x)] -
 Bu nedenle, $x = 1$ atadığımız da, $u '= 2$ değerine sahibiz: Sayısal sonucun $2$'ye yaklaştığı bu bölümdeki önceki denememiz tarafından desteklenmektedir.
 Bu türev aynı zamanda $u = f(x)$ eğrisine $x = 1$'deki teğet doğrusunun eğimidir.
 
-To visualize such an interpretation of derivatives, we will use `matplotlib`, a popular plotting library in Python.
-To configure properties of the figures produced by `matplotlib`, we need to define a few functions.
-In the following, the `use_svg_display` function specifies the `matplotlib` package to output the svg figures for sharper images.
+Türevlerin bu tür yorumunu görselleştirmek için Python'da popüler bir çizim kütüphanesi olan `matplotlib`i kullanacağız.
+`matplotlib` tarafından üretilen şekillerin özelliklerini yapılandırmak için birkaç işlev tanımlamamız gerekir.
+Aşağıdaki `use_svg_display` işlevi, daha keskin görüntülü svg şekilleri çıktısı almak için `matplotlib` paketini özelleştirir.
 
 ```{.python .input}
 #@tab all
@@ -136,7 +136,7 @@ def use_svg_display():  #@save
     display.set_matplotlib_formats('svg')
 ```
 
-We define the `set_figsize` function to specify the figure sizes. Note that here we directly use `d2l.plt` since the import statement `from matplotlib import pyplot as plt` has been marked for being saved in the `d2l` package in the preface.
+Şekil boyutlarını belirtmek için `set_figsize` fonksiyonunu tanımlarız. Burada doğrudan `d2l.plt`yi kullandığımıza dikkat edin, çünkü içe aktarma komutu, `from matplotlib import pyplot as plt`, önsöz bölumündeki `d2l` paketine kaydedilmek üzere işaretlenmişti.
 
 ```{.python .input}
 #@tab all
@@ -146,7 +146,7 @@ def set_figsize(figsize=(3.5, 2.5)):  #@save
     d2l.plt.rcParams['figure.figsize'] = figsize
 ```
 
-The following `set_axes` function sets properties of axes of figures produced by `matplotlib`.
+Aşağıdaki `set_axes` işlevi, `matplotlib` tarafından üretilen şekillerin eksenlerinin özelliklerini ayarlar.
 
 ```{.python .input}
 #@tab all
@@ -164,7 +164,7 @@ def set_axes(axes, xlabel, ylabel, xlim, ylim, xscale, yscale, legend):
     axes.grid()
 ```
 
-With these three functions for figure configurations, we define the `plot` function to plot multiple curves succinctly since we will need to visualize many curves throughout the book.
+Şekil biçimlendirmeleri için bu üç işlevle, kitap boyunca birçok eğriyi görselleştirmemiz gerekeceğinden, çoklu eğrileri kısa ve öz olarak çizmek için `plot` işlevini tanımlıyoruz.
 
 ```{.python .input}
 #@tab all
@@ -201,7 +201,7 @@ def plot(X, Y=None, xlabel=None, ylabel=None, legend=None, xlim=None,
     set_axes(axes, xlabel, ylabel, xlim, ylim, xscale, yscale, legend)
 ```
 
-Now we can plot the function $u = f(x)$ and its tangent line $y = 2x - 3$ at $x=1$, where the coefficient $2$ is the slope of the tangent line.
+Şimdi $u = f(x)$ fonksiyonunu ve $y = 2x - 3$ teğet doğrusunu $x=1$'de çizebiliriz, burada $2$ katsayısı teğet doğrusunun eğimidir.
 
 ```{.python .input}
 #@tab all
@@ -209,90 +209,82 @@ x = np.arange(0, 3, 0.1)
 plot(x, [f(x), 2 * x - 3], 'x', 'f(x)', legend=['f(x)', 'Tangent line (x=1)'])
 ```
 
-## Partial Derivatives
+## Kısmi Türevler
 
-So far we have dealt with the differentiation of functions of just one variable.
-In deep learning, functions often depend on *many* variables.
-Thus, we need to extend the ideas of differentiation to these *multivariate* functions.
+Şimdiye kadar sadece tek değişkenli fonksiyonların türevinin alınması ile uğraştık.
+Derin öğrenmede, işlevler genellikle *birçok* değişkene bağlıdır.
+Bu nedenle, türev alma fikirlerini bu *çok değişkenli* fonksiyonlara genişletmemiz gerekiyor.
 
-
-Let $y = f(x_1, x_2, \ldots, x_n)$ be a function with $n$ variables. The *partial derivative* of $y$ with respect to its $i^\mathrm{th}$  parameter $x_i$ is
+$y = f(x_1, x_2, \ldots, x_n)$,  $n$ değişkenli bir fonksiyon olsun. $y$'nin $i.$ parametresi $x_i$'ye göre *kısmi türevi* şöyledir:
 
 $$ \frac{\partial y}{\partial x_i} = \lim_{h \rightarrow 0} \frac{f(x_1, \ldots, x_{i-1}, x_i+h, x_{i+1}, \ldots, x_n) - f(x_1, \ldots, x_i, \ldots, x_n)}{h}.$$
 
-
-To calculate $\frac{\partial y}{\partial x_i}$, we can simply treat $x_1, \ldots, x_{i-1}, x_{i+1}, \ldots, x_n$ as constants and calculate the derivative of $y$ with respect to $x_i$.
-For notation of partial derivatives, the following are equivalent:
+$\frac{\partial y}{\partial x_i}$'ı hesaplarken, $x_1, \ldots, x_{i-1}, x_{i+1}, \ldots, x_n$'ı sabitler olarak kabul eder ve $y$'nin $x_i$'ye göre türevini hesaplayabiliriz.
+Kısmi türevlerin gösterimi için aşağıdakiler eşdeğerdir:
 
 $$\frac{\partial y}{\partial x_i} = \frac{\partial f}{\partial x_i} = f_{x_i} = f_i = D_i f = D_{x_i} f.$$
 
 
-## Gradients
+## Gradyanlar (Eğimler)
 
-We can concatenate partial derivatives of a multivariate function with respect to all its variables to obtain the *gradient* vector of the function.
-Suppose that the input of function $f: \mathbb{R}^n \rightarrow \mathbb{R}$ is an $n$-dimensional vector $\mathbf{x} = [x_1, x_2, \ldots, x_n]^\top$ and the output is a scalar. The gradient of the function $f(\mathbf{x})$ with respect to $\mathbf{x}$ is a vector of $n$ partial derivatives:
+Fonksiyonun *gradyan* vektörünü elde etmek için çok değişkenli bir fonksiyonun tüm değişkenlerine göre kısmi türevlerini art arda birleştirebiliriz.
+$f : \mathbb{R}^n \rightarrow \mathbb{R}$ işlevinin girdisinin $n$ boyutlu bir vektör, $\mathbf{x} = [x_1, x_2, \ldots, x_n]^\top$ olduğunu varsayalım ve çıktı bir skalerdir. $\mathbf{x}$'a göre $f(\mathbf{x})$ fonksiyonunun gradyanı, $n$ kısmi türevli bir vektördür:
 
 $$\nabla_{\mathbf{x}} f(\mathbf{x}) = \bigg[\frac{\partial f(\mathbf{x})}{\partial x_1}, \frac{\partial f(\mathbf{x})}{\partial x_2}, \ldots, \frac{\partial f(\mathbf{x})}{\partial x_n}\bigg]^\top,$$
 
-where $\nabla_{\mathbf{x}} f(\mathbf{x})$ is often replaced by $\nabla f(\mathbf{x})$ when there is no ambiguity.
+belirsizlik olmadığında, $\nabla_{\mathbf{x}} f(\mathbf{x})$ genellikle $\nabla f(\mathbf{x})$ ile değiştirilir.
 
-Let $\mathbf{x}$ be an $n$-dimensional vector, the following rules are often used when differentiating multivariate functions:
+$\mathbf{x}$ bir $n$ boyutlu vektör olsun, aşağıdaki kurallar genellikle çok değişkenli fonksiyonların türevini alırken kullanılır:
 
-* For all $\mathbf{A} \in \mathbb{R}^{m \times n}$, $\nabla_{\mathbf{x}} \mathbf{A} \mathbf{x} = \mathbf{A}^\top$,
-* For all  $\mathbf{A} \in \mathbb{R}^{n \times m}$, $\nabla_{\mathbf{x}} \mathbf{x}^\top \mathbf{A}  = \mathbf{A}$,
-* For all  $\mathbf{A} \in \mathbb{R}^{n \times n}$, $\nabla_{\mathbf{x}} \mathbf{x}^\top \mathbf{A} \mathbf{x}  = (\mathbf{A} + \mathbf{A}^\top)\mathbf{x}$,
+* Her $\mathbf{A} \in \mathbb{R}^{m \times n}$ için, $\nabla_{\mathbf{x}} \mathbf{A} \mathbf{x} = \mathbf{A}^\top$,
+* Her $\mathbf{A} \in \mathbb{R}^{n \times m}$ için, $\nabla_{\mathbf{x}} \mathbf{x}^\top \mathbf{A}  = \mathbf{A}$,
+* Her $\mathbf{A} \in \mathbb{R}^{n \times n}$ için, $\nabla_{\mathbf{x}} \mathbf{x}^\top \mathbf{A} \mathbf{x}  = (\mathbf{A} + \mathbf{A}^\top)\mathbf{x}$,
 * $\nabla_{\mathbf{x}} \|\mathbf{x} \|^2 = \nabla_{\mathbf{x}} \mathbf{x}^\top \mathbf{x} = 2\mathbf{x}$.
 
-Similarly, for any matrix $\mathbf{X}$, we have $\nabla_{\mathbf{X}} \|\mathbf{X} \|_F^2 = 2\mathbf{X}$. As we will see later, gradients are useful for designing optimization algorithms in deep learning.
+Benzer şekilde, herhangi bir $\mathbf{X}$ matrisi için, $\nabla_{\mathbf{X}} \|\mathbf {X} \|_F^2 = 2\mathbf{X}$ olur. Daha sonra göreceğimiz gibi, gradyanlar derin öğrenmede optimizasyon algoritmaları tasarlamak için kullanışlıdır.
 
+## Zincir kuralı
 
-## Chain Rule
+Bununla birlikte, bu tür gradyanları bulmak zor olabilir.
+Bunun nedeni, derin öğrenmedeki çok değişkenli işlevlerin genellikle *bileşik* olmasıdır, bu nedenle bu işlevlerin türevleri için yukarıda belirtilen kuralların hiçbirini uygulamayabiliriz.
+Neyse ki, *zincir kuralı* bileşik işlevlerin türevlerini almamızı sağlar.
 
-However, such gradients can be hard to find.
-This is because multivariate functions in deep learning are often *composite*, so we may not apply any of the aforementioned rules to differentiate these functions.
-Fortunately, the *chain rule* enables us to differentiate composite functions.
-
-Let us first consider functions of a single variable.
-Suppose that functions $y=f(u)$ and $u=g(x)$ are both differentiable, then the chain rule states that
+Önce tek değişkenli fonksiyonları ele alalım.
+$y = f(u)$ ve $u=g(x)$ işlevlerinin her ikisinin de türevlenebilir olduğunu varsayalım, bu durumda zincir kuralı şunu belirtir:
 
 $$\frac{dy}{dx} = \frac{dy}{du} \frac{du}{dx}.$$
 
-Now let us turn our attention to a more general scenario where functions have an arbitrary number of variables.
-Suppose that the differentiable function $y$ has variables $u_1, u_2, \ldots, u_m$, where each differentiable function $u_i$ has variables $x_1, x_2, \ldots, x_n$.
-Note that $y$ is a function of $x_1, x_2, \ldots, x_n$.
-Then the chain rule gives
+
+Şimdi dikkatimizi, fonksiyonların keyfi sayıda değişkene sahip olduğu daha genel bir senaryoya çevirelim.
+$y$ türevlenebilir fonksiyonunun $u_1, u_2, \ldots, u_m$ değişkenlerine sahip olduğunu varsayalım, burada her türevlenebilir fonksiyon $u_i$, $x_1, x_2, \ldots, x_n$ değişkenlerine sahiptir.
+$y$ değerinin $x_1, x_2, \ldots, x_n$'nin bir işlevi olduğuna dikkat edin.
+Sonra bütün $i = 1, 2, \ldots, n$ için, zincir kuralı şunu gösterir:
 
 $$\frac{dy}{dx_i} = \frac{dy}{du_1} \frac{du_1}{dx_i} + \frac{dy}{du_2} \frac{du_2}{dx_i} + \cdots + \frac{dy}{du_m} \frac{du_m}{dx_i}$$
 
-for any $i = 1, 2, \ldots, n$.
+## Özet
 
 
+* Diferansiyel kalkülüs ve integral kalkülüs, birincisi derin öğrenmede her yerde bulunan optimizasyon problemlerine uygulanabildiği, iki analiz dalıdır.
+* Bir türev, bir fonksiyonun değişkenine göre anlık değişim hızı olarak yorumlanabilir. Aynı zamanda teğet doğrusunun fonksiyonun eğrisine olan eğimidir.
+* Gradyan, bileşenleri çok değişkenli bir fonksiyonun tüm değişkenlerine göre kısmi türevleri olan bir vektördür.
+* Zincir kuralı, bileşik fonksiyonların türevlerini almamızı sağlar.
 
-## Summary
+## Alıştırmalar
 
-
-* Differential calculus and integral calculus are two branches of calculus, where the former can be applied to the ubiquitous optimization problems in deep learning.
-* A derivative can be interpreted as the instantaneous rate of change of a function with respect to its variable. It is also the slope of the tangent line to the curve of the function.
-* A gradient is a vector whose components are the partial derivatives of a multivariate function with respect to all its variables.
-* The chain rule enables us to differentiate composite functions.
-
-
-
-## Exercises
-
-1. Plot the function $y = f(x) = x^3 - \frac{1}{x}$ and its tangent line when $x = 1$.
-1. Find the gradient of the function $f(\mathbf{x}) = 3x_1^2 + 5e^{x_2}$.
-1. What is the gradient of the function $f(\mathbf{x}) = \|\mathbf{x}\|_2$?
-1. Can you write out the chain rule for the case where $u = f(x, y, z)$ and $x = x(a, b)$, $y = y(a, b)$, and $z = z(a, b)$?
+1. $y = f(x) = x^3 - \frac{1}{x}$ fonksiyonunu ve $x = 1$ olduğunda teğet doğrusunu çizin.
+1. $f(\mathbf{x}) = 3x_1^2 + 5e^{x_2}$ fonksiyonunun gradyanını bulun.
+1. $f(\mathbf{x}) = \|\mathbf{x}\|_2$ fonksiyonunun gradyanı nedir?
+1. $u = f(x, y, z)$ ve $x = x(a, b)$, $y = y(a, b)$ ve $z = z(a, b)$ olduğu durum için zincir kuralını yazabilir misiniz? 
 
 :begin_tab:`mxnet`
-[Discussions](https://discuss.d2l.ai/t/32)
+[Tartışmalar](https://discuss.d2l.ai/t/32)
 :end_tab:
 
 :begin_tab:`pytorch`
-[Discussions](https://discuss.d2l.ai/t/33)
+[Tartışmalar](https://discuss.d2l.ai/t/33)
 :end_tab:
 
 :begin_tab:`tensorflow`
-[Discussions](https://discuss.d2l.ai/t/197)
+[Tartışmalar](https://discuss.d2l.ai/t/197)
 :end_tab:
