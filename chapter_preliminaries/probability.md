@@ -116,10 +116,10 @@ counts = tfp.distributions.Multinomial(1000, fair_probs).sample()
 counts / 1000
 ```
 
-Because we generated the data from a fair die, we know that each outcome has true probability $\frac{1}{6}$, roughly $0.167$, so the above output estimates look good.
+Verileri adil bir zardan oluşturduğumuz için, her sonucun gerçek olasılığının $\frac{1}{6}$ olduğunu, yani kabaca $0,167$ olduğunu biliyoruz, bu nedenle yukarıdaki çıktı tahminleri iyi görünüyor.
 
-We can also visualize how these probabilities converge over time towards the true probability.
-Let us conduct 500 groups of experiments where each group draws 10 samples.
+Ayrıca bu olasılıkların zaman içinde gerçek olasılığa doğru nasıl yakınsadığını da görselleştirebiliyoruz.
+Her grubun 10 örnek çektiği 500 adet deney yapalım.
 
 ```{.python .input}
 counts = np.random.multinomial(10, fair_probs, size=500)
@@ -168,109 +168,107 @@ d2l.plt.gca().set_ylabel('Estimated probability')
 d2l.plt.legend();
 ```
 
-Each solid curve corresponds to one of the six values of the die and gives our estimated probability that the die turns up that value as assessed after each group of experiments.
-The dashed black line gives the true underlying probability.
-As we get more data by conducting more experiments, the $6$ solid curves converge towards the true probability.
+Her katı eğri, zarın altı değerinden birine karşılık gelir ve her deney grubundan sonra değerlendirildiğinde zarın bu değerleri göstermesinde tahmin ettiimiz olasılığı verir.
+Kesikli siyah çizgi, gerçek temel olasılığı verir.
+Daha fazla deney yaparak daha fazla veri elde ettikçe, $6$ katı eğri gerçek olasılığa doğru yaklaşıyor.
 
-### Axioms of Probability Theory
+### Olasılık Teorisinin Aksiyomları
 
-When dealing with the rolls of a die, we call the set $\mathcal{S} = \{1, 2, 3, 4, 5, 6\}$ the *sample space* or *outcome space*, where each element is an *outcome*.
-An *event* is a set of outcomes from a given sample space.
-For instance, "seeing a $5$" ($\{5\}$) and "seeing an odd number" ($\{1, 3, 5\}$) are both valid events of rolling a die.
-Note that if the outcome of a random experiment is in event $\mathcal{A}$, then event $\mathcal{A}$ has occurred.
-That is to say, if $3$ dots faced up after rolling a die, since $3 \in \{1, 3, 5\}$, we can say that the event "seeing an odd number" has occurred.
+Bir zarın atışları ile uğraşırken, $\mathcal{S} = \{1, 2, 3, 4, 5, 6\}$ kümesine *örnek uzay* veya *sonuç uzayı* diyoruz, burada her eleman bir *sonuçtur*.
+Bir * olay *, belirli bir örnek uzaydan alınan bir dizi sonuçtur.
+Örneğin, "$5$ görmek" ($\{5\}$) ve "tek sayı görmek" ($\{1, 3, 5\}$) zar atmanın geçerli olaylarıdır.
+Rastgele bir denemenin sonucu $\mathcal{A}$ olayındaysa, $\mathcal{A}$ olayının gerçekleştiğine dikkat edin.
+Yani, bir zar atıldıktan sonra $3$ nokta üstte gelirse, $3 \in \{1, 3, 5 \}$ olduğundan, "tek bir sayı görme" olayı gerçekleşti diyebiliriz.
 
-Formally, *probability* can be thought of a function that maps a set to a real value.
-The probability of an event $\mathcal{A}$ in the given sample space $\mathcal{S}$, denoted as $P(\mathcal{A})$, satisfies the following properties:
+Biçimsel olarak, *olasılık*, bir kümeyi gerçek bir değere eşleyen bir işlev olarak düşünülebilir.
+$P(\mathcal{A})$ olarak gösterilen, verilen $\mathcal{S}$ örnek uzayında bir $\mathcal{A}$ olayının olasılığı aşağıdaki özellikleri karşılar:
 
-* For any event $\mathcal{A}$, its probability is never negative, i.e., $P(\mathcal{A}) \geq 0$;
-* Probability of the entire sample space is $1$, i.e., $P(\mathcal{S}) = 1$;
-* For any countable sequence of events $\mathcal{A}_1, \mathcal{A}_2, \ldots$ that are *mutually exclusive* ($\mathcal{A}_i \cap \mathcal{A}_j = \emptyset$ for all $i \neq j$), the probability that any happens is equal to the sum of their individual probabilities, i.e., $P(\bigcup_{i=1}^{\infty} \mathcal{A}_i) = \sum_{i=1}^{\infty} P(\mathcal{A}_i)$.
+* Herhangi bir $\mathcal{A}$ olayı için, olasılığı asla negatif değildir, yani, $P(\mathcal{A}) \geq 0$;
+* Tüm örnek alanın olasılığı $1$'dir, yani $P(\mathcal{S}) = 1$;
+* Birbirini dışlayan sayılabilir herhangi bir olay dizisi için ($\mathcal{A}_i \cap \mathcal{A}_j = \emptyset$ bütün $i \neq j$) için, herhangi bir şeyin olma olasılığı kendi olasılıklarının toplamına eşittir, yani, $P(\bigcup_{i=1}^{\infty} \mathcal{A}_i) = \sum_{i=1}^{\infty} P(\mathcal{A}_i)$.
 
-These are also the axioms of probability theory, proposed by Kolmogorov in 1933.
-Thanks to this axiom system, we can avoid any philosophical dispute on randomness; instead, we can reason rigorously with a mathematical language.
-For instance, by letting event $\mathcal{A}_1$ be the entire sample space and $\mathcal{A}_i = \emptyset$ for all $i > 1$, we can prove that $P(\emptyset) = 0$, i.e., the probability of an impossible event is $0$.
+Bunlar aynı zamanda 1933'te Kolmogorov tarafından önerilen olasılık teorisinin aksiyomlarıdır.
+Bu aksiyom sistemi sayesinde, rastlantısallıkla ilgili herhangi bir felsefi tartışmayı önleyebiliriz; bunun yerine matematiksel bir dille titiz bir şekilde akıl yürütebiliriz.
+Örneğin, $\mathcal{A}_1$ olayının tüm örnek uzay olmasına ve $\mathcal{A}_i = \emptyset$'a bütün $i > 1$ için izin vererek, $P(\emptyset) = 0$, yani imkansız bir olayın olasılığı $0$'dır.
 
+### Rastgele Değişkenler
 
-### Random Variables
+Bir zar atma rastgele deneyimizde, *rastgele değişken* kavramını tanıttık. Rastgele bir değişken hemen hemen herhangi bir miktar olabilir ve deterministik değildir. Değişken rastgele bir deneyde bir dizi olasılık arasından bir değer alabilir.
+Değeri bir zar atmanın $\mathcal{S} = \{1, 2, 3, 4, 5, 6\}$ örnek uzayında olan $X$ rastgele değişkenini düşünün. "Bir $5$ görme" olayını $\{X = 5\}$ veya $X = 5$ ve olasılığını $P(\{X = 5\}) $ veya $P(X = 5)$ diye belirtiriz.
+$P(X = a)$ ile, $X$ rastgele değişkeni ile $X$'ın alabileceği değerler (örneğin, $a$) arasında bir ayrım yaparız.
+Bununla birlikte, bu tür bilgiçlik, hantal bir gösterimle sonuçlanır.
+Kısa bir gösterim için, bir yandan, $P(X)$'ı, $X$ rasgele değişkeni üzerindeki *dağılım* olarak gösterebiliriz: Dağılım bize $X$'ın herhangi bir değeri alma olasılığını söyler.
+Öte yandan, rastgele bir değişkenin $a$ değerini alma olasılığını belirtmek için $P(a)$ yazabiliriz.
+Olasılık teorisindeki bir olay, örnek uzaydan bir küme sonuç olduğu için, rastgele bir değişkenin alması için bir dizi değer belirleyebiliriz.
+Örneğin, $P(1 \leq X \leq 3)$ $\{1 \leq X \leq 3\}$ olayının olasılığını belirtir, yani $\{X = 1, 2, \text{veya}, 3\} $ anlamına gelir. Aynı şekilde, $P(1 \leq X \leq 3)$, $X$ rasgele değişkeninin $\{1, 2, 3\}$'dan bir değer alabilme olasılığını temsil eder.
 
-In our random experiment of casting a die, we introduced the notion of a *random variable*. A random variable can be pretty much any quantity and is not deterministic. It could take one value among a set of possibilities in a random experiment.
-Consider a random variable $X$ whose value is in the sample space $\mathcal{S} = \{1, 2, 3, 4, 5, 6\}$ of rolling a die. We can denote the event "seeing a $5$" as $\{X = 5\}$ or $X = 5$, and its probability as $P(\{X = 5\})$ or $P(X = 5)$.
-By $P(X = a)$, we make a distinction between the random variable $X$ and the values (e.g., $a$) that $X$ can take.
-However, such pedantry results in a cumbersome notation.
-For a compact notation, on one hand, we can just denote $P(X)$ as the *distribution* over the random variable $X$: the distribution tells us the probability that $X$ takes any value.
-On the other hand, we can simply write $P(a)$ to denote the probability that a random variable takes the value $a$.
-Since an event in probability theory is a set of outcomes from the sample space, we can specify a range of values for a random variable to take.
-For example, $P(1 \leq X \leq 3)$ denotes the probability of the event $\{1 \leq X \leq 3\}$, which means $\{X = 1, 2, \text{or}, 3\}$. Equivalently, $P(1 \leq X \leq 3)$ represents the probability that the random variable $X$ can take a value from $\{1, 2, 3\}$.
+Bir zarın yüzleri gibi *kesikli* rastgele değişkenler ile bir kişinin ağırlığı ve boyu gibi *sürekli* olanlar arasında ince bir fark olduğunu unutmayın. İki kişinin tam olarak aynı boyda olup olmadığını sormanın pek bir anlamı yok. Yeterince hassas ölçümler alırsak, gezegendeki hiçbir insanın aynı boyda olmadığını göreceksiniz. Aslında, yeterince ince bir ölçüm yaparsak, uyandığınızda ve uyuduğunuzda da boyunuz aynı olmayacaktır. Dolayısıyla, birinin 1,80139278291028719210196740527486202 metre boyunda olma olasılığını sormanın hiçbir amacı yoktur. Dünya insan nüfusu göz önüne alındığında, olasılık neredeyse 0'dır. Bu durumda, birinin boyunun belirli bir aralıkta, örneğin 1,79 ile 1,81 metre arasında olup olmadığını sormak daha mantıklıdır. Bu durumlarda, bir değeri *yoğunluk* olarak görme olasılığımızı ölçüyoruz. Tam olarak 1.80 metrelik boyun olasılığı yoktur, ancak yoğunluğu sıfır değildir. Herhangi iki farklı boy arasındaki aralıkta sıfır olmayan bir olasılığa sahibiz.
+Bu bölümün geri kalanında, olasılığı ayrık uzayda ele alıyoruz.
+Sürekli rastgele değişkenler üzerindeki olasılık için, şunlara başvurabilirsiniz :numref:`sec_random_variables`.
 
-Note that there is a subtle difference between *discrete* random variables, like the sides of a die, and *continuous* ones, like the weight and the height of a person. There is little point in asking whether two people have exactly the same height. If we take precise enough measurements you will find that no two people on the planet have the exact same height. In fact, if we take a fine enough measurement, you will not have the same height when you wake up and when you go to sleep. So there is no purpose in asking about the probability that someone is 1.80139278291028719210196740527486202 meters tall. Given the world population of humans the probability is virtually 0. It makes more sense in this case to ask whether someone's height falls into a given interval, say between 1.79 and 1.81 meters. In these cases we quantify the likelihood that we see a value as a *density*. The height of exactly 1.80 meters has no probability, but nonzero density. In the interval between any two different heights we have nonzero probability.
-In the rest of this section, we consider probability in discrete space.
-For probability over continuous random variables, you may refer to :numref:`sec_random_variables`.
+## Çoklu Rastgele Değişkenlerle Başa Çıkma
 
-## Dealing with Multiple Random Variables
+Çok sık olarak, bir seferde birden fazla rastgele değişkeni dikkate almak isteyeceğiz.
+Örneğin, hastalıklar ve belirtiler arasındaki ilişkiyi modellemek isteyebiliriz. Bir hastalık ve bir belirti verildiğinde, örneğin "grip" ve "öksürük", bir olasılıkla bir hastada ortaya çıkabilirler veya çıkmayabilirler. Her ikisinin de olasılığının sıfıra yakın olacağını umarken, bu olasılıkları ve bunların birbirleriyle olan ilişkilerini tahmin etmek isteyebiliriz, böylece daha iyi tıbbi bakım sağlamak için çıkarımlarımızı uygulayabiliriz.
 
-Very often, we will want to consider more than one random variable at a time.
-For instance, we may want to model the relationship between diseases and symptoms. Given a disease and a symptom, say "flu" and "cough", either may or may not occur in a patient with some probability. While we hope that the probability of both would be close to zero, we may want to estimate these probabilities and their relationships to each other so that we may apply our inferences to effect better medical care.
+Daha karmaşık bir örnek olarak, görüntüler milyonlarca piksel, dolayısıyla milyonlarca rastgele değişken içerir. Ve çoğu durumda resimler, resimdeki nesneleri tanımlayan bir etiketle birlikte gelir. Etiketi rastgele bir değişken olarak da düşünebiliriz. Tüm meta (üst) verileri konum, zaman, diyafram, odak uzaklığı, ISO, odak mesafesi ve kamera türü gibi, rastgele değişkenler olarak bile düşünebiliriz.
+Bunların hepsi birlikte oluşan rastgele değişkenlerdir. Birden çok rastgele değişkenle uğraştığımızda, ilgilendiğimiz birkaç miktar vardır.
 
-As a more complicated example, images contain millions of pixels, thus millions of random variables. And in many cases images will come with a label, identifying objects in the image. We can also think of the label as a random variable. We can even think of all the metadata as random variables such as location, time, aperture, focal length, ISO, focus distance, and camera type.
-All of these are random variables that occur jointly. When we deal with multiple random variables, there are several quantities of interest.
+### Birleşik olasılık
 
-### Joint Probability
+İlki, *birleşik olasılık* $P(A = a, B = b)$ olarak adlandırılır. Herhangi $a$ ve $b$ değerleri verildiğinde, birleşik olasılık şu cevabı vermemizi sağlar: $A = a$ ve $B = b$ aynı anda olma olasılığı nedir?
+Tüm $a$ ve $b$ değerleri için, $P(A = a, B = b) \leq P (A=a)$ olduğuna dikkat edin.
+Durum böyle olmalıdır, çünkü $A=a$ ve $B=b$ olması için $A=a$ olması gerekir *ve* $B=b$ de gerçekleşmelidir (ve bunun tersi de geçerlidir). Bu nedenle, $A=a$ ve $B=b$, tek tek $A=a$ veya $B=b$ değerinden daha büyük olamaz.
 
-The first is called the *joint probability* $P(A = a, B=b)$. Given any values $a$ and $b$, the joint probability lets us answer, what is the probability that $A=a$ and $B=b$ simultaneously?
-Note that for any values $a$ and $b$, $P(A=a, B=b) \leq P(A=a)$.
-This has to be the case, since for $A=a$ and $B=b$ to happen, $A=a$ has to happen *and* $B=b$ also has to happen (and vice versa). Thus, $A=a$ and $B=b$ cannot be more likely than $A=a$ or $B=b$ individually.
+### Koşullu olasılık
 
+Bu bizi ilginç bir orana getiriyor: $0 \leq \frac{P(A=a, B=b)}{P(A=a)} \leq 1$. Bu oranı bir *koşullu olasılık* olarak adlandırıyoruz ve bunu $P(B=b \mid A=a) $ ile gösteriyoruz: $A=a$ olması koşuluyla, $B=b$ olasılığıdır.
 
-### Conditional Probability
+### Bayes Kuramı (Teoremi)
 
-This brings us to an interesting ratio: $0 \leq \frac{P(A=a, B=b)}{P(A=a)} \leq 1$. We call this ratio a *conditional probability* and denote it by $P(B=b \mid A=a)$: it is the probability of $B=b$, provided that $A=a$ has occurred.
-
-### Bayes' theorem
-
-Using the definition of conditional probabilities, we can derive one of the most useful and celebrated equations in statistics: *Bayes' theorem*.
-It goes as follows.
-By construction, we have the *multiplication rule* that $P(A, B) = P(B \mid A) P(A)$. By symmetry, this also holds for $P(A, B) = P(A \mid B) P(B)$. Assume that $P(B) > 0$. Solving for one of the conditional variables we get
+Koşullu olasılıkların tanımını kullanarak, istatistikteki en kullanışlı ve ünlü denklemlerden birini türetebiliriz: *Bayes teoremi*.
+Aşağıdaki gibidir.
+Yapısı gereği, $P(A, B) = P(B \mid A) P(A)$ şeklindeki *çarpma kuralına* sahibiz. Simetriye göre, bu aynı zamanda $P(A, B) = P(A \mid B) P(B)$ için de geçerlidir. $P(B) > 0$ olduğunu varsayalım. Koşullu değişkenlerden birini çözerek şunu elde ederiz: 
 
 $$P(A \mid B) = \frac{P(B \mid A) P(A)}{P(B)}.$$
 
-Note that here we use the more compact notation where $P(A, B)$ is a *joint distribution* and $P(A \mid B)$ is a *conditional distribution*. Such distributions can be evaluated for particular values $A = a, B=b$.
+Burada, $P(A, B)$'nın *birleşik dağılım* ve $P(A \mid B)$'nin *koşullu dağılım* olduğu, daha sıkı gösterimi kullandığımıza dikkat edin. Bu tür dağılımlar belirli $A = a, B = b$ değerleri için hesaplanabilir.
 
-### Marginalization
 
-Bayes' theorem is very useful if we want to infer one thing from the other, say cause and effect, but we only know the properties in the reverse direction, as we will see later in this section. One important operation that we need, to make this work, is *marginalization*.
-It is the operation of determining $P(B)$ from $P(A, B)$. We can see that the probability of $B$ amounts to accounting for all possible choices of $A$ and aggregating the joint probabilities over all of them:
+### Tümleştirme
+
+Bayes teoremi, bir şeyi diğerinden çıkarmak istiyorsak, neden ve sonuç mesela, çok kullanışlıdır, ancak bu bölümde daha sonra göreceğimiz gibi, yalnızca özellikleri ters yönde biliyoruz. Bunun işe yaraması için ihtiyacımız olan önemli bir işlem, *tümleştirme*dir.
+$P (A, B)$'den $P(B)$ belirleme işlemidir. $B$ olasılığının, tüm olası $A$ seçeneklerini hesaba katma ve bunların hepsinde birleşik olasılıkları bir araya toplama olduğunu görebiliriz:
 
 $$P(B) = \sum_{A} P(A, B),$$
 
-which is also known as the *sum rule*. The probability or distribution as a result of marginalization is called a *marginal probability* or a *marginal distribution*.
+bu aynı zamanda *toplam kuralı* olarak da bilinir. Tümleştirmenin bir sonucu olan olasılık veya dağılım, *marjinal (tümsel) olasılık* veya *marjinal (tümsel) dağılım* olarak adlandırılır.
 
+### Bağımsızlık
 
-### Independence
+Kontrol edilmesi gereken diğer bir yararlı özellik, *bağımlılık* ve *bağımsızlık*'tır.
+İki rastgele değişken olan $A$ ve $B$nin birbirinden bağımsızlığı, $A$ olayının ortaya çıkmasının, $B$ olayının oluşumu hakkında herhangi bir bilgi vermediği anlamına gelir.
+Bu durumda $P(B \mid A) = P (B)$dir. İstatistikçiler bunu genellikle $A \perp B$ olarak ifade ederler. Bayes teoreminden, bunu aynı zamanda $P(A \mid B) = P(A)$ olduğunu da izler.
+Diğer tüm durumlarda $A$ ve $B$'ye bağımlı diyoruz. Örneğin, bir zarın iki ardışık atışı bağımsızdır. Aksine, bir ışık anahtarının konumu ve odadaki parlaklık değildir (her zaman kırılmış bir ampulümüz, elektrik kesintisi veya kırık bir anahtarımız olabileceğinden, tam olarak gerekirci (deterministik) değildirler).
 
-Another useful property to check for is *dependence* vs. *independence*.
-Two random variables $A$ and $B$ being independent means that the occurrence of one event of $A$ does not reveal any information about the occurrence of an event of $B$.
-In this case $P(B \mid A) = P(B)$. Statisticians typically express this as $A \perp  B$. From Bayes' theorem, it follows immediately that also $P(A \mid B) = P(A)$.
-In all the other cases we call $A$ and $B$ dependent. For instance, two successive rolls of a die are independent. In contrast, the position of a light switch and the brightness in the room are not (they are not perfectly deterministic, though, since we could always have a broken light bulb, power failure, or a broken switch).
+$P(A \mid B) = \frac{P(A, B)}{P(B)} = P(A)$ ve $P(A, B) = P(A)P(B)$ eşit olduğundan, iki rastgele değişken ancak ve ancak birleşik dağılımları kendi bireysel dağılımlarının çarpımına eşit ise bağımsızdır.
+Benzer şekilde, iki rastgele değişken $A$ ve $B$ başka bir rasgele değişken $C$ verildiğinde, ancak ve ancak $P(A, B \mid C) = P(A \mid C)P(B \mid C)$ ise *koşullu olarak bağımsızdır*. Bu, $A \perp B \mid C$ olarak ifade edilir.
 
-Since $P(A \mid B) = \frac{P(A, B)}{P(B)} = P(A)$ is equivalent to $P(A, B) = P(A)P(B)$, two random variables are independent if and only if their joint distribution is the product of their individual distributions.
-Likewise, two random variables $A$ and $B$ are *conditionally independent* given another random variable $C$ if and only if $P(A, B \mid C) = P(A \mid C)P(B \mid C)$. This is expressed as $A \perp B \mid C$.
-
-### Application
+### Uygulama
 :label:`subsec_probability_hiv_app`
 
-Let us put our skills to the test. Assume that a doctor administers an AIDS test to a patient. This test is fairly accurate and it fails only with 1% probability if the patient is healthy but reporting him as diseased. Moreover, it never fails to detect HIV if the patient actually has it. We use $D_1$ to indicate the diagnosis ($1$ if positive and $0$ if negative) and $H$ to denote the HIV status ($1$ if positive and $0$ if negative).
-:numref:`conditional_prob_D1` lists such conditional probabilities.
+Becerilerimizi test edelim. Bir doktorun bir hastaya AIDS testi uyguladığını varsayalım. Bu test oldukça doğrudur ve yalnızca %1 olasılıkla hasta sağlıklı olduğu halde hasta olarak bildirme hatası yapar. Dahası, eğer hastada gerçekten varsa HIV'i asla tespit etmemezlik yapmaz. Teşhisi belirtmek için $D_1$ (pozitifse $1$ ve negatifse $0$) ve HIV durumunu belirtmek için $H$ (pozitifse $1$ ve negatifse $0$) kullanırız.
+:numref:`conditional_prob_D1` bu tür koşullu olasılıkları listeler.
 
-:Conditional probability of $P(D_1 \mid H)$.
+:$P(D_1 \mid H)$ koşullu olasılığı:
 
-| Conditional probability | $H=1$ | $H=0$ |
+| Koşullu olasılık | $H=1$ | $H=0$ |
 |---|---|---|
 |$P(D_1 = 1 \mid H)$|            1 |         0.01 |
 |$P(D_1 = 0 \mid H)$|            0 |         0.99 |
 :label:`conditional_prob_D1`
 
-Note that the column sums are all 1 (but the row sums are not), since the conditional probability needs to sum up to 1, just like the probability. Let us work out the probability of the patient having AIDS if the test comes back positive, i.e., $P(H = 1 \mid D_1 = 1)$. Obviously this is going to depend on how common the disease is, since it affects the number of false alarms. Assume that the population is quite healthy, e.g., $P(H=1) = 0.0015$. To apply Bayes' theorem, we need to apply marginalization and the multiplication rule to determine
+Koşullu olasılığın, olasılık gibi 1'e toplanması gerektiğinden, sütun toplamlarının hepsinin 1 olduğuna dikkat edin (ancak satır toplamları değildir). Test pozitif çıkarsa hastanın AIDS olma olasılığını hesaplayalım, yani $P(H = 1 \mid D_1 = 1)$. Açıkçası bu, yanlış alarmların sayısını etkilediği için hastalığın ne kadar yaygın olduğuna bağlı olacaktır. Nüfusun oldukça sağlıklı olduğunu varsayalım, örneğin $P(H = 1) = 0.0015$. Bayes teoremini uygulamak için, tümleştirme ve çarpım kuralını uygulamalıyız.
 
 $$\begin{aligned}
 &P(D_1 = 1) \\
@@ -280,27 +278,26 @@ $$\begin{aligned}
 \end{aligned}
 $$
 
-Thus, we get
+Böylece bunu elde ederiz,
 
 $$\begin{aligned}
 &P(H = 1 \mid D_1 = 1)\\ =& \frac{P(D_1=1 \mid H=1) P(H=1)}{P(D_1=1)} \\ =& 0.1306 \end{aligned}.$$
 
-In other words, there is only a 13.06% chance that the patient actually has AIDS, despite using a very accurate test.
-As we can see, probability can be counterintuitive.
+Diğer bir deyişle, çok doğru bir test kullanmasına rağmen, hastanın gerçekten AIDS sahibi olma şansı yalnızca %13.06'dır.
+Gördüğümüz gibi, olasılık sezgilere ters olabilir.
 
-What should a patient do upon receiving such terrifying news? Likely, the patient would ask the physician to administer another test to get clarity. The second test has different characteristics and it is not as good as the first one, as shown in :numref:`conditional_prob_D2`.
+Böylesine korkunç bir haber alan hasta ne yapmalıdır? Muhtemelen hasta, netlik elde etmek için hekimden başka bir test yapmasını isteyecektir. İkinci testin farklı özellikleri vardır ve şu şekilde gösterildiği gibi birincisi kadar iyi değildir :numref:`conditional_prob_D2`.
 
+:$P(D_2 \mid H)$ koşullu olasılığı:
 
-:Conditional probability of $P(D_2 \mid H)$.
-
-| Conditional probability | $H=1$ | $H=0$ |
+| Koşullu olasılık | $H=1$ | $H=0$ |
 |---|---|---|
 |$P(D_2 = 1 \mid H)$|            0.98 |         0.03 |
 |$P(D_2 = 0 \mid H)$|            0.02 |         0.97 |
 :label:`conditional_prob_D2`
 
-Unfortunately, the second test comes back positive, too.
-Let us work out the requisite probabilities to invoke Bayes' theorem by assuming the conditional independence:
+Maalesef ikinci test de pozitif çıkıyor.
+Koşullu bağımsızlığı varsayıp Bayes teoremini çağırarak gerekli olasılıkları bulalım:
 
 $$\begin{aligned}
 &P(D_1 = 1, D_2 = 1 \mid H = 0) \\
@@ -316,7 +313,7 @@ $$\begin{aligned}
 \end{aligned}
 $$
 
-Now we can apply marginalization and the multiplication rule:
+Şimdi tümleştirme ve çarpım kuralını uygulayabiliriz
 
 $$\begin{aligned}
 &P(D_1 = 1, D_2 = 1) \\
@@ -326,7 +323,7 @@ $$\begin{aligned}
 \end{aligned}
 $$
 
-In the end, the probability of the patient having AIDS given both positive tests is
+En sonunda, her iki pozitif testin de verildiği hastanın AIDS olma olasılığı
 
 $$\begin{aligned}
 &P(H = 1 \mid D_1 = 1, D_2 = 1)\\
@@ -335,59 +332,55 @@ $$\begin{aligned}
 \end{aligned}
 $$
 
-That is, the second test allowed us to gain much higher confidence that not all is well. Despite the second test being considerably less accurate than the first one, it still significantly improved our estimate.
+Böylece ikinci test, her şeyin yolunda olmadığına dair çok daha yüksek bir güven kazanmamızı sağladı. İkinci test, birincisinden çok daha az doğru olmasına rağmen, tahminimizi önemli ölçüde iyileştirdi.
 
 
+## Beklenti ve Varyans (Değişinti)
 
-## Expectation and Variance
-
-To summarize key characteristics of probability distributions, we need some measures.
-The *expectation* (or average) of the random variable $X$ is denoted as
+Olasılık dağılımlarının temel özelliklerini özetlemek için bazı ölçülere ihtiyacımız var.
+$X$ rastgele değişkeninin *beklentisi* (veya ortalaması) şu şekilde belirtilir:
 
 $$E[X] = \sum_{x} x P(X = x).$$
 
-When the input of a function $f(x)$ is a random variable drawn from the distribution $P$ with different values $x$,
-the expectation of $f(x)$ is computed as
+
+$f(x)$ fonksiyonunun girdisi $P$ dağılımından farklı $x$ değerleriyle elde edilen rastgele bir değişken olduğunda, $f(x)$ beklentisi şu şekilde hesaplanır:
 
 $$E_{x \sim P}[f(x)] = \sum_x f(x) P(x).$$
 
 
-In many cases we want to measure by how much the random variable $X$ deviates from its expectation. This can be quantified by the variance
+Çoğu durumda $X$ rastgele değişkeninin beklentisinden ne kadar saptığını ölçmek isteriz. Bu, varyans (değişinti) ile ölçülebilir
 
 $$\mathrm{Var}[X] = E\left[(X - E[X])^2\right] =
 E[X^2] - E[X]^2.$$
 
-Its square root is called the *standard deviation*.
-The variance of a function of a random variable measures
-by how much the function deviates from the expectation of the function,
-as different values $x$ of the random variable are sampled from its distribution:
+Varyansın kareköküne *standart sapma* denir.
+Rastgele değişkenin bir fonksiyonunun varyansı, fonksiyonun beklentisinden ne kadar saptığını ölçer, çünkü rastgele değişkenin farklı değerleri $x$, dağılımından örneklenir:
 
 $$\mathrm{Var}[f(x)] = E\left[\left(f(x) - E[f(x)]\right)^2\right].$$
 
 
-## Summary
+## Özet
 
-* We can sample from probability distributions.
-* We can analyze multiple random variables using joint distribution, conditional distribution, Bayes' theorem, marginalization, and independence assumptions.
-* Expectation and variance offer useful measures to summarize key characteristics of probability distributions.
+* Olasılık dağılımlarından örnekleme yapabiliriz.
+* Birleşik dağılım, koşullu dağılım, Bayes teoremi, marjinalleştirme ve bağımsızlık varsayımlarını kullanarak birden çok rastgele değişkeni analiz edebiliriz.
+* Beklenti ve varyans, olasılık dağılımlarının temel özelliklerini özetlemek için yararlı ölçüler sunar.
 
+## Alıştırmalar
 
-## Exercises
-
-1. We conducted $m=500$ groups of experiments where each group draws $n=10$ samples. Vary $m$ and $n$. Observe and analyze the experimental results.
-1. Given two events with probability $P(\mathcal{A})$ and $P(\mathcal{B})$, compute upper and lower bounds on $P(\mathcal{A} \cup \mathcal{B})$ and $P(\mathcal{A} \cap \mathcal{B})$. (Hint: display the situation using a [Venn Diagram](https://en.wikipedia.org/wiki/Venn_diagram).)
-1. Assume that we have a sequence of random variables, say $A$, $B$, and $C$, where $B$ only depends on $A$, and $C$ only depends on $B$, can you simplify the joint probability $P(A, B, C)$? (Hint: this is a [Markov Chain](https://en.wikipedia.org/wiki/Markov_chain).)
-1. In :numref:`subsec_probability_hiv_app`, the first test is more accurate. Why not just run the first test a second time?
+1. Her grubun $n = 10$ örnek çektiği $m = 500$ deney grubu yürüttük. $m$ ve $n$ değerlerini değiştirin. Deneysel sonuçları gözlemleyin ve analiz edin.
+1. $P(\mathcal{A})$ ve $P(\mathcal{B})$ olasılığına sahip iki olay verildiğinde, $P(\mathcal{A} \cup \mathcal{B}$ ve $P(\mathcal{A} \cap \mathcal{B})$ için üst ve alt sınırları hesaplayın (İpucu: Durumu bir [Venn Şeması](https://en.wikipedia.org/wiki/Venn_diagram) kullanarak görüntüleyin.)
+1. $A$, $B$ ve $C$ gibi rastgele değişkenlerden oluşan bir dizimiz olduğunu varsayalım, burada $B$ yalnızca $A$'ya bağlıdır ve $C$ yalnızca $B$'ye bağlıdır, $P(A, B, C)$ birleşik olasılığı basitleştirebilir misiniz? (İpucu: Bu bir [Markov Zinciri](https://en.wikipedia.org/wiki/Markov_chain)'dir .)
+1. :numref:`subsec_probability_hiv_app`'da, ilk test daha doğrudur. Neden ilk testi ikinci kez çalıştırmıyoruz?
 
 
 :begin_tab:`mxnet`
-[Discussions](https://discuss.d2l.ai/t/36)
+[Tartışmalar](https://discuss.d2l.ai/t/36)
 :end_tab:
 
 :begin_tab:`pytorch`
-[Discussions](https://discuss.d2l.ai/t/37)
+[Tartışmalar](https://discuss.d2l.ai/t/37)
 :end_tab:
 
 :begin_tab:`tensorflow`
-[Discussions](https://discuss.d2l.ai/t/198)
+[Tartışmalar](https://discuss.d2l.ai/t/198)
 :end_tab:
