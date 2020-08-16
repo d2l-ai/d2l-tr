@@ -32,77 +32,77 @@ Matrisler yararlı veri yapılarıdır: Değişimlerinde farklı model modların
 Bir vektör verildiğinde, ona vermemiz gereken ilk yorum uzayda bir nokta olduğudur.
 İki veya üç boyutta, bu noktaları, *köken (orijin)* adı verilen sabit bir referansa kıyasla uzaydaki konumlarını belirtmek için vektör bileşenlerini kullanarak görselleştirebiliriz. Bu, şurada görülebilir :numref:`fig_grid`.
 
-![An illustration of visualizing vectors as points in the plane. The first component of the vector gives the $x$-coordinate, the second component gives the $y$-coordinate.  Higher dimensions are analogous, although much harder to visualize.](../img/GridPoints.svg)
+![Vektörleri düzlemdeki noktalar olarak görselleştirmenin bir örneği. Vektörün ilk bileşeni $x$ koordinatını verir, ikinci bileşen $y$ koordinatını verir. Görselleştirilmesi çok daha zor olsa da, daha yüksek boyutlar da benzerdir.](../img/GridPoints.svg)
 :label:`fig_grid`
 
-This geometric point of view allows us to consider the problem on a more abstract level.
-No longer faced with some insurmountable seeming problem like classifying pictures as either cats or dogs, we can start considering tasks abstractly as collections of points in space and picturing the task as discovering how to separate two distinct clusters of points.
+Bu geometrik bakış açısı, sorunu daha soyut bir düzeyde ele almamızı sağlar.
+Artık resimleri kedi veya köpek olarak sınıflandırmak gibi başa çıkılmaz görünen bir problemle karşılaşmadığımızdan, görevleri soyut olarak uzaydaki nokta toplulukları olarak değerlendirmeye ve görevi iki farklı nokta kümesini nasıl ayıracağımızı keşfetmek olarak resmetmeye başlayabiliriz.
 
-In parallel, there is a second point of view that people often take of vectors: as directions in space. 
-Not only can we think of the vector $\mathbf{v} = [2,3]^\top$ as the location $2$ units to the right and $3$ units up from the origin, we can also think of it as the direction itself to take $2$ steps to the right and $3$ steps up. 
-In this way, we consider all the vectors in figure :numref:`fig_arrow` the same.
+Buna paralel olarak, insanların genellikle vektörleri aldıkları ikinci bir bakış açısı vardır: Uzayda yönler olarak.
+$\mathbf{v} = [2,3]^\top$ vektörünü başlangıç noktasından $2$ birim sağda ve $3$ birim yukarıda bir konum olarak düşünmekle kalmayabiliriz, aynı zamanda onu sağa doğru $2$ adım ve yukarı doğru $3$ adım şekilde yönün kendisi olarak da düşünebiliriz.
+Bu şekilde, şekildeki tüm vektörleri aynı kabul ederiz :numref:`fig_arrow`.
 
-![Any vector can be visualized as an arrow in the plane. In this case, every vector drawn is a representation of the vector $(2,3)$.](../img/ParVec.svg)
+![Herhangi bir vektör, düzlemde bir ok olarak görselleştirilebilir. Bu durumda, çizilen her vektör $(2,3)$ vektörünün bir temsilidir.](../img/ParVec.svg)
 :label:`fig_arrow`
 
-One of the benefits of this shift is that we can make visual sense of the act of vector addition.
-In particular, we follow the directions given by one vector, and then follow the directions given by the other, as is seen in :numref:`fig_add-vec`.
+Bu değisik gösterimin faydalarından biri, vektör toplama işlemini görsel olarak anlamlandırabilmemizdir.
+Özellikle, bir vektör tarafından verilen yönleri izliyoruz ve sonra diğerinin verdiği yönleri takip ediyoruz, şekilde görüldüğü gibi :numref:`fig_add-vec`.
 
-![We can visualize vector addition by first following one vector, and then another.](../img/VecAdd.svg)
+![Önce bir vektörü, sonra diğerini takip ederek vektör toplamayı görselleştirebiliriz.](../img/VecAdd.svg)
 :label:`fig_add-vec`
 
-Vector subtraction has a similar interpretation.
-By considering the identity that $\mathbf{u} = \mathbf{v} + (\mathbf{u}-\mathbf{v})$, we see that the vector $\mathbf{u}-\mathbf{v}$ is the direction that takes us from the point $\mathbf{u}$ to the point $\mathbf{v}$.
+Vektör çıkarma işleminin benzer bir yorumu vardır.
+$\mathbf{u} = \mathbf{v} + (\mathbf{u}-\mathbf{v})$ özdeşliğini göz önünde bulundurursak, $\mathbf{u} - \mathbf{v}$ vektörü, bizi $\mathbf{u}$ noktasından $\mathbf{v}$ noktasına götüren yöndür.
 
 
-## Dot Products and Angles
-As we saw in :numref:`sec_linear-algebra`, if we take two column vectors say $\mathbf{u}$ and $\mathbf{v}$, we can form their dot product by computing:
+## Nokta (İç) Çarpımları ve Açılar
+:numref:`sec_linear-algebra`da gördüğümüz gibi, $\mathbf{u}$ ve $\mathbf{v}$ gibi iki sütun vektörü alırsak, bunların nokta çarpımını aşağıdaki işlemi hesaplayarak oluşturabiliriz:
 
 $$\mathbf{u}^\top\mathbf{v} = \sum_i u_i\cdot v_i.$$
 :eqlabel:`eq_dot_def`
 
-Because :eqref:`eq_dot_def` is symmetric, we will mirror the notation of classical multiplication and write
+:eqref:`eq_dot_def` simetrik olduğundan, klasik çarpmanın gösterimini kopyalayacağız ve şöyle yazacağız:
 
 $$
 \mathbf{u}\cdot\mathbf{v} = \mathbf{u}^\top\mathbf{v} = \mathbf{v}^\top\mathbf{u},
 $$
 
-to highlight the fact that exchanging the order of the vectors will yield the same answer.
+Böylece vektörlerin sırasını değiştirmenin aynı cevabı vereceği gerçeğini vurgulamış olacağız.
 
-The dot product :eqref:`eq_dot_def` also admits a geometric interpretation: it is closely related to the angle between two vectors. Consider the angle shown in :numref:`fig_angle`.
+İç çarpım :eqref:`eq_dot_def` ayrıca geometrik bir yorumu da kabul eder: O da iki vektör arasındaki açı ile yakından ilgilidir. :numref:`fig_angle`da gösterilen açıyı düşünün.
 
-![Between any two vectors in the plane there is a well defined angle $\theta$.  We will see this angle is intimately tied to the dot product.](../img/VecAngle.svg)
+![Düzlemdeki herhangi iki vektör arasında iyi tanımlanmış bir $\theta$ açısı vardır. Bu açının iç çarpıma yakından bağlı olduğunu göreceğiz.](../img/VecAngle.svg)
 :label:`fig_angle`
 
-To start, let us consider two specific vectors:
+Başlamak için iki belli vektörü ele alalım:
 
 $$
 \mathbf{v} = (r,0) \; \text{and} \; \mathbf{w} = (s\cos(\theta), s \sin(\theta)).
 $$
 
-The vector $\mathbf{v}$ is length $r$ and runs parallel to the $x$-axis, and the vector $\mathbf{w}$ is of length $s$ and at angle $\theta$ with the $x$-axis.  
-If we compute the dot product of these two vectors, we see that
+$\mathbf{v}$ vektörü $r$ uzunluğundadır ve $x$ eksenine paralel uzanır, $\mathbf{w}$ vektörü $s$ uzunluğundadır ve $x$ ekseni ile arasında $\theta$ açısı vardır.
+Bu iki vektörün iç çarpımını hesaplarsak, şunu görürüz:
 
 $$
 \mathbf{v}\cdot\mathbf{w} = rs\cos(\theta) = \|\mathbf{v}\|\|\mathbf{w}\|\cos(\theta).
 $$
 
-With some simple algebraic manipulation, we can rearrange terms to obtain
+Bazı basit cebirsel işlemlerle, terimleri yeniden düzenleyebiliriz.
 
 $$
 \theta = \arccos\left(\frac{\mathbf{v}\cdot\mathbf{w}}{\|\mathbf{v}\|\|\mathbf{w}\|}\right).
 $$
 
-In short, for these two specific vectors, the dot product combined with the norms tell us the angle between the two vectors. This same fact is true in general. We will not derive the expression here, however, if we consider writing $\|\mathbf{v} - \mathbf{w}\|^2$ in two ways: one with the dot product, and the other geometrically using the law of cosines, we can obtain the full relationship. 
-Indeed, for any two vectors $\mathbf{v}$ and $\mathbf{w}$, the angle between the two vectors is
+Kısacası, bu iki belli vektör için, normlarla birleştirilmiş iç çarpım bize iki vektör arasındaki açıyı söyler. Aynı gerçek genel olarak doğrudur. Burada ifade türetmeyeceğiz, ancak $\|\mathbf{v} - \mathbf{w}\|^2$'ı iki şekilde yazmayı düşünürsek, biri nokta çarpımı ile, diğeri geometrik olarak kosinüsler yasasının kullanımı ile, tam ilişkiyi elde edebiliriz.
+Gerçekten de, herhangi iki vektör, $\mathbf{v}$ ve $\mathbf{w}$ için, aralarındaki açı:
 
 $$\theta = \arccos\left(\frac{\mathbf{v}\cdot\mathbf{w}}{\|\mathbf{v}\|\|\mathbf{w}\|}\right).$$
 :eqlabel:`eq_angle_forumla`
 
-This is a nice result since nothing in the computation references two-dimensions.
-Indeed, we can use this in three or three million dimensions without issue.
+Hesaplamadaki hiçbir şey iki boyutluluğu referans almadığı için bu güzel bir sonuçtur.
+Aslında bunu üç veya üç milyon boyutta da sorunsuz olarak kullanabiliriz.
 
-As a simple example, let us see how to compute the angle between a pair of vectors:
+Basit bir örnek olarak, bir çift vektör arasındaki açıyı nasıl hesaplayacağımızı görelim:
 
 ```{.python .input}
 %matplotlib inline
@@ -132,24 +132,24 @@ def angle(v, w):
 angle(torch.tensor([0, 1, 2], dtype=torch.float32), torch.tensor([2.0, 3, 4]))
 ```
 
-We will not use it right now, but it is useful to know that we will refer to vectors for which the angle is $\pi/2$ (or equivalently $90^{\circ}$) as being *orthogonal*. 
-By examining the equation above, we see that this happens when $\theta = \pi/2$, which is the same thing as $\cos(\theta) = 0$. 
-The only way this can happen is if the dot product itself is zero, and two vectors are orthogonal if and only if $\mathbf{v}\cdot\mathbf{w} = 0$. 
-This will prove to be a helpful formula when understanding objects geometrically.
+Şu anda kullanmayacağız, ancak açılarının $\pi/2$ (veya eşdeğer olarak $90^{\circ}$) olduğu vektörleri *dik* olarak isimlendireceğimizi bilmekte fayda var.
+Yukarıdaki denklemi inceleyerek, bunun $\theta = \pi/2$ olduğunda gerçekleştiğini görürüz, bu $\cos(\theta) = 0$ ile aynı şeydir.
+Bunun gerçekleşmesinin tek yolu, nokta çarpımın kendisinin sıfır olmasıdır ve ancak ve ancak $\mathbf{v}\cdot\mathbf{w} = 0$ ise iki vektörün dik olur.
+Bu, nesneleri geometrik olarak anlarken faydalı bir formül olacaktır.  
 
-It is reasonable to ask: why is computing the angle useful?
-The answer comes in the kind of invariance we expect data to have. 
-Consider an image, and a duplicate image, where every pixel value is the same but $10\%$ the brightness. 
-The values of the individual pixels are in general far from the original values.
-Thus, if one computed the distance between the original image and the darker one, the distance can be large.  
-However, for most ML applications, the *content* is the same---it is still an image of a cat as far as a cat/dog classifier is concerned. 
-However, if we consider the angle, it is not hard to see that for any vector $\mathbf{v}$, the angle  between $\mathbf{v}$ and $0.1\cdot\mathbf{v}$ is zero.
-This corresponds to the fact that scaling vectors keeps the same direction and just changes the length.
-The angle considers the darker image identical.  
+Şu soruyu sormak mantıklıdır: Açıyı hesaplamak neden yararlıdır?
+Cevap, verinin sahip olmasını beklediğimiz türden değişmezlikten gelir.
+Bir görüntü ve her piksel değerinin aynı, ancak parlaklığın $\% 10$ olduğu kopya bir görüntü düşünün.
+Tek tek piksellerin değerleri genel olarak asıl değerlerden uzaktır.
+Bu nedenle, hakiki görüntü ile daha karanlık olan arasındaki mesafe hesaplanırsa, mesafe büyük olabilir.
+Gene de, çoğu makine öğrenmesi uygulaması için *içerik* aynıdır---kedi/köpek sınıflandırıcısı söz konusu olduğunda yine de bir kedinin görüntüsüdür.
+Ancak, açıyı düşünürsek, herhangi bir $\mathbf{v}$ vektörü için $\mathbf{v}$ ve $0.1\cdot\mathbf{v}$ arasındaki açının sıfır olduğunu görmek zor değildir.
+Bu, ölçeklemenin vektörlerin yönlerini koruduğu ve sadece uzunluğu değiştirdiği gerçeğine karşılık gelir.
+Açı, koyu görüntüyü aynı kabul edecektir.
 
-Examples like this are everywhere.
-In text, we might want the topic being discussed to not change if we write twice as long of document that says the same thing.
-For some encoding (such as counting the number of occurrences of words in some vocabulary), this corresponds to a doubling of the vector encoding the document, so again we can use the angle.
+Buna benzer örnekler her yerdedir.
+Metinde, aynı şeyleri söyleyen iki kat daha uzun bir belge yazarsak tartışılan konunun değişmemesini isteyebiliriz.
+Bazı kodlamalar için (herhangi sözcük haznesindeki kelimelerin kaç kere geçtiğinin sayılması gibi), bu, belgeyi kodlayan vektörün ikiye çarpılmasına karşılık gelir ki, böylece yine açıyı kullanabiliriz.
 
 ### Cosine Similarity
 In ML contexts where the angle is employed to measure the closeness of two vectors, practitioners adopt the term *cosine similarity* to refer to the portion 
