@@ -151,56 +151,56 @@ Buna benzer örnekler her yerdedir.
 Metinde, aynı şeyleri söyleyen iki kat daha uzun bir belge yazarsak tartışılan konunun değişmemesini isteyebiliriz.
 Bazı kodlamalar için (herhangi sözcük haznesindeki kelimelerin kaç kere geçtiğinin sayılması gibi), bu, belgeyi kodlayan vektörün ikiye çarpılmasına karşılık gelir ki, böylece yine açıyı kullanabiliriz.
 
-### Cosine Similarity
-In ML contexts where the angle is employed to measure the closeness of two vectors, practitioners adopt the term *cosine similarity* to refer to the portion 
+### Kosinüs Benzerliği
+Açının iki vektörün yakınlığını ölçmek için kullanıldığı makine öğrenmesi bağlamlarında, uygulayıcılar benzerlik miktarını ifade etmek için *kosinüs benzerliği* terimini kullanırlar.
 $$
 \cos(\theta) = \frac{\mathbf{v}\cdot\mathbf{w}}{\|\mathbf{v}\|\|\mathbf{w}\|}.
 $$
 
-The cosine takes a maximum value of $1$ when the two vectors point in the same direction, a minimum value of $-1$ when they point in opposite directions, and a value of $0$ when the two vectors are orthogonal.
-Note that if the components of high-dimensional vectors are sampled randomly with mean $0$, their cosine will nearly always be close to $0$.
+İki vektör aynı yönü gösterdiğinde kosinüs maksimum $1$, zıt yönleri gösterdiklerinde minimum  $-1$ ve birbirlerine dik iseler $0$ değerini alır.
+Yüksek boyutlu vektörlerin bileşenleri ortalama $0$ ile rastgele örneklenirse, kosinüslerinin neredeyse her zaman $0$ 'a yakın olacağını unutmayın.
 
 
-## Hyperplanes
+## Hiperdüzlemler
 
-In addition to working with vectors, another key object that you must understand to go far in linear algebra is the *hyperplane*, a generalization to higher dimensions of a line (two dimensions) or of a plane (three dimensions).
-In an $d$-dimensional vector space, a hyperplane has $d-1$ dimensions and divides the space into two half-spaces. 
+Vektörlerle çalışmaya ek olarak, doğrusal cebirde ileri gitmek için anlamanız gereken bir diğer önemli nesne olan *hiperdüzlem*, bir doğrunun (iki boyut) veya bir düzlemin (üç boyut) daha yüksek boyutlarına genellemedir.
+$d$ boyutlu bir vektör uzayında, bir hiperdüzlemin $d-1$ boyutu vardır ve uzayı iki yarı-uzaya böler.
 
-Let us start with an example.
-Suppose that we have a column vector $\mathbf{w}=[2,1]^\top$. We want to know, "what are the points $\mathbf{v}$ with $\mathbf{w}\cdot\mathbf{v} = 1$?"
-By recalling the connection between dot products and angles above :eqref:`eq_angle_forumla`, we can see that this is equivalent to 
+Bir örnekle başlayalım.
+Sütun vektörümüzün $\mathbf{w}=[2,1]^\top$ olduğunu varsayalım. "$\mathbf{w}\cdot\mathbf{v} = 1$ olan $ $\mathbf{v}$ noktaları nedir?", bilmek istiyoruz. 
+Yukarıdaki nokta çarpımları ile ve açılar arasındaki bağlantıyı hatırlayarak :eqref:`eq_angle_forumla`, bunun asağıdaki denkleme eşdeğer olduğunu görebiliriz:
 $$
 \|\mathbf{v}\|\|\mathbf{w}\|\cos(\theta) = 1 \; \iff \; \|\mathbf{v}\|\cos(\theta) = \frac{1}{\|\mathbf{w}\|} = \frac{1}{\sqrt{5}}.
 $$
 
-![Recalling trigonometry, we see the formula $\|\mathbf{v}\|\cos(\theta)$ is the length of the projection of the vector $\mathbf{v}$ onto the direction of $\mathbf{w}$](../img/ProjVec.svg)
+![Trigonometriyi anımsarsak, $\|\mathbf{v}\|\cos(\theta)$ formülünün $\mathbf{v}$ vektörünün $\mathbf{w}$ yönüne izdüşümünün uzunluğu olduğunu görürüz.](../img/ProjVec.svg)
 :label:`fig_vector-project`
 
-If we consider the geometric meaning of this expression, we see that this is equivalent to saying that the length of the projection of $\mathbf{v}$ onto the direction of $\mathbf{w}$ is exactly $1/\|\mathbf{w}\|$, as is shown in :numref:`fig_vector-project`. 
-The set of all points where this is true is a line at right angles to the vector $\mathbf{w}$.
-If we wanted, we could find the equation for this line and see that it is $2x + y = 1$ or equivalently $y = 1 - 2x$.
+Bu ifadenin geometrik anlamını düşünürsek, bunun $\mathbf{v}$'ın $\mathbf{w}$ yönündeki izdüşümünün uzunluğunun tam olarak $1/\|\mathbf{w}\|$ olduğunu söylemeye eşdeğer olduğunu görürüz, :numref:`fig_vector-project`'da gösterildiği gibi.
+Bunun ifadenin doğru olduğu tüm noktalar kümesi, $\mathbf{w}$ vektörüne dik açıda olan bir doğrudur.
+İstersek, bu doğrunun denklemini bulabilir ve bunun $2x + y = 1$ veya eşdeğer olarak $y = 1 - 2x$ olduğunu görebiliriz.
 
-If we now look at what happens when we ask about the set of points with $\mathbf{w}\cdot\mathbf{v} > 1$ or $\mathbf{w}\cdot\mathbf{v} < 1$, we can see that these are cases where the projections are longer or shorter than $1/\|\mathbf{w}\|$, respectively.
-Thus, those two inequalities define either side of the line.
-In this way, we have found a way to cut our space into two halves, where all the points on one side have dot product below a threshold, and the other side above as we see in :numref:`fig_space-division`.
+Şimdi $\mathbf{w}\cdot\mathbf{v} > 1$ veya $\mathbf{w}\cdot\mathbf{v} < 1$ ile nokta kümesini sorduğumuzda ne olduğuna bakarsak, bunların sırasıyla $1/\|\mathbf{w}\|$'den daha uzun veya daha kısa izdüşümlerin (projeksiyon) olduğu durumlar olduğunu görebiliriz.
+Dolayısıyla, bu iki eşitsizlik çizginin her iki tarafını da tanımlar.
+Bu şekilde, uzayımızı iki yarıma bölmenin bir yolunu bulduk, burada bir taraftaki tüm noktaların bir eşiğin altında iç çarpımları var ve diğer tarafta üstünde, aynı :numref:`fig_space-division`da gördüğümüz gibi.
 
-![If we now consider the inequality version of the expression, we see that our hyperplane (in this case: just a line) separates the space into two halves.](../img/SpaceDivision.svg)
+![Şimdi ifadenin eşitsizlik versiyonunu ele alırsak, hiperdüzlemimizin (bu durumda: sadece bir çizgi) uzayı iki yarıma ayırdığını görürüz.](../img/SpaceDivision.svg)
 :label:`fig_space-division`
 
-The story in higher dimension is much the same.
-If we now take $\mathbf{w} = [1,2,3]^\top$ and ask about the points in three dimensions with $\mathbf{w}\cdot\mathbf{v} = 1$, we obtain a plane at right angles to the given vector $\mathbf{w}$.
-The two inequalities again define the two sides of the plane as is shown in :numref:`fig_higher-division`.
+Daha yüksek boyuttaki hikaye hemen hemen aynıdır.
+Şimdi $\mathbf{w} = [1,2,3]^\top$ alırsak ve $\mathbf{w}\cdot\mathbf{v} = 1$ ile üç boyuttaki noktaları sorarsak, verilen $\mathbf{w}$ vektörüne dik açıda bir düzlem elde ederiz.
+İki eşitsizlik yine düzlemin iki tarafını şu şekilde gösterildiği gibi tanımlar :numref:`fig_higher-division`.
 
-![Hyperplanes in any dimension separate the space into two halves.](../img/SpaceDivision3D.svg)
+![Herhangi bir boyuttaki hiperdüzlemler, uzayı ikiye böler.](../img/SpaceDivision3D.svg)
 :label:`fig_higher-division`
 
-While our ability to visualize runs out at this point, nothing stops us from doing this in tens, hundreds, or billions of dimensions.
-This occurs often when thinking about machine learned models.
-For instance, we can understand linear classification models like those from :numref:`sec_softmax`, as methods to find hyperplanes that separate the different target classes.
-In this context, such hyperplanes are often referred to as *decision planes*.
-The majority of deep learned classification models end with a linear layer fed into a softmax, so one can interpret the role of the deep neural network to be to find a non-linear embedding such that the target classes can be separated cleanly by hyperplanes.
+Bu noktada görselleştirme yeteneğimiz tükenirken, bizi bunu onlarca, yüzlerce veya milyarlarca boyutta yapmaktan hiçbir şey alıkoyamaz.
+Bu genellikle makinenin öğrendiği modeller hakkında düşünürken ortaya çıkar.
+Örneğin :numref:`sec_softmax`taki gibi doğrusal sınıflandırma modellerini farklı hedef sınıfları ayıran hiperdüzlemleri bulma yöntemleri olarak anlayabiliriz.
+Bu bağlamda, bu tür hiperdüzlemlere genellikle *karar düzlemleri* adı verilir.
+Derin eğitilmiş sınıflandırma modellerinin çoğu, bir eşiksiz en büyük işleve (softmax) beslenen doğrusal bir katmanla sona erer, bu nedenle derin sinir ağının rolü, hedef sınıfların hiperdüzlemler tarafından temiz bir şekilde ayrılabileceği şekilde doğrusal olmayan bir gömme bulmak olarak yorumlanabilir.
 
-To give a hand-built example, notice that we can produce a reasonable model to classify tiny images of t-shirts and trousers from the Fashion MNIST dataset (seen in :numref:`sec_fashion_mnist`) by just taking the vector between their means to define the decision plane and eyeball a crude threshold.  First we will load the data and compute the averages.
+El yapımı bir örnek vermek gerekirse, Fashion MNIST veri kümesinden (:numref:`sec_fashion_mnist`) küçük tişört ve pantolon resimlerini sınıflandırmak için sadece ortalamalarını birleştiren bir vektör alıp karar düzlemini ve göz kararı kaba bir eşiği tanımlayarak makul bir model oluşturabileceğimize dikkat edin. İlk önce verileri yükleyeceğiz ve ortalamaları hesaplayacağız.
 
 ```{.python .input}
 # Load in the dataset
@@ -244,7 +244,7 @@ ave_0 = torch.mean(X_train_0, axis=0)
 ave_1 = torch.mean(X_train_1, axis=0)
 ```
 
-It can be informative to examine these averages in detail, so let us plot what they look like.  In this case, we see that the average indeed resembles a blurry image of a t-shirt.
+Bu ortalamaları ayrıntılı olarak incelemek bilgilendirici olabilir, bu yüzden neye benzediklerini çizelim. Bu durumda, ortalamanın gerçekten de bir tişörtün bulanık görüntüsüne benzediğini görüyoruz.
 
 ```{.python .input}
 #@tab all
@@ -254,7 +254,7 @@ d2l.plt.imshow(ave_0.reshape(28, 28).tolist(), cmap='Greys')
 d2l.plt.show()
 ```
 
-In the second case, we again see that the average resembles a blurry image of trousers.
+İkinci durumda, yine ortalamanın bulanık bir pantolon görüntüsüne benzediğini görüyoruz.
 
 ```{.python .input}
 #@tab all
@@ -263,7 +263,7 @@ d2l.plt.imshow(ave_1.reshape(28, 28).tolist(), cmap='Greys')
 d2l.plt.show()
 ```
 
-In a fully machine learned solution, we would learn the threshold from the dataset. In this case, I simply eyeballed a threshold that looked good on the training data by hand.
+Tamamen makine öğrenmeli bir çözümde, eşiği veri kümesinden öğrenecektik. Bu durumda, el ile eğitim verilerinde iyi görünen bir eşiği göz karari aldıK.
 
 ```{.python .input}
 # Print test set accuracy with eyeballed threshold
@@ -285,13 +285,14 @@ predictions = X_test.reshape(2000, -1) @ (w.flatten()) > -1500000
 torch.mean(predictions.type(y_test.dtype) == y_test, dtype=torch.float64)
 ```
 
-## Geometry of Linear Transformations
 
-Through :numref:`sec_linear-algebra` and the above discussions, we have a solid understanding of the geometry of vectors, lengths, and angles. 
-However, there is one important object we have omitted discussing, and that is a geometric understanding of linear transformations represented by matrices. Fully internalizing what matrices can do to transform data between two potentially different high dimensional spaces takes significant practice, and is beyond the scope of this appendix. 
-However, we can start building up intuition in two dimensions.
+## Doğrusal Dönüşümlerin Geometrisi
 
-Suppose that we have some matrix:
+:numref:`sec_linear-algebra` ve yukarıdaki tartışmalar sayesinde, vektörlerin geometrisine , uzunluklara ve açılara dair sağlam bir anlayışa sahibiz.
+Bununla birlikte, tartışmayı atladığımız önemli bir nesne var ve bu, matrislerle temsil edilen doğrusal dönüşümlerin geometrik bir şekilde anlaşılmasıdır. Potansiyel olarak farklı yüksek boyutlu iki uzay arasında verileri dönüştürken matrislerin neler yapabileceğini tam olarak içselleştirmek, önemli bir uygulama gerektirir ve bu ek bölümün kapsamı dışındadır.
+Bununla birlikte, sezgimizi iki boyutta oluşturmaya başlayabiliriz.
+
+Bir matrisimiz olduğunu varsayalım:
 
 $$
 \mathbf{A} = \begin{bmatrix}
@@ -299,9 +300,7 @@ a & b \\ c & d
 \end{bmatrix}.
 $$
 
-If we want to apply this to an arbitrary vector 
-$\mathbf{v} = [x, y]^\top$, 
-we multiply and see that
+Bunu rastgele bir $\mathbf{v} = [x, y]^\top$ vektörüne uygulamak istersek, çarpar ve görürüz ki
 
 $$
 \begin{aligned}
@@ -312,13 +311,13 @@ $$
 \end{aligned}
 $$
 
-This may seem like an odd computation, where something clear became somewhat impenetrable.
-However, it tells us that we can write the way that a matrix transforms *any* vector in terms of how it transforms *two specific vectors*: $[1,0]^\top$ and $[0,1]^\top$. 
-This is worth considering for a moment. 
-We have essentially reduced an infinite problem (what happens to any pair of real numbers) to a finite one (what happens to these specific vectors).
-These vectors are an example a *basis*, where we can write any vector in our space as a weighted sum of these *basis vectors*.
+Bu, net bir şeyin bir şekilde anlaşılmaz hale geldiği garip bir hesaplama gibi görünebilir.
+Bununla birlikte, bize bir matrisin *herhangi* bir vektörü *iki belirli vektöre* göre nasıl dönüştürdüğünü yazabileceğimizi söyler: $[1,0]^\top$ and $[0,1]^\top$.
+Bu bir an için düşünmeye değer.
+Esasen sonsuz bir problemi (herhangi bir gerçel sayı çiftine olanı) sonlu bir probleme (bu belirli vektörlere ne olduğuna) indirgedik.
+Bu vektörler, uzayımızdaki herhangi bir vektörü bu *taban vektörlerin* ağırlıklı toplamı olarak yazabileceğimiz örnek bir *taban*dır.
 
-Let us draw what happens when we use the specific matrix
+Belli bir matrisi kullandığımızda ne olacağını çizelim
 
 $$
 \mathbf{A} = \begin{bmatrix}
@@ -327,17 +326,17 @@ $$
 \end{bmatrix}.
 $$
 
-If we look at the specific vector $\mathbf{v} = [2, -1]^\top$, we see this is $2\cdot[1,0]^\top + -1\cdot[0,1]^\top$, and thus we know that the matrix $A$ will send this to $2(\mathbf{A}[1,0]^\top) + -1(\mathbf{A}[0,1])^\top = 2[1, -1]^\top - [2,3]^\top = [0, -5]^\top$.
-If we follow this logic through carefully, say by considering the grid of all integer pairs of points, we see that what happens is that the matrix multiplication can skew, rotate, and scale the grid, but the grid structure must remain as you see in :numref:`fig_grid-transform`.
+Belirli $\mathbf{v} = [2, -1]^\top$ vektörüne bakarsak, bunun $2\cdot[1,0]^\top + -1\cdot[0,1]^\top$ olduğunu görürüz, dolayısıyla $A$ matrisinin bunu $$2(\mathbf{A}[1,0]^\top) + -1(\mathbf{A}[0,1])^\top = 2[1, -1]^\top - [2,3]^\top = [0, -5]^\top$'e göndereceğini biliyoruz.
+Bu mantığı dikkatlice takip edersek, diyelim ki tüm tamsayı nokta çiftlerinin ızgarasını (grid) göz önünde bulundurarak, matris çarpımının ızgarayı eğriltebileceğini, döndürebileceğini ve ölçekleyebileceğini görürüz, ancak ızgara yapısı aşağıda gördüğünüz gibi kalmalıdır :numref:`fig_grid-transform`.
 
-![The matrix $\mathbf{A}$ acting on the given basis vectors.  Notice how the entire grid is transported along with it.](../img/GridTransform.svg)
+![Verilen temel vektörlere göre hareket eden $\mathbf {A}$ matrisi. Tüm ızgaranın onunla birlikte nasıl taşındığına dikkat edin.](../img/GridTransform.svg)
 :label:`fig_grid-transform`
 
-This is the most important intuitive point to internalize about linear transformations represented by matrices.
-Matrices are incapable of distorting some parts of space differently than others.
-All they can do is take the original coordinates on our space and skew, rotate, and scale them.
+Bu, matrisler tarafından temsil edilen doğrusal dönüşümler hakkında içselleştirilmesi gereken en önemli sezgisel noktadır.
+Matrisler, uzayın bazı bölümlerini diğerlerinden farklı şekilde bozma yeteneğine sahip değildir.
+Tüm yapabilecekleri, uzayımızdaki hakiki koordinatları almak ve onları eğriltmek, döndürmek ve ölçeklendirmektir.
 
-Some distortions can be severe.  For instance the matrix
+Bazı çarpıklıklar şiddetli olabilir. Örneğin matris
 
 $$
 \mathbf{B} = \begin{bmatrix}
@@ -345,12 +344,12 @@ $$
 \end{bmatrix},
 $$
 
-compresses the entire two-dimensional plane down to a single line.
-Identifying and working with such transformations are the topic of a later section, but geometrically we can see that this is fundamentally different from the types of transformations we saw above. 
-For instance, the result from matrix $\mathbf{A}$ can be "bent back" to the original grid. The results from matrix $\mathbf{B}$ cannot because we will never know where the vector $[1,2]^\top$ came from---was it $[1,1]^\top$ or $[0, -1]^\top$?
+iki boyutlu düzlemin tamamını tek bir çizgiye sıkıştırır.
+Bu tür dönüşümleri tanımlamak ve bunlarla çalışmak daha sonraki bir bölümün konusudur, ancak geometrik olarak bunun yukarıda gördüğümüz dönüşüm türlerinden temelde farklı olduğunu görebiliriz.
+Örneğin, $\mathbf{A}$ matrisinden gelen sonuç, orijinal ızgaraya "geri eğilebilir". $\mathbf{B}$ matrisinden gelen sonuçlar olamaz çünkü $[1,2]^\top$ vektörünün nereden geldiğini asla bilemeyiz --- bu $[1,1]^\top$ veya $[0,-1]^\top$ mıydı?
 
-While this picture was for a $2\times2$ matrix, nothing prevents us from taking the lessons learned into higher dimensions.
-If we take similar basis vectors like $[1,0, \ldots,0]$ and see where our matrix sends them, we can start to get a feeling for how the matrix multiplication distorts the entire space in whatever dimension space we are dealing with.
+Bu resim $2\times 2$ matrisi için olsa da, hiçbir şey öğrenilen dersleri daha yüksek boyutlara taşımamızı engellemiyor.
+$[1,0, \ldots,0]$ gibi benzer taban vektörleri alırsak ve matrisimizin onları nereye gönderdiğini görürsek, matris çarpımının, uğraştığımız boyut uzayında tüm uzayı nasıl bozduğu hakkında bir fikir edinmeye başlayabiliriz.
 
 ## Linear Dependence
 
