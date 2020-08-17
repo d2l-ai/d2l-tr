@@ -263,7 +263,7 @@ d2l.plt.imshow(ave_1.reshape(28, 28).tolist(), cmap='Greys')
 d2l.plt.show()
 ```
 
-Tamamen makine öğrenmeli bir çözümde, eşiği veri kümesinden öğrenecektik. Bu durumda, el ile eğitim verilerinde iyi görünen bir eşiği göz karari aldıK.
+Tamamen makine öğrenmeli bir çözümde, eşiği veri kümesinden öğrenecektik. Bu durumda, el ile eğitim verilerinde iyi görünen bir eşiği göz kararı aldık.
 
 ```{.python .input}
 # Print test set accuracy with eyeballed threshold
@@ -351,9 +351,9 @@ Bu tür dönüşümleri tanımlamak ve bunlarla çalışmak daha sonraki bir bö
 Bu resim $2\times 2$ matrisi için olsa da, hiçbir şey öğrenilen dersleri daha yüksek boyutlara taşımamızı engellemiyor.
 $[1,0, \ldots,0]$ gibi benzer taban vektörleri alırsak ve matrisimizin onları nereye gönderdiğini görürsek, matris çarpımının, uğraştığımız boyut uzayında tüm uzayı nasıl bozduğu hakkında bir fikir edinmeye başlayabiliriz.
 
-## Linear Dependence
+## Doğrusal Bağımlılık
 
-Consider again the matrix
+Matrisi tekrar düşünün
 
 $$
 \mathbf{B} = \begin{bmatrix}
@@ -361,36 +361,36 @@ $$
 \end{bmatrix}.
 $$
 
-This compresses the entire plane down to live on the single line $y = 2x$. The question now arises: is there some way we can detect this just looking at the matrix itself?
-The answer is that indeed we can.
-Let us take $\mathbf{b}_1 = [2,4]^\top$ and $\mathbf{b}_2 = [-1, -2]^\top$ be the two columns of $\mathbf{B}$.
-Remember that we can write everything transformed by the matrix $\mathbf{B}$ as a weighted sum of the columns of the matrix: like $a_1\mathbf{b}_1 + a_2\mathbf{b}_2$.
-We call this a *linear combination*. 
-The fact that $\mathbf{b}_1 = -2\cdot\mathbf{b}_2$ means that we can write any linear combination of those two columns entirely in terms of say $\mathbf{b}_2$ since
+Bu, tüm düzlemi $y = 2x$ tek doğruda yaşamak için sıkıştırır. Şimdi şu soru ortaya çıkıyor: Bunu sadece matrise bakarak tespit etmemizin bir yolu var mı?
+Cevap, gerçekten edebiliriz.
+$\mathbf{b}_1 = [2,4]^\top$ ve $\mathbf{b}_2 = [-1,-2]^\top$, $\mathbf {B}$'nin iki sütunu olsun.
+$\mathbf{B}$ matrisi tarafından dönüştürülen her şeyi, matrisin sütunlarının ağırlıklı toplamı olarak yazabileceğimizi unutmayın: $a_1\ mathbf{b}_1 + a_2\mathbf{b}_2$ gibi.
+Buna *doğrusal birleşim (kombinasyon)* diyoruz.
+$\mathbf{b}_1 = -2\cdot\mathbf{b}_2$ olması, bu iki sütunun herhangi bir doğrusal kombinasyonunu tamamen, mesela, $\mathbf{b}_2$ cinsinden yazabileceğimiz anlamına gelir, çünkü
 
 $$
 a_1\mathbf{b}_1 + a_2\mathbf{b}_2 = -2a_1\mathbf{b}_2 + a_2\mathbf{b}_2 = (a_2-2a_1)\mathbf{b}_2.
 $$
 
-This means that one of the columns is, in a sense, redundant because it does not define a unique direction in space. 
-This should not surprise us too much  since we already saw that this matrix collapses the entire plane down into a single line.
-Moreover, we see that the linear dependence $\mathbf{b}_1 = -2\cdot\mathbf{b}_2$ captures this. 
-To make this more symmetrical between the two vectors, we will write this as
+Bu, sütunlardan birinin uzayda tek bir yön tanımlamadığından bir bakıma gereksiz olduğu anlamına gelir.
+Bu matrisin tüm düzlemi tek bir çizgiye indirdiğini gördüğümüz için bu bizi çok şaşırtmamalı.
+Dahası, $\mathbf{b}_1 = -2\cdot\mathbf{b}_2$ doğrusal bağımlılığının bunu yakaladığını görüyoruz.
+Bunu iki vektör arasında daha simetrik hale getirmek için şöyle yazacağız:
 
 $$
 \mathbf{b}_1  + 2\cdot\mathbf{b}_2 = 0.
 $$
 
-In general, we will say that a collection of vectors $\mathbf{v}_1, \ldots, \mathbf{v}_k$ are *linearly dependent* if there exist coefficients $a_1, \ldots, a_k$ *not all equal to zero* so that
+Genel olarak, $\mathbf{v}_1, \ldots, \mathbf{v}_k$ vektörlerinin bir topluluğunun *doğrusal olarak bağımlı* olduğunu söyleyeceğiz, eğer öyleki aşağıdaki denklem için *hepsi sıfıra eşit olmayan* $a_1, \ldots, a_k$ katsayıları varsa.
 
 $$
 \sum_{i=1}^k a_i\mathbf{v_i} = 0.
 $$
 
-In this case, we can solve for one of the vectors in terms of some combination of the others, and effectively render it redundant.
-Thus, a linear dependence in the columns of a matrix is a witness to the fact that our matrix is compressing the space down to some lower dimension.
-If there is no linear dependence we say the vectors are *linearly independent*. 
-If the columns of a matrix are linearly independent, no compression occurs and the operation can be undone.
+Bu durumda, vektörlerden birini diğerlerinin birtakım birleşimi olarak çözebilir ve onu etkili bir şekilde gereksiz hale getirebiliriz.
+Bu nedenle, bir matrisin sütunlarındaki doğrusal bir bağımlılık, matrisimizin uzayı daha düşük bir boyuta sıkıştırdığına bir kanıttır.
+Doğrusal bağımlılık yoksa, vektörlerin *doğrusal olarak bağımsız* olduğunu söyleriz.
+Bir matrisin sütunları doğrusal olarak bağımsızsa, sıkıştırma gerçekleşmez ve işlem geri alınabilir.
 
 ## Rank
 
