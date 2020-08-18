@@ -392,12 +392,12 @@ Bu nedenle, bir matrisin sütunlarındaki doğrusal bir bağımlılık, matrisim
 Doğrusal bağımlılık yoksa, vektörlerin *doğrusal olarak bağımsız* olduğunu söyleriz.
 Bir matrisin sütunları doğrusal olarak bağımsızsa, sıkıştırma gerçekleşmez ve işlem geri alınabilir.
 
-## Rank
+## Kerte (Rank)
 
-If we have a general $n\times m$ matrix, it is reasonable to ask what dimension space the matrix maps into.
-A concept known as the *rank* will be our answer.
-In the previous section, we noted that a linear dependence bears witness to compression of space into a lower dimension and so we will be able to use this to define the notion of rank. 
-In particular, the rank of a matrix $\mathbf{A}$ is the largest number of linearly independent columns amongst all subsets of columns. For example, the matrix
+Genel bir $n\times m$ matrisimiz varsa, matrisin hangi boyut uzayına eşlendiğini sormak mantıklıdır.
+Cevabımız *kerte* olarak bilinen bir kavram olacaktır.
+Önceki bölümde, doğrusal bir bağımlılığın uzayın daha düşük bir boyuta sıkıştırılmasına tanıklık ettiğini ve bu nedenle bunu kerte kavramını tanımlamak için kullanabileceğimizi ifade ettik.
+Özellikle, bir $\mathbf{A}$ matrisinin kertesi, sütunların tüm alt kümeleri arasındaki doğrusal bağımsız en büyük sütun sayısıdır. Örneğin, matris
 
 $$
 \mathbf{B} = \begin{bmatrix}
@@ -405,8 +405,8 @@ $$
 \end{bmatrix},
 $$
 
-has $\mathrm{rank}(B)=1$, since the two columns are linearly dependent, but either column by itself is not linearly dependent.
-For a more challenging example, we can consider
+$\mathrm{kerte}(B) = 1$'e sahiptir, çünkü iki sütunu doğrusal olarak bağımlıdır, ancak iki sütun da kendi başına doğrusal olarak bağımlı değildir.
+Daha zorlu bir örnek için,
 
 $$
 \mathbf{C} = \begin{bmatrix}
@@ -417,15 +417,15 @@ $$
 \end{bmatrix},
 $$
 
-and show that $\mathbf{C}$ has rank two since, for instance, the first two columns are linearly independent, however any of the four collections of three columns are dependent.  
+ve $\mathbf{C}$'nin kertesinin iki olduğunu gösterebiliriz, çünkü örneğin ilk iki sütun doğrusal olarak bağımsızdır, ancak herhangi bir dört sütunlu toplulukta üç sütun bağımlıdır.
 
-This procedure, as described, is very inefficient. 
-It requires looking at every subset of the columns of our given matrix, and thus is potentially exponential in the number of columns.
-Later we will see a more computationally efficient way to compute the rank of a matrix, but for now, this is sufficient to see that the concept is well defined and understand the meaning.
+Bu prosedür, açıklandığı gibi, çok verimsizdir.
+Verdiğimiz matrisin sütunlarının her alt kümesine bakmayı gerektirir ve bu nedenle sütun sayısına bağlı, potansiyel olarak üsteldir.
+Daha sonra bir matrisin kertesini hesaplamanın hesaplama açısından daha verimli bir yolunu göreceğiz, ancak şimdilik, kavramın iyi tanımlandığını görmek ve anlamı anlamak yeterlidir.
 
-## Invertibility
+## Tersinirlik (Invertibility)
 
-We have seen above that multiplication by a matrix with linearly dependent columns cannot be undone, i.e., there is no inverse operation that can always recover the input. However, multiplication by a full-rank matrix (i.e., some $\mathbf{A}$ that is $n \times n$ matrix with rank $n$), we should always be able to undo it. Consider the matrix
+Yukarıda doğrusal olarak bağımlı sütunları olan bir matris ile çarpmanın geri alınamayacağını gördük, yani girdiyi her zaman kurtarabilecek ters işlem yoktur. Bununla birlikte, tam kerteli bir matrisle çarpma durumunda (yani, $\mathbf{A}$ yani $n\times n$, $n$ kerteli matris), bunu her zaman geri alabilmeliyiz. Şu matrisi düşünün
 
 $$
 \mathbf{I} = \begin{bmatrix}
@@ -436,18 +436,18 @@ $$
 \end{bmatrix}.
 $$
 
-which is the matrix with ones along the diagonal, and zeros elsewhere. 
-We call this the *identity* matrix. 
-It is the matrix which leaves our data unchanged when applied. 
-To find a matrix which undoes what our matrix $\mathbf{A}$ has done, we want to find a matrix $\mathbf{A}^{-1}$ such that
+Bu, köşegen boyunca birlerin ve başka yerlerde sıfırların bulunduğu matristir.
+Buna *birim* matris diyoruz.
+Uygulandığında verilerimizi değiştirmeden bırakan matristir.
+$\mathbf{A}$ matrisimizin yaptıklarını geri alan bir matris bulmak için, şu şekilde bir $\mathbf{A}^{-1}$ matrisi bulmak istiyoruz
 
 $$
 \mathbf{A}^{-1}\mathbf{A} = \mathbf{A}\mathbf{A}^{-1} =  \mathbf{I}.
 $$
 
-If we look at this as a system, we have $n \times n$ unknowns (the entries of $\mathbf{A}^{-1}$) and $n \times n$ equations (the equality that needs to hold between every entry of the product $\mathbf{A}^{-1}\mathbf{A}$ and every entry of $\mathbf{I}$) so we should generically expect a solution to exist. 
-Indeed, in the next section we will see a quantity called the *determinant*, which has the property that as long as the determinant is not zero, we can find a solution. We call such a matrix $\mathbf{A}^{-1}$ the *inverse* matrix.
-As an example, if $\mathbf{A}$ is the general $2 \times 2$ matrix 
+Buna bir sistem olarak bakarsak, $n\times n$ bilinmeyenli ($\mathbf{A}^{-1}$'nin girdileri) ve $n\times n$ denklemimiz var ($\mathbf{A}^{-1}\mathbf{A}$ çarpımının her girdisi ve $\mathbf{I}$'nin her girdisi arasında uyulması gereken eşitlik), bu nedenle genel olarak bir çözümün var olmasını beklemeliyiz.
+Nitekim bir sonraki bölümde sıfır olmadığı sürece çözüm bulabileceğimizi gösterme özelliğine sahip olan *determinant* adlı bir miktar göreceğiz. Böyle bir $\mathbf{A}^{-1}$ matrise, *ters* matris diyoruz.
+Örnek olarak, eğer $\mathbf{A}$ genel bir $2\times 2$ matris ise
 
 $$
 \mathbf{A} = \begin{bmatrix}
@@ -456,7 +456,7 @@ c & d
 \end{bmatrix},
 $$
 
-then we can see that the inverse is
+o zaman tersinin şöyle olduğunu görebiliriz
 
 $$
  \frac{1}{ad-bc}  \begin{bmatrix}
@@ -465,7 +465,7 @@ d & -b \\
 \end{bmatrix}.
 $$
 
-We can test to see this by seeing that multiplying by the inverse given by the formula above works in practice.
+Yukarıdaki formülün verdiği ters ile çarpmanın pratikte işe yaradığını görmek için test edebiliriz.
 
 ```{.python .input}
 M = np.array([[1, 2], [1, 4]])
@@ -480,37 +480,37 @@ M_inv = torch.tensor([[2, -1], [-0.5, 0.5]])
 M_inv @ M
 ```
 
-### Numerical Issues
-While the inverse of a matrix is useful in theory, we must say that most of the time we do not wish to *use* the matrix inverse to solve a problem in practice. 
-In general, there are far more numerically stable algorithms for solving linear equations like
+### Sayısal (Numerik) Sorunlar
+Bir matrisin tersi teoride yararlı olsa da, pratikte bir problemi çözmek için çoğu zaman matris tersini *kullanmak* istemediğimizi söylemeliyiz.
+Genel olarak, doğrusal denklemleri çözmek için sayısal olarak çok daha kararlı algoritmalar vardır,
 
 $$
 \mathbf{A}\mathbf{x} = \mathbf{b},
 $$
 
-than computing the inverse and multiplying to get
+tersini hesaplamaktan ve çarpmaktan daha tercih edebileceğimiz.
 
 $$
 \mathbf{x} = \mathbf{A}^{-1}\mathbf{b}.
 $$
 
-Just as division by a small number can lead to numerical instability, so can inversion of a matrix which is close to having low rank.
+Küçük bir sayıya bölünmenin sayısal kararsızlığa yol açması gibi, düşük kerteye olmaya yakın bir matrisin ters çevrilmesi de kararsızlığa neden olabilir.
 
-Moreover, it is common that the matrix $\mathbf{A}$ is *sparse*, which is to say that it contains only a small number of non-zero values. 
-If we were to explore examples, we would see that this does not mean the inverse is sparse. 
-Even if $\mathbf{A}$ was a $1$ million by $1$ million matrix with only $5$ million non-zero entries (and thus we need only store those $5$ million), the inverse will typically have almost every entry non-negative, requiring us to store all $1\text{M}^2$ entries---that is $1$ trillion entries!
+Dahası, $\mathbf{A}$ matrisinin *seyrek* olması yaygındır, yani sadece az sayıda sıfır olmayan değer içerir.
+Örnekleri araştıracak olsaydık, bunun tersin de seyrek olduğu anlamına gelmediğini görürdük.
+$\mathbf{A}$, yalnızca $5$ milyon tanesi sıfır olmayan girdileri olan $1$ milyona $1$milyonluk bir matris olsa bile (ve bu nedenle yalnızca bu $5$ milyon girdiyi saklamamız gerekir), tersi genellikle hemen hemen hepsi eksi değer olmayan tüm girdilere sahip olacaktır ki tüm $1\text{M}^2$ girdiyi saklamamızı gerektirir --- bu da $1$ trilyon girdidir!
 
-While we do not have time to dive all the way into the thorny numerical issues frequently encountered when working with linear algebra, we want to provide you with some intuition about when to proceed with caution, and generally avoiding inversion in practice is a good rule of thumb.
+Doğrusal cebir ile çalışırken sıkça karşılaşılan çetrefilli sayısal sorunlara tam olarak dalacak vaktimiz olmasa da, ne zaman dikkatli bir şekilde ilerlemeniz gerektiği konusunda size biraz önsezi sağlamak istiyoruz ve pratikte genellikle ters çevirmekten kaçınmak iyi bir ampirik kuraldır.
 
 ## Determinant
-The geometric view of linear algebra gives an intuitive way to interpret a a fundamental quantity known as the *determinant*.
-Consider the grid image from before, but now with a highlighted region (:numref:`fig_grid-filled`).
+Doğrusal cebirin geometrik görünümü, *determinant* olarak bilinen temel bir miktarı yorumlamanın sezgisel bir yolunu sunar.
+Önceki ızgara görüntüsünü, ama şimdi vurgulanmış bölgeyle (:numref:`fig_grid-dolu`) düşünün.
 
-![The matrix $\mathbf{A}$ again distorting the grid.  This time, I want to draw particular attention to what happens to the highlighted square.](../img/GridTransformFilled.svg)
+![$\mathbf{A}$ matrisi yine ızgarayı bozuyor. Bu sefer, vurgulanan kareye ne olduğuna özellikle dikkat çekmek istiyoruz.](../img/GridTransformFilled.svg)
 :label:`fig_grid-filled`
 
-Look at the highlighted square.  This is a square with edges given by $(0, 1)$ and $(1, 0)$ and thus it has area one. After $\mathbf{A}$ transforms this square, we see that it becomes a parallelogram.
-There is no reason this parallelogram should have the same area that we started with, and indeed in the specific case shown here of
+Vurgulanan kareye bakın. Bu, kenarları $(0,1)$ ve $(1,0)$ ile verilen bir karedir ve dolayısıyla bir birim alana sahiptir. $\mathbf{A}$ bu kareyi dönüştürdükten sonra, bunun bir paralelkenar olduğunu görürüz.
+Bu paralelkenarın başladığımızdaki aynı alana sahip olması için hiçbir neden yok ve aslında burada gösterilen özel durumda aşağıdaki matristir.
 
 $$
 \mathbf{A} = \begin{bmatrix}
@@ -519,9 +519,9 @@ $$
 \end{bmatrix},
 $$
 
-it is an exercise in coordinate geometry to compute the area of this parallelogram and obtain that the area is $5$.
+Bu paralelkenarın alanını hesaplamak ve alanın $5$ olduğunu elde etmek koordinat geometrisinde bir alıştırmadır.
 
-In general, if we have a matrix
+Genel olarak, bir matrisimiz varsa,
 
 $$
 \mathbf{A} = \begin{bmatrix}
@@ -530,10 +530,10 @@ c & d
 \end{bmatrix},
 $$
 
-we can see with some computation that the area of the resulting parallelogram is $ad-bc$.
-This area is referred to as the *determinant*.
+biraz hesaplamayla elde edilen paralelkenarın alanının $ad-bc$ olduğunu görebiliriz.
+Bu alan, *determinant* olarak adlandırılır.
 
-Let us check this quickly with some example code.
+Bunu bazı örnek kodlarla hızlıca kontrol edelim.
 
 ```{.python .input}
 import numpy as np
@@ -545,11 +545,11 @@ np.linalg.det(np.array([[1, -1], [2, 3]]))
 torch.det(torch.tensor([[1, -1], [2, 3]], dtype=torch.float32))
 ```
 
-The eagle-eyed amongst us will notice that this expression can be zero or even negative.
-For the negative term, this is a matter of convention  taken generally in mathematics: if the matrix flips the figure, we say the area is negated.
-Let us see now that when the determinant is zero, we learn more.
+Aramızdaki kartal gözlüler, bu ifadenin sıfır, hatta negatif olabileceğini fark edecek.
+Negatif terim için, bu genel olarak matematikte ele alınan bir ifade meselesidir: Eğer matris şekli ters çevirirse, alanın aksine çevrildiğini söyleriz.
+Şimdi determinant sıfır olduğunda daha fazlasını öğreneceğimizi görelim.
 
-Let us consider
+Bir düşünelim.
 
 $$
 \mathbf{B} = \begin{bmatrix}
@@ -557,59 +557,58 @@ $$
 \end{bmatrix}.
 $$
 
-If we compute the determinant of this matrix, we get $2\cdot(-2 ) - 4\cdot(-1) = 0$.
-Given our understanding above, this makes sense. 
-$\mathbf{B}$ compresses the square from the original image down to a line segment, which has zero area.
-And indeed, being compressed into a lower dimensional space is the only way to have zero area after the transformation.
-Thus we see the following result is true: a matrix $A$ is invertible if and only if the determinant is not equal to zero.
+Bu matrisin determinantını hesaplarsak, $2\cdot(-2) - 4\cdot(-1) = 0$ elde ederiz.
+Yukarıdaki anlayışımıza göre, bu mantıklı.
+$\mathbf{B}$, orijinal görüntüdeki kareyi sıfır alana sahip bir çizgi parçasına sıkıştırır.
+Ve aslında, dönüşümden sonra sıfır alana sahip olmanın tek yolu, daha düşük boyutlu bir alana sıkıştırılmaktır.
+Böylece, aşağıdaki sonucun doğru olduğunu görüyoruz: Bir $A$ matrisinin, ancak ve ancak determinantı sıfıra eşit değilse tersi hesaplanabilir.
 
-As a final comment, imagine that we have any figure drawn on the plane.
-Thinking like computer scientists, we can decompose that figure into a collection of little squares so that the area of the figure is in essence just the number of squares in the decomposition.
-If we now transform that figure by a matrix, we send each of these squares to parallelograms, each one of which has area given by the determinant.
-We see that for any figure, the determinant gives the (signed) number that a matrix scales the area of any figure.
+Son bir yorum olarak, düzlemde herhangi bir figürün çizildiğini hayal edin.
+Bilgisayar bilimcileri gibi düşünürsek, bu şekli küçük kareler toplamına ayırabiliriz, böylece şeklin alanı özünde sadece ayrıştırmadaki karelerin sayısı olur.
+Şimdi bu rakamı bir matrisle dönüştürürsek, bu karelerin her birini, determinant tarafından verilen alana sahip olan paralelkenarlara göndeririz.
+Herhangi bir şekil için determinantın, bir matrisin herhangi bir şeklin alanını ölçeklendirdiği (işaretli) sayıyı verdiğini görüyoruz.
 
-Computing determinants for larger matrices can be laborious, but the  intuition is the same.
-The determinant remains the factor that $n\times n$ matrices scale $n$-dimensional volumes.
+Daha büyük matrisler için belirleyicilerin hesaplanması zahmetli olabilir, ancak sezgi aynıdır.
+Determinant, $n\times n$ matrislerin $n$-boyutlu hacimlerini ölçeklendiren faktör olarak kalır.
 
-## Tensors and Common Linear Algebra Operations
+## Tensörler ve Genel Doğrusal Cebir İşlemleri
 
-In :numref:`sec_linear-algebra` the concept of tensors was introduced.
-In this section, we will dive more deeply into tensor contractions (the tensor equivalent of matrix multiplication), and see how it can provide a unified view on a number of matrix and vector operations.  
+:numref:`sec_linear-algebra`'de tensör kavramı tanıtıldı.
+Bu bölümde, tensör daralmalarına (büzülmesine) (matris çarpımının tensör eşdeğeri) daha derinlemesine dalacağız ve bir dizi matris ve vektör işlemi üzerinde nasıl birleşik bir görünüm sağlayabileceğini göreceğiz.
 
-With matrices and vectors we knew how to multiply them to transform data.
-We need to have a similar definition for tensors if they are to be useful to us.
-Think about matrix multiplication:
+Matrisler ve vektörlerle, verileri dönüştürmek için onları nasıl çarpacağımızı biliyorduk.
+Bize yararlı olacaksa, tensörler için de benzer bir tanıma ihtiyacımız var.
+Matris çarpımını düşünün:
 
 $$
 \mathbf{C} = \mathbf{A}\mathbf{B},
 $$
 
-or equivalently
+Veya eşdeğer olarak
 
 $$ c_{i, j} = \sum_{k} a_{i, k}b_{k, j}.$$
 
-This pattern is one we can repeat for tensors.
-For tensors, there is no one case of what to sum over that can be universally chosen, so we need specify exactly which indices we want to sum over.
-For instance we could consider
+Bu model tensörler için tekrar edebileceğimiz bir modeldir.
+Tensörler için, neyin toplanacağına dair evrensel olarak seçilebilecek tek bir durum yoktur, bu yüzden tam olarak hangi indeksleri toplamak istediğimizi belirlememiz gerekir.
+Örneğin düşünün,
 
 $$
 y_{il} = \sum_{jk} x_{ijkl}a_{jk}.
-$$
+$$ 
 
-Such a transformation is called a *tensor contraction*.
-It can represent a far more flexible family of transformations that matrix multiplication alone. 
+Böyle bir dönüşüme *tensör daralması* denir.
+Tek başına matris çarpımının olduğundan çok daha esnek bir dönüşüm ailesini temsil edebilir.
 
-As a often-used notational simplification, we can notice that the sum is over exactly those indices that occur more than once in the expression, thus people often work with *Einstein notation*, where the summation is implicitly taken over all repeated indices.
-This gives the compact expression:
+Sık kullanılan bir gösterimsel sadeleştirme olarak, toplamın ifadede birden fazla kez yer alan indislerin üzerinde olduğunu fark edebiliriz, bu nedenle insanlar genellikle, toplamın örtülü olarak tüm tekrarlanan indisler üzerinden alındığı *Einstein gösterimi* ile çalışır.
+Bu aşağıdaki kompakt ifadeyi verir:
 
 $$
 y_{il} = x_{ijkl}a_{jk}.
 $$
 
-### Common Examples from Linear Algebra
+### Doğrusal Cebirden Yaygın Örnekler
 
-Let us see how many of the linear algebraic definitions 
-we have seen before can be expressed in this compressed tensor notation:
+Daha önce gördüğümüz doğrusal cebirsel tanımların kaçının bu sıkıştırılmış tensör gösteriminde ifade edilebileceğini görelim:
 
 * $\mathbf{v} \cdot \mathbf{w} = \sum_i v_iw_i$
 * $\|\mathbf{v}\|_2^{2} = \sum_i v_iv_i$
@@ -617,11 +616,11 @@ we have seen before can be expressed in this compressed tensor notation:
 * $(\mathbf{A}\mathbf{B})_{ik} = \sum_j a_{ij}b_{jk}$
 * $\mathrm{tr}(\mathbf{A}) = \sum_i a_{ii}$
 
-In this way, we can replace a myriad of specialized notations with short tensor expressions.
+Bu şekilde, çok sayıda özel gösterimi kısa tensör ifadeleriyle değiştirebiliriz.
 
-### Expressing in Code
-Tensors may flexibly be operated on in code as well.
-As seen in :numref:`sec_linear-algebra`, we can create tensors as is shown below.
+### Kodla İfade Etme
+Tensörler de kod içinde esnek bir şekilde çalıştırılabilir.
+:numref:`sec_linear-algebra`'da görüldüğü gibi, aşağıda gösterildiği gibi tensörler oluşturabiliriz.
 
 ```{.python .input}
 # Define tensors
@@ -644,9 +643,9 @@ v = torch.tensor([1, 2])
 A.shape, B.shape, v.shape
 ```
 
-Einstein summation has been implemented directly  via ```np.einsum```. 
-The indices that occurs in the Einstein summation can be passed as a string,  followed by the tensors that are being acted upon.
-For instance, to implement matrix multiplication, we can consider the Einstein summation seen above ($\mathbf{A}\mathbf{v} = a_{ij}v_j$) and strip out the indices themselves to get the implementation:
+Einstein toplamı doğrudan ```np.einsum``` üzerinden uygulanır.
+Einstein toplamında ortaya çıkan indisler bir dizi olarak aktarılabilir ve ardından işlem yapılan tensörler eklenebilir.
+Örneğin, matris çarpımını uygulamak için, yukarıda görülen Einstein toplamını ($\mathbf{A}\mathbf{v} = a_{ij}v_j$) düşünebilir ve uygulamayı (gerçeklemeyi) elde etmek için indisleri söküp atabiliriz:
 
 ```{.python .input}
 # Reimplement matrix multiplication
@@ -659,14 +658,14 @@ np.einsum("ij, j -> i", A, v), A.dot(v)
 torch.einsum("ij, j -> i", A, v), A@v
 ```
 
-This is a highly flexible notation.
-For instance if we want to compute what would be traditionally written as
+Bu oldukça esnek bir gösterimdir.
+Örneğin, geleneksel olarak şu şekilde yazılanı hesaplamak istiyorsak,
 
 $$
 c_{kl} = \sum_{ij} \mathbf{B}_{ijk}\mathbf{A}_{il}v_j.
 $$
 
-it can be implemented via Einstein summation as:
+Einstein toplamı aracılığıyla şu şekilde uygulanabilir:
 
 ```{.python .input}
 np.einsum("ijk, il, j -> kl", B, A, v)
@@ -677,9 +676,9 @@ np.einsum("ijk, il, j -> kl", B, A, v)
 torch.einsum("ijk, il, j -> kl", B, A, v)
 ```
 
-This notation is readable and efficient for humans, however bulky if for whatever reason we need to generate a tensor contraction programmatically.
-For this reason, `einsum` provides an alternative notation by providing integer indices for each tensor.
-For example, the same tensor contraction can also be written as:
+Bu gösterim insanlar için okunabilir ve etkilidir, ancak herhangi bir nedenle programlı olarak bir tensör daralması üretmeniz gerekirse hantaldır.
+Bu nedenle `einsum`, her tensör için tamsayı indisleri sağlayarak alternatif bir gösterim sağlar.
+Örneğin, aynı tensör daralması şu şekilde de yazılabilir:
 
 ```{.python .input}
 np.einsum(B, [0, 1, 2], A, [0, 3], v, [1], [2, 3])
@@ -690,20 +689,20 @@ np.einsum(B, [0, 1, 2], A, [0, 3], v, [1], [2, 3])
 # PyTorch doesn't support this type of notation.
 ```
 
-Either notation allows for concise and efficient representation of tensor contractions in code.
+Her iki gösterim, tensör daralmalarının kodda kısa ve verimli bir şekilde temsiline izin verir.
 
-## Summary
-* Vectors can be interpreted geometrically as either points or directions in space.
-* Dot products define the notion of angle to arbitrarily high-dimensional spaces.
-* Hyperplanes are high-dimensional generalizations of lines and planes.  They can be used to define decision planes that are often used as the last step in a classification task.
-* Matrix multiplication can be geometrically interpreted as uniform distortions of the underlying coordinates. They represent a very restricted, but mathematically clean, way to transform vectors.
-* Linear dependence is a way to tell when a collection of vectors are in a lower dimensional space than we would expect (say you have $3$ vectors living in a $2$-dimensional space). The rank of a matrix is the size of the largest subset of its columns that are linearly independent.
-* When a matrix's inverse is defined, matrix inversion allows us to find another matrix that undoes the action of the first. Matrix inversion is useful in theory, but requires care in practice owing to numerical instability.
-* Determinants allow us to measure how much a matrix expands or contracts a space. A nonzero determinant implies an invertible (non-singular) matrix and a zero-valued determinant means that the matrix is non-invertible (singular).
-* Tensor contractions and Einstein summation provide for a neat and clean notation for expressing many of the computations that are seen in machine learning.
+## Özet
+* Vektörler, uzayda geometrik olarak noktalar veya yönler olarak yorumlanabilir.
+* Nokta çarpımları, keyfi olarak yüksek boyutlu uzaylar için açı kavramını tanımlar.
+* Hiperdüzlemler, doğruların ve düzlemlerin yüksek boyutlu genellemeleridir. Genellikle bir sınıflandırma görevinde son adım olarak kullanılan karar düzlemlerini tanımlamak için kullanılabilirler.
+* Matris çarpımı, geometrik olarak, temel koordinatların tekdüze bozulmaları olarak yorumlanabilir. Vektörleri dönüştürmenin çok kısıtlı, ancak matematiksel olarak temiz bir yolunu temsil ederler.
+* Doğrusal bağımlılık, bir vektör topluluğunun beklediğimizden daha düşük boyutlu bir uzayda olduğunu anlamanın bir yoludur (diyelim ki $2$ boyutunda bir uzayda yaşayan $3$ vektörünüz var). Bir matrisin kertesi, doğrusal olarak bağımsız olan sütunlarının en büyük alt kümesinin ebadıdır.
+* Bir matrisin tersi tanımlandığında, matris tersi bulma, ilkinin eylemini geri alan başka bir matris bulmamızı sağlar. Matris tersi bulma teoride faydalıdır, ancak sayısal kararsızlık nedeniyle pratikte dikkat gerektirir.
+* Determinantlar, bir matrisin bir alanı ne kadar genişlettiğini veya daralttığını ölçmemizi sağlar. Sıfır olmayan bir determinant, tersinir (tekil olmayan) bir matris anlamına gelir ve sıfır değerli bir determinant, matrisin tersinemez (tekil) olduğu anlamına gelir.
+* Tensör daralmaları ve Einstein toplamı, makine öğrenmesinde görülen hesaplamaların çoğunu ifade etmek için düzgün ve temiz bir gösterim sağlar.
 
-## Exercises
-1. What is the angle between
+## Alıştırmalar
+1. Aralarındaki açı nedir?
 $$
 \vec v_1 = \begin{bmatrix}
 1 \\ 0 \\ -1 \\ 2
@@ -711,23 +710,23 @@ $$
 3 \\ 1 \\ 0 \\ 1
 \end{bmatrix}?
 $$
-2. True or false: $\begin{bmatrix}1 & 2\\0&1\end{bmatrix}$ and $\begin{bmatrix}1 & -2\\0&1\end{bmatrix}$ are inverses of one another?
-3. Suppose that we draw a shape in the plane with area $100\mathrm{m}^2$.  What is the area after transforming the figure by the matrix
+2. Doğru veya yanlış: $\begin{bmatrix}1 & 2\\0&1\end{bmatrix}$ ve $\begin{bmatrix}1 & -2\\0&1\end{bmatrix}$ birbirinin tersi mi?
+3. Düzlemde $100\mathrm{m}^2$ alanına sahip bir şekil çizdiğimizi varsayalım. Şeklin aşağıdaki matrise göre dönüştükten sonraki alanı nedir?
 $$
 \begin{bmatrix}
 2 & 3\\
 1 & 2
 \end{bmatrix}.
 $$
-4. Which of the following sets of vectors are linearly independent?
+4. Aşağıdaki vektör kümelerinden hangisi doğrusal olarak bağımsızdır?
  * $\left\{\begin{pmatrix}1\\0\\-1\end{pmatrix}, \begin{pmatrix}2\\1\\-1\end{pmatrix}, \begin{pmatrix}3\\1\\1\end{pmatrix}\right\}$
  * $\left\{\begin{pmatrix}3\\1\\1\end{pmatrix}, \begin{pmatrix}1\\1\\1\end{pmatrix}, \begin{pmatrix}0\\0\\0\end{pmatrix}\right\}$
  * $\left\{\begin{pmatrix}1\\1\\0\end{pmatrix}, \begin{pmatrix}0\\1\\-1\end{pmatrix}, \begin{pmatrix}1\\0\\1\end{pmatrix}\right\}$
-5. Suppose that you have a matrix written as $A = \begin{bmatrix}c\\d\end{bmatrix}\cdot\begin{bmatrix}a & b\end{bmatrix}$ for some choice of values $a, b, c$, and $d$.  True or false: the determinant of such a matrix is always $0$?
-6. The vectors $e_1 = \begin{bmatrix}1\\0\end{bmatrix}$ and $e_2 = \begin{bmatrix}0\\1\end{bmatrix}$ are orthogonal.  What is the condition on a matrix $A$ so that $Ae_1$ and $Ae_2$ are orthogonal?
-7. How can you write $\mathrm{tr}(\mathbf{A}^4)$ in Einstein notation for an arbitrary matrix $A$?
+5. Bazı $a , b, c$ ve $d$ değerleri için $A = \begin{bmatrix}c\\d\end{bmatrix}\cdot\begin{bmatrix}a & b\end{bmatrix}$ olarak yazılmış bir matrisiniz olduğunu varsayalım . Doğru mu yanlış mı: Böyle bir matrisin determinantı her zaman $0$'dır?
+6. $e_1 = \begin{bmatrix}1\\0\end{bmatrix}$  ve $e_2 = \begin{bmatrix}0\\1\end{bmatrix}$ vektörleri diktir. $Ae_1$ ve $Ae_2$'nin dik olması için $A$ matrisindeki koşul nedir?
+7. Rasgele bir $A$ matrisi için Einstein gösterimi ile $\mathrm{tr}(\mathbf{A}^4)$'u nasıl yazabilirsiniz?
 
 
 :begin_tab:`mxnet`
-[Discussions](https://discuss.d2l.ai/t/410)
+[Tartışmalar](https://discuss.d2l.ai/t/410)
 :end_tab:
