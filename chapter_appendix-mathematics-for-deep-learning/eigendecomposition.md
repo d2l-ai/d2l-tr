@@ -29,19 +29,19 @@ $$
 
 $\mathbf{v}$ $A$ için bir özvektör ve $\lambda$ bir özdeğerdir deriz.
 
-## Finding Eigenvalues
-Let us figure out how to find them.  
-By subtracting off the $\lambda \vec v$ from both sides, and then factoring out the vector, we see the above is equivalent to:
+## Özdeğerleri Bulma
+Onları nasıl bulacağımızı anlayalım.
+Her iki taraftan $\lambda \vec v$ çıkararak ve ardından vektörü dışarıda bırakarak, yukarıdakinin şuna eşdeğer olduğunu görürüz:
 
 $$(\mathbf{A} - \lambda \mathbf{I})\mathbf{v} = 0.$$
 :eqlabel:`eq_eigvalue_der`
 
-For :eqref:`eq_eigvalue_der` to happen, we see that $(\mathbf{A} - \lambda \mathbf{I})$ must compress some direction down to zero, hence it is not invertible, and thus the determinant is zero.
-Thus, we can find the *eigenvalues* by finding for what $\lambda$ is $\det(\mathbf{A}-\lambda \mathbf{I}) = 0$.
-Once we find the eigenvalues, we can solve $\mathbf{A}\mathbf{v} = \lambda \mathbf{v}$ to find the associated *eigenvector(s)*.
+:eqref:`eq_eigvalue_der`'in gerçekleşmesi için, $(\mathbf{A} - \lambda \mathbf{I})$'nın bir yönü sıfıra kadar sıkıştırması gerektiğini görüyoruz, bu nedenle tersinir değildir ve bu nedenle determinant sıfırdır .
+Böylece, *özdeğerleri*, $\lambda$ değerinin ne zaman $\det(\mathbf{A}-\lambda \mathbf{I}) = 0$ olduğunu bularak bulabiliriz.
+Özdeğerleri bulduktan sonra, ilişkili *özvektör(leri)* bulmak için $\mathbf{A}\mathbf{v} = \lambda \mathbf{v}$'yı çözebiliriz.
 
-### An Example
-Let us see this with a more challenging matrix
+### Bir örnek
+Bunu daha zorlu bir matrisle görelim
 
 $$
 \mathbf{A} = \begin{bmatrix}
@@ -50,9 +50,9 @@ $$
 \end{bmatrix}.
 $$
 
-If we consider $\det(\mathbf{A}-\lambda \mathbf{I}) = 0$, we see this is equivalent to the polynomial equation $0 = (2-\lambda)(3-\lambda)-2 = (4-\lambda)(1-\lambda)$.
-Thus, two eigenvalues are $4$ and $1$.
-To find the associated vectors, we then need to solve
+$\det(\mathbf{A}-\lambda \mathbf{I}) = 0$ olarak düşünürsek, bunun $0 = (2-\lambda)(3-\lambda)-2 = (4-\lambda)(1-\lambda)$ polinom denklemine eşdeğer olduğunu görürüz.
+Böylece, iki özdeğer $4$ ve $1$'dir.
+İlişkili vektörleri bulmak için bunu çözmemiz gerekir:
 
 $$
 \begin{bmatrix}
@@ -65,9 +65,9 @@ $$
 \end{bmatrix}\begin{bmatrix}x \\ y\end{bmatrix}  = \begin{bmatrix}4x \\ 4y\end{bmatrix} .
 $$
 
-We can solve this with the vectors $[1, -1]^\top$ and $[1, 2]^\top$ respectively.
+Bunu sırasıyla $[1, -1]^\top$ ve $[1, 2]^\top$ vektörleriyle çözebiliriz.
 
-We can check this in code using the built-in `numpy.linalg.eig` routine.
+Bunu yerleşik `numpy.linalg.eig` rutinini kullanarak kodda kontrol edebiliriz.
 
 ```{.python .input}
 %matplotlib inline
@@ -89,12 +89,12 @@ torch.eig(torch.tensor([[2, 1], [2, 3]], dtype=torch.float64),
           eigenvectors=True)
 ```
 
-Note that `numpy` normalizes the eigenvectors to be of length one, whereas we took ours to be of arbitrary length.
-Additionally, the choice of sign is arbitrary.
-However, the vectors computed are parallel to the ones we found by hand with the same eigenvalues.
+`numpy`'ın özvektörleri bir uzunlukta normalleştirdiğini, oysa bizimkileri keyfi uzunlukta kabul ettiğimizi unutmayın.
+Ek olarak, işaret seçimi keyfidir.
+Bununla birlikte, hesaplanan vektörler, aynı özdeğerlerle elle bulduklarımıza paraleldir.
 
-## Decomposing Matrices
-Let us continue the previous example one step further.  Let
+## Matris Ayrıştırma
+Önceki örnek ile bir adım daha devam edelim. 
 
 $$
 \mathbf{W} = \begin{bmatrix}
@@ -103,7 +103,7 @@ $$
 \end{bmatrix},
 $$
 
-be the matrix where the columns are the eigenvectors of the matrix $\mathbf{A}$. Let
+Sütunları $\mathbf{A}$ matrisinin özvektörleri olduğu matris olsun.
 
 $$
 \boldsymbol{\Sigma} = \begin{bmatrix}
@@ -112,54 +112,54 @@ $$
 \end{bmatrix},
 $$
 
-be the matrix with the associated eigenvalues on the diagonal.
-Then the definition of eigenvalues and eigenvectors tells us that
+Köşegen üzerinde ilişkili özdeğerleri olan matris olsun.
+Özdeğerlerin ve özvektörlerin tanımı bize şunu söyler:
 
 $$
 \mathbf{A}\mathbf{W} =\mathbf{W} \boldsymbol{\Sigma} .
 $$
 
-The matrix $W$ is invertible, so we may multiply both sides by $W^{-1}$ on the right, we see that we may write
+$W$ matrisi ters çevrilebilir, bu yüzden her iki tarafı da sağdan $W^{-1}$ ile çarpabiliriz ve görürüz ki:
 
 $$\mathbf{A} = \mathbf{W} \boldsymbol{\Sigma} \mathbf{W}^{-1}.$$
 :eqlabel:`eq_eig_decomp`
 
-In the next section we will see some nice consequences of this, but for now we need only know that such a decomposition will exist as long as we can find a full collection of linearly independent eigenvectors (so that $W$ is invertible).
+Bir sonraki bölümde bunun bazı güzel sonuçlarını göreceğiz, ancak şimdilik sadece, doğrusal olarak bağımsız özvektörlerin tam bir topluluğunu bulabildiğimiz sürece böyle bir ayrışmanın var olacağını bilmemiz gerekiyor (böylece $W$ tersinirdir).
 
-## Operations on Eigendecompositions
-One nice thing about eigendecompositions :eqref:`eq_eig_decomp` is that we can write many operations we usually encounter cleanly in terms of the eigendecomposition.  
-As a first example, consider:
+## Özayrışmalar üzerinde işlemler
+Özayrışmalar ilgili güzel bir şey :eqref:`eq_eig_decomp`, genellikle karşılaştığımız birçok işlemi özayrışmalar açısından temiz bir şekilde yazabilmemizdir.
+İlk örnek olarak şunları düşünün:
 
 $$
 \mathbf{A}^n = \overbrace{\mathbf{A}\cdots \mathbf{A}}^{\text{$n$ times}} = \overbrace{(\mathbf{W}\boldsymbol{\Sigma} \mathbf{W}^{-1})\cdots(\mathbf{W}\boldsymbol{\Sigma} \mathbf{W}^{-1})}^{\text{$n$ times}} =  \mathbf{W}\overbrace{\boldsymbol{\Sigma}\cdots\boldsymbol{\Sigma}}^{\text{$n$ times}}\mathbf{W}^{-1} = \mathbf{W}\boldsymbol{\Sigma}^n \mathbf{W}^{-1}.
 $$
 
-This tells us that for any positive power of a matrix, the eigendecomposition is obtained by just raising the eigenvalues to the same power.
-The same can be shown for negative powers, so if we want to invert a matrix we need only consider
+Bu bize, bir matrisin herhangi bir pozitif kuvveti için, özayrışmasının özdeğerlerin sadece aynı kuvvete yükseltilmesiyle elde edildiğini söyler.
+Aynısı negatif kuvvetler için de gösterilebilir, bu nedenle bir matrisi tersine çevirmek istiyorsak, yapmamız gereken yalnızca
 
 $$
 \mathbf{A}^{-1} = \mathbf{W}\boldsymbol{\Sigma}^{-1} \mathbf{W}^{-1},
 $$
 
-or in other words, just invert each eigenvalue.
-This will work as long as each eigenvalue is non-zero, so we see that invertible is the same as having no zero eigenvalues.  
+veya başka bir deyişle, her bir özdeğeri ters çevirin.
+Bu, her özdeğer sıfır olmadığı sürece işe yarayacaktır, bu nedenle tersinebilirin sıfır özdeğer olmamasıyla aynı olduğunu görürüz.
 
-Indeed, additional work can show that if $\lambda_1, \ldots, \lambda_n$ are the eigenvalues of a matrix, then the determinant of that matrix is
+Aslında, ek çalışma şunu gösterebilir: Eğer $\lambda_1, \ldots, \lambda_n$  bir matrisin özdeğerleriyse, o zaman o matrisin determinantı
 
 $$
 \det(\mathbf{A}) = \lambda_1 \cdots \lambda_n,
 $$
 
-or the product of all the eigenvalues.
-This makes sense intuitively because whatever stretching $\mathbf{W}$ does, $W^{-1}$ undoes it, so in the end the only stretching that happens is by multiplication by the diagonal matrix $\boldsymbol{\Sigma}$, which stretches volumes by the product of the diagonal elements.
+veya tüm özdeğerlerin çarpımı.
+Bu sezgisel olarak mantıklıdır, çünkü $\mathbf{W}$ ne kadar esnetme yaparsa, $W^{-1}$ bunu geri alır, dolayısıyla sonunda gerçekleşen tek uzatma köşegen matris $\boldsymbol{\Sigma}$ ile çarpma yoluyla olur, ki o da köşegen elemanların çarpımına göre hacimleri uzatır.
 
-Finally, recall that the rank was the maximum number of linearly independent columns of your matrix.
-By examining the eigendecomposition closely, we can see that the rank is the same as the number of non-zero eigenvalues of $\mathbf{A}$.
+Son olarak, kertenin matrisinizin doğrusal olarak bağımsız sütunlarının en fazla sayısı olduğunu hatırlayın.
+Özayrışmayı yakından inceleyerek, kertenin $\mathbf{A}$ 'ın sıfır olmayan özdeğerlerinin sayısıyla aynı olduğunu görebiliriz.
 
-The examples could continue, but hopefully the point is clear: eigendecompositions can simplify many linear-algebraic computations and are a fundamental operation underlying many numerical algorithms and much of the analysis that we do in linear algebra. 
+Örnekler devam edebilirdi, ancak umarız ki mesele açıktır: Özayrışmalar, birçok lineer-cebirsel hesaplamayı basitleştirebilir ve birçok sayısal (numerik) algoritmanın ve lineer cebirde yaptığımız analizlerin çoğunun altında yatan temel bir işlemdir.
 
-## Eigendecompositions of Symmetric Matrices
-It is not always possible to find enough linearly independent eigenvectors for the above process to work. For instance the matrix
+## Simetrik Matrislerin Özayrışmaları
+Yukarıdaki işlemin çalışması için yeterli doğrusal olarak bağımsız özvektör bulmak her zaman mümkün değildir. Örneğin matris
 
 $$
 \mathbf{A} = \begin{bmatrix}
@@ -168,30 +168,30 @@ $$
 \end{bmatrix},
 $$
 
-has only a single eigenvector, namely $(0, 1)$. 
-To handle such matrices, we require more advanced techniques than we can cover (such as the Jordan Normal Form, or Singular Value Decomposition).
-We will often need to restrict our attention to those matrices where we can guarantee the existence of a full set of eigenvectors.
+tek bir özvektöre, $(0, 1)$, sahiptir.
+Bu tür matrisleri işlemek için, ele alabileceğimizden daha gelişmiş tekniklere ihtiyacımız var (Jordan Normal Formu veya Tekil Değer Ayrıştırması gibi).
+Dikkatimizi sık sık tam bir özvektörler kümesinin varlığını garanti edebileceğimiz matrislere sınırlamamız gerekecek.
 
-The most commonly encountered family are the *symmetric matrices*, which are those matrices where $\mathbf{A} = \mathbf{A}^\top$. 
-In this case, we may take $W$ to be an *orthogonal matrix*—a matrix whose columns are all length one vectors that are at right angles to one another, where  $\mathbf{W}^\top = \mathbf{W}^{-1}$—and all the eigenvalues will be real. 
-Thus, in this special case, we can write :eqref:`eq_eig_decomp` as
+En sık karşılaşılan aile, $\mathbf{A} = \mathbf{A}^\top$ olan *simetrik matrislerdir*.
+Bu durumda, $W$'i bir *dikgen (ortogonal) matris* olarak alabiliriz — sütunlarının tümü birbirine dik açıda birim uzunluklu vektörler olan bir matris, burada $\mathbf{W}^\top = \mathbf{W}^{-1}$ - ve tüm özdeğerler gerçel olacaktır.
+Böylece, bu özel durumda şöyle yazabiliriz :eqref:`eq_eig_decomp`
 
 $$
 \mathbf{A} = \mathbf{W}\boldsymbol{\Sigma}\mathbf{W}^\top .
 $$
 
-## Gershgorin Circle Theorem
-Eigenvalues are often difficult to reason with intuitively.
-If presented an arbitrary matrix, there is little that can be said about what the eigenvalues are without computing them.
-There is, however, one theorem that can make it easy to approximate well if the largest values are on the diagonal.
+## Gershgorin Çember Teoremi
+Özdeğerlerle sezgisel olarak akıl yürütmek genellikle zordur.
+Rasgele bir matris sunulursa, özdeğerleri hesaplamadan ne oldukları hakkında söylenebilecek çok az şey vardır.
+Bununla birlikte, en büyük değerler köşegen üzerindeyse, iyi bir tahmin yapmayı kolaylaştıran bir teorem vardır.
 
-Let $\mathbf{A} = (a_{ij})$ be any square matrix ($n\times n$).
-We will define $r_i = \sum_{j \neq i} |a_{ij}|$.
-Let $\mathcal{D}_i$ represent the disc in the complex plane with center $a_{ii}$ radius $r_i$.
-Then, every eigenvalue of $\mathbf{A}$ is contained in one of the $\mathcal{D}_i$.
+$\mathbf{A} = (a_{ij})$ herhangi bir ($n\times n$) kare matris olsun.
+Şöyle tanımlayalım: $r_i = \sum_{j \neq i} |a_{ij}|$.
+$\mathcal{D}_i$ karmaşık düzlemde $a_ {ii}$ merkezli $r_i$ yarıçaplı diski temsil etsin.
+Daha sonra, $\mathbf{A}$'nın her özdeğeri $\mathcal{D}_i $'dan birinin içinde bulunur.
 
-This can be a bit to unpack, so let us look at an example.  
-Consider the matrix:
+Bunu açmak biraz zaman alabilir, o yüzden bir örneğe bakalım.
+Şu matrisi düşünün:
 
 $$
 \mathbf{A} = \begin{bmatrix}
@@ -202,9 +202,9 @@ $$
 \end{bmatrix}.
 $$
 
-We have $r_1 = 0.3$, $r_2 = 0.6$, $r_3 = 0.8$ and $r_4 = 0.9$.
-The matrix is symmetric, so all eigenvalues are real.
-This means that all of our eigenvalues will be in one of the ranges of 
+Elimizde $r_1 = 0.3$, $r_2 = 0.6$, $r_3 = 0.8$ ve $r_4 = 0.9$ var.
+Matris simetriktir, bu nedenle tüm özdeğerler gerçeldir.
+Bu, tüm özdeğerlerimizin aşağıdaki aralıklardan birinde olacağı anlamına gelir.
 
 $$[a_{11}-r_1, a_{11}+r_1] = [0.7, 1.3], $$
 
@@ -214,8 +214,7 @@ $$[a_{33}-r_3, a_{33}+r_3] = [4.2, 5.8], $$
 
 $$[a_{44}-r_4, a_{44}+r_4] = [8.1, 9.9]. $$
 
-
-Performing the numerical computation shows that the eigenvalues are approximately $0.99$, $2.97$, $4.95$, $9.08$, all comfortably inside the ranges provided.
+Sayısal hesaplamanın gerçekleştirilmesi, özdeğerlerin yaklaşık $0,99$, $2,97$, $4,95$, $9,08$ olduğunu ve rahatlıkla sağlanan aralıklar içinde olduğunu gösterir.
 
 ```{.python .input}
 A = np.array([[1.0, 0.1, 0.1, 0.1],
@@ -238,26 +237,26 @@ v, _ = torch.eig(A)
 v
 ```
 
-In this way, eigenvalues can be approximated, and the approximations will be fairly accurate in the case that the diagonal is significantly larger than all the other elements.  
+Bu şekilde, özdeğerler yaklaşık olarak tahmin edilebilir ve köşegenin diğer tüm öğelerden önemli ölçüde daha büyük olması durumunda yaklaşımlar oldukça doğru olacaktır.
 
-It is a small thing, but with a complex and subtle topic like eigendecomposition, it is good to get any intuitive grasp we can.
+Bu küçük bir şey, ancak özayrışma gibi karmaşık ve incelikli bir konuda, yapabileceğimiz herhangi bir sezgisel kavrayışa sahip olmak iyidir.
 
-## A Useful Application: The Growth of Iterated Maps
+## Yararlı Bir Uygulama: Yinelenen Eşlemelerin Gelişimi
 
-Now that we understand what eigenvectors are in principle, let us see how they can be used to provide a deep understanding of a problem central to neural network behavior: proper weight initialization. 
+Artık özvektörlerin prensipte ne olduğunu anladığımıza göre, bunların sinir ağı davranışının merkezinde olan bir problemin derinlemesine anlaşılmasını sağlamak için nasıl kullanılabileceklerini görelim: Uygun ağırlık ilklenmesi (başlatma).
 
-### Eigenvectors as Long Term Behavior
+### Uzun Vadeli Davranış Olarak Özvektörler
 
-The full mathematical investigation of the initialization of deep neural networks is beyond the scope of the text, but we can see a toy version here to understand how eigenvalues can help us see how these models work.
-As we know, neural networks operate by interspersing layers of linear transformations with non-linear operations.
-For simplicity here, we will assume that there is no non-linearity, and that the transformation is a single repeated matrix operation $A$, so that the output of our model is
+Derin sinir ağlarının başlatılmasının (ilklenmesi) tam matematiksel araştırması, metnin kapsamı dışındadır, ancak özdeğerlerin bu modellerin nasıl çalıştığını görmemize nasıl yardımcı olabileceğini anlamak için burada bir oyuncak sürümünü görebiliriz.
+Bildiğimiz gibi, sinir ağları, doğrusal olmayan işlemlerle doğrusal dönüşüm katmanlarını serpiştirerek çalışır.
+Burada basitleştirmek için, doğrusal olmayanlığın olmadığını ve dönüşümün tek bir tekrarlanan matris işlemi $A$ olduğunu varsayacağız, böylece modelimizin çıktısı şu şekildedir:
 
 $$
 \mathbf{v}_{out} = \mathbf{A}\cdot \mathbf{A}\cdots \mathbf{A} \mathbf{v}_{in} = \mathbf{A}^N \mathbf{v}_{in}.
 $$
 
-When these models are initialized, $A$ is taken to be a random matrix with Gaussian entries, so let us make one of those. 
-To be concrete, we start with a mean zero, variance one Gaussian distributed $5 \times 5$ matrix.
+Bu modeller ilklendirildiğinde, $A$ Gauss girdileri olan rastgele bir matris olarak alınır, bu yüzden onlardan birini yapalım.
+Somut olmak gerekirse, ortalama sıfır, değişinti (varyans) bir olan Gauss dağılımından gelen bir $5\times 5$ matrisi ile başlıyoruz.
 
 ```{.python .input}
 np.random.seed(8675309)
@@ -276,18 +275,18 @@ A = torch.randn(k, k, dtype=torch.float64)
 A
 ```
 
-### Behavior on Random Data
-For simplicity in our toy model, we will assume that the data vector we feed in $\mathbf{v}_{in}$ is a random five dimensional Gaussian vector.
-Let us think about what we want to have happen.
-For context, lets think of a generic ML problem, where we are trying to turn input data, like an image, into a prediction, like the probability the image is a picture of a cat.
-If repeated application of $\mathbf{A}$ stretches a random vector out to be very long, then small changes in input will be amplified into large changes in output---tiny modifications of the input image would lead to vastly different predictions.
-This does not seem right!
+### Rastgele Verilerde Davranış
+Oyuncak modelimizde basitlik sağlamak için, $\mathbf{v}_{in}$ ile beslediğimiz veri vektörünün rastgele beş boyutlu bir Gauss vektörü olduğunu varsayacağız.
+Ne olmasını istediğimizi düşünelim.
+Bağlam için, bir görüntü gibi girdi verilerini, görüntünün bir kedi resmi olma olasılığı gibi bir tahmine dönüştürmeye çalıştığımız genel bir makine öğrenmesi problemini düşünelim.
+Tekrarlanan $\mathbf{A}$ uygulaması rastgele bir vektörü çok uzun olacak şekilde esnetirse, o zaman girdideki küçük değişiklikler çıktıdaki büyük değişikliklere yükseltilir --- girdi görüntüsündeki küçük değişiklikler çok farklı tahminlere yol açar.
+Bu doğru görünmüyor!
 
-On the flip side, if $\mathbf{A}$ shrinks random vectors to be shorter, then after running through many layers, the vector will essentially shrink to nothing, and the output will not depend on the input. This is also clearly not right either!
+Diğer taraftan, $\mathbf{A}$ rasgele vektörleri daha kısa olacak şekilde küçültürse, o zaman birçok katmandan geçtikten sonra, vektör esasen hiçbir şeye (sıfıra yakın) küçülür ve çıktı girdiye bağlı olmaz. Bu da açıkça doğru değil!
 
-We need to walk the narrow line between growth and decay to make sure that our output changes depending on our input, but not much!
+Çıktımızın girdimize bağlı olarak değiştiğinden emin olmak için büyüme ve bozulma arasındaki dar çizgide yürümemiz gerekir, ancak çok fazla değil!
 
-Let us see what happens when we repeatedly multiply our matrix $\mathbf{A}$ against a random input vector, and keep track of the norm.
+$\mathbf{A}$ matrisimizi rastgele bir girdi vektörüyle tekrar tekrar çarptığımızda ne olacağını görelim ve normunu takip edelim.
 
 ```{.python .input}
 # Calculate the sequence of norms after repeatedly applying `A`
@@ -314,8 +313,8 @@ for i in range(1, 100):
 d2l.plot(torch.arange(0, 100), norm_list, 'Iteration', 'Value')
 ```
 
-The norm is growing uncontrollably! 
-Indeed if we take the list of quotients, we will see a pattern.
+Norm kontrolsüz bir şekilde büyüyor!
+Nitekim bölüm listesini alırsak, bir desen göreceğiz.
 
 ```{.python .input}
 # Compute the scaling factor of the norms
@@ -336,15 +335,15 @@ for i in range(1, 100):
 d2l.plot(torch.arange(1, 100), norm_ratio_list, 'Iteration', 'Ratio')
 ```
 
-If we look at the last portion of the above computation, we see that the random vector is stretched by a factor of `1.974459321485[...]`, where the portion at the end shifts a little, but the stretching factor is stable.  
+Yukarıdaki hesaplamanın son kısmına bakarsak, rastgele vektörün, sondaki kısmın biraz kaydığı, ancak esneme faktörünün sabit olduğu bir faktör olan `1.974459321485[...]`'lik bir faktör kadar esnediğini görürüz.
 
-### Relating Back to Eigenvectors
+### Özvektörlerle İlişkilendirme
 
-We have seen that eigenvectors and eigenvalues correspond to the amount something is stretched, but that was for specific vectors, and specific stretches.
-Let us take a look at what they are for $\mathbf{A}$.
-A bit of a caveat here: it turns out that to see them all, we will need to go to complex numbers.
-You can think of these as stretches and rotations.
-By taking the norm of the complex number (square root of the sums of squares of real and imaginary parts) we can measure that stretching factor. Let us also sort them.
+Özvektörlerin ve özdeğerlerin, bir şeyin gerildiği (esnetildiği) miktara karşılık geldiğini gördük, ancak bu, belirli vektörler ve belirli gerilmeler içindi.
+$\mathbf{A}$ için ne olduklarına bir göz atalım.
+Burada bir uyarı: Hepsini görmek için karmaşık sayılara gitmemiz gerekeceği ortaya çıkıyor.
+Bunları esnemeler ve dönüşler olarak düşünebilirsiniz.
+Karmaşık sayının normunu (gerçek ve sanal kısımların karelerinin toplamının karekökü) alarak, bu germe faktörünü ölçebiliriz. Bunları da sıralayabiliriz.
 
 ```{.python .input}
 # Compute the eigenvalues
@@ -363,25 +362,24 @@ norm_eigs.sort()
 print(f'norms of eigenvalues: {norm_eigs}')
 ```
 
-### An Observation
+### Bir Gözlem
 
-We see something a bit unexpected happening here: that number we identified before for the long term stretching of our matrix $\mathbf{A}$ applied to a random vector is *exactly* (accurate to thirteen decimal places!) the largest eigenvalue of $\mathbf{A}$.
-This is clearly not a coincidence!
+Burada biraz beklenmedik bir şey görüyoruz: Daha önce rasgele bir vektöre uzun vadeli gerilmesi için $\mathbf{A}$ matrisimizi uygularken tanımladığımız sayı *tam olarak* (on üç ondalık basamağa kadar doğru!) $\mathbf{A}$'nın en büyük özdeğeridir.
+Bu açıkça bir tesadüf değil!
 
-But, if we now think about what is happening geometrically, this starts to make sense. Consider a random vector. 
-This random vector points a little in every direction, so in particular, it points at least a little bit in the same direction as the eigenvector of $\mathbf{A}$
-associated with the largest eigenvalue.
-This is so important that it is called the *principle eigenvalue* and *principle eigenvector*.
-After applying $\mathbf{A}$, our random vector gets stretched in every possible direction, as is associated with every possible eigenvector, but it is stretched most of all in the direction associated with this principle eigenvector.
-What this means is that after apply in $A$, our random vector is longer, and points in a direction closer to being aligned with the principle eigenvector.
-After applying the matrix many times, the alignment with the principle eigenvector becomes closer and closer until, for all practical purposes, our random vector has been transformed into the principle eigenvector!
-Indeed this algorithm is the basis for what is known as the *power iteration* for finding the largest eigenvalue and eigenvector of a matrix.  For details see, for example, :cite:`Van-Loan.Golub.1983`.
+Ama şimdi geometrik olarak ne olduğunu düşünürsek, bu mantıklı gelmeye başlar. Rastgele bir vektör düşünün.
+Bu rasgele vektör her yönü biraz işaret ediyor, bu nedenle özellikle en büyük özdeğerle ilişkili $\mathbf{A}$ özvektörüyle çok az olsa bile bir miktar aynı yönü gösteriyor.
+Bu o kadar önemlidir ki *ana (esas) özdeğer* ve *ana (esas) özvektör* olarak adlandırılır.
+$\mathbf{A}$'yı uyguladıktan sonra, rastgele vektörümüz her olası özvektörle ilişkili olduğu gibi mümkün olan her yönde gerilir, ancak en çok bu özvektörle ilişkili yönde esnetilir.
+Bunun anlamı, $A$'da uygulandıktan sonra, rasgele vektörümüzün daha uzun olması ve ana özvektör ile hizalanmaya daha yakın bir yönü göstermesidir.
+Matrisi birçok kez uyguladıktan sonra, ana özvektörle hizalama gittikçe daha yakın hale gelir, ta ki tüm pratik amaçlar için rastgele vektörümüz temel özvektöre dönüştürülene kadar!
+Aslında bu algoritma, bir matrisin en büyük özdeğerini ve özvektörünü bulmak için *kuvvet yinelemesi* olarak bilinen şeyin temelidir. Ayrıntılar için, örneğin, bkz. :cite:`Van-Loan.Golub.1983`.
 
-### Fixing the Normalization
+### Normalleştirmeyi (Düzgelemeyi) Düzeltme
 
-Now, from above discussions, we concluded that we do not want a random vector to be stretched or squished at all, we would like random vectors to stay about the same size throughout the entire process.
-To do so, we now rescale our matrix by this principle eigenvalue so that the largest eigenvalue is instead now just one.
-Let us see what happens in this case.
+Şimdi, yukarıdaki tartışmalardan, rastgele bir vektörün esnetilmesini veya ezilmesini istemediğimiz sonucuna vardık, rastgele vektörlerin tüm süreç boyunca yaklaşık aynı boyutta kalmasını istiyoruz.
+Bunu yapmak için, şimdi matrisimizi bu ana özdeğere göre yeniden ölçeklendiriyoruz, böylece en büyük özdeğer şimdi eskinin yerine sadece bir olur.
+Bakalım bu durumda ne olacak.
 
 ```{.python .input}
 # Rescale the matrix `A`
@@ -414,7 +412,7 @@ for i in range(1, 100):
 d2l.plot(torch.arange(0, 100), norm_list, 'Iteration', 'Value')
 ```
 
-We can also plot the ratio between consecutive norms as before and see that indeed it stabilizes.
+Aynı zamanda ardışık normlar arasındaki oranı daha önce olduğu gibi çizebiliriz ve gerçekten dengelendiğini görebiliriz.
 
 ```{.python .input}
 # Also plot the ratio
@@ -435,37 +433,36 @@ for i in range(1, 100):
 d2l.plot(torch.arange(1, 100), norm_ratio_list, 'Iteration', 'Ratio')
 ```
 
-## Conclusions
+## Sonuçlar
 
-We now see exactly what we hoped for!
-After normalizing the matrices by the principle eigenvalue, we see that the random data does not explode as before,
-but rather eventually equilibrates to a specific value.
-It would be nice to be able to do these things from first principles, and it turns out that if we look deeply at the mathematics of it, we can see that the largest eigenvalue of a large random matrix with independent mean zero, variance one Gaussian entries is on average about $\sqrt{n}$, or in our case $\sqrt{5} \approx 2.2$, due to a fascinating fact known as the *circular law* :cite:`Ginibre.1965`.
-The relationship between the eigenvalues (and a related object called singular values) of random matrices has been shown to have deep connections to proper initialization of neural networks as was discussed in :cite:`Pennington.Schoenholz.Ganguli.2017` and subsequent works.
+Şimdi tam olarak ne umduysak görüyoruz!
+Matrisleri ana özdeğere göre normalleştirdikten sonra, rastgele verilerin eskisi gibi patlamadığını görüyoruz, bunun yerine nihai belirli bir değerde dengelenirler.
+Bunları ilk ana özdeğerlerden yapabilmek güzel olurdu ve matematiğine derinlemesine bakarsak, bağımsız, ortalaması sıfır varyansı bir olan Gauss dağılımlı girdileri olan büyük bir rastgele matrisin en büyük özdeğerinin, ortalamada yaklaşık $\sqrt{n}$ veya bizim durumumuzda $\sqrt{5}\approx  2.2$ civarında olduğunu görebiliriz; bu *dairesel yasa* olarak bilinen büyüleyici bir gerçekten kaynaklanır :cite:`Ginibre.1965`.
+Rastgele matrislerin özdeğerlerinin (ve tekil değerler olarak adlandırılan ilgili bir konunun) arasındaki ilişkinin, şu adreste :cite:`Pennington.Schoenholz.Ganguli.2017` ve sonraki çalışmalarda tartışıldığı gibi sinir ağlarının uygun şekilde ilklendirilmesiyle derin bağlantıları olduğu gösterilmiştir.
 
-## Summary
-* Eigenvectors are vectors which are stretched by a matrix without changing direction.
-* Eigenvalues are the amount that the eigenvectors are stretched by the application of the matrix.
-* The eigendecomposition of a matrix can allow for many operations to be reduced to operations on the eigenvalues.
-* The Gershgorin Circle Theorem can provide approximate values for the eigenvalues of a matrix.
-* The behavior of iterated matrix powers depends primarily on the size of the largest eigenvalue.  This understanding has many applications in the theory of neural network initialization.
+## Özet
+* Özvektörler, yön değiştirmeden bir matris tarafından uzatılan vektörlerdir.
+* Özdeğerler, özvektörlerin matris uygulamasıyla gerildikleri miktardır.
+* Bir matrisin özayrışımı, birçok işlemin özdeğerler üzerindeki işlemlere indirgenmesine izin verebilir.
+* Gershgorin Çember Teoremi, bir matrisin özdeğerleri için yaklaşık değerler sağlayabilir.
+* Yinelenen matris kuvvetlerinin davranışı, öncelikle en büyük özdeğerin boyutuna bağlıdır. Bu anlayış, sinir ağı ilkleme teorisinde birçok uygulamaya sahiptir.
 
-## Exercises
-1. What are the eigenvalues and eigenvectors of
+## Alıştırmalar
+1. Aşağıdaki matrisin özdeğerleri ve özvektörleri nedir?
 $$
 \mathbf{A} = \begin{bmatrix}
 2 & 1 \\
 1 & 2
 \end{bmatrix}?
 $$
-1.  What are the eigenvalues and eigenvectors of the following matrix, and what is strange about this example compared to the previous one?
+1.  Aşağıdaki matrisin özdeğerleri ve özvektörleri nelerdir ve bu örnekte bir öncekine kıyasla garip olan nedir?
 $$
 \mathbf{A} = \begin{bmatrix}
 2 & 1 \\
 0 & 2
 \end{bmatrix}.
 $$
-1. Without computing the eigenvalues, is it possible that the smallest eigenvalue of the following matrix is less that $0.5$? *Note*: this problem can be done in your head.
+1. Özdeğerleri hesaplamadan, aşağıdaki matrisin en küçük özdeğerinin $0,5$'den az olması mümkün müdür? *Not*: Bu problemi kafanızda yapılabilirsiniz.
 $$
 \mathbf{A} = \begin{bmatrix}
 3.0 & 0.1 & 0.3 & 1.0 \\
@@ -476,5 +473,5 @@ $$
 $$
 
 :begin_tab:`mxnet`
-[Discussions](https://discuss.d2l.ai/t/411)
+[Tartışmalar](https://discuss.d2l.ai/t/411)
 :end_tab:
