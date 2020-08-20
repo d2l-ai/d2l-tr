@@ -102,8 +102,6 @@ $$
 \lim_{\epsilon \rightarrow 0}\frac{L(4+\epsilon) - L(4)}{\epsilon} = 8.
 $$
 
-It was not solved until 1986 that the *backpropagation algorithm* introduced in :cite:`Rumelhart.Hinton.Williams.ea.1988` provided a way to calculate how *any* change of the weights together would change the loss in the same computation time as a single prediction of the network over the dataset.
-
 Biraz tarihsel bir bilgi olarak: Sinir ağı araştırmalarının ilk birkaç on yılında, bilim adamları bu algoritmayı (*sonlu farklar yöntemi*) küçük bir oynama altında bir kayıp fonksiyonunun nasıl değiştiğini değerlendirmek için kullandılar; sadece ağırlıkları değiştirin ve kayıp nasıl değişir izleyin. Bu, sayısal olarak verimsizdir ve bir değişkendeki tek bir değişikliğin kaybı nasıl etkilediğini görmek için kayıp fonksiyonunun iki değerlendirmesini gerektirir. Bunu birkaç bin parametreyle bile yapmaya çalışsaydık, tüm veri kümesi üzerinde ağın birkaç bin değerlendirme yapmasını gerektirecekti! :cite:`Rumelhart.Hinton.Williams.ea.1988`de sunulan *geri yayma algoritması* ile ağırlıkların herhangi bir değişikliğinin, veri kümesi üzerindeki ağın tek bir tahminiyle aynı hesaplama süresinde kaybı nasıl değiştireceğini hesaplamak için bir yol sağladığı 1986 yılına kadar çözülemedi.
 
 Örneğimizdeki bu $8$ değeri, $x$'in farklı değerleri için farklıdır, bu nedenle, $x$'in bir işlevi olarak tanımlamak mantıklıdır. Daha resmi olarak, bu değere bağlı değişim oranına *türev* denir ve şöyle yazılır:
@@ -132,19 +130,19 @@ Son denklem açıkça belirtilmeye değer. Bize, herhangi bir işlevi alırsanı
 
 Bu şekilde türevi, girdideki bir değişiklikten çıktıda ne kadar büyük değişiklik elde ettiğimizi söyleyen ölçeklendirme faktörü olarak anlayabiliriz.
 
-## Rules of Calculus
+## Kalkülüs Kuralları
 :label:`sec_derivative_table`
 
-We now turn to the task of understanding how to compute the derivative of an explicit function.  A full formal treatment of calculus would derive everything from first principles.  We will not indulge in this temptation here, but rather provide an understanding of the common rules encountered.
+Şimdi, açık bir fonksiyonun türevinin nasıl hesaplanacağını anlama görevine dönüyoruz. Kalkülüsün tam bir biçimsel incelemesi, her şeyi ilk ilkelerden türetecektir. Burada bu cazibeye kapılmayacağız, bunun yerine karşılaşılan genel kuralların anlaşılmasını sağlayacağız.
 
-### Common Derivatives
-As was seen in :numref:`sec_calculus`, when computing derivatives one can oftentimes use a series of rules to reduce the computation to a few core functions.  We repeat them here for ease of reference.
+### Yaygın Türevler
+:numref:`sec_calculus`da görüldüğü gibi, türevleri hesaplarken hesaplamayı birkaç temel işleve indirgemek için çoğu zaman bir dizi kural kullanılabilir. Referans kolaylığı için burada tekrar ediyoruz.
 
-* **Derivative of constants.** $\frac{d}{dx}c = 0$.
-* **Derivative of linear functions.** $\frac{d}{dx}(ax) = a$.
-* **Power rule.** $\frac{d}{dx}x^n = nx^{n-1}$.
-* **Derivative of exponentials.** $\frac{d}{dx}e^x = e^x$.
-* **Derivative of the logarithm.** $\frac{d}{dx}\log(x) = \frac{1}{x}$.
+* **Sabitlerin türevi.** $\frac{d}{dx}c = 0$.
+* **Doğrusal fonksiyonların türevi.** $\frac{d}{dx}(ax) = a$.
+* **Kuvvet kuralı.** $\frac{d}{dx}x^n = nx^{n-1}$.
+* **Üstellerin türevi.** $\frac{d}{dx}e^x = e^x$.
+* **Logaritmanın türevi.** $\frac{d}{dx}\log(x) = \frac{1}{x}$.
 
 ### Derivative Rules
 If every derivative needed to be separately computed and stored in a table, differential calculus would be near impossible.  It is a gift of mathematics that we can generalize the above derivatives and compute more complex derivatives like finding the derivative of $f(x) = \log\left(1+(x-1)^{10}\right)$.  As was mentioned in :numref:`sec_calculus`, the key to doing so is to codify what happens when we take functions and combine them in various ways, most importantly: sums, products, and compositions.
