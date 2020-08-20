@@ -144,14 +144,14 @@ Bu şekilde türevi, girdideki bir değişiklikten çıktıda ne kadar büyük d
 * **Üstellerin türevi.** $\frac{d}{dx}e^x = e^x$.
 * **Logaritmanın türevi.** $\frac{d}{dx}\log(x) = \frac{1}{x}$.
 
-### Derivative Rules
-If every derivative needed to be separately computed and stored in a table, differential calculus would be near impossible.  It is a gift of mathematics that we can generalize the above derivatives and compute more complex derivatives like finding the derivative of $f(x) = \log\left(1+(x-1)^{10}\right)$.  As was mentioned in :numref:`sec_calculus`, the key to doing so is to codify what happens when we take functions and combine them in various ways, most importantly: sums, products, and compositions.
+### Türev Kuralları
+Her türevin ayrı ayrı hesaplanması ve bir tabloda depolanması gerekirse, diferansiyel kalkülüs neredeyse imkansız olurdu. Yukarıdaki türevleri genelleştirebilmemiz ve $f(x) = \log\left(1+(x-1)^{10}\right)$ türevini bulmak gibi daha karmaşık türevleri hesaplayabilmemiz matematiğin bir armağanıdır. :numref:`sec_calculus`da bahsedildiği gibi, bunu yapmanın anahtarı, fonksiyonları aldığımızda ve bunları çeşitli şekillerde birleştirdiğimizde, özellikle toplamlar, çarpımlar ve bileşimler, olanları kodlamaktır.
 
-* **Sum rule.** $\frac{d}{dx}\left(g(x) + h(x)\right) = \frac{dg}{dx}(x) + \frac{dh}{dx}(x)$.
-* **Product rule.** $\frac{d}{dx}\left(g(x)\cdot h(x)\right) = g(x)\frac{dh}{dx}(x) + \frac{dg}{dx}(x)h(x)$.
-* **Chain rule.** $\frac{d}{dx}g(h(x)) = \frac{dg}{dh}(h(x))\cdot \frac{dh}{dx}(x)$.
+* **Toplam kuralı.** $\frac{d}{dx}\left(g(x) + h(x)\right) = \frac{dg}{dx}(x) + \frac{dh}{dx}(x)$
+* **Çarpım kuralı.** $\frac{d}{dx}\left(g(x)\cdot h(x)\right) = g(x)\frac{dh}{dx}(x) + \frac{dg}{dx}(x)h(x)$.
+* **Zincir kuralı.** $\frac{d}{dx}g(h(x)) = \frac{dg}{dh}(h(x))\cdot \frac{dh}{dx}(x)$.
 
-Let us see how we may use :eqref:`eq_small_change` to understand these rules.  For the sum rule, consider following chain of reasoning:
+Bu kuralları anlamak için :eqref:`eq_small_change`'i nasıl kullanabileceğimize bir bakalım. Toplam kuralı için aşağıdaki akıl yürütme zincirini düşünün:
 
 $$
 \begin{aligned}
@@ -162,10 +162,9 @@ f(x+\epsilon) & = g(x+\epsilon) + h(x+\epsilon) \\
 \end{aligned}
 $$
 
-By comparing this result with the fact that $f(x+\epsilon) \approx f(x) + \epsilon \frac{df}{dx}(x)$, we see that $\frac{df}{dx}(x) = \frac{dg}{dx}(x) + \frac{dh}{dx}(x)$ as desired.  The intuition here is: when we change the input $x$, $g$ and $h$ jointly contribute to the change of the output by $\frac{dg}{dx}(x)$ and $\frac{dh}{dx}(x)$.
+Bu sonucu $f(x+\epsilon) \approx f(x) + \epsilon \frac{df}{dx}(x)$ gerçeğiyle karşılaştırdığımızda istenildiği gibi $\frac{df}{dx}(x) = \frac{dg}{dx}(x) + \frac{dh}{dx}(x)$ olduğunu görürüz. Buradaki sezgi şudur: $x$ girdisini değiştirdiğimizde, $g$ ve $h$ çıktının değişmesine $\frac{dg}{dx}(x)$$ ve $\frac{dh}{dx}(x)$ ile birlikte katkıda bulunur.
 
-
-The product is more subtle, and will require a new observation about how to work with these expressions.  We will begin as before using :eqref:`eq_small_change`:
+Çarpım daha inceliklidir ve bu ifadelerle nasıl çalışılacağı konusunda yeni bir gözlem gerektirecektir. Önceden olduğu gibi :eqref:`eq_small_change`'i kullanarak başlayacağız :
 
 $$
 \begin{aligned}
@@ -176,8 +175,7 @@ f(x+\epsilon) & = g(x+\epsilon)\cdot h(x+\epsilon) \\
 \end{aligned}
 $$
 
-
-This resembles the computation done above, and indeed we see our answer ($\frac{df}{dx}(x) = g(x)\frac{dh}{dx}(x) + \frac{dg}{dx}(x)h(x)$) sitting next to $\epsilon$, but there is the issue of that term of size $\epsilon^{2}$.  We will refer to this as a *higher-order term*, since the power of $\epsilon^2$ is higher than the power of $\epsilon^1$.  We will see in a later section that we will sometimes want to keep track of these, however for now observe that if $\epsilon = 0.0000001$, then $\epsilon^{2}= 0.0000000000001$, which is vastly smaller.  As we send $\epsilon \rightarrow 0$, we may safely ignore the higher order terms.  As a general convention in this appendix, we will use "$\approx$" to denote that the two terms are equal up to higher order terms.  However, if we wish to be more formal we may examine the difference quotient
+Bu, yukarıda yapılan hesaplamaya benzer ve aslında görürüz ki cevabımız ($\frac{df}{dx}(x) = g(x)\frac{dh}{dx}(x) + \frac{dg}{dx}(x)h(x)$) $\epsilon$'un yanında duruyor, ancak $\epsilon^{2}$ terimininin boyutu ile ilgili bir durum var. $\epsilon^2$'nin gücü $\epsilon^1$'in gücünden daha yüksek olduğu için buna *yüksek dereceli bir terim* diyeceğiz. Daha sonraki bir bölümde bazen bunların kaydını tutmak isteyeceğimizi göreceğiz, ancak şimdilik $\epsilon = 0.0000001$ ise $\epsilon^{2} = 0.0000000000001$'nın çok daha küçük olduğunu gözlemleyeceğiz. $\epsilon \rightarrow 0$ gider iken, daha yüksek dereceli terimleri güvenle göz ardı edebiliriz. Bu ek bölümünde genel bir kural olarak, iki terimin daha yüksek mertebeden terimlere kadar eşit olduğunu belirtmek için "$\approx$" kullanacağız. Ancak, daha resmi olmak istiyorsak, fark oranını inceleyebiliriz.
 
 $$
 \frac{f(x+\epsilon) - f(x)}{\epsilon} = g(x)\frac{dh}{dx}(x) + \frac{dg}{dx}(x)h(x) + \epsilon \frac{dg}{dx}(x)\frac{dh}{dx}(x),
