@@ -181,9 +181,9 @@ $$
 \frac{f(x+\epsilon) - f(x)}{\epsilon} = g(x)\frac{dh}{dx}(x) + \frac{dg}{dx}(x)h(x) + \epsilon \frac{dg}{dx}(x)\frac{dh}{dx}(x),
 $$
 
-and see that as we send $\epsilon \rightarrow 0$, the right hand term goes to zero as well.
+$\epsilon \rightarrow 0$ giderken, sağdaki terimin de sıfıra gittiğini görürüz.
 
-Finally, with the chain rule, we can again progress as before using :eqref:`eq_small_change` and see that
+Son olarak, zincir kuralı ile, :eqref:`eq_small_change`'yi kullanmadan önceki gibi tekrar ilerleyebiliriz ve görürüz ki
 
 $$
 \begin{aligned}
@@ -194,9 +194,9 @@ f(x+\epsilon) & = g(h(x+\epsilon)) \\
 \end{aligned}
 $$
 
-where in the second line we view the function $g$ as having its input ($h(x)$) shifted by the tiny quantity $\epsilon \frac{dh}{dx}(x)$.
+Burada ikinci satırda $g$ fonksiyonunun girdisinin ($h(x)$) minik miktar, $\epsilon\frac{dh}{dx} (x)$ kadar, kaydırıldığını görüyoruz.
 
-These rule provide us with a flexible set of tools to compute essentially any expression desired.  For instance,
+Bu kurallar, esasen istenen herhangi bir ifadeyi hesaplamak için bize bir dizi esnek araç sağlar. Örneğin,
 
 $$
 \begin{aligned}
@@ -208,28 +208,28 @@ $$
 \end{aligned}
 $$
 
-Where each line has used the following rules:
+Her satırda sırasıyla aşağıdaki kurallar kullanmıştır:
 
-1. The chain rule and derivative of logarithm.
-2. The sum rule.
-3. The derivative of constants, chain rule, and power rule.
-4. The sum rule, derivative of linear functions, derivative of constants.
+1. Zincir kuralı ve logaritmanın türevi.
+2. Toplam kuralı.
+3. Sabitlerin türevi, zincir kuralı ve kuvvet kuralı.
+4. Toplam kuralı, doğrusal fonksiyonların türevi, sabitlerin türevi.
 
-Two things should be clear after doing this example:
+Bu örneği yaptıktan sonra iki şey netleşmiş olmalıdır:
 
-1. Any function we can write down using sums, products, constants, powers, exponentials, and logarithms can have its derivate computed mechanically by following these rules.
-2. Having a human follow these rules can be tedious and error prone!
+1. Toplamları, çarpımları, sabitleri, üsleri, üstelleri ve logaritmaları kullanarak yazabileceğimiz herhangi bir fonksiyonun türevi bu kuralları takip ederek mekanik olarak hesaplanabilir.
+2. Bir insanın bu kuralları takip etmesi yorucu ve hataya açık olabilir!
 
-Thankfully, these two facts together hint towards a way forward: this is a perfect candidate for mechanization!  Indeed backpropagation, which we will revisit later in this section, is exactly that.
+Neyse ki, bu iki gerçek birlikte ileriye doğru bir yol gösteriyor: Bu, mekanikleştirme için mükemmel bir aday! Aslında bu bölümde daha sonra tekrar ele alacağımız geri yayma tam olarak da budur. 
 
-### Linear Approximation
-When working with derivatives, it is often useful to geometrically interpret the approximation used above.  In particular, note that the equation 
+### Doğrusal yaklaşıklama
+Türevlerle çalışırken, yukarıda kullanılan yaklaşıklamayı geometrik olarak yorumlamak genellikle yararlıdır. Özellikle, aşağıdaki denklemin
 
 $$
 f(x+\epsilon) \approx f(x) + \epsilon \frac{df}{dx}(x),
 $$
 
-approximates the value of $f$ by a line which passes through the point $(x, f(x))$ and has slope $\frac{df}{dx}(x)$.  In this way we say that the derivative gives a linear approximation to the function $f$, as illustrated below:
+$f$ değerine $(x, f(x))$ noktasından geçen ve $\frac{df}{dx}(x)$ eğimine sahip bir çizgi ile yaklaştığına dikkat edin. Bu şekilde, türevin, aşağıda gösterildiği gibi $f$ fonksiyonuna doğrusal bir yaklaşıklama verdiğini söylüyoruz:
 
 ```{.python .input}
 # Compute sin
@@ -257,38 +257,36 @@ for x0 in [-1.5, 0.0, 2.0]:
 d2l.plot(xs, plots, 'x', 'f(x)', ylim=[-1.5, 1.5])
 ```
 
-### Higher Order Derivatives
+### Yüksek Dereceli Türevler
 
-Let us now do something that may on the surface seem strange.  Take a function $f$ and compute the derivative $\frac{df}{dx}$.  This gives us the rate of change of $f$ at any point.
+Şimdi yüzeyde garip görünebilecek bir şey yapalım. Bir $f$ fonksiyonunu alın ve $\frac{df}{dx}$ türevini hesaplayın. Bu bize herhangi bir noktada $f$'nin değişim oranını verir.
 
-However, the derivative, $\frac{df}{dx}$, can be viewed as a function itself, so nothing stops us from computing the derivative of $\frac{df}{dx}$ to get $\frac{d^2f}{dx^2} = \frac{df}{dx}\left(\frac{df}{dx}\right)$.  We will call this the second derivative of $f$.  This function is the rate of change of the rate of change of $f$, or in other words, how the rate of change is changing. We may apply the derivative any number of times to obtain what is called the $n$-th derivative. To keep the notation clean, we will denote the $n$-th derivative as 
+Bununla birlikte, $\frac{df}{dx}$ türevi, bir işlev olarak görülebilir, bu nedenle hiçbir şey bizi $\frac{df}{dx}$ türevini, $\frac{d^2f}{dx^2} = \frac{df}{dx}\left(\frac{df}{dx}\right)$, hesaplamaktan alıkoyamaz. Buna $f$'nin ikinci türevi diyeceğiz. Bu fonksiyon, $f$'nin değişim oranının değişim oranıdır veya başka bir deyişle, değişim oranının nasıl değiştiğidir. $n.$ türev denen türevi elde etmek için herhangi bir sayıda art arda türev uygulayabiliriz. Gösterimi temiz tutmak için, $n.$ türevi şu şekilde göstereceğiz:
 
 $$
 f^{(n)}(x) = \frac{d^{n}f}{dx^{n}} = \left(\frac{d}{dx}\right)^{n} f.
 $$
 
-Let us try to understand *why* this is a useful notion.  Below, we visualize $f^{(2)}(x)$, $f^{(1)}(x)$, and $f(x)$.  
+Bunun *neden* yararlı bir fikir olduğunu anlamaya çalışalım. Aşağıda, $f^{(2)}(x)$, $f^{(1)}(x)$ ve $f(x)$'i görselleştiriyoruz.
 
-First, consider the case that the second derivative $f^{(2)}(x)$ is a positive constant.  This means that the slope of the first derivative is positive.  As a result, the first derivative $f^{(1)}(x)$ may start out negative, becomes zero at a point, and then becomes positive in the end. This tells us the slope of our original function $f$ and therefore, the function $f$ itself decreases, flattens out, then increases.  In other words, the function $f$ curves up, and has a single minimum as is shown in :numref:`fig_positive-second`.
+İlk olarak, ikinci türevin $ f^{(2)}(x)$ pozitif bir sabit olduğu durumu düşünün. Bu, birinci türevin eğiminin pozitif olduğu anlamına gelir. Sonuç olarak, birinci türev, $f^{(1)}(x)$, negatif olarak başlayabilir, bir noktada sıfır olur ve sonra sonunda pozitif olur. Bu bize esas fonksiyonumuz $f$'nin eğimini anlatır; dolayısıyla $f$ fonksiyonunun kendisi azalır, düzleşir, sonra artar. Başka bir deyişle, $f$ işlevi yukarı doğru eğrilir ve şu şekilde gösterildiği gibi tek bir minimuma sahiptir :numref:`fig_positive-second`.
 
-![If we assume the second derivative is a positive constant, then the fist derivative in increasing, which implies the function itself has a minimum.](../img/posSecDer.svg)
+![İkinci türevin pozitif bir sabit olduğunu varsayarsak, artmakta olan ilk türev, fonksiyonun kendisinin bir minimuma sahip olduğu anlamına gelir.](../img/posSecDer.svg)
 :label:`fig_positive-second`
 
+İkincisi, eğer ikinci türev negatif bir sabitse, bu, birinci türevin azaldığı anlamına gelir. Bu, ilk türevin pozitif başlayabileceği, bir noktada sıfır olacağı ve sonra negatif olacağı anlamına gelir. Dolayısıyla, $f$ işlevinin kendisi artar, düzleşir ve sonra azalır. Başka bir deyişle, $f$ işlevi aşağı doğru eğilir ve şu şekilde gösterildiği gibi tek bir maksimuma sahiptir :numref:`fig_negative-second`.
 
-Second, if the second derivative is a negative constant, that means that the first derivative is decreasing.  This implies the first derivative may start out positive, becomes zero at a point, and then becomes negative. Hence, the function $f$ itself increases, flattens out, then decreases.  In other words, the function $f$ curves down, and has a single maximum as is shown in :numref:`fig_negative-second`.
-
-![If we assume the second derivative is a negative constant, then the fist derivative in decreasing, which implies the function itself has a maximum.](../img/negSecDer.svg)
+![İkinci türevin negatif bir sabit olduğunu varsayarsak, azalmakta olan ilk türev, fonksiyonun kendisinin bir maksimuma sahip olduğu anlamına gelir.](../img/negSecDer.svg)
 :label:`fig_negative-second`
 
+Üçüncüsü, eğer ikinci türev her zaman sıfırsa, o zaman ilk türev asla değişmeyecektir---sabittir! Bu, $f$'nin sabit bir oranda arttığı (veya azaldığı) anlamına gelir ve $f$'nin kendisi de gösterildiği gibi düz bir doğrudur :numref:`fig_zero-saniye`.
 
-Third, if the second derivative is a always zero, then the first derivative will never change---it is constant!  This means that $f$ increases (or decreases) at a fixed rate, and $f$ is itself a straight line  as is shown in :numref:`fig_zero-second`.
-
-![If we assume the second derivative is zero, then the fist derivative is constant, which implies the function itself is a straight line.](../img/zeroSecDer.svg)
+![İkinci türevin sıfır olduğunu varsayarsak, ilk türev sabittir, bu da fonksiyonun kendisinin düz bir doğru olduğu anlamına gelir.](../img/zeroSecDer.svg)
 :label:`fig_zero-second`
 
-To summarize, the second derivative can be interpreted as describing the way that the function $f$ curves.  A positive second derivative leads to a upwards curve, while a negative second derivative means that $f$ curves downwards, and a zero second derivative means that $f$ does not curve at all.
+Özetlemek gerekirse, ikinci türev, $f$ fonksiyonunun eğrilerinin şeklinin açıklanması olarak yorumlanabilir. Pozitif bir ikinci türev yukarı doğru bir eğriye yol açarken, negatif bir ikinci türev $f$'nin aşağı doğru eğrildiği ve sıfır ikinci türev ise $f$'nin hiç eğrilmediği anlamına gelir.
 
-Let us take this one step further. Consider the function $g(x) = ax^{2}+ bx + c$.  We can then compute that
+Bunu bir adım daha ileri götürelim. $g(x) = ax^{2}+ bx + c$ işlevini düşünün. Birlikte şunu hesaplayabiliriz
 
 $$
 \begin{aligned}
@@ -297,7 +295,7 @@ $$
 \end{aligned}
 $$
 
-If we have some original function $f(x)$ in mind, we may compute the first two derivatives and find the values for $a, b$, and $c$ that make them match this computation.  Similarly to the previous section where we saw that the first derivative gave the best approximation with a straight line, this construction provides the best approximation by a quadratic.  Let us visualize this for $f(x) = \sin(x)$.
+Aklımızda belirli bir orijinal fonksiyon $f(x)$ varsa, ilk iki türevi hesaplayabilir ve $a,b$ ve $c$ değerlerini bu hesaplamayla eşleşecek şekilde bulabiliriz. İlk türevin düz bir doğru ile en iyi yaklaşıklamayı verdiğini gördüğümüz önceki bölüme benzer şekilde, bu yapı bir ikinci dereceden en iyi yaklaşımı sağlar. Bunu $f(x) = \sin(x)$ için görselleştirelim.
 
 ```{.python .input}
 # Compute sin
@@ -327,58 +325,57 @@ for x0 in [-1.5, 0.0, 2.0]:
 d2l.plot(xs, plots, 'x', 'f(x)', ylim=[-1.5, 1.5])
 ```
 
-We will extend this idea to the idea of a *Taylor series* in the next section. 
+Bu fikri bir sonraki bölümde bir *Taylor serisi* fikrine genişleteceğiz.
 
-### Taylor Series
+### Taylor Serisi
 
 
-The *Taylor series* provides a method to approximate the function $f(x)$ if we are given values for the first $n$ derivatives at a point $x_0$, i.e., $\left\{ f(x_0), f^{(1)}(x_0), f^{(2)}(x_0), \ldots, f^{(n)}(x_0) \right\}$. The idea will be to find a degree $n$ polynomial that matches all the given derivatives at $x_0$.
+*Taylor serisi*, bir $x_0$ noktası için ilk $n$ türevlerinin değerleri , $\left\{ f(x_0), f^{(1)}(x_0), f^{(2)}(x_0), \ldots, f^{(n)}(x_0) \right\}$ verilirse, $f(x)$ fonksiyonuna yaklaşıklamak için bir yöntem sağlar. Buradaki fikir, $x_0$'da verilen tüm türevlerle eşleşen bir $n$ dereceli polinom bulmak olacaktır.
 
-We saw the case of $n=2$ in the previous section and a little algebra shows this is
+Önceki bölümde $n = 2$ durumunu gördük ve biraz cebir bunu gösterecektir:
 
 $$
 f(x) \approx \frac{1}{2}\frac{d^2f}{dx^2}(x_0)(x-x_0)^{2}+ \frac{df}{dx}(x_0)(x-x_0) + f(x_0).
 $$
 
-As we can see above, the denominator of $2$ is there to cancel out the $2$ we get when we take two derivatives of $x^2$, while the other terms are all zero.  Same logic applies for the first derivative and the value itself.
+Yukarıda gördüğümüz gibi, $2$ paydası, $x^2$'nin türevini iki defa aldığımızda elde ettiğimiz $2$'yi iptal etmek için oradadır, diğer terimlerin hepsi sıfırdır. Aynı mantık, birinci türev ve değerin kendisi için de geçerlidir.
 
-If we push the logic further to $n=3$, we will conclude that
+Mantığı $n = 3$ değerine uygularsak, şu sonuca varacağız:
 
 $$
 f(x) \approx \frac{\frac{d^3f}{dx^3}(x_0)}{6}(x-x_0)^3 + \frac{\frac{d^2f}{dx^2}(x_0)}{2}(x-x_0)^{2}+ \frac{df}{dx}(x_0)(x-x_0) + f(x_0).
 $$
 
-where the $6 = 3 \times 2 = 3!$ comes from the constant we get in front if we take three derivatives of $x^3$.
 
+burada $ 6 = 3 \times 2 = 3! $, $x^3$'ün üçüncü türevini alırsak önümüze gelen sabitten gelir.
 
-Furthermore, we can get a degree $n$ polynomial by 
+Dahası, bir $n$ dereceli polinom elde edebiliriz.
 
 $$
 P_n(x) = \sum_{i = 0}^{n} \frac{f^{(i)}(x_0)}{i!}(x-x_0)^{i}.
 $$
 
-where the notation 
+buradaki eşdeğer gösterim aşağıdadır.
 
 $$
 f^{(n)}(x) = \frac{d^{n}f}{dx^{n}} = \left(\frac{d}{dx}\right)^{n} f.
 $$
 
+Aslında, $P_n(x)$, $f(x)$ fonksiyonumuza yaklaşan en iyi $n$-dereceli polinom olarak görülebilir.
 
-Indeed, $P_n(x)$ can be viewed as the best $n$-th degree polynomial approximation to our function $f(x)$.
-
-While we are not going to dive all the way into the error of the above approximations, it is worth mentioning the infinite limit. In this case, for well behaved functions (known as real analytic functions) like $\cos(x)$ or $e^{x}$, we can write out the infinite number of terms and approximate the exactly same function
+Yukarıdaki tahminlerin hatasına tam olarak dalmayacak olsak da, sonsuz limitten bahsetmeye değer. Bu durumda, $\cos(x)$ veya $e^{x}$ gibi iyi huylu işlevler (gerçel analitik işlevler olarak bilinir) için, sonsuz sayıda terim yazabilir ve tam olarak aynı işlevi yaklaşık olarak tahmin edebiliriz
 
 $$
 f(x) = \sum_{n = 0}^\infty \frac{f^{(n)}(x_0)}{n!}(x-x_0)^{n}.
 $$
 
-Take $f(x) = e^{x}$ as am example. Since $e^{x}$ is its own derivative, we know that $f^{(n)}(x) = e^{x}$. Therefore, $e^{x}$ can be reconstructed by taking the Taylor series at $x_0 = 0$, i.e.,
+Örnek olarak $f(x) = e^{x}$'i alalım. $e^{x}$ kendisinin türevi olduğundan, $f^{(n)}(x) = e^{x}$ olduğunu biliyoruz. Bu nedenle, $e^{x}$, Taylor serisi $x_0 = 0$ alınarak yeniden yapılandırılabilir, yani,
 
 $$
 e^{x} = \sum_{n = 0}^\infty \frac{x^{n}}{n!} = 1 + x + \frac{x^2}{2} + \frac{x^3}{6} + \cdots.
 $$
 
-Let us see how this works in code and observe how increasing the degree of the Taylor approximation brings us closer to the desired function $e^x$.
+Bunun kodda nasıl çalıştığını görelim ve Taylor yaklaşımının derecesini artırmanın bizi istenen $e^x$ fonksiyonuna nasıl yaklaştırdığını görelim.
 
 ```{.python .input}
 # Compute the exponential function
@@ -409,31 +406,30 @@ P5 = 1 + xs + xs**2 / 2 + xs**3 / 6 + xs**4 / 24 + xs**5 / 120
 d2l.plot(xs, [ys, P1, P2, P5], 'x', 'f(x)', legend=[
     "Exponential", "Degree 1 Taylor Series", "Degree 2 Taylor Series",
     "Degree 5 Taylor Series"])
-```
+``` 
 
-Taylor series have two primary applications:
+Taylor serisinin iki ana uygulaması vardır:
 
-1. *Theoretical applications*: Often when we try to understand a too complex function, using Taylor series enables we turn it into a polynomial that we can work with directly.
+1. *Teorik uygulamalar*: Genellikle çok karmaşık bir fonksiyonu anlamaya çalıştığımızda, Taylor serisini kullanmak onu doğrudan çalışabileceğimiz bir polinom haline dönüştürebilmemizi sağlar.
 
-2. *Numerical applications*: Some functions like $e^{x}$ or $\cos(x)$ are  difficult for machines to compute.  They can store tables of values at a fixed precision (and this is often done), but it still leaves open questions like "What is the 1000-th digit of $\cos(1)$?"  Taylor series are often helpful to answer such questions.  
+2. *Sayısal (numerik) uygulamalar*: $e^{x}$ veya $\cos(x)$ gibi bazı işlevlerin hesaplanması makineler için zordur. Değer tablolarını sabit bir hassasiyette depolayabilirler (ve bu genellikle yapılır), ancak yine de "$\cos(1)$'in 1000'inci basamağı nedir?" gibi açık sorular kalır. Taylor serileri, bu tür soruları cevaplamak için genellikle yardımcı olur.
+
+## Özet
+
+* Türevler, girdiyi küçük bir miktar değiştirdiğimizde fonksiyonların nasıl değişeceğini ifade etmek için kullanılabilir.
+* Temel türevler, karmaşık türevleri bulmak için türev kuralları kullanılarak birleştirilebilir.
+* Türevler, ikinci veya daha yüksek dereceden türevleri elde etmek için yinelenebilir. Derecedeki her artış, işlevin davranışı hakkında daha ayrıntılı bilgi sağlar.
+* Tek bir veri noktasının türevlerindeki bilgileri kullanarak, Taylor serisinden elde edilen polinomlarla iyi huylu fonksiyonları yaklaşık elde edebiliriz.
 
 
-## Summary
+## Alıştırmalar
 
-* Derivatives can be used to express how functions change when we change the input by a small amount.
-* Elementary derivatives can be combined using derivative rules to create arbitrarily complex derivatives.
-* Derivatives can be iterated to get second or higher order derivatives.  Each increase in order provides more fine grained information on the behavior of the function.
-* Using information in the derivatives of a single data point, we can approximate well behaved functions by polynomials obtained from the Taylor series.
-
-
-## Exercises
-
-1. What is the derivative of $x^3-4x+1$?
-2. What is the derivative of $\log(\frac{1}{x})$?
-3. True or False: If $f'(x) = 0$ then $f$ has a maximum or minimum at $x$?
-4. Where is the minimum of $f(x) = x\log(x)$ for $x\ge0$ (where we assume that $f$ takes the limiting value of $0$ at $f(0)$)?
+1. $x^3-4x+1$'in türevi nedir?
+2. $\log(\frac{1}{x})$'in türevi nedir?
+3. Doğru veya yanlış: $f'(x) = 0$ ise, $f$ $x$'te maksimum veya minimuma sahip midir?
+4. $x\ge0$ için $f(x) = x\log(x)$ minimumu nerededir (burada $f$'nin $f(0)$'da $0$'ın limit değerini aldığını varsayıyoruz)?
 
 
 :begin_tab:`mxnet`
-[Discussions](https://discuss.d2l.ai/t/412)
+[Tartışmalar](https://discuss.d2l.ai/t/412)
 :end_tab:
