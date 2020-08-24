@@ -154,7 +154,7 @@ $$
 L(\mathbf{x}_0 + \boldsymbol{\epsilon}) \approx L(\mathbf{x}_0) + \boldsymbol{\epsilon}\cdot \nabla_{\mathbf{x}} L(\mathbf{x}_0).
 $$
 
-Gradyan sıfır değilse, $L$'nin daha küçük değerini bulmak için $-\epsilon \nabla_{\mathbf{x}} L(\mathbf{x}_0) $ yönünde bir adım atabileceğimizi biliyoruz. Bu nedenle, gerçekten minimumda isek, böyle bir durum olamaz! $\mathbf{x}_0$ bir minimum ise, $\nabla_{\mathbf{x}} L(\mathbf{x}_0) = 0$ olduğu sonucuna varabiliriz. $\nabla_{\mathbf{x}} L(\mathbf{x}_0) = 0$ ifadesi gerçek olan noktaları *kritik nokta* diye çağırıyoruz.
+Gradyan sıfır değilse, $L$'nin daha küçük değerini bulmak için $-\epsilon \nabla_{\mathbf{x}} L(\mathbf{x}_0) $ yönünde bir adım atabileceğimizi biliyoruz. Bu nedenle, gerçekten minimumda isek, böyle bir durum olamaz! $\mathbf{x}_0$ bir minimum ise, $\nabla_{\mathbf{x}} L(\mathbf{x}_{0}) = 0$ olduğu sonucuna varabiliriz. $\nabla_{\mathbf{x}} L(\mathbf{x}_0) = 0$ ifadesi gerçek olan noktaları *kritik nokta* diye çağırıyoruz.
 
 Bu güzel bir bilgi, çünkü bazı nadir durumlarda gradyanın sıfır olduğu tüm noktaları açıkça *bulabiliriz* ve en küçük değere sahip olanı bulabiliriz.
 
@@ -525,14 +525,14 @@ ax.set_zlim(-1, 1)
 ax.dist = 12
 ```
 
-Bu, :numref:`sec_gd`'de tartışılan Newton Algoritmasının temelini oluşturur; sayısal optimizasyonu yinelemeli olarak uygulayarak en uygun kuadratik polinomu bulur, sonra da tam olarak bu ikinci dereceden polinomu en aza indiririz.
+Bu, :numref:`sec_gd`'de tartışılan Newton Algoritmasının temelini oluşturur; sayısal optimizasyonu yinelemeli olarak uygulayarak en uygun kuadratik polinomu bulur, sonra da tam olarak bu ikinci dereceden polinomu en aza indiririz. 
 
-## A Little Matrix Calculus
-Derivatives of functions involving matrices turn out to be particularly nice.  This section can become notationally heavy, so may be skipped in a first reading, but it is useful to know how derivatives of functions involving common matrix operations are often much cleaner than one might initially anticipate, particularly given how central matrix operations are to deep learning applications.
+## Biraz Matris Kalkülüsü
+Matrisleri içeren fonksiyonların türevlerinin oldukça iyi olduğu ortaya çıktı. Bu bölüm gösterimsel olarak ağır hale gelebilir, bu nedenle ilk okumada atlanabilir, ancak genel matris işlemlerini içeren fonksiyonların türevlerinin genellikle başlangıçta tahmin edebileceğinden çok daha temiz olduğunu bilmek yararlıdır, özellikle de merkezi matris işlemlerinin derin öğrenme uygulamaları için ne kadar olduğu göz önüne alındığında.
 
-Let us begin with an example.  Suppose that we have some fixed row vector $\boldsymbol{\beta}$, and we want to take the product function $f(\mathbf{x}) = \boldsymbol{\beta}\mathbf{x}$, and understand how the dot product changes when we change $\mathbf{x}$.  
+Bir örnekle başlayalım. Bir sabit satır vektörümüz $\boldsymbol{\beta}$ olduğunu ve $f(\mathbf{x}) = \boldsymbol{\beta}\mathbf{x}$ çarpım fonksiyonunu almak ve $\mathbf{x}$'i değiştirdiğimizde iç çarpım nasıl değişir anlamak istediğimizi varsayalım.
 
-A bit of notation that will be useful when working with matrix derivatives in ML is called the *denominator layout matrix derivative* where we assemble our partial derivatives into the shape of whatever vector, matrix, or tensor is in the denominator of the differential.  In this case, we will write
+Makine öğrenmesinde matris türevleriyle çalışırken faydalı olacak bir gösterim parçası, kısmi türevlerimizi türevin paydada bulunduğu vektör, matris veya tensörün şekline dönüştürdüğümüz *payda düzenli matris türevi* olarak adlandırılır. Bu durumda şöyle yazacağız
 
 $$
 \frac{df}{d\mathbf{x}} = \begin{bmatrix}
@@ -542,27 +542,27 @@ $$
 \end{bmatrix}.
 $$
 
-where we matched the shape of the column vector $\mathbf{x}$. 
+Burada $\mathbf{x}$ sütun vektörünün şekline eşleştirdik.
 
-If we write out our function into components this is
+İşlevimizi bileşenlere yazarsak:
 
 $$
 f(\mathbf{x}) = \sum_{i = 1}^{n} \beta_ix_i = \beta_1x_1 + \cdots + \beta_nx_n.
 $$
 
-If we now take the partial derivative with respect to say $\beta_1$, note that everything is zero but the first term, which is just $x_1$ multiplied by $\beta_1$, so the we obtain that
+Şimdi $x_1$ göre kısmi türevi alırsak, ilk terim hariç her şeyin sıfır olduğuna dikkat edin, sadece $x_1$ ile $\beta_1$ ile çarpılır, böylece bunu elde ederiz:
 
 $$
 \frac{df}{dx_1} = \beta_1,
 $$
 
-or more generally that 
+ya da daha genel olarak
 
 $$
 \frac{df}{dx_i} = \beta_i.
 $$
 
-We can now reassemble this into a matrix to see
+Şimdi bunu bir matris olarak görmek için yeniden birleştirebiliriz
 
 $$
 \frac{df}{d\mathbf{x}} = \begin{bmatrix}
@@ -576,184 +576,184 @@ $$
 \end{bmatrix} = \boldsymbol{\beta}^\top.
 $$
 
-This illustrates a few factors about matrix calculus that we will often counter throughout this section:
+Bu, matris kalkülüsü ile ilgili olarak bu bölümde sık sık karşılaşacağımız birkaç etkeni göstermektedir:
 
-* First, The computations will get rather involved.
-* Second, The final results are much cleaner than the intermediate process, and will always look similar to the single variable case.  In this case, note that $\frac{d}{dx}(bx) = b$ and $\frac{d}{d\mathbf{x}} (\boldsymbol{\beta}\mathbf{x}) = \boldsymbol{\beta}^\top$ are both similar. 
-* Third, transposes can often appear seemingly from nowhere.  The core reason for this is the convention that we match the shape of the denominator, thus when we multiply matrices, we will need to take transposes to match back to the shape of the original term.
+* İlk olarak, hesaplamalar daha çok işin içine girecek.
+* İkinci olarak, nihai sonuçlar ara süreçten çok daha temizdir ve her zaman tek değişkenli duruma benzer görünecektir. Bu durumda, $\frac{d}{dx}(bx) = b$ ve $\frac{d}{d\mathbf{x}} (\boldsymbol{\beta}\mathbf{x}) = \boldsymbol{\beta}^\top$'nin ikisi de benzerdir.
+* Üçüncüsü, devrikler genellikle herhangi bir yerden ortaya çıkabilirler. Bunun temel nedeni, paydanın şeklini eşleştirmemizdir, böylece matrisleri çarptığımızda, esas terimin şekline geri dönmek için devrikler almamız gerekecek.
 
-To keep building intuition, let us try a computation that is a little harder.  Suppose that we have a column vector $\mathbf{x}$, and a square matrix $A$ and we want to compute 
+Önsezi oluşturmaya devam etmek için biraz daha zor bir hesaplama deneyelim. Bir sütun vektörümüz $\mathbf{x}$ ve kare matrisimiz $A$ olduğunu ve şunu hesaplamak istediğimizi varsayalım.
 
 $$\frac{d}{d\mathbf{x}}(\mathbf{x}^\top A \mathbf{x}).$$
 :eqlabel:`eq_mat_goal_1`
 
-To drive towards easier to manipulate notation, let us consider this problem using Einstein notation.  In this case we can write the function as
+Gösterimde daha kolay oynama yaparak ileriye doğru ilerlemek için, bu problemi Einstein gösterimini kullanarak ele alalım. Bu durumda fonksiyonu şu şekilde yazabiliriz:
 
 $$
 \mathbf{x}^\top A \mathbf{x} = x_ia_{ij}x_j.
 $$
 
-To compute our derivative, we need to understand for every $k$, what the value of
+Türevimizi hesaplamak için, her $k$ için, değerin ne olduğunu anlamamız gerekir:
 
 $$
 \frac{d}{dx_k}(\mathbf{x}^\top A \mathbf{x}) = \frac{d}{dx_k}x_ia_{ij}x_j.
 $$
 
-By the product rule, this is
+Çarpım kuralını uygulayalım:
 
 $$
 \frac{d}{dx_k}x_ia_{ij}x_j = \frac{dx_i}{dx_k}a_{ij}x_j + x_ia_{ij}\frac{dx_j}{dx_k}.
 $$
 
-For a term like $\frac{dx_i}{dx_k}$, it is not hard to see that this is one when $i=k$ and zero otherwise.  This means that every term where $i$ and $k$ are different vanish from this sum, so the only terms that remain in that first sum are the ones where $i=k$.  The same reasoning holds for the second term where we need $j=k$.  This gives
+$\frac{dx_i}{dx_k}$ gibi bir terim için, bunun $i = k$ için bir ve aksi halde sıfır olduğunda  görmek zor değildir. Bu, $i$ ve $k$ değerlerinin farklı olduğu her terimin bu toplamdan kaybolduğu anlamına gelir, bu nedenle bu ilk toplamda kalan tek terim, $i = k$ olanlardır. Aynı çıkarsama, $j = k$'a ihtiyacımız olduğu ikinci terim için de geçerlidir. Böylece:
 
 $$
 \frac{d}{dx_k}x_ia_{ij}x_j = a_{kj}x_j + x_ia_{ik}.
 $$
 
-Now, the names of the indices in Einstein notation are arbitrary---the fact that $i$ and $j$ are different is immaterial to this computation at this point, so we can re-index so that they both use $i$ to see that
+Şimdi, Einstein gösterimindeki indislerin isimleri keyfidir --- $i$ ve $j$'nin farklı olması bu noktada bu hesaplama için önemsizdir, bu yüzden ikisinin de $i$ kullanması için yeniden indeksleyebiliriz:
 
 $$
 \frac{d}{dx_k}x_ia_{ij}x_j = a_{ki}x_i + x_ia_{ik} = (a_{ki} + a_{ik})x_i.
 $$
 
-Now, here is where we start to need some practice to go further.  Let us try and identify this outcome in terms of matrix operations.  $a_{ki} + a_{ik}$ is the $k, i$-th component of $\mathbf{A} + \mathbf{A}^\top$.  This gives
+Şimdi, burası daha ileri gitmek için biraz pratik yapmaya ihtiyacımız olan yerdir. Bu sonucu matris işlemleri açısından belirlemeye çalışalım. $a_{ki} + a_{ik}$, $\mathbf{A} + \mathbf{A}^\top$'nin $k,i$-inci bileşenidir.
 
 $$
 \frac{d}{dx_k}x_ia_{ij}x_j = [\mathbf{A} + \mathbf{A}^\top]_{ki}x_i.
 $$
 
-Similarly, this term is now the product of the matrix $\mathbf{A} + \mathbf{A}^\top$ by the vector $\mathbf{x}$, so we see that
+Benzer şekilde, bu terim artık $\mathbf{A} + \mathbf{A}^\top$ matrisinin $\mathbf{x} $ vektörü ile çarpımıdır, dolayısıyla şunu görüyoruz
 
 $$
 \left[\frac{d}{d\mathbf{x}}(\mathbf{x}^\top A \mathbf{x})\right]_k = \frac{d}{dx_k}x_ia_{ij}x_j = [(\mathbf{A} + \mathbf{A}^\top)\mathbf{x}]_k.
 $$
 
-Thus, we see that the $k$-th entry of the desired derivative from :eqref:`eq_mat_goal_1` is just the $k$-th entry of the vector on the right, and thus the two are the same.  Thus yields
+Böylece, :eqref:`eq_mat_goal_1`den istenen türevin $k.$ girdisinin sağdaki vektörün $k.$ girdisi olduğunu ve dolayısıyla ikisinin aynı olduğunu görüyoruz. Sonunda:
 
 $$
 \frac{d}{d\mathbf{x}}(\mathbf{x}^\top A \mathbf{x}) = (\mathbf{A} + \mathbf{A}^\top)\mathbf{x}.
 $$
 
-This required significantly more work than our last one, but the final result is small.  More than that, consider the following computation for traditional single variable derivatives:
+Bu, önceki sonucumuzdan önemli ölçüde daha fazla çalışma gerektirdi, ancak nihai sonuç küçük. Bundan daha fazlası, geleneksel tek değişkenli türevler için aşağıdaki hesaplamayı düşünün:
 
 $$
 \frac{d}{dx}(xax) = \frac{dx}{dx}ax + xa\frac{dx}{dx} = (a+a)x.
-$$
+$$ 
 
-Equivalently $\frac{d}{dx}(ax^2) = 2ax = (a+a)x$.  Again, we get a result that looks rather like the single variable result but with a transpose tossed in.  
+Eşdeğer olarak $\frac{d}{dx}(ax^2) = 2ax = (a+a)x$'dir. Yine, tek değişkenli sonuca benzeyen, ancak içine devrik atılmış bir sonuç elde ederiz.
 
-At this point, the pattern should be looking rather suspicious, so let us try to figure out why.  When we take matrix derivatives like this, let us first assume that the expression we get will be another matrix expression: an expression we can write it in terms of products and sums of matrices and their transposes.  If such an expression exists, it will need to be true for all matrices.  In particular, it will need to be true of $1 \times 1$ matrices, in which case the matrix product is just the product of the numbers, the matrix sum is just the sum, and the transpose does nothing at all!  In other words, whatever expression we get *must* match the single variable expression.  This means that, with some practice, one can often guess matrix derivatives just by knowing what the associated single variable expression must look like!
+Bu noktada, model oldukça şüpheli görünmelidir, bu yüzden nedenini anlamaya çalışalım. Bunun gibi matris türevlerini aldığımızda, öncelikle aldığımız ifadenin başka bir matris ifadesi olacağını varsayalım: Onu matrislerin çarpımları ve toplamları ve bunların devrikleri cinsinden yazabileceğimiz bir ifade. Böyle bir ifade varsa, tüm matrisler için doğru olması gerekecektir. Özellikle, $1 \times 1$ matrisler için doğru olması gerekecektir, ki bu durumda matris çarpımı sadece sayıların çarpımıdır, matris toplamı sadece toplamdır ve devrik hiçbir şey yapmaz! Başka bir deyişle, aldığımız ifade ne olursa olsun tek değişkenli ifadeyle *eşleşmelidir*. Bu, biraz pratikle, yalnızca ilişkili tek değişkenli ifadenin neye benzemesi gerektiğini bilerek matris türevlerini tahmin edebileceğiniz anlamına gelir!
 
-Let us try this out.  Suppose that $\mathbf{X}$ is a $n \times m$ matrix, $\mathbf{U}$ is an $n \times r$ and $\mathbf{V}$ is an $r \times m$.  Let us try to compute 
+Bunu deneyelim. $\mathbf{X}$'nin bir $ n\times m$ matrisi, $\mathbf{U}$'nun $n\times r$ ve $\mathbf{V}$'nin $r\times m$ olduğunu varsayalım. Hesaplamayı deneyelim
 
 $$\frac{d}{d\mathbf{V}} \|\mathbf{X} - \mathbf{U}\mathbf{V}\|_2^{2} = \;?$$
 :eqlabel:`eq_mat_goal_2`
 
-This computation is important in an area called matrix factorization.  For us, however, it is just a derivative to compute.  Let us try to imaging what this would be for $1\times1$ matrices.  In that case, we get the expression
+Bu hesaplama, matris çarpanlarına ayırma adı verilen bir alanda önemlidir. Ancak bizim için bu, hesaplanması gereken bir türevdir. Bunun $1\times 1$ matrisler için ne olacağını hayal etmeye çalışalım. Bu durumda ifadeyi alırız
 
 $$ 
 \frac{d}{dv} (x-uv)^{2}= 2(x-uv)u,
 $$
 
-where, the derivative is rather standard.  If we try to convert this back into a matrix expression we get
+Burada türev oldukça standarttır. Bunu tekrar bir matris ifadesine dönüştürmeye çalışırsak,
 
 $$
 \frac{d}{d\mathbf{V}} \|\mathbf{X} - \mathbf{U}\mathbf{V}\|_2^{2}= 2(\mathbf{X} - \mathbf{U}\mathbf{V})\mathbf{U}.
 $$
 
-However, if we look at this it does not quite work.  Recall that $\mathbf{X}$ is $n \times m$, as is $\mathbf{U}\mathbf{V}$, so the matrix $2(\mathbf{X} - \mathbf{U}\mathbf{V})$ is $n \times m$.  On the other hand $\mathbf{U}$ is $n \times r$, and we cannot multiply a $n \times m$ and a $n \times r$ matrix since the dimensions do not match! 
+Ancak buna bakarsak pek işe yaramıyor. $\mathbf{X}$'in $n\times m$ olduğunu ve $\mathbf{U}\mathbf{V}$ öyle olduğunu hatırlayın, dolayısıyla $2(\mathbf{X} - \mathbf{U}\mathbf{V})$, $n\times m$'dir. Öte yandan, $\mathbf{U}$, $n\times r$'dir ve boyutlar eşleşmediğinden, $n\times m$ ve a $n\times r$ matrisleri çarpamayız!
 
-We want to get $\frac{d}{d\mathbf{V}}$, which is the same shape of $\mathbf{V}$, which is $r \times m$.  So somehow we need to take a $n \times m$ matrix and a $n \times r$ matrix, multiply them together (perhaps with some transposes) to get a $r \times m$. We can do this by multiplying $U^\top$ by $(\mathbf{X} - \mathbf{U}\mathbf{V})$.  Thus, we can guess the solution to :eqref:`eq_mat_goal_2` is
+$\frac{d}{d\mathbf{V}}$'i elde etmek istiyoruz, bu $\mathbf{V}$ ile aynı şekle sahip, ki bu $r\times m$. Öyleyse bir şekilde bir $n\times m$ matrisi ve bir $n\times r$ matrisi almalıyız, bunları bir $r\times m$ matris elde etmek için birbirleriyle çarpmalıyız (belki bazı devriklerle). Bunu $U^\top$'yu $(\mathbf{X} - \mathbf{U}\mathbf{V})$ ile çarparak yapabiliriz. Böylelikle, :eqref:`eq_mat_goal_2` için çözümü tahmin edebiliriz:
 
 $$
 \frac{d}{d\mathbf{V}} \|\mathbf{X} - \mathbf{U}\mathbf{V}\|_2^{2}= 2\mathbf{U}^\top(\mathbf{X} - \mathbf{U}\mathbf{V}).
-$$
+$$ 
 
-To show we that this works, we would be remiss to not provide a detailed computation.  If we already believe that this rule-of-thumb works, feel free to skip past this derivation.  To compute 
+Bunun işe yaradığını göstermek için, ayrıntılı bir hesaplama sağlamazsak ihmal etmiş oluruz. Bu pratik kuralın işe yaradığına zaten inanıyorsanız, bu türetmeyi atlamaktan çekinmeyin. Hesaplayalım:
 
 $$
 \frac{d}{d\mathbf{V}} \|\mathbf{X} - \mathbf{U}\mathbf{V}\|_2^2,
 $$
 
-we must find for every $a$, and $b$
+Her $a$ ve $b$ için bulmalıyız.
 
 $$
 \frac{d}{dv_{ab}} \|\mathbf{X} - \mathbf{U}\mathbf{V}\|_2^{2}= \frac{d}{dv_{ab}} \sum_{i, j}\left(x_{ij} - \sum_k u_{ik}v_{kj}\right)^2.
 $$
 
-Recalling that all entries of $\mathbf{X}$ and $\mathbf{U}$ are constants as far as $\frac{d}{dv_{ab}}$ is concerned, we may push the derivative inside the sum, and apply the chain rule to the square to get
+$\mathbf{X}$ and $\mathbf{U}$'nin tüm girdilerinin $\frac{d}{dv_{ab}}$ bakımında sabitler olduğunu hatırlayarak, türevi toplamın içine itebiliriz, ve zincir kuralını kareye uygularız:
 
 $$
 \frac{d}{dv_{ab}} \|\mathbf{X} - \mathbf{U}\mathbf{V}\|_2^{2}= \sum_{i, j}2\left(x_{ij} - \sum_k u_{ik}v_{kj}\right)\left(\sum_k u_{ik}\frac{dv_{kj}}{dv_{ab}} \right).
 $$
 
-As in the previous derivation, we may note that $\frac{dv_{kj}}{dv_{ab}}$ is only non-zero if the $k=a$ and $j=b$.  If either of those conditions do not hold, the term in the sum is zero, and we may freely discard it.  We see that
+Önceki türetmede olduğu gibi, $\frac{dv_{kj}}{dv_{ab}}$’nın yalnızca $k = a$ ve $j = b$ ise sıfırdan farklı olduğunu görebiliriz. Bu koşullardan herhangi biri geçerli değilse, toplamdaki terim sıfırdır ve onu özgürce atabiliriz. Bunu görüyoruz:
 
 $$
 \frac{d}{dv_{ab}} \|\mathbf{X} - \mathbf{U}\mathbf{V}\|_2^{2}= \sum_{i}2\left(x_{ib} - \sum_k u_{ik}v_{kb}\right)u_{ia}.
 $$
 
-An important subtlety here is that the requirement that $k=a$ does not occur inside the inner sum since that $k$ is a dummy variable which we are summing over inside the inner term.  For a notationally cleaner example, consider why
+Buradaki önemli bir incelik, $k = a$ şartının iç toplamın içinde oluşmamasıdır, çünkü $k$ iç terimin içinde topladığımız yapay bir değişken. Gösterimsel olarak daha temiz bir örnek için nedenini düşünelim:
 
 $$
 \frac{d}{dx_1} \left(\sum_i x_i \right)^{2}= 2\left(\sum_i x_i \right).
 $$
 
-From this point, we may start identifying components of the sum.  First, 
+Bu noktadan itibaren, toplamın bileşenlerini belirlemeye başlayabiliriz. İlk olarak,
 
 $$
 \sum_k u_{ik}v_{kb} = [\mathbf{U}\mathbf{V}]_{ib}.
 $$
 
-So the entire expression in the inside of the sum is
+Yani toplamın içindeki tüm ifade:
 
 $$
 x_{ib} - \sum_k u_{ik}v_{kb} = [\mathbf{X}-\mathbf{U}\mathbf{V}]_{ib}.
 $$
 
-This means we may now write our derivative as
+Bu, artık türevimizi şu şekilde yazabileceğimiz anlamına gelir:
 
 $$
 \frac{d}{dv_{ab}} \|\mathbf{X} - \mathbf{U}\mathbf{V}\|_2^{2}= 2\sum_{i}[\mathbf{X}-\mathbf{U}\mathbf{V}]_{ib}u_{ia}.
 $$
 
-We want this to look like the $a, b$ element of a matrix so we can use the technique as in the previous example to arrive at a matrix expression, which means that we need to exchange the order of the indices on $u_{ia}$.  If we notice that $u_{ia} = [\mathbf{U}^\top]_{ai}$, we can then write
+Bunun bir matrisin $a, b$ öğesi gibi görünmesini istiyoruz ki böylece bir matris ifadesine ulaşmak için önceki örnekte olduğu gibi tekniği kullanabilelim, bu da indislerin sırasını $u_{ia}$ üzerinden değiştirmemiz gerektiği anlamına gelir. $. $u_{ia} = [\mathbf{U}^\top]_{ai}$ olduğunu fark edersek, bunu yazabiliriz:
 
 $$
 \frac{d}{dv_{ab}} \|\mathbf{X} - \mathbf{U}\mathbf{V}\|_2^{2}= 2\sum_{i} [\mathbf{U}^\top]_{ai}[\mathbf{X}-\mathbf{U}\mathbf{V}]_{ib}.
 $$
 
-This is a matrix product, and thus we can conclude that
+Bu bir matris çarpımıdır ve dolayısıyla şu sonuca varabiliriz:
 
 $$
 \frac{d}{dv_{ab}} \|\mathbf{X} - \mathbf{U}\mathbf{V}\|_2^{2}= [2\mathbf{U}^\top(\mathbf{X}-\mathbf{U}\mathbf{V})]_{ab}.
 $$
 
-and thus we may write the solution to :eqref:`eq_mat_goal_2`
+Böylece çözümü şu şekilde yazabiliriz :eqref:`eq_mat_goal_2`
 
 $$
 \frac{d}{d\mathbf{V}} \|\mathbf{X} - \mathbf{U}\mathbf{V}\|_2^{2}= 2\mathbf{U}^\top(\mathbf{X} - \mathbf{U}\mathbf{V}).
 $$
 
-This matches the solution we guessed above!
+Bu, yukarıda tahmin ettiğimiz çözüme uyuyor!
 
-It is reasonable to ask at this point, "Why can I not just write down matrix versions of all the calculus rules I have learned?  It is clear this is still mechanical.  Why do we not just get it over with!"  And indeed there are such rules and :cite:`Petersen.Pedersen.ea.2008` provides an excellent summary.  However, due to the plethora of ways matrix operations can be combined compared to single values, there are many more matrix derivative rules than single variable ones.  It is often the case that it is best to work with the indices, or leave it up to automatic differentiation when appropriate.
+Bu noktada şunu sormak mantıklıdır, "Neden öğrendiğim tüm kalkülüs kurallarının matris versiyonlarını yazamıyorum? Bunun hala mekanik olduğu açık. Neden bunun üstesinden gelmiyoruz!" Gerçekten de böyle kurallar var ve :cite:`Petersen.Pedersen.ea.2008` mükemmel bir özet sunuyor. Bununla birlikte, matris işlemlerinin tekli değerlere kıyasla birleştirilebileceği çok sayıda yol olması nedeniyle, tek değişkenli olanlara göre çok daha fazla matris türev kuralı vardır. Genellikle en iyisi indislerle çalışmak veya uygun olduğunda bunu otomatik türev almaya bırakmaktır.
 
-## Summary
+## Özet
 
-* In higher dimensions, we can define gradients which serve the same purpose as derivatives in one dimension.  These allow us to see how a multi-variable function changes when we make an arbitrary small change to the inputs.
-* The backpropagation algorithm can be seen to be a method of organizing the multi-variable chain rule to allow for the efficient computation of many partial derivatives.
-* Matrix calculus allows us to write the derivatives of matrix expressions in concise ways.
+* Daha yüksek boyutlarda, bir boyuttaki türevlerle aynı amaca hizmet eden gradyanları tanımlayabiliriz. Bunlar, girdilerde rastgele küçük bir değişiklik yaptığımızda çok değişkenli bir fonksiyonun nasıl değiştiğini görmemizi sağlar.
+* Geri yayma algoritması, birçok kısmi türevin verimli bir şekilde hesaplanmasına izin vermek için çok değişkenli zincir kuralını düzenlemenin bir yöntemi olarak görülebilir.
+* Matris kalkülüsü, matris ifadelerinin türevlerini öz olarak yazmamızı sağlar.
 
-## Exercises
-1. Given a row vector $\boldsymbol{\beta}$, compute the derivatives of both $f(\mathbf{x}) = \boldsymbol{\beta}\mathbf{x}$ and $g(\mathbf{x}) = \mathbf{x}^\top\boldsymbol{\beta}^\top$.  Why do you get the same answer?
-2. Let $\mathbf{v}$ be an $n$ dimension vector. What is $\frac{\partial}{\partial\mathbf{v}}\|\mathbf{v}\|_2$?
-3. Let $L(x, y) = \log(e^x + e^y)$.  Compute the gradient.  What is the sum of the components of the gradient?
-4. Let $f(x, y) = x^2y + xy^2$. Show that the only critical point is $(0,0)$. By considering $f(x, x)$, determine if $(0,0)$ is a maximum, minimum, or neither.
-5. Suppose that we are minimizing a function $f(\mathbf{x}) = g(\mathbf{x}) + h(\mathbf{x})$.  How can we geometrically interpret the condition of $\nabla f = 0$ in terms of $g$ and $h$?
+## Alıştırmalar
+1. $\boldsymbol{\beta}$ satır vektörü verildiğinde, hem $f(\mathbf{x}) = \boldsymbol{\beta}\mathbf{x}$ hem de $g(\mathbf{x}) = \mathbf{x}^\top\boldsymbol{\beta}^\top$ türevlerini hesaplayınız. Neden aynı cevabı alıyorsunuz?
+2. $\mathbf{v}$ bir $n$ boyutlu vektör olsun. $\frac{\partial}{\partial\mathbf{v}}\|\mathbf{v}\|_2$ nedir?
+3. $L(x, y) = \log(e^x + e^y)$ olsun. Gradyanı hesaplayınız. Gradyanın bileşenlerinin toplamı nedir?
+4. $f(x, y) = x^2y + xy^2$ olsun. Tek kritik noktanın $(0,0)$ olduğunu gösterin. $f(x, x)$'i dikkate alarak, $(0,0)$'ın maksimum mu, minimum mu olduğunu veya hiçbiri olmadığını belirleyin.
+5. $f(\mathbf{x}) = g(\mathbf{x}) + h(\mathbf{x})$.işlevini küçülttüğümüzü varsayalım. $\nabla f = 0$ koşulunu $g$ ve $h$ cinsinden geometrik olarak nasıl yorumlayabiliriz?
 
 
 :begin_tab:`mxnet`
-[Discussions](https://discuss.d2l.ai/t/413)
+[Tartışmalar](https://discuss.d2l.ai/t/413)
 :end_tab:
