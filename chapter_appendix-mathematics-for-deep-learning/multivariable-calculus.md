@@ -142,33 +142,33 @@ This brings us to one of the most important mathematical concepts in machine lea
 
 Bu temel algoritma, birçok araştırmacı tarafından birçok şekilde değiştirilmiş ve uyarlanmıştır, ancak temel kavram hepsinde aynı kalır. Kaybı olabildiğince hızlı azaltan yönü bulmak için gradyanı kullanın ve bu yönde bir adım atmak için parametreleri güncelleyin.
 
-## A Note on Mathematical Optimization
-Throughout this book, we focus squarely on numerical optimization techniques for the practical reason that all functions we encounter in the deep learning setting are too complex to minimize explicitly.  
+## Matematiksel Optimizasyon (Eniyileme) Üzerine Bir Not
+Bu kitap boyunca, derin öğrenme ortamında karşılaştığımız tüm işlevlerin açıkça en aza indirilemeyecek kadar karmaşık olmasından dolayı pratik nedenlerle doğrudan sayısal optimizasyon tekniklerine odaklanıyoruz.
 
-However, it is a useful exercise to consider what the geometric understanding we obtained above tells us about optimizing functions directly.
+Bununla birlikte, yukarıda elde ettiğimiz geometrik anlayışın bize fonksiyonları doğrudan optimize etme hakkında ne söylediğini düşünmek faydalı bir alıştırmadır.
 
-Suppose that we wish to find the value of $\mathbf{x}_0$ which minimizes some function $L(\mathbf{x})$.  Let us suppose that moreover someone gives us a value and tells us that it is the value that minimizes $L$.  Is there anything we can check to see if their answer is even plausible?
+Bir $L(\mathbf{x})$ işlevini en aza indiren $\mathbf{x}_0$'nin değerini bulmak istediğimizi varsayalım. Diyelim ki birisi bize bir değer veriyor ve bize $L$'yi en aza indiren şeyin bu değer olduğunu söylüyor. Yanıtın makul olup olmadığını kontrol edebileceğimiz bir şey var mı?
 
-Again consider :eqref:`eq_nabla_use`:
+Tekrar düşünün :eqref:`eq_nabla_use`:
 $$
 L(\mathbf{x}_0 + \boldsymbol{\epsilon}) \approx L(\mathbf{x}_0) + \boldsymbol{\epsilon}\cdot \nabla_{\mathbf{x}} L(\mathbf{x}_0).
 $$
 
-If the gradient is not zero, we know that we can take a step in the direction $-\epsilon \nabla_{\mathbf{x}} L(\mathbf{x}_0)$ to find a value of $L$ that is smaller.  Thus, if we truly are at a minimum, this cannot be the case!  We can conclude that if $\mathbf{x}_0$ is a minimum, then $\nabla_{\mathbf{x}} L(\mathbf{x}_0) = 0$.  We call points with $\nabla_{\mathbf{x}} L(\mathbf{x}_0) = 0$ *critical points*.
+Gradyan sıfır değilse, $L$'nin daha küçük değerini bulmak için $-\epsilon \nabla_{\mathbf{x}} L(\mathbf{x}_0) $ yönünde bir adım atabileceğimizi biliyoruz. Bu nedenle, gerçekten minimumda isek, böyle bir durum olamaz! $\mathbf{x}_0$ bir minimum ise, $\nabla_{\mathbf{x}} L(\mathbf{x}_0) = 0$ olduğu sonucuna varabiliriz. $\nabla_{\mathbf{x}} L(\mathbf{x}_0) = 0$ ifadesi gerçek olan noktaları *kritik nokta* diye çağırıyoruz.
 
-This is nice, because in some rare settings, we *can* explicitly find all the points where the gradient is zero, and find the one with the smallest value.  
+Bu güzel bir bilgi, çünkü bazı nadir durumlarda gradyanın sıfır olduğu tüm noktaları açıkça *bulabiliriz* ve en küçük değere sahip olanı bulabiliriz.
 
-For a concrete example, consider the function
+Somut bir örnek için bu işlevi düşünün:
 $$
 f(x) = 3x^4 - 4x^3 -12x^2.
 $$
 
-This function has derivative
+Bu fonksiyonun türevi aşağıdadır:
 $$
 \frac{df}{dx} = 12x^3 - 12x^2 -24x = 12x(x-2)(x+1).
 $$
 
-The only possible location of minima are at $x = -1, 0, 2$, where the function takes the values $-5,0, -32$ respectively, and thus we can conclude that we minimize our function when $x = 2$.  A quick plot confirms this.
+Minimumun olası konumları $x = -1, 0, 2$'dir, burada fonksiyon sırasıyla $-5,0, -32$ değerlerini alır ve böylece $x =2$ olduğunda fonksiyonumuzu küçülttüğümüz sonucuna varabiliriz. Hızlı bir çizim bunu doğrular.
 
 ```{.python .input}
 x = np.arange(-2, 3, 0.01)
@@ -185,26 +185,26 @@ f = (3 * x**4) - (4 * x**3) - (12 * x**2)
 d2l.plot(x, f, 'x', 'f(x)')
 ```
 
-This highlights an important fact to know when working either theoretically or numerically: the only possible points where we can minimize (or maximize) a function will have gradient equal to zero, however, not every point with gradient zero is the true *global* minimum (or maximum).  
+Bu, teorik veya sayısal olarak çalışırken bilinmesi gereken önemli bir gerçeğin altını çiziyor: Bir işlevi en aza indirebileceğimiz (veya maksimize edebileceğimiz) olası noktalar sıfıra eşit bir gradyana sahip olacaktır, ancak sıfır gradyanlı her nokta gerçek *küresel (global)* minimum (veya maksimum) değildir.
 
-## Multivariate Chain Rule
-Let us suppose that we have a function of four variables ($w, x, y$, and $z$) which we can make by composing many terms:
+## Çok Değişkenli Zincir Kuralı
+Pek çok terim oluşturarak yapabileceğimiz dört değişkenli ($w, x, y$ ve $z$) bir fonksiyonumuz olduğunu varsayalım:
 
 $$\begin{aligned}f(u, v) & = (u+v)^{2} \\u(a, b) & = (a+b)^{2}, \qquad v(a, b) = (a-b)^{2}, \\a(w, x, y, z) & = (w+x+y+z)^{2}, \qquad b(w, x, y, z) = (w+x-y-z)^2.\end{aligned}$$
 :eqlabel:`eq_multi_func_def`
 
-Such chains of equations are common when working with neural networks, so trying to understand how to compute gradients of such functions is key.  We can start to see visual hints of this connection in :numref:`fig_chain-1` if we take a look at what variables directly relate to one another.
+Sinir ağları ile çalışırken bu tür denklem zincirleri yaygındır, bu nedenle bu tür işlevlerin gradyanlarının nasıl hesaplanacağını anlamaya çalışmak çok önemlidir. Hangi değişkenlerin doğrudan birbiriyle ilişkili olduğuna bakarsak, bu bağlantının görsel ipuçlarını :numref:`fig_chain-1`'de görmeye başlayabiliriz.
 
-![The function relations above where nodes represent values and edges show functional dependence.](../img/ChainNet1.svg)
+![Düğümlerin değerleri temsil ettiği ve kenarların işlevsel bağımlılığı gösterdiği yukarıda geçen işlev ilişkileri.](../img/ChainNet1.svg)
 :label:`fig_chain-1`
 
-Nothing stops us from just composing everything from :eqref:`eq_multi_func_def` and writing out that
+Hiçbir şey bizi sadece :eqref:`eq_multi_func_def`'den her şeyi birleştirmekten ve bunu yazmaktan alıkoyamaz
 
 $$
 f(w, x, y, z) = \left(\left((w+x+y+z)^2+(w+x-y-z)^2\right)^2+\left((w+x+y+z)^2-(w+x-y-z)^2\right)^2\right)^2.
 $$
 
-We may then take the derivative by just using single variable derivatives, but if we did that we would quickly find ourself swamped with terms, many of which are repeats!  Indeed, one can see that, for instance:
+O zaman türevi sadece tek değişkenli türevler kullanarak alabiliriz, ancak bunu yaparsak, kendimizi hızlı bir şekilde terimlere boğulmuş buluruz, çoğu da tekrar eder! Gerçekten de, örneğin şunu görebiliriz:
 
 $$
 \begin{aligned}
@@ -212,12 +212,11 @@ $$
 & \left. \quad 2 \left(2 (w + x - y - z) + 2 (w + x + y + z)\right) \left((w + x - y - z)^{2}+ (w + x + y + z)^{2}\right)\right) \times \\
 & \quad \left(\left((w + x + y + z)^{2}- (w + x - y - z)^2\right)^{2}+ \left((w + x - y - z)^{2}+ (w + x + y + z)^{2}\right)^{2}\right).
 \end{aligned}
-$$
+$$ 
 
-If we then also wanted to compute $\frac{\partial f}{\partial x}$, we would end up with a similar equation again with many repeated terms, and many *shared* repeated terms between the two derivatives.  This represents a massive quantity of wasted work, and if we needed to compute derivatives this way, the whole deep learning revolution would have stalled out before it began!
+Daha sonra $\frac{\partial f}{\partial x}$'i de hesaplamak isteseydik, birçok tekrarlanan terim ve iki türev arasında birçok *paylaşılan* tekrarlanan terimle tekrar benzer bir denklem elde ederdik. Bu, büyük miktarda boşa harcanan işi temsil ediyor ve eğer türevleri bu şekilde hesaplamamız gerekseydi, tüm derin öğrenme devrimi başlamadan önce durmuş olurdu!
 
-
-Let us break up the problem.  We will start by trying to understand how $f$ changes when we change $a$, essentially assuming that $w, x, y$, and $z$ all do not exist.  We will reason as we did back when we worked with the gradient for the first time.  Let us take $a$ and add a small amount $\epsilon$ to it. 
+Sorunu çözelim. $a$'yı değiştirdiğimizde $f$'nin nasıl değiştiğini anlamaya çalışarak başlayacağız, esasen $w, x, y$ ve $z$ değerlerinin mevcut olmadığını varsayarak yapacağız. Gradyan ile ilk kez çalışırken yaptığımız gibi akıl yürüteceğiz. Bir $a$ alalım ve ona küçük bir miktar $\epsilon$ ekleyelim.
 
 $$
 \begin{aligned}
@@ -227,26 +226,26 @@ $$
 \end{aligned}
 $$
 
-The first line follows from the definition of partial derivative, and the second follows from the definition of gradient.  It is notationally burdensome to track exactly where we evaluate every derivative, as in the expression $\frac{\partial f}{\partial u}(u(a, b), v(a, b))$, so we often abbreviate this to the much more memorable
+İlk satır kısmi türev tanımından, ikincisi gradyan tanımından gelir. $\frac{\partial f}{\partial u}(u(a, b), v(a, b))$ ifadesinde olduğu gibi, her türevi tam olarak nerede değerlendirdiğimizi izlemek gösterimsel olarak külfetlidir, bu nedenle sık sık bunu çok daha akılda kalıcı olarak kısaltırız.
 
 $$
 \frac{\partial f}{\partial a} = \frac{\partial f}{\partial u}\frac{\partial u}{\partial a}+\frac{\partial f}{\partial v}\frac{\partial v}{\partial a}.
 $$
+ 
+Sürecin anlamını düşünmekte fayda var. $f(u (a, b), v(a, b))$ biçimindeki bir fonksiyonun $a$'daki bir değişiklikle değerini nasıl değiştirdiğini anlamaya çalışıyoruz. Bunun meydana gelebileceği iki yol vardır: $a \rightarrow u \rightarrow f$ ve $a \rightarrow v \rightarrow f$. Bu katkıların her ikisini de zincir kuralı aracılığıyla hesaplayabiliriz: $\frac{\partial w}{\partial u} \cdot \frac{\partial u}{\partial x}$ ve $\frac{\partial w}{\partial v} \cdot \frac{\partial v}{\partial x}$ hesaplanırlar ve toplanırlar.
 
-It is useful to think about the meaning of the process. We are trying to understand how a function of the form $f(u(a, b), v(a, b))$ changes its value with a change in $a$.  There are two pathways this can occur: there is the pathway where $a \rightarrow u \rightarrow f$ and where $a \rightarrow v \rightarrow f$.  We can compute both of these contributions via the chain rule: $\frac{\partial w}{\partial u} \cdot \frac{\partial u}{\partial x}$ and $\frac{\partial w}{\partial v} \cdot \frac{\partial v}{\partial x}$ respectively, and added up.  
+Sağdaki işlevlerin soldakilere, şekilde gösterildiği gibi, bağlı oldukları farklı bir işlev ağına sahip olduğumuzu düşünün :numref:`fig_chain-2`.
 
-Imagine we have a different network of functions where the functions on the right depend on those they are connected to on the left as is shown in :numref:`fig_chain-2`.
-
-![Another more subtle example of the chain rule.](../img/ChainNet2.svg)
+![Zincir kuralının daha ince bir başka örneği.](../img/ChainNet2.svg)
 :label:`fig_chain-2`
 
-To compute something like $\frac{\partial f}{\partial y}$, we need to sum over all (in this case $3$) paths from $y$ to $f$ giving
+$\frac{\partial f}{\partial y}$ gibi bir şeyi hesaplamak için, $y$'den $f$'e kadar tüm (bu durumda $3$) yolları toplamamız gerekir.
 
 $$
 \frac{\partial f}{\partial y} = \frac{\partial f}{\partial a} \frac{\partial a}{\partial u} \frac{\partial u}{\partial y} + \frac{\partial f}{\partial u} \frac{\partial u}{\partial y} + \frac{\partial f}{\partial b} \frac{\partial b}{\partial v} \frac{\partial v}{\partial y}.
 $$
 
-Understanding the chain rule in this way will pay great dividends when trying to understand how gradients flow through networks, and why various architectural choices like those in LSTMs (:numref:`sec_lstm`) or residual layers (:numref:`sec_resnet`) can help shape the learning process by controlling gradient flow.
+Zincir kuralını bu şekilde anlamak, gradyanların ağlar boyunca nasıl aktığını ve neden LSTM'lerdeki (:numref:`sec_lstm`) veya artık (residual) katmanlardaki (:numref:`sec_resnet`) gibi çeşitli mimari seçimlerin gradyan akışını kontrol etmeye yardımcı olarak öğrenme sürecini şekillendirdiğini anlamaya çalışırken büyük kazançlar sağlayacaktır.
 
 ## The Backpropagation Algorithm
 
