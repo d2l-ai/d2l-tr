@@ -247,9 +247,9 @@ $$
 
 Zincir kuralını bu şekilde anlamak, gradyanların ağlar boyunca nasıl aktığını ve neden LSTM'lerdeki (:numref:`sec_lstm`) veya artık (residual) katmanlardaki (:numref:`sec_resnet`) gibi çeşitli mimari seçimlerin gradyan akışını kontrol etmeye yardımcı olarak öğrenme sürecini şekillendirdiğini anlamaya çalışırken büyük kazançlar sağlayacaktır.
 
-## The Backpropagation Algorithm
+## Geri Yayma Algoritması
 
-Let us return to the example of :eqref:`eq_multi_func_def` the previous section where
+Önceki bölüm :eqref:`eq_multi_func_def` örneğine dönelim
 
 $$
 \begin{aligned}
@@ -259,7 +259,7 @@ a(w, x, y, z) & = (w+x+y+z)^{2}, \qquad b(w, x, y, z) = (w+x-y-z)^2.
 \end{aligned}
 $$
 
-If we want to compute say $\frac{\partial f}{\partial w}$ we may apply the multi-variate chain rule to see:
+Diyelim ki $\frac{\partial f}{\partial w}$'yi hesaplıyoruz, çok değişkenli zincir kuralını uygularsak şunu görebiliriz:
 
 $$
 \begin{aligned}
@@ -269,7 +269,7 @@ $$
 \end{aligned}
 $$
 
-Let us try using this decomposition to compute $\frac{\partial f}{\partial w}$.  Notice that all we need here are the various single step partials:
+$\frac{\partial f}{\partial w}$ hesaplamak için bu ayrıştırmayı kullanmayı deneyelim. Burada ihtiyacımız olan tek şeyin çeşitli tek adımlık kısmi türevler olduğuna dikkat edin:
 
 $$
 \begin{aligned}
@@ -280,7 +280,7 @@ $$
 \end{aligned}
 $$
 
-If we write this out into code this becomes a fairly manageable expression.
+Bunu kodda yazarsak, bu oldukça yönetilebilir bir ifade olur.
 
 ```{.python .input}
 #@tab all
@@ -302,9 +302,9 @@ df_dw = df_du*du_dw + df_dv*dv_dw
 print(f'df/dw at {w}, {x}, {y}, {z} is {df_dw}')
 ```
 
-However, note that this still does not make it easy to compute something like $\frac{\partial f}{\partial x}$.  The reason for that is the *way* we chose to apply the chain rule.  If we look at what we did above, we always kept $\partial w$ in the denominator when we could.  In this way, we chose to apply the chain rule seeing how $w$ changed every other variable.  If that is what we wanted, this would be a good idea.  However, think back to our motivation from deep learning: we want to see how every parameter changes the *loss*.  In essence, we want to apply the chain rule keeping $\partial f$ in the numerator whenever we can!
+Ancak, bunun hala $\frac{\partial f}{\partial x}$ gibi bir şeyi hesaplamayı kolaylaştırmadığını unutmayın. Bunun nedeni, zincir kuralını uygulamayı seçtiğimiz *yoldur*. Yukarıda ne yaptığımıza bakarsak, elimizden geldiğince paydada her zaman $\partial w$ tuttuk. Bu şekilde, $w$ değişkenin her değişkeni nasıl değiştirdiğini görerek zincir kuralını uygulamayı seçtik. İstediğimiz buysa, bu iyi bir fikir olabilir. Bununla birlikte, derin öğrenmedeki motivasyonumuza geri dönün: Her parametrenin *kaybı* nasıl değiştirdiğini görmek istiyoruz. Esasında, yapabildiğimiz her yerde $\partial f$'yi payda tutan zincir kuralını uygulamak istiyoruz!
 
-To be more explicit, note that we can write
+Daha açık olmak gerekirse, şunu yazabileceğimize dikkat edin
 
 $$
 \begin{aligned}
@@ -314,7 +314,7 @@ $$
 \end{aligned}
 $$
 
-Note that this application of the chain rule has us explicitly compute $\frac{\partial f}{\partial u}, \frac{\partial f}{\partial u}, \frac{\partial f}{\partial u}, \frac{\partial f}{\partial u}, \; \text{and} \; \frac{\partial f}{\partial u}$.  Nothing stops us from also including the equations:
+Zincir kuralının bu uygulaması bizim açıkça $\frac{\partial f}{\partial u}, \frac{\partial f}{\partial u}, \frac{\partial f}{\partial u}, \frac{\partial f}{\partial u}, \; \text{ve} \; \frac{\partial f}{\partial u}$'ları hesaplamamızı gerektirir. Aşağıdaki denklemleri de dahil etmekten bizi hiçbir şey alıkoyamaz:
 
 $$
 \begin{aligned}
@@ -324,7 +324,7 @@ $$
 \end{aligned}
 $$
 
-and then keeping track of how $f$ changes when we change *any* node in the entire network.  Let us implement it.
+Sonra tüm ağdaki *herhangi bir* düğümü değiştirdiğimizde $f$ değerinin nasıl değiştiğini takip edebiliyoruz. Haydi uygulayalım.
 
 ```{.python .input}
 #@tab all
@@ -355,13 +355,13 @@ print(f'df/dy at {w}, {x}, {y}, {z} is {df_dy}')
 print(f'df/dz at {w}, {x}, {y}, {z} is {df_dz}')
 ```
 
-The fact that we compute derivatives from $f$ back towards the inputs rather than from the inputs forward to the outputs (as we did in the first code snippet above) is what gives this algorithm its name: *backpropagation*.  Note that there are two steps:
-1. Compute the value of the function, and the single step partials from front to back.  While not done above, this can be combined into a single *forward pass*.
-2. Compute the gradient of $f$ from back to front.  We call this the *backwards pass*.
+Türevleri, girdilerden çıktılara, ileriye doğru, hesaplamaktansa, $f$'den girdilere doğru hesapladığımız gerçeği (yukarıdaki ilk kod parçacığında yaptığımız gibi), bu algoritmaya adını veren şeydir: *Geri yayma*. İki adım olduğunu unutmayın:
+1. Fonksiyonun değerini ve önden arkaya tek adımlık kısmi değerlerini hesaplayın. Yukarıda yapılmasa da, bu tek bir *ileri geçişte* birleştirilebilir.
+2. Arkadan öne doğru $f$ gradyanını hesaplayın. Biz buna *geriye doğru geçiş* diyoruz.
 
-This is precisely what every deep learning algorithm implements to allow the computation of the gradient of the loss with respect to every weight in the network at one pass.  It is an astonishing fact that we have such a decomposition.
+Bu, her derin öğrenme algoritmasının, bir geçişte ağdaki her ağırlığa göre kaybın gradyanının hesaplanmasına izin vermek, uyguladığı şeydir. Böyle bir ayrışmaya sahip olmamız şaşırtıcı bir gerçektir.
 
-To see how MXNet has encapsulated this, let us take a quick look at this example.
+MXNet'in bunu nasıl içerdiğini görmek için bu örneğe hızlıca bir göz atalım.
 
 ```{.python .input}
 # Initialize as ndarrays, then attach gradients
@@ -412,34 +412,33 @@ print(f'df/dz at {w.data.item()}, {x.data.item()}, {y.data.item()}, '
       f'{z.data.item()} is {x.grad.data.item()}')
 ```
 
-All of what we did above can be done automatically by calling `f.backwards()`.
+Yukarıda yaptığımız şeylerin tümü, `f.backwards()` çağrısıyla otomatik olarak yapılabilir.
 
+## Hessianlar
+Tek değişkenli kalkülüste olduğu gibi, bir işleve tek başına gradyanı kullanmaktan daha iyi bir yaklaşıklama elde edebilmek için daha yüksek dereceli türevleri düşünmek yararlıdır.
 
-## Hessians
-As with single variable calculus, it is useful to consider higher-order derivatives in order to get a handle on how we can obtain a better approximation to a function than using the gradient alone.
-
-There is one immediate problem one encounters when working with higher order derivatives of functions of several variables, and that is there are a large number of them.  If we have a function $f(x_1, \ldots, x_n)$ of $n$ variables, then we can take $n^{2}$ many second derivatives, namely for any choice of $i$ and $j$:
+Birkaç değişkenli fonksiyonların daha yüksek dereceden türevleriyle çalışırken karşılaşılan anlık bir sorun vardır ve bu da çok sayıda olmasıdır. $f(x_1, \ldots, x_n)$ fonksiyonun $n$ değişkeni varsa, o zaman $n^{2}$ tane ikinci türev alabiliriz, yani herhangi bir $i$ ve $j$ seçeneği için:
 
 $$
 \frac{d^2f}{dx_idx_j} = \frac{d}{dx_i}\left(\frac{d}{dx_j}f\right).
 $$
 
-This is traditionally assembled into a matrix called the *Hessian*:
+Bu, geleneksel olarak *Hessian* adı verilen bir matris içinde toplanır:
 
 $$\mathbf{H}_f = \begin{bmatrix} \frac{d^2f}{dx_1dx_1} & \cdots & \frac{d^2f}{dx_1dx_n} \\ \vdots & \ddots & \vdots \\ \frac{d^2f}{dx_ndx_1} & \cdots & \frac{d^2f}{dx_ndx_n} \\ \end{bmatrix}.$$
 :eqlabel:`eq_hess_def`
 
-Not every entry of this matrix is independent.  Indeed, we can show that as long as both *mixed partials* (partial derivatives with respect to more than one variable) exist and are continuous, we can say that for any $i$, and $j$, 
+Bu matrisin her girdisi bağımsız değildir. Aslında, her iki *karışık kısmi* (birden fazla değişkene göre kısmi türevler) var ve sürekli olduğu sürece, herhangi bir $i$ ve $j$ için şunu söyleyebiliriz:
 
 $$
 \frac{d^2f}{dx_idx_j} = \frac{d^2f}{dx_jdx_i}.
 $$
 
-This follows by considering first perturbing a function in the direction of $x_i$, and then perturbing it in $x_j$ and then comparing the result of that with what happens if we perturb first $x_j$ and then $x_i$, with the knowledge that both of these orders lead to the same final change in the output of $f$.
+Bunu, önce bir işlevi $x_i$ yönünde ve ardından $x_j$ yönünde dürtmeyi ve ardından bunun sonucunu önce $x_j$ ve sonra $x_i$ yönünde dürtersek ne olacağıyla karşılaştırmak izler; burada her iki sıranın da $f$'nin çıktısında aynı nihai değişikliğe yol açtığı bilgisine ulaşırız.
 
-As with single variables, we can use these derivatives to get a far better idea of how the function behaves near a point.  In particular, we can use it to find the best fitting quadratic near a point $\mathbf{x}_0$, as we saw in a single variable.
+Tek değişkenlerde olduğu gibi, fonksiyonun bir noktanın yakınında nasıl davrandığına dair daha iyi bir fikir edinmek için bu türevleri kullanabiliriz. Özellikle, tek bir değişkende gördüğümüz gibi, $\mathbf{x}_0$ noktasının yakınında en uygun ikinci derece fonksiyonu bulmak için kullanabiliriz.
 
-Let us see an example.  Suppose that $f(x_1, x_2) = a + b_1x_1 + b_2x_2 + c_{11}x_1^{2} + c_{12}x_1x_2 + c_{22}x_2^{2}$.  This is the general form for a quadratic in two variables.  If we look at the value of the function, its gradient, and its Hessian :eqref:`eq_hess_def`, all at the point zero:
+Bir örnek görelim. $f(x_1, x_2) = a + b_1x_1 + b_2x_2 + c_{11}x_1^{2} + c_{12}x_1x_2 + c_{22}x_2^{2}$ olduğunu varsayalım. Bu, iki değişkenli bir ikinci dereceden fonksiyon genel formudur. Fonksiyonun değerine, gradyanına ve Hessian :eqref:`eq_hess_def` değerine bakarsak, hepsi sıfır noktasında şöyle gözükür:
 
 $$
 \begin{aligned}
@@ -449,30 +448,30 @@ f(0,0) & = a, \\
 \end{aligned}
 $$
 
-If we from this, we see we can get our original polynomial back by saying
+Bundan yola çıkarsak, esas polinomumuzu şöyle diyerek geri alabileceğimizi görürüz;
 
 $$
 f(\mathbf{x}) = f(0) + \nabla f (0) \cdot \mathbf{x} + \frac{1}{2}\mathbf{x}^\top \mathbf{H} f (0) \mathbf{x}.
 $$
 
-In general, if we computed this expansion any point $\mathbf{x}_0$, we see that
+Genel olarak, bu genişletmeyi herhangi bir $\mathbf {x}_0$ noktasında hesaplasaydık, şunu görürdük
 
 $$
 f(\mathbf{x}) = f(\mathbf{x}_0) + \nabla f (\mathbf{x}_0) \cdot (\mathbf{x}-\mathbf{x}_0) + \frac{1}{2}(\mathbf{x}-\mathbf{x}_0)^\top \mathbf{H} f (\mathbf{x}_0) (\mathbf{x}-\mathbf{x}_0).
 $$
 
-This works for any dimensional input, and provides the best approximating quadratic to any function at a point.  To give an example, let us plot the function 
+Bu, herhangi bir boyuttaki girdi için çalışır ve bir noktadaki herhangi bir işleve en iyi yaklaşıklayan ikinci derece polinomu sağlar. Bir örnek vermek gerekirse, fonksiyonun grafiğini çizelim.
 
 $$
 f(x, y) = xe^{-x^2-y^2}.
 $$
 
-One can compute that the gradient and Hessian are
+Gradyan ve Hessian şöyle hesaplanabilir:
 $$
 \nabla f(x, y) = e^{-x^2-y^2}\begin{pmatrix}1-2x^2 \\ -2xy\end{pmatrix} \; \text{and} \; \mathbf{H}f(x, y) = e^{-x^2-y^2}\begin{pmatrix} 4x^3 - 6x & 4x^2y - 2y \\ 4x^2y-2y &4xy^2-2x\end{pmatrix}.
 $$
 
-And thus, with a little algebra, see that the approximating quadratic at $[-1,0]^\top$ is
+Böylece, biraz cebirle, $[-1,0]^\top$'deki yaklaşık ikinci dereceden polinomu görebiliriz:
 
 $$
 f(x, y) \approx e^{-1}\left(-1 - (x+1) +2(x+1)^2+2y^2\right).
@@ -526,7 +525,7 @@ ax.set_zlim(-1, 1)
 ax.dist = 12
 ```
 
-This forms the basis for Newton's Algorithm discussed in :numref:`sec_gd`, where we perform numerical optimization iteratively finding the best fitting quadratic, and then exactly minimizing that quadratic.
+Bu, :numref:`sec_gd`'de tartışılan Newton Algoritmasının temelini oluşturur; sayısal optimizasyonu yinelemeli olarak uygulayarak en uygun kuadratik polinomu bulur, sonra da tam olarak bu ikinci dereceden polinomu en aza indiririz.
 
 ## A Little Matrix Calculus
 Derivatives of functions involving matrices turn out to be particularly nice.  This section can become notationally heavy, so may be skipped in a first reading, but it is useful to know how derivatives of functions involving common matrix operations are often much cleaner than one might initially anticipate, particularly given how central matrix operations are to deep learning applications.
