@@ -3,15 +3,15 @@
 
 Artık tek değişkenli bir fonksiyonun türevleri hakkında oldukça güçlü bir anlayışa sahip olduğumuza göre, potansiyel olarak milyarlarca ağırlığa sahip bir kayıp (yitim) fonksiyonunu düşündüğümüz esas sorumuza dönelim.
 
-## Higher-Dimensional Differentiation
-What :numref:`sec_single_variable_calculus` tells us is that if we change a single one of these billions of weights leaving every other one fixed, we know what will happen!  This is nothing more than a function of a single variable, so we can write
+## Yüksek Boyutlu Türev Alma
+:numref:`sec_single_variable_calculus` bize, bu milyarlarca ağırlıktan diğer her birini sabit bırakarak sadece birini değiştirirsek ne olacağını bildiğimizi söyler! Bu, tek değişkenli bir fonksiyondan başka bir şey değildir, bu yüzden şöyle yazabiliriz
 
 $$L(w_1+\epsilon_1, w_2, \ldots, w_N) \approx L(w_1, w_2, \ldots, w_N) + \epsilon_1 \frac{d}{dw_1} L(w_1, w_2, \ldots, w_N).$$
 :eqlabel:`eq_part_der`
 
-We will call the derivative in one variable while fixing the other the *partial derivative*, and we will use the notation $\frac{\partial}{\partial w_1}$ for the derivative in :eqref:`eq_part_der`.
+Diğerlerini sabit tutarken bir değişkenin türevine *kısmi türev* diyeceğiz ve :eqref:`eq_part_der`deki türev için $\frac{\partial}{\partial w_1}$ gösterimini kullanacağız.
 
-Now, let us take this and change $w_2$ a little bit to $w_2 + \epsilon_2$:
+Şimdi bunu alalım ve $w_2$'yi biraz $w_2 + \epsilon_2$ olarak değiştirelim:
 
 $$
 \begin{aligned}
@@ -26,47 +26,47 @@ L(w_1+\epsilon_1, w_2+\epsilon_2, \ldots, w_N) & \approx L(w_1, w_2+\epsilon_2, 
 \end{aligned}
 $$
 
-We have again used the idea that $\epsilon_1\epsilon_2$ is a higher order term that we can discard in the same way we could discard $\epsilon^{2}$ in the previous section, along with what we saw in :eqref:`eq_part_der`.  By continuing in this manner, we may write that
+Bir kez daha, $\ epsilon_1 \epsilon_2$'nin daha yüksek bir terim olduğu fikrini kullandık ve önceki bölümde gördüğümüz $\epsilon^{2}$ ile aynı şekilde :eqref:`eq_part_der`'den atabildik. Bu şekilde devam ederek şunu yazabiliriz:
 
 $$
 L(w_1+\epsilon_1, w_2+\epsilon_2, \ldots, w_N+\epsilon_N) \approx L(w_1, w_2, \ldots, w_N) + \sum_i \epsilon_i \frac{\partial}{\partial w_i} L(w_1, w_2, \ldots, w_N).
 $$
 
-This may look like a mess, but we can make this more familiar by noting that the sum on the right looks exactly like a dot product, so if we let
+Bu bir karmaşa gibi görünebilir, ancak sağdaki toplamın tam olarak bir iç çarpıma benzediğini fark ederek bunu daha tanıdık hale getirebiliriz.
 
 $$
 \boldsymbol{\epsilon} = [\epsilon_1, \ldots, \epsilon_N]^\top \; \text{and} \;
 \nabla_{\mathbf{x}} L = \left[\frac{\partial L}{\partial x_1}, \ldots, \frac{\partial L}{\partial x_N}\right]^\top,
 $$
 
-then
+o zaman da:
 
 $$L(\mathbf{w} + \boldsymbol{\epsilon}) \approx L(\mathbf{w}) + \boldsymbol{\epsilon}\cdot \nabla_{\mathbf{w}} L(\mathbf{w}).$$
 :eqlabel:`eq_nabla_use`
 
-We will call the vector $\nabla_{\mathbf{w}} L$ the *gradient* of $L$.
+$\nabla_{\mathbf{w}}L$'yı $L$'nin *gradyanı* olarak adlandıracağız.
 
-Equation :eqref:`eq_nabla_use` is worth pondering for a moment.  It has exactly the format that we encountered in one dimension, just we have converted everything to vectors and dot products.  It allows us to tell approximately how the function $L$ will change given any perturbation to the input.  As we will see in the next section, this will provide us with an important tool in understanding geometrically how we can learn using information contained in the gradient.
+Denklem :eqref:`eq_nabla_use` bir an üstünde düşünmeye değerdir. Tam olarak bir boyutta karşılaştığımız formata sahip, sadece her şeyi vektörlere ve nokta çarpımlarına dönüştürdük. Girdiye herhangi ufak bir dürtme verildiğinde $L$ fonksiyonunun nasıl değişeceğini yaklaşık olarak söylememizi sağlar. Bir sonraki bölümde göreceğimiz gibi, bu bize gradyanda bulunan bilgileri kullanarak nasıl öğrenebileceğimizi geometrik olarak anlamamız için önemli bir araç sağlayacaktır.
 
-But first, let us see this approximation at work with an example.  Suppose that we are working with the function
+Ama önce bu yaklaşıklamayı bir örnekle iş başında görelim. Şu fonksiyon ile çalıştığımızı varsayalım:
 
 $$
 f(x, y) = \log(e^x + e^y) \text{ with gradient } \nabla f (x, y) = \left[\frac{e^x}{e^x+e^y}, \frac{e^y}{e^x+e^y}\right].
 $$
 
-If we look at a point like $(0, \log(2))$, we see that
+$(0,\log(2))$ gibi bir noktaya bakarsak görürüz ki
 
 $$
 f(x, y) = \log(3) \text{ with gradient } \nabla f (x, y) = \left[\frac{1}{3}, \frac{2}{3}\right].
 $$
 
-Thus, if we want to approximate $f$ at $(\epsilon_1, \log(2) + \epsilon_2)$,  we see that we should have the specific instance of :eqref:`eq_nabla_use`:
+Bu nedenle,  $(\epsilon_1, \log(2) + \epsilon_2)$ konumunda $f$'ye yaklaşmak istiyorsak, şu özel örneğe sahip olmamız gerektiğini görürüz :eqref:`eq_nabla_use`:
 
 $$
 f(\epsilon_1, \log(2) + \epsilon_2) \approx \log(3) + \frac{1}{3}\epsilon_1 + \frac{2}{3}\epsilon_2.
 $$
 
-We can test this in code to see how good the approximation is.
+Yaklaşıklamanın ne kadar iyi olduğunu görmek için bunu kodda test edebiliriz.
 
 ```{.python .input}
 %matplotlib inline
@@ -111,37 +111,36 @@ true_value = f(torch.tensor([0.]) + epsilon[0], torch.log(
 f'approximation: {grad_approx}, true Value: {true_value}'
 ```
 
-## Geometry of Gradients and Gradient Descent
-Consider the again :eqref:`eq_nabla_use`: 
+## Gradyanların Geometrisi ve Gradyan (Eğim) İnişi
+Tekrar düşünün: :eqref:`eq_nabla_use`
 
 $$
 L(\mathbf{w} + \boldsymbol{\epsilon}) \approx L(\mathbf{w}) + \boldsymbol{\epsilon}\cdot \nabla_{\mathbf{w}} L(\mathbf{w}).
 $$
 
-Let us suppose that I want to use this to help minimize our loss $L$.  Let us understand geometrically the algorithm of gradient descent first described in  :numref:`sec_autograd`. What we will do is the following:
+Diyelim ki, bunu $L$ kaybımızı en aza indirmeye yardımcı olmak için kullanmak istiyoruz. İlk önce :numref:`sec_autograd` içinde açıklanan gradyan iniş algoritmasını geometrik olarak anlayalım. Yapacağımız şey şudur:
 
-1. Start with a random choice for the initial parameters $\mathbf{w}$.
-2. Find the direction $\mathbf{v}$ that makes $L$ decrease the most rapidly at $\mathbf{w}$.
-3. Take a small step in that direction: $\mathbf{w} \rightarrow \mathbf{w} + \epsilon\mathbf{v}$.
-4. Repeat.
+1. $\mathbf{w}$ başlangıç parametreleri için rastgele bir seçimle başlayın.
+2. $L$'nin $\mathbf{w}$ seviyesinde en hızlı azalmasını sağlayan $\mathbf{v}$ yönünü bulun.
+3. Bu yönde küçük bir adım atın: $\mathbf{w} \rightarrow \mathbf{w} + \epsilon\mathbf{v}$.
+4. Tekrar edin.
 
-The only thing we do not know exactly how to do is to compute the vector $\mathbf{v}$ in the second step.  We will call such a direction the *direction of steepest descent*.  Using the geometric understanding of dot products from :numref:`sec_geometry-linear-algebraic-ops`, we see that we can rewrite :eqref:`eq_nabla_use` as
+Tam olarak nasıl yapılacağını bilmediğimiz tek şey, ikinci adımdaki $\mathbf{v}$ vektörünü hesaplamaktır. Böyle bir yöne *en dik iniş yönü* diyeceğiz. :numref:`sec_geometry-linear-cebebraic-ops` konusundan nokta çarpımlarının geometrik anlamını kullanarak, şunu, :eqref:`eq_nabla_use`, yeniden yazabileceğimizi görüyoruz:
 
 $$
 L(\mathbf{w} + \mathbf{v}) \approx L(\mathbf{w}) + \mathbf{v}\cdot \nabla_{\mathbf{w}} L(\mathbf{w}) = \|\nabla_{\mathbf{w}} L(\mathbf{w})\|\cos(\theta).
 $$
 
-Note that we have taken our direction to have length one for convenience, and used $\theta$ for the angle between $\mathbf{v}$ and $\nabla_{\mathbf{w}} L(\mathbf{w})$.  If we want to find the direction that decreases $L$ as rapidly as possible, we want to make this as expression as negative as possible.  The only way the direction we pick enters into this equation is through $\cos(\theta)$, and thus we wish to make this cosine as negative as possible.  Now, recalling the shape of cosine, we can make this as negative as possible by making $\cos(\theta) = -1$ or equivalently making the angle between the gradient and our chosen direction to be $\pi$ radians, or equivalently $180$ degrees.  The only way to achieve this is to head in the exact opposite direction:  pick $\mathbf{v}$ to point in the exact opposite direction to $\nabla_{\mathbf{w}} L(\mathbf{w})$!
+Kolaylık olması açısından yönümüzü birim uzunluğa sahip olacak şekilde aldığımızı ve $\mathbf{v}$ ile $\nabla_ {\mathbf{w}} L(\mathbf{w}) arasındaki açı için $\theta$ kullandığımızı unutmayın. $L$'nin olabildiğince hızlı azalan yönünü bulmak istiyorsak, bu ifadeyi olabildiğince negatif olarak ifade etmek isteriz. Seçtiğimiz yönün bu denkleme girmesinin tek yolu $\cos(\theta)$ sayesindedir ve bu yüzden bu kosinüsü olabildiğince negatif yapmak istiyoruz. Şimdi, kosinüs şeklini hatırlarsak, bunu mümkün olduğunca negatif yapmak için $\cos(\theta) = -1$ yapmamız veya eşdeğer olarak gradyan ile seçtiğimiz yön arasındaki açıyı $\pi$ radyan olacak şekilde, diğer anlamda $180$ derece yapmamız gerekecektir. Bunu başarmanın tek yolu, tam ters yöne gitmektir: $\nabla_{\mathbf{w}} L(\mathbf{w})$ yönünün tam tersini gösteren $\mathbf{v}$'yi seçin !
 
 This brings us to one of the most important mathematical concepts in machine learning: the direction of steepest decent points in the direction of $-\nabla_{\mathbf{w}}L(\mathbf{w})$.  Thus our informal algorithm can be rewritten as follows.
 
-1. Start with a random choice for the initial parameters $\mathbf{w}$.
-2. Compute $\nabla_{\mathbf{w}} L(\mathbf{w})$.
-3. Take a small step in the opposite of that direction: $\mathbf{w} \rightarrow \mathbf{w} - \epsilon\nabla_{\mathbf{w}} L(\mathbf{w})$.
-4. Repeat.
+1. $\mathbf{w}$ başlangıç parametreleri için rastgele bir seçimle başlayın.
+2. $\nabla_{\mathbf{w}} L(\mathbf{w})$'yi hesaplayın.
+3. Ters yönde küçük bir adım atın: $\mathbf{w} \rightarrow \mathbf{w} - \epsilon\nabla_{\mathbf{w}} L(\mathbf{w})$.
+4. Tekrar edin.
 
-
-This basic algorithm has been modified and adapted many ways by many researchers, but the core concept remains the same in all of them.  Use the gradient to find the direction that decreases the loss as rapidly as possible, and update the parameters to take a step in that direction.
+Bu temel algoritma, birçok araştırmacı tarafından birçok şekilde değiştirilmiş ve uyarlanmıştır, ancak temel kavram hepsinde aynı kalır. Kaybı olabildiğince hızlı azaltan yönü bulmak için gradyanı kullanın ve bu yönde bir adım atmak için parametreleri güncelleyin.
 
 ## A Note on Mathematical Optimization
 Throughout this book, we focus squarely on numerical optimization techniques for the practical reason that all functions we encounter in the deep learning setting are too complex to minimize explicitly.  
