@@ -1,4 +1,4 @@
-# Integral (Tümlev) Kalkülüsu
+# Integral (Tümlev) Kalkülüsü
 :label:`sec_integral_calculus`
 
 Türev alma, geleneksel bir matematik eğitiminin içeriğinin yalnızca yarısını oluşturur. Diğer sütun, integral alma, oldukça ayrık bir soru gibi görünerek başlar, "Bu eğrinin altındaki alan nedir?" Görünüşte alakasız olsa da, intgeral alma, *kalkülüsün temel teoremi* olarak bilinen ilişki aracılığıyla türev alma ile sıkı bir şekilde iç içe geçmiştir.
@@ -202,99 +202,100 @@ $$
 
 Bu şekilde, diferansiyel kalkülüsten gelen fikirlerden özgürce yararlanarak bütün integral alma teorisini geliştirebiliriz. Her integral kuralı bu olgudan türetilir.
 
-## Change of Variables
+## Değişkenlerin Değişimi
 :label:`integral_example`
 
-Just as with differentiation, there are a number of rules which make the computation of integrals more tractable.  In fact, every rule of differential calculus (like the product rule, sum rule, and chain rule) has a corresponding rule for integral calculus (integration by parts, linearity of integration, and the change of variables formula respectively).  In this section, we will dive into what is arguably the most important from the list: the change of variables formula.
+Aynen türev almada olduğu gibi, integrallerin hesaplanmasını daha izlenebilir kılan bir dizi kural vardır. Aslında, diferansiyel kalkülüsün her kuralı (çarpım kuralı, toplam kuralı ve zincir kuralı gibi), integral hesaplamada karşılık gelen bir kurala sahiptir (formül sırasıyla, parçalayarak integral alma, integralin doğrusallığı ve değişkenler değişimi). Bu bölümde, listeden tartışmasız en önemli olanı inceleyeceğiz: değişkenlerin değişimi formülü.
 
-First, suppose that we have a function which is itself an integral:
+İlk olarak, kendisi bir integral olan bir fonksiyonumuz olduğunu varsayalım:
 
 $$
 F(x) = \int_0^x f(y) \; dy.
 $$ 
 
-Let us suppose that we want to know how this function looks when we compose it with another to obtain $F(u(x))$.  By the chain rule, we know
+Diyelim ki, $F(u(x))$ elde etmek için onu başka bir fonksiyonla oluşturduğumuzda bu fonksiyonun nasıl göründüğünü bilmek istediğimizi varsayalım. Zincir kuralı ile biliyoruz ki:
 
 $$
 \frac{d}{dx}F(u(x)) = \frac{dF}{dx}(u(x))\cdot \frac{du}{dx}.
 $$
 
-We can turn this into a statement about integration by using the fundamental theorem :eqref:`eq_ftc` as above.  This gives
+Yukarıdaki gibi, temel teoremi kullanarak bunu integral alma ilgili bir ifadeye dönüştürebiliriz :eqref:`eq_ftc`. Böylece:
 
 $$
 F(u(x)) - F(u(0)) = \int_0^x \frac{dF}{dx}(u(y))\cdot \frac{du}{dy} \;dy.
 $$
 
-Recalling that $F$ is itself an integral gives that the left hand side may be rewritten to be
+$F$'nin kendisinin bir integral olduğunu hatırlamak, sol tarafın yeniden yazılabilmesine olanak verir.
 
 $$
 \int_{u(0)}^{u(x)} f(y) \; dy = \int_0^x \frac{dF}{dx}(u(y))\cdot \frac{du}{dy} \;dy.
 $$
 
-Similarly, recalling that $F$ is an integral allows us to recognize that $\frac{dF}{dx} = f$ using the fundamental theorem :eqref:`eq_ftc`, and thus we may conclude
+Benzer şekilde, $F$'nin bir integral olduğunu hatırlamak, temel teoremi kullanarak $\frac{dF}{dx} = f$'i tanımamıza izin verir :eqref:`eq_ftc` ve böylece şu sonuca varabiliriz:
 
 $$\int_{u(0)}^{u(x)} f(y) \; dy = \int_0^x f(u(y))\cdot \frac{du}{dy} \;dy.$$
 :eqlabel:`eq_change_var`
 
-This is the *change of variables* formula.
+Bu, *değişkenlerin değişimi* formülüdür.
 
-For a more intuitive derivation, consider what happens when we take an integral of $f(u(x))$ between $x$ and $x+\epsilon$. For a small $\epsilon$, this integral is approximately $\epsilon f(u(x))$, the area of the associated rectangle.  Now, let us compare this with the integral of $f(y)$ from $u(x)$ to $u(x+\epsilon)$.  We know that $u(x+\epsilon) \approx u(x) + \epsilon \frac{du}{dx}(x)$, so the area of this rectangle is approximately $\epsilon \frac{du}{dx}(x)f(u(x))$.  Thus, to make the area of these two rectangles to agree, we need to multiply the first one by $\frac{du}{dx}(x)$ as is illustrated in :numref:`fig_rect-transform`.  
+Daha sezgisel bir türetme için, $x$ ile $x+\epsilon$ arasında bir $f(u(x))$ integralini aldığımızda ne olacağını düşünün. Küçük bir $\epsilon$ için, bu integral, yaklaşık olarak $\epsilon f(u(x))$, yani ilişkili dikdörtgenin alanıdır. Şimdi bunu $u(x) $ ile $u(x+\epsilon)$ arasındaki $f(y)$ integraliyle karşılaştıralım. $u(x+\epsilon) \approx u(x) + \epsilon \frac{du}{dx}(x)$ olduğunu biliyoruz, bu nedenle bu dikdörtgenin alanı yaklaşık $\epsilon \frac{du}{dx}(x)f(u(x))$'dir. Bu nedenle, bu iki dikdörtgenin alanını uyuşacak hale getirmek için, ilkini $\frac{du}{dx}(x)$ ile çarpmamız gerekiyor :numref:`fig_rect-transform`.
 
-![Visualizing the transformation of a single thin rectangle under the change of variables.](../img/RectTrans.svg)
+![Değişkenlerin değişimi altında tek bir ince dikdörtgenin dönüşümünü görselleştirelim.](../img/RectTrans.svg)
 :label:`fig_rect-transform`
 
-This tells us that
+Bu bize şunu söyler:
 
 $$
 \int_x^{x+\epsilon} f(u(y))\frac{du}{dy}(y)\;dy = \int_{u(x)}^{u(x+\epsilon)} f(y) \; dy.
 $$  
 
-This is the change of variables formula expressed for a single small rectangle.
+Bu, tek bir küçük dikdörtgen için ifade edilen değişken değişimi formülüdür.
 
-If $u(x)$ and $f(x)$ are properly chosen, this can allow for the computation of incredibly complex integrals.  For instance, if we even chose $f(y) = 1$ and $u(x) = e^{-x^{2}}$ (which means $\frac{du}{dx}(x) = -2xe^{-x^{2}}$, this can show for instance that
+$u(x)$ ve $f(x)$ doğru seçildirse, bu inanılmaz derecede karmaşık integrallerin hesaplanmasına izin verebilir. Örneğin, $f(y) = 1$ ve $u(x) = e^{-x^{2}}$ seçersek (bu $\frac{du}{dx}(x) = -2xe^{-x^{2}}$ anlamına gelir), bu örnek şunu gösterebilir:
 
 $$
 e^{-1} - 1 = \int_{e^{-0}}^{e^{-1}} 1 \; dy = -2\int_0^{1} ye^{-y^2}\;dy,
 $$
 
-and thus by rearranging that
+Tekrar düzenlersek:
 
 $$
 \int_0^{1} ye^{-y^2}\; dy = \frac{1-e^{-1}}{2}.
 $$
 
-## A Comment on Sign Conventions
+## İşaret Gösterimlerine Bir Yorum
 
-Keen-eyed readers will observe something strange about the computations above.  Namely, computations like
+Keskin gözlü okuyucular yukarıdaki hesaplamalarla ilgili tuhaf bir şey gözlemleyecekler. Yani, aşağıdaki gibi hesaplamalar
 
 $$
 \int_{e^{-0}}^{e^{-1}} 1 \; dy = e^{-1} -1 < 0,
 $$
 
-can produce negative numbers.  When thinking about areas, it can be strange to see a negative value, and so it is worth digging into what the convention is.
+negatif sayılar üretebilirler. Alanlar hakkında düşünürken, negatif bir değer görmek garip olabilir ve bu nedenle bu gösterimin ne olduğunu araştırmaya değer.
 
-Mathematicians take the notion of signed areas.  This manifests itself in two ways.  First, if we consider a function $f(x)$ which is sometimes less than zero, then the area will also be negative.  So for instance
+Matematikçiler işaretli alanlar kavramını benimser. Bu kendini iki şekilde gösterir. İlk olarak, bazen sıfırdan küçük olan $f(x)$ fonksiyonunu düşünürsek, alan da negatif olacaktır. Yani örneğin
 
 $$
 \int_0^{1} (-1)\;dx = -1.
 $$
 
-Similarly, integrals which progress from right to left, rather than left to right are also taken to be negative areas
+Benzer şekilde, soldan sağa değil sağdan sola ilerleyen integraller de negatif alan olarak tanımlanır.
 
 $$
 \int_0^{-1} 1\; dx = -1.
 $$
 
-The standard area (from left to right of a positive function) is always positive.  Anything obtained by flipping it (say flipping over the $x$-axis to get the integral of a negative number, or flipping over the $y$-axis to get an integral in the wrong order) will produce a negative area.  And indeed, flipping twice will give a pair of negative signs that cancel out to have positive area
+Standart alan (pozitif bir fonksiyonda soldan sağa) her zaman pozitiftir. Ters çevirerek elde edilen herhangi bir şey (örneğin, negatif bir sayının integralini elde etmek için $x$ eksenini ters çevirmek veya bir integrali yanlış sırada elde etmek için $y$ eksenini ters çevirmek gibi) negatif bir alan üretecektir. Aslında, iki kez ters yüz etme, pozitif alana sahip olmak için birbirini götüren bir çift negatif işaret verecektir.
 
 $$
 \int_0^{-1} (-1)\;dx =  1.
 $$
 
-If this discussion sounds familiar, it is!  In :numref:`sec_geometry-linear-algebraic-ops` we discussed how the determinant represented the signed area in much the same way.
+Bu tartışma size tanıdık geliyorsa, normaldir! :numref:`sec_geometry-linear-algebraic-ops`'de determinantın işaretli alanı nasıl aynı şekilde temsil ettiğini tartıştık.
 
-## Multiple Integrals
-In some cases, we will need to work in higher dimensions.  For instance, suppose that we have a function of two variables, like $f(x, y)$ and we want to know the volume under $f$ when $x$ ranges over $[a, b]$ and $y$ ranges over $[c, d]$.
+
+## Çoklu İntegraller
+Bazı durumlarda daha yüksek boyutlarda çalışmamız gerekecektir. Örneğin, $f(x, y)$ gibi iki değişkenli bir fonksiyonumuz olduğunu ve $x$'nin $[a, b]$ ve $y$'nin ise $[c, d]$ arasında değiştiğinde $f$ altındaki hacim nedir bilmek istediğimizi varsayalım. .
 
 ```{.python .input}
 # Construct grid and compute function
@@ -336,62 +337,62 @@ ax.set_zlim(0, 1)
 ax.dist = 12
 ```
 
-We write this as 
+Şöyle yazabiliriz:
 
 $$
 \int_{[a, b]\times[c, d]} f(x, y)\;dx\;dy.
 $$
 
-Suppose that we wish to compute this integral.  My claim is that we can do this by iteratively computing first the integral in say $x$ and then shifting to the integral in $y$, that is to say
+Bu integrali hesaplamak istediğimizi varsayalım. Bizim iddiamız, bunu önce $x$'deki integrali yinelemeli olarak hesaplayarak ve sonra da $y$'deki integrale kayarak yapabileceğimizdir, yani
 
 $$
 \int_{[a, b]\times[c, d]} f(x, y)\;dx\;dy = \int_c^{d} \left(\int_a^{b} f(x, y) \;dx\right) \; dy.
 $$
 
-Let us see why this is.  
+Bunun neden olduğunu görelim.
 
-Consider the figure above where we have split the function into $\epsilon \times \epsilon$ squares which we will index with integer coordinates $i, j$.  In this case, our integral is approximately
+Fonksiyonu $\epsilon \times \epsilon$ karelere böldüğümüzü ve $i, j$ tamsayı koordinatlarıyla indekslediğimizi düşünün. Bu durumda integralimiz yaklaşık olarak
 
 $$
 \sum_{i, j} \epsilon^{2} f(\epsilon i, \epsilon j).
 $$
 
-Once we discretize the problem, we may add up the values on these squares in whatever order we like, and not worry about changing the values.  This is illustrated in :numref:`fig_sum-order`.  In particular, we can say that
+Problemi ayrıklaştırdığımızda, bu karelerdeki değerleri istediğimiz sırayla toplayabiliriz ve değerleri değiştirme konusunda endişelenmeyiz. Bu, şu şekilde gösterilmektedir :numref:`fig_sum-order`. Özellikle şunu söyleyebiliriz:
 
 $$
  \sum _ {j} \epsilon \left(\sum_{i} \epsilon f(\epsilon i, \epsilon j)\right).
 $$
 
-![Illustrating how to decompose a sum over many squares as a sum over first the columns (1), then adding the column sums together (2).](../img/SumOrder.svg)
+![İlk önce sütunlar üzerinden bir toplam olarak birçok karede bir toplamın nasıl ayrıştırılacağını (1), ardından sütun toplamlarının nasıl toplanacağını (2) gösterelim.](../img/SumOrder.svg)
 :label:`fig_sum-order`
-
-The sum on the inside is precisely the discretization of the integral 
+ 
+İç kısımdaki toplam, tam olarak integralin ayrıklaştırılmasıdır.
 
 $$
 G(\epsilon j) = \int _a^{b} f(x, \epsilon j) \; dx.
 $$
 
-Finally, notice that if we combine these two expressions we get 
+Son olarak, bu iki ifadeyi birleştirirsek şunu elde ettiğimize dikkat edin: 
 
 $$
 \sum _ {j} \epsilon G(\epsilon j) \approx \int _ {c}^{d} G(y) \; dy = \int _ {[a, b]\times[c, d]} f(x, y)\;dx\;dy.
 $$
 
-Thus putting it all together, we have that
+Böylece hepsini bir araya getirirsek, buna sahip oluruz:
 
 $$
 \int _ {[a, b]\times[c, d]} f(x, y)\;dx\;dy = \int _ c^{d} \left(\int _ a^{b} f(x, y) \;dx\right) \; dy.
 $$
 
-Notice that, once discretized, all we did was rearrange the order in which we added a list of numbers.  This may make it seem like it is nothing, however this result (called *Fubini's Theorem*) is not always true!  For the type of mathematics encountered when doing machine learning (continuous functions), there is no concern, however it is possible to create examples where it fails (for example the function $f(x, y) = xy(x^2-y^2)/(x^2+y^2)^3$ over the rectangle $[0,2]\times[0,1]$).
+Dikkat edin, bir kez ayrıklaştırıldı mı, yaptığımız tek şey, bir sayı listesi eklediğimiz sırayı yeniden düzenlemek oldu. Bu, burada hiçbir zorluk yokmuş gibi görünmesine neden olabilir, ancak bu sonuç (*Fubini Teoremi* olarak adlandırılır) her zaman doğru değildir! Makine öğrenmesi (sürekli fonksiyonlar) yapılırken karşılaşılan matematik türü için herhangi bir endişe yoktur, ancak başarısız olduğu durumlardan örnekler oluşturmak mümkündür (örneğin $f(x, y) = xy(x^2-y^2)/(x^2+y^2)^3$ fonksiyonunu $[0,2]\times[0,1]$ dikdörtgenin üzerinde deneyin).
 
-Note that the choice to do the integral in $x$ first, and then the integral in $y$ was arbitrary.  We could have equally well chosen to do $y$ first and then $x$ to see
+İntegrali önce $x$ cinsinden ve ardından $y$ cinsinden yapma seçeneğinin keyfi olduğuna dikkat edin. Önce $y$ için, sonra da $x$ için yapmayı eşit derecede iyi seçebilirdik:
 
 $$
 \int _ {[a, b]\times[c, d]} f(x, y)\;dx\;dy = \int _ a^{b} \left(\int _ c^{d} f(x, y) \;dy\right) \; dx.
 $$
 
-Often times, we will condense down to vector notation, and say that for $U = [a, b]\times [c, d]$ this is
+Çoğu zaman, vektör gösterimine yoğunlaşacağız ve $U = [a, b]\times [c, d]$ için bunun şöyle olduğunu söyleyeceğiz:
 
 $$
 \int _ U f(\mathbf{x})\;d\mathbf{x}.
