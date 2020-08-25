@@ -398,18 +398,18 @@ $$
 \int _ U f(\mathbf{x})\;d\mathbf{x}.
 $$
 
-## Change of Variables in Multiple Integrals
-As we with single variables in :eqref:`eq_change_var`, the ability to change variables inside a higher dimensional integral is a key tool.  Let us summarize the result without derivation.  
+## Çoklu İntegrallerde Değişkenlerin Değiştirilmesi
+Tek değişkenlerdeki gibi :eqref:`eq_change_var`, daha yüksek boyutlu bir integral içindeki değişkenleri değiştirme yeteneği önemli bir araçtır. Sonucu türetme yapmadan özetleyelim.
 
-We need a function that reparameterizes our domain of integration.  We can take this to be $\phi : \mathbb{R}^n \rightarrow \mathbb{R}^n$, that is any function which takes in $n$ real variables and returns another $n$.  To keep the expressions clean, we will assume that $\phi$ is *injective* which is to say it never folds over itself ($\phi(\mathbf{x}) = \phi(\mathbf{y}) \implies \mathbf{x} = \mathbf{y}$).  
+Integral alma alanımızı yeniden parametrelendiren bir işleve ihtiyacımız var. Bunu $\phi : \mathbb{R}^n \rightarrow \mathbb{R}^n$ olarak alabiliriz, bu $n$ gerçel değişkenleri alıp başka bir $n$ gerçele döndüren herhangi bir işlevdir. İfadeleri temiz tutmak için, $\phi$'nin *bire-bir* olduğunu varsayacağız, bu da onun hiçbir zaman kendi üzerine katlanmadığını söylemektir ($\phi(\mathbf{x}) = \phi(\mathbf{y}) \implies \mathbf{x} = \mathbf{y}$).
 
-In this case, we can say that
+Bu durumda şunu söyleyebiliriz
 
 $$
 \int _ {\phi(U)} f(\mathbf{x})\;d\mathbf{x} = \int _ {U} f(\phi(\mathbf{x})) \left|\det(D\phi(\mathbf{x}))\right|\;d\mathbf{x}.
 $$
 
-where $D\phi$ is the *Jacobian* of $\phi$, which is the matrix of partial derivatives of $\boldsymbol{\phi} = (\phi_1(x_1, \ldots, x_n), \ldots, \phi_n(x_1, \ldots, x_n))$,
+$D\phi$, $\phi$'nin *Jacobi matrisi*dir, yani $\boldsymbol{\phi} = (\phi_1(x_1, \ldots, x_n), \ldots, \phi_n(x_1, \ldots, x_n))$'nin kısmi türevlerinin matrisidir.
 
 $$
 D\boldsymbol{\phi} = \begin{bmatrix}
@@ -419,23 +419,23 @@ D\boldsymbol{\phi} = \begin{bmatrix}
 \end{bmatrix}.
 $$
 
-Looking closely, we see that this is similar to the single variable chain rule :eqref:`eq_change_var`, except we have replaced the term $\frac{du}{dx}(x)$ with $\left|\det(D\phi(\mathbf{x}))\right|$.  Let us see how we can to interpret this term.  Recall that the $\frac{du}{dx}(x)$ term existed to say how much we stretched our $x$-axis by applying $u$.  The same process in higher dimensions is to determine how much we stretch the area (or volume, or hyper-volume) of a little square (or little *hyper-cube*) by applying $\boldsymbol{\phi}$.  If $\boldsymbol{\phi}$ was the multiplication by a matrix, then we know how the determinant already gives the answer.  
+Yakından baktığımızda, bunun tek değişkenli zincir kuralına benzer olduğunu görüyoruz :eqref:`eq_change_var`, ancak $\frac{du}{dx}(x)$ terimini  $\left|\det(D\phi(\mathbf{x}))\right|$ ile değiştirdik. Bu terimi nasıl yorumlayabileceğimize bir bakalım. $\frac{du}{dx}(x)$ teriminin $x$ eksenimizi $u$'yu uygulayarak ne kadar uzattığımızı söylemek için var olduğunu hatırlayın. Daha yüksek boyutlarda aynı işlem, $\boldsymbol{\phi}$ uygulayarak küçük bir karenin (veya küçük *hiper küpün*) alanını (veya hacmini veya hiper hacmini) ne kadar uzatacağımızı belirlemektir. Eğer $\boldsymbol{\phi}$ bir matrisle çarpımsa, determinantın zaten cevabı nasıl verdiğini biliyoruz.
 
-With some work, one can show that the *Jacobian* provides the best approximation to a multivariable function $\boldsymbol{\phi}$ at a point by a matrix in the same way we could approximate by lines or planes with derivatives and gradients. Thus the determinant of the Jacobian exactly mirrors the scaling factor we identified in one dimension.
+Biraz çalışmayla, *Jacobi matrisi*nin çok değişkenli bir fonksiyona, yani $\boldsymbol{\phi}$'ye, bir noktada matrisin türevleri ve gradyanları olan doğrular veya düzlemlerle yaklaşık olarak tahmin edebileceğimiz gibi en iyi yaklaşıklamayı sağladığı gösterilebilir. Böylece, Jacobi matrisinin determinantı, bir boyutta tanımladığımız ölçeklendirme faktörünü tam olarak kopyalar.
 
-It takes some work to fill in the details to this, so do not worry if they are not clear now.  Let us see at least one example we will make use of later on.  Consider the integral
+Bunun ayrıntılarını doldurmak biraz çalışma gerektirir, bu yüzden şimdi net değilse endişelenmeyin. Daha sonra kullanacağımız bir örnek görelim. Bu integrali düşünün:
 
 $$
 \int _ {-\infty}^{\infty} \int _ {-\infty}^{\infty} e^{-x^{2}-y^{2}} \;dx\;dy.
 $$
 
-Playing with this integral directly will get us no-where, but if we change variables, we can make significant progress.  If we let $\boldsymbol{\phi}(r, \theta) = (r \cos(\theta),  r\sin(\theta))$ (which is to say that $x = r \cos(\theta)$, $y = r \sin(\theta)$), then we can apply the change of variable formula to see that this is the same thing as
+Bu integral ile doğrudan oynamak bizi hiçbir yere götürmez, ancak değişkenleri değiştirirsek, önemli ilerleme kaydedebiliriz. $\boldsymbol{\phi}(r, \theta) = (r \cos(\theta),  r\sin(\theta))$ olmasına izin verirsek (bu $x = r \cos(\theta)$, $y = r \sin(\theta)$ demektir), sonra bunun aynı şey olduğunu görmek için değişken değişikliği formülünü uygulayabiliriz:
 
 $$
 \int _ 0^\infty \int_0 ^ {2\pi} e^{-r^{2}} \left|\det(D\mathbf{\phi}(\mathbf{x}))\right|\;d\theta\;dr,
 $$
 
-where 
+ve
 
 $$
 \left|\det(D\mathbf{\phi}(\mathbf{x}))\right| = \left|\det\begin{bmatrix}
@@ -444,28 +444,28 @@ $$
 \end{bmatrix}\right| = r(\cos^{2}(\theta) + \sin^{2}(\theta)) = r.
 $$
 
-Thus, the integral is
+Böylece integral:
 
 $$
 \int _ 0^\infty \int _ 0 ^ {2\pi} re^{-r^{2}} \;d\theta\;dr = 2\pi\int _ 0^\infty re^{-r^{2}} \;dr = \pi,
 $$
 
-where the final equality follows by the same computation that we used in section :numref:`integral_example`.  
+Burada son eşitlik, bölüm :numref:`integral_example`de kullandığımız hesaplamanın aynısını izler.
 
-We will meet this integral again when we study continuous random variables in :numref:`sec_random_variables`.
+Sürekli rastgele değişkenleri incelediğimizde bu integral ile tekrar karşılaşacağız :numref:`sec_random_variables`.
 
-## Summary
+## Özet
 
-* The theory of integration allows us to answer questions about areas or volumes.
-* The fundamental theorem of calculus allows us to leverage knowledge about derivatives to compute areas via the observation that the derivative of the area up to some point is given by the value of the function being integrated.
-* Integrals in higher dimensions can be computed by iterating single variable integrals.
+* Integral alma teorisi, alanlar veya hacimler hakkındaki soruları yanıtlamamıza izin verir.
+* Kalkülüsün temel teoremi, alanın türevinin bir noktaya kadar integrali alınan fonksiyonun değeri tarafından verildiği gözlemi sayesinde alanları hesaplamak için türevler hakkındaki bilgiden yararlanmamızı sağlar.
+* Daha yüksek boyutlardaki integraller, tek değişkenli integralleri sırasıyla izleyerek hesaplanabilir.
 
-## Exercises
-1. What is $\int_1^2 \frac{1}{x} \;dx$?
-2. Use the change of variables formula to integrate $\int_0^{\sqrt{\pi}}x\sin(x^2)\;dx$.
-3. What is $\int_{[0,1]^2} xy \;dx\;dy$?
-4. Use the change of variables formula to compute $\int_0^2\int_0^1xy(x^2-y^2)/(x^2+y^2)^3\;dy\;dx$ and $\int_0^1\int_0^2f(x, y) = xy(x^2-y^2)/(x^2+y^2)^3\;dx\;dy$ to see they are different.
+## Alıştırmalar
+1. $\int_1^2 \frac{1}{x} \;dx$ nedir?
+2. $\int_0^{\sqrt{\pi}}x\sin(x^2)\;dx$ hesaplamak için değişken değişikliği formülünü kullanınız.
+3. $\int_{[0,1]^2} xy \;dx\;dy$ nedir?
+4. $\int_0^2\int_0^1xy(x^2-y^2)/(x^2+y^2)^3\;dy\;dx$ ve $\int_0^1\int_0^2f(x, y) = xy(x^2-y^2)/(x^2+y^2)^3\;dx\;dy$ hesaplamak için değişken değişikliği formülünü kullanınız ve farkı görünüz.
 
 :begin_tab:`mxnet`
-[Discussions](https://discuss.d2l.ai/t/414)
+[Tartışmalar](https://discuss.d2l.ai/t/414)
 :end_tab:
