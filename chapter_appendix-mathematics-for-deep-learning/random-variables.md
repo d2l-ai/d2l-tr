@@ -73,48 +73,48 @@ d2l.plot(x, p, 'x', 'Density')
 
 İşlev değerinin büyük olduğu konumlar, rastgele değeri bulma olasılığımızın daha yüksek olduğu bölgeleri gösterir. Düşük kısımlar, rastgele değeri bulamaya yatkın olmadığımız alanlardır.
 
-### Probability Density Functions
+### Olasılık Yoğunluk Fonksiyonları
 
-Let us now investigate this further.  We have already seen what a probability density function is intuitively for a random variable $X$, namely the density function is a function $p(x)$ so that
+Şimdi bunu daha ayrıntılı inceleyelim. Bir rastgele değişken $X$ için olasılık yoğunluk fonksiyonunun sezgisel olarak ne olduğunu daha önce görmüştük, yani yoğunluk fonksiyonu bir $p(x)$ fonksiyonudur.
 
 $$P(X \; \text{is in an}\; \epsilon \text{-sized interval around}\; x ) \approx \epsilon \cdot p(x).$$
 :eqlabel:`eq_pdf_def`
 
-But what does this imply for the properties of $p(x)$?
+Peki bu $p(x)$'nin özellikleri için ne anlama geliyor?
 
-First, probabilities are never negative, thus we should expect that $p(x) \ge 0$ as well.
+Birincisi, olasılıklar asla negatif değildir, dolayısıyla $p(x)\ge 0$ olmasını bekleriz.
 
-Second, let us imagine that we slice up the $\mathbb{R}$ into an infinite number of slices which are $\epsilon$ wide, say with slices $(\epsilon\cdot i, \epsilon \cdot (i+1)]$.  For each of these, we know from :eqref:`eq_pdf_def` the probability is approximately
+İkinci olarak, $\mathbb{R}$'yi $\epsilon$ genişliğinde sonsuz sayıda dilime böldüğümüzü varsayalım, diyelim ki $(\epsilon\cdot i, \epsilon \cdot (i+1)]$ gibi. Bunların her biri için, :eqref:`eq_pdf_def`'den biliyoruz, olasılık yaklaşık olarak
 
 $$
 P(X \; \text{is in an}\; \epsilon\text{-sized interval around}\; x ) \approx \epsilon \cdot p(\epsilon \cdot i),
 $$
 
-so summed over all of them it should be
+bu yüzden hepsi üzerinden toplanabilmeli
 
 $$
 P(X\in\mathbb{R}) \approx \sum_i \epsilon \cdot p(\epsilon\cdot i).
 $$
 
-This is nothing more than the approximation of an integral discussed in :numref:`sec_integral_calculus`, thus we can say that
+Bu, :numref:`sec_integral_calculus`da tartışılan bir integral yaklaşımından başka bir şey değildir, dolayısıyla şunu söyleyebiliriz
 
 $$
 P(X\in\mathbb{R}) = \int_{-\infty}^{\infty} p(x) \; dx.
 $$
 
-We know that $P(X\in\mathbb{R}) = 1$, since the random variable must take on *some* number, we can conclude that for any density
+$P(X\in\mathbb{R}) = 1$ olduğunu biliyoruz, çünkü rasgele değişkenin *herhangi bir* sayı alması gerektiğinden, herhangi bir yoğunluk için şu sonuca varabiliriz:
 
 $$
 \int_{-\infty}^{\infty} p(x) \; dx = 1.
 $$
 
-Indeed, digging into this further shows that for any $a$, and $b$, we see that
+Aslında, bu konuyu daha ayrıntılı olarak incelersek, herhangi $a$ ve $b$ için şunu görürüz:
 
 $$
 P(X\in(a, b]) = \int _ {a}^{b} p(x) \; dx.
 $$
 
-We may approximate this in code by using the same discrete approximation methods as before.  In this case we can approximate the probability of falling in the blue region.
+Bunu, daha önce olduğu gibi aynı ayrık yaklaşıklama yöntemlerini kullanarak kodda yaklaşıklaştırabiliriz. Bu durumda mavi bölgeye düşme olasılığını tahmin edebiliriz.
 
 ```{.python .input}
 # Approximate probability using numerical integration
@@ -147,36 +147,36 @@ d2l.plt.show()
 f'approximate Probability: {torch.sum(epsilon*p[300:800])}'
 ```
 
-It turns out that these two properties describe exactly the space of possible probability density functions (or *p.d.f.*'s for the commonly encountered abbreviation).  They are non-negative functions $p(x) \ge 0$ such that
+Bu iki özelliğin, olası olasılık yoğunluk fonksiyonlarının (veya yaygın olarak karşılaşılan kısaltma için *o.y.f. (p.d.f)*'ler) uzayını tastamam tanımladığı ortaya çıkar. Negatif olmayan fonksiyonlar $p(x) \ge 0$ için
 
 $$\int_{-\infty}^{\infty} p(x) \; dx = 1.$$
 :eqlabel:`eq_pdf_int_one`
 
-We interpret this function by using integration to obtain the probability our random variable is in a specific interval:
+Bu işlevi, rastgele değişkenimizin belirli bir aralıkta olma olasılığını elde etmek için integral alarak yorumluyoruz:
 
 $$P(X\in(a, b]) = \int _ {a}^{b} p(x) \; dx.$$
 :eqlabel:`eq_pdf_int_int`
 
-In :numref:`sec_distributions` we will see a number of common distributions, but let us continue working in the abstract.
+:numref:`sec_distributions`'da bir dizi yaygın dağılımı göreceğiz, ancak soyut oalrak çalışmaya devam edelim.
 
-### Cumulative Distribution Functions
+### Birikimli (Kümülatif) Dağılım Fonksiyonları
 
-In the previous section, we saw the notion of the p.d.f.  In practice, this is a commonly encountered method to discuss continuous random variables, but it has one significant pitfall: that the values of the p.d.f. are not themselves probabilities, but rather a function that we must integrate to yield probabilities.  There is nothing wrong with a density being larger than $10$, as long as it is not larger than $10$ for more than an interval of length $1/10$.  This can be counter-intuitive, so people often also think in terms of the *cumulative distribution function*, or c.d.f., which *is* a probability.
+Önceki bölümde, o.y.f kavramını gördük. Uygulamada, bu sürekli rastgele değişkenleri tartışmak için yaygın olarak karşılaşılan bir yöntemdir, ancak önemli bir görünmez tuzak vardır: o.y.f.'nin değerlerinin kendileri olasılıklar değil, olasılıkları elde etmek için integralini almamız gereken bir fonksiyondur. $1/10$'dan daha uzun bir aralık için $10$'dan fazla olmadığı sürece, yoğunluğun $10$'dan büyük olmasının yanlış bir tarafı yoktur. Bu sezgiye aykırı olabilir, bu nedenle insanlar genellikle *birikimli dağılım işlevi* veya *bir olasılık olan* b.d.f. açısından düşünürler.
 
-In particular, by using :eqref:`eq_pdf_int_int`, we define the c.d.f. for a random variable $X$ with density $p(x)$ by
-
+Özellikle :eqref:`eq_pdf_int_int` kullanarak b.d.f'yi tanımlarız. $p(x)$ yoğunluğuna sahip rastgele bir değişken $X$ için
+ 
 $$
 F(x) = \int _ {-\infty}^{x} p(x) \; dx = P(X \le x).
 $$
 
-Let us observe a few properties.
+Birkaç özelliği inceleyelim.
 
-* $F(x) \rightarrow 0$ as $x\rightarrow -\infty$.
-* $F(x) \rightarrow 1$ as $x\rightarrow \infty$.
-* $F(x)$ is non-decreasing ($y > x \implies F(y) \ge F(x)$).
-* $F(x)$ is continuous (has no jumps) if $X$ is a continuous random variable.
+* $F(x) \rightarrow 0$ iken $x\rightarrow -\infty$.
+* $F(x) \rightarrow 1$ iken $x\rightarrow \infty$.
+* $F(x)$ azalmaz ($y > x \implies F(y) \ge F(x)$).
+* $X$ sürekli bir rasgele değişkense $F(x)$ süreklidir (sıçrama yoktur).
 
-With the fourth bullet point, note that this would not be true if $X$ were discrete, say taking the values $0$ and $1$ both with probability $1/2$.  In that case
+Dördüncü maddede, $X$ ayrık olsaydı bunun doğru olmayacağına dikkat edin, mesela $0$ ve $1$ değerlerini $1/2$ olasılıkla alalım. Bu durumda
 
 $$
 F(x) = \begin{cases}
@@ -186,7 +186,7 @@ F(x) = \begin{cases}
 \end{cases}
 $$
 
-In this example, we see one of the benefits of working with the c.d.f., the ability to deal with continuous or discrete random variables in the same framework, or indeed mixtures of the two (flip a coin: if heads return the roll of a die, if tails return the distance of a dart throw from the center of a dart board).
+Bu örnekte, bdf ile çalışmanın faydalarından birini, aynı çerçevede sürekli veya ayrık rastgele değişkenlerle veya ötesi ikisinin karışımlarıyla başa çıkma becerisini görüyoruz (Yazı tura atın: tura gerlirse zar atın, yazı gelirse bir dart atışının dart tahtasının merkezinden mesafesini ölçün).
 
 ### Means
 
