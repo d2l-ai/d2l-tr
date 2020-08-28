@@ -563,8 +563,6 @@ $$
 \end{aligned}
 $$
 
-For visualization, let us take a look at a collection of random variables with tunable covariance.
-
 $p = 1$ olduğunda (her ikisinin de aynı anda maksimum pozitif veya negatif olduğu durum) $2$'lik bir kovaryansa sahiptir. $p = 0$ olduğunda (çevrildikleri durum) kovaryans $-2$'dir. Son olarak, $p = 1/2$ (ilgisiz oldukları durum) olduğunda kovaryans $0$'dır. Böylece kovaryansın bu iki rastgele değişkenin nasıl ilişkili olduğunu ölçtüğünü görüyoruz.
 
 Kovaryansla ilgili bir not, yalnızca bu doğrusal ilişkileri ölçmesidir. $X = Y^2$ gibi daha karmaşık ilişkiler, $Y$'nin $\{- 2, -1, 0, 1, 2 \}$'dan eşit olasılıkla rastgele seçildiği durumlarda, gözden kaçabilir. Aslında hızlı bir hesaplama, biri diğerinin deterministik bir fonksiyonu olmasına rağmen, bu rastgele değişkenlerin kovaryansının sıfır olduğunu gösterir.
@@ -647,23 +645,23 @@ $$
 \rho(X, Y) = \frac{4p-2}{1\cdot 2} = 2p-1.
 $$
 
-This now ranges between $-1$ and $1$ with the expected behavior of $1$ meaning most correlated, and $-1$ meaning minimally correlated.
+Bu şimdi $-1$ ile $1$ arasında değişiyor ve beklenen davranış $1$'in en çok ilişkili olduğu ve $-1$'in ise minimum düzeyde ilişkili olduğu anlamına gelmesidir.
 
-As another example, consider $X$ as any random variable, and $Y=aX+b$ as any linear deterministic function of $X$.  Then, one can compute that
+Başka bir örnek olarak, herhangi bir rastgele değişken olarak $X$'i ve $X$'in herhangi bir doğrusal deterministik fonksiyonu olarak $Y = aX + b$'yi düşünün. Sonra, bunu hesaplayabiliriz:
 
 $$\sigma_{Y} = \sigma_{aX+b} = |a|\sigma_{X},$$
 
 $$\mathrm{Cov}(X, Y) = \mathrm{Cov}(X, aX+b) = a\mathrm{Cov}(X, X) = a\mathrm{Var}(X),$$
 
-and thus by :eqref:`eq_cor_def` that
+böylece :eqref:`eq_cor_def` ile beraber:
 
 $$
 \rho(X, Y) = \frac{a\mathrm{Var}(X)}{|a|\sigma_{X}^2} = \frac{a}{|a|} = \mathrm{sign}(a).
 $$
 
-Thus we see that the correlation is $+1$ for any $a > 0$, and $-1$ for any $a < 0$ illustrating that correlation measures the degree and directionality the two random variables are related, not the scale that the variation takes.
+Böylece korelasyonun herhangi bir $a > 0$ için $+ 1$ olduğunu ve herhangi bir $a < 0$ için $-1$ olduğunu görürüz, yani korelasyon iki rasgele değişkenin ilişkisinin derecesini ve yönünü ölçer, varyasyonun aldığı ölçeği değil.
 
-Let us again plot a collection of random variables with tunable correlation.
+Yine ayarlanabilir korelasyonlu rastgele değişkenlerin bir koleksiyonunu çizelim.
 
 ```{.python .input}
 # Plot a few random variables adjustable correlations
@@ -699,44 +697,43 @@ for i in range(3):
 d2l.plt.show()
 ```
 
-Let us list a few properties of the correlation below.
+Korelasyonun birkaç özelliğini aşağıda listeleyelim.
 
-* For any random variable $X$, $\rho(X, X) = 1$.
-* For any random variables $X, Y$ and numbers $a$ and $b$, $\rho(aX+b, Y) = \rho(X, aY+b) = \rho(X, Y)$.
-* If $X$ and $Y$ are independent with non-zero variance then $\rho(X, Y) = 0$.
+* Herhangi bir rastgele değişken $X$ için , $\rho(X, X) = 1$.
+* $X, Y$ rasgele değişkenleri ve $a$ ve $b$ sayıları için, $\rho(aX + b, Y) = \rho(X, aY + b) = \rho(X, Y)$.
+* $X$ ve $Y$, sıfır olmayan farkla bağımsızsa, $\rho(X, Y) = 0$.
 
-As a final note, you may feel like some of these formulae are familiar.  Indeed, if we expand everything out assuming that $\mu_X = \mu_Y = 0$, we see that this is
+Son bir not olarak, bu formüllerden bazılarının tanıdık geldiğini hissedebilirsiniz. Gerçekten, her şeyi $\mu_X =\mu_Y = 0$ varsayarak genişletirsek, görürüz ki
 
 $$
 \rho(X, Y) = \frac{\sum_{i, j} x_iy_ip_{ij}}{\sqrt{\sum_{i, j}x_i^2 p_{ij}}\sqrt{\sum_{i, j}y_j^2 p_{ij}}}.
 $$
 
-This looks like a sum of a product of terms divided by the square root of sums of terms.  This is exactly the formula for the cosine of the angle between two vectors $\mathbf{v}, \mathbf{w}$ with the different coordinates weighted by $p_{ij}$:
+Bu, terimlerin toplamının kareköküne bölünen bir terimler çarpımının toplamına benziyor. Bu tam olarak, $p_{ij}$ ile ağırlıklandırılmış farklı koordinatlara sahip iki $\mathbf{v}, \mathbf{w}$ vektörü arasındaki açının kosinüsü için olan formüldür:
 
 $$
 \cos(\theta) = \frac{\mathbf{v}\cdot \mathbf{w}}{\|\mathbf{v}\|\|\mathbf{w}\|} = \frac{\sum_{i} v_iw_i}{\sqrt{\sum_{i}v_i^2}\sqrt{\sum_{i}w_i^2}}.
 $$
 
-Indeed if we think of norms as being related to standard deviations, and correlations as being cosines of angles, much of the intuition we have from geometry can be applied to thinking about random variables.
+Aslında, normların standart sapmalarla ilişkili olduğunu ve korelasyonların açıların kosinüsü olduğunu düşünürsek, geometriden elde ettiğimiz sezgilerin çoğu rastgele değişkenler hakkında düşünmeye uygulanabilir.
 
-## Summary
-* Continuous random variables are random variables that can take on a continuum of values.  They have some technical difficulties that make them more challenging to work with compared to discrete random variables.
-* The probability density function allows us to work with continuous random variables by giving a function where the area under the curve on some interval gives the probability of finding a sample point in that interval.
-* The cumulative distribution function is the probability of observing the random variable to be less than a given threshold.  It can provide a useful alternate viewpoint which unifies discrete and continuous variables.
-* The mean is the average value of a random variable.
-* The variance is the expected square of the difference between the random variable and its mean.
-* The standard deviation is the square root of the variance.  It can be thought of as measuring the range of values the random variable may take.
-* Chebyshev's inequality allows us to make this intuition rigorous by giving an explicit interval that contains the random variable most of the time.
-* Joint densities allow us to work with correlated random variables.  We may marginalize joint densities by integrating over unwanted random variables to get the distribution of the desired random variable.
-* The covariance and correlation coefficient provide a way to measure any linear relationship between two correlated random variables.
+## Özet
+* Sürekli rastgele değişkenler, bir dizi değer sürekliliği alabilen rastgele değişkenlerdir. Ayrık rastgele değişkenlere kıyasla, çalışmayı daha zor hale getiren bazı teknik zorlukları vardır.
+* Olasılık yoğunluk fonksiyonu, bir aralıktaki eğrinin altındaki alanın o aralıkta bir örnek nokta bulma olasılığını gösteren bir fonksiyon vererek, sürekli rastgele değişkenlerle çalışmamızı sağlar.
+* Birikimli dağılım işlevi, rastgele değişkenin belirli bir eşik değerinden daha düşük olduğunu gözlemleme olasılığıdır. Ayrık ve sürekli değişkenleri birleştiren kullanışlı bir alternatif bakış açısı sağlayabilir.
+* Ortalama, rastgele bir değişkenin ortalama değeridir.
+* Varyans, rastgele değişken ile onun ortalaması arasındaki farkın beklenen (ortalama) karesidir.
+* Standart sapma, varyansın kareköküdür. Rasgele değişkenin alabileceği değerlerin aralığını ölçmek olarak düşünülebilir.
+* Chebyshev'in eşitsizliği, çoğu zaman rastgele değişkeni içeren açık bir aralık vererek bu sezgiyi içleştirmemize izin verir.
+* Bileşik yoğunluklar, ilişkili rastgele değişkenlerle çalışmamıza izin verir. İstenilen rastgele değişkenin dağılımını elde etmek için istenmeyen rastgele değişkenlerin integralini alarak bileşik yoğunluklarını marjinalize edebiliriz.
+* Kovaryans ve korelasyon katsayısı, iki ilişkili rastgele değişken arasındaki herhangi bir doğrusal ilişkiyi ölçmenin bir yol sağlar.
 
-## Exercises
-1. Suppose that we have the random variable with density given by $p(x) = \frac{1}{x^2}$ for $x \ge 1$ and $p(x) = 0$ otherwise.  What is $P(X > 2)$?
-2. The Laplace distribution is a random variable whose density is given by $p(x = \frac{1}{2}e^{-|x|}$.  What is the mean and the standard deviation of this function?  As a hint, $\int_0^\infty xe^{-x} \; dx = 1$ and $\int_0^\infty x^2e^{-x} \; dx = 2$.
-3. I walk up to you on the street and say "I have a random variable with mean $1$, standard deviation $2$, and I observed $25\%$ of my samples taking a value larger than $9$."  Do you believe me?  Why or why not?
-4. Suppose that you have two random variables $X, Y$, with joint density given by $p_{XY}(x, y) = 4xy$ for $x, y \in [0,1]$ and $p_{XY}(x, y) = 0$ otherwise.  What is the covariance of $X$ and $Y$?
-
+## Alıştırmalar
+1. $x \ge 1$ için yoğunluğu $p(x) = \frac{1}{x ^ 2}$ ve aksi takdirde $p(x) = 0$ ile verilen rastgele değişkenimiz olduğunu varsayalım. $P(X> 2)$ nedir?
+2. Laplace dağılımı, yoğunluğu $p(x = \frac{1}{2}e^{-|x|} ile verilen rastgele bir değişkendir. Bu fonksiyonun ortalaması ve standart sapması nedir? Bir ipucu, $\int_0^\infty xe^{-x} \; dx = 1$ ve $\int_0^\infty x^2e^{-x} \; dx = 2$.
+3. Sokakta size doğru yürüyorum ve "Ortalaması $1 $, standart sapması $2$ olan rastgele bir değişkenim var ve örneklerimin $\% 25$'inin $9$'dan daha büyük bir değer aldığını gözlemledim." dedim. Bana inanır mısınız? Neden evet ya da neden hayır?
+4. $x, y \in [0,1]$ için $p_{XY}(x, y) = 4xy$ ve aksi takdirde $p_{XY}(x, y) = 0$ ile bileşik yoğunlukları verilen iki rastgele değişkenimizin $X, Y$ olduğunu varsayalım $X$ ve $Y$'nin kovaryansı nedir?
 
 :begin_tab:`mxnet`
-[Discussions](https://discuss.d2l.ai/t/415)
+[Tartışmalar](https://discuss.d2l.ai/t/415)
 :end_tab:
