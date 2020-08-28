@@ -542,7 +542,7 @@ Başlamak için $X$ ve $Y$ olmak üzere iki rasgele değişkenimiz olduğunu var
 $$\sigma_{XY} = \mathrm{Cov}(X, Y) = \sum_{i, j} (x_i - \mu_X) (y_j-\mu_Y) p_{ij}. = E[XY] - E[X]E[Y].$$
 :eqlabel:`eq_cov_def`
 
-To think about this intuitively: consider the following pair of random variables.  Suppose that $X$ takes the values $1$ and $3$, and $Y$ takes the values $-1$ and $3$.  Suppose that we have the following probabilities
+Bunu sezgisel olarak düşünmek için: Aşağıdaki rastgele değişken çiftini düşünün. $X$'in $1$ ve $3$ değerlerini ve $Y$'nin $-1$ ve $3$ değerlerini aldığını varsayalım. Aşağıdaki olasılıklara sahip olduğumuzu varsayalım:
 
 $$
 \begin{aligned}
@@ -553,7 +553,7 @@ P(X = 3 \; \text{and} \; Y = 3) & = \frac{p}{2},
 \end{aligned}
 $$
 
-where $p$ is a parameter in $[0,1]$ we get to pick.  Notice that if $p=1$ then they are both always their minimum or maximum values simultaneously, and if $p=0$ they are guaranteed to take their flipped values simultaneously (one is large when the other is small and vice versa).  If $p=1/2$, then the four possibilities are all equally likely, and neither should be related.  Let us compute the covariance.  First, note $\mu_X = 2$ and $\mu_Y = 1$, so we may compute using :eqref:`eq_cov_def`:
+Burada $p$, $[0,1]$ içinde bir parametredir. $p = 1$ ise her ikisi de her zaman aynı anda minimum veya maksimum değerlerdedir ve $p = 0$ ise çevrilmiş değerlerini aynı anda almaları garanti edilir (biri küçükken diğeri büyüktür). $p = 1/2$ ise, bu durumda dört olasılığın tümü eşit olasılıktadır ve ikisi de ilişkili olmamalıdır. Kovaryansı hesaplayalım. İlk olarak, $\mu_X = 2$ ve $\mu_Y = 1$ olduğuna not edin, böylece şunu kullanarak hesaplama yapabiliriz :eqref:`eq_cov_def`:
 
 $$
 \begin{aligned}
@@ -563,17 +563,19 @@ $$
 \end{aligned}
 $$
 
-When $p=1$ (the case where the are both maximally positive or negative at the same time) has a covariance of $2$. When $p=0$ (the case where they are flipped) the covariance is $-2$.  Finally, when $p=1/2$ (the case where they are unrelated), the covariance is $0$.  Thus we see that the covariance measures how these two random variables are related.
+For visualization, let us take a look at a collection of random variables with tunable covariance.
 
-A quick note on the covariance is that it only measures these linear relationships.  More complex relationships like $X = Y^2$ where $Y$ is randomly chosen from $\{-2, -1, 0, 1, 2\}$ with equal probability can be missed.  Indeed a quick computation shows that these random variables have covariance zero, despite one being a deterministic function of the other.
+$p = 1$ olduğunda (her ikisinin de aynı anda maksimum pozitif veya negatif olduğu durum) $2$'lik bir kovaryansa sahiptir. $p = 0$ olduğunda (çevrildikleri durum) kovaryans $-2$'dir. Son olarak, $p = 1/2$ (ilgisiz oldukları durum) olduğunda kovaryans $0$'dır. Böylece kovaryansın bu iki rastgele değişkenin nasıl ilişkili olduğunu ölçtüğünü görüyoruz.
 
-For continuous random variables, much the same story holds.  At this point, we are pretty comfortable with doing the transition between discrete and continuous, so we will provide the continuous analogue of :eqref:`eq_cov_def` without any derivation.
+Kovaryansla ilgili bir not, yalnızca bu doğrusal ilişkileri ölçmesidir. $X = Y^2$ gibi daha karmaşık ilişkiler, $Y$'nin $\{- 2, -1, 0, 1, 2 \}$'dan eşit olasılıkla rastgele seçildiği durumlarda, gözden kaçabilir. Aslında hızlı bir hesaplama, biri diğerinin deterministik bir fonksiyonu olmasına rağmen, bu rastgele değişkenlerin kovaryansının sıfır olduğunu gösterir.
+
+Sürekli rastgele değişkenler için, hemen hemen aynı hikaye geçerlidir. Bu noktada, ayrık ve sürekli arasındaki geçişi yapmakta oldukça rahatız, bu nedenle herhangi bir türetme olmaksızın :eqref:`eq_cov_def`in sürekli benzerini sağlayacağız.
 
 $$
 \sigma_{XY} = \int_{\mathbb{R}^2} (x-\mu_X)(y-\mu_Y)p(x, y) \;dx \;dy.
 $$
 
-For visualization, let us take a look at a collection of random variables with tunable covariance.
+Görselleştirme için, ayarlanabilir kovaryanslı rastgele değişkenlerinden bir topluluğa bakalım.
 
 ```{.python .input}
 # Plot a few random variables adjustable covariance
@@ -608,38 +610,38 @@ for i in range(3):
 d2l.plt.show()
 ```
 
-Let us see some properties of covariances:
+Kovaryansların bazı özelliklerini görelim:
 
-* For any random variable $X$, $\mathrm{Cov}(X, X) = \mathrm{Var}(X)$.
-* For any random variables $X, Y$ and numbers $a$ and $b$, $\mathrm{Cov}(aX+b, Y) = \mathrm{Cov}(X, aY+b) = a\mathrm{Cov}(X, Y)$.
-* If $X$ and $Y$ are independent then $\mathrm{Cov}(X, Y) = 0$.
+* Herhangi bir rastgele değişken $X$ için, $\mathrm{Cov}(X, X) = \mathrm{Var}(X)$'dir.
+* $X, Y$ rasgele değişkenleri ve $a$ ve $b$ sayıları için, $\mathrm{Cov}(aX+b, Y) = \mathrm{Cov}(X, aY+b) = a\mathrm{Cov}(X, Y)$'dir.
+* $X$ ve $Y$ bağımsızsa, $\mathrm{Cov}(X, Y) = 0$'dır.
 
-In addition, we can use the covariance to expand a relationship we saw before.  Recall that is $X$ and $Y$ are two independent random variables then
+Ek olarak, daha önce gördüğümüz bir ilişkiyi genişletmek için kovaryansı kullanabiliriz. $X$ ve $Y$'nin iki bağımsız rastgele değişken olduğunu hatırlayın.
 
 $$
 \mathrm{Var}(X+Y) = \mathrm{Var}(X) + \mathrm{Var}(Y).
 $$
 
-With knowledge of covariances, we can expand this relationship.  Indeed, some algebra can show that in general,
+Kovaryans bilgisi ile bu ilişkiyi genişletebiliriz. Aslında, biraz cebir genel olarak şunu gösterebilir:
 
 $$
 \mathrm{Var}(X+Y) = \mathrm{Var}(X) + \mathrm{Var}(Y) + 2\mathrm{Cov}(X, Y).
 $$
 
-This allows us to generalize the variance summation rule for correlated random variables.
+Bu, ilişkili rastgele değişkenler için varyans toplama kuralını genelleştirmemize olanak tanır. 
 
-### Correlation
+### Korelasyon
 
-As we did in the case of means and variances, let us now consider units.  If $X$ is measured in one unit (say inches), and $Y$ is measured in another (say dollars), the covariance is measured in the product of these two units $\text{inches} \times \text{dollars}$.  These units can be hard to interpret.  What we will often want in this case is a unit-less measurement of relatedness.  Indeed, often we do not care about exact quantitative correlation, but rather ask if the correlation is in the same direction, and how strong the relationship is.
+Ortalamalar ve varyanslar durumunda yaptığımız gibi, şimdi birimleri ele alalım. $X$ bir birimde ölçülürse (inç diyelim) ve $Y$ başka bir birimde ölçülürse (dolar diyelim), kovaryans bu iki birimin çarpımı $\text{inches} \times \text{dollars}$ cinsinden ölçülür. Bu birimleri yorumlamak zor olabilir. Bu durumda sık sık isteyeceğimiz şey, birimsiz ilişkililik ölçümüdür. Aslında, çoğu zaman kesin nicel korelasyonu önemsemiyoruz, bunun yerine korelasyonun aynı yönde olup olmadığını ve ilişkinin ne kadar güçlü olduğunu soruyoruz.
 
-To see what makes sense, let us perform a thought experiment.  Suppose that we convert our random variables in inches and dollars to be in inches and cents.  In this case the random variable $Y$ is multiplied by $100$.  If we work through the definition, this means that $\mathrm{Cov}(X, Y)$ will be multiplied by $100$.  Thus we see that in this case a change of units change the covariance by a factor of $100$.  Thus, to find our unit-invariant measure of correlation, we will need to divide by something else that also gets scaled by $100$.  Indeed we have a clear candidate, the standard deviation!  Indeed if we define the *correlation coefficient* to be
+Neyin mantıklı olduğunu görmek için bir düşünce deneyi yapalım. Rastgele değişkenlerimizi inç ve dolar cinsinden inç ve sent olarak dönüştürdüğümüzü varsayalım. Bu durumda rastgele $Y$ değişkeni $100$ ile çarpılır. Tanım üzerinde çalışırsak bu, $\mathrm{Cov}(X, Y)$'nın $100$ ile çarpılacağı anlamına gelir. Böylece, bu durumda birimlerin değişmesinin kovaryansı $100$lük bir çarpan kadar değiştirdiğini görüyoruz. Bu nedenle, birim değişmez korelasyon ölçümümüzü bulmak için, yine $100$ ile ölçeklenen başka bir şeye bölmemiz gerekecek. Gerçekten de bariz bir adayımız var, standart sapma! Böylece, *korelasyon katsayısını* tanımlarsak
 
 $$\rho(X, Y) = \frac{\mathrm{Cov}(X, Y)}{\sigma_{X}\sigma_{Y}},$$
 :eqlabel:`eq_cor_def`
 
-we see that this is a unit-less value.  A little mathematics can show that this number is between $-1$ and $1$ with $1$ meaning maximally positively correlated, whereas $-1$ means maximally negatively correlated.
+Bunun birimsiz bir değer olduğunu görüyoruz. Biraz matematik, bu sayının $-1$ ile $1$ arasında olduğunu ve $1$'in maksimum pozitif korelasyona sahip olduğunu, $-1$'in ise maksimum negatif korelasyon olduğunu gösterebilir.
 
-Returning to our explicit discrete example above, we can see that $\sigma_X = 1$ and $\sigma_Y = 2$, so we can compute the correlation between the two random variables using :eqref:`eq_cor_def` to see that
+Yukarıdaki açık ayrık örneğimize dönersek, $\sigma_X = 1$ ve $\sigma_Y = 2$ olduğunu görebiliriz, böylece iki rastgele değişken arasındaki korelasyonu şunu kullanarak hesaplayabiliriz :eqref:`eq_cor_def`
 
 $$
 \rho(X, Y) = \frac{4p-2}{1\cdot 2} = 2p-1.
