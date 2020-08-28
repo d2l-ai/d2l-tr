@@ -188,99 +188,99 @@ $$
 
 Bu örnekte, bdf ile çalışmanın faydalarından birini, aynı çerçevede sürekli veya ayrık rastgele değişkenlerle veya ötesi ikisinin karışımlarıyla başa çıkma becerisini görüyoruz (Yazı tura atın: tura gerlirse zar atın, yazı gelirse bir dart atışının dart tahtasının merkezinden mesafesini ölçün).
 
-### Means
+### Ortalama
 
-Suppose that we are dealing with a random variables $X$.  The distribution itself can be hard to interpret.  It is often useful to be able to summarize the behavior of a random variable concisely.  Numbers that help us capture the behavior of a random variable are called *summary statistics*.  The most commonly encountered ones are the *mean*, the *variance*, and the *standard deviation*.
+Rastgele değişkenler, $X$, ile uğraştığımızı varsayalım. Dağılımın kendisini yorumlamak zor olabilir. Bir rastgele değişkenin davranışını kısaca özetleyebilmek genellikle yararlıdır. Rastgele bir değişkenin davranışını özetlememize yardımcı olan sayılara *özet istatistikleri* denir. En sık karşılaşılanlar *ortalama*, *varyans (değişinti)* ve *standart sapmadır*.
 
-The *mean* encodes the average value of a random variable.  If we have a discrete random variable $X$, which takes the values $x_i$ with probabilities $p_i$, then the mean is given by the weighted average: sum the values times the probability that the random variable takes on that value:
+*Ortalama*, rastgele bir değişkenin ortalama değerini kodlar. $p_i$ olasılıklarıyla $x_i$ değerlerini alan ayrık bir rastgele değişkenimiz, $X$, varsa, ortalama, ağırlıklı ortalama ile verilir: Rastgele değişken değerlerinin bu değerleri alma olasılığıyla çarpımlarının toplamıdır:
 
 $$\mu_X = E[X] = \sum_i x_i p_i.$$
 :eqlabel:`eq_exp_def`
 
-The way we should interpret the mean (albeit with caution) is that it tells us essentially where the random variable tends to be located.
+Ortalamayı yorumlamamız gereken anlam (dikkatli olarak), bize rastgele değişkenin nerede bulunma eğiliminde olduğunu söylemesidir.
 
-As a minimalistic example that we will examine throughout this section, let us take $X$ to be the random variable which takes the value $a-2$ with probability $p$, $a+2$ with probability $p$ and $a$ with probability $1-2p$.  We can compute using :eqref:`eq_exp_def` that, for any possible choice of $a$ and $p$, the mean is
+Bu bölümde inceleyeceğimiz minimalist bir örnek olarak, $a-2$ değerini $p$, $a + 2$ değerini $p$ ve $a$ değerini $1-2p$ olasılıkla alan rastgele değişken olarak $X$'i alalım. :eqref:`eq_exp_def`'yi kullanarak, olası herhangi bir $a$ ve $p$ seçimi için ortalama hesaplayabiliriz:
 
 $$
 \mu_X = E[X] = \sum_i x_i p_i = (a-2)p + a(1-2p) + (a+2)p = a.
 $$
 
-Thus we see that the mean is $a$.  This matches the intuition since $a$ is the location around which we centered our random variable.
+Böylece ortalamanın $a$ olduğunu görüyoruz. Rastgele değişkenimizi ortaladığımız konum $a$ olduğundan, bu sezgimizle eşleşir.
 
-Because they are helpful, let us summarize a few properties.
+Yararlı oldukları için birkaç özelliği özetleyelim.
 
-* For any random variable $X$ and numbers $a$ and $b$, we have that $\mu_{aX+b} = a\mu_X + b$.
-* If we have two random variables $X$ and $Y$, we have $\mu_{X+Y} = \mu_X+\mu_Y$.
+* Herhangi bir rastgele değişken $X$ ve $a$ ve $b$ sayıları için, $\mu_{aX + b} = a\mu_X + b$ var.
+* İki rastgele değişkenimiz varsa $X$ ve $Y$, $\mu_{X + Y} = \mu_X + \mu_Y$ olur.
 
-Means are useful for understanding the average behavior of a random variable, however the mean is not sufficient to even have a full intuitive understanding.  Making a profit of $\$10 \pm \$1$ per sale is very different from making $\$10 \pm \$15$ per sale despite having the same average value.  The second one has a much larger degree of fluctuation, and thus represents a much larger risk.  Thus, to understand the behavior of a random variable, we will need at minimum one more measure: some measure of how widely a random variable fluctuates.
+Ortalamalar, rastgele bir değişkenin ortalama davranışını anlamak için yararlıdır, ancak ortalama, tam bir sezgisel anlayışa sahip olmak için bile yeterli değildir. Satış başına $10\$ \pm 1\$$ kar etmek, aynı ortalama değere sahip olmasına rağmen satış başına $10\$ \pm 15\$$ kar etmekten çok farklıdır. İkincisi çok daha büyük bir dalgalanma derecesine sahiptir ve bu nedenle çok daha büyük bir riski temsil eder. Bu nedenle, rastgele bir değişkenin davranışını anlamak için en az bir ölçüye daha ihtiyacımız olacak: Bir rasgele değişkenin ne kadar geniş dalgalandığına dair bir ölçü.
 
-### Variances
+### Varyanslar
 
-This leads us to consider the *variance* of a random variable.  This is a quantitative measure of how far a random variable deviates from the mean.  Consider the expression $X - \mu_X$.  This is the deviation of the random variable from its mean.  This value can be positive or negative, so we need to do something to make it positive so that we are measuring the magnitude of the deviation.
+Bu bizi rastgele bir değişkenin *varyansını* düşünmeye götürür. Bu, rastgele bir değişkenin ortalamadan ne kadar saptığının nicel bir ölçüsüdür. $X - \mu_X $ifadesini düşünün. Bu, rastgele değişkenin ortalamasından sapmasıdır. Bu değer pozitif ya da negatif olabilir, bu yüzden onu pozitif yapmak için bir şeyler yapmalıyız ki böylece sapmanın büyüklüğünü ölçebilelim.
 
-A reasonable thing to try is to look at $\left|X-\mu_X\right|$, and indeed this leads to a useful quantity called the *mean absolute deviation*, however due to connections with other areas of mathematics and statistics, people often use a different solution.
+Denenecek makul bir şey, $\left|X-\mu_X\right|$'a bakmaktır ve bu gerçekten de *ortalama mutlak sapma* olarak adlandırılan faydalı bir miktara yol açar, ancak diğer matematik ve istatistik alanlarıyla olan bağlantılarından dolayı, insanlar genellikle farklı bir çözüm kullanır.
 
-In particular, they look at $(X-\mu_X)^2.$  If we look at the typical size of this quantity by taking the mean, we arrive at the variance
+Özellikle $(X-\mu_X)^2$'ye bakarlar. Bu miktarın tipik boyutuna ortalamasını alarak bakarsak, varyansa ulaşırız:
 
 $$\sigma_X^2 = \mathrm{Var}(X) = E\left[(X-\mu_X)^2\right] = E[X^2] - \mu_X^2.$$
 :eqlabel:`eq_var_def`
 
-The last equality in :eqref:`eq_var_def` holds by expanding out the definition in the middle, and applying the properties of expectation.
+:eqref:`eq_var_def`'deki son eşitlik ortadaki tanımı genişleterek ve beklentinin özelliklerini uygulayarak devam eder.
 
-Let us look at our example where $X$ is the random variable which takes the value $a-2$ with probability $p$, $a+2$ with probability $p$ and $a$ with probability $1-2p$.  In this case $\mu_X = a$, so all we need to compute is $E\left[X^2\right]$.  This can readily be done:
+$X$'in $p$ olasılıkla $a-2$ değerini, $p$ olasılıkla $a + 2$ ve $1-2p$ olasılıkla $a$ değerini alan rastgele değişken olduğu örneğimize bakalım. Bu durumda $\mu_X = a$'dır, dolayısıyla hesaplamamız gereken tek şey $E\left[X^2\right]$'dir. Bu kolaylıkla yapılabilir:
 
 $$
 E\left[X^2\right] = (a-2)^2p + a^2(1-2p) + (a+2)p = a^2 + 8p.
 $$
 
-Thus, we see that by :eqref:`eq_var_def` our variance is
+Böylece görürüz ki :eqref:`eq_var_def` tanımıyla varyansımız:
 
 $$
 \sigma_X^2 = \mathrm{Var}(X) = E[X^2] - \mu_X^2 = a^2 + 8p - a^2 = 8p.
 $$
 
-This result again makes sense.  The largest $p$ can be is $1/2$ which corresponds to picking $a-2$ or $a+2$ with a coin flip.  The variance of this being $4$ corresponds to the fact that both $a-2$ and $a+2$ are $2$ units away from the mean, and $2^2 = 4$.  On the other end of the spectrum, if $p=0$, this random variable always takes the value $0$ and so it has no variance at all.
+Bu sonuç yine mantıklıdır. $p$ en büyük  $1/2$ olabilir ve bu da yazı tura ile $a-2$ veya $a + 2$ seçmeye karşılık gelir. Bunun $4$ olması, hem $a-2$ hem de $a + 2$'nin ortalamadan $2$ birim uzakta ve $2^2 = 4$ olduğu gerçeğine karşılık gelir. Spektrumun (izgenin) diğer ucunda, eğer $p = 0$ ise, bu rasgele değişken her zaman $0$ değerini alır ve bu nedenle hiçbir varyansı yoktur.
 
-We will list a few properties of variance below:
+Aşağıda varyansın birkaç özelliğini listeleyeceğiz:
 
-* For any random variable $X$, $\mathrm{Var}(X) \ge 0$, with $\mathrm{Var}(X) = 0$ if and only if $X$ is a constant.
-* For any random variable $X$ and numbers $a$ and $b$, we have that $\mathrm{Var}(aX+b) = a^2\mathrm{Var}(X)$.
-* If we have two *independent* random variables $X$ and $Y$, we have $\mathrm{Var}(X+Y) = \mathrm{Var}(X) + \mathrm{Var}(Y)$.
+* Herhangi bir rastgele değişken için $X$, $\mathrm{Var}(X) \ ge 0$, ancak ve ancak $X$ bir sabitse $\mathrm {Var}(X) = 0 $'dır.
+* Herhangi bir rastgele değişken $X$ ve $a$ ve $b$ sayıları için, $\mathrm{Var}(aX + b) = a^2 \mathrm{Var}(X)$'dır.
+* İki *bağımsız* rastgele değişkenimiz varsa, $X$ ve $Y$, $\mathrm{Var}(X + Y) = \mathrm{Var}(X) + \mathrm{Var}(Y)$'dir.
 
-When interpreting these values, there can be a bit of a hiccup.  In particular, let us try imagining what happens if we keep track of units through this computation.  Suppose that we are working with the star rating assigned to a product on the web page.  Then $a$, $a-2$, and $a+2$ are all measured in units of stars.  Similarly, the mean $\mu_X$ is then also measured in stars (being a weighted average).  However, if we get to the variance, we immediately encounter an issue, which is we want to look at $(X-\mu_X)^2$, which is in units of *squared stars*.  This means that the variance itself is not comparable to the original measurements.  To make it interpretable, we will need to return to our original units.
+Bu değerleri yorumlarken biraz tutukluk olabilir. Özellikle, bu hesaplama yoluyla birimleri takip edersek ne olacağını hayal edelim. Web sayfasındaki bir ürüne atanan yıldız derecelendirmesiyle çalıştığımızı varsayalım. Daha sonra $a$, $a-2$ ve $a + 2$ değerlerinin tümü yıldız birimleriyle ölçülür. Benzer şekilde, ortalama, $\mu_X$, daha sonra yıldızlarla da ölçülür (ağırlıklı ortalama). Bununla birlikte, varyansa ulaşırsak, hemen bir sorunla karşılaşırız, bu da *yıldız kare* birimleri cinsinden $(X-\mu_X)^2$'ye bakmak istediğimizdendir. Bu, varyansın kendisinin orijinal ölçümlerle karşılaştırılamayacağı anlamına gelir. Bunu yorumlanabilir hale getirmek için orijinal birimlerimize dönmemiz gerekecek.
 
-### Standard Deviations
+### Standart Sapmalar
 
-This summary statistics can always be deduced from the variance by taking the square root!  Thus we define the *standard deviation* to be
+Bu özet istatistik, karekök alınarak varyanstan her zaman çıkarılabilir! Böylece *standart sapmayı* tanımlıyoruz:
 
 $$
 \sigma_X = \sqrt{\mathrm{Var}(X)}.
 $$
 
-In our example, this means we now have the standard deviation is $\sigma_X = 2\sqrt{2p}$.  If we are dealing with units of stars for our review example, $\sigma_X$ is again in units of stars.
+Örneğimizde bu, standart sapmanın $\sigma_X = 2\sqrt{2p}$ olduğu anlamına gelir. İnceleme örneğimiz için yıldız birimleriyle uğraşıyorsak, $\sigma_X$ yine yıldız birimindedir.
 
-The properties we had for the variance can be restated for the standard deviation.
+Varyans için sahip olduğumuz özellikler, standart sapma için yeniden ifade edilebilir.
 
-* For any random variable $X$, $\sigma_{X} \ge 0$.
-* For any random variable $X$ and numbers $a$ and $b$, we have that $\sigma_{aX+b} = |a|\sigma_{X}$
-* If we have two *independent* random variables $X$ and $Y$, we have $\sigma_{X+Y} = \sqrt{\sigma_{X}^2 + \sigma_{Y}^2}$.
+* Herhangi bir rastgele değişken $X$ için , $\sigma_{X} \ge 0$'dır.
+* Herhangi bir rastgele değişken $X$ ve $a$ ve $b$ sayıları için, $\sigma_{aX+b} = |a|\sigma_{X}$'dır.
+* İki *bağımsız* rastgele değişkenimiz, $ X$ ve $Y$, varsa, $\sigma_{X+Y} = \sqrt{\sigma_{X}^2 + \sigma_{Y}^2}$ olur.
 
-It is natural at this moment to ask, "If the standard deviation is in the units of our original random variable, does it represent something we can draw with regards to that random variable?"  The answer is a resounding yes!  Indeed much like the mean told we the typical location of our random variable, the standard deviation gives the typical range of variation of that random variable.  We can make this rigorous with what is known as Chebyshev's inequality:
+Şu anda şunu sormak doğaldır, "Eğer standart sapma orijinal rasgele değişkenimizin birimlerindeyse, bu rasgele değişkenle ilgili olarak çizebileceğimiz bir şeyi temsil eder mi?" Cevap yankılanan bir evettir! Aslında ortalamanın bize rastgele değişkenimizin tipik konumunu söylediğine benzer şekilde, standart sapma o rastgele değişkenin tipik varyasyon aralığını verir. Bunu, Chebyshev eşitsizliği olarak bilinen şeyle sıkı hale getirebiliriz:
 
 $$P\left(X \not\in [\mu_X - \alpha\sigma_X, \mu_X + \alpha\sigma_X]\right) \le \frac{1}{\alpha^2}.$$
 :eqlabel:`eq_chebyshev`
 
-Or to state it verbally in the case of $\alpha=10$, $99\%$ of the samples from any random variable fall within $10$ standard deviations of the mean.  This gives an immediate interpretation to our standard summary statistics.
+Veya sözlü olarak ifade etmek gerekirse, $\alpha = 10$ durumunda, herhangi bir rasgele değişkenden alınan örneklerin $\%99$'u, ortalamadan $10$ standart sapmalık aralığa düşer. Bu, standart özet istatistiklerimize anında bir anlam sağlar.
 
-To see how this statement is rather subtle, let us take a look at our running example again where  $X$ is the random variable which takes the value $a-2$ with probability $p$, $a+2$ with probability $p$ and $a$ with probability $1-2p$.  We saw that the mean was $a$ and the standard deviation was $2\sqrt{2p}$.  This means, if we take Chebyshev's inequality :eqref:`eq_chebyshev` with $\alpha = 2$, we see that the expression is
+Bu ifadenin ne kadar ince olduğunu görmek için, $X$'in $p$ olasılıkla $a-2$, $p$ olasılıkla $a+2$ ve $1-2p$ olasılıkla $a$ değerini alan rastgele değişken olduğu, mevcut örneğimize tekrar bakalım. $. Ortalamanın $a$ ve standart sapmanın $2\sqrt{2p}$ olduğunu gördük. Bu demektir ki, Chebyshev'in eşitsizliğini, :eqref:`eq_chebyshev`, $\alpha = 2$ ile alırsak, ifadenin şöyle olduğunu görürüz:
 
 $$
 P\left(X \not\in [a - 4\sqrt{2p}, a + 4\sqrt{2p}]\right) \le \frac{1}{4}.
 $$
 
-This means that $75\%$ of the time, this random variable will fall within this interval for any value of $p$.  Now, notice that as $p \rightarrow 0$, this interval also converges to the single point $a$.  But we know that our random variable takes the values $a-2, a$, and $a+2$ only so eventually we can be certain $a-2$ and $a+2$ will fall outside the interval!  The question is, at what $p$ does that happen.  So we want to solve: for what $p$ does $a+4\sqrt{2p} = a+2$, which is solved when $p=1/8$, which is *exactly* the first $p$ where it could possibly happen without violating our claim that no more than $1/4$ of samples from the distribution would fall outside the interval ($1/8$ to the left, and $1/8$ to the right).
+Bu, zamanın $\%75$'inde, bu rastgele değişkenin herhangi bir $p$ değeri için bu aralığa denk geleceği anlamına gelir. Şimdi, $p \rightarrow 0$ olarak, bu aralığın da tek bir $a$ noktasına yakınsadığına dikkat edin. Ancak rasgele değişkenimizin yalnızca $a-2, a$ ve $a + 2$ değerlerini aldığını biliyoruz, bu nedenle sonunda $a-2$ ve $a + 2$ aralığının dışında kalacağından emin olabiliriz! Soru, bunun hangi $p$'de olduğu. Bu yüzden bunu çözmek istiyoruz: Hangi $p$'de $a + 4 \sqrt{2p} = a + 2$ yapar, ki bu $p = 1/8$ olduğunda çözülür, bu da dağılımdan $1/4$'ten fazla örneklemin aralığın dışında kalmayacağı iddiamızı ihlal etmeden gerçekleştirebilecek *tam olarak* ilk $p$'dir ($1/8$ sola ve $1/8$ sağa).
 
-Let us visualize this.  We will show the probability of getting the three values as three vertical bars with height proportional to the probability.  The interval will be drawn as a horizontal line in the middle.  The first plot shows what happens for $p > 1/8$ where the interval safely contains all points.
+Bunu görselleştirelim. Üç değeri alma olasılığını olasılıkla orantılı yüksekliği olan üç dikey çubuk olarak göstereceğiz. Aralık ortada yatay bir çizgi olarak çizilecektir. İlk grafik, aralığın güvenli bir şekilde tüm noktaları içerdiği $p > 1/8$ için ne olduğunu gösterir.
 
 ```{.python .input}
 # Define a helper to plot these figures
@@ -325,7 +325,7 @@ def plot_chebyshev(a, p):
 plot_chebyshev(0.0, torch.tensor(0.2))
 ```
 
-The second shows that at $p = 1/8$, the interval exactly touches the two points.  This shows that the inequality is *sharp*, since no smaller interval could be taken while keeping the inequality true.
+İkinci görsel, $p = 1/8$'de aralığın tam olarak iki noktaya dokunduğunu gösterir. Bu, eşitsizliğin doğru tutulurken daha küçük bir aralık alınamayacağı için eşitsizliğin *keskin* olduğunu gösterir.
 
 ```{.python .input}
 # Plot interval when p = 1/8
@@ -338,7 +338,7 @@ plot_chebyshev(0.0, 0.125)
 plot_chebyshev(0.0, torch.tensor(0.125))
 ```
 
-The third shows that for $p < 1/8$ the interval only contains the center.  This does not invalidate the inequality since we only needed to ensure that no more than $1/4$ of the probability falls outside the interval, which means that once $p < 1/8$, the two points at $a-2$ and $a+2$ can be discarded.
+Üçüncüsü, $p < 1/8$ için aralığın yalnızca merkezi içerdiğini gösterir. Bu, eşitsizliği geçersiz kılmaz, çünkü yalnızca olasılığın $1/4$'ten fazlasının aralığın dışında kalmamasını sağlamamız gerekiyor, yani $p < 1/8$ olduğunda, iki nokta $a-2$ ve $a + 2$ yok sayılabilir edilebilir.
 
 ```{.python .input}
 # Plot interval when p < 1/8
