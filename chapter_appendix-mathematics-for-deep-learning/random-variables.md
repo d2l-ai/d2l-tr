@@ -351,9 +351,9 @@ plot_chebyshev(0.0, 0.05)
 plot_chebyshev(0.0, torch.tensor(0.05))
 ```
 
-### Means and Variances in the Continuum
+### Süreklilikteki Ortalamalar ve Varyanslar
 
-This has all been in terms of discrete random variables, but the case of continuous random variables is similar.  To intuitively understand how this works, imagine that we split the real number line into intervals of length $\epsilon$ given by $(\epsilon i, \epsilon (i+1)]$.  Once we do this, our continuous random variable has been made discrete and we can use :eqref:`eq_exp_def` say that
+Bunların tümü ayrık rastgele değişkenler açısından olmuştur, ancak sürekli rastgele değişkenler durumu benzerdir. Bunun nasıl çalıştığını sezgisel olarak anlamak için, $(\epsilon i, \epsilon (i+1)]$ ile verilen gerçel sayı doğrusunu $\epsilon$ uzunluğundaki aralıklara böldüğümüzü hayal edin. Bunu yaptıktan sonra, sürekli rastgele değişkenimiz artık ayrık sayılır ve şunu kullanabiliriz :eqref:`eq_exp_def` .
 
 $$
 \begin{aligned}
@@ -362,19 +362,19 @@ $$
 \end{aligned}
 $$
 
-where $p_X$ is the density of $X$.  This is an approximation to the integral of $xp_X(x)$, so we can conclude that
+Burada $p_X$, $X$'in yoğunluğudur. Bu, $xp_X(x)$ integralinin yaklaşıklama bir değeridir, dolayısıyla şunu çıkarabiliriz:
 
 $$
 \mu_X = \int_{-\infty}^\infty xp_X(x) \; dx.
 $$
 
-Similarly, using :eqref:`eq_var_def` the variance can be written as
+Benzer şekilde :eqref:`eq_var_def` kullanılarak varyans şöyle yazılabilir:
 
 $$
 \sigma^2_X = E[X^2] - \mu_X^2 = \int_{-\infty}^\infty x^2p_X(x) \; dx - \left(\int_{-\infty}^\infty xp_X(x) \; dx\right)^2.
 $$
 
-Everything stated above about the mean, the variance, and the standard deviation still applies in this case.  For instance, if we consider the random variable with density
+Yukarıda ortalama, varyans ve standart sapma hakkında belirtilen her şey bu durumda hala geçerlidir. Örneğin, aşağıdaki yoğunluğa sahip rastgele değişkeni düşünelim:
 
 $$
 p(x) = \begin{cases}
@@ -383,19 +383,19 @@ p(x) = \begin{cases}
 \end{cases}
 $$
 
-we can compute
+Hesaplabiliriz ki:
 
 $$
 \mu_X = \int_{-\infty}^\infty xp(x) \; dx = \int_0^1 x \; dx = \frac{1}{2}.
 $$
 
-and
+ve
 
 $$
 \sigma_X^2 = \int_{-\infty}^\infty x^2p(x) \; dx - \left(\frac{1}{2}\right)^2 = \frac{1}{3} - \frac{1}{4} = \frac{1}{12}.
 $$
 
-As a warning, let us examine one more example, known as the *Cauchy distribution*.  This is the distribution with p.d.f. given by
+Bir uyarı olarak, *Cauchy dağılımı* olarak bilinen bir örneği daha inceleyelim. Aşağıda o.y.f.'si verilen dağılımdır. 
 
 $$
 p(x) = \frac{1}{1+x^2}.
@@ -418,15 +418,15 @@ p = 1 / (1 + x**2)
 d2l.plot(x, p, 'x', 'p.d.f.')
 ```
 
-This function looks innocent, and indeed consulting a table of integrals will show it has area one under it, and thus it defines a continuous random variable.
+Bu fonksiyon masum görünür ve bir integral tablosuna başvurmak, onun altında birim alan olduğunu gösterecek ve böylece sürekli bir rastgele değişken tanımlayacaktır.
 
-To see what goes astray, let us try to compute the variance of this.  This would involve using :eqref:`eq_var_def` computing
+Neyin yanlış gittiğini görmek için, bunun varyansını hesaplamaya çalışalım. Hesaplama şunu kullanmayı içerir :eqref:`eq_var_def` 
 
 $$
 \int_{-\infty}^\infty \frac{x^2}{1+x^2}\; dx.
 $$
 
-The function on the inside looks like this:
+İç kısımdaki işlev şuna benzer:
 
 ```{.python .input}
 # Plot the integrand needed to compute the variance
@@ -445,66 +445,66 @@ p = x**2 / (1 + x**2)
 d2l.plot(x, p, 'x', 'integrand')
 ```
 
-This function clearly has infinite area under it since it is essentially the constant one with a small dip near zero, and indeed we could show that
+Bu fonksiyonun altında sonsuz bir alan vardır, çünkü esasen sıfırda çökerken diğer yerlerde bir sabittir ve bunu gösterebiliriz.
 
 $$
 \int_{-\infty}^\infty \frac{x^2}{1+x^2}\; dx = \infty.
 $$
 
-This means it does not have a well-defined finite variance.
+Bu, iyi tanımlanmış bir sonlu varyansa sahip olmadığı anlamına gelir.
 
-However, looking deeper shows an even more disturbing result.  Let us try to compute the mean using :eqref:`eq_exp_def`.  Using the change of variables formula, we see
+Ancak daha derin bakmak daha da rahatsız edici bir sonuç gösterir. Ortalama değerini :eqref:`eq_exp_def` kullanarak hesaplamaya çalışalım. Değişken değişikliği formülünü kullanalım,
 
 $$
 \mu_X = \int_{-\infty}^{\infty} \frac{x}{1+x^2} \; dx = \frac{1}{2}\int_1^\infty \frac{1}{u} \; du.
 $$
 
-The integral inside is the definition of the logarithm, so this is in essence $\log(\infty) = \infty$, so there is no well-defined average value either!
+İçerideki integral, logaritmanın tanımıdır, dolayısıyla bu özünde $\log(\infty) = \infty$'dur, dolayısıyla iyi tanımlanmış bir ortalama değer de yoktur!
 
-Machine learning scientists define their models so that we most often do not need to deal with these issues, and will in the vast majority of cases deal with random variables with well-defined means and variances.  However, every so often random variables with *heavy tails* (that is those random variables where the probabilities of getting large values are large enough to make things like the mean or variance undefined) are helpful in modeling physical systems, thus it is worth knowing that they exist.
+Makine öğrenmesi bilimcileri, modellerini, çoğu zaman bu sorunlarla uğraşmamıza gerek kalmayacak şekilde tanımlarlar, öyle ki vakaların büyük çoğunluğunda iyi tanımlanmış araçlar ve varyanslarla rastgele değişkenlerle ilgileneceğiz. Bununla birlikte, *ağır kuyruklu* rastgele değişkenler (yani, büyük değerler alma olasılıklarının ortalama veya varyans gibi şeyleri tanımlanmamış hale getirecek kadar büyük olduğu rastgele değişkenler) fiziksel sistemleri modellemede yardımcı olur, bu nedenle var olduklarını bilmeye değerdir.
 
-### Joint Density Functions
+### Bileşik Yoğunluk İşlevleri
 
-The above work all assumes we are working with a single real valued random variable.  But what if we are dealing with two or more potentially highly correlated random variables?  This circumstance is the norm in machine learning: imagine random variables like $R_{i, j}$ which encode the red value of the pixel at the $(i, j)$ coordinate in an image, or $P_t$ which is a random variable given by a stock price at time $t$.  Nearby pixels tend to have similar color, and nearby times tend to have similar prices.  We cannot treat them as separate random variables, and expect to create a successful model (we will see in :numref:`sec_naive_bayes` a model that under-performs due to such an assumption).  We need to develop the mathematical language to handle these correlated continuous random variables.
+Yukarıdaki çalışmanın tümü, tek bir gerçel değerli rastgele değişkenle çalıştığımızı varsayar. Peki ya iki veya daha fazla potansiyel olarak yüksek düzeyde ilişkili rastgele değişkenle uğraşıyorsak? Bu durum, makine öğrenmesinde normaldir: Bir görüntüdeki $(i, j)$ koordinatındaki pikselin kırmızı değerini kodlayan $R_{i, j}$ gibi rastgele değişkenler veya $t$ zamanında hisse senedi fiyatı tarafından verilen rastgele değişken olan $P_t$. Yakındaki pikseller benzer renge sahip olma eğilimindedir ve yakın zamanlardakiler benzer fiyatlara sahip olma eğilimindedir. Bunları ayrı rastgele değişkenler olarak ele alamayız ve başarılı bir model oluşturmayı bekleyemeyiz (:numref:`sec_naive_bayes`da böyle bir varsayım nedeniyle düşük performans gösteren bir model göreceğiz). Bu ilişkili sürekli rastgele değişkenleri işlemek için matematik dili geliştirmemiz gerekiyor.
 
-Thankfully, with the multiple integrals in :numref:`sec_integral_calculus` we can develop such a language.  Suppose that we have, for simplicity, two random variables $X, Y$ which can be correlated.  Then, similar to the case of a single variable, we can ask the question:
+Neyse ki :numref:`sec_integral_calculus`deki çoklu integraller ile böyle bir dil geliştirebiliriz. Basitlik açısından, ilişkilendirilebilecek iki $X, Y$ rastgele değişkenimiz olduğunu varsayalım. Sonra, tek bir değişken durumunda olduğu gibi, şu soruyu sorabiliriz:
 
 $$
 P(X \;\text{is in an}\; \epsilon \text{-sized interval around}\; x \; \text{and} \;Y \;\text{is in an}\; \epsilon \text{-sized interval around}\; y ).
 $$
 
-Similar reasoning to the single variable case shows that this should be approximately
+Tek değişkenli duruma benzer akıl yürütme, bunun yaklaşık olması gerektiğini gösterir:
 
 $$
 P(X \;\text{is in an}\; \epsilon \text{-sized interval around}\; x \; \text{and} \;Y \;\text{is in an}\; \epsilon \text{-sized interval around}\; y ) \approx \epsilon^{2}p(x, y),
 $$
 
-for some function $p(x, y)$.  This is referred to as the joint density of $X$ and $Y$.  Similar properties are true for this as we saw in the single variable case. Namely:
+bu bazı işlevler, $p(x, y)$, içindir. Bu, $X$ ve $Y$ bileşik yoğunluğu olarak adlandırılır. Tek değişken durumunda gördüğümüz gibi benzer özellikler bunun için doğrudur. Yani:
 
 * $p(x, y) \ge 0$;
 * $\int _ {\mathbb{R}^2} p(x, y) \;dx \;dy = 1$;
 * $P((X, Y) \in \mathcal{D}) = \int _ {\mathcal{D}} p(x, y) \;dx \;dy$.
 
-In this way, we can deal with multiple, potentially correlated random variables.  If we wish to work with more than two random variables, we can extend the multivariate density to as many coordinates as desired by considering $p(\mathbf{x}) = p(x_1, \ldots, x_n)$.  The same properties of being non-negative, and having total integral of one still hold.
+Bu şekilde, birden çok, potansiyel olarak ilişkili rastgele değişkenlerle başa çıkabiliriz. İkiden fazla rastgele değişkenle çalışmak istersek, çok değişkenli yoğunluğu, $p(\mathbf{x}) = p(x_1, \ldots, x_n)$'yi dikkate alarak istediğimiz kadar çok koordinata genişletebiliriz. Negatif olmama ve birinin toplam integraline sahip olma gibi aynı özellikler hala geçerlidir.
 
-### Marginal Distributions
-When dealing with multiple variables, we oftentimes want to be able to ignore the relationships and ask, "how is this one variable distributed?"  Such a distribution is called a *marginal distribution*.
+### Marjinal Dağılımlar
+Birden çok değişkenle uğraşırken, çoğu zaman ilişkileri görmezden gelmek ve "Bu tek değişken nasıl dağıtılır?" diye sormak isteriz. Böyle bir dağılım, *marjinal dağılım* olarak adlandırılır.
 
-To be concrete, let us suppose that we have two random variables $X, Y$ with joint density given by $p _ {X, Y}(x, y)$.  We will be using the subscript to indicate what random variables the density is for.  The question of finding the marginal distribution is taking this function, and using it to find $p _ X(x)$.
+Somut olmak gerekirse, bileşik yoğunluğu $ p_{X, Y}(x, y)$ ile verilen iki rastgele değişkenimiz, $X, Y$, olduğunu varsayalım. Yoğunluğun hangi rastgele değişkenler için olduğunu belirtmek için alt indis kullanacağız. Marjinal dağılımı bulma sorusu bu işlevi alıp $ p_X(x)$ bulmak için kullanmaktır.
 
-As with most things, it is best to return to the intuitive picture to figure out what should be true.  Recall that the density is the function $p _ X$ so that
+Çoğu şeyde olduğu gibi, neyin doğru olması gerektiğini anlamak için sezgisel resmimize dönmek en iyisidir. Yoğunluğun $p_X$ işlevi olduğunu hatırlayın, böylece
 
 $$
 P(X \in [x, x+\epsilon]) \approx \epsilon \cdot p _ X(x).
 $$
 
-There is no mention of $Y$, but if all we are given is $p _{X, Y}$, we need to include $Y$ somehow. We can first observe that this is the same as
+$Y$'den söz edilmiyor, ancak bize verilen tek şey $p_{X, Y}$ ise, bir şekilde $Y$ eklememiz gerekir. İlk önce bunun aynı olduğunu gözlemleyelim:
 
 $$
 P(X \in [x, x+\epsilon] \text{, and } Y \in \mathbb{R}) \approx \epsilon \cdot p _ X(x).
 $$
 
-Our density does not directly tell us about what happens in this case, we need to split into small intervals in $y$ as well, so we can write this as
+Yoğunluğumuz bize bu durumda ne olduğunu doğrudan söylemiyor, $y$ cinsinden de küçük aralıklara bölmemiz gerekiyor, böylece bunu şu şekilde yazabiliriz:
 
 $$
 \begin{aligned}
@@ -513,10 +513,10 @@ $$
 \end{aligned}
 $$
 
-![By summing along the columns of our array of probabilities, we are able to obtain the marginal distribution for just the random variable represented along the $x$-axis.](../img/Marginal.svg)
+![Olasılık dizimizin sütunları boyunca toplayarak, sadece $x$ ekseni boyunca temsil edilen rastgele değişken için marjinal dağılımı elde edebiliriz.](../img/Marginal.svg)
 :label:`fig_marginal`
 
-This tells us to add up the value of the density along a series of squares in a line as is shown in :numref:`fig_marginal`.  Indeed, after canceling one factor of epsilon from both sides, and recognizing the sum on the right is the integral over $y$, we can conclude that
+Bu bize, :numref:`fig_marginal`'deki gibi bir satırdaki bir dizi kare boyunca yoğunluk değerini toplamamızı söyler. Aslında, her iki taraftan bir epsilon çarpanı iptal ettikten ve sağdaki toplamın $y$'nin üzerindeki integral olduğunu gördükten sonra, şu sonuca varabiliriz:
 
 $$
 \begin{aligned}
@@ -525,19 +525,19 @@ $$
 \end{aligned}
 $$
 
-Thus we see
+Böylece görürüz ki:
 
 $$
 p _ X(x) = \int_{-\infty}^\infty p_{X, Y}(x, y) \; dy.
 $$
 
-This tells us that to get a marginal distribution, we integrate over the variables we do not care about.  This process is often referred to as *integrating out* or *marginalized out* the unneeded variables.
+Bu bize, marjinal bir dağılım elde etmek için umursamadığımız değişkenlerin integralini almamızı söyler. Bu sürece genellikle gereksiz değişkenleri *integralle dışarı atma* veya *marjinalleştirme* adı verilir.
 
-### Covariance
+### Kovaryans (Eşdeğişirlik)
 
-When dealing with multiple random variables, there is one additional summary statistic which is helpful to know: the *covariance*.  This measures the degree that two random variable fluctuate together.
+Birden fazla rastgele değişkenle uğraşırken, bilinmesinin ileride yardımcı olacağı ek bir özet istatistik vardır: *kovaryans*. Bu, iki rastgele değişkenin birlikte dalgalanma derecesini ölçer.
 
-Suppose that we have two random variables $X$ and $Y$, to begin with, let us suppose they are discrete, taking on values $(x_i, y_j)$ with probability $p_{ij}$.  In this case, the covariance is defined as
+Başlamak için $X$ ve $Y$ olmak üzere iki rasgele değişkenimiz olduğunu varsayalım, bunların ayrık olduklarını varsayalım, $p_{ij}$ olasılıkla $(x_i, y_j)$ değerlerini alalım. Bu durumda kovaryans şu şekilde tanımlanır:
 
 $$\sigma_{XY} = \mathrm{Cov}(X, Y) = \sum_{i, j} (x_i - \mu_X) (y_j-\mu_Y) p_{ij}. = E[XY] - E[X]E[Y].$$
 :eqlabel:`eq_cov_def`
