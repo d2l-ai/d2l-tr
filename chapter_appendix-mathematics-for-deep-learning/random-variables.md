@@ -732,7 +732,7 @@ Aslında, normların standart sapmalarla ilişkili olduğunu ve korelasyonların
 1. $x \ge 1$ için yoğunluğu $p(x) = \frac{1}{x ^ 2}$ ve aksi takdirde $p(x) = 0$ ile verilen rastgele değişkenimiz olduğunu varsayalım. $P(X> 2)$ nedir?
 2. Laplace dağılımı, yoğunluğu $p(x = \frac{1}{2}e^{-|x|} ile verilen rastgele bir değişkendir. Bu fonksiyonun ortalaması ve standart sapması nedir? Bir ipucu, $\int_0^\infty xe^{-x} \; dx = 1$ ve $\int_0^\infty x^2e^{-x} \; dx = 2$.
 3. Sokakta size doğru yürüyorum ve "Ortalaması $1 $, standart sapması $2$ olan rastgele bir değişkenim var ve örneklerimin $\% 25$'inin $9$'dan daha büyük bir değer aldığını gözlemledim." dedim. Bana inanır mısınız? Neden evet ya da neden hayır?
-4. $x, y \in [0,1]$ için $p_{XY}(x, y) = 4xy$ ve aksi takdirde $p_{XY}(x, y) = 0$ ile bileşik yoğunlukları verilen iki rastgele değişkenimizin $X, Y$ olduğunu varsayalım $X$ ve $Y$'nin kovaryansı nedir?
+4. $x, y \in [0,1]$ için $p_{XY}(x, y) = 4xy$ ve aksi takdirde $p_{XY}(x, y) = 0$ ile bileşik yoğunlukları verilen iki rastgele değişkenimizin $X, Y$ olduğunu varsayalım. $X$ ve $Y$'nin kovaryansı nedir?
 
 :begin_tab:`mxnet`
 [Tartışmalar](https://discuss.d2l.ai/t/415)
