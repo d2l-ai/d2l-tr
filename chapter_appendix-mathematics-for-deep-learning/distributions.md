@@ -98,7 +98,7 @@ Birikimli dağılım fonksiyonunu böyledir:
 $$F(x) = \begin{cases} 0 & x < 1, \\ \frac{k}{n} & k \le x < k+1 \text{ with } 1 \le k < n, \\ 1 & x >= n . \end{cases}$$
 :eqlabel:`eq_discrete_uniform_cdf`
 
-Ilk olarak olasılık kütle fonksiyonu çizelim.
+İlk olarak olasılık kütle fonksiyonu çizelim.
 
 ```{.python .input}
 #@tab all
@@ -218,28 +218,28 @@ Aşağıdaki gibi tekdüze bir rastgele değişkenden keyfi bir şekil dizisini 
 (b - a) * torch.rand(10, 10) + a
 ```
 
-## Binomial
+## Binom (İki Terimli) Dağılım
 
-Let us make things a little more complex and examine the *binomial* random variable.  This random variable originates from performing a sequence of $n$ independent experiments, each of which has probability $p$ of succeeding, and asking how many successes we expect to see.
+İşleri biraz daha karmaşık hale getirelim ve *iki terimli (binom)* rastgele değişkeni inceleyelim. Bu rastgele değişken, her birinin başarılı olma olasılığı $p$ olan $n$ bağımsız deneyler dizisi gerçekleştirmekten ve kaç tane başarı görmeyi beklediğimizi sormaktan kaynaklanır.
 
-Let us express this mathematically.  Each experiment is an independent random variable $X_i$ where we will use $1$ to encode success, and $0$ to encode failure.  Since each is an independent coin flip which is successful with probability $p$, we can say that $X_i \sim \mathrm{Bernoulli}(p)$.  Then, the binomial random variable is
+Bunu matematiksel olarak ifade edelim. Her deney, başarıyı kodlamak için $1$ ve başarısızlığı kodlamak için $0$ kullanacağımız bağımsız bir rastgele değişken $X_i$'dir. Her biri $p$ olasılığı ile başarılı olan bağımsız bir yazı tura olduğu için, $X_i \sim \mathrm{Bernoulli}(p)$ diyebiliriz. Sonra, iki terimli rastgele değişken asağıdaki gibidir:
 
 $$
 X = \sum_{i=1}^n X_i.
 $$
 
-In this case, we will write
+Bu durumda, böyle yazacağız:
 
 $$
 X \sim \mathrm{Binomial}(n, p).
 $$
 
-To get the cumulative distribution function, we need to notice that getting exactly $k$ successes can occur in $\binom{n}{k} = \frac{n!}{k!(n-k)!}$ ways each of which has a probability of $p^k(1-p)^{n-k}$ of occurring.  Thus the cumulative distribution function is
+Birikimli dağılım işlevini elde etmek için, tam olarak $k$ başarı elde etmenin gerçekleşebileceği hepsi $ p^k(1-p)^{nk}$ olasılıklı $\binom{n}{k} = \frac{n!}{k!(n-k)!}$ yolu olduğunu fark etmemiz gerekir. Böylece birikimli dağılım işlevi bu olur:
 
 $$F(x) = \begin{cases} 0 & x < 0, \\ \sum_{m \le k} \binom{n}{m} p^m(1-p)^{n-m}  & k \le x < k+1 \text{ with } 0 \le k < n, \\ 1 & x >= n . \end{cases}$$
 :eqlabel:`eq_binomial_cdf`
 
-Let us first plot the probability mass function.
+İlk olarak olasılık kütle fonksiyonu çizelim.
 
 ```{.python .input}
 n, p = 10, 0.2
@@ -278,7 +278,7 @@ d2l.plt.ylabel('p.m.f.')
 d2l.plt.show()
 ```
 
-Now, let us plot the cumulative distribution function :eqref:`eq_binomial_cdf`.
+Şimdi, birikimli dağılım fonksiyonunu çizelim :eqref:`eq_binomial_cdf`.
 
 ```{.python .input}
 x = np.arange(-1, 11, 0.01)
@@ -301,12 +301,12 @@ def F(x):
 d2l.plot(x, torch.tensor([F(y) for y in x.tolist()]), 'x', 'c.d.f.')
 ```
 
-While this result is not simple, the means and variances are.  If $X \sim \mathrm{Binomial}(n, p)$, then:
+Bu sonuç basit değildir, ortalamalar ve varyanslar da öyle. If $X \sim \mathrm{Binomial}(n, p)$ ise, o zaman:
 
 * $\mu_X = np$,
 * $\sigma_X^2 = np(1-p)$.
 
-This can be sampled as follows.
+Bu aşağıdaki gibi örneklenebilir.
 
 ```{.python .input}
 np.random.binomial(n, p, size=(10, 10))
