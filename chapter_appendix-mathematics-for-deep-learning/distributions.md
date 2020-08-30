@@ -318,39 +318,40 @@ m = torch.distributions.binomial.Binomial(n, p)
 m.sample(sample_shape=(10, 10))
 ```
 
-## Poisson
-Let us now perform a thought experiment.  We are standing at a bus stop and we want to know how many buses will arrive in the next minute.  Let us start by considering $X^{(1)} \sim \mathrm{Bernoulli}(p)$ which is simply the probability that a bus arrives in the one minute window.  For bus stops far from an urban center, this might be a pretty good approximation.  We may never see more than one bus in a minute.
+## Poisson Dağılımı
 
-However, if we are in a busy area, it is possible or even likely that two buses will arrive.  We can model this by splitting our random variable into two parts for the first 30 seconds, or the second 30 seconds.  In this case we can write
+Şimdi bir düşünce deneyi yapalım. Bir otobüs durağında duruyoruz ve önümüzdeki dakika içinde kaç otobüsün geleceğini bilmek istiyoruz. $X^{(1)} \sim \mathrm{Bernoulli}(p)$'i ele alarak başlayalım, bu basitçe bir otobüsün bir dakikalık pencerede varma olasılığıdır. Bir şehir merkezinden uzaktaki otobüs durakları için bu oldukça iyi bir yaklaşıklama olabilir. Bir dakikada birden fazla otobüs göremeyebiliriz.
+
+Ancak, yoğun bir bölgedeysek, iki otobüsün gelmesi mümkün veya hatta muhtemeldir. Bunu, rastgele değişkenimizi ilk 30 saniye veya ikinci 30 saniye için ikiye bölerek modelleyebiliriz. Bu durumda bunu yazabiliriz:
 
 $$
 X^{(2)} \sim X^{(2)}_1 + X^{(2)}_2,
 $$
 
-where $X^{(2)}$ is the total sum, and $X^{(2)}_i \sim \mathrm{Bernoulli}(p/2)$.  The total distribution is then $X^{(2)} \sim \mathrm{Binomial}(2, p/2)$.
+burada $X^{(2)}$ tüm toplamdır ve $X^{(2)}_i \sim \mathrm{Bernoulli}(p/2)$. Toplam dağılım bu durumda $X^{(2)} \sim \mathrm{Binomial}(2, p/2)$ olur.
 
-Why stop here?  Let us continue to split that minute into $n$ parts.  By the same reasoning as above, we see that
+Neden burada duralım? O dakikayı $n$ parçaya ayırmaya devam edelim. Yukarısıyla aynı mantıkla, bunu görüyoruz:
 
 $$X^{(n)} \sim \mathrm{Binomial}(n, p/n).$$
 :eqlabel:`eq_eq_poisson_approx`
 
-Consider these random variables.  By the previous section, we know that :eqref:`eq_eq_poisson_approx` has mean $\mu_{X^{(n)}} = n(p/n) = p$, and variance $\sigma_{X^{(n)}}^2 = n(p/n)(1-(p/n)) = p(1-p/n)$.  If we take $n \rightarrow \infty$, we can see that these numbers stabilize to $\mu_{X^{(\infty)}} = p$, and variance $\sigma_{X^{(\infty)}}^2 = p$.  This indicates that there *could be* some random variable we can define in this infinite subdivision limit.  
+Bu rastgele değişkenleri düşünün. Önceki bölümden şunu biliyoruz :eqref:`eq_eq_poisson_approx`, ortalama $\mu_{X^{(n)}} = n(p/n) = p$ ve varyans $\sigma_{X^{(n)}}^2 = n(p/n)(1-(p/n)) = p(1-p/n)$'dir. $n \rightarrow \infty$ alırsak, bu sayıların ortalama $\mu_{X^{(\infty)}} = p$ ve varyans $\sigma_{X^{(\infty)}}^2 = p$ şeklinde sabitlendiğini görebiliriz. Bu, bu sonsuz alt bölüm limitinde tanımlayabileceğimiz bazı rastgele değişkenlerin *olabileceğini* gösterir.
 
-This should not come as too much of a surprise, since in the real world we can just count the number of bus arrivals, however it is nice to see that our mathematical model is well defined.  This discussion can be made formal as the *law of rare events*.
+Bu çok fazla sürpriz olmamalı, çünkü gerçek dünyada sadece otobüslerin geliş sayısını sayabiliyoruz, ancak matematiksel modelimizin iyi tanımlandığını görmek güzel. Bu tartışma, *nadir olaylar yasası* olarak kurallı yapılabilir.
 
-Following through this reasoning carefully, we can arrive at the following model.  We will say that $X \sim \mathrm{Poisson}(\lambda)$ if it is a random variable which takes the values $\{0,1,2, \ldots\}$ with probability
+Bu akıl yürütmeyi dikkatlice takip ederek aşağıdaki modele ulaşabiliriz. $\{0,1,2, \ldots \}$ değerlerini asağıdaki olasılıkla  alan rastgele bir değişken ise $X \sim \mathrm{Poisson}(\lambda)$ diyeceğiz.
 
 $$p_k = \frac{\lambda^ke^{-\lambda}}{k!}.$$
-:eqlabel:`eq_poisson_mass`
+:eqlabel:`eq_poisson_mass` 
 
-The value $\lambda > 0$ is known as the *rate* (or the *shape* parameter), and denotes the average number of arrivals we expect in one unit of time.  
+$\lambda > 0$ değeri *oran* (veya *şekil* parametresi) olarak bilinir ve bir zaman biriminde beklediğimiz ortalama varış sayısını belirtir.
 
-We may sum this probability mass function to get the cumulative distribution function.
+Birikimli dağılım işlevini elde etmek için bu olasılık kütle işlevini toplayabiliriz.
 
 $$F(x) = \begin{cases} 0 & x < 0, \\ e^{-\lambda}\sum_{m = 0}^k \frac{\lambda^m}{m!} & k \le x < k+1 \text{ with } 0 \le k. \end{cases}$$
 :eqlabel:`eq_poisson_cdf`
 
-Let us first plot the probability mass function :eqref:`eq_poisson_mass`.
+İlk olarak olasılık kütle fonksiyonu çizelim :eqref:`eq_poisson_mass`.
 
 ```{.python .input}
 lam = 5.0
@@ -378,7 +379,7 @@ d2l.plt.ylabel('p.m.f.')
 d2l.plt.show()
 ```
 
-Now, let us plot the cumulative distribution function :eqref:`eq_poisson_cdf`.
+Şimdi, birikimli dağılım fonksiyonunu çizelim :eqref:`eq_poisson_cdf`.
 
 ```{.python .input}
 x = np.arange(-1, 21, 0.01)
@@ -399,12 +400,12 @@ def F(x):
 d2l.plot(x, torch.tensor([F(y) for y in x.tolist()]), 'x', 'c.d.f.')
 ```
 
-As we saw above, the means and variances are particularly concise.  If $X \sim \mathrm{Poisson}(\lambda)$, then:
+Yukarıda gördüğümüz gibi, ortalamalar ve varyanslar özellikle nettir. Eğer $X \sim \mathrm{Poisson}(\lambda)$ ise, o zaman:
 
 * $\mu_X = \lambda$,
 * $\sigma_X^2 = \lambda$.
 
-This can be sampled as follows.
+Bu aşağıdaki gibi örneklenebilir.
 
 ```{.python .input}
 np.random.poisson(lam, size=(10, 10))
@@ -416,16 +417,17 @@ m = torch.distributions.poisson.Poisson(lam)
 m.sample((10, 10))
 ```
 
-## Gaussian
-Now Let us try a different, but related experiment.  Let us say we again are performing $n$ independent $\mathrm{Bernoulli}(p)$ measurements $X_i$.  The distribution of the sum of these is $X^{(n)} \sim \mathrm{Binomial}(n, p)$.  Rather than taking a limit as $n$ increases and $p$ decreases, Let us fix $p$, and then send $n \rightarrow \infty$.  In this case $\mu_{X^{(n)}} = np \rightarrow \infty$ and $\sigma_{X^{(n)}}^2 = np(1-p) \rightarrow \infty$, so there is no reason to think this limit should be well defined.
+## Gauss Dağılımı
 
-However, not all hope is lost!  Let us just make the mean and variance be well behaved by defining
+Şimdi farklı ama ilişkili bir deney deneyelim. Tekrar $n$ bağımsız $\mathrm{Bernoulli}(p)$ ölçümlerini, $X_i$'yi, gerçekleştirdiğimizi varsayalım. Bunların toplamının dağılımı $X^{(n)} \sim \mathrm{Binomial}(n, p)$ şeklindedir.Burada $n$ arttıkça ve $p$ azaldıkça bir limit almak yerine, $p$'yi düzeltelim ve sonra $n \rightarrow \infty$ diyelim. Bu durumda $\mu_{X^{(n)}} = np \rightarrow \infty$ ve $\sigma_{X^{(n)}}^2 = np(1-p) \rightarrow \infty$ olur, bu nedenle bu limitin iyi tanımlanması gerektiğini düşünmek için hiçbir neden yoktur.
+
+Ancak, tüm umudumuzu kaybetmeyelim! Onları tanımlayarak ortalama ve varyansın iyi davranmasını sağlayalım
 
 $$
 Y^{(n)} = \frac{X^{(n)} - \mu_{X^{(n)}}}{\sigma_{X^{(n)}}}.
 $$
 
-This can be seen to have mean zero and variance one, and so it is plausible to believe that it will converge to some limiting distribution.  If we plot what these distributions look like, we will become even more convinced that it will work.
+Burada ortalama sıfır ve varyans bir olduğu görülebilir ve bunun nedenle bazı sınırlayıcı dağılıma yakınsayacağına inanmak mantıklıdır. Bu dağılımların neye benzediğini çizersek, işe yarayacağına daha da ikna olacağız.
 
 ```{.python .input}
 p = 0.2
@@ -464,20 +466,20 @@ for i in range(4):
 d2l.plt.show()
 ```
 
-One thing to note: compared to the Poisson case, we are now dividing by the standard deviation which means that we are squeezing the possible outcomes into smaller and smaller areas.  This is an indication that our limit will no longer be discrete, but rather a continuous.
+Unutulmaması gereken bir şey: Poisson durumu ile karşılaştırıldığında, şimdi standart sapmaya bölüyoruz, bu da olası sonuçları gittikçe daha küçük alanlara sıkıştırdığımız anlamına gelir. Bu, limitimizin artık ayrık olmayacağının, bilakis sürekli olacağının bir göstergesidir.
 
-A derivation of what occurs is beyond the scope of this document, but the *central limit theorem* states that as $n \rightarrow \infty$, this will yield the Gaussian Distribution (or sometimes normal distribution).  More explicitly, for any $a, b$:
+Burada oluşan şeyin türetilmesi bu kitabın kapsamı dışındadır, ancak *merkezi limit teoremi*, $n \rightarrow \infty$ iken bunun Gauss Dağılımını (veya bazen normal dağılımı) vereceğini belirtir. Daha açık bir şekilde, herhangi bir $a, b$ için:
 
 $$
 \lim_{n \rightarrow \infty} P(Y^{(n)} \in [a, b]) = P(\mathcal{N}(0,1) \in [a, b]),
 $$
 
-where we say a random variable is normally distributed with given mean $\mu$ and variance $\sigma^2$, written $X \sim \mathcal{N}(\mu, \sigma^2)$ if $X$ has density
+burada rastgele bir değişkenin normalde verilen ortalama $\mu$ ve varyans $\sigma^2$ ile dağıldığını söyleriz, $X \sim \mathcal{N} (\mu, \sigma^2)$ ise, $X$ yoğunluğu şöyledir:
 
 $$p_X(x) = \frac{1}{\sqrt{2\pi\sigma^2}}e^{-\frac{(x-\mu)^2}{2\sigma^2}}.$$
 :eqlabel:`eq_gaussian_pdf`
 
-Let us first plot the probability density function :eqref:`eq_gaussian_pdf`.
+Önce, olasılık yoğunluk dağılım fonksiyonunu çizelim :eqref:`eq_gaussian_pdf`.
 
 ```{.python .input}
 mu, sigma = 0, 1
@@ -499,7 +501,7 @@ p = 1 / torch.sqrt(2 * torch.pi * sigma**2) * torch.exp(
 d2l.plot(x, p, 'x', 'p.d.f.')
 ```
 
-Now, let us plot the cumulative distribution function.  It is beyond the scope of this appendix, but the Gaussian c.d.f. does not have a closed-form formula in terms of more elementary functions.  We will use `erf` which provides a way to compute this integral numerically.
+Şimdi, birikimli dağılım fonksiyonunu çizelim. Bu ek bölümün kapsamı dışındadır, ancak Gauss b.d.f.'nun daha temel işlevlerden tanımlı kapalı-şekil formülü yoktur. Bu integrali sayısal olarak hesaplamanın bir yolunu sağlayan `erf`'i kullanacağız.
 
 ```{.python .input}
 def phi(x):
@@ -516,32 +518,34 @@ def phi(x):
 d2l.plot(x, torch.tensor([phi(y) for y in x.tolist()]), 'x', 'c.d.f.')
 ```
 
-Keen-eyed readers will recognize some of these terms.  Indeed, we encountered this integral in :numref:`sec_integral_calculus`.  Indeed we need exactly that computation to see that this $p_X(x)$ has total area one and is thus a valid density.
+Indeed, if we take any collection of independent identically distributed random variables $X_i$, and form
 
-Our choice of working with coin flips made computations shorter, but nothing about that choice was fundamental.  Indeed, if we take any collection of independent identically distributed random variables $X_i$, and form
+Meraklı okuyucular bu terimlerin bazılarını tanıyacaktır. Aslında, bu integralla :numref:`sec_integral_calculus` içinde karşılaştık. Aslında, $p_X(x)$'nin toplamda bir birim alana sahip olduğunu ve dolayısıyla geçerli bir yoğunluk olduğunu görmek için tam olarak bu hesaplamaya ihtiyacımız var.
+
+Bozuk para atmalarla çalışma seçimimiz, hesaplamaları kısalttı, ancak bu seçimle ilgili hiçbir şey temel (zorunlu) değildi. Gerçekten de, bağımsız aynı şekilde dağılmış rastgele değişkenlerden, $X_i$'den, oluşan herhangi bir koleksiyon alırsak ve aşağıdaki gibi hesaplarsak:
 
 $$
 X^{(N)} = \sum_{i=1}^N X_i.
 $$
 
-Then
+O zaman:
 
 $$
 \frac{X^{(N)} - \mu_{X^{(N)}}}{\sigma_{X^{(N)}}}
 $$
 
-will be approximately Gaussian.  There are additional requirements needed to make it work, most commonly $E[X^4] < \infty$, but the philosophy is clear.
+yaklaşık olarak Gauss olacak. Çalışması için ek gereksinimler vardır, en yaygın olarak da $E[X^4] < \infty$, ancak işin felsefesi açıktır.
 
-The central limit theorem is the reason that the Gaussian is fundamental to probability, statistics, and machine learning.  Whenever we can say that something we measured is a sum of many small independent contributions, we can assume that the thing being measured will be close to Gaussian.  
+Merkezi limit teoremi, Gauss'un olasılık, istatistik ve makine öğrenmesi için temel olmasının nedenidir. Ölçtüğümüz bir şeyin birçok küçük bağımsız katkının toplamı olduğunu söyleyebildiğimizde, ölçülen şeyin Gauss'a yakın olacağını varsayabiliriz.
 
-There are many more fascinating properties of Gaussians, and we would like to discuss one more here.  The Gaussian is what is known as a *maximum entropy distribution*.  We will get into entropy more deeply in :numref:`sec_information_theory`, however all we need to know at this point is that it is a measure of randomness.  In a rigorous mathematical sense, we can think of the Gaussian as the *most* random choice of random variable with fixed mean and variance.  Thus, if we know that our random variable has some mean and variance, the Gaussian is in a sense the most conservative choice of distribution we can make.
+Gauss'ların daha birçok büyüleyici özelliği var ve burada bir tanesini daha tartışmak istiyoruz. Gauss, *maksimum entropi dağılımı* olarak bilinen şeydir. Entropiye daha derinlemesine :numref:`sec_information_theory`'de gireceğiz, ancak bu noktada bilmemiz gereken tek şey bunun bir rastgelelik ölçüsü olduğudur. Titiz bir matematiksel anlamda, Gauss'u sabit ortalama ve varyanslı rastgele değişkenin *en* rastgele seçimi olarak düşünebiliriz. Bu nedenle, rastgele değişkenimizin herhangi bir ortalama ve varyansa sahip olduğunu bilirsek, Gauss bir anlamda yapabileceğimiz en muhafazakar dağılım seçimidir.
 
-To close the section, Let us recall that if $X \sim \mathcal{N}(\mu, \sigma^2)$, then:
+Bölümü kapatırken, $X \sim \mathcal{N}(\mu, \sigma^2)$ ise şunu hatırlayalım:
 
 * $\mu_X = \mu$,
 * $\sigma_X^2 = \sigma^2$.
 
-We can sample from the Gaussian (or standard normal) distribution as shown below.
+Aşağıda gösterildiği gibi Gauss (veya standart normal) dağılımından örneklem alabiliriz.
 
 ```{.python .input}
 np.random.normal(mu, sigma, size=(10, 10))
@@ -552,21 +556,19 @@ np.random.normal(mu, sigma, size=(10, 10))
 torch.normal(mu, sigma, size=(10, 10))
 ```
 
-## Summary
-* Bernoulli random variables can be used to model events with a yes/no outcome.
-* Discrete uniform distributions model selects from a finite set of possibilities.
-* Continuous uniform distributions select from an interval.
-* Binomial distributions model a series of Bernoulli random variables, and count the number of successes.
-* Poisson random variables model the arrival of rare events.
-* Gaussian random variables model the result of adding a large number of independent random variables together.
+## Özet
+* Bernoulli rastgele değişkenleri, evet/hayır sonucu olan olayları modellemek için kullanılabilir.
+* Ayrık tekdüze dağılım modeli, bir küme sınırlı olasılıktan seçim yapar.
+* Sürekli tekdüze dağılımlar bir aralıktan seçim yapar.
+* Binom dağılımları bir dizi Bernoulli rasgele değişkeni modeller ve başarıların sayısını sayar.
+* Poisson rastgele değişkenleri, nadir olayların oluşunu modeller.
+* Gauss rastgele değişkenleri, çok sayıda bağımsız rastgele değişkenin toplam sonucunu modeller.
 
-## Exercises
-
-1. What is the standard deviation of a random variable that is the difference $X-Y$ of two independent binomial random variables $X, Y \sim \mathrm{Binomial}(16, 1/2)$.
-2. If we take a Poisson random variable $X \sim \mathrm{Poisson}(\lambda)$ and consider $(X - \lambda)/\sqrt{\lambda}$ as $\lambda \rightarrow \infty$, we can show that this becomes approximately Gaussian.  Why does this make sense?
-3. What is the probability mass function for a sum of two discrete uniform random variables on $n$ elements?
-
+## Alıştırmalar
+1. İki bağımsız iki terimli rastgele değişken $X, Y \sim \mathrm{Binomial}(16, 1/2)$ arasındaki $X-Y$ farkı olan rastgele bir değişkenin standart sapması nedir?
+2. Poisson rastgele değişkenini, $X \sim \mathrm{Poisson}(\lambda)$, alırsak ve $(X - \lambda)/\sqrt{\lambda}$'i $\lambda \rightarrow \infty$ olarak kabul edersek, bunun yaklaşık olarak Gauss olduğunu gösterebiliriz. Bu neden anlamlıdır?
+3. $n$ elemanda tanımlı iki tane ayrık tekdüze rasgele değişkenin toplamı için olasılık kütle fonksiyonu nedir?
 
 :begin_tab:`mxnet`
-[Discussions](https://discuss.d2l.ai/t/417)
+[Tartışmalar](https://discuss.d2l.ai/t/417)
 :end_tab:
