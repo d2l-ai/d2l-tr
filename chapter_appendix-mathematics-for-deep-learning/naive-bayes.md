@@ -24,8 +24,6 @@ import torchvision
 d2l.use_svg_display()
 ```
 
-We quantize them into binary features to simplify the problem.
-
 ## Optik Karakter Tanıma
 
 MNIST :cite:`LeCun.Bottou.Bengio.ea.1998`, yaygın olarak kullanılan veri kümelerinden biridir. Eğitim için 60.000 görüntü ve geçerleme için 10.000 görüntü içerir. Her görüntü, 0'dan 9'a kadar el yazısıyla yazılmış bir rakam içerir. Görev, her görüntüyü karşılık gelen rakama sınıflandırmaktır.
