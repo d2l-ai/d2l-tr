@@ -11,13 +11,13 @@ Merak edebilirsiniz: "Makine öğrenmesi ile istatistik arasındaki temel fark n
 
 Bu bölümde, üç tür istatistik çıkarım yöntemini tanıtacağız: tahmin edicileri değerlendirme ve karşılaştırma, hipotez testleri yürütme ve güven aralıkları oluşturma. Bu yöntemler, belirli bir popülasyonun özelliklerini, yani gerçek $\theta$ parametresi gibi, anlamamıza yardımcı olabilir. Kısacası, belirli bir popülasyonun gerçek parametresinin, $\theta$, skaler bir değer olduğunu varsayıyoruz. $\theta$'nin bir vektör veya tensör olduğu durumu genişletmek basittir, bu nedenle tartışmamızda onu es geçiyoruz.
 
-## Evaluating and Comparing Estimators
+## Tahmincileri Değerlendirme ve Karşılaştırma
 
-In statistics, an *estimator* is a function of given samples used to estimate the true parameter $\theta$. We will write $\hat{\theta}_n = \hat{f}(x_1, \ldots, x_n)$ for the estimate of $\theta$ after observing the samples {$x_1, x_2, \ldots, x_n$}.
+İstatistikte, bir *tahminci*, gerçek $\theta$ parametresini tahmin etmek için kullanılan belirli örneklemlerin bir fonksiyonudur. {$x_1, x_2, \ ldots, x_n$} örneklerini gözlemledikten sonra $\theta$ tahmini için $\hat{\theta}_n = \hat{f}(x_1, \ldots, x_n)$ yazacağız .
 
-We have seen simple examples of estimators before in section :numref:`sec_maximum_likelihood`.  If you have a number of samples from a Bernoulli random variable, then the maximum likelihood estimate for the probability the random variable is one can be obtained by counting the number of ones observed and dividing by the total number of samples.  Similarly, an exercise asked you to show that the maximum likelihood estimate of the mean of a Gaussian given a number of samples is given by the average value of all the samples.  These estimators will almost never give the true value of the parameter, but ideally for a large number of samples the estimate will be close.
+Tahmincilerin basit örneklerini daha önce şu bölümde görmüştük :numref:`sec_maximum_likelihood`. Bir Bernoulli rastgele değişkeninden birkaç örneğiniz varsa, rastgele değişkenin olma olasılığı için maksimum olabilirlik tahmini, gözlemlenenlerin sayısını sayarak ve toplam örnek sayısına bölerek elde edilebilir. Benzer şekilde, bir alıştırma sizden bir miktar örnek verilen bir Gauss'un ortalamasının maksimum olabilirlik tahmininin tüm örneklerin ortalama değeriyle verildiğini göstermenizi istiyor. Bu tahminciler neredeyse hiçbir zaman parametrenin gerçek değerini vermezler, ancak ideal olarak çok sayıda örnek için tahmin yakın olacaktır.
 
-As an example, we show below the true density of a Gaussian random variable with mean zero and variance one, along with a collection samples from that Gaussian.  We constructed the $y$ coordinate so every point is visible and the relationship to the original density is clearer.
+Örnek olarak, ortalama sıfır ve varyans bir olan bir Gauss rasgele değişkeninin gerçek yoğunluğunu, bu Gauss'tan bir dizi örnek ile aşağıda gösteriyoruz. Her noktanın $y$ koordinatı görünür ve orijinal yoğunluk ile olan ilişki daha net fark edilecek şekilde oluşturduk.
 
 ```{.python .input}
 from d2l import mxnet as d2l
@@ -76,47 +76,42 @@ d2l.plt.title(f'sample mean: {float(torch.mean(xs).item()):.2f}')
 d2l.plt.show()
 ```
 
-There can be many ways to compute an estimator of a parameter $\hat{\theta}_n$.  In this section, we introduce three common methods to evaluate and compare estimators: the mean squared error, the standard deviation, and statistical bias.
+$\hat{\theta}_n $ parametresinin bir tahmincisini hesaplamanın birçok yolu olabilir. Bu bölümde, tahmincileri değerlendirmek ve karşılaştırmak için üç genel yöntem sunuyoruz: ortalama hata karesi, standart sapma ve istatistiksel yanlılık.
 
-### Mean Squared Error
+### Ortalama Hata Karesi
 
-Perhaps the simplest metric used to evaluate estimators is the *mean squared error (MSE)* (or $l_2$ loss) of an estimator can be defined as
+Tahmin edicileri değerlendirmek için kullanılan en basit ölçüt, bir tahmincinin *ortalama hata karesi (MSE)* (veya $l_2$ kaybı) olarak tanımlanabilir.
 
 $$\mathrm{MSE} (\hat{\theta}_n, \theta) = E[(\hat{\theta}_n - \theta)^2].$$
 :eqlabel:`eq_mse_est`
 
-This allows us to quantify the average squared deviation from the true value.  MSE is always non-negative. If you have read :numref:`sec_linear_regression`, you will recognize it as the most commonly used regression loss function. As a measure to evaluate an estimator, the closer its value to zero, the closer the estimator is close to the true parameter $\theta$.
+Bu, gerçek değerden ortalama kare sapmayı ölçümlemizi sağlar. MSE her zaman negatif değildir. Eğer :numref:`sec_linear_regression`'yi okuduysanız, bunu en sık kullanılan bağlanım (regresyon) kaybı işlevi olarak tanıyacaksınız. Bir tahminciyi değerlendirmek için bir ölçü olarak, değeri sıfıra ne kadar yakınsa, tahminci gerçek $\theta$ parametresine o kadar yakın olur.
 
+### İstatistiksel Yanlılık
 
-### Statistical Bias
+MSE doğal bir ölçü sağlar, ancak onu büyük yapabilecek birden fazla farklı vakayı kolayca hayal edebiliriz. İki temel önemli olay veri kümesindeki rastgelelik nedeniyle tahmincideki dalgalanma ve tahmin prosedürüne bağlı olarak tahmincideki sistematik hatadır.
 
-The MSE provides a natural metric, but we can easily imagine multiple different phenomena that might make it large.  Two fundamentally important are fluctuation in the estimator due to randomness in the dataset, and systematic error in the estimator due to the estimation procedure.
-
-
-First, let us measure the systematic error. For an estimator $\hat{\theta}_n$, the mathematical illustration of *statistical bias* can be defined as
+Öncelikle sistematik hatayı ölçelim. Bir $\hat{\theta}_n $ tahmincisi için *istatistiksel yanlılığın* matematiksel gösterimi şu şekilde tanımlanabilir:
 
 $$\mathrm{bias}(\hat{\theta}_n) = E(\hat{\theta}_n - \theta) = E(\hat{\theta}_n) - \theta.$$
 :eqlabel:`eq_bias`
 
-Note that when $\mathrm{bias}(\hat{\theta}_n) = 0$, the expectation of the estimator $\hat{\theta}_n$ is equal to the true value of parameter.  In this case, we say $\hat{\theta}_n$ is an unbiased estimator.  In general, an unbiased estimator is better than a biased estimator since its expectation is the same as the true parameter.
+$\mathrm{bias}(\hat{\theta}_n) = 0$ olduğunda, $\hat{\theta}_n$ tahmin edicisinin beklentisinin parametrenin gerçek değerine eşit olduğuna dikkat edin. Bu durumda, $\hat{\theta}_n$'nin yansız bir tahminci olduğunu söylüyoruz. Genel olarak, yansız bir tahminci, yanlı bir tahminciden daha iyidir çünkü beklenen değeri gerçek parametre ile aynıdır.
 
+Bununla birlikte, yanlı tahmin edicilerin pratikte sıklıkla kullanıldığının farkında olunması gerekir. Yansız tahmin edicilerin başka varsayımlar olmaksızın var olmadığı veya hesaplamanın zor olduğu durumlar vardır. Bu, bir tahmincide önemli bir kusur gibi görünebilir, ancak pratikte karşılaşılan tahmin edicilerin çoğu, mevcut örneklerin sayısı sonsuza giderken sapmanın sıfır olma eğiliminde olması açısından en azından asimptotik (kavuşma doğrusu) olarak tarafsızdır: $\lim_{n \rightarrow \infty} \mathrm{bias}(\hat{\theta}_n) = 0$.
 
-It is worth being aware, however, that biased estimators are frequently used in practice.  There are cases where unbiased estimators do not exist without further assumptions, or are intractable to compute.  This may seem like a significant flaw in an estimator, however the majority of estimators encountered in practice are at least asymptotically unbiased in the sense that the bias tends to zero as the number of available samples tends to infinity: $\lim_{n \rightarrow \infty} \mathrm{bias}(\hat{\theta}_n) = 0$.
+### Varyans ve Standart Sapma
 
-
-### Variance and Standard Deviation
-
-Second, let us measure the randomness in the estimator.  Recall from :numref:`sec_random_variables`, the *standard deviation* (or *standard error*) is defined as the squared root of the variance.  We may measure the degree of fluctuation of an estimator by measuring the standard deviation or variance of that estimator.
+İkinci olarak tahmincideki rastgeleliği ölçelim. Eğer :numref:`sec_random_variables`yi anımsarsak, *standart sapma* (veya *standart hata*), varyansın kare kökü olarak tanımlanır. Bir tahmincinin dalgalanma derecesini, o tahmincinin standart sapmasını veya varyansını ölçerek ölçebiliriz.
 
 $$\sigma_{\hat{\theta}_n} = \sqrt{\mathrm{Var} (\hat{\theta}_n )} = \sqrt{E[(\hat{\theta}_n - E(\hat{\theta}_n))^2]}.$$
 :eqlabel:`eq_var_est`
 
-It is important to compare :eqref:`eq_var_est` to :eqref:`eq_mse_est`.  In this equation we do not compare to the true population value $\theta$, but instead to $E(\hat{\theta}_n)$, the expected sample mean.  Thus we are not measuring how far the estimator tends to be from the true value, but instead we measuring the fluctuation of the estimator itself.
+Şunları karşılaştırmak önemlidir :eqref:`eq_var_est` ile :eqref:`eq_mse_est`. Bu denklemde gerçek popülasyon değeri $\theta$ ile değil, bunun yerine beklenen örneklem ortalaması $E(\hat{\theta}_n)$ ile karşılaştırıyoruz. Bu nedenle, tahmincinin gerçek değerden ne kadar uzakta olduğunu ölçmüyoruz, bunun yerine tahmincinin dalgalanmasını ölçüyoruz.
 
+### Yanlılık-Varyans Takası
 
-### The Bias-Variance Trade-off
-
-It is intuitively clear that these two components contribute to the mean squared error.  What is somewhat shocking is that we can show that this is actually a *decomposition* of the mean squared error into two contributions.  That is to say that we can write the mean squared error as the sum of the variance and the square or the bias.
+Bu iki bileşenin ortalama hata karesine katkıda bulunduğu sezgisel olarak açıktır. Biraz şok edici olan şey, bunun aslında ortalama hata karesinin iki parçaya *ayrıştırılması* olduğunu gösterebilmemizdir. Yani, ortalama hata karesini varyansın ve yanlılığın karesi toplamı olarak yazabiliriz.
 
 $$
 \begin{aligned}
@@ -126,12 +121,11 @@ $$
 \end{aligned}
 $$
 
-We refer the above formula as *bias-variance trade-off*. The mean squared error can be divided into precisely two sources of error: the error from high bias and the error from high variance. On the one hand, the bias error is commonly seen in a simple model (such as a linear regression model), which cannot extract high dimensional relations between the features and the outputs. If a model suffers from high bias error, we often say it is *underfitting* or lack of *generalization* as introduced in (:numref:`sec_model_selection`). On the flip side, the other error source---high variance usually results from a too complex model, which overfits the training data. As a result, an *overfitting* model is sensitive to small fluctuations in the data. If a model suffers from high variance, we often say it is *overfitting* and lack of *flexibility* as introduced in (:numref:`sec_model_selection`).
+Yukarıdaki formülü *yanlılık-varyans takası* olarak adlandırıyoruz. Ortalama hata karesi kesin olarak iki hata kaynağına bölünebilir: Yüksek yanlılıktan kaynaklanan hata ve yüksek varyans kaynaklı hata. Bir yandan, yanlılık hatası genellikle basit bir modelde (doğrusal bağlanım modeli gibi) görülür, çünkü özellikler ve çıktılar arasındaki yüksek boyutsal ilişkileri çıkaramaz. Bir model yüksek yanlılık hatasından muzdaripse, (:numref:`sec_model_selection`) bölümünde açıklandığı gibi genellikle *eksik öğrenme* veya *genelleme* eksikliği olduğunu söylüyoruz. Diğer taraftan, diğer hata kaynağı---yüksek varyans, genellikle eğitim verilerine öğrenen çok karmaşık bir modelden kaynaklanır. Sonuç olarak, *aşırı öğrenen* bir model, verilerdeki küçük dalgalanmalara duyarlıdır. Bir modelin varyansı yüksekse, genellikle (:numref:`sec_model_selection`)'de tanıtıldığı gibi *aşırı öğrenme* ve *esneklik* yoksunluğu olduğunu söyleriz.
 
+### Kodda Tahmincileri Değerlendirme
 
-### Evaluating Estimators in Code
-
-Since the standard deviation of an estimator has been implementing in MXNet by simply calling `a.std()` for a tensor `a`, we will skip it but implement the statistical bias and the mean squared error in MXNet.
+Bir tahmincinin standart sapması, MXNet'te bir tensör `a` için basitçe `a.std()` çağırarak uygulandığından, onu atlayacağız ancak MXNet'te istatistiksel yanlılık ve ortalama hata karesini uygulayacağız.
 
 ```{.python .input}
 # Statistical bias
@@ -154,7 +148,7 @@ def mse(data, true_theta):
     return(torch.mean(torch.square(data - true_theta)))
 ```
 
-To illustrate the equation of the bias-variance trade-off, let us simulate of normal distribution $\mathcal{N}(\theta, \sigma^2)$ with $10,000$ samples. Here, we use a $\theta = 1$ and $\sigma = 4$. As the estimator is a function of the given samples, here we use the mean of the samples as an estimator for true $\theta$ in this normal distribution $\mathcal{N}(\theta, \sigma^2)$ .
+Yanlılık-varyans takasının denklemini görsellemek için, $\mathcal{N}(\theta, \sigma^2)$ normal dağılımını $10.000$ örnekle canlandıralım. Burada bir $\theta = 1$ ve $\sigma = 4$ kullanıyoruz. Tahminci verilen örneklerin bir fonksiyonu olduğu için, burada örneklerin ortalamasını bu normal dağılımdaki, $\mathcal{N}(\theta, \sigma^2)$, gerçek $\theta$ için bir tahminci olarak kullanıyoruz.
 
 ```{.python .input}
 theta_true = 1
@@ -175,7 +169,7 @@ theta_est = torch.mean(samples)
 theta_est
 ```
 
-Let us validate the trade-off equation by calculating the summation of the squared bias and the variance of our estimator. First, calculate the MSE of our estimator.
+Tahmincimizin yanlılık karesi ve varyansının toplamını hesaplayarak takas denklemini doğrulayalım. İlk önce, tahmincimizin MSE'sini hesaplayın.
 
 ```{.python .input}
 mse(samples, theta_true)
@@ -186,7 +180,7 @@ mse(samples, theta_true)
 mse(samples, theta_true)
 ```
 
-Next, we calculate $\mathrm{Var} (\hat{\theta}_n) + [\mathrm{bias} (\hat{\theta}_n)]^2$ as below. As you can see, the two values agree to numerical precision.
+Ardından, aşağıdaki gibi $\mathrm{Var} (\hat{\theta}_n) + [\mathrm{bias} (\hat{\theta}_n)]^2$'yi hesaplıyoruz. Gördüğünüz gibi, iki değer sayısal kesinliğe kadar uyuyor.
 
 ```{.python .input}
 bias = stat_bias(theta_true, theta_est)
