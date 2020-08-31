@@ -24,14 +24,15 @@ import torchvision
 d2l.use_svg_display()
 ```
 
-## Optical Character Recognition
+We quantize them into binary features to simplify the problem.
 
-MNIST :cite:`LeCun.Bottou.Bengio.ea.1998` is one of widely used datasets. It contains 60,000 images for training and 10,000 images for validation. Each image contains a handwritten digit from 0 to 9. The task is classifying each image into the corresponding digit.
+## Optik Karakter Tanıma
 
-Gluon provides a `MNIST` class in the `data.vision` module to automatically retrieve the dataset from the Internet.
-Subsequently, Gluon will use the already-downloaded local copy.
-We specify whether we are requesting the training set or the test set by setting the value of the parameter `train` to `True` or `False`, respectively.
-Each image is a grayscale image with both width and height of $28$ with shape ($28$,$28$,$1$). We use a customized transformation to remove the last channel dimension. In addition, the dataset represents each pixel by an unsigned $8$-bit integer.  We quantize them into binary features to simplify the problem.
+MNIST :cite:`LeCun.Bottou.Bengio.ea.1998`, yaygın olarak kullanılan veri kümelerinden biridir. Eğitim için 60.000 görüntü ve geçerleme için 10.000 görüntü içerir. Her görüntü, 0'dan 9'a kadar el yazısıyla yazılmış bir rakam içerir. Görev, her görüntüyü karşılık gelen rakama sınıflandırmaktır.
+
+Gluon, veri kümesini İnternet'ten otomatik olarak almak için `data.vision` modülünde bir `MNIST` sınıfı sağlar.
+Daha sonra, Gluon hali-hazırda indirilmiş yerel kopyayı kullanacaktır. `train` parametresinin değerini sırasıyla `True` veya `False` olarak ayarlayarak eğitim setini mi yoksa test setini mi talep ettiğimizi belirtiriz.
+Her resim, hem genişliği hem de yüksekliği $28$ olan ve ($28$, $28$, $1$) şekilli gri tonlamalı bir resimdir. Son kanal boyutunu kaldırmak için özelleştirilmiş bir dönüşüm kullanıyoruz. Ek olarak, veri kümesi her pikseli işaretsiz $8$ bitlik bir tamsayı ile temsil eder. Problemi basitleştirmek için bunları ikili özellikler halinde nicelendiriyoruz.
 
 ```{.python .input}
 def transform(data, label):
@@ -52,7 +53,7 @@ mnist_test = torchvision.datasets.MNIST(
     root='./temp', train=False, transform=data_transform, download=True)
 ```
 
-We can access a particular example, which contains the image and the corresponding label.
+Resmi ve ilgili etiketi içeren belirli bir örneğe erişebiliriz.
 
 ```{.python .input}
 image, label = mnist_train[2]
@@ -65,7 +66,7 @@ image, label = mnist_train[2]
 image.shape, label
 ```
 
-Our example, stored here in the variable `image`, corresponds to an image with a height and width of $28$ pixels.
+Burada `image` değişkeninde depolanan örneğimiz, yüksekliği ve genişliği $28$ piksel olan bir resme karşılık gelir.
 
 ```{.python .input}
 image.shape, image.dtype
@@ -76,7 +77,7 @@ image.shape, image.dtype
 image.shape, image.dtype
 ```
 
-Our code stores the label of each image as a scalar. Its type is a $32$-bit integer.
+Kodumuz her görüntünün etiketini skaler olarak depolar. Türü $32$ bitlik bir tamsayıdır.
 
 ```{.python .input}
 label, type(label), label.dtype
@@ -87,7 +88,7 @@ label, type(label), label.dtype
 label, type(label)
 ```
 
-We can also access multiple examples at the same time.
+Aynı anda birden fazla örneğe de erişebiliriz.
 
 ```{.python .input}
 images, labels = mnist_train[10:38]
@@ -102,7 +103,7 @@ labels = torch.tensor([mnist_train[i][1] for i in range(10,38)])
 images.shape, labels.shape
 ```
 
-Let us visualize these examples.
+Bu örnekleri görselleştirelim.
 
 ```{.python .input}
 d2l.show_images(images, 2, 9);
@@ -113,45 +114,44 @@ d2l.show_images(images, 2, 9);
 d2l.show_images(images, 2, 9);
 ```
 
-## The Probabilistic Model for Classification
+## Sınıflandırma için Olasılık Modeli
 
-In a classification task, we map an example into a category. Here an example is a grayscale $28\times 28$ image, and a category is a digit. (Refer to :numref:`sec_softmax` for a more detailed explanation.)
-One natural way to express the classification task is via the probabilistic question: what is the most likely label given the features (i.e., image pixels)? Denote by $\mathbf x\in\mathbb R^d$ the features of the example and $y\in\mathbb R$ the label. Here features are image pixels, where we can reshape a $2$-dimensional image to a vector so that $d=28^2=784$, and labels are digits.
-The probability of the label given the features is $p(y  \mid  \mathbf{x})$. If we are able to compute these probabilities, which are $p(y  \mid  \mathbf{x})$ for $y=0, \ldots,9$ in our example, then the classifier will output the prediction $\hat{y}$ given by the expression:
+Bir sınıflandırma görevinde, bir örneği bir kategoriye eşleriz. Burada bir örnek gri tonlamalı $28\times 28$ resim ve kategori bir rakamdır. (Daha ayrıntılı bir açıklama için bakınız :numref:`sec_softmax`.)
+Sınıflandırma görevini ifade etmenin doğal bir yolu, olasılık sorusudur: Özellikler (yani, görüntü pikselleri) verildiğinde en olası etiket nedir? $\mathbf x\in\mathbb R^d$ ile örneğin özelliklerini ve $y\in\mathbb R$ ile etiketini belirtiriz. Burada özellikler, $2$ boyutlu bir resmi $d = 28 ^ 2 = 784$ büyüklüğünde bir vektöre yeniden şekillendirebileceğimiz resim pikselleri ve etiketler rakamlardır.
+Özellikleri verilen etiketin olasılığı $p(y  \mid  \mathbf{x})$ şeklindedir. Örneğimizde $y = 0, \ ldots, 9$ için $p(y  \mid  \mathbf{x})$ for $y=0, \ldots,9$ olan bu olasılıkları hesaplayabilirsek, sınıflandırıcı aşağıda verilen ifade ile tahminini, $\hat{y}$, yapacaktır:
 
 $$\hat{y} = \mathrm{argmax} \> p(y  \mid  \mathbf{x}).$$
 
-Unfortunately, this requires that we estimate $p(y  \mid  \mathbf{x})$ for every value of $\mathbf{x} = x_1, ..., x_d$. Imagine that each feature could take one of $2$ values. For example, the feature $x_1 = 1$ might signify that the word apple appears in a given document and $x_1 = 0$ would signify that it does not. If we had $30$ such binary features, that would mean that we need to be prepared to classify any of $2^{30}$ (over 1 billion!) possible values of the input vector $\mathbf{x}$.
+Maalesef bu, her $\mathbf{x} = x_1, ..., x_d$ değeri için $p(y \mid \mathbf{x})$'yi tahmin etmemizi gerektirir. Her özelliğin $2$ değerden birini alabileceğini düşünün. Örneğin, $x_1 = 1$ özelliği, elma kelimesinin belirli bir belgede göründüğünü ve $x_1 = 0$ görünmediğini belirtebilir. Eğer $30$ tane bu tür ikili özelliklere sahip olsaydık, bu $\mathbf{x}$ girdi vektörünün $2^{30}$ (1 milyardan fazla!) olası değerlerinden herhangi birini sınıflandırmaya hazırlıklı olmamız gerektiği anlamına gelirdi.
 
-Moreover, where is the learning? If we need to see every single possible example in order to predict the corresponding label then we are not really learning a pattern but just memorizing the dataset.
+Dahası, öğrenme nerede? İlgili etiketi tahmin etmek için her bir olası örneği görmemiz gerekiyorsa, o zaman gerçekten bir model öğrenmiyoruz, sadece veri setini ezberliyoruz.
 
-## The Naive Bayes Classifier
+## Naif Bayes Sınıflandırıcı
 
-Fortunately, by making some assumptions about conditional independence, we can introduce some inductive bias and build a model capable of generalizing from a comparatively modest selection of training examples. To begin, let us use Bayes theorem, to express the classifier as
+Neyse ki, koşullu bağımsızlık hakkında bazı varsayımlar yaparak, bazı tümevarımsal önyargılar sunabilir ve nispeten mütevazı bir eğitim örnekleri seçiminden genelleme yapabilen bir model oluşturabiliriz. Başlamak için, sınıflandırıcıyı şu şekilde ifade etmek için Bayes teoremini kullanalım:
 
 $$\hat{y} = \mathrm{argmax}_y \> p(y  \mid  \mathbf{x}) = \mathrm{argmax}_y \> \frac{p( \mathbf{x}  \mid  y) p(y)}{p(\mathbf{x})}.$$
 
-Note that the denominator is the normalizing term $p(\mathbf{x})$ which does not depend on the value of the label $y$. As a result, we only need to worry about comparing the numerator across different values of $y$. Even if calculating the denominator turned out to be intractable, we could get away with ignoring it, so long as we could evaluate the numerator. Fortunately, even if we wanted to recover the normalizing constant, we could.  We can always recover the normalization term since $\sum_y p(y  \mid  \mathbf{x}) = 1$.
+Paydanın normalleştirme teriminin $p(\ mathbf {x})$ olduğunu ve $y$ etiketinin değerine bağlı olmadığını unutmayın. Sonuç olarak, sadece payı farklı $y$ değerlerinde karşılaştırken endişelenmemiz gerekiyor. Paydanın hesaplanmasının zorlu olduğu ortaya çıksa bile, payı değerlendirebildiğimiz sürece onu görmezden gelerek kurtulabilirdik. Neyse ki, normalleştirme sabitini kurtarmak istesek, bunu da yapabilirdik. Normalleştirme terimini $\sum_y p(y \mid \mathbf{x}) = 1$ olduğundan her zaman kurtarabiliriz.
 
-Now, let us focus on $p( \mathbf{x}  \mid  y)$. Using the chain rule of probability, we can express the term $p( \mathbf{x}  \mid  y)$ as
+Şimdi $p( \mathbf{x}  \mid  y)$ üzerine odaklanalım. Zincir olasılık kuralını kullanarak $p( \mathbf{x}  \mid  y)$ terimini şu şekilde ifade edebiliriz:
 
 $$p(x_1  \mid y) \cdot p(x_2  \mid  x_1, y) \cdot ... \cdot p( x_d  \mid  x_1, ..., x_{d-1}, y).$$
 
-By itself, this expression does not get us any further. We still must estimate roughly $2^d$ parameters. However, if we assume that *the features are conditionally independent of each other, given the label*, then suddenly we are in much better shape, as this term simplifies to $\prod_i p(x_i  \mid  y)$, giving us the predictor
+Tek başına bu ifade bizi daha ileriye götürmez. Yine de kabaca $2^ d$ tanee parametreyi tahmin etmeliyiz. Bununla birlikte, *etiketi verildiğinde özelliklerin koşullu olarak birbirinden bağımsız olduğunu varsayarsak*, aniden çok daha iyi durumda oluruz, çünkü bu terim $\prod_i p(x_i \mid y)$'a sadeleştirerek bize şu tahminciyi verir: 
 
 $$ \hat{y} = \mathrm{argmax}_y \> \prod_{i=1}^d p(x_i  \mid  y) p(y).$$
 
-If we can estimate $\prod_i p(x_i=1  \mid  y)$ for every $i$ and $y$, and save its value in $P_{xy}[i, y]$, here $P_{xy}$ is a $d\times n$ matrix with $n$ being the number of classes and $y\in\{1, \ldots, n\}$. In addition, we estimate $p(y)$ for every $y$ and save it in $P_y[y]$, with $P_y$ a $n$-length vector. Then for any new example $\mathbf x$, we could compute
+Her $i$ ve $y$ için $\prod_i p(x_i = 1 \mid y)$'yi tahmin edebilir ve değerini $P_{xy} [i, y]$ olarak kaydedebiliriz, burada $P_{xy}$, $d \times n$ matristir; $n$ sınıf sayısı ve $y \in \{1, \ ldots, n\}$'dir. Ek olarak, her $y$ için $p(y)$ değerini tahmin ediyoruz ve $n$-uzunluk vektör olan $P_y$'ya, $P_y [y]$ olarak kaydediyoruz. Sonra herhangi bir yeni örnek için $\mathbf x$'yi hesaplayabiliriz:
 
 $$ \hat{y} = \mathrm{argmax}_y \> \prod_{i=1}^d P_{xy}[x_i, y]P_y[y],$$
 :eqlabel:`eq_naive_bayes_estimation`
 
-for any $y$. So our assumption of conditional independence has taken the complexity of our model from an exponential dependence on the number of features $\mathcal{O}(2^dn)$ to a linear dependence, which is $\mathcal{O}(dn)$.
+üstelik herhangi bir $y$ için. Dolayısıyla, koşullu bağımsızlık varsayımımız, modelimizin karmaşıklığını özellik sayısına bağlı $\mathcal{O}(2^dn)$ üstel bir bağımlılıktan $\mathcal{O}(dn)$ olan doğrusal bir bağımlılığa almıştır.
 
+## Eğitim
 
-## Training
-
-The problem now is that we do not know $P_{xy}$ and $P_y$. So we need to estimate their values given some training data first. This is *training* the model. Estimating $P_y$ is not too hard. Since we are only dealing with $10$ classes, we may count the number of occurrences $n_y$ for each of the digits and divide it by the total amount of data $n$. For instance, if digit 8 occurs $n_8 = 5,800$ times and we have a total of $n = 60,000$ images, the probability estimate is $p(y=8) = 0.0967$.
+Şimdi sorun, $P_{xy}$ ve $P_y$'yi bilmiyor olmamızdır. Bu nedenle, önce bazı eğitim verileri verildiğinde bu değerleri tahmin etmemiz gerekiyor. Bu, modeli *eğitmektir*. $P_y$'yi tahmin etmek çok zor değil. Sadece $10$ sınıfla uğraştığımız için, her rakam için görülme sayısını, $n_y$, sayabilir ve bunu toplam veri miktarına $n$ bölebiliriz. Örneğin, 8 rakamı $n_8 = 5,800$ kez ortaya çıkarsa ve toplam $n = 60,000$ görüntümüz varsa, olasılık tahminimiz $ p(y=8) = 0,0967$ olur.
 
 ```{.python .input}
 X, Y = mnist_train[:]  # All training examples
@@ -176,7 +176,7 @@ P_y = n_y / n_y.sum()
 P_y
 ```
 
-Now on to slightly more difficult things $P_{xy}$. Since we picked black and white images, $p(x_i  \mid  y)$ denotes the probability that pixel $i$ is switched on for class $y$. Just like before we can go and count the number of times $n_{iy}$ such that an event occurs and divide it by the total number of occurrences of $y$, i.e., $n_y$. But there is something slightly troubling: certain pixels may never be black (e.g., for well cropped images the corner pixels might always be white). A convenient way for statisticians to deal with this problem is to add pseudo counts to all occurrences. Hence, rather than $n_{iy}$ we use $n_{iy}+1$ and instead of $n_y$ we use $n_{y} + 1$. This is also called *Laplace Smoothing*.  It may seem ad-hoc, however it may be well motivated from a Bayesian point-of-view.
+Şimdi biraz daha zor şeylere, $P_{xy}$'ye, geçelim. Siyah beyaz resimler seçtiğimiz için, $p(x_i \mid y)$, $i$ pikselinin $y$ sınıfı için açık olma olasılığını gösterir. Tıpkı daha önce olduğu gibi, bir olayın meydana geldiği $n_{iy}$ sayısını sayabilmemiz ve bunu $y$'nin toplam oluş sayısına bölebilmemiz gibi, yani $n_y$. Ancak biraz rahatsız edici bir şey var: Belirli pikseller asla siyah olmayabilir (örneğin, iyi kırpılmış görüntülerde köşe pikselleri her zaman beyaz olabilir). İstatistikçilerin bu sorunla baş etmeleri için uygun bir yol, tüm oluşumlara sözde sayımlar eklemektir. Bu nedenle, $n_{iy}$ yerine $n_{iy} + 1$ ve $n_y$ yerine $n_{y} + 1$ kullanıyoruz. Bu aynı zamanda *Laplace Düzleştirme (Smoothing)* olarak da adlandırılır. Geçici görünebilir, ancak Bayesci bir bakış açısından iyi motive edilmiş olabilir.
 
 ```{.python .input}
 n_x = np.zeros((10, 28, 28))
@@ -197,9 +197,9 @@ P_xy = (n_x + 1) / (n_y + 1).reshape(10, 1, 1)
 d2l.show_images(P_xy, 2, 5);
 ```
 
-By visualizing these $10\times 28\times 28$ probabilities (for each pixel for each class) we could get some mean looking digits.
+Bu $10$ \times 28 \times 28$ olasılıkları görselleştirerek (her sınıf için her piksel için) ortalama görünümlü rakamlar elde edebiliriz.
 
-Now we can use :eqref:`eq_naive_bayes_estimation` to predict a new image. Given $\mathbf x$, the following functions computes $p(\mathbf x \mid y)p(y)$ for every $y$.
+Şimdi yeni bir görüntüyü tahmin etmek için :eqref:`eq_naive_bayes_estimation`'yi kullanabiliriz. $\mathbf x$ verildiğinde, aşağıdaki işlevler her $y$ için $p(\mathbf x \mid y)p(y)$'yi hesaplar.
 
 ```{.python .input}
 def bayes_pred(x):
@@ -224,10 +224,9 @@ image, label = mnist_test[0]
 bayes_pred(image)
 ```
 
-This went horribly wrong! To find out why, let us look at the per pixel probabilities. They are typically numbers between $0.001$ and $1$. We are multiplying $784$ of them. At this point it is worth mentioning that we are calculating these numbers on a computer, hence with a fixed range for the exponent. What happens is that we experience *numerical underflow*, i.e., multiplying all the small numbers leads to something even smaller until it is rounded down to zero.  We discussed this as a theoretical issue in :numref:`sec_maximum_likelihood`, but we see the phenomena clearly here in practice.
+Bu korkunç bir şekilde yanlış gitti! Nedenini bulmak için piksel başına olasılıklara bakalım. Bunlar tipik $0,001$ ile $1$ arasındaki sayılardır. $784$ tanesini çarpıyoruz. Bu noktada, bu sayıları bir bilgisayarda sabit bir aralıkla hesapladığımızı belirtmekte fayda var, dolayısıyla bu kuvvet için de geçerli. Olan şu ki, *sayısal küçümenlik (underflow)* yaşıyoruz, yani tüm küçük sayıları çarpmak, sıfıra yuvarlanana kadar daha da küçük değerlere yol açar. Bunu teorik bir mesele olarak :numref:`sec_maximum_likelihood`da tartıştık, ancak burada pratikteki bir vaka olarak açıkça görüyoruz.
 
-As discussed in that section, we fix this by use the fact that $\log a b = \log a + \log b$, i.e., we switch to summing logarithms.
-Even if both $a$ and $b$ are small numbers, the logarithm values should be in a proper range.
+O bölümde tartışıldığı gibi, bunu $\log a b = \log a + \log b$ gerçeğini kullanarak, yani logaritma toplamaya geçerek düzeltiriz. Hem $a$ hem de $b$ küçük sayılar olsa bile, logaritma değerleri uygun bir aralıkta olacaktır.
 
 ```{.python .input}
 a = 0.1
@@ -242,11 +241,11 @@ print('underflow:', a**784)
 print('logarithm is normal:', 784*math.log(a))
 ```
 
-Since the logarithm is an increasing function, we can rewrite :eqref:`eq_naive_bayes_estimation` as
+Logaritma artan bir fonksiyon olduğundan, şu şekilde yeniden yazabiliriz :eqref:`eq_naive_bayes_estimation`:
 
 $$ \hat{y} = \mathrm{argmax}_y \> \sum_{i=1}^d \log P_{xy}[x_i, y] + \log P_y[y].$$
 
-We can implement the following stable version:
+Aşağıdaki kararlı sürümü uygulayabiliriz:
 
 ```{.python .input}
 log_P_xy = np.log(P_xy)
@@ -279,7 +278,7 @@ py = bayes_pred_stable(image)
 py
 ```
 
-We may now check if the prediction is correct.
+Şimdi tahminin doğru olup olmadığını kontrol edebiliriz.
 
 ```{.python .input}
 # Convert label which is a scalar tensor of int32 dtype
@@ -292,7 +291,7 @@ py.argmax(axis=0) == int(label)
 py.argmax(dim=0) == label
 ```
 
-If we now predict a few validation examples, we can see the Bayes classifier works pretty well.
+Şimdi birkaç geçerleme örneği tahmin edersek, Bayes sınıflandırıcısının oldukça iyi çalıştığını görebiliriz.
 
 ```{.python .input}
 def predict(X):
@@ -315,7 +314,7 @@ preds = predict(X)
 d2l.show_images(X, 2, 9, titles=[str(d) for d in preds]);
 ```
 
-Finally, let us compute the overall accuracy of the classifier.
+Son olarak, sınıflandırıcının genel doğruluğunu hesaplayalım.
 
 ```{.python .input}
 X, y = mnist_test[:]
@@ -332,19 +331,18 @@ preds = torch.tensor(predict(X), dtype=torch.int32)
 float((preds == y).sum()) / len(y)  # Validation accuracy
 ```
 
-Modern deep networks achieve error rates of less than $0.01$. The relatively poor performance is due to the incorrect statistical assumptions that we made in our model: we assumed that each and every pixel are *independently* generated, depending only on the label. This is clearly not how humans write digits, and this wrong assumption led to the downfall of our overly naive (Bayes) classifier.
+Modern derin ağlar $0,01$'den daha düşük hata oranlarına ulaşır. Nispeten düşük performans, modelimizde yaptığımız yanlış istatistiksel varsayımlardan kaynaklanmaktadır: Her pikselin yalnızca etikete bağlı olarak *bağımsızca* oluşturulduğunu varsaydık. İnsanların rakamları böyle yazmadığı açıktır ve bu yanlış varsayım, aşırı naif (Bayes) sınıflandırıcımızın çökmesine yol açtı.
 
-## Summary
-* Using Bayes' rule, a classifier can be made by assuming all observed features are independent.  
-* This classifier can be trained on a dataset by counting the number of occurrences of combinations of labels and pixel values.
-* This classifier was the gold standard for decades for tasks such as spam detection.
+## Özet
+* Bayes kuralı kullanılarak, gözlenen tüm özelliklerin bağımsız olduğu varsayılarak bir sınıflandırıcı yapılabilir.
+* Bu sınıflandırıcı, etiket ve piksel değerlerinin kombinasyonlarının olma sayısını sayarak bir veri kümesi üzerinde eğitilebilir.
+* Bu sınıflandırıcı, istenmeyen elektronik posta (spam) tespiti gibi görevler için onlarca yıldır altın standarttı.
 
-## Exercises
-1. Consider the dataset $[[0,0], [0,1], [1,0], [1,1]]$ with labels given by the XOR of the two elements $[0,1,1,0]$.  What are the probabilities for a Naive Bayes classifier built on this dataset.  Does it successfully classify our points?  If not, what assumptions are violated?
-1. Suppose that we did not use Laplace smoothing when estimating probabilities and a data point arrived at testing time which contained a value never observed in training.  What would the model output?
-1. The naive Bayes classifier is a specific example of a Bayesian network, where the dependence of random variables are encoded with a graph structure.  While the full theory is beyond the scope of this section (see :cite:`Koller.Friedman.2009` for full details), explain why allowing explicit dependence between the two input variables in the XOR model allows for the creation of a successful classifier.
-
+## Alıştırmalar
+1. $[[0,0], [0,1], [1,0], [1,1]]$ veri kümesini iki öğenin XOR tarafından verilen etiketleri ile, $[0,1,1,0]$, düşünün. Bu veri kümesine dayanan bir naif Bayes sınıflandırıcısının olasılıkları nelerdir? Noktalarımızı başarıyla sınıflandırıyor mu? Değilse, hangi varsayımlar ihlal edilir?
+1. Olasılıkları tahmin ederken Laplace düzleştirmeyi kullanmadığımızı ve eğitimde asla gözlenmeyen bir değer içeren bir veri noktasının test zamanında geldiğini varsayalım. Model ne çıkarır?
+1. Naif Bayes sınıflandırıcısı, rastgele değişkenlerin bağımlılığının bir grafik yapısıyla kodlandığı belirli bir Bayes ağı örneğidir. Tam teorisi bu bölümün kapsamı dışında olsa da (tüm ayrıntılar için :cite:`Koller.Friedman.2009`a bakınız), XOR modelinde iki giriş değişkeni arasında açık bağımlılığa izin vermenin neden başarılı bir sınıflandırıcı oluşturmaya izin verdiğini açıklayıniz.
 
 :begin_tab:`mxnet`
-[Discussions](https://discuss.d2l.ai/t/418)
+[Tartışmalar](https://discuss.d2l.ai/t/418)
 :end_tab:
