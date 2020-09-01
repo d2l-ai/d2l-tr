@@ -201,147 +201,137 @@ torch.square(samples.std(unbiased=False)) + torch.square(bias)
 
 Kimyager olduğunuzu hayal edin. Laboratuvarda binlerce saat geçirdikten sonra, kişinin matematiği anlama yeteneğini önemli ölçüde arttırabilecek yeni bir ilaç geliştiriyorsunuz. Sihirli gücünü göstermek için onu test etmeniz gerekir. Doğal olarak, ilacı almak ve matematiği daha iyi öğrenmelerine yardımcı olup olmayacağını görmek için bazı gönüllülere ihtiyacınız olabilir. Nasıl başlayacaksınız?
 
-First, you will need carefully random selected two groups of volunteers, so that there is no difference between their math understanding ability measured by some metrics. The two groups are commonly referred to as the test group and the control group. The *test group* (or *treatment group*) is a group of individuals who will experience the medicine, while the *control group* represents the group of users who are set aside as a benchmark, i.e., identical environment setups except taking this medicine. In this way, the influence of all the variables are minimized, except the impact of the independent variable in the treatment.
+İlk olarak, dikkatle rastgele seçilmiş iki grup gönüllüye ihtiyacınız olacak, böylece bazı ölçütlerle ölçülen matematik anlama yetenekleri arasında hiçbir fark olmayacak. Bu iki grup genellikle test grubu ve kontrol grubu olarak adlandırılır. *Test grubu* (veya *tedavi grubu*) ilacı deneyimleyecek bir grup kişidir, *kontrol grubu* ise bir kıyaslama olarak bir kenara bırakılan kullanıcı grubunu temsil eder, yani, ilaç almak dışında aynı ortam şartlarına sahipler. Bu şekilde, bağımsız değişkenin tedavideki etkisi dışında tüm değişkenlerin etkisi en aza indirilir.
 
-Second, after a period of taking the medicine, you will need to measure the two groups' math understanding by the same metrics, such as letting the volunteers do the same tests after learning a new math formula. Then, you can collect their performance and compare the results.  In this case, our null hypothesis will be that there is no difference between the two groups, and our alternate will be that there is.
+İkincisi, ilacı bir süre aldıktan sonra, iki grubun matematik anlayışını, yeni bir matematik formülü öğrendikten sonra gönüllülerin aynı matematik testlerini yapmasına izin vermek gibi aynı ölçütlerle ölçmeniz gerekecektir. Ardından, performanslarını toplayabilir ve sonuçları karşılaştırabilirsiniz. Bu durumda, sıfır hipotezimiz, muhtemelen iki grup arasında hiçbir fark olmadığı ve alternatifimiz olduğu şeklinde olacaktır.
 
-This is still not fully formal.  There are many details you have to think of carefully. For example, what is the suitable metrics to test their math understanding ability? How many volunteers for your test so you can be confident to claim the effectiveness of your medicine? How long should you run the test? How do you decide if there is a difference between the two groups?  Do you care about the average performance only, or do you also the range of variation of the scores. And so on.
+Bu hala tam olarak resmi (nizamlara uygun) değil. Dikkatlice düşünmeniz gereken birçok detay var. Örneğin, matematik anlama yeteneklerini test etmek için uygun ölçütler nelerdir? İlacınızın etkinliğini iddia edebileceğinizden emin olabilmeniz için testinizde kaç gönüllü var? Testi ne kadar süreyle koşturmalısınız? İki grup arasında bir fark olup olmadığına nasıl karar veriyorsunuz? Yalnızca ortalama performansla mı ilgileniyorsunuz, yoksa puanların varyasyon aralığını da mı önemsiyorsunuz? Ve bunun gibi.
 
-In this way, hypothesis testing provides a framework for experimental design and reasoning about certainty in observed results.  If we can now show that the null hypothesis is very unlikely to be true, we may reject it with confidence.
+Bu şekilde, hipotez testi, deneysel tasarım ve gözlemlenen sonuçlarda kesinlik hakkında akıl yürütme için bir çerçeve sağlar. Şimdi sıfır hipotezinin gerçek olma ihtimalinin çok düşük olduğunu gösterebilirsek, onu güvenle reddedebiliriz.
 
-To complete the story of how to work with hypothesis testing, we need to now introduce some additional terminology and make some of our concepts above formal.
+Hipotez testiyle nasıl çalışılacağına dair hikayeyi tamamlamak için, şimdi bazı ek terminolojiyle tanışmamız ve yukarıdaki bazı kavramlarımızı kurallara uygun halde işlememiz gerekiyor.
 
+### İstatistiksel Anlamlılık
 
-### Statistical Significance
+*İstatistiksel anlamlılık*, sıfır hipotezin, $H_0$, reddedilmemesi gerektiğinde yanlışlıkla reddedilme olasılığını ölçer, yani,
 
-The *statistical significance* measures the probability of erroneously rejecting the null hypothesis, $H_0$, when it should not be rejected, i.e.,
+$$\text{istatistiksel anlamlılık} = 1 - \ alpha = P (\text{reddet } H_0 \mid H_0 \text{ doğru})$$.
 
-$$ \text{statistical significance }= 1 - \alpha = P(\text{reject } H_0 \mid H_0 \text{ is true} ).$$
+Aynı zamanda *1. tür hata* veya *yanlış pozitif* olarak da anılır. $\alpha$, *anlamlılık düzeyi* olarak adlandırılır ve yaygın olarak kullanılan değeri $\% 5$, yani $1- \alpha = \% 95$ şeklindedir. İstatistiksel anlamlılık düzeyi, gerçek bir sıfır hipotezi reddettiğimizde almaya istekli olduğumuz risk seviyesi olarak açıklanabilir.
 
-It is also referred to as the *type I error* or *false positive*. The $\alpha$, is called as the *significance level* and its commonly used value is $5\%$, i.e., $1-\alpha = 95\%$. The level of statistical significance level can be explained as the level of risk that we are willing to take, when we reject a true null hypothesis.
+:numref:`fig_statistical_significance`, iki örneklemli bir hipotez testinde gözlemlerin değerlerini ve belirli bir normal dağılımın gelme olasılığını gösterir. Gözlem veri noktası $\% 95$ eşiğinin dışında yer alırsa, sıfır hipotez varsayımı altında çok olası olmayan bir gözlem olacaktır. Dolayısıyla, sıfır hipotezde yanlış bir şeyler olabilir ve onu reddedeceğiz.
 
-:numref:`fig_statistical_significance` shows the observations' values and probability of a given normal distribution in a two-sample hypothesis test. If the observation data point is located outsides the $95\%$ threshold, it will be a very unlikely observation under the null hypothesis assumption. Hence, there might be something wrong with the null hypothesis and we will reject it.
-
-![Statistical significance.](../img/statistical_significance.svg)
+![İstatistiksel anlamlılık.](../img/statistical_significance.svg)
 :label:`fig_statistical_significance`
 
+### İstatistiksel Güç
 
-### Statistical Power
+*İstatistiksel Güç* (veya *duyarlılık*), reddedilmesi gerektiğinde sıfır hipotezin, $H_0$, reddedilme olasılığını ölçer, yani,
 
-The *statistical power* (or *sensitivity*) measures the probability of reject the null hypothesis, $H_0$, when it should be rejected, i.e.,
+$$\text{istatistiksel güç} = P(\text{reddet } H_0 \mid H_0 \text{ yanlış}). $$
 
-$$ \text{statistical power }= P(\text{reject } H_0  \mid H_0 \text{ is false} ).$$
+Bir *1. tür hata*nın, doğru olduğunda sıfır hipotezin reddedilmesinden kaynaklanan bir hata olduğunu hatırlayın, oysa *2. tür hata* yanlış olduğunda sıfır hipotezin reddedilmemesinden kaynaklanır. 2. tür hata genellikle $\beta$ olarak belirtilir ve bu nedenle ilgili istatistiksel güç $1-\beta$ olur.
 
-Recall that a *type I error* is error caused by rejecting the null hypothesis when it is true, whereas a *type II error* is resulted from failing to reject the null hypothesis when it is false. A type II error is usually denoted as $\beta$, and hence the corresponding statistical power is $1-\beta$.
+Sezgisel olarak, istatistiksel güç, testimizin istenen bir istatistiksel anlamlılık düzeyindeyken minimum büyüklükte gerçek bir tutarsızlığı ne kadar olasılıkla tespit edeceği şeklinde yorumlanabilir. $\% 80$, yaygın olarak kullanılan bir istatistiksel güç eşiğidir. İstatistiksel güç ne kadar yüksekse, gerçek farklılıkları tespit etme olasılığımız o kadar yüksektir.
 
+İstatistiksel gücün en yaygın kullanımlarından biri, ihtiyaç duyulan örnek sayısını belirlemektir. Sıfır hipotezini yanlış olduğunda reddetme olasılığınız, yanlış olma derecesine (*etki boyutu* olarak bilinir) ve sahip olduğunuz örneklerin sayısına bağlıdır. Tahmin edebileceğiniz gibi, küçük etki boyutları, yüksek olasılıkla tespit edilebilmesi için çok fazla sayıda örnek gerektirir. Ayrıntılı olarak türetmek için bu kısa ek bölümün kapsamı dışında, örnek olarak, örneğimizin sıfır ortalama bir varyanslı Gauss'tan geldiğine dair bir sıfır hipotezi reddedebilmek isterken, örneklemimizin ortalamasının aslında bire yakın olduğuna inanıyoruz, bunu yalnızca $8$'lik örneklem büyüklüğünde kabul edilebilir hata oranları ile yapabiliriz. Bununla birlikte, örnek popülasyonumuzun gerçek ortalamasının $0.01$'e yakın olduğunu düşünürsek, farkı tespit etmek için yaklaşık $80000$'lik bir örneklem büyüklüğüne ihtiyacımız olur.
 
-Intuitively, statistical power can be interpreted as how likely our test will detect a real discrepancy of some minimum magnitude at a desired statistical significance level. $80\%$ is a commonly used statistical power threshold. The higher the statistical power, the more likely we are to detect true differences.
+Gücü bir su filtresi olarak hayal edebiliriz. Bu benzetmede, yüksek güçlü bir hipotez testi, sudaki zararlı maddeleri olabildiğince azaltacak yüksek kaliteli bir su filtreleme sistemi gibidir. Öte yandan, daha küçük bir tutarsızlık, bazı nispeten küçük maddelerin boşluklardan kolayca kaçabildiği düşük kaliteli bir su filtresine benzer. Benzer şekilde, istatistiksel güç yeterince yüksek güce sahip değilse, bu test daha küçük tutarsızları yakalayamayabilir.
 
-One of the most common uses of statistical power is in determining the number of samples needed.  The probability you reject the null hypothesis when it is false depends on the degree to which it is false (known as the *effect size*) and the number of samples you have.  As you might expect, small effect sizes will require a very large number of samples to be detectable with high probability.  While beyond the scope of this brief appendix to derive in detail, as an example, want to be able to reject a null hypothesis that our sample came from a mean zero variance one Gaussian, and we believe that our sample's mean is actually close to one, we can do so with acceptable error rates with a sample size of only $8$.  However, if we think our sample population true mean is close to $0.01$, then we'd need a sample size of nearly $80000$ to detect the difference.
+### Test İstatistiği
 
-We can imagine the power as a water filter. In this analogy, a high power hypothesis test is like a high quality water filtration system that will reduce harmful substances in the water as much as possible. On the other hand, a smaller discrepancy is like a low quality water filter, where some relative small substances may easily escape from the gaps. Similarly, if the statistical power is not of enough high power, then the test may not catch the smaller discrepancy.
+Bir *test istatistiği* $T(x)$, örnek verilerin bazı özelliklerini özetleyen bir sayıdır. Böyle bir istatistiği tanımlamanın amacı, farklı dağılımları ayırt etmemize ve hipotez testimizi yürütmemize izin vermesidir. Kimyager örneğimize geri dönersek, bir popülasyonun diğerinden daha iyi performans gösterdiğini göstermek istiyorsak, ortalamayı test istatistiği olarak almak mantıklı olabilir. Farklı test istatistiği seçenekleri, büyük ölçüde farklı istatistiksel güçlü istatistiksel testlere yol açabilir.
 
+Genellikle, $T(X)$ (sıfır hipotezimiz altındaki test istatistiğinin dağılımı), en azından yaklaşık olarak, sıfır hipotezi kapsamında değerlendirildiğinde normal dağılım gibi genel bir olasılık dağılımını izleyecektir. Açıkça böyle bir dağılım elde edebilir ve daha sonra veri kümemizdeki test istatistiğimizi ölçebilirsek, istatistiğimiz beklediğimiz aralığın çok dışındaysa sıfır hipotezi güvenle reddedebiliriz. Bunu nicel hale getirmek bizi $p$-değerleri kavramına götürür.
 
-### Test Statistic
+### $p$-Değeri
 
-A *test statistic* $T(x)$ is a scalar which summarizes some characteristic of the sample data.  The goal of defining such a statistic is that it should allow us to distinguish between different distributions and conduct our hypothesis test.  Thinking back to our chemist example, if we wish to show that one population performs better than the other, it could be reasonable to take the mean as the test statistic.  Different choices of test statistic can lead to statistical test with drastically different statistical power.
-
-Often, $T(X)$ (the distribution of the test statistic under our null hypothesis) will follow, at least approximately, a common probability distribution such as a normal distribution when considered under the null hypothesis. If we can derive explicitly such a distribution, and then measure our test statistic on our dataset, we can safely reject the null hypothesis if our statistic is far outside the range that we would expect.  Making this quantitative leads us to the notion of $p$-values.
-
-
-### $p$-value
-
-The $p$-value (or the *probability value*) is the probability that $T(X)$ is at least as extreme as the observed test statistic $T(x)$ assuming that the null hypothesis is *true*, i.e.,
+$p$-değeri (veya *olasılık değeri*), sıfır hipotezinin *doğru* olduğu varsayılarak, $T(X)$'in en az gözlenen test istatistiği $T(x)$ kadar uç olma olasılığıdır, yani
 
 $$ p\text{-value} = P_{H_0}(T(X) \geq T(x)).$$
 
-If the $p$-value is smaller than or equal to a predefined and fixed statistical significance level $\alpha$, we may reject the null hypothesis. Otherwise, we will conclude that we are lack of evidence to reject the null hypothesis. For a given population distribution, the *region of rejection* will be the interval contained of all the points which has a $p$-value smaller than the statistical significance level $\alpha$.
+$p$-değeri önceden tanımlanmış ve sabit bir istatistiksel anlamlılık düzeyi $\alpha$ değerinden küçükse veya ona eşitse, sıfır hipotezini reddedebiliriz. Aksi takdirde, sıfır hipotezi reddetmek için kanıtımız olmadığı sonucuna varacağız. Belirli bir popülasyon dağılımı için, *reddetme bölgesi*, istatistiksel anlamlılık düzeyi $\alpha$'dan daha küçük bir $p$ değerine sahip tüm noktaların içerildiği aralık olacaktır.
 
+### Tek Taraflı Test ve İki Taraflı Test
 
-### One-side Test and Two-sided Test
+Normalde iki tür anlamlılık testi vardır: Tek taraflı test ve iki taraflı test. *Tek taraflı test* (veya *tek kuyruklu test*), sıfır hipotez ve alternatif hipotezin yalnızca bir tarafta olduğunda geçerlidir. Örneğin, sıfır hipotez $\theta$ gerçek parametresinin $c$ değerinden küçük veya ona eşit olduğunu belirtebilir. Alternatif hipotez, $\theta$ nın $c$'den büyük olması olacaktır. Yani, reddetme bölgesi, örneklem dağılımının sadece bir tarafındadır. Tek taraflı testin aksine, *iki taraflı test* (veya *iki kuyruklu test*), redeetme bölgesi örneklem dağılımının her iki tarafında olduğunda uygulanabilir. Bu durumda bir örnek, $\theta$ gerçek parametresinin $c$ değerine eşit olduğunu belirten bir sıfır hipotez ifadesine sahip olma olabilir. Alternatif hipotez, $\theta$'nın $c$'ye eşit olmamasıdır.
 
-Normally there are two kinds of significance test: the one-sided test and the two-sided test. The *one-sided test* (or *one-tailed test*) is applicable when the null hypothesis and the alternative hypothesis only have one direction. For example, the null hypothesis may state that the true parameter $\theta$ is less than or equal to a value $c$. The alternative hypothesis would be that $\theta$ is greater than $c$. That is, the region of rejection is on only one side of the sampling distribution.  Contrary to the one-sided test, the *two-sided test* (or *two-tailed test*) is applicable when the region of rejection is on both sides of the sampling distribution. An example in this case may have a null hypothesis state that the true parameter $\theta$ is equal to a value $c$. The alternative hypothesis would be that $\theta$ is not equal to $c$.
+### Hipotez Testinin Genel Adımları
 
+Yukarıdaki kavramlara aşina olduktan sonra, hipotez testinin genel adımlarından geçelim.
 
-### General Steps of Hypothesis Testing
+1. Soruyu belirtin ve sıfır hipotezi, $H_0$, oluşturun.
+2. İstatistiksel anlamlılık düzeyini $\alpha$ ve bir istatistiksel güç ($1-\beta$) ayarlayın.
+3. Deneyler yoluyla numuneler alın. İhtiyaç duyulan örnek sayısı istatistiksel güce ve beklenen etki büyüklüğüne bağlı olacaktır.
+4. Test istatistiğini ve $p$-değerini hesaplayın.
+5. $p$-değeri ve istatistiksel anlamlılık düzeyi $\alpha$ bağlı olarak sıfır hipotezi tutma veya reddetme kararını verin.
 
-After getting familiar with the above concepts, let us go through the general steps of hypothesis testing.
+Bir hipotez testi yapmak için, bir sıfır hipotez ve almaya istekli olduğumuz bir risk seviyesi tanımlayarak başlıyoruz. Sonra, sıfır hipotezine karşı kanıt olarak test istatistiğinin aşırı bir değerini alarak numunenin (örneklemin) test istatistiğini hesaplıyoruz. Test istatistiği reddetme bölgesi dahilindeyse, alternatif lehine sıfır hipotezi reddedebiliriz.
 
-1. State the question and establish a null hypotheses $H_0$.
-2. Set the statistical significance level $\alpha$ and a statistical power ($1 - \beta$).
-3. Obtain samples through experiments.  The number of samples needed will depend on the statistical power, and the expected effect size.
-4. Calculate the test statistic and the $p$-value.
-5. Make the decision to keep or reject the null hypothesis based on the $p$-value and the statistical significance level $\alpha$.
+Hipotez testi, klinik araştırmalar ve A/B testi gibi çeşitli senaryolarda uygulanabilir.
 
-To conduct a hypothesis test, we start by defining a null hypothesis and a level of risk that we are willing to take. Then we calculate the test statistic of the sample, taking an extreme value of the test statistic as evidence against the null hypothesis. If the test statistic falls within the reject region, we may reject the null hypothesis in favor of the alternative.
+## Güven Aralıkları Oluşturma
 
-Hypothesis testing is applicable in a variety of scenarios such as the clinical trails and A/B testing.
+Bir $\theta$ parametresinin değerini tahmin ederken, $\hat \theta$ gibi nokta tahmincileri, belirsizlik kavramı içermedikleri için sınırlı fayda sağlar. Daha ziyade, yüksek olasılıkla gerçek $\theta$ parametresini içeren bir aralık oluşturabilirsek çok daha iyi olurdu. Yüzyıl önce bu tür fikirlerle ilgileniyor olsaydınız, 1937'de güven aralığı kavramını tanıtan Jerzy Neyman'ın "Klasik Olasılık Teorisine Dayalı İstatistiksel Tahmin Teorisinin Ana Hatları (Outline of a Theory of Statistical Estimation Based on the Classical Theory of Probability)" nı okumaktan heyecan duyardınız :cite:`Neyman.1937`.
 
+Faydalı olması için, belirli bir kesinlik derecesi için bir güven aralığı mümkün olduğu kadar küçük olmalıdır. Nasıl türetileceğini görelim.
 
-## Constructing Confidence Intervals
+### Tanım
 
-
-When estimating the value of a parameter $\theta$, point estimators like $\hat \theta$ are of limited utility since they contain no notion of uncertainty. Rather, it would be far better if we could produce an interval that would contain the true parameter $\theta$ with high probability.  If you were interested in such ideas a century ago, then you would have been excited to read "Outline of a Theory of Statistical Estimation Based on the Classical Theory of Probability" by Jerzy Neyman :cite:`Neyman.1937`, who first introduced the concept of confidence interval in 1937.
-
-To be useful, a confidence interval should be as small as possible for a given degree of certainty. Let us see how to derive it.
-
-
-### Definition
-
-Mathematically, a *confidence interval* for the true parameter $\theta$ is an interval $C_n$ that computed from the sample data such that
+Matematiksel olarak, $\theta$ gerçek parametresi için *güven aralığı*, örnek verilerden şu şekilde hesaplanan bir $C_n$ aralığıdır.
 
 $$P_{\theta} (C_n \ni \theta) \geq 1 - \alpha, \forall \theta.$$
 :eqlabel:`eq_confidence`
 
-Here $\alpha \in (0, 1)$, and $1 - \alpha$ is called the *confidence level* or *coverage* of the interval. This is the same $\alpha$ as the significance level as we discussed about above.
+Burada $\alpha \in (0, 1)$ ve $1 - \alpha$, aralığın *güven düzeyi* veya *kapsamı* olarak adlandırılır. Bu, yukarıda tartıştığımız anlam düzeyiyle aynı $\alpha$'dır.
 
-Note that :eqref:`eq_confidence` is about variable $C_n$, not about the fixed $\theta$. To emphasize this, we write $P_{\theta} (C_n \ni \theta)$ rather than $P_{\theta} (\theta \in C_n)$.
+Unutmayın :eqref:`eq_confidence`  $C_n$ değişkeni hakkındadır, sabit $\theta$ ile ilgili değildir. Bunu vurgulamak için, $P_{\theta} (\theta \C_n)$ yerine $P_{\theta} (C_n \ni \theta)$ yazıyoruz.
 
-### Interpretation
+### Yorumlama
 
-It is very tempting to interpret a $95\%$ confidence interval as an interval where you can be $95\%$ sure the true parameter lies, however this is sadly not true.  The true parameter is fixed, and it is the interval that is random.  Thus a better interpretation would be to say that if you generated a large number of confidence intervals by this procedure, $95\%$ of the generated intervals would contain the true parameter.
+$\% 95$ güven aralığını, gerçek parametrenin $\% 95$ olduğundan emin olabileceğiniz bir aralık olarak yorumlamak çok caziptir, ancak bu maalesef doğru değildir. Gerçek parametre sabittir ve rastgele olan aralıktır. Bu nedenle, bu yordamla çok sayıda güven aralığı oluşturduysanız, oluşturulan aralıkların $\% 95$'inin gerçek parametreyi içereceğini söylemek daha iyi bir yorum olacaktır.
 
-This may seem pedantic, but it can have real implications for the interpretation of the results.  In particular, we may satisfy :eqref:`eq_confidence` by constructing intervals that we are *almost certain* do not contain the true value, as long as we only do so rarely enough.  We close this section by providing three tempting but false statements.  An in-depth discussion of these points can be found in :cite:`Morey.Hoekstra.Rouder.ea.2016`.
+Bu bilgiçlik gibi görünebilir, ancak sonuçların yorumlanmasında gerçek etkileri olabilir. Özellikle, çok nadiren yeterince yaptığımız sürece, *neredeyse kesin* gerçek değeri içermediğimiz aralıklar oluşturarak :eqref:`eq_confidence`i tatmin edebiliriz. Bu bölümü cazip ama yanlış üç ifade sunarak kapatıyoruz. Bu noktaların derinlemesine bir tartışması şu adreste bulunabilir :cite:`Morey.Hoekstra.Rouder.ea.2016`.
 
-* **Fallacy 1**. Narrow confidence intervals mean we can estimate the parameter precisely.
-* **Fallacy 2**. The values inside the confidence interval are more likely to be the true value than those outside the interval.
-* **Fallacy 3**. The probability) that a particular observed $95\%$ confidence interval contains the true value is $95\%$.
+* **Yanılgı 1**. Dar güven aralıkları, parametreyi tam olarak tahmin edebileceğimiz anlamına gelir.
+* **Yanılgı 2**. Güven aralığı içindeki değerlerin, aralığın dışındaki değerlere göre gerçek değer olma olasılığı daha yüksektir.
+* **Yanılgı 3**. Gözlemlenen belirli bir $\% 95$ güven aralığının gerçek değeri içerme olasılığı $\% 95$'tir.
 
-Sufficed to say, confidence intervals are subtle objects.  However, if you keep the interpretation clear, they can be powerful tools.
+Güven aralıklarının narin nesneler olduğunu söylemek yeterli. Ancak yorumlamasını net tutarsanız, bunlar güçlü araçlar olabilir.
 
-### A Gaussian Example
+### Bir Gauss Örneği
 
-Let us discuss the most classical example, the confidence interval for the mean of a Gaussian of unknown mean and variance.  Suppose we collect $n$ samples $\{x_i\}_{i=1}^n$ from our Gaussian $\mathcal{N}(\mu, \sigma^2)$.  We can compute estimators for the mean and standard deviation by taking
+En klasik örneği, bilinmeyen ortalama ve varyansa sahip bir Gauss dağılımının ortalaması için güven aralığını tartışalım. Gauss dağılımdan, $\mathcal{N}(\mu, \sigma^2)$'dan, $n$ örnek, $\{x_i\}_{i=1}^n$, topladığımızı varsayalım. Ortalama ve standart sapma için tahmincileri şu şekilde hesaplayabiliriz:
 
 $$\hat\mu_n = \frac{1}{n}\sum_{i=1}^n x_i \;\text{and}\; \hat\sigma^2_n = \frac{1}{n-1}\sum_{i=1}^n (x_i - \hat\mu)^2.$$
 
-If we now consider the random variable
+Şimdi rastgele değişkeni düşünürsek
 
 $$
 T = \frac{\hat\mu_n - \mu}{\hat\sigma_n/\sqrt{n}},
 $$
 
-we obtain a random variable following a well-known distribution called the *Student's t-distribution on* $n-1$ *degrees of freedom*.
+$n-1$ *serbestlik derecesinde*, *Student-t (Öğrenci-t) dağılımı* adı verilen iyi bilinen bir dağılımı izleyen rastgele bir değişken elde ederiz.
 
-This distribution is very well studied, and it is known, for instance, that as $n\rightarrow \infty$, it is approximately a standard Gaussian, and thus by looking up values of the Gaussian c.d.f. in a table, we may conclude that the value of $T$ is in the interval $[-1.96, 1.96]$ at least $95\%$ of the time.  For finite values of $n$, the interval needs to be somewhat larger, but are well known and precomputed in tables.
+Bu dağılım çok iyi incelenmiştir ve örneğin, $n \rightarrow \infty$ iken, yaklaşık olarak standart bir Gauss olduğu bilinir ve dolayısıyla bir tabloda Gauss b.y.f'nin değerlerine bakarak $T$ değerinin zamanın en az $\% 95$'inde  $[- 1.96, 1.96]$ aralığında olduğu sonucuna varabiliriz. $n$ değerinin sonlu değerleri için, aralığın biraz daha büyük olması gerekir, ancak bunlar iyi bilinmekte ve tablolarda önceden hesaplanmaktadır.
 
-Thus, we may conclude that for large $n$,
+Böylece, büyük $ n $ için diyebiliriz ki,
 
 $$
 P\left(\frac{\hat\mu_n - \mu}{\hat\sigma_n/\sqrt{n}} \in [-1.96, 1.96]\right) \ge 0.95.
 $$
 
-Rearranging this by multiplying both sides by $\hat\sigma_n/\sqrt{n}$ and then adding $\hat\mu_n$, we obtain
+Bunu her iki tarafı da $\hat\sigma_n /\sqrt{n}$ ile çarpıp ardından $\hat\mu_n$ ekleyerek yeniden düzenleriz,
 
 $$
 P\left(\mu \in \left[\hat\mu_n - 1.96\frac{\hat\sigma_n}{\sqrt{n}}, \hat\mu_n + 1.96\frac{\hat\sigma_n}{\sqrt{n}}\right]\right) \ge 0.95.
 $$
 
-Thus we know that we have found our $95\%$ confidence interval:
+Böylece, $\% 95$'lik güven aralığımızı bulduğumuzu biliyoruz:
 $$\left[\hat\mu_n - 1.96\frac{\hat\sigma_n}{\sqrt{n}}, \hat\mu_n + 1.96\frac{\hat\sigma_n}{\sqrt{n}}\right].$$
 :eqlabel:`eq_gauss_confidence`
 
-It is safe to say that :eqref:`eq_gauss_confidence` is one of the most used formula in statistics.  Let us close our discussion of statistics by implementing it.  For simplicity, we assume we are in the asymptotic regime.  Small values of $N$ should include the correct value of `t_star` obtained either programmatically or from a $t$-table.
+Şunu söylemek güvenlidir: :eqref:`eq_gauss_confidence` istatistikte en çok kullanılan formüllerden biridir. İstatistik tartışmamızı uygulama ile kapatalım. Basit olması için, asimptotik (kavuşma doğrusal) rejimde olduğumuzu varsayıyoruz. Küçük $N$ değerleri, programlanarak veya bir $t$-tablosundan elde edilen "`t_star`'ın doğru değerini içermelidir.
 
 ```{.python .input}
 # Number of samples
@@ -381,26 +371,25 @@ sigma_hat = samples.std(unbiased=True)
  mu_hat + t_star*sigma_hat/torch.sqrt(torch.tensor(N, dtype=torch.float32)))
 ```
 
-## Summary
+## Özet
 
-* Statistics focuses on inference problems, whereas deep learning emphasizes on making accurate predictions without explicitly programming and understanding.
-* There are three common statistics inference methods: evaluating and comparing estimators, conducting hypothesis tests, and constructing confidence intervals.
-* There are three most common estimators: statistical bias, standard deviation, and mean square error.
-* A confidence interval is an estimated range of a true population parameter that we can construct by given the samples.
-* Hypothesis testing is a way of evaluating some evidence against the default statement about a population.
+* İstatistik, çıkarım sorunlarına odaklanırken, derin öğrenme, açıkça programlamadan ve anlamadan doğru tahminler yapmaya vurgu yapar.
+* Üç yaygın istatistik çıkarım yöntemi vardır: tahmincileri değerlendirme ve karşılaştırma, hipotez testleri yürütme ve güven aralıkları oluşturma.
+* En yaygın üç tahminci vardır: istatistiksel yanlılık, standart sapma ve ortalama hata karesi.
+* Bir güven aralığı, örneklerle oluşturabileceğimiz gerçek bir popülasyon parametresinin tahmini aralığıdır.
+* Hipotez testi, bir popülasyonla ilgili varsayılan ifadeye karşı bazı kanıtları değerlendirmenin bir yoludur.
 
+## Alıştırmalar
 
-## Exercises
-
-1. Let $X_1, X_2, \ldots, X_n \overset{\text{iid}}{\sim} \mathrm{Unif}(0, \theta)$, where "iid" stands for *independent and identically distributed*. Consider the following estimators of $\theta$:
+1. $X_1, X_2, \ldots, X_n \overset {\text{iid}}{\sim} \mathrm{Unif} (0, \theta)$ olsun, burada "iid" *bağımsız ve aynı şekilde dağılmış* anlamına gelir . Aşağıdaki $\theta$ tahmincilerini düşünün:
 $$\hat{\theta} = \max \{X_1, X_2, \ldots, X_n \};$$
 $$\tilde{\theta} = 2 \bar{X_n} = \frac{2}{n} \sum_{i=1}^n X_i.$$
-    * Find the statistical bias, standard deviation, and mean square error of $\hat{\theta}.$
-    * Find the statistical bias, standard deviation, and mean square error of $\tilde{\theta}.$
-    * Which estimator is better?
-1. For our chemist example in introduction, can you derive the 5 steps to conduct a two-sided hypothesis testing? Given the statistical significance level $\alpha = 0.05$ and the statistical power $1 - \beta = 0.8$.
-1. Run the confidence interval code with $N=2$ and $\alpha = 0.5$ for $100$ independently generated dataset, and plot the resulting intervals (in this case `t_star = 1.0`).  You will see several very short intervals which are very far from containing the true mean $0$.  Does this contradict the interpretation of the confidence interval?  Do you feel comfortable using short intervals to indicate high precision estimates?
+    * $\hat{\theta}$ için istatistiksel yanlılığı, standart sapmayı ve ortalama hata karesini bulunuz.
+    * $\tilde{\theta}$ için istatistiksel yanlılığı, standart sapmayı ve ortalama hata karesini bulunuz.
+    * Hangi tahminci daha iyi?
+1. Girişteki kimyager örneğimiz için, iki taraflı bir hipotez testi yapmak için 5 adımı türetebilir misiniz? İstatistiksel anlamlılık düzeyini $\alpha = 0.05$ ve istatistiksel gücü $1 - \beta =0.8$ alınız.
+1. $100$ tane bağımsız olarak oluşturulan veri kümesi için güven aralığı kodunu $N = 2$ ve $\alpha = 0.5$ ile çalıştırın ve ortaya çıkan aralıkları çizin (bu durumda "`t_star = 1.0`). Gerçek ortalama olan $0$'ı içermekten çok uzak olan birkaç çok kısa aralık göreceksiniz. Bu, güven aralığının yorumlamasıyla çelişiyor mu? Yüksek hassasiyetli tahminleri belirtmek için kısa aralıklar kullanmakta kendinizi rahat hissediyor musunuz?
 
 :begin_tab:`mxnet`
-[Discussions](https://discuss.d2l.ai/t/419)
+[Tartışmalar](https://discuss.d2l.ai/t/419)
 :end_tab:
