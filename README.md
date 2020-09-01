@@ -17,7 +17,7 @@ Bu açık kaynak kitap, bizim derin öğrenmeyi ulaşılabilir yapma, size kavra
 
 Hedefimiz,
 1. herkes için serbestçe kullanılabilir
-1. Uygulamalı bir makine öğrenimi bilimcisi olma yolunda bir başlangıç noktası sağlamak için yeterli teknik derinlik sunan
+1. uygulamalı bir makine öğrenimi bilimcisi olma yolunda bir başlangıç noktası sağlamak için yeterli teknik derinlik sunan
 1. okuyuculara pratikte problemlerin nasıl çözüleceğini gösteren çalıştırılabilir kod içeren
 1. hem bizim hem de genel olarak topluluk tarafından hızlı güncellemeler için izin veren
 1. teknik detayların etkileşimli tartışılması ve soruların cevaplanması için bir forum ile tamamlanan
