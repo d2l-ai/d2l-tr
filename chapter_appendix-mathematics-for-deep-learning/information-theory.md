@@ -66,35 +66,34 @@ def self_information(p):
 self_information(1 / 64)
 ```
 
-## Entropy 
+## Entropi
 
-As self-information only measures the information of a single discrete event, we need a more generalized measure for any random variable of either discrete or continuous distribution. 
+Öz-bilgi yalnızca tek bir ayrık olayın bilgisini ölçtüğü için, ayrık veya sürekli dağılımın herhangi bir rastgele değişkeni için daha genelleştirilmiş bir ölçüme ihtiyacımız var.
 
+### Motive Edici Entropi
 
-### Motivating Entropy
+Ne istediğimiz konusunda belirli olmaya çalışalım. Bu, *Shannon entropisinin aksiyomları* olarak bilinenlerin gayri resmi bir ifadesi olacaktır. Aşağıdaki sağduyu beyanları topluluğunun bizi benzersiz bir bilgi tanımına zorladığı ortaya çıkacaktır. Bu aksiyomların usule uygun bir versiyonu, diğer birçoklarıyla birlikte şu adreste bulunabilir :cite:`Csiszar.2008`.
 
-Let us try to get specific about what we want.  This will be an informal statement of what are known as the *axioms of Shannon entropy*.  It will turn out that the following collection of common-sense statements force us to a unique definition of information.  A formal version of these axioms, along with several others may be found in :cite:`Csiszar.2008`.
+1. Rastgele bir değişkeni gözlemleyerek kazandığımız bilgi, elemanlar dediğimiz şeye veya olasılığı sıfır olan ek elemanların varlığına bağlı değildir.
+2. İki rastgele değişkeni gözlemleyerek elde ettiğimiz bilgi, onları ayrı ayrı gözlemleyerek elde ettiğimiz bilgilerin toplamından fazlası değildir. Bağımsız iseler, o zaman tam toplamdır.
+3. (Neredeyse) Kesin olayları gözlemlerken kazanılan bilgi (neredeyse) sıfırdır.
 
-1.  The information we gain by observing a random variable does not depend on what we call the elements, or the presence of additional elements which have probability zero.
-2.  The information we gain by observing two random variables is no more than the sum of the information we gain by observing them separately.  If they are independent, then it is exactly the sum.
-3.  The information gained when observing (nearly) certain events is (nearly) zero.
+Bu gerçeğin kanıtlanması kitabımızın kapsamı dışında olduğu halde, bunun entropinin alması gereken şekli benzersiz bir şekilde belirlediğini bilmek önemlidir. Bunların izin verdiği tek belirsizlik, daha önce gördüğümüz seçimi yaparak normalize edilen temel birimlerin seçimidir; tek bir adil yazı tura ile sağlanan bilginin bir bit olması gibi.
 
-While proving this fact is beyond the scope of our text, it is important to know that this uniquely determines the form that entropy must take.  The only ambiguity that these allow is in the choice of fundamental units, which is most often normalized by making the choice we saw before that the information provided by a single fair coin flip is one bit.
+### Tanım
 
-### Definition
-
-For any random variable $X$ that follows a probability distribution $P$ with a probability density function (p.d.f.) or a probability mass function (p.m.f.) $p(x)$, we measure the expected amount of information through *entropy* (or *Shannon entropy*)
+Olasılık yoğunluk fonksiyonu (pdf/oyf) veya olasılık kütle fonksiyonu (pmf/okf) $p(x)$ ile olasılık dağılımı $P$'yi takip eden rastgele değişken $X$ için, beklenen bilgi miktarını *entropi* ( veya *Shannon entropisi*) ile ölçebiliriz:
 
 $$H(X) = - E_{x \sim P} [\log p(x)].$$
 :eqlabel:`eq_ent_def`
 
-To be specific, if $X$ is discrete, $$H(X) = - \sum_i p_i \log p_i \text{, where } p_i = P(X_i).$$ 
+Özel olmak gerekirse, $X$ ayrıksa, $$H(X)= - \sum_i p_i \log p_i \text {, burada } p_i = P (X_i)$$.
 
-Otherwise, if $X$ is continuous, we also refer entropy as *differential entropy* 
+Aksi takdirde, $X$ sürekli ise, entropiyi *diferansiyel (ayrımsal) entropi* olarak da adlandırırız
 
 $$H(X) = - \int_x p(x) \log p(x) \; dx.$$
 
-In MXNet, we can define entropy as below.
+MXNet'te entropiyi aşağıdaki gibi tanımlayabiliriz.
 
 ```{.python .input}
 def entropy(p):
@@ -117,30 +116,27 @@ def entropy(p):
 entropy(torch.tensor([0.1, 0.5, 0.1, 0.3]))
 ```
 
-### Interpretations
+### Yorumlama
 
-You may be curious: in the entropy definition :eqref:`eq_ent_def`, why do we use an expectation of a negative logarithm? Here are some intuitions.
+Merak ediyor olabilirsiniz: Entropi tanımında :eqref:`eq_ent_def`, neden negatif bir logaritma ortalaması kullanıyoruz? Burada bazı sezgileri verelim.
 
-First, why do we use a *logarithm* function $\log$? Suppose that $p(x) = f_1(x) f_2(x) \ldots, f_n(x)$, where each component function $f_i(x)$ is independent from each other. This means that each $f_i(x)$ contributes independently to the total information obtained from $p(x)$. As discussed above, we want the entropy formula to be additive over independent random variables. Luckily, $\log$ can naturally turn a product of probability distributions to a summation of the individual terms.
+İlk olarak, neden *logaritma* işlevi $\log$ kullanıyoruz? $p(x) = f_1(x) f_2(x) \ldots, f_n(x)$ olduğunu varsayalım, burada her bileşen işlevi $f_i(x)$ birbirinden bağımsızdır. Bu, her bir $f_i(x)$'in $p(x)$'den elde edilen toplam bilgiye bağımsız olarak katkıda bulunduğu anlamına gelir. Yukarıda tartışıldığı gibi, entropi formülünün bağımsız rastgele değişkenler üzerinde toplamsal olmasını istiyoruz. Neyse ki, $\log$ doğal olarak olasılık dağılımlarının çarpımını bireysel terimlerin toplamına dönüştürebilir.
 
-Next, why do we use a *negative* $\log$? Intuitively, more frequent events should contain less information than less common events, since we often gain more information from an unusual case than from an ordinary one. However, $\log$ is monotonically increasing with the probabilities, and indeed negative for all values in $[0, 1]$.  We need to construct a monotonically decreasing relationship between the probability of events and their entropy, which will ideally be always positive (for nothing we observe should force us to forget what we have known). Hence, we add a negative sign in front of $\log$ function.
+Sonra, neden *negatif* $\log$ kullanıyoruz? Sezgisel olarak, alışılmadık bir vakadan genellikle sıradan olandan daha fazla bilgi aldığımız için, daha sık olaylar, daha az yaygın olaylardan daha az bilgi içermelidir. Bununla birlikte, $\log$ olasılıklarla birlikte monoton bir şekilde artıyor ve aslında $[0, 1]$ içindeki tüm değerler için negatif. Olayların olasılığı ile entropileri arasında monoton olarak azalan bir ilişki kurmamız gerekir ki bu ideal olarak her zaman pozitif olacaktır (çünkü gözlemlediğimiz hiçbir şey bizi bildiklerimizi unutmaya zorlamamalıdır). Bu nedenle, $\log$ fonksiyonunun önüne bir eksi işareti ekliyoruz.
 
-Last, where does the *expectation* function come from? Consider a random variable $X$. We can interpret the self-information ($-\log(p)$) as the amount of *surprise* we have at seeing a particular outcome.  Indeed, as the probability approaches zero, the surprise becomes infinite.  Similarly, we can interpret the entropy as the average amount of surprise from observing $X$. For example, imagine that a slot machine system emits statistical independently symbols ${s_1, \ldots, s_k}$ with probabilities ${p_1, \ldots, p_k}$ respectively. Then the entropy of this system equals to the average self-information from observing each output, i.e.,
+Son olarak, *beklenti (ortalama)* işlevi nereden geliyor? Rastgele bir değişken olan $X'i$ düşünün. Öz-bilgiyi ($-\log(p)$), belirli bir sonucu gördüğümüzde sahip olduğumuz *sürpriz* miktarı olarak yorumlayabiliriz. Nitekim, olasılık sıfıra yaklaştıkça sürpriz sonsuz olur. Benzer şekilde, entropiyi $X$'i gözlemlemekten kaynaklanan ortalama sürpriz miktarı olarak yorumlayabiliriz. Örneğin, bir slot makinesi sisteminin ${p_1, \ldots, p_k}$ olasılıklarıyla ${s_1, \ldots, s_k}$ sembollerini istatistiksel olarak bağımsız yaydığını düşünün. O zaman bu sistemin entropisi, her bir çıktının gözlemlenmesinden elde edilen ortalama öz-bilgiye eşittir, yani,
 
 $$H(S) = \sum_i {p_i \cdot I(s_i)} = - \sum_i {p_i \cdot \log p_i}.$$
 
+### Entropinin Özellikleri
 
+Yukarıdaki örnekler ve yorumlarla, entropinin şu özelliklerini türetebiliriz :eqref:`eq_ent_def`. Burada, X'i bir olay ve P'yi X'in olasılık dağılımı olarak adlandırıyoruz.
 
-### Properties of Entropy
+* Entropi negatif değildir, yani $H(X) \geq 0, \forall X$.
 
-By the above examples and interpretations, we can derive the following properties of entropy :eqref:`eq_ent_def`. Here, we refer to X as an event and P as the probability distribution of X.
+* Bir o.y.f veya o.k.f. $p(x)$ ile $X \sim P$ ise ve o.y.f veya o.k.f. $q(x)$'ya sahip yeni bir olasılık dağılımı $Q$ ile $P$'yi tahmin etmeye çalışıyoruz,  o zaman $$H(X) = - E_{x \sim P} [\log p(x)] \leq - E_{x \sim P} [\log q(x)], \text {eşitlikle ancak ve ancak eğer} P = Q.$$ Alternatif olarak, $H(X)$, $P$'den çekilen sembolleri kodlamak için gereken ortalama bit sayısının alt sınırını verir.
 
-* Entropy is non-negative, i.e., $H(X) \geq 0, \forall X$.
-
-* If $X \sim P$ with a p.d.f. or a p.m.f. $p(x)$, and we try to estimate $P$ by a new probability distribution $Q$ with a p.d.f. or a p.m.f. $q(x)$, then $$H(X) = - E_{x \sim P} [\log p(x)] \leq  - E_{x \sim P} [\log q(x)], \text{ with equality if and only if } P = Q.$$  Alternatively, $H(X)$ gives a lower bound of the average number of bits needed to encode symbols drawn from $P$.
-
-* If $X \sim P$, then $x$ conveys the maximum amount of information if it spreads evenly among all possible outcomes. Specifically, if the probability distribution $P$ is discrete with $k$-class $\{p_1, \ldots, p_k \}$, then $$H(X) \leq \log(k), \text{ with equality if and only if } p_i = \frac{1}{k}, \forall x_i.$$ If $P$ is a continuous random variable, then the story becomes much more complicated.  However, if we additionally impose that $P$ is supported on a finite interval (with all values between $0$ and $1$), then $P$ has the highest entropy if it is the uniform distribution on that interval.
-
+* $X \sim P$ ise, $x$ tüm olası sonuçlar arasında eşit olarak yayılırsa maksimum bilgi miktarını iletir. Özel olarak, $P$  $k$-sınıflıayrık olasılık dağılımı $\{p_1, \ldots, p_k \} ise, o halde $$H(X) \leq \log(k), \text {eşitlikle ancak ve ancak eğer} p_i = \frac{1}{k}, \forall x_i.$$ Eğer $P$ sürekli bir rastgele değişkene, öykü çok daha karmaşık hale gelir. Bununla birlikte, ek olarak $P$'nin sonlu bir aralıkta (tüm değerler $0$ ile $1$ arasında) desteklenmesini zorlarsak, bu aralıkta tekdüze dağılım varsa $P$ en yüksek entropiye sahip olur.
 
 ## Mutual Information
 
