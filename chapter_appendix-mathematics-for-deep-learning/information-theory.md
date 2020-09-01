@@ -89,7 +89,7 @@ $$H(X) = - E_{x \sim P} [\log p(x)].$$
 
 Özel olmak gerekirse, $X$ ayrıksa, $$H(X)= - \sum_i p_i \log p_i \text {, burada } p_i = P (X_i)$$.
 
-Aksi takdirde, $X$ sürekli ise, entropiyi *diferansiyel (ayrımsal) entropi* olarak da adlandırırız
+Aksi takdirde, $X$ sürekli ise, entropiyi *diferansiyel (farksal) entropi* olarak da adlandırırız
 
 $$H(X) = - \int_x p(x) \log p(x) \; dx.$$
 
@@ -136,37 +136,36 @@ Yukarıdaki örnekler ve yorumlarla, entropinin şu özelliklerini türetebiliri
 
 * Bir o.y.f veya o.k.f. $p(x)$ ile $X \sim P$ ise ve o.y.f veya o.k.f. $q(x)$'ya sahip yeni bir olasılık dağılımı $Q$ ile $P$'yi tahmin etmeye çalışıyoruz,  o zaman $$H(X) = - E_{x \sim P} [\log p(x)] \leq - E_{x \sim P} [\log q(x)], \text {eşitlikle ancak ve ancak eğer} P = Q.$$ Alternatif olarak, $H(X)$, $P$'den çekilen sembolleri kodlamak için gereken ortalama bit sayısının alt sınırını verir.
 
-* $X \sim P$ ise, $x$ tüm olası sonuçlar arasında eşit olarak yayılırsa maksimum bilgi miktarını iletir. Özel olarak, $P$  $k$-sınıflıayrık olasılık dağılımı $\{p_1, \ldots, p_k \} ise, o halde $$H(X) \leq \log(k), \text {eşitlikle ancak ve ancak eğer} p_i = \frac{1}{k}, \forall x_i.$$ Eğer $P$ sürekli bir rastgele değişkene, öykü çok daha karmaşık hale gelir. Bununla birlikte, ek olarak $P$'nin sonlu bir aralıkta (tüm değerler $0$ ile $1$ arasında) desteklenmesini zorlarsak, bu aralıkta tekdüze dağılım varsa $P$ en yüksek entropiye sahip olur.
+* $X \sim P$ ise, $x$ tüm olası sonuçlar arasında eşit olarak yayılırsa maksimum bilgi miktarını iletir. Özel olarak, $P$  $k$-sınıflı ayrık olasılık dağılımı $\{p_1, \ldots, p_k \} ise, o halde $$H(X) \leq \log(k), \text {eşitlikle ancak ve ancak eğer} p_i = \frac{1}{k}, \forall x_i.$$ Eğer $P$ sürekli bir rastgele değişkene, öykü çok daha karmaşık hale gelir. Bununla birlikte, ek olarak $P$'nin sonlu bir aralıkta (tüm değerler $0$ ile $1$ arasında) desteklenmesini zorlarsak, bu aralıkta tekdüze dağılım varsa $P$ en yüksek entropiye sahip olur.
 
-## Mutual Information
+## Ortak Bilgi
 
-Previously we defined entropy of a single random variable $X$, how about the entropy of a pair random variables $(X, Y)$?  We can think of these techniques as trying to answer the following type of question, "What information is contained in $X$ and $Y$ together compared to each separately?  Is there redundant information, or is it all unique?"
+Daha önce tek bir rastgele değişken $X$ entropisini tanımlamıştık, bir çift rastgele değişken $(X, Y)$ entropisine ne dersiniz? Bu teknikleri şu soru tipini yanıtlamaya çalışırken düşünebiliriz: "$X$ ve $Y$'de her biri ayrı ayrı olması bir arada olmalarıyla karşılaştırıldığında ne tür bilgi bulunur? Gereksiz bilgi var mı, yoksa hepsi tek mi?"
 
-For the following discussion, we always use $(X, Y)$ as a pair of random variables that follows a joint probability distribution $P$ with a p.d.f. or a p.m.f. $p_{X, Y}(x, y)$, while $X$ and $Y$ follow probability distribution $p_X(x)$ and $p_Y(y)$, respectively. 
+Aşağıdaki tartışma için, her zaman $(X, Y)$'yi, bir o.y.f veya o.k.f. olan $p_{X, Y}(x, y)$ ile bileşik olasılık dağılımı $P$'yi izleyen bir çift rastgele değişken olarak kullanıyoruz, aynı zamanda da $X$ ve $Y$ sırasıyla $p_X(x) $ ve $p_Y(y) $ olasılık dağılımlarını takip eder.
 
+### Bileşik Entropi 
 
-### Joint Entropy 
-
-Similar to entropy of a single random variable :eqref:`eq_ent_def`, we define the *joint entropy* $H(X, Y)$ of a pair random variables $(X, Y)$ as
+Tek bir rastgele değişkenin entropisine benzer şekilde :eqref:`eq_ent_def`, rastgele değişken çiftinin, $(X, Y)$, *bileşik entropisini* $H (X, Y)$ olarak tanımlarız.
 
 $$H(X, Y) = −E_{(x, y) \sim P} [\log p_{X, Y}(x, y)]. $$
 :eqlabel:`eq_joint_ent_def`
 
-Precisely, on the one hand, if $(X, Y)$ is a pair of discrete random variables, then 
+Tam olarak, bir yandan $(X, Y)$ bir çift ayrık rastgele değişkense, o zaman
 
 $$H(X, Y) = - \sum_{x} \sum_{y} p_{X, Y}(x, y) \log p_{X, Y}(x, y).$$
 
-On the other hand, if $(X, Y)$ is a pair of continuous random variables, then we define the *differential joint entropy* as 
+Öte yandan, $(X, Y)$ bir çift sürekli rastgele değişken ise, o zaman *diferansiyel (farksal) bileşik entropiyi* tanımlarız. 
 
 $$H(X, Y) = - \int_{x, y} p_{X, Y}(x, y) \ \log p_{X, Y}(x, y) \;dx \;dy.$$
 
-We can think of :eqref:`eq_joint_ent_def` as telling us the total randomness in the pair of random variables.  As a pair of extremes, if $X = Y$ are two identical random variables, then the information in the pair is exactly the information in one and we have $H(X, Y) = H(X) = H(Y)$.  On the other extreme, if $X$ and $Y$ are independent then $H(X, Y) = H(X) + H(Y)$.  Indeed we will always have that the information contained in a pair of random variables is no smaller than the entropy of either random variable and no more than the sum of both.
+Şunu düşünebiliriz :eqref:`eq_joint_ent_def` bize rastgele değişkenler çiftindeki toplam rastgeleliği anlatıyor. Bir çift uç vaka olarak, eğer $X = Y$ iki özdeş rastgele değişken ise, o zaman çiftteki bilgi tam olarak bir tanedeki bilgidir ve $H(X, Y) = H(X) = H(Y)$'dir. Diğer uçta, $X$ ve $Y$ bağımsızsa, $H(X, Y) = H(X) + H(Y)$'dir. Aslında, her zaman bir çift rasgele değişkenin içerdiği bilginin her iki rasgele değişkenin entropisinden daha küçük ve her ikisinin toplamından daha fazla olmadığını bilecegiz.
 
 $$
 H(X), H(Y) \le H(X, Y) \le H(X) + H(Y).
 $$
 
-Let us implement joint entropy from scratch in MXNet.
+MXNet'te ortak entropiyi en başından uygulayalım.
 
 ```{.python .input}
 def joint_entropy(p_xy):
@@ -189,34 +188,32 @@ def joint_entropy(p_xy):
 joint_entropy(torch.tensor([[0.1, 0.5], [0.1, 0.3]]))
 ```
 
-Notice that this is the same *code* as before, but now we interpret it differently as working on the joint distribution of the two random variables.
+Bunun öncekiyle aynı *kod* olduğuna dikkat edin, ancak şimdi onu iki rastgele değişkenin bileşik dağılımı üzerinde çalışırken farklı bir şekilde yorumluyoruz.
 
+### Koşullu Entropi
 
-### Conditional Entropy
+Bileşik entropi bir çift rastgele değişkende bulunan bilgi miktarının üzerinde tanımlıdır. Bu yararlıdır, ancak çoğu zaman umursadığımız şey değildir. Makine öğrenmesinin ayarlarını düşünün. Bir görüntünün piksel değerlerini tanımlayan rastgele değişken (veya rastgele değişkenlerin vektörü) olarak $X$'i ve sınıf etiketi olan rastgele değişken olarak $Y$'yi alalım. $X$ önemli bilgi içermelidir---doğal bir görüntü karmaşık bir şeydir. Ancak, görüntü gösterildikten sonra $Y$ içindeki bilgi düşük olmalıdır. Aslında, bir rakamın görüntüsü, rakam okunaksız olmadıkça, hangi rakam olduğu hakkında bilgiyi zaten içermelidir. Bu nedenle, bilgi teorisi kelime dağarcığımızı genişletmeye devam etmek için, rastgele bir değişkenin diğerine koşullu bağlı olarak bilgi içeriği hakkında mantık yürütebilmeliyiz.
 
-The joint entropy defined above the amount of information contained in a pair of random variables.  This is useful, but oftentimes it is not what we care about.  Consider the setting of machine learning.  Let us take $X$ to be the random variable (or vector of random variables) that describes the pixel values of an image, and $Y$ to be the random variable which is the class label.  $X$ should contain substantial information---a natural image is a complex thing.  However, the information contained in $Y$ once the image has been show should be low.  Indeed, the image of a digit should already contain the information about what digit it is unless the digit is illegible.  Thus, to continue to extend our vocabulary of information theory, we need to be able to reason about the information content in a random variable conditional on another.
-
-In the probability theory, we saw the definition of the *conditional probability* to measure the relationship between variables. We now want to analogously define the *conditional entropy* $H(Y \mid X)$.  We can write this as 
+Olasılık teorisinde, değişkenler arasındaki ilişkiyi ölçmek için *koşullu olasılığın* tanımını gördük. Şimdi, *koşullu entropiyi*, $H(Y \mid X)$, benzer şekilde tanımlamak istiyoruz. Bunu şu şekilde yazabiliriz:
 
 $$ H(Y \mid X) = - E_{(x, y) \sim P} [\log p(y \mid x)],$$
 :eqlabel:`eq_cond_ent_def`
 
-where $p(y \mid x) = \frac{p_{X, Y}(x, y)}{p_X(x)}$ is the conditional probability. Specifically, if $(X, Y)$ is a pair of discrete random variables, then 
+Burada $p(y \mid x) = \frac{p_{X, Y}(x, y)}{p_X(x)}$ koşullu olasılıktır. Özellikle, $(X, Y)$ bir çift ayrık rastgele değişken ise, o zaman
 
 $$H(Y \mid X) = - \sum_{x} \sum_{y} p(x, y) \log p(y \mid x).$$
 
-If $(X, Y)$ is a pair of continuous random variables, then the *differential joint entropy* is similarly defined as 
+$(X, Y)$ bir çift sürekli rastgele değişkense, *diferansiyel bileşik entropi* benzer şekilde şöyle tanımlanır:
 
 $$H(Y \mid X) = - \int_x \int_y p(x, y) \ \log p(y \mid x) \;dx \;dy.$$
 
-
-It is now natural to ask, how does the *conditional entropy* $H(Y \mid X)$ relate to the entropy $H(X)$ and the joint entropy $H(X, Y)$?  Using the definitions above, we can express this cleanly:
+Şimdi bunu sormak doğaldır, *koşullu entropi* $H(Y \mid X)$, $H(X)$ entropisi ve bileşik entropi $H(X, Y)$ ile nasıl ilişkilidir? Yukarıdaki tanımları kullanarak bunu net bir şekilde ifade edebiliriz:
 
 $$H(Y \mid X) = H(X, Y) - H(X).$$
 
-This has an intuitive interpretation: the information in $Y$ given $X$ ($H(Y \mid X)$) is the same as the information in both $X$ and $Y$ together ($H(X, Y)$) minus the information already contained in $X$.  This gives us the information in $Y$ which is not also represented in $X$.  
+Bunun sezgisel bir yorumu vardır: $X$ verildiğinde ($H(Y \mid X)$) $Y$'deki bilgi, hem $X$ hem de $Y$ ($H(X, Y)$) birlikteyken olan bilgi eksi $X$ içinde zaten bulunan bilgidir. Bu bize $Y$'de olup da aynı zamanda $X$ ile temsil edilmeyen bilgiyi verir.
 
-Now, let us implement conditional entropy :eqref:`eq_cond_ent_def` from scratch in MXNet.
+Şimdi, koşullu entropiyi, :eqref:`eq_cond_ent_def`, MXNet’te sıfırdan uygulayalım.
 
 ```{.python .input}
 def conditional_entropy(p_xy, p_x):
