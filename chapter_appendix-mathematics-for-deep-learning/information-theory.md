@@ -239,35 +239,33 @@ conditional_entropy(torch.tensor([[0.1, 0.5], [0.2, 0.3]]),
                     torch.tensor([0.2, 0.8]))
 ```
 
-### Mutual Information
+### Karşılıklı Bilgi
 
-Given the previous setting of random variables $(X, Y)$, you may wonder: "Now that we know how much information is contained in $Y$ but not in $X$, can we similarly ask how much information is shared between $X$ and $Y$?" The answer will be the *mutual information* of $(X, Y)$, which we will write as $I(X, Y)$.  
+Önceki rastgele değişkenler $(X, Y)$ ortamını göz önünde bulundurarak şunu merak edebilirsiniz: "Artık $Y$'nin ne kadar bilgi içerdiğini ancak $X$'de olmadığını bildiğimize göre, benzer şekilde $X$ ve $Y$'nin aralarında ne kadar bilginin paylaşıldığını da sorabilir miyiz? " Cevap, $(X, Y)$'nin *karşılıklı bilgisi* olacak ve bunu $I(X, Y)$ olarak yazacağız.
 
-Rather than diving straight into the formal definition, let us practice our intuition by first trying to derive an expression for the mutual information entirely based on terms we have constructed before.  We wish to find the information shared between two random variables.  One way we could try to do this is to start with all the information contained in both $X$ and $Y$ together, and then we take off the parts that are not shared.  The information contained in both $X$ and $Y$ together is written as $H(X, Y)$.  We want to subtract from this the information contained in $X$ but not in $Y$, and the information contained in $Y$ but not in $X$.  As we saw in the previous section, this is given by $H(X \mid Y)$ and $H(Y \mid X)$ respectively.  Thus, we have that the mutual information should be
+Doğrudan biçimsel (formal) tanıma dalmak yerine, önce karşılıklı bilgi için tamamen daha önce oluşturduğumuz terimlere dayalı bir ifade türetmeyi deneyerek sezgilerimizi uygulayalım. İki rastgele değişken arasında paylaşılan bilgiyi bulmak istiyoruz. Bunu yapmaya çalışmanın bir yolu, hem $X$ hem de $Y$ içerisindeki tüm bilgi ile başlamak ve sonra paylaşılmayan kısımları çıkarmaktır. Hem $X$ hem de $Y$ içerisindeki bilgi, $H(X, Y)$ olarak yazılır. Bundan, $X$ içinde yer alan ama $Y$ içinde yer almayan bilgileri ve $Y$ içinde yer alan ama $X$ içinde olmayan bilgileri çıkarmak istiyoruz. Önceki bölümde gördüğümüz gibi, bu sırasıyla $H(X \mid Y)$ ve $H(Y \mid X)$ ile verilmektedir. Bu nedenle, karşılıklı bilginin şöyle olması gerek:
 
 $$
 I(X, Y) = H(X, Y) - H(Y \mid X) − H(X \mid Y).
 $$
 
-Indeed, this is a valid definition for the mutual information.  If we expand out the definitions of these terms and combine them, a little algebra shows that this is the same as
+Aslında bu, karşılıklı bilgi için geçerli bir tanımdır. Bu terimlerin tanımlarını genişletir ve bunları birleştirirsek, biraz cebir bunun aşağısı gibi olduğunu gösterir
 
 $$I(X, Y) = E_{x} E_{y} \left\{ p_{X, Y}(x, y) \log\frac{p_{X, Y}(x, y)}{p_X(x) p_Y(y)} \right\}. $$
 :eqlabel:`eq_mut_ent_def` 
 
-
-We can summarize all of these relationships in image :numref:`fig_mutual_information`.  It is an excellent test of intuition to see why the following statements are all also equivalent to $I(X, Y)$.
+Tüm bu ilişkileri görsel :numref:`fig_mutual_information`'de özetleyebiliriz. Aşağıdaki ifadelerin de neden $I(X, Y)$ ile eşdeğer olduğunu görmek harika bir sezgi testidir.
 
 * $H(X) − H(X \mid Y)$
 * $H(Y) − H(Y \mid X)$
 * $H(X) + H(Y) − H(X, Y)$
 
-![Mutual information's relationship with joint entropy and conditional entropy.](../img/mutual_information.svg)
+![Karşılıklı bilginin bileşik entropi ve koşullu entropi ile ilişkisi.](../img/mutual_information.svg)
 :label:`fig_mutual_information`
 
+Karşılıklı bilgiyi :eqref:`eq_mut_ent_def` birçok yönden :numref:`sec_random_variables`'de gördüğümüz korelasyon katsayısının ilkesel uzantısı olarak düşünebiliriz. Bu, yalnızca değişkenler arasındaki doğrusal ilişkileri değil, aynı zamanda herhangi bir türdeki iki rastgele değişken arasında paylaşılan maksimum bilgiyi de sorabilmemize olanak tanır.
 
-In many ways we can think of the mutual information :eqref:`eq_mut_ent_def` as principled extension of correlation coefficient we saw in :numref:`sec_random_variables`.  This allows us to ask not only for linear relationships between variables, but for the maximum information shared between the two random variables of any kind.
-
-Now, let us implement mutual information from scratch.
+Şimdi karşılıklı bilgiyi sıfırdan uygulayalım.
 
 ```{.python .input}
 def mutual_information(p_xy, p_x, p_y):
@@ -294,48 +292,46 @@ mutual_information(torch.tensor([[0.1, 0.5], [0.1, 0.3]]),
                    torch.tensor([0.2, 0.8]), torch.tensor([[0.75, 0.25]]))
 ```
 
-### Properties of Mutual Information
+### Karşılıklı Bilginin Özellikleri
 
-Rather than memorizing the definition of mutual information :eqref:`eq_mut_ent_def`, you only need to keep in mind its notable properties:
+Karşılıklı bilginin tanımını, :eqref:`eq_mut_ent_def`, ezberlemek yerine sadece dikkate değer özelliklerini aklınızda tutmanız gerekir:
 
-* Mutual information is symmetric, i.e., $I(X, Y) = I(Y, X)$.
-* Mutual information is non-negative, i.e., $I(X, Y) \geq 0$.
-* $I(X, Y) = 0$ if and only if $X$ and $Y$ are independent. For example, if $X$ and $Y$ are independent, then knowing $Y$ does not give any information about $X$ and vice versa, so their mutual information is zero.
-* Alternatively, if $X$ is an invertible function of $Y$, then $Y$ and $X$ share all information and $$I(X, Y) = H(Y) = H(X).$$
+* Karşılıklı bilgi simetriktir (bakışımlı), yani $I(X, Y) = I(Y, X)$.
+* Karşılıklı bilgi negatif olamaz, yani $I(X, Y) \ geq 0$.
+* $ I(X, Y) = 0$ ancak ve ancak $X$ ve $Y$ bağımsızsa olur. Örneğin, $X$ ve $Y$ bağımsızsa, $Y$'yi bilmek $X$ hakkında herhangi bir bilgi vermez ve bunun tersi de geçerlidir, dolayısıyla karşılıklı bilgileri sıfırdır.
+* Alternatif olarak, $X$, $Y$ değerinin ters çevrilebilir bir işleviyse, $Y$ ve $X$ tüm bilgiyi paylaşır ve $$I(X, Y) = H(Y) = H(X)$$.
 
-### Pointwise Mutual Information
+### Noktasal Karşılıklı Bilgi
 
-When we worked with entropy at the beginning of this chapter, we were able to provide an interpretation of $-\log(p_X(x))$ as how *surprised* we were with the particular outcome.  We may give a similar interpretation to the logarithmic term in the mutual information, which is often referred to as the *pointwise mutual information*:
+Bu bölümün başında entropi ile çalıştığımızda, $- \log (p_X (x))$'i belirli bir sonuca ne kadar *şaşırdığımızın* yorumlanması diye sunabildik. Karşılıklı bilgideki logaritmik terime benzer bir yorum verebiliriz, bu genellikle *noktasal karşılıklı bilgi* olarak anılır:
 
 $$\mathrm{pmi}(x, y) = \log\frac{p_{X, Y}(x, y)}{p_X(x) p_Y(y)}.$$
 :eqlabel:`eq_pmi_def`
 
-We can think of :eqref:`eq_pmi_def` as measuring how much more or less likely the specific combination of outcomes $x$ and $y$ are compared to what we would expect for independent random outcomes.  If it is large and positive, then these two specific outcomes occur much more frequently than they would compared to random chance (*note*: the denominator is $p_X(x) p_Y(y)$ which is the probability of the two outcomes were independent), whereas if it is large and negative it represents the two outcomes happening far less than we would expect by random chance.  
+:eqref:`eq_pmi_def`'i, bağımsız rastgele sonuçlar için beklentimizle karşılaştırıldığında $x$ ve $y$ sonuçlarının belirli kombinasyonunun ne kadar daha fazla veya daha az olası olduğunu ölçmek olarak düşünebiliriz. Büyük ve pozitifse, bu iki belirli sonuç, rastgele şansa kıyasla çok daha sık meydana gelir (*dikkat*: payda $p_X(x) p_Y(y)$'dir ki bu iki sonucun bağımsız olma olasılığıdır), bilakis büyük ve negatifse, şans eseri beklediğimizden çok daha az gerçekleşen iki sonucu temsil eder.
 
-This allows us to interpret the mutual information :eqref:`eq_mut_ent_def` as the average amount that we were surprised to see two outcomes occurring together compared to what we would expect if they were independent.
+Bu, karşılıklı bilgiyi, :eqref: `eq_mut_ent_def`,  bağımsız olsalardı bekleyeceğimiz şeyle karşılaştırıldığında iki sonucun birlikte gerçekleştiğini gördüğümüzde şaşırmamızın ortalama miktarı olarak yorumlamamıza olanak tanır.
 
-### Applications of Mutual Information
+### Karşılıklı Bilginin Uygulamaları
 
-Mutual information may be a little abstract in it pure definition, so how does it related to machine learning? In natural language processing, one of the most difficult problems is the *ambiguity resolution*, or the issue of the meaning of a word being unclear from context. For example, recently a headline in the news reported that "Amazon is on fire". You may wonder whether the company Amazon has a building on fire, or the Amazon rain forest is on fire. 
+Karşılıklı bilgi, saf tanımında biraz soyut olabilir, peki makine öğrenmesi ile nasıl ilişkilidir? Doğal dil işlemede, en zor sorunlardan biri *belirsizlik çözümü* yani bir kelimenin anlamının bağlamdan anlaşılmaz olması sorunudur. Örneğin son zamanlarda bir haber manşetinde "Amazon yanıyor" yazıyordu. Amazon şirketinin bir binası yanıyor mu, yoksa Amazon yağmur ormanı mı yanıyor diye merak edebilirsiniz.
 
-In this case, mutual information can help us resolve this ambiguity. We first find the group of words that each has a relatively large mutual information with the company Amazon, such as e-commerce, technology, and online. Second, we find another group of words that each has a relatively large mutual information with the Amazon rain forest, such as rain, forest, and tropical. When we need to disambiguate "Amazon", we can compare which group has more occurrence in the context of the word Amazon.  In this case the article would go on to describe the forest, and make the context clear.
+Bu durumda, karşılıklı bilgi bu belirsizliği çözmemize yardımcı olabilir. İlk olarak, e-ticaret, teknoloji ve çevrimiçi gibi, her birinin Amazon şirketi ile nispeten büyük karşılıklı bilgiye sahip olduğu kelime grubunu buluruz. İkinci olarak, her biri yağmur, orman ve tropikal gibi Amazon yağmur ormanlarıyla ilgili nispeten büyük karşılıklı bilgiye sahip başka bir kelime grubu buluruz. "Amazon""un belirsizliğini ortadan kaldırmamız gerektiğinde, hangi grubun Amazon kelimesi bağlamında daha fazla yer aldığını karşılaştırabiliriz. Bu durumda haber ormanı tarif etmeye ve bağlamı netleştirmeye devam edecektir.
 
+## Kullback – Leibler Iraksaması
 
-## Kullback–Leibler Divergence
+:numref:`sec_linear-algebra`'da tartıştığımız gibi, herhangi bir boyutluluğun uzaydaki iki nokta arasındaki mesafeyi ölçmek için normları kullanabiliriz. Olasılık dağılımları ile de benzer bir iş yapabilmek istiyoruz. Bunu yapmanın birçok yolu var, ancak bilgi teorisi en güzellerinden birini sağlıyor. Şimdi, iki dağılımın birbirine yakın olup olmadığını ölçmenin bir yolunu sağlayan *Kullback – Leibler (KL) ıraksamasını* inceleyeceğiz.
 
-As what we have discussed in :numref:`sec_linear-algebra`, we can use norms to measure distance between two points in space of any dimensionality.  We would like to be able to do a similar task with probability distributions.  There are many ways to go about this, but information theory provides one of the nicest.  We now explore the *Kullback–Leibler (KL) divergence*, which provides a way to measure if two distributions are close together or not. 
+### Tanım
 
-
-### Definition
-
-Given a random variable $X$ that follows the probability distribution $P$ with a p.d.f. or a p.m.f. $p(x)$, and we estimate $P$ by another probability distribution $Q$ with a p.d.f. or a p.m.f. $q(x)$. Then the *Kullback–Leibler (KL) divergence* (or *relative entropy*) between $P$ and $Q$ is
+Olasılık dağılımı bir o.y.f veya o.k.f. olan $p(x)$ ile izleyen rastgele bir değişken $X$ verildiğinde, o.y.f veya o.k.f.'u $q(x)$ olan başka bir olasılık dağılımı $Q$ kullanarak $P$'yi tahmin ediyoruz. Böylece, $P$ ile $Q$ arasındaki *Kullback – Leibler (KL) ıraksaması* (veya *göreceli entropi*) hesaplanabilir:
 
 $$D_{\mathrm{KL}}(P\|Q) = E_{x \sim P} \left[ \log \frac{p(x)}{q(x)} \right].$$
 :eqlabel:`eq_kl_def`
 
-As with the pointwise mutual information :eqref:`eq_pmi_def`, we can again provide an interpretation of the logarithmic term:  $-\log \frac{q(x)}{p(x)} = -\log(q(x)) - (-\log(p(x)))$ will be large and positive if we see $x$ far more often under $P$ than we would expect for $Q$, and large and negative if we see the outcome far less than expected.  In this way, we can interpret it as our *relative* surprise at observing the outcome compared to how surprised we would be observing it from our reference distribution.
+Noktasal karşılıklı bilgide olduğu gibi :eqref:`eq_pmi_def`, logaritmik terimin yorumunu tekrar sağlayabiliriz: $-\log \frac{q(x)}{p(x)} = -\log(q(x)) - (-\log(p(x)))$, $x$'i $P$'nın altında, $Q$'da beklediğimizden çok daha fazla görürsek büyük ve pozitif, ve beklenenden çok daha az görürsek büyük ve negatif olacaktır. Bu şekilde, sonucu onu referans dağılımımızdan gözlemlememize oranla burada gözlemlediğimizde ne kadar şaşıracağımız, yani *göreceli* şaşkınlığımız, olarak yorumlayabiliriz.
 
-In MXNet, let us implement the KL divergence from Scratch.
+MXNet'te, Scratch'ten KL ıraksamasını uygulayalım.
 
 ```{.python .input}
 def kl_divergence(p, q):
@@ -352,26 +348,25 @@ def kl_divergence(p, q):
     return out.abs().item()
 ```
 
-### KL Divergence Properties
+### KL Iraksamasının Özellikleri
 
-Let us take a look at some properties of the KL divergence :eqref:`eq_kl_def`.
+KL ıraksamasının bazı özelliklerine bir göz atalım :eqref:`eq_kl_def`.
 
-* KL divergence is non-symmetric, i.e., $$D_{\mathrm{KL}}(P\|Q) \neq D_{\mathrm{KL}}(Q\|P), \text{ if } P \neq Q.$$
-* KL divergence is non-negative, i.e., $$D_{\mathrm{KL}}(P\|Q) \geq 0.$$ Note that the equality holds only when $P = Q$.
-* If there exists an $x$ such that $p(x) > 0$ and $q(x) = 0$, then $D_{\mathrm{KL}}(P\|Q) = \infty$.
-* There is a close relationship between KL divergence and mutual information. Besides the relationship shown in :numref:`fig_mutual_information`, $I(X, Y)$ is also numerically equivalent with the following terms:
+* KL ıraksaması simetrik değildir, yani $$D_{\mathrm{KL}}(P\|Q) \neq D_{\mathrm{KL}}(Q\|P), \text{ if } P \neq Q.$$
+* KL ıraksaması negatif değildir, yani $$D_{\mathrm{KL}}(P\|Q) \geq 0.$$. Eşitliğin yalnızca $P = Q$ olduğunda geçerli olduğuna dikkat edin.
+* $p(x)> 0$ ve $q(x) = 0$ şeklinde bir $x$ varsa, $D_{\mathrm{KL}}(P\|Q) = \infty$..
+* KL ıraksaması ile karşılıklı bilgi arasında yakın bir ilişki vardır. :numref:`fig_mutual_information`da gösterilen ilişkinin yanı sıra, $I(X, Y)$'da aşağıdaki terimlerle sayısal olarak eşdeğerdir:
     1. $D_{\mathrm{KL}}(P(X, Y)  \ \| \ P(X)P(Y))$;
     1. $E_Y \{ D_{\mathrm{KL}}(P(X \mid Y) \ \| \ P(X)) \}$;
     1. $E_X \{ D_{\mathrm{KL}}(P(Y \mid X) \ \| \ P(Y)) \}$.
     
-  For the first term, we interpret mutual information as the KL divergence between $P(X, Y)$ and the product of $P(X)$ and $P(Y)$, and thus is a measure of how different the joint distribution is from the distribution if they were independent. For the second term, mutual information tells us the average reduction in uncertainty about $Y$ that results from learning the value of the $X$'s distribution. Similarly to the third term.
+İlk terim için, karşılıklı bilgiyi $P(X, Y)$ ile $P(X)$ ve $P(Y)$ arasındaki KL ıraksaması olarak yorumluyoruz ve bu bileşik dağılımın bağımsız oldukları haldeki dağılımdan ne kadar farklı olduğunun bir ölçüsüdür. İkinci terimde, karşılıklı bilgi bize $X$ değerinin dağılımını öğrenmekten kaynaklanan $Y$ hakkındaki belirsizlikteki ortalama azalmayı anlatır. Üçüncü terimde benzer şekildedir.
 
+### Örnek
 
-### Example
+Simetrisizliği açıkça görmek için bir yapay örneğin üzerinden geçelim.
 
-Let us go through a toy example to see the non-symmetry explicitly. 
-
-First, let us generate and sort three tensors of length $10,000$: an objective tensor $p$ which follows a normal distribution $N(0, 1)$, and two candidate tensors $q_1$ and $q_2$ which follow normal distributions $N(-1, 1)$ and $N(1, 1)$ respectively.
+İlk olarak, $10.000$ uzunluğunda üç tensör oluşturup sıralayalım: $N(0,1)$ normal dağılımını izleyen bir hedef tensör $p$, sırasıyla $N(-1, 1)$ ve $N(1, 1)$ normal dağılımları izleyen iki aday tensörümüz $q_1$ ve $q_2$ var.
 
 ```{.python .input}
 random.seed(1)
@@ -400,7 +395,7 @@ q1 = torch.sort(q1)[0]
 q2 = torch.sort(q2)[0]
 ```
 
-Since $q_1$ and $q_2$ are symmetric with respect to the y-axis (i.e., $x=0$), we expect a similar value of KL divergence between $D_{\mathrm{KL}}(p\|q_1)$ and $D_{\mathrm{KL}}(p\|q_2)$. As you can see below, there is only a 1% off between $D_{\mathrm{KL}}(p\|q_1)$ and $D_{\mathrm{KL}}(p\|q_2)$.
+$q_1$ ve $q_2$, y eksenine göre simetrik olduğundan (yani, $x = 0$), $D_{\mathrm{KL}}(p\|q_1)$ ve $D_{\mathrm{KL}}(p\|q_2)$ arasında benzer bir KL ıraksaması bekleriz. Aşağıda görebileceğiniz gibi, $D_{\mathrm{KL}}(p\|q_1)$ ve $D_{\mathrm{KL}}(p\|q_2)$ arasında yalnızca $\% 1$ fark var.
 
 ```{.python .input}
 kl_pq1 = kl_divergence(p, q1)
@@ -419,7 +414,7 @@ similar_percentage = abs(kl_pq1 - kl_pq2) / ((kl_pq1 + kl_pq2) / 2) * 100
 kl_pq1, kl_pq2, similar_percentage
 ```
 
-In contrast, you may find that $D_{\mathrm{KL}}(q_2 \|p)$ and $D_{\mathrm{KL}}(p \| q_2)$ are off a lot, with around 40% off as shown below.
+Bunun aksine, $D_{\mathrm{KL}}(q_2 \|p)$ ve $D_{\mathrm{KL}}(p \| q_2)$'nın yaklaşık $\% 40$ farklı olduğunu görebilirsiniz. Aşağıda gösterildiği gibi.
 
 ```{.python .input}
 kl_q2p = kl_divergence(q2, p)
@@ -436,11 +431,11 @@ differ_percentage = abs(kl_q2p - kl_pq2) / ((kl_q2p + kl_pq2) / 2) * 100
 kl_q2p, differ_percentage
 ```
 
-## Cross Entropy
+## Çapraz Entropi
 
-If you are curious about applications of information theory in deep learning, here is a quick example. We define the true distribution $P$ with probability distribution $p(x)$, and the estimated distribution $Q$ with probability distribution $q(x)$, and we will use them in the rest of this section.
+Bilgi teorisinin derin öğrenmedeki uygulamalarını merak ediyorsanız, işte size hızlı bir örnek. $P$ gerçek dağılımını $p(x)$ olasılık dağılımıyla ve tahmini $Q$ dağılımını $q(x)$ olasılık dağılımıyla tanımlıyoruz ve bunları bu bölümün geri kalanında kullanacağız.
 
-Say we need to solve a binary classification problem based on given $n$ data points {$x_1, \ldots, x_n$}. Assume that we encode $1$ and $0$ as the positive and negative class label $y_i$ respectively, and our neural network is parameterized by $\theta$. If we aim to find a best $\theta$ so that $\hat{y}_i= p_{\theta}(y_i \mid x_i)$, it is natural to apply the maximum log-likelihood approach as was seen in :numref:`sec_maximum_likelihood`. To be specific, for true labels $y_i$ and predictions $\hat{y}_i= p_{\theta}(y_i \mid x_i)$, the probability to be classified as positive is $\pi_i= p_{\theta}(y_i = 1 \mid x_i)$. Hence, the log-likelihood function would be
+Verilen $n$ veri noktasına, {$ x_1, \ldots, x_n$}, ait bir ikili sınıflandırma problemini çözmemiz gerektiğini varsayalım. Sırasıyla $1$ ve $0$'ı pozitif ve negatif sınıf etiketi $y_i$ olarak kodladığımızı ve sinir ağımızın $\theta$ parametresi ile ifade edildiğini varsayalım. $\hat{y}_i = p_{\theta}(y_i \mid x_i)$ için en iyi $\theta$'yı bulmayı hedeflersek, maksimum log-olabilirlik yaklaşımını şurada görüldüğü gibi uygulamak doğaldır :numref:`sec_maximum_likelihood`. Daha belirleyici olmak gerekirse, $y_i$ gerçek etiketleri ve $\hat {y}_i = p_{\theta} (y_i \mid x_i)$ tahminleri için pozitif olarak sınıflandırılma olasılığı $\pi_i = p_{\theta} (y_i = 1 \mid x_i)$'dir. Bu nedenle, log-olabilirlik işlevi şöyle olacaktır:
 
 $$
 \begin{aligned}
@@ -450,24 +445,22 @@ l(\theta) &= \log L(\theta) \\
 \end{aligned}
 $$
 
-Maximizing the log-likelihood function $l(\theta)$ is identical to minimizing $- l(\theta)$, and hence we can find the best $\theta$ from here. To generalize the above loss to any distributions, we also called $-l(\theta)$ the *cross entropy loss* $\mathrm{CE}(y, \hat{y})$, where $y$ follows the true distribution $P$ and $\hat{y}$ follows the estimated distribution $Q$. 
+$L(\theta)$ log-olabilirlik fonksiyonunu maksimize etmek, $ -l(\theta)$'yı küçültmekle aynıdır ve bu nedenle en iyi $\theta$'yı buradan bulabiliriz. Yukarıdaki kaybı herhangi bir dağılımda genelleştirmek için $-l(\theta)$'yı *çapraz entropi kaybı*, $\mathrm{CE}(y, \hat{y})$ olarak adlandırdık, burada $y$ doğru dağılımı, $P$'yi izler ve $\hat{y}$ tahmini dağılım $Q$'yu izler.
 
-This was all derived by working from the maximum likelihood point of view.  However, if we look closely we can see that terms like $\log(\pi_i)$ have entered into our computation which is a solid indication that we can understand the expression from an information theoretic point of view.    
+Tüm bunlar, maksimum olabilirlik üzerinde çalışılarak elde edildi. Bununla birlikte, yakından bakarsak, $\log(\pi_i)$ gibi terimlerin bizim hesaplamamıza girdiğini görebiliriz ki bu, ifadeyi bilgi teorik bakış açısıyla anlayabileceğimizin sağlam bir göstergesidir.
 
+### Resmi (Formal) Tanım
 
-### Formal Definition
+KL ıraksaması gibi, rastgele bir değişken $X$ için, tahmini dağılım $Q$ ile gerçek dağılım $P$ arasındaki ıraksamayı (sapmayı) *çapraz entropi (ÇE)* aracılığıyla ölçebiliriz,
 
-Like KL divergence, for a random variable $X$, we can also measure the divergence between the estimating distribution $Q$ and the true distribution $P$ via *cross entropy*,
-
-$$\mathrm{CE}(P, Q) = - E_{x \sim P} [\log(q(x))].$$
+$$\mathrm{ÇE}(P, Q) = - E_{x \sim P} [\log(q(x))].$$
 :eqlabel:`eq_ce_def`
 
-By using properties of entropy discussed above, we can also interpret it as the summation of the entropy $H(P)$ and the KL divergence between $P$ and $Q$, i.e.,
+Yukarıda tartışılan entropinin özelliklerini kullanarak, bunu $H(P)$ entropisinin $P$ ve $Q$ arasındaki KL ıraksaması ile toplamı olarak da yorumlayabiliriz, yani,
 
-$$\mathrm{CE} (P, Q) = H(P) + D_{\mathrm{KL}}(P\|Q).$$
+$$\mathrm{ÇE} (P, Q) = H(P) + D_{\mathrm{KL}}(P\|Q).$$
 
-
-In MXNet, we can implement the cross entropy loss as below.
+MXNet'te çapraz entropi kaybını aşağıdaki gibi uygulayabiliriz.
 
 ```{.python .input}
 def cross_entropy(y_hat, y):
@@ -482,7 +475,7 @@ def cross_entropy(y_hat, y):
     return ce.mean()
 ```
 
-Now define two tensors for the labels and predictions, and calculate the cross entropy loss of them.
+Şimdi etiketler ve tahminler için iki tensör tanımlayalım ve bunların çapraz entropi kaybını hesaplayalım.
 
 ```{.python .input}
 labels = np.array([0, 2])
@@ -499,44 +492,42 @@ preds = torch.tensor([[0.3, 0.6, 0.1], [0.2, 0.3, 0.5]])
 cross_entropy(preds, labels)
 ```
 
-### Properties
+### Özellikler
 
-As alluded in the beginning of this section, cross entropy :eqref:`eq_ce_def` can be used to define a loss function in the optimization problem. It turns out that the following are equivalent:
+Bu bölümün başında belirtildiği gibi, çapraz entropi :eqref:`eq_ce_def` optimizasyon probleminde bir kayıp fonksiyonunu tanımlamak için kullanılabilir. Aşağıdakilerin eşdeğer olduğu ortaya çıkar:
 
-1. Maximizing predictive probability of $Q$ for distribution $P$, (i.e., $E_{x 
-\sim P} [\log (q(x))]$);
-1. Minimizing cross entropy $\mathrm{CE} (P, Q)$;
-1. Minimizing the KL divergence $D_{\mathrm{KL}}(P\|Q)$.
+1. $P$ dağılımı için $Q$ tahmini olasılığının en üst düzeye çıkarılması (yani, $E_{x \sim P} [\log (q(x))]$);
+1. Çapraz entropiyi en aza indirme $\mathrm{E}(P, Q)$;
+1. KL ıraksamasının en aza indirilmesi $D_{\mathrm {KL}}(P\|Q)$.
 
-The definition of cross entropy indirectly proves the equivalent relationship between objective 2 and objective 3, as long as the entropy of true data $H(P)$ is constant.
+Çapraz entropinin tanımı, $H(P)$ gerçek verisinin entropisi sabit olduğu sürece, amaç fonksiyonu 2 ve amaç fonksiyonu 3 arasındaki eşdeğer ilişkiyi dolaylı olarak kanıtlar.
 
+### Çok Sınıflı Sınıflandırmanın Amaç Fonksiyonu Olarak Çapraz Entropi
 
-### Cross Entropy as An Objective Function of Multi-class Classification
+Çapraz entropi kaybı $\mathrm{ÇE}$ ile sınıflandırma amaç fonksiyonunun derinliklerine inersek, $\mathrm{ÇE}$'yi minimize etmenin $L$ log-olabilirlik fonksiyonunu maksimize etmeye eşdeğer olduğunu bulacağız.
 
-If we dive deep into the classification objective function with cross entropy loss $\mathrm{CE}$, we will find minimizing $\mathrm{CE}$ is equivalent to maximizing the log-likelihood function $L$.
+Başlangıç olarak, $n$ örnekli bir veri kümesi verildiğini ve bunun $k$ sınıfa sınıflandırılabileceğini varsayalım. Her $i$ veri noktası için, $k$-sınıf etiketini $\mathbf{y}_i = (y_{i1}, \ldots, y_{ik})$ ile * biri-sıcak kodlama* ile temsil ederiz. Belirleyici olmak gerekirse, $i$ veri noktası $j$ sınıfına aitse, o zaman $j.$ girdisini $1$ olarak ve diğer tüm bileşenleri $0$ olarak kuruyoruz, yani,
 
-To begin with, suppose that we are given a dataset with $n$ samples, and it can be classified into $k$-classes. For each data point $i$, we represent any $k$-class label $\mathbf{y}_i = (y_{i1}, \ldots, y_{ik})$ by *one-hot encoding*. To be specific, if the data point $i$ belongs to class $j$, then we set the $j$-th entry to $1$, and all other components to $0$, i.e., 
+$$ y_{ij} = \begin{cases}1 & j \in J; \\ 0 &\text{aksi takdirde.}\end{cases}$$
 
-$$ y_{ij} = \begin{cases}1 & j \in J; \\ 0 &\text{otherwise.}\end{cases}$$
+Örneğin, çok sınıflı bir sınıflandırma problemi $A$, $B$ ve $C$ olmak üzere üç sınıf içeriyorsa, $\mathbf{y}_i$ etiketleri {$A: (1, 0, 0); B: (0, 1, 0); C: (0, 0, 1) $}'dir.
 
-For instance, if a multi-class classification problem contains three classes $A$, $B$, and $C$, then the labels $\mathbf{y}_i$ can be encoded in {$A: (1, 0, 0); B: (0, 1, 0); C: (0, 0, 1)$}.
+Sinir ağımızın $\theta$ parametresi ifade edildiğini varsayalım. Doğru etiket vektörleri $\mathbf {y}_i$ ve tahminleri için: $$\hat{\mathbf{y}}_i= p_{\theta}(\mathbf{y}_i \mid \mathbf{x}_i) = \sum_{j=1}^k y_{ij} p_{\theta} (y_{ij}  \mid  \mathbf{x}_i).$$
 
-
-Assume that our neural network is parameterized by $\theta$. For true label vectors $\mathbf{y}_i$ and predictions $$\hat{\mathbf{y}}_i= p_{\theta}(\mathbf{y}_i \mid \mathbf{x}_i) = \sum_{j=1}^k y_{ij} p_{\theta} (y_{ij}  \mid  \mathbf{x}_i).$$
-
-Hence, the *cross entropy loss* would be
+Dolayısıyla, *çapraz entropi kaybı*:
 
 $$
-\mathrm{CE}(\mathbf{y}, \hat{\mathbf{y}}) = - \sum_{i=1}^n \mathbf{y}_i \log \hat{\mathbf{y}}_i
+\mathrm{ÇE}(\mathbf{y}, \hat{\mathbf{y}}) = - \sum_{i=1}^n \mathbf{y}_i \log \hat{\mathbf{y}}_i
  = - \sum_{i=1}^n \sum_{j=1}^k y_{ij} \log{p_{\theta} (y_{ij}  \mid  \mathbf{x}_i)}.\\
 $$
 
-On the other side, we can also approach the problem through maximum likelihood estimation. To begin with, let us quickly introduce a $k$-class multinoulli distribution. It is an extension of the Bernoulli distribution from binary class to multi-class. If a random variable $\mathbf{z} = (z_{1}, \ldots, z_{k})$ follows a $k$-class *multinoulli distribution* with probabilities $\mathbf{p} =$ ($p_{1}, \ldots, p_{k}$), i.e., $$p(\mathbf{z}) = p(z_1, \ldots, z_k) = \mathrm{Multi} (p_1, \ldots, p_k), \text{ where } \sum_{i=1}^k p_i = 1,$$ then the joint probability mass function(p.m.f.) of $\mathbf{z}$ is
-$$\mathbf{p}^\mathbf{z} = \prod_{j=1}^k p_{j}^{z_{j}}.$$
+Öte yandan, soruna maksimum olabilirlik tahminiyle de yaklaşabiliriz. Başlangıç ​​olarak, hızlı bir şekilde $k$-sınıflı bir multinoulli dağılımını sunalım. Bu, Bernoulli dağılımının ikili sınıftan çoklu sınıfa doğru bir uzantısıdır. 
 
+Rastgele bir değişken $\mathbf{z} = (z_{1}, \ldots, z_{k})$, $k$-sınıf *multinoulli dağılımını*, $\mathbf{p} =$ ($p_{1}, \ldots, p_{k}$), izliyor, yani $$p(\mathbf{z}) = p(z_1, \ldots, z_k) = \mathrm{Multi} (p_1, \ldots, p_k), \text{ öyle ki } \sum_{i=1}^k p_i = 1,$$  o zaman $\mathbf{z}$ bileşik olasılık kütle fonksiyonu (o.k.f.):
+$$ \ mathbf {p} ^ \ mathbf {z} = \ prod_ {j = 1} ^ k p_ {j} ^ {z_ {j}}. $$
 
-It can be seen that each data point, $\mathbf{y}_i$, is following a $k$-class multinoulli distribution with probabilities $\boldsymbol{\pi} =$ ($\pi_{1}, \ldots, \pi_{k}$). Therefore, the joint p.m.f. of each data point $\mathbf{y}_i$ is  $\mathbf{\pi}^{\mathbf{y}_i} = \prod_{j=1}^k \pi_{j}^{y_{ij}}.$
-Hence, the log-likelihood function would be
+Görülebileceği gibi, her veri noktası, $\mathbf{y}_i$, $k$-sınıflı $\boldsymbol{\pi} =$ ($\pi_{1}, \ldots, \pi_{k}$) olasılıklı bir multinoulli dağılımını takip ediyor. Bu nedenle, her veri noktası $\mathbf{y}_i$ için bileşik o.k.f  $\mathbf{\pi}^{\mathbf{y}_i} = \prod_{j=1}^k \pi_{j}^{y_{ij}}$'dir.
+Bu nedenle, log-olabilirlik işlevi şöyle olacaktır:
 
 $$
 \begin{aligned}
@@ -548,10 +539,9 @@ l(\theta)
 \end{aligned}
 $$
 
-Since in maximum likelihood estimation, we maximizing the objective function $l(\theta)$ by having $\pi_{j} = p_{\theta} (y_{ij}  \mid  \mathbf{x}_i)$. Therefore, for any multi-class classification, maximizing the above log-likelihood function $l(\theta)$ is equivalent to minimizing the CE loss $\mathrm{CE}(y, \hat{y})$.
+Maksimum olabilirlik tahmini olduğundan, $\pi_{j} = p_{\theta} (y_{ij}  \mid  \mathbf{x}_i)$ elimizdeyken $l(\theta)$ amaç fonksiyonunu maksimize ediyoruz. Bu nedenle, herhangi bir çok-sınıflı sınıflandırma için, yukarıdaki log-olabilirlik fonksiyonunu, $l(\theta)$, maksimize etmek, ÇE kaybını $\mathrm{ÇE}(y, \hat{y})$ en aza indirmeye eşdeğerdir.
 
-
-To test the above proof, let us apply the built-in measure `NegativeLogLikelihood` in MXNet. Using the same `labels` and `preds` as in the earlier example, we will get the same numerical loss as the previous example up to the 5 decimal place.
+Yukarıdaki kanıtı test etmek için, MXNet'te yerleşik `NegativeLogLikelihood` ölçütünü uygulayalım. Önceki örnekte olduğu gibi aynı `labels` (etiketler) ve `preds` (tahminler) değişkenlerini kullanarak, 5 ondalık basamağa kadar önceki örnekteki aynı sayısal kaybı elde edeceğiz.
 
 ```{.python .input}
 nll_loss = NegativeLogLikelihood()
@@ -568,26 +558,24 @@ loss = nll_loss(torch.log(preds), labels)
 loss
 ```
 
-## Summary
+## Özet
 
-* Information theory is a field of study about encoding, decoding, transmitting, and manipulating information.
-* Entropy is the unit to measure how much information is presented in different signals.
-* KL divergence can also measure the divergence between two distributions.
-* Cross Entropy can be viewed as an objective function of multi-class classification. Minimizing cross entropy loss is equivalent to maximizing the log-likelihood function.
+* Bilgi teorisi, bilgiyi kodlama, kod çözme, iletme ve üzerinde oynama ile ilgili bir çalışma alanıdır.
+* Entropi, farklı sinyallerde ne kadar bilginin sunulduğunu ölçen birimdir.
+* KL ıraksaması, iki dağılım arasındaki farklılığı da ölçebilir.
+* Çapraz Entropi, çok sınıflı sınıflandırmanın amaç işlevi olarak görülebilir. Çapraz entropi kaybını en aza indirmek, log-olabilirlik fonksiyonunu maksimize etmeye eşdeğerdir.
 
+## Alıştırmalar
 
-## Exercises
-
-1. Verify that the card examples from the first section indeed have the claimed entropy.
-1. Show that the KL divergence $D(p\|q)$ is nonnegative for all distributions $p$ and $q$. Hint: use Jensen's inequality, i.e., use the fact that $-\log x$ is a convex function.
-1. Let us compute the entropy from a few data sources:
-    * Assume that you are watching the output generated by a monkey at a typewriter. The monkey presses any of the $44$ keys of the typewriter at random (you can assume that it has not discovered any special keys or the shift key yet). How many bits of randomness per character do you observe?
-    * Being unhappy with the monkey, you replaced it by a drunk typesetter. It is able to generate words, albeit not coherently. Instead, it picks a random word out of a vocabulary of $2,000$ words. Moreover, assume that the average length of a word is $4.5$ letters in English. How many bits of randomness do you observe now?
-    * Still being unhappy with the result, you replace the typesetter by a high quality language model. These can currently obtain perplexity numbers as low as $15$ points per character. The perplexity is defined as a length normalized probability, i.e., $$PPL(x) = \left[p(x)\right]^{1 / \text{length(x)} }.$$ How many bits of randomness do you observe now?
-1. Explain intuitively why $I(X, Y) = H(X) - H(X|Y)$.  Then, show this is true by expressing both sides as an expectation with respect to the joint distribution.
-1. What is the KL Divergence between the two Gaussian distributions $\mathcal{N}(\mu_1, \sigma_1^2)$ and $\mathcal{N}(\mu_2, \sigma_2^2)$?
-
+1. İlk bölümdeki kart örneklerinin gerçekten iddia edilen entropiye sahip olduğunu doğrulayınız.
+1. $D(p\|q)$ KL ıraksamasının tüm $p$ ve $q$ dağılımları için negatif olmadığını gösteriniz. İpucu: Jensen'in eşitsizliğini kullanınız, yani $-\log x$'in dışbükey (konveks) bir fonksiyon olduğu gerçeğini kullanınız.
+1. Entropiyi birkaç veri kaynağından hesaplayalım:
+    * Bir daktiloda bir maymun tarafından üretilen çıktıyı izlediğinizi varsayınız. Maymun, daktilonun $44$ tane tuşundan herhangi birine rasgele basar (henüz herhangi bir özel tuşun veya shift tuşunun bulunmadığını varsayabilirsiniz). Karakter başına kaç bit rastgelelik gözlemliyorsunuz?
+    * Maymundan mutsuz olduğunuz için, onun yerine sarhoş bir dizici koydunuz. Tutarlı olmasa da kelimeler üretebiliyor. Bununla birlikte, $2000$ tanelik bir kelime dağarcığından rastgele bir kelime seçiyor. Ayrıca, bir kelimenin ortalama uzunluğunun İngilizce olarak $4,5$ harf olduğunu varsayalım. Şimdi kaç bit rastgelelik gözlemliyorsunuz?
+    * Sonuçtan hâlâ memnun olmadığınızdan dizgiciyi yüksek kaliteli bir dil modeliyle değiştiriyorsunuz. Bunlar şu anda karakter başına $15$ noktaya kadar tereddüdlü (karışık) sayıları elde edebilir. Karışıklık (tereddüd), uzunluğu normalize edilmiş bir olasılık olarak tanımlanır, yani $$PPL(x) = \left [p(x) \right]^{1 / \text{length(x)}}$$. Şimdi kaç bit rastgelelik gözlemliyorsunuz?
+1. Neden $I(X, Y) = H(X) - H(X|Y)$ olduğunu sezgisel olarak açıklayın. Ardından, her iki tarafı da bileşik dağılıma göre bir beklenti şeklinde ifade ederek bunun doğru olduğunu gösterin.
+1. İki Gauss dağılımı, $\mathcal{N} (\mu_1, \sigma_1^2)$ ve $\mathcal{N}(\mu_2, \sigma_2^2)$, arasındaki KL ıraksaması nedir?
 
 :begin_tab:`mxnet`
-[Discussions](https://discuss.d2l.ai/t/420)
+[Tartışmalar](https://discuss.d2l.ai/t/420)
 :end_tab:
