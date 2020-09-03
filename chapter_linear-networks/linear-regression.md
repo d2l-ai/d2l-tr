@@ -46,76 +46,69 @@ $\mathbf{x}$ verildiğinde $y$ tahmini için en iyi modelin doğrusal olduğuna 
 
 En iyi *parametreleri* (veya *model parametrelerini*) $\mathbf{w}$ ve $b$'yi aramaya başlamadan önce, iki şeye daha ihtiyacımız var: (i) belirli bir model için bir kalite ölçütü; ve (ii) kalitesini iyileştirmek için modelin güncellenmesine yönelik bir yordam (prosedür).
 
-### Loss Function
+### Kayıp İşlevi
 
-Before we start thinking about how *to fit* our model, we need to determine a measure of *fitness*. The *loss function* quantifies the distance between the *real* and *predicted* value of the target. The loss will usually be a non-negative number where smaller values are better and perfect predictions incur a loss of 0. The most popular loss function in regression problems is the squared error. When our prediction for an example $i$ is $\hat{y}^{(i)}$ and the corresponding true label is $y^{(i)}$, the squared error is given by:
+Modelimizi nasıl *oturtacağımızı* düşünmeye başlamadan önce, bir *uygunluk* ölçüsü belirlememiz gerekir. *Kayıp işlevi*, hedefin *gerçek* ve *tahmini* değeri arasındaki mesafeyi ölçer. Kayıp, genellikle, daha küçük değerlerin daha iyi olduğu ve mükemmel tahminlerin 0 kayba neden olduğu negatif olmayan bir sayı olacaktır. Regresyon problemlerinde en popüler kayıp fonksiyonu, hata karesidir. Bir $i$ örneğine ilişkin tahminimiz $\hat{y}^{(i)}$ ve buna karşılık gelen doğru etiket $y^{(i)}$ olduğunda, hata karesi şu şekilde verilir:
 
 $$l^{(i)}(\mathbf{w}, b) = \frac{1}{2} \left(\hat{y}^{(i)} - y^{(i)}\right)^2.$$
 
-The constant $\frac{1}{2}$ makes no real difference but will prove notationally convenient, canceling out when we take the derivative of the loss. Since the training dataset is given to us, and thus out of our control, the empirical error is only a function of the model parameters. To make things more concrete, consider the example below where we plot a regression problem for a one-dimensional case as shown in :numref:`fig_fit_linreg`.
+$\frac{1}{2}$ sabiti gerçek bir fark yaratmaz, ancak gösterim olarak uygun olduğunu ispatlayacak ve kaybın türevini aldığımızda dengelenip kaybolur. Eğitim veri kümesi bize verildiğinden, kontrolümüz dışında, sadece deneysel hata model parametrelerinin bir fonksiyonudur. İşleri daha somut hale getirmek için, aşağıdaki örnekte gösterildiği gibi tek boyutlu bir durum için bir regresyon problemi çizdiğimizi düşünün :numref:`fig_fit_linreg`.
 
-![Fit data with a linear model.](../img/fit_linreg.svg)
+![Verilere doğrusal bir model oturtmak.](../img/fit_linreg.svg)
 :label:`fig_fit_linreg`
 
-Note that large differences between estimates $\hat{y}^{(i)}$ and observations $y^{(i)}$ lead to even larger contributions to the loss, due to the quadratic dependence. To measure the quality of a model on the entire dataset of $n$ examples, we simply average (or equivalently, sum) the losses on the training set.
+$\hat{y}^{(i)}$ tahminleri ile $y^{(i)}$ gözlemleri arasındaki büyük farkların ikinci dereceden bağımlılık nedeniyle daha da büyük kayıba neden olduğuna dikkat edin. $n$ örnekli veri kümesinin tamamında bir modelin kalitesini ölçmek için, eğitim setindeki kayıpların ortalamasını alıyoruz (veya eşdeğer bir şekilde topluyoruz).
 
 $$L(\mathbf{w}, b) =\frac{1}{n}\sum_{i=1}^n l^{(i)}(\mathbf{w}, b) =\frac{1}{n} \sum_{i=1}^n \frac{1}{2}\left(\mathbf{w}^\top \mathbf{x}^{(i)} + b - y^{(i)}\right)^2.$$
 
-When training the model, we want to find parameters ($\mathbf{w}^*, b^*$) that minimize the total loss across all training examples:
+Modeli eğitirken, tüm eğitim örneklerinde toplam kaybı en aza indiren parametreleri ($\mathbf{w}^*, b^*$) bulmak istiyoruz:
 
 $$\mathbf{w}^*, b^* = \operatorname*{argmin}_{\mathbf{w}, b}\  L(\mathbf{w}, b).$$
 
+### Analitik Çözüm
 
-### Analytic Solution
-
-Linear regression happens to be an unusually simple optimization problem. Unlike most other models that we will encounter in this book, linear regression can be solved analytically by applying a simple formula. To start, we can subsume the bias $b$ into the parameter $\mathbf{w}$ by appending a column to the design matrix consisting of all ones. Then our prediction problem is to minimize $\|\mathbf{y} - \mathbf{X}\mathbf{w}\|^2$. There is just one critical point on the loss surface
-and it corresponds to the minimum of the loss over the entire domain. Taking the derivative of the loss with respect to $\mathbf{w}$ and setting it equal to zero yields the analytic (closed-form) solution:
+Doğrusal regresyon, alışılmadık derecede basit bir optimizasyon problemi haline gelir. Bu kitapta karşılaşacağımız diğer modellerin çoğunun aksine, doğrusal regresyon, basit bir formül uygulanarak analitik olarak çözülebilir. Başlangıç olarak, tüm olanlardan oluşan tasarım matrisine bir sütun ekleyerek $b$ ek girdisini $\mathbf{w}$ parametresine dahil edebiliriz. Öyleyse tahmin problemimiz $\|\mathbf{y} - \mathbf{X}\mathbf{w}\|^2$'yi minimize etmektir. Kayıp yüzeyinde sadece bir kritik nokta vardır ve bütün alandaki minimum kayba denk gelir. $\mathbf{w}$'ya göre kaybın türevini almak ve sıfıra eşitlemek, analitik (kapalı form) çözümü verir:
 
 $$\mathbf{w}^* = (\mathbf X^\top \mathbf X)^{-1}\mathbf X^\top \mathbf{y}.$$
 
-While simple problems like linear regression may admit analytic solutions, you should not get used to such good fortune. Although analytic solutions allow for nice mathematical analysis, the requirement of an analytic solution is so restrictive that it would exclude all of deep learning.
+Doğrusal regresyon gibi basit problemler analitik çözümleri sunarken, her zaman bu kadar talihli olmazsınız. Analitik çözümler güzel matematiksel analize izin verse de, analitik bir çözümün gerekliliği o kadar kısıtlayıcıdır ki tüm derin öğrenme dışarıda kalır.
 
+### Minigrup Rasgele Gradyan (Eğim) İniş
 
-### Minibatch Stochastic Gradient Descent
+Modelleri analitik olarak çözümleyemediğimiz durumlarda bile, yine de pratikte etkili bir şekilde modelleri eğitebileceğimiz ortaya çıkıyor. Dahası, birçok görev için, optimize edilmesi zor olan bu modeller o kadar iyi çalısırlar ki, onların nasıl eğiteceklerini bulma zahmetine değecektir.
 
-Even in cases where we cannot solve the models analytically, it turns out that we can still train models effectively in practice. Moreover, for many tasks, those difficult-to-optimize models turn out to be so much better that figuring out how to train them ends up being well worth the trouble.
+Neredeyse tüm derin öğrenme modellerini optimize etmek için kullanılan ve bu kitap boyunca değineceğimiz temel teknik, kayıp fonksiyonunu kademeli olarak düşüren yönde parametreleri güncelleyerek hatayı yinelemeli olarak azaltmaktan ibarettir. Bu algoritmaya *gradyan iniş* denir.
 
-The key technique for optimizing nearly any deep learning model, and which we will call upon throughout this book, consists of iteratively reducing the error by updating the parameters in the direction that incrementally lowers the loss function. This algorithm is called *gradient descent*.
+Gradyan inişinin en saf uygulaması, veri kümesindeki her bir örnekten hesaplanan kayıpların ortalaması olan kayıp fonksiyonunun türevini almaktan oluşur. Pratikte bu çok yavaş olabilir: Tek bir güncelleme yapmadan önce tüm veri setinin üzerinden geçmeliyiz. Bu nedenle, güncellemeyi her hesaplamamız gerektiğinde rastgele bir mini grup örnekten örneklemeyi *minigrup rasgele gradyan inişi* adı verilen bir yöntem ile deneyeceğiz.
 
-The most naive application of gradient descent consists of taking the derivative of the loss function, which is an average of the losses computed on every single example in the dataset. In practice, this can be extremely slow: we must pass over the entire dataset before making a single update. Thus, we will often settle for sampling a random minibatch of examples every time we need to compute the update, a variant called *minibatch stochastic gradient descent*.
+Her bir yinelemede, ilk olarak sabit sayıda eğitim örneğinden oluşan bir mini grubu, $\mathcal{B}$, rasgele örnekliyoruz. Daha sonra mini gruptaki ortalama kaybın türevini (gradyan) model parametrelerine göre hesaplıyoruz. Son olarak, gradyanı önceden belirlenmiş pozitif bir değerle $\eta$ çarpıyoruz ve ortaya çıkan terimi mevcut parametre değerlerinden çıkarıyoruz.
 
-In each iteration, we first randomly sample a minibatch $\mathcal{B}$ consisting of a fixed number of training examples. We then compute the derivative (gradient) of the average loss on the minibatch with regard to the model parameters. Finally, we multiply the gradient by a predetermined positive value $\eta$ and subtract the resulting term from the current parameter values.
-
-We can express the update mathematically as follows ($\partial$ denotes the partial derivative):
+Güncellemeyi matematiksel olarak şu şekilde ifade edebiliriz ($\partial$ kısmi türevi belirtir):
 
 $$(\mathbf{w},b) \leftarrow (\mathbf{w},b) - \frac{\eta}{|\mathcal{B}|} \sum_{i \in \mathcal{B}} \partial_{(\mathbf{w},b)} l^{(i)}(\mathbf{w},b).$$
 
-
-To summarize, steps of the algorithm are the following: (i) we initialize the values of the model parameters, typically at random; (ii) we iteratively sample random minibatches from the data, updating the parameters in the direction of the negative gradient. For quadratic losses and affine transformations, we can write this out explicitly as follows:
+Özetlemek gerekirse, algoritmanın adımları şöyledir: (i) model parametrelerinin değerlerini tipik olarak rastgele olarak başlatıyoruz; (ii) verilerden yinelemeli olarak rastgele mini gruplar örnekleyerek parametreleri negatif gradyan yönünde güncelliyoruz. İkinci dereceden kayıplar ve afin dönüşümler için, bunu açıkça şu şekilde yazabiliriz:
 
 $$\begin{aligned} \mathbf{w} &\leftarrow \mathbf{w} -   \frac{\eta}{|\mathcal{B}|} \sum_{i \in \mathcal{B}} \partial_{\mathbf{w}} l^{(i)}(\mathbf{w}, b) = \mathbf{w} - \frac{\eta}{|\mathcal{B}|} \sum_{i \in \mathcal{B}} \mathbf{x}^{(i)} \left(\mathbf{w}^\top \mathbf{x}^{(i)} + b - y^{(i)}\right),\\ b &\leftarrow b -  \frac{\eta}{|\mathcal{B}|} \sum_{i \in \mathcal{B}} \partial_b l^{(i)}(\mathbf{w}, b)  = b - \frac{\eta}{|\mathcal{B}|} \sum_{i \in \mathcal{B}} \left(\mathbf{w}^\top \mathbf{x}^{(i)} + b - y^{(i)}\right). \end{aligned}$$
 :eqlabel:`eq_linreg_batch_update`
 
+$\mathbf{w}$ ve $\mathbf{x}$'in :eqref:`eq_linreg_batch_update` içinde vektörler olduğuna dikkat edin. Burada, daha zarif vektör goöterimi, matematiği, $w_1, w_2, \ldots, w_d$ gibi, katsayılarla ifade etmekten çok daha okunaklı hale getirir. Küme niceliği (kardinalite), $|\mathcal{B}|$, her bir mini gruptaki örneklerin sayısını (*grup boyutu*) ve $\eta$ *öğrenme oranını* gösterir. Burada grup boyutu ve öğrenme oranı değerlerinin manuel olarak önceden belirlendiğini ve tipik olarak model eğitimi yoluyla öğrenilmediğini vurguluyoruz. Ayarlanabilir ancak eğitim döngüsünde güncellenmeyen bu parametrelere *hiperparametreler* denir. *Hiperparametre ayarı*, hiperparametrelerin seçildiği süreçtir ve genellikle onları eğitim döngüsününde ayrı bir *geçerleme veri kümesinde* (veya *geçerleme kümesinde*) elde edilen değerlendirilme sonuçlarına göre ayarlamamızı gerektirir.
 
-Note that $\mathbf{w}$ and $\mathbf{x}$ are vectors in :eqref:`eq_linreg_batch_update`. Here, the more elegant vector notation makes the math much more readable than expressing things in terms of coefficients, say $w_1, w_2, \ldots, w_d$. The set cardinality $|\mathcal{B}|$ represents the number of examples in each minibatch (the *batch size*) and $\eta$ denotes the *learning rate*. We emphasize that the values of the batch size and learning rate are manually pre-specified and not typically learned through model training. These parameters that are tunable but not updated in the training loop are called *hyperparameters*. *Hyperparameter tuning* is the process by which hyperparameters are chosen, and typically requires that we adjust them based on the results of the training loop
-as assessed on a separate *validation dataset* (or *validation set*).
+Önceden belirlenmiş sayıda yineleme kadar eğitimden sonra (veya başka bazı durdurma kriterleri karşılanana kadar), $\hat{\mathbf{w}}, \hat{b}$ olarak belirtilen tahmini model parametrelerini kaydediyoruz. Fonksiyonumuz gerçekten doğrusal ve gürültüsüz olsa bile, bu parametreler kaybın kesin minimum değerleri olmayacaktır, çünkü algoritma yavaşça en küçük değerlere doğru yaklaşsa da sonlu bir adımda tam olarak başaramayacaktır.
 
-After training for some predetermined number of iterations (or until some other stopping criteria are met), we record the estimated model parameters, denoted $\hat{\mathbf{w}}, \hat{b}$. Note that even if our function is truly linear and noiseless, these parameters will not be the exact minimizers of the loss because, although the algorithm converges slowly towards the minimizers it cannot achieve it exactly in a finite number of steps.
+Doğrusal regresyon, tüm etki alanı üzerinde yalnızca bir minimumun olduğu bir öğrenme problemi haline gelir. Halbuki, derin ağlar gibi daha karmaşık modeller için kayıp yüzeyleri birçok minimum içerir. Neyse ki, henüz tam olarak anlaşılmayan nedenlerden dolayı, derin öğrenme uygulayıcıları nadiren *eğitim kümelerinde* kaybı en aza indirecek parametreleri bulmakta zorlanırlar. Daha zorlu görev, daha önce görmediğimiz verilerde düşük kayıp elde edecek parametreler bulmaktır; bu, *genelleme* denen bir zorluktur. Kitap boyunca bu konulara döneceğiz.
 
-Linear regression happens to be a learning problem where there is only one minimum over the entire domain. However, for more complicated models, like deep networks, the loss surfaces contain many minima. Fortunately, for reasons that are not yet fully understood, deep learning practitioners seldom struggle to find parameters that minimize the loss *on training sets*. The more formidable task is to find parameters that will achieve low loss on data that we have not seen before, a challenge called *generalization*. We return to these topics throughout the book.
+### Öğrenilen Modelle Tahmin Yapma
 
+Öğrenilen doğrusal regresyon modeli $\hat{\mathbf{w}}^\top \mathbf{x} + \hat{b}$ göz önüne alındığında, artık (eğitim verilerinde yer almayan) yeni bir evin alanı, $x_1$, ve yaşı, $x_2$, verildiğinde fiyatını tahmin edebiliriz. Öznitelikler verilince hedeflerin tahmin edilmesine genellikle *tahmin* veya *çıkarım* denir.
 
-### Making Predictions with the Learned Model
+*Tahmine* bağlı kalmaya çalışacağız çünkü bu adımı *çıkarım* olarak adlandırmak, derin öğrenmede standart bir jargon olarak ortaya çıkmasına rağmen, bir şekilde yanlış bir isimdir. İstatistiklerde, *çıkarım* daha çok bir veri kümesine dayanarak parametreleri tahmin etmeyi ifade eder. Terminolojinin bu kötüye kullanılması, derin öğrenme uygulayıcıları istatistikçilerle konuşurken yaygın bir kafa karışıklığı kaynağıdır.
 
+Doing this efficiently requires that we vectorize the calculations and leverage fast linear algebra libraries rather than writing costly for-loops in Python.
 
-Given the learned linear regression model $\hat{\mathbf{w}}^\top \mathbf{x} + \hat{b}$, we can now estimate the price of a new house (not contained in the training data) given its area $x_1$ and age $x_2$. Estimating targets given features is commonly called *prediction* or *inference*.
+## Hız için Vektörleştirme
 
-We will try to stick with *prediction* because calling this step *inference*, despite emerging as standard jargon in deep learning, is somewhat of a misnomer. In statistics, *inference* more often denotes estimating parameters based on a dataset. This misuse of terminology is a common source of confusion when deep learning practitioners talk to statisticians.
-
-
-## Vectorization for Speed
-
-When training our models, we typically want to process whole minibatches of examples simultaneously. Doing this efficiently requires that we vectorize the calculations and leverage fast linear algebra libraries rather than writing costly for-loops in Python.
+Modellerimizi eğitirken, tipik olarak tüm mini grup örneklerini aynı anda işlemek isteriz. Bunu verimli bir şekilde yapmak, Python'da maliyetli döngüler yazmak yerine, hesaplamaları vektörleştirmemizi ve hızlı doğrusal cebir kütüphanelerinden yararlanmamızı gerektirir.
 
 ```{.python .input}
 %matplotlib inline
@@ -145,7 +138,7 @@ import numpy as np
 import time
 ```
 
-To illustrate why this matters so much, we can consider two methods for adding vectors. To start we instantiate two 10000-dimensional vectors containing all ones. In one method we will loop over the vectors with a Python for-loop. In the other method we will rely on a single call to `+`.
+Bunun neden bu kadar önemli olduğunu göstermek için, vektörleri eklemek için iki yöntem düşünebiliriz. Başlangıç olarak, bütün girdileri 1 olan 10000 boyutlu iki vektör tanımlıyoruz. Bir yöntemde vektörler üzerinde bir Python for-döngüsü ile döngü yapacağız. Diğer yöntemde, tek bir `+` çağrısına güveneceğiz.
 
 ```{.python .input}
 #@tab all
@@ -154,7 +147,7 @@ a = d2l.ones(n)
 b = d2l.ones(n)
 ```
 
-Since we will benchmark the running time frequently in this book, let us define a timer.
+Bu kitapta çalışma süresini sık sık karşılaştıracağımızdan bir zamanlayıcı tanımlayalım.
 
 ```{.python .input}
 #@tab all
@@ -186,7 +179,7 @@ class Timer:  #@save
         return np.array(self.times).cumsum().tolist()
 ```
 
-Now we can benchmark the workloads. First, we add them, one coordinate at a time,  using a for-loop.
+Artık iş yüklerini karşılaştırabiliriz. İlk olarak, bir for döngüsü kullanarak her seferinde bir koordinat şeklinde onları topluyoruz.
 
 ```{.python .input}
 #@tab mxnet, pytorch
@@ -206,7 +199,7 @@ for i in range(n):
 f'{timer.stop():.5f} sec'
 ```
 
-Alternatively, we rely on the reloaded `+` operator to compute the elementwise sum.
+Alternatif olarak, eleman-yönlü toplamı hesaplamak için yeniden yüklenen `+` operatörüne güveniyoruz.
 
 ```{.python .input}
 #@tab all
@@ -215,19 +208,18 @@ d = a + b
 f'{timer.stop():.5f} sec'
 ```
 
-You probably noticed that the second method is dramatically faster than the first. Vectorizing code often yields order-of-magnitude speedups. Moreover, we push more of the mathematics to the library and need not write as many calculations ourselves, reducing the potential for errors.
+Muhtemelen ikinci yöntemin birincisinden çok daha hızlı olduğunu fark etmişsinizdir. Vektörleştirme kodu genellikle büyük ölçeklerde hız artışları sağlar. Dahası, matematiğin çoğunun sorumluluğunu kütüphaneye yüklüyoruz ve kendimizin bu kadar çok hesaplamayı yazmamıza gerek yok, bu da hata olasılığını azaltıyor.
 
-## The Normal Distribution and Squared Loss
+## Normal Dağılım ve Kare Kayıp
 :label:`subsec_normal_distribution_and_squared_loss`
 
-While you can already get your hands dirty using only the information above, in the following we can more formally motivate the square loss objective via assumptions about the distribution of noise.
+Sadece yukarıdaki bilgileri kullanarak ellerinizi şimdiden kirletebilecekken, aşağıda gürültünün dağılımı ile ilgili varsayımlar yoluyla kare kayıp amaç fonsiyonunu daha biçimsel (formal) motive edici hale getirebiliriz.
 
-Linear regression was invented by Gauss in 1795, who also discovered the normal distribution (also called the *Gaussian*). It turns out that the connection between
-the normal distribution and linear regression runs deeper than common parentage. To refresh your memory, the probability density of a normal distribution with mean $\mu$ and variance $\sigma^2$ (standard deviation $\sigma$) is given as
+Doğrusal regresyon, 1795'te normal (*Gauss* olarak da adlandırılır) dağılımını da keşfeden Gauss tarafından icat edildi. Görünüşe göre normal dağılım ve doğrusal regresyon arasındaki bağlantı, ortak ebeveynlikten daha derindir. Belleğinizi yenilemek için, ortalaması $\mu$ ve varyansı $\sigma^2$ (standart sapma $\sigma$) olan normal bir dağılımın olasılık yoğunluğu şu şekilde verilir:
 
 $$p(x) = \frac{1}{\sqrt{2 \pi \sigma^2}} \exp\left(-\frac{1}{2 \sigma^2} (x - \mu)^2\right).$$
 
-Below we define a Python function to compute the normal distribution.
+Aşağıda normal dağılımı hesaplamak için bir Python işlevi tanımlıyoruz.
 
 ```{.python .input}
 #@tab all
@@ -236,7 +228,7 @@ def normal(x, mu, sigma):
     return p * np.exp(-0.5 / sigma**2 * (x - mu)**2)
 ```
 
-We can now visualize the normal distributions.
+Artık normal dağılımları görselleştirebiliriz.
 
 ```{.python .input}
 #@tab all
@@ -250,87 +242,88 @@ d2l.plot(x, [normal(x, mu, sigma) for mu, sigma in params], xlabel='x',
          legend=[f'mean {mu}, std {sigma}' for mu, sigma in params])
 ```
 
-As we can see, changing the mean corresponds to a shift along the $x$-axis, and increasing the variance spreads the distribution out, lowering its peak.
+Gördüğümüz gibi, ortalamanın değiştirilmesi $x$ ekseni boyunca bir kaymaya karşılık gelir ve varyansı arttırmak dağılımı yayarak tepe noktasını düşürür.
 
-One way to motivate linear regression with the mean squared error loss function (or simply square loss) is to formally assume that observations arise from noisy observations, where the noise is normally distributed as follows:
+Ortalama hata karesi kayıp fonksiyonlu (veya basitçe kare kaybı) doğrusal regresyonu motive etmenin bir yolu, gözlemlerin, gürültünün aşağıdaki gibi normal dağıldığı gürültülü gözlemlerden kaynaklandığını resmi (formal) olarak varsaymaktır:
 
 $$y = \mathbf{w}^\top \mathbf{x} + b + \epsilon \text{ where } \epsilon \sim \mathcal{N}(0, \sigma^2).$$
 
-Thus, we can now write out the *likelihood* of seeing a particular $y$ for a given $\mathbf{x}$ via
+Böylece, belirli bir $y$'yi belirli bir $\mathbf{x}$ için görme *olabilirliğini* şu şekilde yazabiliriz:
 
 $$P(y \mid \mathbf{x}) = \frac{1}{\sqrt{2 \pi \sigma^2}} \exp\left(-\frac{1}{2 \sigma^2} (y - \mathbf{w}^\top \mathbf{x} - b)^2\right).$$
 
-Now, according to the principle of maximum likelihood, the best values of parameters $\mathbf{w}$ and $b$ are those that maximize the *likelihood* of the entire dataset:
+Şimdi, maksimum olabilirlik ilkesine göre, $\mathbf{w}$ ve $b$ parametrelerinin en iyi değerleri, tüm veri kümesinin *olabilirliğini* en üst düzeye çıkaranlardır:
 
 $$P(\mathbf y \mid \mathbf X) = \prod_{i=1}^{n} p(y^{(i)}|\mathbf{x}^{(i)}).$$
 
-Estimators chosen according to the principle of maximum likelihood are called *maximum likelihood estimators*. While, maximizing the product of many exponential functions, might look difficult, we can simplify things significantly, without changing the objective, by maximizing the log of the likelihood instead. For historical reasons, optimizations are more often expressed as minimization rather than maximization. So, without changing anything we can minimize the *negative log-likelihood* $-\log P(\mathbf y \mid \mathbf X)$. Working out the mathematics gives us:
+Maksimum olabilirlik ilkesine göre seçilen tahminciler, *maksimum olabilirlik tahmincileri* olarak adlandırılır. Birçok üssel fonksiyonun çarpımını maksimize etmek zor görünse de, bunun yerine olabilirliğin logaritmasını maksimize ederek, amaç fonksiyonunu değiştirmeden işleri önemli ölçüde basitleştirebiliriz. Tarihsel nedenlerden dolayı, eniyilemeler (optimizasyon) daha çok azamileştirmekten (maksimizasyon) ziyade asgarileştirme (minimizasyon) olarak ifade edilir. Dolayısıyla, hiçbir şeyi değiştirmeden *negatif log-olabilirlik*, $-\logP(\mathbf y \mid \mathbf X)$, değerini en aza indirebiliriz. Matematik üzerinde biraz çalışmak bize şunu verir:
 
 $$-\log P(\mathbf y \mid \mathbf X) = \sum_{i=1}^n \frac{1}{2} \log(2 \pi \sigma^2) + \frac{1}{2 \sigma^2} \left(y^{(i)} - \mathbf{w}^\top \mathbf{x}^{(i)} - b\right)^2.$$
 
-Now we just need one more assumption that $\sigma$ is some fixed constant. Thus we can ignore the first term because it does not depend on $\mathbf{w}$ or $b$.
-Now the second term is identical to the squared error loss introduced earlier, except for the multiplicative constant $\frac{1}{\sigma^2}$. Fortunately, the solution does not depend on $\sigma$. It follows that minimizing the mean squared error is equivalent to maximum likelihood estimation of a linear model under the assumption of additive Gaussian noise.
+Şimdi $\sigma$'nın bir sabit olduğu varsayımına da ihtiyacımız var. Böylece ilk terimi göz ardı edebiliriz çünkü bu $\mathbf{w}$ veya $b$'ye bağlı değildir. Şimdi ikinci terim, çarpımsal sabit $\frac{1}{\sigma^2}$ dışında, daha önce tanıtılan hata karesi kaybıyla aynıdır. Neyse ki, çözüm $\sigma$'ya bağlı değildir. Ortalama hata karesini en aza indirmenin, eklenen Gauss gürültüsü varsayımı altında doğrusal bir modelin maksimum olabilirlik tahminine eşdeğer olduğu sonucu çıkar.
 
-## From Linear Regression to Deep Networks
+## Doğrusal Regresyondan Derin Ağlara
 
-So far we only talked about linear models. While neural networks cover a much richer family of models, we can begin thinking of the linear model as a neural network by expressing it in the language of neural networks. To begin, let us start by rewriting things in a "layer" notation.
+Şimdiye kadar sadece doğrusal modellerden bahsettik. Sinir ağları çok daha zengin bir model ailesini kapsarken, doğrusal modeli sinir ağları dilinde ifade ederek bir sinir ağı gibi düşünmeye başlayabiliriz. Başlangıç için, nesneleri bir "katman" gösteriminde yeniden yazalım.
 
-### Neural Network Diagram
+Note that these diagrams highlight the connectivity pattern such as how each input is connected to the output, but not the values taken by the weights or biases.
 
-Deep learning practitioners like to draw diagrams to visualize what is happening in their models. In :numref:`fig_single_neuron`, we depict our linear regression model as a neural network. Note that these diagrams highlight the connectivity pattern such as how each input is connected to the output, but not the values taken by the weights or biases.
+### Yapay Sinir Ağı Şeması
 
-![Linear regression is a single-layer neural network.](../img/singleneuron.svg)
+Derin öğrenme uygulayıcıları, modellerinde neler olduğunu görselleştirmek için şemalar çizmeyi severler. :numref:`fig_single_neuron`'de, doğrusal regresyon modelimizi bir sinir ağı olarak tasvir ediyoruz. Bu diyagramların, her bir girdinin çıktıya nasıl bağlandığı gibi bağlantı desenlerini vurguladığını, ancak ağırlıkların veya ek girdilerin aldığı değerleri vurgulamadığına dikkat edin.
+
+![Doğrusal regresyon, tek katmanlı bir sinir ağıdır.](../img/singleneuron.svg)
 :label:`fig_single_neuron`
 
-For the neural network shown in :numref:`fig_single_neuron`, the inputs are $x_1, \ldots, x_d$, so the *number of inputs* (or *feature dimensionality*) in the input layer is $d$. The output of the network in :numref:`fig_single_neuron` is $o_1$, so the *number of outputs* in the output layer is 1. Note that the input values are all *given* and there is just a single *computed* neuron. Focusing on where computation takes place, conventionally we do not consider the input layer when counting layers. That is to say, the *number of layers* for the neural network in :numref:`fig_single_neuron` is 1. We can think of linear regression models as neural networks consisting of just a single artificial neuron, or as single-layer neural networks.
+:numref:`fig_single_neuron`da gösterilen sinir ağı için, girdiler $x_1, \ ldots, x_d$'dir, dolayısıyla girdi katmanındaki *girdi sayısı* (veya *öznitelik boyutu*) $d$'dir. Ağın :numref:`fig_single_neuron`deki çıktısı $ o_1 $'dir, dolayısıyla çıktı katmanındaki *çıktı sayısı* $1$'dir. Girdi değerlerinin hepsinin *verildiğini* ve sadece tek bir *hesaplanmış*  nöron (sinir hücresi) olduğuna dikkat edin. Hesaplamanın nerede gerçekleştiğine odaklanarak, geleneksel olarak katmanları sayarken girdi katmanını dikkate almayız. Yani :numref:`fig_single_neuron`daki sinir ağı için *katman sayısı* $1$'dir. Doğrusal regresyon modellerini sadece tek bir yapay nörondan oluşan sinir ağları veya tek katmanlı sinir ağları olarak düşünebiliriz.
 
-Since for linear regression, every input is connected to every output (in this case there is only one output), we can regard this transformation (the output layer in :numref:`fig_single_neuron`) as a *fully-connected layer* or *dense layer*. We will talk a lot more about networks composed of such layers in the next chapter.
+Doğrusal regresyon için, her girdi her çıktıya bağlı olduğundan (bu durumda yalnızca bir çıktı vardır), bu dönüşümü (:numref:`fig_single_neuron`daki çıktı katmanı) *tam bağlantılı katman* veya *yoğun katman* olarak kabul edebiliriz. Bir sonraki bölümde bu tür katmanlardan oluşan ağlar hakkında daha çok konuşacağız.
 
+To see why linear models were a natural place to begin when the cyberneticists/neurophysiologists Warren McCulloch and Walter Pitts began to develop models of artificial neurons, consider the cartoonish picture of a biological neuron in :numref:`fig_Neuron`, consisting of *dendrites* (input terminals), the *nucleus* (CPU), the *axon* (output wire), and the *axon terminals* (output terminals), enabling connections to other neurons via *synapses*.
 
-### Biology
+### Biyoloji
 
-Since linear regression (invented in 1795) predates computational neuroscience, it might seem anachronistic to describe linear regression as a neural network. To see why linear models were a natural place to begin when the cyberneticists/neurophysiologists Warren McCulloch and Walter Pitts began to develop models of artificial neurons, consider the cartoonish picture of a biological neuron in :numref:`fig_Neuron`, consisting of *dendrites* (input terminals), the *nucleus* (CPU), the *axon* (output wire), and the *axon terminals* (output terminals), enabling connections to other neurons via *synapses*.
+Doğrusal regresyon (1795'te icat edildi) hesaplamalı sinirbilimden önce geldiğinden, doğrusal regresyonu bir sinir ağı gibi tanımlamak kronolojik hata olarak görünebilir. Sibernetikçiler / nörofizyologlar Warren McCulloch ve Walter Pitts, yapay sinir hücresi modelleri geliştirmeye başladığında doğrusal modellerin neden doğal bir başlangıç noktası olduğunu anlamak için, bir biyolojik sinir hücresinin karikatürize resmini düşünün :numref:`fig_Neuron`: *Dendritlerden* (girdi terminalleri), *çekirdekten* (CPU), *aksondan* (çıktı teli) ve *akson terminallerinde* (çıktı terminalleri) oluşur ve *sinapslar* aracılığıyla diğer nöronlara bağlantı sağlar.
 
-![The real neuron.](../img/Neuron.svg)
+![Gerçek nöron.](../img/Neuron.svg)
 :label:`fig_Neuron`
 
-Information $x_i$ arriving from other neurons (or environmental sensors such as the retina) is received in the dendrites. In particular, that information is weighted by *synaptic weights* $w_i$ determining the effect of the inputs (e.g., activation or inhibition via the product $x_i w_i$). The weighted inputs arriving from multiple sources are aggregated in the nucleus as a weighted sum $y = \sum_i x_i w_i + b$, and this information is then sent for further processing in the axon $y$, typically after some nonlinear processing via $\sigma(y)$. From there it either reaches its destination (e.g., a muscle) or is fed into another neuron via its dendrites.
+Dendritlerde diğer nöronlardan (veya retina gibi çevresel sensörlerden) gelen bilgiyi, $x_i$, alınır. Özellikle, bu bilgi, girdilerin etkisini belirleyen *sinaptik ağırlıklar*, $w_i$, ile ağırlıklandırılır (örneğin, $x_i w_i$ çarpımı aracılığıyla etkinleştirme veya engelleme). Birden fazla kaynaktan gelen ağırlıklı girdiler, çekirdekte ağırlıklı bir toplam $y= \sum_i x_i w_i + b$ olarak biriktirilir ve bu bilgi daha sonra, tipik olarak bazı doğrusal olmayan işlemlerden, $\sigma(y)$ gibi, sonra $y$ aksonunda daha fazla işlenmek üzere gönderilir. Oradan ya hedefine (örneğin bir kas) ulaşır ya da dendritleri yoluyla başka bir nörona beslenir.
 
-Certainly, the high-level idea that many such units could be cobbled together with the right connectivity and right learning algorithm, to produce far more interesting and complex behavior than any one neuron alone could express owes to our study of real biological neural systems.
+Kuşkusuz, birçok birimin, tek başına herhangi bir nöronun ifade edebileceğinden çok daha ilginç ve karmaşık davranışlar üretmek için doğru bağlanabilirlik ve doğru öğrenme algoritmasıyla bir araya getirilebileceği yönündeki bu tür üst düzey fikir, varlığını gerçek biyolojik sinir sistemleri çalışmamıza borçludur.
 
-At the same time, most research in deep learning today draws little direct inspiration in neuroscience. We invoke Stuart Russell and Peter Norvig who, in their classic AI text book *Artificial Intelligence: A Modern Approach* :cite:`Russell.Norvig.2016`, pointed out that although airplanes might have been *inspired* by birds, ornithology has not been the primary driver of aeronautics innovation for some centuries. Likewise, inspiration in deep learning these days comes in equal or greater measure from mathematics, statistics, and computer science.
+Aynı zamanda, günümüzde derin öğrenmedeki çoğu araştırma, sinirbilimden çok az ilham alıyor. Stuart Russell ve Peter Norvig'in klasik YZ metin kitaplarında *Yapay Zeka: Modern Bir Yaklaşım (Artificial Intelligence: A Modern Approach)* :cite:`Russell.Norvig.2016`, görüyoruz ki, uçaklar kuşlardan *esinlenmiş* olsa da ornitolojinin birkaç yüzyıldır havacılık yeniliklerinin ana itici gücü olmamıştır. Aynı şekilde, bu günlerde derin öğrenmedeki ilham eşit veya daha büyük ölçüde matematik, istatistik ve bilgisayar bilimlerinden  geliyor.
 
-## Summary
+## Özet
 
-* Key ingredients in a machine learning model are training data, a loss function, an optimization algorithm, and quite obviously, the model itself.
-* Vectorizing makes everything better (mostly math) and faster (mostly code).
-* Minimizing an objective function and performing maximum likelihood estimation can mean the same thing.
-* Linear regression models are neural networks, too.
+* Bir makine öğrenmesi modelindeki temel bileşenler eğitim verileri, bir kayıp işlevi, bir optimizasyon algoritması ve oldukça açık bir şekilde modelin kendisidir.
+* Vektörleştirme, her şeyi daha iyi (çoğunlukla matematik) ve daha hızlı (çoğunlukla kod) yapar.
+* Bir amaç işlevini en aza indirmek ve maksimum olabilirlik tahminini gerçekleştirmek aynı anlama gelebilir.
+* Doğrusal regresyon modelleri de sinir ağlarıdır.
 
+## Alıştırmalar
 
-## Exercises
-
-1. Assume that we have some data $x_1, \ldots, x_n \in \mathbb{R}$. Our goal is to find a constant $b$ such that $\sum_i (x_i - b)^2$ is minimized.
-    * Find a analytic solution for the optimal value of $b$.
-    * How does this problem and its solution relate to the normal distribution?
-1. Derive the analytic solution to the optimization problem for linear regression with squared error. To keep things simple, you can omit the bias $b$ from the problem (we can do this in principled fashion by adding one column to $\mathbf X$ consisting of all ones).
-    * Write out the optimization problem in matrix and vector notation (treat all the data as a single matrix, and all the target values as a single vector).
-    * Compute the gradient of the loss with respect to $w$.
-    * Find the analytic solution by setting the gradient equal to zero and solving the matrix equation.
-    * When might this be better than using stochastic gradient descent? When might this method break?
-1. Assume that the noise model governing the additive noise $\epsilon$ is the exponential distribution. That is, $p(\epsilon) = \frac{1}{2} \exp(-|\epsilon|)$.
-    * Write out the negative log-likelihood of the data under the model $-\log P(\mathbf y \mid \mathbf X)$.
-    * Can you find a closed form solution?
-    * Suggest a stochastic gradient descent algorithm to solve this problem. What could possibly go wrong (hint: what happens near the stationary point as we keep on updating the parameters)? Can you fix this?
+1. $x_1, \ldots, x_n \in \mathbb{R}$ verisine sahip olduğumuzu varsayalım. Amacımız, $\sum_i (x_i - b)^2$ en aza indirilecek şekilde sabit bir $b$ bulmaktır.
+    * $b$'nin optimum değeri için analitik bir çözüm bulunuz.
+    * Bu problem ve çözümü normal dağılımla nasıl ilişkilidir?
+1. Hata kareli doğrusal regresyon için optimizasyon probleminin analitik çözümünü türetiniz. İşleri basitleştirmek için, problemden $b$ ek girdisini çıkarabilirsiniz (bunu ilkeli bir şekilde, hepsini içeren $\mathbf X$'e bir sütun ekleyerek yapabiliriz).
+    * Optimizasyon problemini matris ve vektör gösteriminde yazınız (tüm verileri tek bir matris ve tüm hedef değerleri tek bir vektör olarak ele alınız).
+    * $w$'ya göre kaybın gradyanını hesaplayınız.
+    * Gradyanı sıfıra eşitleyerek ve matris denklemini çözerek analitik çözümü bulunuz.
+    * Bu ne zaman rasgele gradyan iniş kullanmaktan daha iyi olabilir? Bu yöntem ne zaman bozulabilir?
+1. Eklenen gürültü $\epsilon$'u yöneten gürültü modelinin üssel dağılım olduğunu varsayın. Yani, $p(\epsilon) = \frac{1}{2} \exp(-|\epsilon|)$'dur.
+    * Verilerin negatif log-olabilirliğini $-\log P(\mathbf y \mid \mathbf X)$ modeli altında yazınız.
+    * Kapalı form çözümü bulabilir misiniz?
+    * Bu sorunu çözmek için bir rasgele gradyan iniş algoritması önerin. Ne yanlış gidebilir (ipucu: Parametreleri güncellemeye devam ederken durağan noktanın yakınında ne olur)? Bunu düzeltebilir misiniz?
 
 :begin_tab:`mxnet`
-[Discussions](https://discuss.d2l.ai/t/40)
+[Tartışmalar](https://discuss.d2l.ai/t/40)
 :end_tab:
 
 :begin_tab:`pytorch`
-[Discussions](https://discuss.d2l.ai/t/258)
+[Tartışmalar](https://discuss.d2l.ai/t/258)
 :end_tab:
 
 :begin_tab:`tensorflow`
-[Discussions](https://discuss.d2l.ai/t/259)
+[Tartışmalar](https://discuss.d2l.ai/t/259)
 :end_tab:
