@@ -13,7 +13,7 @@
   <img width="200"  src="static/frontpage/_images/notebook.gif">
 </p>
 
-Bu açık kaynak kitap, bizim derin öğrenmeyi ulaşılabilir yapma, size kavramları, bağlamı ve kodu öğretme çabamızı temsil eder. Kitabın tamamı Jupyter not defterlerinde hazırlanarak açıklama figürlerini, matematiği ve etkileşimli örnekleri, kendi kendine yeterli kodla sorunsuz bir şekilde bütünleştirmektedir.
+Bu açık kaynak kitap, derin öğrenmeyi ulaşılabilir yapma, kavramları, bağlamı ve kodu öğretme çabamızı temsil ediyor. Kitabın tamamı Jupyter not defterlerinde hazırlanarak açıklama figürlerini, matematiği ve etkileşimli örnekleri, kendi kendine yeterli kodla sorunsuz bir şekilde bütünleştirmektedir.
 
 Hedefimiz,
 1. herkes için serbestçe kullanılabilir
