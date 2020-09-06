@@ -1,7 +1,7 @@
-# Linear Regression Implementation from Scratch
-:label:`sec_linear_scratch`
+# Sıfırdan Doğrusal Regresyon Uygulaması Yaratma
+:label:`sec_linear_scratch
 
-Now that you understand the key ideas behind linear regression, we can begin to work through a hands-on implementation in code. In this section, we will implement the entire method from scratch, including the data pipeline, the model, the loss function, and the minibatch stochastic gradient descent optimizer. While modern deep learning frameworks can automate nearly all of this work, implementing things from scratch is the only way to make sure that you really know what you are doing. Moreover, when it comes time to customize models, defining our own layers or loss functions, understanding how things work under the hood will prove handy. In this section, we will rely only on tensors and auto differentiation. Afterwards, we will introduce a more concise implementation, taking advantage of bells and whistles of deep learning frameworks.
+Artık doğrusal regresyonun arkasındaki temel fikirleri anladığınıza göre, işe ellerimizi daldırarak kodda uygulamaya başlayabiliriz. Bu bölümde, veri komut işleme hattı (pipeline), model, kayıp fonksiyonu ve minigrup rasgele gradyan iniş optimize edici dahil olmak üzere tüm yöntemi sıfırdan uygulayacağız. Modern derin öğrenme çerçeveleri neredeyse tüm bu çalışmayı otomatikleştirebilirken, bir şeyleri sıfırdan uygulamak, ne yaptığınızı gerçekten bildiğinizden emin olmanın tek yoludur. Dahası, modelleri ihtiyacımıza göre özelleştirken, kendi katmanlarımızı veya kayıp işlevlerimizi tanımlama zamanı geldiğinde, kaputun altında işlerin nasıl ilerlediğini anlamak kullanışlı olacaktır. Bu bölümde, sadece tensörlere ve otomatik türev almaya güveneceğiz. Daha sonra, derin öğrenme çerçevelerinin çekici ek özelliklerden yararlanarak daha kısa bir uygulama sunacağız.
 
 ```{.python .input}
 %matplotlib inline
@@ -27,16 +27,15 @@ import tensorflow as tf
 import random
 ```
 
-## Generating the Dataset
+## Veri Kümesini Oluşturma
 
-To keep things simple, we will construct an artificial dataset according to a linear model with additive noise. Our task will be to recover this model's parameters
-using the finite set of examples contained in our dataset. We will keep the data low-dimensional so we can visualize it easily. In the following code snippet, we generate a dataset containing 1000 examples, each consisting of 2 features sampled from a standard normal distribution. Thus our synthetic dataset will be a matrix $\mathbf{X}\in \mathbb{R}^{1000 \times 2}$.
+İşleri basitleştirmek için, gürültülü doğrusal bir model için yapay bir veri kümesi oluşturacağız. Görevimiz, veri setimizde bulunan sonlu örnek kümesini kullanarak bu modelin parametrelerini elde etmek olacaktır. Verileri düşük boyutlu tutacağız, böylece kolayca görselleştirebiliriz. Aşağıdaki kod parçacığında, her biri standart bir normal dağılımdan örneklenmiş 2 öznitelikten oluşan 1000 örnekli bir veri kümesi oluşturuyoruz. Böylece, sentetik veri kümemiz matris $\mathbf{X}\in \mathbb{R}^{1000 \times 2}$ olacaktır.
 
-The true parameters generating our dataset will be $\mathbf{w} = [2, -3.4]^\top$ and $b = 4.2$, and our synthetic labels will be assigned according to the following linear model with the noise term $\epsilon$:
+Veri kümemizi oluşturan gerçek parametreler $\mathbf{w} = [2, -3.4]^\top$ ve $b = 4.2$ olacaktır ve sentetik etiketlerimiz aşağıdaki $\epsilon$ gürültü terimli  doğrusal modele göre atanacaktır:
 
 $$\mathbf{y}= \mathbf{X} \mathbf{w} + b + \mathbf\epsilon.$$
 
-You could think of $\epsilon$ as capturing potential measurement errors on the features and labels. We will assume that the standard assumptions hold and thus that $\epsilon$ obeys a normal distribution with mean of 0. To make our problem easy, we will set its standard deviation to 0.01. The following code generates our synthetic dataset.
+$\epsilon$'u öznitelikler ve etiketlerdeki olası ölçüm hatalarını yakalıyor diye düşünebilirsiniz. Standart varsayımların geçerli olduğunu ve böylece $\epsilon$ değerinin ortalaması 0 olan normal bir dağılıma uyduğunu varsayacağız. Problemimizi kolaylaştırmak için, standart sapmasını 0.01 olarak ayarlayacağız. Aşağıdaki kod, sentetik veri kümemizi üretir.
 
 ```{.python .input}
 def synthetic_data(w, b, num_examples):  #@save
@@ -81,14 +80,14 @@ true_b = 4.2
 features, labels = synthetic_data(true_w, true_b, 1000)
 ```
 
-Note that each row in `features` consists of a 2-dimensional data instance and that each row in `labels` consists of a 1-dimensional label value (a scalar).
+`Öznitelikler`deki (features değişkeni) her satırın 2 boyutlu bir veri örneğinden oluştuğuna ve `etiketlerdeki` (labels değişkeni) her satırın 1 boyutlu bir etiket değerinden (bir skaler) oluştuğuna dikkat edin.
 
 ```{.python .input}
 #@tab all
 print('features:', features[0],'\nlabel:', labels[0])
 ```
 
-By generating a scatter plot using the second feature `features[:, 1]` and `labels`, we can clearly observe the linear correlation between the two.
+İkinci özntelik `features[:, 1]` ve `labels` kullanılarak bir dağılım grafiği oluşturup ikisi arasındaki doğrusal korelasyonu net bir şekilde gözlemleyebiliriz.
 
 ```{.python .input}
 #@tab all
@@ -97,11 +96,11 @@ d2l.set_figsize()
 d2l.plt.scatter(d2l.numpy(features[:, 1]), d2l.numpy(labels), 1);
 ```
 
-## Reading the Dataset
+## Veri Kümesini Okuma
 
-Recall that training models consists of making multiple passes over the dataset, grabbing one minibatch of examples at a time, and using them to update our model. Since this process is so fundamental to training machine learning algorithms, it is worth defining a utility function to shuffle the dataset and access it in minibatches.
+Model eğitimlerinin, veri kümesi üzerinde birden çok geçiş yapmaktan, her seferde bir minigrup örnek almaktan ve bunları modelimizi güncellemek için kullanmaktan oluştuğunu hatırlayın. Bu süreç, makine öğrenmesi algoritmalarını eğitmek için çok temel olduğundan, veri kümesini karıştırmak ve ona minigruplar halinde erişmek için bir yardımcı işlev tanımlamaya değer.
 
-In the following code, we define the `data_iter` function to demonstrate one possible implementation of this functionality. The function takes a batch size, a matrix of features, and a vector of labels, yielding minibatches of the size `batch_size`. Each minibatch consists of a tuple of features and labels.
+Aşağıdaki kodda, bu işlevselliğin olası bir uygulamasını göstermek için `data_iter` işlevini tanımlıyoruz. Fonksiyon, bir grup boyutunu, bir öznitelik matrisini ve bir etiket vektörünü alarak `batch_size` boyutundaki minigrupları verir. Her bir mini parti, bir dizi öznitelik ve etiketten oluşur.
 
 ```{.python .input}
 def data_iter(batch_size, features, labels):
@@ -139,9 +138,9 @@ def data_iter(batch_size, features, labels):
         yield tf.gather(features, j), tf.gather(labels, j)
 ```
 
-In general, note that we want to use reasonably sized minibatches to take advantage of the GPU hardware, which excels at parallelizing operations. Because each example can be fed through our models in parallel and the gradient of the loss function for each example can also be taken in parallel, GPUs allow us to process hundreds of examples in scarcely more time than it might take to process just a single example.
+Genel olarak, paralelleştirme işlemlerinde mükemmel olan GPU donanımından yararlanmak için makul boyutta minigruplar kullanmak istediğimizi unutmayın. Her örnek, modellerimiz üzerinden paralel olarak beslenebildiği ve her örnek için kayıp fonksiyonunun gradyanı da paralel olarak alınabildiğinden, GPU'lar, yüzlerce örneği yalnızca tek bir örneği işlemek için gerekebileceğinden çok daha az kısa sürede işlememize izin verir.
 
-To build some intuition, let us read and print the first small batch of data examples. The shape of the features in each minibatch tells us both the minibatch size and the number of input features. Likewise, our minibatch of labels will have a shape given by `batch_size`.
+Biraz sezgi oluşturmak için, ilk küçük bir grup veri örneği okuyup yazdıralım. Her mini gruptaki özniteliklerin şekli bize hem minigrup boyutunu hem de girdi özniteliklerinin sayısını söyler. Aynı şekilde, minigrubumuzun etiketleri de `batch_size` ile verilen şekle sahip olacaktır.
 
 ```{.python .input}
 #@tab all
@@ -152,12 +151,11 @@ for X, y in data_iter(batch_size, features, labels):
     break
 ```
 
-As we run the iteration, we obtain distinct minibatches successively until the entire dataset has been exhausted (try this). While the iteration implemented above is good for didactic purposes, it is inefficient in ways that might get us in trouble on real problems. For example, it requires that we load all the data in memory and that we perform lots of random memory access. The built-in iterators implemented in a deep learning framework are considerably more efficient and they can deal with both data stored in files and data fed via data streams.
+Yinelemeyi çalıştırırken, tüm veri kümesi tükenene kadar art arda farklı minigruplar elde ederiz (bunu deneyin). Yukarıda uygulanan yineleme, eğitici amaçlar için iyi olsa da, gerçek problemlerde bizim başımızı belaya sokacak şekillerde verimsizdir. Örneğin, tüm verileri belleğe yüklememizi ve çok sayıda rastgele bellek erişimi gerçekleştirmemizi gerektirir. Derin öğrenme çerçevesinde uygulanan yerleşik yineleyiciler önemli ölçüde daha verimlidir ve hem dosyalarda depolanan verilerle hem de veri akışları aracılığıyla beslenen verilerle ilgilenebilirler.
 
+## Model Parametrelerini İlkleme
 
-## Initializing Model Parameters
-
-Before we can begin optimizing our model's parameters by minibatch stochastic gradient descent, we need to have some parameters in the first place. In the following code, we initialize weights by sampling random numbers from a normal distribution with mean 0 and a standard deviation of 0.01, and setting the bias to 0.
+Modelimizin parametrelerini minigrup rasgele gradyan inişiyle optimize etmeye başlamadan önce, ilk olarak bazı parametrelere ihtiyacımız var. Aşağıdaki kodda, ağırlıkları, ortalaması 0 ve standart sapması 0.01 olan normal bir dağılımdan rasgele sayılar örnekleyerek ve ek girdiyi 0 olarak ayarlayarak ilkliyoruz.
 
 ```{.python .input}
 w = np.random.normal(0, 0.01, (2, 1))
@@ -179,14 +177,13 @@ w = tf.Variable(tf.random.normal(shape=(2, 1), mean=0, stddev=0.01),
 b = tf.Variable(tf.zeros(1), trainable=True)
 ```
 
-After initializing our parameters, our next task is to update them until they fit our data sufficiently well. Each update requires taking the gradient of our loss function with respect to the parameters. Given this gradient, we can update each parameter in the direction that may reduce the loss.
+Parametrelerimizi başlattıktan sonra, bir sonraki görevimiz, verilerimize yeterince iyi oturana kadar onları güncellemektir. Her güncelleme, parametrelere göre kayıp fonksiyonumuzun gradyanını almayı gerektirir. Bu gradyan göz önüne alındığında, her parametreyi kaybı azaltabilecek yönde güncelleyebiliriz.
 
-Since nobody wants to compute gradients explicitly (this is tedious and error prone), we use automatic differentiation, as introduced in :numref:`sec_autograd`, to compute the gradient.
+Hiç kimse gradyanları açıkça hesaplamak istemediğinden (bu sıkıcı ve hataya açık), gradyanı hesaplamak için :numref:`sec_autograd`da tanıtıldığı gibi otomatik türev almayı kullanırız.
 
+## Modeli Tanımlama
 
-## Defining the Model
-
-Next, we must define our model, relating its inputs and parameters to its outputs. Recall that to calculate the output of the linear model, we simply take the matrix-vector dot product of the input features $\mathbf{X}$ and the model weights $\mathbf{w}$, and add the offset $b$ to each example. Note that below $\mathbf{Xw}$  is a vector and $b$ is a scalar. Recall the broadcasting mechanism as described in :numref:`subsec_broadcasting`. When we add a vector and a scalar, the scalar is added to each component of the vector.
+Daha sonra, modelimizi, onun girdileri ve parametreleri çıktıları ile ilişkilendirerek tanımlamalıyız. Doğrusal modelin çıktısını hesaplamak için, $\mathbf{X}$ girdi özniteliklerinin ve $\mathbf{w}$ model ağırlıklarının matris vektör nokta çarpımını alıp her bir örneğe $b$ ofsetini eklediğimizi hatırlayın. Aşağıda $\mathbf{Xw}$ bir vektör ve $b$ bir skalerdir. Yayma mekanizmasını şurada açıklandığı anımsayalım :numref:`subsec_broadcasting`. Bir vektör ve bir skaleri topladığımızda, skaler vektörün her bileşenine eklenir.
 
 ```{.python .input}
 def linreg(X, w, b):  #@save
@@ -208,10 +205,9 @@ def linreg(X, w, b):  #@save
     return tf.matmul(X, w) + b
 ```
 
-## Defining the Loss Function
+## Kayıp Fonksiyonunu Tanımlama
 
-Since updating our model requires taking the gradient of our loss function, we ought to define the loss function first. Here we will use the squared loss function
-as described in :numref:`sec_linear_regression`. In the implementation, we need to transform the true value `y` into the predicted value's shape `y_hat`. The result returned by the following function will also have the same shape as `y_hat`.
+Modelimizi güncellemek, kayıp fonksiyonumuzun gradyanını almayı gerektirdiğinden, önce kayıp fonksiyonunu tanımlamalıyız. Burada kare kayıp fonksiyonunu şurada açıklandığı gibi kullanacağız :numref:`sec_linear_regression`. Uygulamada, `y` gerçek değerini tahmin edilen değer `y_hat` şekline dönüştürmemiz gerekir. Aşağıdaki işlev tarafından döndürülen sonuç da `y_hat` ile aynı şekle sahip olacaktır.
 
 ```{.python .input}
 #@tab all
@@ -220,12 +216,11 @@ def squared_loss(y_hat, y):  #@save
     return (y_hat - d2l.reshape(y, y_hat.shape)) ** 2 / 2
 ```
 
-## Defining the Optimization Algorithm
+## Optimizasyon Algoritmasını Tanımlama
 
-As we discussed in :numref:`sec_linear_regression`, linear regression has a closed-form solution. However, this is not a book about linear regression: it is a book about deep learning. Since none of the other models that this book introduces can be solved analytically, we will take this opportunity to introduce your first working example of minibatch stochastic gradient descent.
+:numref:`sec_linear_regression`da tartıştığımız gibi, doğrusal regresyon kapalı form bir çözüme sahiptir. Ancak, bu doğrusal regresyon hakkında bir kitap değil: Derin öğrenme hakkında bir kitap. Bu kitabın tanıttığı diğer modellerin hiçbiri analitik olarak çözülemediğinden, bu fırsatı minigrup rasgele gradyan inişinin ilk çalışan örneğini tanıtmak için kullanacağız.
 
-
-At each step, using one minibatch randomly drawn from our dataset, we will estimate the gradient of the loss with respect to our parameters. Next, we will update our parameters in the direction that may reduce the loss. The following code applies the minibatch stochastic gradient descent update, given a set of parameters, a learning rate, and a batch size. The size of the update step is determined by the learning rate `lr`. Because our loss is calculated as a sum over the minibatch of examples, we normalize our step size by the batch size (`batch_size`), so that the magnitude of a typical step size does not depend heavily on our choice of the batch size.
+Her adımda, veri setimizden rastgele alınan bir minigrup kullanarak, parametrelerimize göre kaybın gradyanını tahmin edeceğiz. Daha sonra kayıpları azaltabilecek yönde parametrelerimizi güncelleyeceğiz. Aşağıdaki kod, bir küme parametre, bir öğrenme hızı ve bir grup boyutu verildiğinde minigrup rasgele gradyan iniş güncellemesini uygular. Güncelleme adımının boyutu, öğrenme oranı `lr` tarafından belirlenir. Kaybımız, örneklerin minigrubu üzerinden bir toplam olarak hesaplandığından, adım boyutumuzu grup boyutuna (`batch_size`) göre normalleştiririz, böylece tipik bir adım boyutunun büyüklüğü, grup boyutu seçimimize büyük ölçüde bağlı olmaz.
 
 ```{.python .input}
 def sgd(params, lr, batch_size):  #@save
@@ -251,20 +246,24 @@ def sgd(params, grads, lr, batch_size):  #@save
         param.assign_sub(lr*grad/batch_size)
 ```
 
-## Training
+Finally, we will call the optimization algorithm `sgd` to update the model parameters.
 
-Now that we have all of the parts in place, we are ready to implement the main training loop. It is crucial that you understand this code because you will see nearly identical training loops over and over again throughout your career in deep learning.
+## Eğitim
 
-In each iteration, we will grab a minibatch of training examples, and pass them through our model to obtain a set of predictions. After calculating the loss, we initiate the backwards pass through the network, storing the gradients with respect to each parameter. Finally, we will call the optimization algorithm `sgd` to update the model parameters.
+Artık tüm parçaları yerine koyduğumuza göre, ana eğitim döngüsünü uygulamaya hazırız. Bu kodu anlamanız çok önemlidir çünkü derin öğrenmede kariyeriniz boyunca neredeyse aynı eğitim döngülerini tekrar tekrar göreceksiniz.
 
-In summary, we will execute the following loop:
+Her yinelemede, bir minigrup eğitim örneği alacağız ve bir dizi tahmin elde etmek için bunları modelimizden geçireceğiz. Kaybı hesapladıktan sonra, her parametreye göre gradyanları depolayarak ağ üzerinden geriye doğru geçişi başlatırız. Son olarak, model parametrelerini güncellemek için optimizasyon algoritması `sgd`yi çağıracağız.
 
-* Initialize parameters $(\mathbf{w}, b)$
-* Repeat until done
-    * Compute gradient $\mathbf{g} \leftarrow \partial_{(\mathbf{w},b)} \frac{1}{|\mathcal{B}|} \sum_{i \in \mathcal{B}} l(\mathbf{x}^{(i)}, y^{(i)}, \mathbf{w}, b)$
-    * Update parameters $(\mathbf{w}, b) \leftarrow (\mathbf{w}, b) - \eta \mathbf{g}$
+We elide these details for now but revise them later in :numref:`chap_optimization`.
 
-In each *epoch*, we will iterate through the entire dataset (using the `data_iter` function) once passing through every example in the training dataset (assuming that the number of examples is divisible by the batch size). The number of epochs `num_epochs` and the learning rate `lr` are both hyperparameters, which we set here to 3 and 0.03, respectively. Unfortunately, setting hyperparameters is tricky and requires some adjustment by trial and error. We elide these details for now but revise them later in :numref:`chap_optimization`.
+Özetle, aşağıdaki döngüyü uygulayacağız:
+
+* $(\mathbf {w}, b)$ parametrelerini ilkletin.
+* Tamamlanana kadar tekrarlayın
+     * Gradyanı hesaplayın: $\mathbf{g} \leftarrow \partial_{(\mathbf{w},b)} \frac{1}{|\mathcal{B}|} \sum_{i \in \mathcal{B}} l(\mathbf{x}^{(i)}, y^{(i)}, \mathbf{w}, b)$
+     * Parametreleri güncelleyin: $(\mathbf{w}, b) \leftarrow (\mathbf{w}, b) - \eta \mathbf{g}$
+
+Her bir *dönemde (epoch)*, eğitim veri kümesindeki her örnekten geçtikten sonra (örneklerin sayısının grup boyutuna bölünebildiği varsayılarak) tüm veri kümesini (`data_iter` işlevini kullanarak) yineleyeceğiz. Dönemlerin sayısı, `num_epochs`, ve öğrenme hızı, `lr`, burada sırasıyla 3 ve 0,03 olarak belirlediğimiz hiperparametrelerdir. Ne yazık ki, hiperparametrelerin belirlenmesi zordur ve deneme yanılma yoluyla bazı ayarlamalar gerektirir. Bu ayrıntıları şimdilik atlıyoruz, ancak daha sonra :numref:`chap_optimization` bölümünde tekrarlayacağız.
 
 ```{.python .input}
 lr = 0.03
@@ -322,7 +321,7 @@ for epoch in range(num_epochs):
     print(f'epoch {epoch + 1}, loss {float(tf.reduce_mean(train_l)):f}')
 ```
 
-In this case, because we synthesized the dataset ourselves, we know precisely what the true parameters are. Thus, we can evaluate our success in training by comparing the true parameters with those that we learned through our training loop. Indeed they turn out to be very close to each other.
+Bu durumda, veri kümemizi kendimiz sentezlediğimiz için, gerçek parametrelerin ne olduğunu tam olarak biliyoruz. Böylece eğitimdeki başarımızı, gerçek parametreleri eğitim döngümüz aracılığıyla öğrendiklerimizle karşılaştırarak değerlendirebiliriz. Gerçekten de birbirlerine çok yakın oldukları ortaya çıkıyor.
 
 ```{.python .input}
 #@tab all
@@ -330,33 +329,31 @@ print(f'error in estimating w: {true_w - d2l.reshape(w, true_w.shape)}')
 print(f'error in estimating b: {true_b - b}')
 ```
 
-Note that we should not take it for granted that we are able to recover the parameters perfectly. However, in machine learning, we are typically less concerned with recovering true underlying parameters, and more concerned with parameters that lead to highly accurate prediction. Fortunately, even on difficult optimization problems, stochastic gradient descent can often find remarkably good solutions, owing partly to the fact that, for deep networks, there exist many configurations of the parameters that lead to highly accurate prediction.
+Parametreleri mükemmel bir şekilde elde ettiğimizi kabullenmememiz gerektiğini unutmayın. Bununla birlikte, makine öğrenmesinde, genellikle temeldeki gerçek parametreleri elde etmek ile daha az ilgileniriz ve yüksek derecede doğru tahminlere yol açan parametrelerle daha çok ilgileniriz. Neyse ki, zorlu optimizasyon problemlerinde bile, rasgele gradyan inişi, kısmen derin ağlar için, oldukça doğru tahmine götüren parametrelerin birçok konfigürasyonunun mevcut olmasından dolayı, genellikle dikkate değer ölçüde iyi çözümler bulabilir.
 
+## Özet
 
-## Summary
+* Derin bir ağın, katmanları veya süslü optimize edicileri tanımlamaya gerek kalmadan sadece tensörler ve otomatik türev alma kullanarak nasıl sıfırdan uygulanabileceğini ve optimize edilebileceğini gördük.
+* Bu bölüm sadece mümkün olanın yüzeyini gösterir. İlerideki bölümlerde, yeni tanıttığımız kavramlara dayalı yeni modelleri açıklayacak ve bunları daha kısaca nasıl uygulayacağımızı öğreneceğiz.
 
-* We saw how a deep network can be implemented and optimized from scratch, using just tensors and auto differentiation, without any need for defining layers or fancy optimizers.
-* This section only scratches the surface of what is possible. In the following sections, we will describe additional models based on the concepts that we have just introduced and learn how to implement them more concisely.
+## Alıştırmalar
 
-
-## Exercises
-
-1. What would happen if we were to initialize the weights to zero. Would the algorithm still work?
-1. Assume that you are [Georg Simon Ohm](https://en.wikipedia.org/wiki/Georg_Ohm) trying to come up with a model between voltage and current. Can you use auto differentiation to learn the parameters of your model?
-1. Can you use [Planck's Law](https://en.wikipedia.org/wiki/Planck%27s_law) to determine the temperature of an object using spectral energy density?
-1. What are the problems you might encounter if you wanted to  compute the second derivatives? How would you fix them?
-1. Why is the `reshape` function needed in the `squared_loss` function?
-1. Experiment using different learning rates to find out how fast the loss function value drops.
-1. If the number of examples cannot be divided by the batch size, what happens to the `data_iter` function's behavior?
+1. Ağırlıkları sıfıra ilkleseydik ne olurdu? Algoritma yine de çalışır mıydı?
+1. Voltaj ve akım arasında bir model bulmaya çalışan [Georg Simon Ohm](https://en.wikipedia.org/wiki/Georg_Ohm) olduğunuzu varsayın. Modelinizin parametrelerini öğrenmek için otomatik türev almayı kullanabilir misiniz?
+1. Spektral enerji yoğunluğunu kullanarak bir nesnenin sıcaklığını belirlemek için [Planck Yasası](https://en.wikipedia.org/wiki/Planck%27s_law)'nı kullanabilir misiniz?
+1. İkinci türevleri hesaplamak isterseniz karşılaşabileceğiniz sorunlar nelerdir? Onları nasıl düzeltirsiniz?
+1. `squared_loss` işlevinde `reshape` işlevi neden gereklidir?
+1. Kayıp işlevi değerinin ne kadar hızlı düştüğünü bulmak için farklı öğrenme oranları kullanarak deney yapın.
+1. Örneklerin sayısı parti boyutuna bölünemezse, `data_iter` işlevinin davranışına ne olur?
 
 :begin_tab:`mxnet`
-[Discussions](https://discuss.d2l.ai/t/42)
+[Tartışmalar](https://discuss.d2l.ai/t/42)
 :end_tab:
 
 :begin_tab:`pytorch`
-[Discussions](https://discuss.d2l.ai/t/43)
+[Tartışmalar](https://discuss.d2l.ai/t/43)
 :end_tab:
 
 :begin_tab:`pytorch`
-[Discussions](https://discuss.d2l.ai/t/201)
+[Tartışmalar](https://discuss.d2l.ai/t/201)
 :end_tab:
