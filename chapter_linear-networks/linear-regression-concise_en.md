@@ -1,9 +1,22 @@
-# Doğrusal Regresyonunun Kısa Uygulaması
+# Concise Implementation of Linear Regression
 :label:`sec_linear_concise`
 
-Son birkaç yıldır derin öğrenmeye olan geniş ve yoğun ilgi, gradyan tabanlı öğrenme algoritmalarını uygulamanın tekrarlayan işyükünü otomatikleştirmek için şirketler, akademisyenler ve amatör geliştiricilere çeşitli olgun açık kaynak çerçeveleri geliştirmeleri için ilham verdi. :numref: `sec_linear_scratch`'de, biz sadece (i) veri depolama ve doğrusal cebir için tensörlere; ve (ii) gradyanları hesaplamak için otomatik türev almaya güvendik. Pratikte, veri yineleyiciler, kayıp işlevleri, optimize ediciler ve sinir ağı katmanları çok yaygın olduğu için, modern kütüphaneler bu bileşenleri bizim için de uygular.
+Broad and intense interest in deep learning for the past several years
+has inspired companies, academics, and hobbyists
+to develop a variety of mature open source frameworks
+for automating the repetitive work of implementing
+gradient-based learning algorithms.
+In :numref:`sec_linear_scratch`, we relied only on
+(i) tensors for data storage and linear algebra;
+and (ii) auto differentiation for calculating gradients.
+In practice, because data iterators, loss functions, optimizers,
+and neural network layers
+are so common, modern libraries implement these components for us as well.
 
-Bu bölümde, derin öğrenme çerçevelerinin üst düzey API'lerini kullanarak :numref: `sec_linear_scratch`daki doğrusal regresyon modelini kısaca nasıl uygulayacağınızı göstereceğiz.
+In this section, we will show you how to implement
+the linear regression model from :numref:`sec_linear_scratch`
+concisely by using high-level APIs of deep learning frameworks.
+
 
 ## Generating the Dataset
 
@@ -46,7 +59,14 @@ labels = tf.reshape(labels, (-1, 1))
 
 ## Reading the Dataset
 
-Rather than rolling our own iterator, we can call upon the existing API in a framework to read data. We pass in `features` and `labels` as arguments and specify `batch_size` when instantiating a data iterator object. Besides, the boolean value `is_train` indicates whether or not we want the data iterator object to shuffle the data on each epoch (pass through the dataset).
+Rather than rolling our own iterator,
+we can call upon the existing API in a framework to read data.
+We pass in `features` and `labels` as arguments and specify `batch_size`
+when instantiating a data iterator object.
+Besides, the boolean value `is_train`
+indicates whether or not
+we want the data iterator object to shuffle the data
+on each epoch (pass through the dataset).
 
 ```{.python .input}
 def load_array(data_arrays, batch_size, is_train=True):  #@save
@@ -83,7 +103,12 @@ batch_size = 10
 data_iter = load_array((features, labels), batch_size)
 ```
 
-Now we can use `data_iter` in much the same way as we called the `data_iter` function in :numref:`sec_linear_scratch`. To verify that it is working, we can read and print the first minibatch of examples. Comparing with :numref:`sec_linear_scratch`, here we use `iter` to construct a Python iterator and use `next` to obtain the first item from the iterator.
+Now we can use `data_iter` in much the same way as we called
+the `data_iter` function in :numref:`sec_linear_scratch`.
+To verify that it is working, we can read and print
+the first minibatch of examples.
+Comparing with :numref:`sec_linear_scratch`,
+here we use `iter` to construct a Python iterator and use `next` to obtain the first item from the iterator.
 
 ```{.python .input}
 #@tab all
@@ -92,17 +117,58 @@ next(iter(data_iter))
 
 ## Defining the Model
 
-When we implemented linear regression from scratch in :numref:`sec_linear_scratch`, we defined our model parameters explicitly and coded up the calculations to produce output using basic linear algebra operations. You *should* know how to do this. But once your models get more complex, and once you have to do this nearly every day, you will be glad for the assistance. The situation is similar to coding up your own blog from scratch. Doing it once or twice is rewarding and instructive, but you would be a lousy web developer if every time you needed a blog you spent a month reinventing the wheel.
+When we implemented linear regression from scratch
+in :numref:`sec_linear_scratch`,
+we defined our model parameters explicitly
+and coded up the calculations to produce output
+using basic linear algebra operations.
+You *should* know how to do this.
+But once your models get more complex,
+and once you have to do this nearly every day,
+you will be glad for the assistance.
+The situation is similar to coding up your own blog from scratch.
+Doing it once or twice is rewarding and instructive,
+but you would be a lousy web developer
+if every time you needed a blog you spent a month
+reinventing the wheel.
 
-For standard operations, we can use a framework's predefined layers, which allow us to focus especially on the layers used to construct the model rather than having to focus on the implementation. We will first define a model variable `net`, which will refer to an instance of the `Sequential` class. The `Sequential` class defines a container for several layers that will be chained together. Given input data, a `Sequential` instance passes it through the first layer, in turn passing the output as the second layer's input and so forth. In the following example, our model consists of only one layer, so we do not really need `Sequential`.
-But since nearly all of our future models will involve multiple layers, we will use it anyway just to familiarize you with the most standard workflow.
+For standard operations, we can use a framework's predefined layers,
+which allow us to focus especially
+on the layers used to construct the model
+rather than having to focus on the implementation.
+We will first define a model variable `net`,
+which will refer to an instance of the `Sequential` class.
+The `Sequential` class defines a container
+for several layers that will be chained together.
+Given input data, a `Sequential` instance passes it through
+the first layer, in turn passing the output
+as the second layer's input and so forth.
+In the following example, our model consists of only one layer,
+so we do not really need `Sequential`.
+But since nearly all of our future models
+will involve multiple layers,
+we will use it anyway just to familiarize you
+with the most standard workflow.
 
-Recall the architecture of a single-layer network as shown in :numref:`fig_singleneuron`. The layer is said to be *fully-connected* because each of its inputs is connected to each of its outputs by means of a matrix-vector multiplication.
+Recall the architecture of a single-layer network as shown in :numref:`fig_singleneuron`.
+The layer is said to be *fully-connected*
+because each of its inputs is connected to each of its outputs
+by means of a matrix-vector multiplication.
 
 :begin_tab:`mxnet`
-In Gluon, the fully-connected layer is defined in the `Dense` class. Since we only want to generate a single scalar output, we set that number to 1.
+In Gluon, the fully-connected layer is defined in the `Dense` class.
+Since we only want to generate a single scalar output,
+we set that number to 1.
 
-It is worth noting that, for convenience, Gluon does not require us to specify the input shape for each layer. So here, we do not need to tell Gluon how many inputs go into this linear layer. When we first try to pass data through our model, e.g., when we execute `net(X)` later, Gluon will automatically infer the number of inputs to each layer. We will describe how this works in more detail later.
+It is worth noting that, for convenience,
+Gluon does not require us to specify
+the input shape for each layer.
+So here, we do not need to tell Gluon
+how many inputs go into this linear layer.
+When we first try to pass data through our model,
+e.g., when we execute `net(X)` later,
+Gluon will automatically infer the number of inputs to each layer.
+We will describe how this works in more detail later.
 :end_tab:
 
 :begin_tab:`pytorch`
@@ -112,7 +178,15 @@ In PyTorch, the fully-connected layer is defined in the `Linear` class. Note tha
 :begin_tab:`tensorflow`
 In Keras, the fully-connected layer is defined in the `Dense` class. Since we only want to generate a single scalar output, we set that number to 1.
 
-It is worth noting that, for convenience, Keras does not require us to specify the input shape for each layer. So here, we do not need to tell Keras how many inputs go into this linear layer. When we first try to pass data through our model, e.g., when we execute `net(X)` later, Keras will automatically infer the number of inputs to each layer. We will describe how this works in more detail later.
+It is worth noting that, for convenience,
+Keras does not require us to specify
+the input shape for each layer.
+So here, we do not need to tell Keras
+how many inputs go into this linear layer.
+When we first try to pass data through our model,
+e.g., when we execute `net(X)` later,
+Keras will automatically infer the number of inputs to each layer.
+We will describe how this works in more detail later.
 :end_tab:
 
 ```{.python .input}
@@ -138,10 +212,21 @@ net.add(tf.keras.layers.Dense(1))
 
 ## Initializing Model Parameters
 
-Before using `net`, we need to initialize the model parameters, such as the weights and bias in the linear regression model. Deep learning frameworks often have a predefined way to initialize the parameters. Here we specify that each weight parameter should be randomly sampled from a normal distribution with mean 0 and standard deviation 0.01. The bias parameter will be initialized to zero.
+Before using `net`, we need to initialize the model parameters,
+such as the weights and bias in the linear regression model.
+Deep learning frameworks often have a predefined way to initialize the parameters.
+Here we specify that each weight parameter
+should be randomly sampled from a normal distribution
+with mean 0 and standard deviation 0.01.
+The bias parameter will be initialized to zero.
 
 :begin_tab:`mxnet`
-We will import the `initializer` module from MXNet. This module provides various methods for model parameter initialization. Gluon makes `init` available as a shortcut (abbreviation) to access the `initializer` package. We only specify how to initialize the weight by calling `init.Normal(sigma=0.01)`. Bias parameters are initialized to zero by default.
+We will import the `initializer` module from MXNet.
+This module provides various methods for model parameter initialization.
+Gluon makes `init` available as a shortcut (abbreviation)
+to access the `initializer` package.
+We only specify how to initialize the weight by calling `init.Normal(sigma=0.01)`.
+Bias parameters are initialized to zero by default.
 :end_tab:
 
 :begin_tab:`pytorch`
@@ -171,7 +256,19 @@ net.add(tf.keras.layers.Dense(1, kernel_initializer=initializer))
 ```
 
 :begin_tab:`mxnet`
-The code above may look straightforward but you should note that something strange is happening here. We are initializing parameters for a network even though Gluon does not yet know how many dimensions the input will have! It might be 2 as in our example or it might be 2000. Gluon lets us get away with this because behind the scene, the initialization is actually *deferred*. The real initialization will take place only when we for the first time attempt to pass data through the network. Just be careful to remember that since the parameters have not been initialized yet, we cannot access or manipulate them.
+The code above may look straightforward but you should note
+that something strange is happening here.
+We are initializing parameters for a network
+even though Gluon does not yet know
+how many dimensions the input will have!
+It might be 2 as in our example or it might be 2000.
+Gluon lets us get away with this because behind the scene,
+the initialization is actually *deferred*.
+The real initialization will take place only
+when we for the first time attempt to pass data through the network.
+Just be careful to remember that since the parameters
+have not been initialized yet,
+we cannot access or manipulate them.
 :end_tab:
 
 :begin_tab:`pytorch`
@@ -179,21 +276,37 @@ The code above may look straightforward but you should note that something stran
 :end_tab:
 
 :begin_tab:`tensorflow`
-The code above may look straightforward but you should note that something strange is happening here. We are initializing parameters for a network even though Keras does not yet know how many dimensions the input will have! It might be 2 as in our example or it might be 2000. Keras lets us get away with this because behind the scenes, the initialization is actually *deferred*. The real initialization will take place only when we for the first time attempt to pass data through the network. Just be careful to remember that since the parameters have not been initialized yet, we cannot access or manipulate them.
+The code above may look straightforward but you should note
+that something strange is happening here.
+We are initializing parameters for a network
+even though Keras does not yet know
+how many dimensions the input will have!
+It might be 2 as in our example or it might be 2000.
+Keras lets us get away with this because behind the scenes,
+the initialization is actually *deferred*.
+The real initialization will take place only
+when we for the first time attempt to pass data through the network.
+Just be careful to remember that since the parameters
+have not been initialized yet,
+we cannot access or manipulate them.
 :end_tab:
 
 ## Defining the Loss Function
 
 :begin_tab:`mxnet`
-In Gluon, the `loss` module defines various loss functions. In this example, we will use the Gluon implementation of squared loss (`L2Loss`).
+In Gluon, the `loss` module defines various loss functions.
+In this example, we will use the Gluon
+implementation of squared loss (`L2Loss`).
 :end_tab:
 
 :begin_tab:`pytorch`
-The `MSELoss` class computes the mean squared error, also known as squared L2 norm. By default it returns the average loss over examples.
+The `MSELoss` class computes the mean squared error, also known as squared L2 norm.
+By default it returns the average loss over examples.
 :end_tab:
 
 :begin_tab:`tensorflow`
-The `MeanSquaredError` class computes the mean squared error, also known as squared L2 norm. By default it returns the average loss over examples.
+The `MeanSquaredError` class computes the mean squared error, also known as squared L2 norm.
+By default it returns the average loss over examples.
 :end_tab:
 
 ```{.python .input}
@@ -213,15 +326,40 @@ loss = tf.keras.losses.MeanSquaredError()
 ## Defining the Optimization Algorithm
 
 :begin_tab:`mxnet`
-Minibatch stochastic gradient descent is a standard tool for optimizing neural networks and thus Gluon supports it alongside a number of variations on this algorithm through its `Trainer` class. When we instantiate `Trainer`, we will specify the parameters to optimize over (obtainable from our model `net` via `net.collect_params()`), the optimization algorithm we wish to use (`sgd`), and a dictionary of hyperparameters required by our optimization algorithm. Minibatch stochastic gradient descent just requires that we set the value `learning_rate`, which is set to 0.03 here.
+Minibatch stochastic gradient descent is a standard tool
+for optimizing neural networks
+and thus Gluon supports it alongside a number of
+variations on this algorithm through its `Trainer` class.
+When we instantiate `Trainer`,
+we will specify the parameters to optimize over
+(obtainable from our model `net` via `net.collect_params()`),
+the optimization algorithm we wish to use (`sgd`),
+and a dictionary of hyperparameters
+required by our optimization algorithm.
+Minibatch stochastic gradient descent just requires that
+we set the value `learning_rate`, which is set to 0.03 here.
 :end_tab:
 
 :begin_tab:`pytorch`
-Minibatch stochastic gradient descent is a standard tool for optimizing neural networks and thus PyTorch supports it alongside a number of variations on this algorithm in the `optim` module. When we instantiate an `SGD` instance, we will specify the parameters to optimize over (obtainable from our net via `net.parameters()`), with a dictionary of hyperparameters required by our optimization algorithm. Minibatch stochastic gradient descent just requires that we set the value `lr`, which is set to 0.03 here.
+Minibatch stochastic gradient descent is a standard tool
+for optimizing neural networks
+and thus PyTorch supports it alongside a number of
+variations on this algorithm in the `optim` module.
+When we instantiate an `SGD` instance,
+we will specify the parameters to optimize over
+(obtainable from our net via `net.parameters()`), with a dictionary of hyperparameters
+required by our optimization algorithm.
+Minibatch stochastic gradient descent just requires that
+we set the value `lr`, which is set to 0.03 here.
 :end_tab:
 
 :begin_tab:`tensorflow`
-Minibatch stochastic gradient descent is a standard tool for optimizing neural networks and thus Keras supports it alongside a number of variations on this algorithm in the `optimizers` module. Minibatch stochastic gradient descent just requires that we set the value `learning_rate`, which is set to 0.03 here.
+Minibatch stochastic gradient descent is a standard tool
+for optimizing neural networks
+and thus Keras supports it alongside a number of
+variations on this algorithm in the `optimizers` module.
+Minibatch stochastic gradient descent just requires that
+we set the value `learning_rate`, which is set to 0.03 here.
 :end_tab:
 
 ```{.python .input}
@@ -241,9 +379,22 @@ trainer = tf.keras.optimizers.SGD(learning_rate=0.03)
 
 ## Training
 
-You might have noticed that expressing our model through high-level APIs of a deep learning framework requires comparatively few lines of code. We did not have to individually allocate parameters, define our loss function, or implement minibatch stochastic gradient descent. Once we start working with much more complex models, advantages of high-level APIs will grow considerably. However, once we have all the basic pieces in place, the training loop itself is strikingly similar to what we did when implementing everything from scratch.
+You might have noticed that expressing our model through
+high-level APIs of a deep learning framework
+requires comparatively few lines of code.
+We did not have to individually allocate parameters,
+define our loss function, or implement minibatch stochastic gradient descent.
+Once we start working with much more complex models,
+advantages of high-level APIs will grow considerably.
+However, once we have all the basic pieces in place,
+the training loop itself is strikingly similar
+to what we did when implementing everything from scratch.
 
-To refresh your memory: for some number of epochs, we will make a complete pass over the dataset (`train_data`), iteratively grabbing one minibatch of inputs and the corresponding ground-truth labels. For each minibatch, we go through the following ritual:
+To refresh your memory: for some number of epochs,
+we will make a complete pass over the dataset (`train_data`),
+iteratively grabbing one minibatch of inputs
+and the corresponding ground-truth labels.
+For each minibatch, we go through the following ritual:
 
 * Generate predictions by calling `net(X)` and calculate the loss `l` (the forward pass).
 * Calculate gradients by running the backpropagation.
@@ -289,7 +440,14 @@ for epoch in range(num_epochs):
     print(f'epoch {epoch + 1}, loss {l:f}')
 ```
 
-Below, we compare the model parameters learned by training on finite data and the actual parameters that generated our dataset. To access parameters, we first access the layer that we need from `net` and then access that layer's weights and bias. As in our from-scratch implementation, note that our estimated parameters are close to their ground-truth counterparts.
+Below, we compare the model parameters learned by training on finite data
+and the actual parameters that generated our dataset.
+To access parameters,
+we first access the layer that we need from `net`
+and then access that layer's weights and bias.
+As in our from-scratch implementation,
+note that our estimated parameters are
+close to their ground-truth counterparts.
 
 ```{.python .input}
 w = net[0].weight.data()
