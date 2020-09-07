@@ -5,9 +5,9 @@ Son birkaç yıldır derin öğrenmeye olan geniş ve yoğun ilgi, gradyan taban
 
 Bu bölümde, derin öğrenme çerçevelerinin üst düzey API'lerini kullanarak :numref: `sec_linear_scratch`daki doğrusal regresyon modelini kısaca nasıl uygulayacağınızı göstereceğiz.
 
-## Generating the Dataset
+## Veri Kümesini Oluşturma
 
-To start, we will generate the same dataset as in :numref:`sec_linear_scratch`.
+Başlamak için, şuradaki aynı veri kümesini oluşturacağız: :numref:`sec_linear_scratch`.
 
 ```{.python .input}
 from d2l import mxnet as d2l
@@ -44,9 +44,9 @@ features, labels = d2l.synthetic_data(true_w, true_b, 1000)
 labels = tf.reshape(labels, (-1, 1))
 ```
 
-## Reading the Dataset
+## Veri Kümesini Okuma
 
-Rather than rolling our own iterator, we can call upon the existing API in a framework to read data. We pass in `features` and `labels` as arguments and specify `batch_size` when instantiating a data iterator object. Besides, the boolean value `is_train` indicates whether or not we want the data iterator object to shuffle the data on each epoch (pass through the dataset).
+Kendi yineleyicimizi döndürmek yerine, verileri okumak için bir çerçevedeki mevcut API'yi çağırabiliriz. `Öznitelikler` (`features`) ve `etiketler`'i (`labels`) bağımsız değişken olarak iletiriz ve bir veri yineleyici nesnesi başlatırken `batch_size` (grup boyutu) belirtiriz. Ayrıca, mantıksal veri tipi (boolean) değeri `is_train`, veri yineleyici nesnesinin her bir dönemdeki (epoch) verileri karıştırmasını isteyip istemediğimizi gösterir (veri kümesinden geçer).
 
 ```{.python .input}
 def load_array(data_arrays, batch_size, is_train=True):  #@save
@@ -83,7 +83,9 @@ batch_size = 10
 data_iter = load_array((features, labels), batch_size)
 ```
 
-Now we can use `data_iter` in much the same way as we called the `data_iter` function in :numref:`sec_linear_scratch`. To verify that it is working, we can read and print the first minibatch of examples. Comparing with :numref:`sec_linear_scratch`, here we use `iter` to construct a Python iterator and use `next` to obtain the first item from the iterator.
+Comparing with :numref:`sec_linear_scratch`, here we use `iter` to construct a Python iterator and use `next` to obtain the first item from the iterator.
+
+Şimdi, `data_iter`i, `data_iter` işlevini :numref:`sec_linear_scratch`'de çağırdırdığımız şekilde kullanabiliriz. Çalıştığını doğrulamak için, örneklerin ilk mini grubunu okuyabilir ve yazdırabiliriz. :numref:`sec_linear_scratch`'deki ile karşılaştırıldığında, burada bir Python yineleyici oluşturmak için `iter` kullanıyoruz ve yineleyiciden ilk öğeyi elde etmek için `next`'i kullanıyoruz.
 
 ```{.python .input}
 #@tab all
