@@ -83,8 +83,6 @@ batch_size = 10
 data_iter = load_array((features, labels), batch_size)
 ```
 
-Comparing with :numref:`sec_linear_scratch`, here we use `iter` to construct a Python iterator and use `next` to obtain the first item from the iterator.
-
 Şimdi, `data_iter`i, `data_iter` işlevini :numref:`sec_linear_scratch`'de çağırdırdığımız şekilde kullanabiliriz. Çalıştığını doğrulamak için, örneklerin ilk mini grubunu okuyabilir ve yazdırabiliriz. :numref:`sec_linear_scratch`'deki ile karşılaştırıldığında, burada bir Python yineleyici oluşturmak için `iter` kullanıyoruz ve yineleyiciden ilk öğeyi elde etmek için `next`'i kullanıyoruz.
 
 ```{.python .input}
@@ -92,29 +90,28 @@ Comparing with :numref:`sec_linear_scratch`, here we use `iter` to construct a P
 next(iter(data_iter))
 ```
 
-## Defining the Model
+## Modeli Tanımlama
 
-When we implemented linear regression from scratch in :numref:`sec_linear_scratch`, we defined our model parameters explicitly and coded up the calculations to produce output using basic linear algebra operations. You *should* know how to do this. But once your models get more complex, and once you have to do this nearly every day, you will be glad for the assistance. The situation is similar to coding up your own blog from scratch. Doing it once or twice is rewarding and instructive, but you would be a lousy web developer if every time you needed a blog you spent a month reinventing the wheel.
+Doğrusal regresyonu :numref:`sec_linear_scratch`'da sıfırdan uyguladığımızda, model parametrelerimizi açık bir şekilde tanımladık ve temel doğrusal cebir işlemlerini kullanarak çıktı üretmek için hesaplamalarımızı kodladık. Bunu nasıl yapacağınızı *bilmelisiniz*. Ancak modelleriniz daha karmaşık hale geldiğinde ve bunu neredeyse her gün yapmanız gerektiğinde, bu yardım için memnun olacaksınız. Durum, kendi blogunuzu sıfırdan kodlamaya benzer. Bunu bir veya iki kez yapmak ödüllendirici ve öğreticidir, ancak bir bloga her ihtiyaç duyduğunuzda tekerleği yeniden icat etmek için bir ay harcarsanız kötü bir web geliştiricisi olursunuz.
 
-For standard operations, we can use a framework's predefined layers, which allow us to focus especially on the layers used to construct the model rather than having to focus on the implementation. We will first define a model variable `net`, which will refer to an instance of the `Sequential` class. The `Sequential` class defines a container for several layers that will be chained together. Given input data, a `Sequential` instance passes it through the first layer, in turn passing the output as the second layer's input and so forth. In the following example, our model consists of only one layer, so we do not really need `Sequential`.
-But since nearly all of our future models will involve multiple layers, we will use it anyway just to familiarize you with the most standard workflow.
+Standart işlemler için, uygulamaya (kodlamaya) odaklanmak yerine özellikle modeli oluşturmak için kullanılan katmanlara odaklanmamızı sağlayan bir çerçevenin önceden tanımlanmış katmanlarını kullanabiliriz. Önce, `Sequential` (ardışık, sıralı) sınıfının bir örneğini ifade edecek `net` (ağ) model değişkenini tanımlayacağız. `Sequential` sınıfı, birbirine zincirlenecek birkaç katman için bir kap (container) tanımlar. Girdi verileri verildiğinde, `Sequential` bir örnek, bunu birinci katmandan geçirir, ardından onun çıktısını ikinci katmanın girdisi olarak geçirir ve böyle devam eder. Aşağıdaki örnekte, modelimiz yalnızca bir katmandan oluşuyor, bu nedenle gerçekten `Sequential` örneğe ihtiyacımız yok. Ancak, gelecekteki modellerimizin neredeyse tamamı birden fazla katman içereceği için, sizi en standart iş akışına alıştırmak için yine de kullanacağız.
 
-Recall the architecture of a single-layer network as shown in :numref:`fig_singleneuron`. The layer is said to be *fully-connected* because each of its inputs is connected to each of its outputs by means of a matrix-vector multiplication.
+Tek katmanlı bir ağın mimarisini şurada gösterildiği gibi hatırlayın :numref:`fig_singleneuron`. Katmanın *tamamen bağlı* olduğu söylenir, çünkü girdilerinin her biri, bir matris-vektör çarpımı yoluyla çıktılarının her birine bağlanır.
 
 :begin_tab:`mxnet`
-In Gluon, the fully-connected layer is defined in the `Dense` class. Since we only want to generate a single scalar output, we set that number to 1.
+Gluon'da tamamen bağlı katman `Dense` (Yoğun) sınıfında tanımlanır. Sadece tek bir skaler çıktı üretmek istediğimiz için, bu sayıyı 1 olarak ayarladık.
 
-It is worth noting that, for convenience, Gluon does not require us to specify the input shape for each layer. So here, we do not need to tell Gluon how many inputs go into this linear layer. When we first try to pass data through our model, e.g., when we execute `net(X)` later, Gluon will automatically infer the number of inputs to each layer. We will describe how this works in more detail later.
+Kolaylık sağlamak için Gluon'un her katman için girdi şeklini belirlememizi gerektirmediğini belirtmek gerekir. Yani burada, Gluon'a bu doğrusal katmana kaç girdi girdiğini söylememize gerek yok. Modelimizden ilk veri geçirmeye çalıştığımızda, örneğin, daha sonra `net(X)`'i çalıştırdığımızda, Gluon otomatik olarak her katmana girdi sayısını çıkaracaktır. Bunun nasıl çalıştığını daha sonra daha ayrıntılı olarak anlatacağız.
 :end_tab:
 
 :begin_tab:`pytorch`
-In PyTorch, the fully-connected layer is defined in the `Linear` class. Note that we passed two arguments into `nn.Linear`. The first one specifies the input feature dimension, which is 2, and the second one is the output feature dimension, which is a single scalar and therefore 1.
+PyTorch'ta, tam bağlantılı katman `Linear` sınıfında tanımlanır. `nn.Linear`'e iki bağımsız değişken aktardığımıza dikkat edin. Birincisi, 2 olan girdi öznitelik boyutunu belirtir ve ikincisi, tek bir skaler olan ve dolayısıyla 1 olan çıktı öznitelik boyutudur.
 :end_tab:
 
 :begin_tab:`tensorflow`
-In Keras, the fully-connected layer is defined in the `Dense` class. Since we only want to generate a single scalar output, we set that number to 1.
+Keras'ta tamamen bağlı katman `Dense` (Yoğun) sınıfında tanımlanır. Sadece tek bir skaler çıktı üretmek istediğimiz için, bu sayıyı 1 olarak ayarladık.
 
-It is worth noting that, for convenience, Keras does not require us to specify the input shape for each layer. So here, we do not need to tell Keras how many inputs go into this linear layer. When we first try to pass data through our model, e.g., when we execute `net(X)` later, Keras will automatically infer the number of inputs to each layer. We will describe how this works in more detail later.
+Kolaylık sağlamak için Gluon'un her katman için girdi şeklini belirlememizi gerektirmediğini belirtmek gerekir. Yani burada, Keras'a bu doğrusal katmana kaç girdi girdiğini söylememize gerek yok. Modelimizden ilk veri geçirmeye çalıştığımızda, örneğin, daha sonra `net(X)`'i çalıştırdığımızda, Keras otomatik olarak her katmana girdi sayısını çıkaracaktır. Bunun nasıl çalıştığını daha sonra daha ayrıntılı olarak anlatacağız.
 :end_tab:
 
 ```{.python .input}
@@ -138,20 +135,20 @@ net = tf.keras.Sequential()
 net.add(tf.keras.layers.Dense(1))
 ```
 
-## Initializing Model Parameters
+## Model Parametrelerini İlkletme
 
-Before using `net`, we need to initialize the model parameters, such as the weights and bias in the linear regression model. Deep learning frameworks often have a predefined way to initialize the parameters. Here we specify that each weight parameter should be randomly sampled from a normal distribution with mean 0 and standard deviation 0.01. The bias parameter will be initialized to zero.
+`net`'i kullanmadan önce, doğrusal regresyon modelindeki ağırlıklar ve ek girdi gibi model parametrelerini ilkletmemiz gerekir. Derin öğrenme çerçeveleri genellikle parametreleri ilklemek için önceden tanımlanmış bir yola sahiptir. Burada, her ağırlık parametresinin, ortalama 0 ve standart sapma 0.01 ile normal bir dağılımdan rastgele örneklenmesi gerektiğini belirtiyoruz. Ek girdi parametresi sıfır olarak başlatılacaktır.
 
 :begin_tab:`mxnet`
-We will import the `initializer` module from MXNet. This module provides various methods for model parameter initialization. Gluon makes `init` available as a shortcut (abbreviation) to access the `initializer` package. We only specify how to initialize the weight by calling `init.Normal(sigma=0.01)`. Bias parameters are initialized to zero by default.
+MXNet'ten `initializer` modülünü içe aktaracağız. Bu modül, model parametresi ilkletme için çeşitli yöntemler sağlar. Gluon, `init`'i `initializer` paketine erişmek için bir kısayol (kısaltma) olarak kullanılabilir hale getirir. Ağırlığın nasıl ilkleneceğini sadece `init.Normal(sigma=0.01)`'i çağırarak belirtiyoruz. Ek girdi parametreleri varsayılan olarak sıfıra başlatılır.
 :end_tab:
 
 :begin_tab:`pytorch`
-As we have specified the input and output dimensions when constructing `nn.Linear`. Now we access the parameters directly to specify there initial values. We first locate the layer by `net[0]`, which is the first layer in the network, and then use the `weight.data` and `bias.data` methods to access the parameters. Next we use the replace methods `uniform_` and `fill_` to overwrite parameter values.
+`nn.Linear` oluştururken girdi ve çıktı boyutlarını belirttik. Şimdi, başlangıç değerlerini belirtmek için parametrelere doğrudan erişiyoruz. İlk olarak  ağdaki ilk katmanı `net[0]` ile buluruz ve ardından parametrelere erişmek için `weight.data` ve `bias.data` yöntemlerini kullanırız. Daha sonra, parametre değerlerinin üzerine yazmak için `uniform_` ve `fill_` değiştirme yöntemlerini kullanırız.
 :end_tab:
 
 :begin_tab:`tensorflow`
-The `initializers` module in TensorFlow provides various methods for model parameter initialization. The easiest way to specify the initialization method in Keras is when creating the layer by specifying `kernel_initializer`. Here we recreate `net` again.
+TensorFlow'daki `initializers` modülü, model parametresi ilkletme için çeşitli yöntemler sağlar. Keras'ta ilkletme yöntemini belirlemenin en kolay yolu, katmanı `kernel_initializer` belirterek oluşturmaktır. Burada `net`'i yeniden oluşturuyoruz.
 :end_tab:
 
 ```{.python .input}
@@ -173,7 +170,7 @@ net.add(tf.keras.layers.Dense(1, kernel_initializer=initializer))
 ```
 
 :begin_tab:`mxnet`
-The code above may look straightforward but you should note that something strange is happening here. We are initializing parameters for a network even though Gluon does not yet know how many dimensions the input will have! It might be 2 as in our example or it might be 2000. Gluon lets us get away with this because behind the scene, the initialization is actually *deferred*. The real initialization will take place only when we for the first time attempt to pass data through the network. Just be careful to remember that since the parameters have not been initialized yet, we cannot access or manipulate them.
+Yukarıdaki kod basit görünebilir, ancak burada tuhaf bir şeylerin olduğunu fark etmelisiniz. Gluon, girdinin kaç boyuta sahip olacağını henüz bilmese de, bir ağ için parametreleri ilkletebiliyoruz! Örneğimizdeki gibi 2 de olabilir veya 2000 de olabilir. Gluon bunun yanına kalmamıza izin veriyor çünkü sahnenin arkasında, ilk değerleri atama aslında *ertelendi*. Gerçek ilkleme, yalnızca verileri ağ üzerinden ilk kez geçirmeye çalıştığımızda gerçekleşecektir. Unutmayın ki, parametreler henüz başlatılmadığı için bunlara erişemeyiz veya onları değiştiremeyiz.
 :end_tab:
 
 :begin_tab:`pytorch`
@@ -181,7 +178,7 @@ The code above may look straightforward but you should note that something stran
 :end_tab:
 
 :begin_tab:`tensorflow`
-The code above may look straightforward but you should note that something strange is happening here. We are initializing parameters for a network even though Keras does not yet know how many dimensions the input will have! It might be 2 as in our example or it might be 2000. Keras lets us get away with this because behind the scenes, the initialization is actually *deferred*. The real initialization will take place only when we for the first time attempt to pass data through the network. Just be careful to remember that since the parameters have not been initialized yet, we cannot access or manipulate them.
+Yukarıdaki kod basit görünebilir, ancak burada tuhaf bir şeylerin olduğunu fark etmelisiniz. Keras, girdinin kaç boyuta sahip olacağını henüz bilmese de, bir ağ için parametreleri ilkletebiliyoruz! Örneğimizdeki gibi 2 de olabilir veya 2000 de olabilir. Keras bunun yanına kalmamıza izin veriyor çünkü sahnenin arkasında, ilk değerleri atama aslında *ertelendi*. Gerçek ilkleme, yalnızca verileri ağ üzerinden ilk kez geçirmeye çalıştığımızda gerçekleşecektir. Unutmayın ki, parametreler henüz başlatılmadığı için bunlara erişemeyiz veya onları değiştiremeyiz.
 :end_tab:
 
 ## Defining the Loss Function
