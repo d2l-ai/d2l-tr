@@ -181,18 +181,18 @@ Yukarıdaki kod basit görünebilir, ancak burada tuhaf bir şeylerin olduğunu 
 Yukarıdaki kod basit görünebilir, ancak burada tuhaf bir şeylerin olduğunu fark etmelisiniz. Keras, girdinin kaç boyuta sahip olacağını henüz bilmese de, bir ağ için parametreleri ilkletebiliyoruz! Örneğimizdeki gibi 2 de olabilir veya 2000 de olabilir. Keras bunun yanına kalmamıza izin veriyor çünkü sahnenin arkasında, ilk değerleri atama aslında *ertelendi*. Gerçek ilkleme, yalnızca verileri ağ üzerinden ilk kez geçirmeye çalıştığımızda gerçekleşecektir. Unutmayın ki, parametreler henüz başlatılmadığı için bunlara erişemeyiz veya onları değiştiremeyiz.
 :end_tab:
 
-## Defining the Loss Function
+## Kayıp Fonksiyonunu Tanımlama
 
 :begin_tab:`mxnet`
-In Gluon, the `loss` module defines various loss functions. In this example, we will use the Gluon implementation of squared loss (`L2Loss`).
+Gluon'da `loss` modülü çeşitli kayıp fonksiyonlarını tanımlar. Bu örnekte, Gluon uygulamasının kare kaybını (`L2Loss`) kullanacağız.
 :end_tab:
 
 :begin_tab:`pytorch`
-The `MSELoss` class computes the mean squared error, also known as squared L2 norm. By default it returns the average loss over examples.
+`MSELoss` sınıfı, kare L2 normu olarak da bilinen ortalama hata karesini hesaplar. Varsayılan olarak, örneklerdeki ortalama kaybı döndürür.
 :end_tab:
 
 :begin_tab:`tensorflow`
-The `MeanSquaredError` class computes the mean squared error, also known as squared L2 norm. By default it returns the average loss over examples.
+`MeanSquaredError` sınıfı, kare L2 normu olarak da bilinen ortalama hata karesini hesaplar. Varsayılan olarak, örneklerdeki ortalama kaybı döndürür.
 :end_tab:
 
 ```{.python .input}
@@ -209,18 +209,19 @@ loss = nn.MSELoss()
 loss = tf.keras.losses.MeanSquaredError()
 ```
 
-## Defining the Optimization Algorithm
+## Optimizasyon Algoritmasını Tanımlama
 
 :begin_tab:`mxnet`
-Minibatch stochastic gradient descent is a standard tool for optimizing neural networks and thus Gluon supports it alongside a number of variations on this algorithm through its `Trainer` class. When we instantiate `Trainer`, we will specify the parameters to optimize over (obtainable from our model `net` via `net.collect_params()`), the optimization algorithm we wish to use (`sgd`), and a dictionary of hyperparameters required by our optimization algorithm. Minibatch stochastic gradient descent just requires that we set the value `learning_rate`, which is set to 0.03 here.
+Mini grup rasgele gradyan inişi, sinir ağlarını optimize etmek için standart bir araçtır ve bu nedenle Gluon, bunu `Trainer` sınıfı aracılığıyla bu algoritmadaki bir dizi varyasyonla birlikte destekler. `Trainer`'den örnek yarattığımızda, optimize edilecek parametreleri (`net.collect_params()` aracılığıyla `net` modelimizden elde edilebilir), kullanmak istediğimiz optimizasyon algoritması (`sgd`) ve optimizasyon algoritmamızın gerektirdiği hiperparametreleri bir sözlük ile (dictionary veri yapısı) belirleyeceğiz. Mini grup rasgele gradyan inişi, burada 0.03 olarak ayarlanan `learning_rate` (öğrenme oranı) değerini ayarlamamızı gerektirir.
 :end_tab:
 
 :begin_tab:`pytorch`
-Minibatch stochastic gradient descent is a standard tool for optimizing neural networks and thus PyTorch supports it alongside a number of variations on this algorithm in the `optim` module. When we instantiate an `SGD` instance, we will specify the parameters to optimize over (obtainable from our net via `net.parameters()`), with a dictionary of hyperparameters required by our optimization algorithm. Minibatch stochastic gradient descent just requires that we set the value `lr`, which is set to 0.03 here.
+Mini grup rasgele gradyan inişi, sinir ağlarını optimize etmek için standart bir araçtır ve bu nedenle PyTorch, bunu `Trainer` sınıfı aracılığıyla bu algoritmadaki bir dizi varyasyonla birlikte destekler. `SGD`'den örnek yarattığımızda, optimize edilecek parametreleri (`net.collect_params()` aracılığıyla `net` modelimizden elde edilebilir) ve optimizasyon algoritmamızın gerektirdiği hiperparametreleri bir sözlük ile (dictionary veri yapısı) belirteceğiz.
+Mini grup rasgele gradyan inişi, burada 0.03 olarak ayarlanan `lr` (öğrenme oranı) değerini ayarlamamızı gerektirir.
 :end_tab:
 
 :begin_tab:`tensorflow`
-Minibatch stochastic gradient descent is a standard tool for optimizing neural networks and thus Keras supports it alongside a number of variations on this algorithm in the `optimizers` module. Minibatch stochastic gradient descent just requires that we set the value `learning_rate`, which is set to 0.03 here.
+Mini grup rasgele gradyan inişi, sinir ağlarını optimize etmek için standart bir araçtır ve bu nedenle Keras, bunu, `optimizers` modülündeki bu algoritmanın bir dizi varyasyonunun yanında destekler.Mini grup rasgele gradyan inişi, burada 0.03 olarak ayarlanan `learning_rate` (öğrenme oranı) değerini ayarlamamızı gerektirir.
 :end_tab:
 
 ```{.python .input}
@@ -238,17 +239,17 @@ trainer = torch.optim.SGD(net.parameters(), lr=0.03)
 trainer = tf.keras.optimizers.SGD(learning_rate=0.03)
 ```
 
-## Training
+## Eğitim
 
-You might have noticed that expressing our model through high-level APIs of a deep learning framework requires comparatively few lines of code. We did not have to individually allocate parameters, define our loss function, or implement minibatch stochastic gradient descent. Once we start working with much more complex models, advantages of high-level APIs will grow considerably. However, once we have all the basic pieces in place, the training loop itself is strikingly similar to what we did when implementing everything from scratch.
+Modelimizi derin öğrenme çerçevesinin yüksek seviyeli API'leri aracılığıyla ifade etmenin nispeten birkaç satır kod gerektirdiğini fark etmiş olabilirsiniz. Parametreleri ayrı ayrı tahsis etmemiz, kayıp fonksiyonumuzu tanımlamamız veya mini grup rasgele gradyan inişini uygulamamız gerekmedi. Çok daha karmaşık modellerle çalışmaya başladığımızda, üst düzey API'lerin avantajları önemli ölçüde artacaktır. Bununla birlikte, tüm temel parçaları bir kez yerine getirdiğimizde, eğitim döngüsünün kendisi, her şeyi sıfırdan uygularken yaptığımıza çarpıcı bir şekilde benzer.
 
-To refresh your memory: for some number of epochs, we will make a complete pass over the dataset (`train_data`), iteratively grabbing one minibatch of inputs and the corresponding ground-truth labels. For each minibatch, we go through the following ritual:
+Hafızanızı yenilemek için: Bazı dönemler (epoch) için, veri kümesinin (`train_data`) üzerinden eksiksiz bir geçiş yapacağız ve yinelemeli olarak bir mini grup girdiyi ve ilgili kesin-doğru etiketleri alacağız. Her mini grup için aşağıdaki ritüeli uyguluyoruz:
 
-* Generate predictions by calling `net(X)` and calculate the loss `l` (the forward pass).
-* Calculate gradients by running the backpropagation.
-* Update the model parameters by invoking our optimizer.
+* `net(X)`'i çağırarak tahminler oluşturun ve `l` kaybını (ileriye doğru geçiş) hesaplayın.
+* Geri yaymayı çalıştırarak gradyanları hesaplayın.
+* Optimize edicimizi çağırarak model parametrelerini güncelleyin.
 
-For good measure, we compute the loss after each epoch and print it to monitor progress.
+İyi bir önlem olarak, her dönemden sonra kaybı hesaplıyor ve ilerlemeyi izlemek için yazdırıyoruz.
 
 ```{.python .input}
 num_epochs = 3
@@ -288,7 +289,7 @@ for epoch in range(num_epochs):
     print(f'epoch {epoch + 1}, loss {l:f}')
 ```
 
-Below, we compare the model parameters learned by training on finite data and the actual parameters that generated our dataset. To access parameters, we first access the layer that we need from `net` and then access that layer's weights and bias. As in our from-scratch implementation, note that our estimated parameters are close to their ground-truth counterparts.
+Aşağıda, sonlu veri üzerinde eğitimle öğrenilen model parametrelerini ve veri setimizi oluşturan gerçek parametreleri karşılaştırıyoruz. Parametrelere erişmek için önce ihtiyacımız olan katmana `net`'ten erişiyoruz ve sonra bu katmanın ağırlıklarına ve ek girdilerine erişiyoruz. Sıfırdan uygulamamızda olduğu gibi, tahmin edilen parametrelerimizin kesin-doğru referanslara yakın olduğuna dikkat edin.
 
 ```{.python .input}
 w = net[0].weight.data()
@@ -316,45 +317,45 @@ print('error in estimating b', true_b - b)
 ## Summary
 
 :begin_tab:`mxnet`
-* Using Gluon, we can implement models much more concisely.
-* In Gluon, the `data` module provides tools for data processing, the `nn` module defines a large number of neural network layers, and the `loss` module defines many common loss functions.
-* MXNet's module `initializer` provides various methods for model parameter initialization.
-* Dimensionality and storage are automatically inferred, but be careful not to attempt to access parameters before they have been initialized.
+* Gluon kullanarak modelleri çok daha kısaca uygulayabiliyoruz.
+* Gluon'da, `veri` modülü veri işleme için araçlar sağlar, `nn` modülü çok sayıda sinir ağı katmanını tanımlar ve `loss` modülü birçok yaygın kayıp işlevini tanımlar.
+* MXNet'in `initializer` modülü, model parametresi ilkletme için çeşitli yöntemler sağlar.
+* Boyutluluk ve depolama otomatik olarak çıkarılır, ancak parametrelere başlatılmadan önce erişmeye çalışmamaya dikkat edin.
 :end_tab:
 
 :begin_tab:`pytorch`
-* Using PyTorch's high-level APIs, we can implement models much more concisely.
-* In PyTorch, the `data` module provides tools for data processing, the `nn` module defines a large number of neural network layers and common loss functions.
-* We can initialize the parameters by replacing their values with methods ending with `_`.
+* PyTorch'un üst düzey API'lerini kullanarak modelleri çok daha kısa bir şekilde uygulayabiliriz.
+* PyTorch'ta, `data` modülü veri işleme için araçlar sağlar, `nn` modülü çok sayıda sinir ağı katmanını ve genel kayıp işlevlerini tanımlar.
+* Değerlerini `_` ile biten yöntemlerle değiştirerek parametreleri ilkleyebiliriz.
 :end_tab:
 
 :begin_tab:`tensorflow`
-* Using TensorFlow's high-level APIs, we can implement models much more concisely.
-* In TensorFlow, the `data` module provides tools for data processing, the `keras` module defines a large number of neural network layers and common loss functions.
-* TensorFlow's module `initializers` provides various methods for model parameter initialization.
-* Dimensionality and storage are automatically inferred (but be careful not to attempt to access parameters before they have been initialized).
+* TensorFlow'un üst düzey API'lerini kullanarak modelleri çok daha kısa bir şekilde uygulayabiliriz.
+* TensorFlow'da, `data` modülü veri işleme için araçlar sağlar, `keras` modülü çok sayıda sinir ağı katmanını ve genel kayıp işlevlerini tanımlar.
+* TensorFlow'un `initializers`  modülü, model parametresi ilkletme için çeşitli yöntemler sağlar.
+* Boyut ve depolama otomatik olarak çıkarılır (ancak parametrelere başlatılmadan önce erişmeye çalışmamaya dikkat edin).
 :end_tab:
 
-## Exercises
+## Alıştırmalar
 
 :begin_tab:`mxnet`
-1. If we replace `l = loss(output, y)` with `l = loss(output, y).mean()`, we need to change `trainer.step(batch_size)` to `trainer.step(1)` for the code to behave identically. Why?
-1. Review the MXNet documentation to see what loss functions and initialization methods are provided in the modules `gluon.loss` and `init`. Replace the loss by Huber's loss.
-1. How do you access the gradient of `dense.weight`?
+1. `l = loss(output, y)` yerine `l = loss(output, y).mean()` koyarsak, kodun aynı şekilde davranması için `trainer.step(batch_size)`'i `trainer.step(1)` olarak değiştirmemiz gerekir. Neden?
+1. `gluon.loss` ve `init` modüllerinde hangi kayıp işlevlerinin ve ilkletme yöntemlerinin sağlandığını görmek için MXNet belgelerini inceleyin. Kaybı Huber kaybıyla yer değiştirin.
+1. `dense.weight`'in gradyanına nasıl erişirsiniz?
 
-[Discussions](https://discuss.d2l.ai/t/44)
+[Tartışmalar](https://discuss.d2l.ai/t/44)
 :end_tab:
 
 :begin_tab:`pytorch`
-1. If we replace `nn.MSELoss(reduction='sum')` with `nn.MSELoss()`, how can we change the learning rate for the code to behave identically. Why?
-1. Review the PyTorch documentation to see what loss functions and initialization methods are provided. Replace the loss by Huber's loss.
-1. How do you access the gradient of `net[0].weight`?
+1. Eğer `nn.MSELoss(reduction='sum')`ı `nn.MSELoss()` ile değiştirirsek, kodun aynı şekilde davranması için öğrenme oranını nasıl değiştirebiliriz? Neden?
+1. Hangi kayıp işlevlerinin ve ilkletme yöntemlerinin sağlandığını görmek için PyTorch belgelerini inceleyin. Kaybı Huber kaybıyla yer değiştirin.
+1. `net[0].weight`'in gradyanına nasıl erişirsiniz?
 
-[Discussions](https://discuss.d2l.ai/t/45)
+[Tartışmalar](https://discuss.d2l.ai/t/45)
 :end_tab:
 
 :begin_tab:`tensorflow`
-1. Review the TensorFlow documentation to see what loss functions and initialization methods are provided. Replace the loss by Huber's loss.
+1. Hangi kayıp işlevlerinin ve ilkletme yöntemlerinin sağlandığını görmek için TensorFlow belgelerini inceleyin. Kaybı Huber kaybıyla yer değiştirin.
 
-[Discussions](https://discuss.d2l.ai/t/204)
+[Tartışmalar](https://discuss.d2l.ai/t/204)
 :end_tab:
