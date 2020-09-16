@@ -20,13 +20,13 @@ Ayaklarımızı ısındırmak için basit bir görüntü sınıflandırma proble
 
 Daha sonra, etiketleri nasıl temsil edeceğimizi seçmeliyiz. İki bariz seçeneğimiz var. Belki de en doğal dürtü, tam sayıların sırasıyla {köpek, kedi, tavuk}'u temsil ettiği $\{1, 2, 3 \}$ içinden $y$'yi seçmek olacaktır. Bu, bu tür bilgileri bir bilgisayarda *saklamanın* harika bir yoludur. Kategoriler arasında doğal bir sıralama varsa, örneğin {bebek, yürümeye başlayan çocuk, ergen, genç yetişkin, yetişkin, yaşlı} tahmin etmeye çalışıyor olsaydık, bu sorunu bağlanım olarak kabul etmek ve etiketleri bu biçimde tutmak mantıklı bile olabilirdi.
 
-Ancak genel sınıflandırma sorunları, sınıflar arasında doğal sıralamalarla gelmez. Neyse ki, istatistikçiler uzun zaman önce kategorik verileri göstermenin basit bir yolunu keşfettiler: *tek-sıcak kodlama*. Tek sıcak kodlama, kategorilerimiz kadar bileşen içeren bir vektördür. Belirli bir örneğin kategorisine karşılık gelen bileşen $1$'e ve diğer tüm bileşenler $0$'a ayarlanmıştır. Bizim durumumuzda, $y$ etiketi üç boyutlu bir vektör olacaktır ve $(1, 0, 0)$ - "kedi", $(0, 1, 0)$ - "tavuk" ve $(0, 0, 1)$ - "köpek":
+Ancak genel sınıflandırma sorunları, sınıflar arasında doğal sıralamalarla gelmez. Neyse ki, istatistikçiler uzun zaman önce kategorik verileri göstermenin basit bir yolunu keşfettiler: *bire bir kodlama*. Bire bir kodlama, kategorilerimiz kadar bileşen içeren bir vektördür. Belirli bir örneğin kategorisine karşılık gelen bileşen $1$'e ve diğer tüm bileşenler $0$'a ayarlanmıştır. Bizim durumumuzda, $y$ etiketi üç boyutlu bir vektör olacaktır: $(1, 0, 0)$ - "kedi", $(0, 1, 0)$ - "tavuk" ve $(0, 0, 1)$ - "köpek":
 
 $$y \in \{(1, 0, 0), (0, 1, 0), (0, 0, 1)\}.$$
 
-## Network Architecture
+## Ağ mimarisi
 
-In order to estimate the conditional probabilities associated with all the possible classes,we need a model with multiple outputs, one per class. To address classification with linear models, we will need as many affine functions as we have outputs. Each output will correspond to its own affine function. In our case, since we have 4 features and 3 possible output categories, we will need 12 scalars to represent the weights ($w$ with subscripts), and 3 scalars to represent the biases ($b$ with subscripts). We compute these three *logits*, $o_1, o_2$, and $o_3$, for each input:
+Tüm olası sınıflarla ilişkili koşullu olasılıkları tahmin etmek için, sınıf başına bir tane olmak üzere birden çok çıktıya sahip bir modele ihtiyacımız var. Doğrusal modellerle sınıflandırmayı ifade etmek için, çıktılarımız olduğu kadar çok sayıda afin (affine) fonksiyona ihtiyacımız olacak. Her çıktı kendi afin işlevine karşılık gelecektir. Bizim durumumuzda, 4 özniteliğimiz ve 3 olası çıktı kategorimiz olduğundan, ağırlıkları temsil etmek için 12 skalere (sayıla) ($w$ gösterimli) ve ek girdileri temsil etmek için 3 skalere ($b$ gösterimli) ihtiyacımız olacak. Her girdi için şu üç *logit*i, $o_1, o_2$ ve $o_3$, hesaplıyoruz:
 
 $$
 \begin{aligned}
@@ -36,49 +36,45 @@ o_3 &= x_1 w_{31} + x_2 w_{32} + x_3 w_{33} + x_4 w_{34} + b_3.
 \end{aligned}
 $$
 
-We can depict this calculation with the neural network diagram shown in :numref:`fig_softmaxreg`. Just as in linear regression, softmax regression is also a single-layer neural network. And since the calculation of each output, $o_1, o_2$, and $o_3$, depends on all inputs, $x_1$, $x_2$, $x_3$, and $x_4$, the output layer of softmax regression can also be described as fully-connected layer.
+Bu hesaplamayı :numref:`fig_softmaxreg`'da gösterilen sinir ağı diyagramı ile tasvir edebiliriz. Doğrusal regresyonda olduğu gibi, softmaks regresyon da tek katmanlı bir sinir ağıdır. Ayrıca her çıktının, $o_1, o_2$ ve $o_3$, hesaplanması,  tüm girdilere, $x_1$, $x_2$, $x_3$ ve $x_4$, bağlı olduğundan, eşiksiz en büyük işlev bağlanımının (softmaks regresyonunun) çıktı katmanı da tamamen bağlı katman olarak tanımlanır.
 
-![Softmax regression is a single-layer neural network.](../img/softmaxreg.svg)
+![Eşiksiz en büyük işlev bağlanımı bir tek katmanlı sinir ağıdır.](../img/softmaxreg.svg)
 :label:`fig_softmaxreg`
 
-To express the model more compactly, we can use linear algebra notation. In vector form, we arrive at $\mathbf{o} = \mathbf{W} \mathbf{x} + \mathbf{b}$, a form better suited both for mathematics, and for writing code. Note that we have gathered all of our weights into a $3 \times 4$ matrix and that for features of a given data instance $\mathbf{x}$, our outputs are given by a matrix-vector product of our weights by our input features plus our biases $\mathbf{b}$.
+Modeli daha özlü bir şekilde ifade etmek için doğrusal cebir gösterimini kullanabiliriz. Vektör biçiminde, hem matematik hem de kod yazmak için daha uygun bir biçim olan $\mathbf{o} = \mathbf{W} \mathbf{x} + \mathbf{b}$'ye ulaşıyoruz. Tüm ağırlıklarımızı bir $3 \times 4$ matriste topladığımızı ve belirli bir $\mathbf{x}$ veri örneğinin öznitelikleri için, çıktılarımızın bizim öznitelikler girdimiz ile ağırlıklarımızın bir matris-vektör çarpımı artı ek girdilerimiz $\mathbf{b}$ olarak verildiğini unutmayın.
 
+# Eşiksiz En Büyük İşlev İşlemi 
 
-## Softmax Operation
+Burada ele alacağımız ana yaklaşım, modelimizin çıktılarını olasılıklar olarak yorumlamaktır. Gözlemlenen verilerin olabilirliğini en üst düzeye çıkaran olasılıklar üretmek için parametrelerimizi optimize edeceğiz (eniyileceğiz). Ardından, tahminler üretmek için bir eşik belirleyeceğiz, örneğin maksimum tahmin edilen olasılığa sahip etiketi seçeceğiz.
 
-The main approach that we are going to take here is to interpret the outputs of our model as probabilities. We will optimize our parameters to produce probabilities that maximize the likelihood of the observed data. Then, to generate predictions, we will set a threshold, for example, choosing the label with the maximum predicted probabilities.
+Biçimsel olarak ifade edersek, herhangi bir $\hat{y}_j$ çıktısının belirli bir öğenin $j$ sınıfına ait olma olasılığı olarak yorumlanmasını istiyoruz. Sonra en büyük çıktı değerine sahip sınıfı tahminimiz $\operatorname*{argmax}_j y_j$ olarak seçebiliriz. Örneğin, $\hat{y}_1$, $\hat{y}_2$ ve $\hat{y}_3$ sırasıyla 0.1, 0.8 ve 0.1 ise, o zaman (örneğimizde) "tavuğu" temsil eden kategori 2'yi tahmin ederiz.
 
-Put formally, we would like any output $\hat{y}_j$ to be interpreted as the probability that a given item belongs to class $j$. Then we can choose the class with the largest output value as our prediction $\operatorname*{argmax}_j y_j$. For example, if $\hat{y}_1$, $\hat{y}_2$, and $\hat{y}_3$ are 0.1, 0.8, and 0.1, respectively, then we predict category 2, which (in our example) represents "chicken".
+Logit $O$'yu doğrudan ilgilendiğimiz çıktılarımız olarak yorumlamamızı önermek isteyebilirsiniz. Bununla birlikte, doğrusal katmanın çıktısının doğrudan bir olasılık olarak yorumlanmasında bazı sorunlar vardır. Bir yandan, hiçbir şey bu sayıların toplamını 1'e sınırlamıyor. Diğer yandan, girdilere bağlı olarak negatif değerler alabilirler. Bunlar, :numref:`sec_prob`da sunulan temel olasılık aksiyomlarını ihlal ediyor.
 
-You might be tempted to suggest that we interpret the logits $o$ directly as our outputs of interest. However, there are some problems with directly interpreting the output of the linear layer as a probability. On one hand, nothing constrains these numbers to sum to 1. On the other hand, depending on the inputs, they can take negative values. These violate basic axioms of probability presented in :numref:`sec_prob`
+Çıktılarımızı olasılıklar olarak yorumlamak için, (yeni verilerde bile) bunların negatif olmayacağını ve toplamlarının 1 olacağını garanti etmeliyiz. Dahası, modeli gerçeğe uygun olasılıkları tahmin etmeye teşvik eden bir eğitim amaç fonksiyonuna ihtiyacımız var. Bir sınıflandırıcı tüm örneklerden 0.5 çıktısını verdiğinde, bu örneklerin yarısının gerçekte tahmin edilen sınıfa ait olacağını umuyoruz. Bu, *kalibrasyon* adı verilen bir özelliktir.
 
-To interpret our outputs as probabilities, we must guarantee that (even on new data), they will be nonnegative and sum up to 1. Moreover, we need a training objective that encourages the model to estimate faithfully probabilities. Of all instances when a classifier outputs 0.5, we hope that half of those examples will actually belong to the predicted class. This is a property called *calibration*.
+1959'da sosyal bilimci R. Duncan Luce tarafından *seçim modelleri* bağlamında icat edilen *eşiksiz en büyük işlevi (softmaks)* tam olarak bunu yapar. Logitlerimizi negatif olmayacak ve toplamı 1 olacak şekilde dönüştürmek için, modelin turevlenebilir kalmasını gerekliyken, önce her logiti üsleriz (negatif olmamasını sağlar) ve sonra toplamlarına böleriz (toplamlarının 1 olmasını sağlar):
 
-The *softmax function*, invented in 1959 by the social scientist R. Duncan Luce in the context of *choice models*, does precisely this. To transform our logits such that they become nonnegative and sum to 1, while requiring that the model remains differentiable, we first exponentiate each logit (ensuring non-negativity) and then divide by their sum (ensuring that they sum to 1):
-
-$$\hat{\mathbf{y}} = \mathrm{softmax}(\mathbf{o})\quad \text{where}\quad \hat{y}_j = \frac{\exp(o_j)}{\sum_k \exp(o_k)}. $$
+$$\hat{\mathbf{y}} = \mathrm{softmax}(\mathbf{o})\quad \text{öyle ki}\quad \hat{y}_j = \frac{\exp(o_j)}{\sum_k \exp(o_k)}. $$
 :eqlabel:`eq_softmax_y_and_o`
 
-It is easy to see $\hat{y}_1 + \hat{y}_2 + \hat{y}_3 = 1$ with $0 \leq \hat{y}_j \leq 1$ for all $j$. Thus, $\hat{\mathbf{y}}$ is a proper probability distribution
-whose element values can be interpreted accordingly. Note that the softmax operation does not change the ordering among the logits $\mathbf{o}$, which are simply the pre-softmax values that determine the probabilities assigned to each class. Therefore, during prediction we can still pick out the most likely class by
+Tüm $j$ için $\hat{y}_1 + \hat{y}_2 + \hat{y}_3 = 1$'ı $0 \leq \hat{y}_j \leq 1$ ile görmek kolaydır. Dolayısıyla, $\hat{\mathbf{y}}$, eleman değerleri uygun şekilde yorumlanabilen uygun bir olasılık dağılımıdır. Softmaks işleminin, her sınıfa atanan olasılıkları belirleyen basit softmaks-öncesi değerler olan $\mathbf{o}$ logitleri arasındaki sıralamayı değiştirmediğini unutmayın. Bu nedenle, tahmin sırasında yine en olası sınıfı seçebiliriz:
 
 $$
 \operatorname*{argmax}_j \hat y_j = \operatorname*{argmax}_j o_j.
 $$
 
-Although softmax is a nonlinear function, the outputs of softmax regression are still *determined* by an affine transformation of input features; thus, softmax regression is a linear model.
+Softmaks doğrusal olmayan bir fonksiyon olmasına rağmen, softmaks regresyonunun çıktıları hala girdi özntellklerinin afin dönüşümü ile *belirlenir*; dolayısıyla, softmaks regresyon doğrusal bir modeldir.
 
-
-
-## Vectorization for Minibatches
+## Minigruplar için Vektörleştirme
 :label:`subsec_softmax_vectorization`
 
-To improve computational efficiency and take advantage of GPUs, we typically carry out vector calculations for minibatches of data. Assume that we are given a minibatch $\mathbf{X}$ of examples with feature dimensionality (number of inputs) $d$ and batch size $n$. Moreover, assume that we have $q$ categories in the output. Then the minibatch features $\mathbf{X}$ are in $\mathbb{R}^{n \times d}$, weights $\mathbf{W} \in \mathbb{R}^{d \times q}$, and the bias satisfies $\mathbf{b} \in \mathbb{R}^{1\times q}$.
+Hesaplama verimliliğini artırmak ve GPU'lardan yararlanmak için, genellikle veri minigrupları için vektör hesaplamaları yapıyoruz. Öznitelik boyutsallığı (girdi sayısı) $d$ ve parti boyutu $n$ içeren bir minigrup $\mathbf{X}$ verildiğini varsayalım. Üstelik, çıktıda $q$ kategorimizin olduğunu varsayalım. Sonra minigrup öznitelikleri $\mathbf{X}$, $\mathbb{R}^{n \times d}$ içinde, ağırlıkları $\mathbf{W} \in \mathbb{R}^{d \times q}$ ve ek girdiyi, $\mathbf{b} \in \mathbb{R}^{1\times q}$ olarak karşılar.
 
 $$ \begin{aligned} \mathbf{O} &= \mathbf{X} \mathbf{W} + \mathbf{b}, \\ \hat{\mathbf{Y}} & = \mathrm{softmax}(\mathbf{O}). \end{aligned} $$
 :eqlabel:`eq_minibatch_softmax_reg`
 
-This accelerates the dominant operation into a matrix-matrix product $\mathbf{X} \mathbf{W}$ vs. the matrix-vector products we would be executing if we processed one example at a time. Since each row in $\mathbf{X}$ is a data instance, the softmax operation itself can be computed *rowwise*: for each row of $\mathbf{O}$, exponentiate all entries and then normalize them by the sum. Triggering broadcasting during the summation $\mathbf{X} \mathbf{W} + \mathbf{b}$ in :eqref:`eq_minibatch_softmax_reg`, both the minibatch logits $\mathbf{O}$ and output probabilities $\hat{\mathbf{Y}}$ are $n \times q$ matrices.
+Bu, baskın olan işlemi, bir matris-matris çarpımı $\mathbf{X} \mathbf{W}$ ile her seferinde bir örnek işleseydik yürüteceğimiz matris-vektör çarpımlarına göreceli olarak, hızlandırır. $\mathbf{X}$ içindeki her satır bir veri örneği olduğundan, softmaks işleminin kendisi *satır bazında* hesaplanabilir: her $\mathbf{O}$ satırı için, tüm girdileri üsleyin ve sonra bunları toplayarak normalleştirin. :eqref:`eq_minibatch_softmax_reg`'deki $\mathbf{X} \mathbf{W} + \mathbf{b}$ toplamı sırasında yayınlamayı tetikleriz, hem minigrup logitleri $\mathbf{O}$ hem de çıktı olasılıkları $\hat{\mathbf{Y}}$, $n \times q$ matrislerdir.
 
 ## Loss Function
 
