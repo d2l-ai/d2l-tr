@@ -14,16 +14,15 @@ Uygulamada, daha çok *sınıflandırma* ile ilgileniyoruz. "Ne kadar" değil, "
 
 Konuşma dilinde, makine öğrenimi uygulayıcıları iki ince farklı sorunu tanımlamak için *sınıflandırma* kelimesini aşırı yüklüyorlar: (i) yalnızca örneklerin kategorilere (sınıflara) zor olarak atanmasıyla ilgilendiğimiz konular ve (ii) yumuşak atamalar yapmak istediğimiz yerler, yani her bir kategorinin geçerli olma olasılığını değerlendirme. Ayrım, kısmen bulanıklaşma eğilimindedir, çünkü çoğu zaman, yalnızca zor görevleri önemsediğimizde bile, yine de yumuşak atamalar yapan modeller kullanıyoruz.
 
-## Classification Problem
+## Sınıflandırma Problemi
 
-To get our feet wet, let us start off with a simple image classification problem. Here, each input consists of a $2\times2$ grayscale image. We can represent each pixel value with a single scalar, giving us four features $x_1, x_2, x_3, x_4$. Further, let us assume that each image belongs to one among the categories "cat", "chicken", and "dog".
+Ayaklarımızı ısındırmak için basit bir görüntü sınıflandırma problemiyle başlayalım. Buradaki her girdi $2\times2$ gri tonlamalı bir resimden oluşur. Her piksel değerini tek bir skaler ile temsil edebiliriz ve bu da  bize dört özellik, $x_1, x_2, x_3, x_4$, verir. Ayrıca, her görüntünün "kedi", "tavuk" ve "köpek" kategorilerinden birine ait olduğunu varsayalım.
 
-Next, we have to choose how to represent the labels. We have two obvious choices. Perhaps the most natural impulse would be to choose $y \in \{1, 2, 3\}$, where the integers represent {dog, cat, chicken} respectively. This is a great way of *storing* such information on a computer. If the categories had some natural ordering among them, say if we were trying to predict {baby, toddler, adolescent, young adult, adult, geriatric}, then it might even make sense to cast this problem as regression and keep the labels in this format.
+Daha sonra, etiketleri nasıl temsil edeceğimizi seçmeliyiz. İki bariz seçeneğimiz var. Belki de en doğal dürtü, tam sayıların sırasıyla {köpek, kedi, tavuk}'u temsil ettiği $\{1, 2, 3 \}$ içinden $y$'yi seçmek olacaktır. Bu, bu tür bilgileri bir bilgisayarda *saklamanın* harika bir yoludur. Kategoriler arasında doğal bir sıralama varsa, örneğin {bebek, yürümeye başlayan çocuk, ergen, genç yetişkin, yetişkin, yaşlı} tahmin etmeye çalışıyor olsaydık, bu sorunu bağlanım olarak kabul etmek ve etiketleri bu biçimde tutmak mantıklı bile olabilirdi.
 
-But general classification problems do not come with natural orderings among the classes. Fortunately, statisticians long ago invented a simple way to represent categorical data: the *one-hot encoding*. A one-hot encoding is a vector with as many components as we have categories. The component corresponding to particular instance's category is set to 1 and all other components are set to 0. In our case, a label $y$ would be a three-dimensional vector, with $(1, 0, 0)$ corresponding to "cat", $(0, 1, 0)$ to "chicken", and $(0, 0, 1)$ to "dog":
+Ancak genel sınıflandırma sorunları, sınıflar arasında doğal sıralamalarla gelmez. Neyse ki, istatistikçiler uzun zaman önce kategorik verileri göstermenin basit bir yolunu keşfettiler: *tek-sıcak kodlama*. Tek sıcak kodlama, kategorilerimiz kadar bileşen içeren bir vektördür. Belirli bir örneğin kategorisine karşılık gelen bileşen $1$'e ve diğer tüm bileşenler $0$'a ayarlanmıştır. Bizim durumumuzda, $y$ etiketi üç boyutlu bir vektör olacaktır ve $(1, 0, 0)$ - "kedi", $(0, 1, 0)$ - "tavuk" ve $(0, 0, 1)$ - "köpek":
 
 $$y \in \{(1, 0, 0), (0, 1, 0), (0, 0, 1)\}.$$
-
 
 ## Network Architecture
 
