@@ -314,7 +314,7 @@ b = net.get_weights()[1]
 print('error in estimating b', true_b - b)
 ```
 
-## Summary
+## Özet
 
 :begin_tab:`mxnet`
 * Gluon kullanarak modelleri çok daha kısaca uygulayabiliyoruz.

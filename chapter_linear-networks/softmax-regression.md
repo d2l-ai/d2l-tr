@@ -188,4 +188,4 @@ we will use *accuracy* to evaluate the model’s performance. This is equal to t
     * What does the soft-min look like?
     * Extend this to more than two numbers.
 
-[Discussions](https://discuss.d2l.ai/t/46)
+[Tartışmalar](https://discuss.d2l.ai/t/46)
