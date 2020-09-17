@@ -1,7 +1,14 @@
 # The Image Classification Dataset
 :label:`sec_fashion_mnist`
 
-One of the widely used dataset for image classification is the  MNIST dataset :cite:`LeCun.Bottou.Bengio.ea.1998`. While it had a good run as a benchmark dataset,even simple models by today's standards achieve classification accuracy over 95%,making it unsuitable for distinguishing between stronger models and weaker ones. Today, MNIST serves as more of sanity checks than as a benchmark. To up the ante just a bit, we will focus our discussion in the coming sections on the qualitatively similar, but comparatively complex Fashion-MNIST dataset :cite:`Xiao.Rasul.Vollgraf.2017`, which was released in 2017.
+One of the widely used dataset for image classification is the  MNIST dataset :cite:`LeCun.Bottou.Bengio.ea.1998`.
+While it had a good run as a benchmark dataset,
+even simple models by today's standards achieve classification accuracy over 95%,
+making it unsuitable for distinguishing between stronger models and weaker ones.
+Today, MNIST serves as more of sanity checks than as a benchmark.
+To up the ante just a bit, we will focus our discussion in the coming sections
+on the qualitatively similar, but comparatively complex Fashion-MNIST
+dataset :cite:`Xiao.Rasul.Vollgraf.2017`, which was released in 2017.
 
 ```{.python .input}
 %matplotlib inline
@@ -59,7 +66,10 @@ mnist_test = torchvision.datasets.FashionMNIST(
 mnist_train, mnist_test = tf.keras.datasets.fashion_mnist.load_data()
 ```
 
-Fashion-MNIST consists of images from 10 categories, each represented by 6000 images in the training set and by 1000 in the test set. Consequently the training set and the test set contain 60000 and 10000 images, respectively.
+Fashion-MNIST consists of images from 10 categories, each represented
+by 6000 images in the training set and by 1000 in the test set.
+Consequently the training set and the test set
+contain 60000 and 10000 images, respectively.
 
 ```{.python .input}
 #@tab mxnet, pytorch
@@ -71,7 +81,10 @@ len(mnist_train), len(mnist_test)
 len(mnist_train[0]), len(mnist_test[0])
 ```
 
-The height and width of each input image are both 28 pixels. Note that the dataset consists of grayscale images, whose number of channels is 1. For brevity, throughout this book we store the shape of any image with height $h$ width $w$ pixels as $h \times w$ or ($h$, $w$).
+The height and width of each input image are both 28 pixels.
+Note that the dataset consists of grayscale images, whose number of channels is 1.
+For brevity, throughout this book
+we store the shape of any image with height $h$ width $w$ pixels as $h \times w$ or ($h$, $w$).
 
 ```{.python .input}
 #@tab mxnet, pytorch
@@ -83,7 +96,9 @@ mnist_train[0][0].shape
 mnist_train[0][0].shape
 ```
 
-The images in Fashion-MNIST are associated with the following categories: t-shirt, trousers, pullover, dress, coat, sandal, shirt, sneaker, bag, and ankle boot. The following function converts between numeric label indices and their names in text.
+The images in Fashion-MNIST are associated with the following categories:
+t-shirt, trousers, pullover, dress, coat, sandal, shirt, sneaker, bag, and ankle boot.
+The following function converts between numeric label indices and their names in text.
 
 ```{.python .input}
 #@tab all
@@ -112,7 +127,8 @@ def show_images(imgs, num_rows, num_cols, titles=None, scale=1.5):  #@save
     return axes
 ```
 
-Here are the images and their corresponding labels (in text) for the first few examples in the training dataset.
+Here are the images and their corresponding labels (in text)
+for the first few examples in the training dataset.
 
 ```{.python .input}
 X, y = mnist_train[:18]
@@ -134,7 +150,11 @@ show_images(X, 2, 9, titles=get_fashion_mnist_labels(y));
 
 ## Reading a Minibatch
 
-To make our life easier when reading from the training and test sets, we use the built-in data iterator rather than creating one from scratch. Recall that at each iteration, a load loader reads a minibatch of data with size `batch_size` each time. We also randomly shuffle the examples for the training data iterator.
+To make our life easier when reading from the training and test sets,
+we use the built-in data iterator rather than creating one from scratch.
+Recall that at each iteration, a load loader
+reads a minibatch of data with size `batch_size` each time.
+We also randomly shuffle the examples for the training data iterator.
 
 ```{.python .input}
 batch_size = 256
@@ -182,7 +202,10 @@ f'{timer.stop():.2f} sec'
 
 ## Putting All Things Together
 
-Now we define the `load_data_fashion_mnist` function that obtains and reads the Fashion-MNIST dataset. It returns the data iterators for both the training set and validation set. In addition, it accepts an optional argument to resize images to another shape.
+Now we define the `load_data_fashion_mnist` function
+that obtains and reads the Fashion-MNIST dataset.
+It returns the data iterators for both the training set and validation set.
+In addition, it accepts an optional argument to resize images to another shape.
 
 ```{.python .input}
 def load_data_fashion_mnist(batch_size, resize=None):  #@save
@@ -236,7 +259,8 @@ def load_data_fashion_mnist(batch_size, resize=None):   #@save
             batch_size).map(resize_fn))
 ```
 
-Below we test the image resizing feature of the `load_data_fashion_mnist` function by specifying the `resize` argument.
+Below we test the image resizing feature of the `load_data_fashion_mnist` function
+by specifying the `resize` argument.
 
 ```{.python .input}
 #@tab all

@@ -1,4 +1,4 @@
-# Eşiksiz En Büyük İşlev Bağlanımı  (Softmax Regression)
+# Eşiksiz En Büyük İşlev Bağlanımı  (Softmaks Regresyon)
 :label:`sec_softmax`
 
 :numref:`sec_linear_regression`'de, doğrusal bağlanımı tanıttık, :numref:`sec_linear_scratch`'da sıfırdan uygulamalar üzerinde çalıştık ve ağır işi yapmak için :numref:`sec_linear_concise`da derin öğrenme çerçevesinin yüksek seviyeli API'lerini tekrar kullandık.
@@ -76,36 +76,35 @@ $$ \begin{aligned} \mathbf{O} &= \mathbf{X} \mathbf{W} + \mathbf{b}, \\ \hat{\ma
 
 Bu, baskın olan işlemi, bir matris-matris çarpımı $\mathbf{X} \mathbf{W}$ ile her seferinde bir örnek işleseydik yürüteceğimiz matris-vektör çarpımlarına göreceli olarak, hızlandırır. $\mathbf{X}$ içindeki her satır bir veri örneği olduğundan, softmaks işleminin kendisi *satır bazında* hesaplanabilir: her $\mathbf{O}$ satırı için, tüm girdileri üsleyin ve sonra bunları toplayarak normalleştirin. :eqref:`eq_minibatch_softmax_reg`'deki $\mathbf{X} \mathbf{W} + \mathbf{b}$ toplamı sırasında yayınlamayı tetikleriz, hem minigrup logitleri $\mathbf{O}$ hem de çıktı olasılıkları $\hat{\mathbf{Y}}$, $n \times q$ matrislerdir.
 
-## Loss Function
+## Kayıp (Yitim) İşlevi
 
-Next, we need a loss function to measure the quality of our predicted probabilities. We will rely on maximum likelihood estimation, the very same concept that we encountered when providing a probabilistic justification for the mean squared error objective in linear regression (:numref:`subsec_normal_distribution_and_squared_loss`).
+Sonrasında, tahmin edilen olasılıklarımızın kalitesini ölçmek için bir kayıp fonksiyonuna ihtiyacımız var. Doğrusal regresyonda ortalama hata karesi amaç fonksiyonu için olasılıksal bir gerekçelendirme sağlarken karşılaştığımız kavramla aynı olan maksimum olabilirlik tahminine güveneceğiz (:numref:`subsec_normal_distribution_and_squared_loss`).
 
+### Log-Olabilirlik
 
-### Log-Likelihood
-
-The softmax function gives us a vector $\hat{\mathbf{y}}$, which we can interpret as estimated conditional probabilities of each class given any input $\mathbf{x}$, e.g., $\hat{y}_1$ = $P(y=\text{cat} \mid \mathbf{x})$. Suppose that the entire dataset $\{\mathbf{X}, \mathbf{Y}\}$ has $n$ examples, where the example indexed by $i$ consists of a feature vector $\mathbf{x}^{(i)}$ and a one-hot label vector $\mathbf{y}^{(i)}$. We can compare the estimates with reality by checking how probable the actual classes are according to our model, given the features:
+Softmaks işlevi bize $\hat{\mathbf{y}}$ vektörünü verir, bunu herhangi bir $\mathbf{x}$ girdisi verildiğinde her bir sınıfın tahmini koşullu olasılıkları olarak yorumlayabiliriz, ör. $\hat{y}_1$ = $P(y =\text{kedi} \mid \mathbf{x})$. $\{\mathbf{X}, \mathbf{Y}\}$ veri kümesinin tamamınında, $i$ indekslenen $\mathbf{x}^{(i}$ örneğini ve ilgili bire-bir etiket vektörü $\mathbf{y}^{(i)}$'yi içeren $n$ örneğe sahip olduğunu varsayalım. Öznitelikleri göz önüne alındığında, gerçek sınıfların modelimize göre ne kadar olası olduğunu kontrol ederek tahminleri gerçekle karşılaştırabiliriz:
 
 $$
 P(\mathbf{Y} \mid \mathbf{X}) = \prod_{i=1}^n P(\mathbf{y}^{(i)} \mid \mathbf{x}^{(i)}).
 $$
 
-According to maximum likelihood estimation, we maximize $P(\mathbf{Y} \mid \mathbf{X})$, which is equivalent to minimizing the negative log-likelihood:
+Maksimum olabilirlik tahminine göre, negatif log olabilirliği en aza indirmeye eşdeğer olan $P(\mathbf{Y} \mid \mathbf{X})$'i maksimize ediyoruz:
 
 $$
 -\log P(\mathbf{Y} \mid \mathbf{X}) = \sum_{i=1}^n -\log P(\mathbf{y}^{(i)} \mid \mathbf{x}^{(i)})
 = \sum_{i=1}^n l(\mathbf{y}^{(i)}, \hat{\mathbf{y}}^{(i)}),
 $$
 
-where for any pair of label $\mathbf{y}$ and model prediction $\hat{\mathbf{y}}$ over $q$ classes, the loss function $l$ is
+$\mathbf{y}$ ve $q$ sınıfının üzerinde $\hat{\mathbf{y}}$ model tahmini etiket çifti için, kayıp fonksiyonu $l$'dir.
 
 $$ l(\mathbf{y}, \hat{\mathbf{y}}) = - \sum_{j=1}^q y_j \log \hat{y}_j. $$
 :eqlabel:`eq_l_cross_entropy`
 
-For reasons explained later on, the loss function in :eqref:`eq_l_cross_entropy` is commonly called the *cross-entropy loss*. Since $\mathbf{y}$ is a one-hot vector of length $q$, the sum over all its coordinates $j$ vanishes for all but one term. Since all $\hat{y}_j$ are predicted probabilities, their logarithm is never larger than $0$. Consequently, the loss function cannot be minimized any further if we correctly predict the actual label with *certainty*, i.e., if the predicted probability $P(\mathbf{y} \mid \mathbf{x}) = 1$ for the actual label $\mathbf{y}$. Note that this is often impossible. For example, there might be label noise in the dataset (some examples may be mislabeled). It may also not be possible when the input features are not sufficiently informative to classify every example perfectly.
+Daha sonra açıklanacak nedenlerden ötürü, :eqref:`eq_l_cross_entropy`'deki kayıp işlevi genellikle *çapraz entropi kaybı* olarak adlandırılır. $\mathbf{y}$, $q$ uzunluğunda bire bir vektör olduğundan, $j$ tüm koordinatlarının toplamı, bir terim hariç tümü için kaybolur. Tüm $\hat{y}_j$'ler tahmini olasılıklar olduğundan, logaritmaları hiçbir zaman $0$'dan büyük olmaz. Sonuç olarak, gerçek etiketi *kesinlik* ile doğru bir şekilde tahmin edersek, yani gerçek etiket $\mathbf{y}$ için tahmini olasılık $P(\mathbf{y} \mid \mathbf{x}) = 1$ ise, kayıp fonksiyonu daha fazla küçültülemez. Bunun genellikle imkansız olduğunu unutmayın. Örneğin, veri kümesinde etiket gürültüsü olabilir (bazı örnekler yanlış etiketlenmiş olabilir). Girdi özellikleri her örneği mükemmel bir şekilde sınıflandırmak için yeterince bilgilendirici olmadığında da mümkün olmayabilir.
 
-### Softmax and Derivatives
+### Softmaks ve Türevleri
 
-Since the softmax and the corresponding loss are so common, it is worth understanding a bit better how it is computed. Plugging :eqref:`eq_softmax_y_and_o` into the definition of the loss in :eqref:`eq_l_cross_entropy` and using the definition of the softmax we obtain:
+Softmaks ve karşılık gelen kayıp fonksiyonu çok yaygın olduğundan, nasıl hesaplandığını biraz daha iyi anlamaya değerdir. :eqref:`eq_softmax_y_and_o`'ü kayıp tanımına, :eqref:`eq_l_cross_entropy` eklersek ve softmaks tanımını kullanarsak:
 
 $$
 \begin{aligned}
@@ -115,72 +114,66 @@ l(\mathbf{y}, \hat{\mathbf{y}}) &=  - \sum_{j=1}^q y_j \log \frac{\exp(o_j)}{\su
 \end{aligned}
 $$
 
-To understand a bit better what is going on, consider the derivative with respect to any logit $o_j$. We get
+Neler olduğunu biraz daha iyi anlamak için, herhangi bir logit $o_j$ ile ilgili türevi düşünün. Böylece şunu görürüz:
 
 $$
 \partial_{o_j} l(\mathbf{y}, \hat{\mathbf{y}}) = \frac{\exp(o_j)}{\sum_{k=1}^q \exp(o_k)} - y_j = \mathrm{softmax}(\mathbf{o})_j - y_j.
 $$
 
-In other words, the derivative is the difference between the probability assigned by our model, as expressed by the softmax operation, and what actually happened, as expressed by elements in the one-hot label vector. In this sense, it is very similar to what we saw in regression, where the gradient was the difference between the observation $y$ and estimate $\hat{y}$. This is not coincidence. In any [exponential family](https://en.wikipedia.org/wiki/Exponential_family) model, the gradients of the log-likelihood are given by precisely this term. This fact makes computing gradients easy in practice.
+Başka bir deyişle, türev, softmaks işlemiyle ifade edilen modelimiz tarafından atanan olasılık ile bire bir etiket vektöründeki öğeler tarafından ifade edilen gerçekte ne olduğu arasındaki farktır. Bu anlamda, regresyonda gördüğümüze çok benzerdir; gradyan $y$ gözlemi ile $\hat{y}$ tahmini arasındaki farktır. Bu bir tesadüf değil. Herhangi bir [üstel aile](https://en.wikipedia.org/wiki/Exponential_family) modelinde, log-olabilirlik gradyanları tam olarak bu terim tarafından verilmektedir. Bu gerçek, gradyanları hesaplamayı pratikte kolaylaştırır.
 
-### Cross-Entropy Loss
+### Çapraz Entropi Kaybı
 
-Now consider the case where we observe not just a single outcome but an entire distribution over outcomes. We can use the same representation as before for the label $\mathbf{y}$. The only difference is that rather than a vector containing only binary entries, say $(0, 0, 1)$, we now have a generic probability vector, say $(0.1, 0.2, 0.7)$. The math that we used previously to define the loss $l$ in :eqref:`eq_l_cross_entropy` still works out fine, just that the interpretation is slightly more general. It is the expected value of the loss for a distribution over labels. This loss is called the *cross-entropy loss* and it is one of the most commonly used losses for classification problems. We can demystify the name by introducing just the basics of information theory. If you wish to understand more details of information theory, you may further refer to the [online appendix on information theory](https://d2l.ai/chapter_appendix-mathematics-for-deep-learning/information-theory.html).
+Şimdi, sadece tek bir sonucu değil, sonuçlara göre bütün bir dağılımı gözlemlediğimiz durumu düşünün. $\mathbf{y}$ etiketi için önceki ile aynı gösterimi kullanabiliriz. Tek fark, $(0, 0, 1)$ gibi sadece ikilik girdiler içeren bir vektör yerine, artık genel bir olasılık vektörüne sahibiz, örneğin $(0.1, 0.2, 0.7)$. Daha önce:eqref:`eq_l_cross_entropy`'de  $l$  kaybını tanımlamak için kullandığımız matematik hala iyi çalışıyor, sadece yorumu biraz daha genel. Burada etiketler üzerindeki dağılım için beklenen kayıp değeridir. Bu kayıp, *çapraz entropi kaybı* olarak adlandırılır ve sınıflandırma problemlerinde en sık kullanılan kayıplardan biridir. Bilgi teorisinin sadece temellerini tanıtarak ismin gizemini çözebiliriz. Bilgi teorisinin daha fazla detayını anlamak isterseniz, [bilgi teorisi üzerine çevrimiçi ek](https://d2l.ai/chapter_appendix-mathematics-for-deep-learning/information-theory.html)'ye başvurabilirsiniz.
 
-## Information Theory Basics
+## Bilgi Teorisinin Temelleri
 
-*Information theory* deals with the problem of encoding, decoding, transmitting, and manipulating information (also known as data) in as concise form as possible.
+*Bilgi teorisi*, bilgiyi (veri olarak da bilinir) mümkün olduğunca kısa bir biçimde kodlama, kod çözme, iletme ve kullanma sorunuyla ilgilenir.
 
+### Entropi
 
-### Entropy
-
-The central idea in information theory is to quantify the information content in data. This quantity places a hard limit on our ability to compress the data. In information theory, this quantity is called the *entropy* of a distribution $p$, and it is captured by the following equation:
+Bilgi teorisindeki ana fikir, verilerdeki bilgi içeriğini ölçmektir. Bu miktar, verileri sıkıştırma yeteneğimize sıkı bir sınır koyar. Bilgi teorisinde, bu miktar bir $p$ dağılımının *entropisi* olarak adlandırılır ve aşağıdaki denklem ile ifade edilir:
 
 $$H[p] = \sum_j - p(j) \log p(j).$$
 :eqlabel:`eq_softmax_reg_entropy`
 
-One of the fundamental theorems of information theory states that in order to encode data drawn randomly from the distribution $p$, we need at least $H[p]$ "nats" to encode it. If you wonder what a "nat" is, it is the equivalent of bit but when using a code with base $e$ rather than one with base 2. Thus, one nat is $\frac{1}{\log(2)} \approx 1.44$ bit.
+Bilgi teorisinin temel teoremlerinden biri, $p$ dağılımından rastgele çekilen verileri kodlamak için, en az $H[p]$ "nats"a ihtiyacımız olduğunu belirtir. "Nat" nedir diye merak ediyorsanız, 2 tabanlı bir kod yerine $e$ tabanlı bir kod kullanıldığında bu bit ile eşdeğerdir, bir nat $\frac{1}{\log(2)} \approx 1,44$ bittir.
 
+### Şaşırtıcılık
 
-### Surprisal
+Sıkıştırmanın tahminle ne ilgisi olduğunu merak ediyor olabilirsiniz. Sıkıştırmak istediğimiz bir veri akışımız olduğunu hayal edin. Bir sonraki belirteci (token) tahmin etmek bizim için her zaman kolaysa, bu verinin sıkıştırılması kolaydır! Akıştaki her belirtecin her zaman aynı değeri aldığı uç örneği ele alalım. Bu çok sıkıcı bir veri akışı! Ve sadece sıkıcı değil, aynı zamanda tahmin etmesi de kolay. Her zaman aynı olduklarından, akışın içeriğini iletmek için herhangi bir bilgi iletmemiz gerekmez. Tahmin etmesi kolay, sıkıştırması kolay.
 
-You might be wondering what compression has to do with prediction. Imagine that we have a stream of data that we want to compress. If it is always easy for us to predict the next token, then this data is easy to compress! Take the extreme example where every token in the stream always takes the same value. That is a very boring data stream! And not only it is boring, but it is also easy to predict. Because they are always the same, we do not have to transmit any information to communicate the contents of the stream. Easy to predict, easy to compress.
+Halbuki, her olayı tam olarak tahmin edemezsek, o zaman bazen şaşırabiliriz. Bir olaya daha düşük bir olasılık atadığımızda sürprizimiz daha da büyük olur. Claude Shannon (öznel) bir olasılık, $P(j)$, atamış olan bir $j$ olayı gözlemlemenin *şaşırtıcı* olduğunu göstermek için $\log \frac{1}{P(j)} = -\log P(j)$'yi hesapladı. :eqref:`eq_softmax_reg_entropy`'de tanımlanan entropi, veri oluşturma süreciyle gerçekten eşleşen doğru olasılıklar atandığında *beklenen şaşırtıcılıktır*.
 
-However if we cannot perfectly predict every event, then we might sometimes be surprised. Our surprise is greater when we assigned an event lower probability. Claude Shannon settled on $\log \frac{1}{P(j)} = -\log P(j)$ to quantify one's *surprisal* at observing an event $j$ having assigned it a (subjective) probability $P(j)$. The entropy defined in :eqref:`eq_softmax_reg_entropy` is then the *expected surprisal* when one assigned the correct probabilities that truly match the data-generating process.
+### Çapraz Entropiyi Yeniden Ziyaret Etme
 
+Öyleyse, entropi gerçek olasılığı bilen birinin yaşadığı sürpriz seviyesiyse, merak ediyor olabilirsiniz, çapraz entropi nedir? $H(p, q)$ olarak gösterilen $p$ ile $q$ *arasındaki* çapraz entropi, öznel olasılıkları $q$ olan bir gözlemcinin gerçekte $p$ olasılıklarına göre oluşturulan verileri gördükten sonra beklenen şaşkınlığıdır. Olası en düşük çapraz entropi $p=q$ olduğunda elde edilir. Bu durumda, $p$ ile $q$ arasındaki çapraz entropi $H(p, p) = H(p)$ şeklindedir.
 
-### Cross-Entropy Revisited
+Kısacası, çapraz entropi sınıflandırma amaç fonksiyonunu iki şekilde düşünebiliriz: (i) gözlemlenen verilerin olabilirliğini maksimize etmek ve (ii) etiketleri iletmek için gerekli olan şaşkınlığımızı (ve dolayısıyla bit sayısını) en aza indirmek.
 
-So if entropy is level of surprise experienced by someone who knows the true probability, then you might be wondering, what is cross-entropy? The cross-entropy *from* $p$ *to* $q$, denoted $H(p, q)$, is the expected surprisal of an observer with subjective probabilities $q$ upon seeing data that were actually generated according to probabilities $p$. The lowest possible cross-entropy is achieved when $p=q$. In this case, the cross-entropy from $p$ to $q$ is $H(p, p)= H(p)$.
+## Model Tahmini ve Değerlendirme
 
-In short, we can think of the cross-entropy classification objective in two ways: (i) as maximizing the likelihood of the observed data; and (ii) as minimizing our surprisal (and thus the number of bits) required to communicate the labels.
+Softmaks regresyon modelini eğittikten sonra, herhangi bir örnek öznitelik verildiğinde, her bir çıktı sınıfının olasılığını tahmin edebiliriz. Normalde, en yüksek tahmin edilen olasılığa sahip sınıfı çıktı sınıfı olarak kullanırız. Gerçek sınıfla (etiket ile) tutarlıysa tahmin doğrudur.  Sonraki deney bölümünde, modelin performansını değerlendirmek için *doğruluk oranını* (kısaca doğruluk) kullanacağız. Bu, doğru tahmin sayısı ile toplam tahmin sayısı arasındaki orana eşittir.
 
+## Özet
 
-## Model Prediction and Evaluation
+* Softmaks işlemi bir vektör alır ve onu olasılıklara eşler.
+* Softmaks regresyonu, sınıflandırma problemleri için geçerlidir. Softmaks işlemi çıktı sınıfının olasılık dağılımını kullanır.
+* Çapraz entropi, iki olasılık dağılımı arasındaki farkın iyi bir ölçüsüdür. Modelimize verilen verileri kodlamak için gereken bit sayısını ölçer.
 
-After training the softmax regression model, given any example features, we can predict the probability of each output class. Normally, we use the class with the highest predicted probability as the output class. The prediction is correct if it is consistent with the actual class (label). In the next part of the experiment,
-we will use *accuracy* to evaluate the model’s performance. This is equal to the ratio between the number of correct predictions and the total number of predictions.
+## Alıştırmalar
 
-
-## Summary
-
-* The softmax operation takes a vector and maps it into probabilities.
-* Softmax regression applies to classification problems. It uses the probability distribution of the output class in the softmax operation.
-* Cross-entropy is a good measure of the difference between two probability distributions. It measures the number of bits needed to encode the data given our model.
-
-## Exercises
-
-1. We can explore the connection between exponential families and the softmax in some more depth.
-    * Compute the second derivative of the cross-entropy loss $l(\mathbf{y},\hat{\mathbf{y}})$ for the softmax.
-    * Compute the variance of the distribution given by $\mathrm{softmax}(\mathbf{o})$ and show that it matches the second derivative computed above.
-1. Assume that we have three classes which occur with equal probability, i.e., the probability vector is $(\frac{1}{3}, \frac{1}{3}, \frac{1}{3})$.
-    * What is the problem if we try to design a binary code for it?
-    * Can you design a better code? Hint: what happens if we try to encode two independent observations? What if we encode $n$ observations jointly?
-1. Softmax is a misnomer for the mapping introduced above (but everyone in deep learning uses it). The real softmax is defined as $\mathrm{RealSoftMax}(a, b) = \log (\exp(a) + \exp(b))$.
-    * Prove that $\mathrm{RealSoftMax}(a, b) > \mathrm{max}(a, b)$.
-    * Prove that this holds for $\lambda^{-1} \mathrm{RealSoftMax}(\lambda a, \lambda b)$, provided that $\lambda > 0$.
-    * Show that for $\lambda \to \infty$ we have $\lambda^{-1} \mathrm{RealSoftMax}(\lambda a, \lambda b) \to \mathrm{max}(a, b)$.
-    * What does the soft-min look like?
-    * Extend this to more than two numbers.
+1. Üstel aileler ile softmaks arasındaki bağlantıyı biraz daha derinlemesine inceleyebiliriz.
+    * Softmaks için çapraz entropi kaybının, $l(\mathbf{y}, \hat{\mathbf{y}})$, ikinci türevini  hesaplayın.
+    * $\mathrm{softmax} (\mathbf{o})$ tarafından verilen dağılımın varyansını hesaplayın ve yukarıda hesaplanan ikinci türevle eşleştiğini gösterin.
+1. Eşit olasılıkla ortaya çıkan üç sınıfımız olduğunu varsayın, yani olasılık vektörü $(\frac{1}{3}, \frac{1}{3}, \frac{1}{3})$.
+    * Bunun için bir ikilik kod tasarlamaya çalışırsak ne sorun olur?
+    * Daha iyi bir kod tasarlayabilir misiniz? İpucu: İki bağımsız gözlemi kodlamaya çalışırsak ne olur? Ya $n$ tane gözlemi birlikte kodlarsak?
+1. Softmaks, yukarıda anlatılan eşleme için yanlış bir isimdir (ancak derin öğrenmede herkes bunu kullanır). Gerçek softmaks, $\mathrm{RealSoftMax}(a, b) = \log (\exp(a) + \exp(b))$ olarak tanımlanır.
+    * $\mathrm{RealSoftMax}(a, b) > \mathrm{max}(a, b)$ olduğunu kanıtlayın.
+    * Bunun $\lambda > 0$ olması koşuluyla $\lambda^{-1} \mathrm{RealSoftMax}(\lambda a, \lambda b)$ için geçerli olduğunu kanıtlayın.
+    * $\lambda \to \infty$ için $\lambda^{-1} \mathrm{RealSoftMax}(\lambda a, \lambda b) \to \mathrm{max}(a, b)$ olduğunu gösterin.
+    * Soft-min neye benzer?
+    * Bunu ikiden fazla sayı için genişletin.
 
 [Tartışmalar](https://discuss.d2l.ai/t/46)
