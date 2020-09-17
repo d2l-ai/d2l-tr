@@ -1,7 +1,7 @@
-# The Image Classification Dataset
+# İmge Sınıflandırma Veri Kümesi
 :label:`sec_fashion_mnist`
 
-One of the widely used dataset for image classification is the  MNIST dataset :cite:`LeCun.Bottou.Bengio.ea.1998`. While it had a good run as a benchmark dataset,even simple models by today's standards achieve classification accuracy over 95%,making it unsuitable for distinguishing between stronger models and weaker ones. Today, MNIST serves as more of sanity checks than as a benchmark. To up the ante just a bit, we will focus our discussion in the coming sections on the qualitatively similar, but comparatively complex Fashion-MNIST dataset :cite:`Xiao.Rasul.Vollgraf.2017`, which was released in 2017.
+İmge sınıflandırması için yaygın olarak kullanılan veri kümelerinden biri MNIST veri kümesidir :cite:`LeCun.Bottou.Bengio.ea.1998`. Bir kıyaslama veri kümesi olarak iyi bir çalışma gerçekleştirmiş olsa da, günümüz standartlarına göre basit modeller bile %95'in üzerinde sınıflandırma doğruluğu elde ettiğinden daha güçlü modeller ile daha zayıf olanları ayırt etmek için uygun değildir. Bugün, MNIST bir kıyaslama ölçütü olmaktan çok makullük (sanity) kontrolü işlevi görüyor. Biraz daha ileriye gitmek için, önümüzdeki bölümlerdeki tartışmamızı niteliksel olarak benzer, ancak nispeten karmaşık olan 2017'de piyasaya sürülen Fashion-MNIST veri kümesine odaklayacağız :cite:`Xiao.Rasul.Vollgraf.2017`.
 
 ```{.python .input}
 %matplotlib inline
@@ -33,9 +33,9 @@ import tensorflow as tf
 d2l.use_svg_display()
 ```
 
-## Reading the Dataset
+## Veri Kümesini Okuma
 
-We can download and read the Fashion-MNIST dataset into memory via the the build-in functions in the framework.
+Fashion-MNIST veri kümesini çerçevemizdeki yerleşik işlevler aracılığıyla indirebilir ve belleğe okuyabiliriz.
 
 ```{.python .input}
 mnist_train = gluon.data.vision.FashionMNIST(train=True)
@@ -59,7 +59,7 @@ mnist_test = torchvision.datasets.FashionMNIST(
 mnist_train, mnist_test = tf.keras.datasets.fashion_mnist.load_data()
 ```
 
-Fashion-MNIST consists of images from 10 categories, each represented by 6000 images in the training set and by 1000 in the test set. Consequently the training set and the test set contain 60000 and 10000 images, respectively.
+Fashion-MNIST, her biri eğitim kümesinde 6000, test kümesinde ise 1000 ile temsil edilen 10 kategorideki görsellerden oluşmaktadır. Sonuç olarak eğitim kümesi ve test kümesi sırasıyla 60000 ve 10000 görüntü içermektedir.
 
 ```{.python .input}
 #@tab mxnet, pytorch
@@ -71,7 +71,7 @@ len(mnist_train), len(mnist_test)
 len(mnist_train[0]), len(mnist_test[0])
 ```
 
-The height and width of each input image are both 28 pixels. Note that the dataset consists of grayscale images, whose number of channels is 1. For brevity, throughout this book we store the shape of any image with height $h$ width $w$ pixels as $h \times w$ or ($h$, $w$).
+Her girdi imgesinin yüksekliği ve genişliği 28 pikseldir. Veri kümesinin, kanal sayısı 1 olan gri tonlamalı görüntülerden oluştuğuna dikkat edin. Kısaca, bu kitapta yüksekliği $h$ genişliği $w$ piksel olan herhangi bir görüntünün şekli $h \times w$ veya ($h$, $w$)'dir.
 
 ```{.python .input}
 #@tab mxnet, pytorch
@@ -83,7 +83,7 @@ mnist_train[0][0].shape
 mnist_train[0][0].shape
 ```
 
-The images in Fashion-MNIST are associated with the following categories: t-shirt, trousers, pullover, dress, coat, sandal, shirt, sneaker, bag, and ankle boot. The following function converts between numeric label indices and their names in text.
+Fashion-MNIST'teki görüntüler şu kategorilerle ilişkilidir: tişört, pantolon, kazak, elbise, ceket, sandalet, gömlek, spor ayakkabı, çanta ve ayak bileği hizası bot. Aşağıdaki işlev, sayısal etiket indeksleri ve metindeki adları arasında dönüştürme yapar.
 
 ```{.python .input}
 #@tab all
@@ -94,7 +94,7 @@ def get_fashion_mnist_labels(labels):  #@save
     return [text_labels[int(i)] for i in labels]
 ```
 
-We can now create a function to visualize these examples.
+Şimdi bu örnekleri görselleştirmek için bir işlev oluşturabiliriz.
 
 ```{.python .input}
 #@tab all
@@ -112,7 +112,7 @@ def show_images(imgs, num_rows, num_cols, titles=None, scale=1.5):  #@save
     return axes
 ```
 
-Here are the images and their corresponding labels (in text) for the first few examples in the training dataset.
+Eğitim veri kümesindeki ilk birkaç örnek için görüntüler ve bunlara karşılık gelen etiketler (metin olarak) aşağıdadır.
 
 ```{.python .input}
 X, y = mnist_train[:18]
@@ -132,9 +132,9 @@ y = tf.constant(mnist_train[1][:18])
 show_images(X, 2, 9, titles=get_fashion_mnist_labels(y));
 ```
 
-## Reading a Minibatch
+## Minigrup Okuma
 
-To make our life easier when reading from the training and test sets, we use the built-in data iterator rather than creating one from scratch. Recall that at each iteration, a load loader reads a minibatch of data with size `batch_size` each time. We also randomly shuffle the examples for the training data iterator.
+Eğitim ve test kümelerinden okurken hayatımızı kolaylaştırmak için sıfırdan bir tane oluşturmak yerine yerleşik veri yineleyiciyi kullanıyoruz. Her yinelemede, bir yükleyicinin her seferinde grup (`batch_size`) boyutundaki bir veri mini grubunu okuduğunu hatırlayın. Ayrıca eğitim verisi yineleyicisi için örnekleri rastgele karıştırıyoruz.
 
 ```{.python .input}
 batch_size = 256
@@ -170,7 +170,7 @@ train_iter = tf.data.Dataset.from_tensor_slices(
     mnist_train).batch(batch_size).shuffle(len(mnist_train[0]))
 ```
 
-Let us look at the time it takes to read the training data.
+Eğitim verilerini okurken geçen süreye bakalım.
 
 ```{.python .input}
 #@tab all
@@ -180,9 +180,9 @@ for X, y in train_iter:
 f'{timer.stop():.2f} sec'
 ```
 
-## Putting All Things Together
+## Her Şeyi Bir Araya Getirme
 
-Now we define the `load_data_fashion_mnist` function that obtains and reads the Fashion-MNIST dataset. It returns the data iterators for both the training set and validation set. In addition, it accepts an optional argument to resize images to another shape.
+Şimdi Fashion-MNIST veri kümesini alan ve okuyan `load_data_fashion_mnist` fonksiyonunu tanımlıyoruz. Hem eğitim kümesi hem de geçerleme kümesi için veri yineleyicileri döndürür. Ek olarak, imgeleri başka bir şekle yeniden boyutlandırmak için isteğe bağlı bir argüman kabul eder.
 
 ```{.python .input}
 def load_data_fashion_mnist(batch_size, resize=None):  #@save
@@ -236,7 +236,7 @@ def load_data_fashion_mnist(batch_size, resize=None):   #@save
             batch_size).map(resize_fn))
 ```
 
-Below we test the image resizing feature of the `load_data_fashion_mnist` function by specifying the `resize` argument.
+Aşağıda, `resize` bağımsız değişkenini belirterek `load_data_fashion_mnist` işlevinin görüntüyü yeniden boyutlandırma özelliğini test ediyoruz.
 
 ```{.python .input}
 #@tab all
@@ -246,29 +246,28 @@ for X, y in train_iter:
     break
 ```
 
-We are now ready to work with the Fashion-MNIST dataset in the sections that follow.
+Artık ilerleyen bölümlerde Fashion-MNIST veri kümesiyle çalışmaya hazırız.
 
-## Summary
+## Özet
 
-* Fashion-MNIST is an apparel classification dataset consisting of images representing 10 categories. We will use this dataset in subsequent sections and chapters to evaluate various classification algorithms.
-* We store the shape of any image with height $h$ width $w$ pixels as $h \times w$ or ($h$, $w$).
-* Data iterators are a key component for efficient performance. Rely on well-implemented data iterators that exploit high-performance computing to avoid slowing down your training loop.
+* Fashion-MNIST, 10 kategoriyi temsil eden resimlerden oluşan bir giyim sınıflandırma veri setidir. Bu veri kümesini, çeşitli sınıflandırma algoritmalarını değerlendirmek için sonraki bölümlerde kullanacağız.
+* Yüksekliği $h$ genişliği $w$ piksel olan herhangi bir görüntünün şeklini $h \times w$ veya ($h$, $w$) olarak saklarız.
+* Veri yineleyiciler, verimli performans için önemli bir bileşendir. Eğitim döngünüzü yavaşlatmaktan kaçınmak için yüksek performanslı hesaplamalardan yararlanan iyi uygulanmış veri yineleyicilerine güvenin.
 
+## Alıştırmalar
 
-## Exercises
-
-1. Does reducing the `batch_size` (for instance, to 1) affect the reading performance?
-1. The data iterator performance is important. Do you think the current implementation is fast enough? Explore various options to improve it.
-1. Check out the framework's online API documentation. Which other datasets are available?
+1. `batch_size` değerini (örneğin 1'e) düşürmek okuma performansını etkiler mi?
+1. Veri yineleyici performansı önemlidir. Mevcut uygulamanın yeterince hızlı olduğunu düşünüyor musunuz? İyileştirmek için çeşitli seçenekleri keşfediniz.
+1. Çerçevenin çevrimiçi API belgelerine bakın. Başka hangi veri kümeleri mevcuttur?
 
 :begin_tab:`mxnet`
-[Discussions](https://discuss.d2l.ai/t/48)
+[Tartışmalar](https://discuss.d2l.ai/t/48)
 :end_tab:
 
 :begin_tab:`pytorch`
-[Discussions](https://discuss.d2l.ai/t/49)
+[Tartışmalar](https://discuss.d2l.ai/t/49)
 :end_tab:
 
 :begin_tab:`tensorflow`
-[Discussions](https://discuss.d2l.ai/t/224)
+[Tartışmalar](https://discuss.d2l.ai/t/224)
 :end_tab:
