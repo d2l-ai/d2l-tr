@@ -8,33 +8,32 @@
 
 :numref:`subsec_linear_model`içinde, bir ek girdi eklenen doğrusal bir dönüşüm olan afin dönüşümünü tanımladık. Başlangıç olarak,  :numref:`fig_softmaxreg`'da gösterilen softmaks regresyon örneğimize karşılık gelen model mimarisini hatırlayalım. Bu model, girdilerimizi tek bir afin dönüşüm ve ardından bir softmaks işlemi aracılığıyla doğrudan çıktılarımıza eşledi. Etiketlerimiz gerçekten bir afin dönüşüm yoluyla girdi verilerimizle ilişkili olsaydı, bu yaklaşım yeterli olurdu. Ancak afin dönüşümlerdeki doğrusallık *güçlü* bir varsayımdır.
 
-### Linear Models May Go Wrong
 
-For example, linearity implies the *weaker* assumption of *monotonicity*: that any increase in our feature must either always cause an increase in our model's output (if the corresponding weight is positive), or always cause a decrease in our model's output(if the corresponding weight is negative). Sometimes that makes sense. For example, if we were trying to predict whether an individual will repay a loan, we might reasonably imagine that holding all else equal, an applicant with a higher income would always be more likely to repay than one with a lower income. While monotonic, this relationship likely is not linearly associated with the probability of repayment. An increase in income from 0 to 50 thousand likely corresponds to a bigger increasein likelihood of repayment than an increase from 1 million to 1.05 million. One way to handle this might be to preprocess our data such that linearity becomes more plausible, say, by using the logarithm of income as our feature.
+### Doğrusal Modeller Yanlış Gidebilir
 
+Örneğin, doğrusallık *daha zayıf* *monotonluk* varsayımını ifade eder: Özniteliğimizdeki herhangi bir artışın ya modelimizin çıktısında her zaman bir artışa (karşılık gelen ağırlık pozitifse) ya da modelimizin çıktısında her zaman bir düşüşe neden olması gerektiği (karşılık gelen ağırlık negatifse). Genelde bu mantıklı gelir. Örneğin, bir bireyin bir krediyi geri ödeyip ödemeyeceğini tahmin etmeye çalışıyor olsaydık, makul olarak ve her şeyi eşit tutarak, daha yüksek gelire sahip bir başvuru sahibinin, daha düşük gelirli bir başvuru sahibine göre geri ödeme olasılığının her zaman daha yüksek olacağını hayal edebilirdik. Monoton olsa da, bu ilişki muhtemelen geri ödeme olasılığıyla doğrusal olarak ilişkili değildir. Gelirdeki 0'dan 50 bine bir artış, geri ödeme olabilirliğinde kapsamında gelirdeki 1 milyondan 1.05 milyona artıştan daha büyük bir artmaya karşılık gelir. Bunu halletmenin bir yolu, verilerimizi, örneğin özniteliğimiz olan gelirin logaritmasını kullanarak doğrusallığın daha makul hale geleceği şekilde, önceden işlemek olabilir.
 
-Note that we can easily come up with examples that violate monotonicity. Say for example that we want to predict probability of death based on body temperature. For individuals with a body temperature above 37°C (98.6°F), higher temperatures indicate greater risk. However, for individuals with body temperatures below 37° C, higher temperatures indicate lower risk! In this case too, we might resolve the problem with some clever preprocessing. Namely, we might use the distance from 37°C as our feature.
+Monotonluğu ihlal eden örnekleri kolayca bulabileceğimizi unutmayın. Örneğin, vücut ısısına bağlı olarak ölüm olasılığını tahmin etmek istediğimizi varsayalım. Vücut ısısı 37°C'nin (98.6°F) üzerinde olan kişiler için, daha yüksek sıcaklıklar daha büyük riski gösterir. Bununla birlikte, vücut ısısı 37°C'nin altında olan kişiler için, daha yüksek sıcaklıklar daha düşük riski gösterir! Bu durumda da sorunu akıllıca bir ön işlemle çözebiliriz. Yani 37°C'den uzaklığı özniteliğimiz olarak kullanabiliriz.
 
+Peki ya kedi ve köpeklerin resimlerini sınıflandırmaya ne dersiniz? (13, 17) konumundaki pikselin yoğunluğunu artırmak, görüntünün bir köpeği tasvir etme olabilirliğini her zaman artırmalı mı (yoksa her zaman azaltmalı mı)? Doğrusal bir modele güvenmek, kedileri ve köpekleri ayırt etmek için tek gerekliliğin tek tek piksellerin parlaklığını değerlendirmek olduğu şeklindeki örtülü varsayıma karşılık gelir. Bu yaklaşım, bir görüntünün tersine çevrilmesinin kategoriyi koruduğu bir dünyada başarısızlığa mahkumdur.
 
-But what about classifying images of cats and dogs? Should increasing the intensity of the pixel at location (13, 17) always increase (or always decrease) the likelihood that the image depicts a dog? Reliance on a linear model corresponds to the implicit assumption that the only requirement for differentiating cats vs. dogs is to assess the brightness of individual pixels. This approach is doomed to fail in a world where inverting an image preserves the category.
-
-
-And yet despite the apparent absurdity of linearity here, as compared with our previous examples, it is less obvious that we could address the problem with a simple preprocessing fix. That is because the significance of any pixel depends in complex ways on its context (the values of the surrounding pixels). While there might exist a representation of our data that would take into account the relevant interactions among our features, on top of which a linear model would be suitable, we simply do not know how to calculate it by hand. With deep neural networks, we used observational data to jointly learn both a representation via hidden layers and a linear predictor that acts upon that representation.
+Yine de, burada doğrusallığın aşikar saçmalığına rağmen, önceki örneklerimizle karşılaştırıldığında, sorunu basit bir ön işleme düzeltmesiyle çözebileceğimiz daha az açıktır. Bunun nedeni, herhangi bir pikselin anlamının karmaşık yollarla bağlamına (çevreleyen piksellerin değerlerine) bağlı olmasıdır. Verilerimizin özniteliklerimiz arasındaki ilgili etkileşimleri hesaba katan bir temsili olabilir, bunun üzerine doğrusal bir model uygun olabilir, ancak biz bunu elle nasıl hesaplayacağımızı bilmiyoruz. Derin sinir ağlarıyla, hem gizli katmanlar aracılığıyla bir gösterimi hem de bu gösterim üzerinde işlem yapan doğrusal bir tahminciyi birlikte öğrenmek için gözlemsel verileri kullandık.
 
 
-### Incorporating Hidden Layers
+### Gizli Katmanları Birleştirme
 
-We can overcome these limitations of linear models and handle a more general class of functions by incorporating one or more hidden layers. The easiest way to do this is to stack many fully-connected layers on top of each other. Each layer feeds into the layer above it, until we generate outputs. We can think of the first $L-1$ layers as our representation and the final layer as our linear predictor. This architecture is commonly called a *multilayer perceptron*, often abbreviated as *MLP*. Below, we depict an MLP diagrammatically (:numref:`fig_nlp`).
+Doğrusal modellerin bu sınırlamalarının üstesinden gelebiliriz ve bir veya daha fazla gizli katman ekleyerek daha genel işlev sınıflarıyla başa çıkabiliriz. Bunu yapmanın en kolay yolu, tam-bağlı birçok katmanı birbirinin üzerine yığmaktır. Her katman, biz çıktılar üretene kadar üstündeki katmana beslenir. İlk $L-1$ katmanı temsilimiz ve son katmanı da doğrusal tahmincimiz olarak düşünebiliriz. Bu mimariye genellikle *çok katmanlı algılayıcı (multilayer perceptron)* denir ve genellikle *MLP* olarak kısaltılır. Aşağıda, bir MLP'yi şematik olarak tasvir ediyoruz (:numref:`fig_nlp`).
 
-![An MLP with a hidden layer of 5 hidden units. ](../img/mlp.svg)
+![5 gizli birimli bir gizli katmana sahip bir MLP ](../img/mlp.svg)
 :label:`fig_nlp`
 
-This MLP has 4 inputs, 3 outputs, and its hidden layer contains 5 hidden units. Since the input layer does not involve any calculations, producing outputs with this network requires implementing the computations for both the hidden and output layers; thus, the number of layers in this MLP is 2. Note that these layers are both fully connected. Every input influences every neuron in the hidden layer, and each of these in turn influences every neuron in the output layer.
-
-### From Linear to Nonlinear
+Bu MLP'nin 4 girdisi, 3 çıktısı vardır ve gizli katmanı 5 gizli birim içerir. Girdi katmanı herhangi bir hesaplama içermediğinden, bu ağ ile çıktıların üretilmesi hem gizli hem de çıktı katmanları için hesaplamaların gerçekleştirilmesini gerektirir; dolayısıyla, bu MLP'deki katman sayısı 2'dir. Bu katmanların her ikisinin de tam-bağlı olduğuna dikkat edin. Her girdi, gizli katmandaki her nöronu etkiler ve bunların her biri de çıktı katmanındaki her nöronu etkiler.
 
 
-As before, by the matrix $\mathbf{X} \in \mathbb{R}^{n \times d}$, we denote a minibatch of $n$ examples where each example has $d$ inputs (features). For a one-hidden-layer MLP whose hidden layer has $h$ hidden units, denote by $\mathbf{H} \in \mathbb{R}^{n \times h}$ the outputs of the hidden layer. Here, $\mathbf{H}$ is also known as a *hidden-layer variable* or a *hidden variable*. Since the hidden and output layers are both fully connected, we have hidden-layer weights $\mathbf{W}_1 \in \mathbb{R}^{d \times h}$ and biases $\mathbf{b}_1 \in \mathbb{R}^{1 \times h}$ and output-layer weights $\mathbf{W}_2 \in \mathbb{R}^{h \times q}$ and biases $\mathbf{b}_2 \in \mathbb{R}^{1 \times q}$. Formally, we calculate the outputs $\mathbf{X} \in \mathbb{R}^{n \times q}$ of the one-hidden-layer MLP as follows:
+### Doğrusaldan Doğrusal Olmayana
+
+Daha önce olduğu gibi, $\mathbf{X} \in \mathbb{R}^{n \times d}$ matrisiyle, her örneğin $d$ girdisine (öznitelikler) sahip olduğu $n$ örneklerden oluşan bir mini grubu gösteriyoruz. Gizli katmanı $h$ gizli birimlere sahip olan tek gizli katmanlı bir MLP için, gizli katmanın çıktılarını $\mathbf{H} \in \mathbb{R}^{n \times h}$ ile belirtelim. Burada, $\mathbf{H}$ aynı zamanda *gizli katman değişkeni* veya *gizli değişken* olarak da bilinir. Gizli ve çıktı katmanlarının her ikisi de tam-bağlı olduğundan, $\mathbf{W}_1 \in \mathbb{R}^{d \times h}$ ve  $\mathbf{b}_1 \in \mathbb{R}^{1 \times h}$ içinde sırasıyla gizli katman ağırlıkları ve ek girdileri, $$\mathbf{W}_2 \in \mathbb{R}^{h \times q}$ ve $\mathbf{b}_2 \in \mathbb{R}^{1 \times q}$ içinde de çıktı katmanı ağırlıkları ve ek girdileri var. Biçimsel olarak, tek gizli katmanlı MLP'nin $\mathbf{X} \in \mathbb{R}^{n \times q}$ çıktılarını şu şekilde hesaplarız:
+
 
 $$
 \begin{aligned}
@@ -43,21 +42,16 @@ $$
 \end{aligned}
 $$
 
+Gizli katmanı ekledikten sonra, modelimizin artık ek parametre kümelerini izlememizi ve güncellememizi gerektirdiğini unutmayın. Peki karşılığında ne kazandık? Yukarıda tanımlanan modelde *sorunlarımız için hiçbir şey kazanmadığımızı* öğrenmek sizi şaşırtabilir! Nedeni açık. Yukarıdaki gizli birimler, girdilerin bir afin işlevi tarafından verilir ve çıktılar (softmaks-öncesi), gizli birimlerin yalnızca bir afin işlevidir. Bir afin fonksiyonun afin fonksiyonu, kendi başına bir afin fonksiyonudur. Dahası, doğrusal modelimiz zaten herhangi bir afin işlevi temsil edebiliyordu.
 
-
-Note that after adding the hidden layer, our model now requires us to track and update additional sets of parameters. So what have we gained in exchange? You might be surprised to find out that---in the model defined above---*we gain nothing for our troubles*! The reason is plain. The hidden units above are given by an affine function of the inputs, and the outputs (pre-softmax) are just an affine function of the hidden units. An affine function of an affine function is itself an affine function. Moreover, our linear model was already capable of representing any affine function.
-
-
-We can view the equivalence formally by proving that for any values of the weights, we can just collapse out the hidden layer, yielding an equivalent single-layer model with parameters
+Ağırlıkların herhangi bir değeri için gizli katmanı daraltarak parametrelerle eşdeğer bir tek katmanlı model oluşturabileceğimizi kanıtlayarak eşdeğerliği biçimsel olarak görebiliriz.
 $\mathbf{W} = \mathbf{W}_1\mathbf{W}_2$ and $\mathbf{b} = \mathbf{b}_1 \mathbf{W}_2 + \mathbf{b}_2$:
 
 $$
 \mathbf{O} = (\mathbf{X} \mathbf{W}_1 + \mathbf{b}_1)\mathbf{W}_2 + \mathbf{b}_2 = \mathbf{X} \mathbf{W}_1\mathbf{W}_2 + \mathbf{b}_1 \mathbf{W}_2 + \mathbf{b}_2 = \mathbf{X} \mathbf{W} + \mathbf{b}.
 $$
 
-
-In order to realize the potential of multilayer architectures, we need one more key ingredient: a nonlinear *activation function* $\sigma$ to be applied to each hidden unit following the affine transformation. In general, with activation functions in place, it is no longer possible to collapse our MLP into a linear model:
-
+Çok katmanlı mimarilerin potansiyelini gerçekleştirmek için, bir anahtar bileşene daha ihtiyacımız var: Afin dönüşümün ardından her gizli birime uygulanacak doğrusal olmayan $\sigma$ *etkinleştirme (aktivasyon) fonksiyonu*. Genel olarak, etkinleştirme işlevleri yürürlükte olduğunda, MLP'mizi doğrusal bir modele indirgemek artık mümkün değildir:
 
 $$
 \begin{aligned}
@@ -66,14 +60,9 @@ $$
 \end{aligned}
 $$
 
-Since each row in $\mathbf{X}$ corresponds to an example in the minibatch, with some abuse of notation, we define the nonlinearity $\sigma$ to apply to its inputs in a rowwise fashion, i.e., one example at a time. Note that we used the notation for softmax in the same way to denote a rowwise operation in :numref:`subsec_softmax_vectorization`. Often, as in this section, the activation functions that we apply to hidden layers are not merely rowwise, but elementwise. That means that after computing the linear portion of the layer, we can calculate each activation result without looking at the values taken by the other hidden units. This is true for most activation functions.
+$\mathbf{X}$ içindeki her satır, minigruptaki bir örneğe karşılık geldiğinden, birazcık gösterimi kötüye kullanarak, $\sigma$ doğrusal olmama durumunu kendi girdilerine satır-yönlü, yani her seferinde bir örnek olarak uygulanacak şekilde tanımlarız. Softmaks için gösterimi, aynı şekilde, bir satırsal işlemi belirtmek için kullandığımıza dikkat edin :numref:`subsec_softmax_vectorization`. Çoğu zaman, bu bölümde olduğu gibi, gizli katmanlara uyguladığımız etkinleştirme işlevleri yalnızca satır bazında değil, bazen eleman-yönlüdür. Bu, katmanın doğrusal bölümünü hesapladıktan sonra, diğer gizli birimler tarafından alınan değerlere bakmadan her bir etkinleştirme sonucunu hesaplayabileceğimiz anlamına gelir. Bu, çoğu etkinleştirme işlevi için geçerlidir.
 
-
-To build more general MLPs, we can continue stacking
-such hidden layers,
-e.g., $\mathbf{H}_1 = \sigma_1(\mathbf{X} \mathbf{W}_1 + \mathbf{b}_1)$
-and $\mathbf{H}_2 = \sigma_2(\mathbf{H}_1 \mathbf{W}_2 + \mathbf{b}_2)$,
-one atop another, yielding ever more expressive models.
+Daha genel MLP'ler oluşturmak için, bu tür gizli katmanları yığmaya devam edebiliriz, örneğin, $\mathbf{H}_1 = \sigma_1(\mathbf{X} \mathbf{W}_1 + \mathbf{b}_1)$ ve $\mathbf{H}_2 = \sigma_2(\mathbf{H}_1 \mathbf{W}_2 + \mathbf{b}_2)$, birbiri ardına, her zamankinden daha kuvvetli ifade edici modeller üretiyor.
 
 ### Universal Approximators
 
