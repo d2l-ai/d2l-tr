@@ -64,11 +64,11 @@ $\mathbf{X}$ içindeki her satır, minigruptaki bir örneğe karşılık geldiğ
 
 Daha genel MLP'ler oluşturmak için, bu tür gizli katmanları yığmaya devam edebiliriz, örneğin, $\mathbf{H}_1 = \sigma_1(\mathbf{X} \mathbf{W}_1 + \mathbf{b}_1)$ ve $\mathbf{H}_2 = \sigma_2(\mathbf{H}_1 \mathbf{W}_2 + \mathbf{b}_2)$, birbiri ardına, her zamankinden daha kuvvetli ifade edici modeller üretiyor.
 
-### Universal Approximators
+### Evrensel Yaklaşımlar
 
-MLPs can capture complex interactions among our inputs via their hidden neurons, which depend on the values of each of the inputs. We can easily design hidden nodes to perform arbitrary computation, for instance, basic logic operations on a pair of inputs. Moreover, for certain choices of the activation function, it is widely known that MLPs are universal approximators. Even with a single-hidden-layer network, given enough nodes (possibly absurdly many), and the right set of weights, we can model any function, though actually learning that function is the hard part. You might think of your neural network as being a bit like the C programming language. The language, like any other modern language, is capable of expressing any computable program. But actually coming up with a program that meets your specifications is the hard part.
+MLP'ler, girdilerin her birinin değerine bağlı olan gizli nöronları aracılığıyla girdilerimiz arasındaki karmaşık etkileşimleri yakalayabilir. Örneğin, bir çift girdi üzerinde temel mantık işlemleri gibi rastgele hesaplamalar için kolayca gizli düğümler tasarlayabiliriz. Dahası, etkinleştirme fonksiyonunun belli seçimleri için MLP'lerin evrensel yaklaşımcılar olduğu yaygın olarak bilinmektedir. Yeterli düğüm (muhtemelen saçma bir şekilde çok) ve doğru ağırlık kümesi verilen tek gizli katmanlı bir ağla bile, aslında o işlevi öğrenmek zor olan kısım olsa da, herhangi bir işlevi modelleyebiliriz. Sinir ağınızı biraz C programlama dili gibi düşünebilirsiniz. Dil, diğer herhangi bir modern dil gibi, herhangi bir hesaplanabilir programı ifade etme yeteneğine sahiptir. Ama aslında sizin şartnamelerinizi karşılayan bir program bulmak zor kısımdır.
 
-Moreover, just because a single-hidden-layer network *can* learn any function does not mean that you should try to solve all of your problems with single-hidden-layer networks. In fact, we can approximate many functions much more compactly by using deeper (vs. wider) networks. We will touch upon more rigorous arguments in subsequent chapters.
+Dahası, tek gizli katmanlı bir ağın *herhangi bir işlevi öğrenebilmesi*, tüm problemlerinizi tek gizli katmanlı ağlarla çözmeye çalışmanız gerektiği anlamına gelmez. Aslında, daha derin (daha genişe kıyasla) ağları kullanarak birçok işlevi çok daha öz bir şekilde tahmin edebiliriz. Sonraki bölümlerde daha sıkı tartışmalara gireceğiz.
 
 ```{.python .input}
 %matplotlib inline
@@ -91,17 +91,17 @@ from d2l import tensorflow as d2l
 import tensorflow as tf
 ```
 
-## Activation Functions
+## Etkinleştirme Fonksiyonları
 
-Activation functions decide whether a neuron should be activated or not by calculating the weighted sum and further adding bias with it. They are differentiable operators to transform input signals to outputs, while most of them add non-linearity. Because activation functions are fundamental to deep learning, let us briefly survey some common activation functions.
+Etkinleştirme fonksiyonları, ağırlıklı toplamı hesaplayarak ve buna ek girdi ekleyerek bir nöronun aktive edilip edilmeyeceğine karar verir. Girdi sinyallerini çıktılara dönüştürmek için türevlenebilir operatörlerdir ve çoğu doğrusal olmayanlık ekler. Etkinleştirme fonksiyonları derin öğrenme için temel olduğundan, bazı genel etkinleştirme fonksiyonlarını kısaca inceleyelim.
 
-### ReLU Function
+### ReLU İşlevi
 
-The most popular choice, due to both simplicity of implementation and its good performance on a variety of predictive tasks, is the *rectified linear unit* (*ReLU*). ReLU provides a very simple nonlinear transformation. Given an element $x$, the function is defined as the maximum of that element and $0$:
+Hem uygulamanın basitliği hem de çeşitli tahminci görevlerdeki iyi performansı nedeniyle en popüler seçenek, *düzeltilmiş doğrusal birimdir* (*ReLU*). ReLU, çok basit doğrusal olmayan bir dönüşüm sağlar. $x$ öğesi verildiğinde, işlev o öğenin ve $0$'ın maksimum değeri olarak tanımlanır:
 
 $$\operatorname{ReLU}(x) = \max(x, 0).$$
 
-Informally, the ReLU function retains only positive elements and discards all negative elements by setting the corresponding activations to 0. To gain some intuition, we can plot the function. As you can see, the activation function is piecewise linear.
+ReLU işlevi gayri resmi olarak yalnızca pozitif öğeleri tutar ve karşılık gelen etkinleştirmeleri 0'a ayarlayarak tüm negatif öğeleri atar. Biraz önsezi kazanmak için bu işlevi çizebiliriz. Gördüğünüz gibi, aktivasyon fonksiyonu parçalı doğrusaldır.
 
 ```{.python .input}
 x = np.arange(-8.0, 8.0, 0.1)
@@ -125,7 +125,7 @@ y = tf.nn.relu(x)
 d2l.plot(x.numpy(), y.numpy(), 'x', 'relu(x)', figsize=(5, 2.5))
 ```
 
-When the input is negative, the derivative of the ReLU function is 0, and when the input is positive, the derivative of the ReLU function is 1. Note that the ReLU function is not differentiable when the input takes value precisely equal to 0. In these cases, we default to the left-hand-side derivative and say that the derivative is 0 when the input is 0. We can get away with this because the input may never actually be zero. There is an old adage that if subtle boundary conditions matter, we are probably doing (*real*) mathematics, not engineering. That conventional wisdom may apply here. We plot the derivative of the ReLU function plotted below.
+Girdi negatif olduğunda, ReLU fonksiyonunun türevi 0'dır ve giriş pozitif olduğunda ReLU fonksiyonunun türevi 1'dir. Girdi tam olarak 0'a eşit değer aldığında ReLU fonksiyonunun türevlenemeyeceğine dikkat edin. Bu durumlarda, sol taraftaki türevi varsayılan olarak kullanırız ve girdi 0 olduğunda türevin 0 olduğunu söyleriz. Bundan uzak durabiliriz çünkü girdi aslında sıfır olmayabilir. Eski bir özdeyiş vardır, eğer ince sınır koşulları önemliyse, muhtemelen mühendislik değil (*gerçek*) matematik yapıyoruz. Bu geleneksel bilgelik burada geçerli olabilir. Aşağıda ReLU fonksiyonunun türevini çiziyoruz.
 
 ```{.python .input}
 y.backward()
@@ -146,24 +146,23 @@ d2l.plot(x.numpy(), t.gradient(y, x).numpy(), 'x', 'grad of relu',
          figsize=(5, 2.5))
 ```
 
-The reason for using ReLU is that its derivatives are particularly well behaved: either they vanish or they just let the argument through. This makes optimization better behaved and it mitigated the well-documented problem of vanishing gradients that plagued previous versions of neural networks (more on this later).
+ReLU kullanmanın nedeni, türevlerinin özellikle iyi davranılır olmasıdır: Ya kaybolurlar ya da sadece argümanın geçmesine izin verirler. Bu, optimizasyonun daha iyi davranmasını sağlar ve sinir ağlarının önceki sürümlerinin belalısı bilindik gradyanların kaybolması sorununu hafifletir (bu konu hakkında daha sonra tartışacağız).
 
-Note that there are many variants to the ReLU function, including the *parameterized ReLU* (*pReLU*) function :cite:`He.Zhang.Ren.ea.2015`. This variation adds a linear term to ReLU, so some information still gets through, even when the argument is negative:
+*Parametreleştirilmiş ReLU* (*pReLU*) işlevi dahil olmak üzere ReLU işlevinin birçok çeşidi olduğunu unutmayın :cite:`He.Zhang.Ren.ea.2015`. Bu sürüm, ReLU'ya doğrusal bir terim ekler, bu nedenle, argüman negatif olsa bile biraz bilgi yine de geçer:
 
 $$\operatorname{pReLU}(x) = \max(0, x) + \alpha \min(0, x).$$
 
-### Sigmoid Function
+### Sigmoid İşlevi
 
-The *sigmoid function* transforms its inputs, for which values lie in the domain $\mathbb{R}$, to outputs that lie on the interval (0, 1). For that reason, the sigmoid is often called a *squashing function*: it squashes any input in the range (-inf, inf) to some value in the range (0, 1):
+*Sigmoid işlevi*, değerleri $\mathbb{R}$ alanında bulunan girdileri (0, 1) aralığındaki çıktılara dönüştürür. Bu nedenle, sigmoid genellikle *sıkıştırma işlevi* olarak adlandırılır: (-sonsuz, sonsuz) aralığındaki herhangi bir girdiyi (0, 1) aralığındaki bir değere sıkıştırır:
 
 $$\operatorname{sigmoid}(x) = \frac{1}{1 + \exp(-x)}.$$
 
-In the earliest neural networks, scientists were interested in modeling biological neurons which either *fire* or *do not fire*. Thus the pioneers of this field, going all the way back to McCulloch and Pitts, the inventors of the artificial neuron, focused on thresholding units. A thresholding activation takes value 0 when its input is below some threshold and value 1 when the input exceeds the threshold.
+İlk sinir ağlarında, bilim adamları ya *ateşleyen* ya da *ateşlemeyen* biyolojik nöronları modellemekle ilgileniyorlardı. Böylece, yapay nöronun mucitleri McCulloch ve Pitts'e kadar uzanan bu alanın öncüleri, eşikleme birimlerine odaklandılar. Bir eşikleme aktivasyonu, girdisi herhangi bir eşiğin altında olduğunda 0 değerini ve girdi eşiği aştığında 1 değerini alır.
 
+Dikkat gradyan tabanlı öğrenmeye kaydırıldığında, sigmoid işlevi doğal bir seçimdi çünkü bir eşikleme birimine yumuşak, türevlenebilir bir yaklaşımdır. Sigmoidler, çıktıları ikili sınıflandırma problemleri için olasılıklar olarak yorumlamak istediğimizde (sigmoidi softmaksın özel bir durumu olarak düşünebilirsiniz), çıktı birimlerinde etkinleştirme fonksiyonları olarak hala yaygın olarak kullanılmaktadır. Bununla birlikte, çoğu kullanımda gizli katmanlarda sigmoid çoğunlukla daha basit ve daha kolay eğitilebilir ReLU ile değiştirilmiştir. Yinelemeli sinir ağlarıyla ilgili bölümlerde, zaman içinde bilgi akışını kontrol etmek için sigmoid birimlerinden yararlanan mimarilere değineceğiz.
 
-When attention shifted to gradient based learning, the sigmoid function was a natural choice because it is a smooth, differentiable approximation to a thresholding unit. Sigmoids are still widely used as activation functions on the output units, when we want to interpret the outputs as probabilities for binary classification problems (you can think of the sigmoid as a special case of the softmax). However, the sigmoid has mostly been replaced by the simpler and more easily trainable ReLU for most use in hidden layers. In later chapters on recurrent neural networks, we will describe architectures that leverage sigmoid units to control the flow of information across time.
-
-Below, we plot the sigmoid function. Note that when the input is close to 0, the sigmoid function approaches a linear transformation.
+Aşağıda sigmoid fonksiyonunu çiziyoruz. Girdi 0'a yakın olduğunda, sigmoid fonksiyonunun doğrusal bir dönüşüme yaklaştığını unutmayın.
 
 ```{.python .input}
 with autograd.record():
@@ -183,12 +182,11 @@ y = tf.nn.sigmoid(x)
 d2l.plot(x.numpy(), y.numpy(), 'x', 'sigmoid(x)', figsize=(5, 2.5))
 ```
 
-The derivative of the sigmoid function is given by the following equation:
+Sigmoid fonksiyonunun türevi aşağıdaki denklemde verilmiştir:
 
 $$\frac{d}{dx} \operatorname{sigmoid}(x) = \frac{\exp(-x)}{(1 + \exp(-x))^2} = \operatorname{sigmoid}(x)\left(1-\operatorname{sigmoid}(x)\right).$$
 
-
-The derivative of the sigmoid function is plotted below. Note that when the input is 0, the derivative of the sigmoid function reaches a maximum of 0.25. As the input diverges from 0 in either direction, the derivative approaches 0.
+Sigmoid fonksiyonunun türevi aşağıda çizilmiştir. Girdi 0 olduğunda, sigmoid fonksiyonunun türevinin maksimum 0.25'e ulaştığını fark edin. Girdi her iki yönde de 0'dan uzaklaştıkça, türev 0'a yaklaşır.
 
 ```{.python .input}
 y.backward()
@@ -211,13 +209,13 @@ d2l.plot(x.numpy(), t.gradient(y, x).numpy(), 'x', 'grad of sigmoid',
          figsize=(5, 2.5))
 ```
 
-### Tanh Function
+### Tanh İşlevi
 
-Like the sigmoid function, the tanh (hyperbolic tangent) function also squashes its inputs, transforming them into elements on the interval between -1 and 1:
+Sigmoid işlevi gibi, tanh (hiperbolik tanjant) işlevi de girdilerini sıkıştırarak -1 ile 1 aralığındaki öğelere dönüştürür:
 
 $$\operatorname{tanh}(x) = \frac{1 - \exp(-2x)}{1 + \exp(-2x)}.$$
 
-We plot the tanh function below. Note that as the input nears 0, the tanh function approaches a linear transformation. Although the shape of the function is similar to that of the sigmoid function, the tanh function exhibits point symmetry about the origin of the coordinate system.
+Tanh fonksiyonunu aşağıda çiziyoruz. Girdi 0'a yaklaştıkça tanh fonksiyonunun doğrusal bir dönüşüme yaklaştığına dikkat edin. Fonksiyonun şekli sigmoid fonksiyonuna benzer olmasına rağmen, tanh fonksiyonu koordinat sisteminin orijinine göre nokta simetrisi sergiler.
 
 ```{.python .input}
 with autograd.record():
@@ -237,11 +235,11 @@ y = tf.nn.tanh(x)
 d2l.plot(x.numpy(), y.numpy(), 'x', 'tanh(x)', figsize=(5, 2.5))
 ```
 
-The derivative of the tanh function is:
+Tanh fonksiyonunun türevi şöyledir:
 
 $$\frac{d}{dx} \operatorname{tanh}(x) = 1 - \operatorname{tanh}^2(x).$$
 
-The derivative of tanh function is plotted below. As the input nears 0, the derivative of the tanh function approaches a maximum of 1. And as we saw with the sigmoid function, as the input moves away from 0 in either direction, the derivative of the tanh function approaches 0.
+Tanh fonksiyonunun türevi aşağıda çizilmiştir. Girdi 0'a yaklaştıkça, tanh fonksiyonunun türevi maksimum 1'e yaklaşır. Sigmoid fonksiyonunda gördüğümüz gibi, girdi her iki yönde de 0'dan uzaklaştıkça, tanh fonksiyonunun türevi 0'a yaklaşır.
 
 ```{.python .input}
 y.backward()
@@ -264,29 +262,28 @@ d2l.plot(x.numpy(), t.gradient(y, x).numpy(), 'x', 'grad of tanh',
          figsize=(5, 2.5))
 ```
 
-In summary, we now know how to incorporate nonlinearities to build expressive multilayer neural network architectures. As a side note, your knowledge already puts you in command of a similar toolkit to a practitioner circa 1990. In some ways, you have an advantage over anyone working in the 1990s, because you can leverage powerful open-source deep learning frameworks to build models rapidly, using only a few lines of code. Previously, training these networks required researchers to code up thousands of lines of C and Fortran.
+Özetle, artık etkileyici çok katmanlı sinir ağı mimarileri oluşturmak için doğrusal olmayanlıkları nasıl birleştireceğimizi biliyoruz. Bir yan not olarak, bilginiz sizi zaten 1990 civarında bir uygulayıcıya benzer bir araç setinin yönetebilmenizi sağlamaktadir. Bazı yönlerden, 1990'larda çalışan herhangi birine göre bir avantajınız var, çünkü sadece birkaç satır kod kullanarak hızlı modeller oluşturmak için güçlü açık kaynaklı derin öğrenme çerçevelerinden yararlanabilirsiniz. Daha önce, bu ağları eğitmek, araştırmacıların binlerce C ve Fortran satırını kodlamasını gerektiriyordu.
 
-## Summary
+## Özet
 
-* MLP adds one or multiple fully-connected hidden layers between the output and input layers and transforms the output of the hidden layer via an activation function.
-* Commonly-used activation functions include the ReLU function, the sigmoid function, and the tanh function.
+* MLP, çıktı ve girdi katmanları arasına bir veya birden fazla tam-bağlı gizli katman ekler ve gizli katmanın çıktısını bir etkinleştirme işlevi aracılığıyla dönüştürür.
+* Yaygın olarak kullanılan etkinleştirme işlevleri arasında ReLU işlevi, sigmoid işlevi ve tanh işlevi bulunur.
 
+## Alıştırmalar
 
-## Exercises
-
-1. Compute the derivative of the pReLU activation function.
-1. Show that an MLP using only ReLU (or pReLU) constructs a continuous piecewise linear function.
-1. Show that $\operatorname{tanh}(x) + 1 = 2 \operatorname{sigmoid}(2x)$.
-1. Assume that we have a nonlinearity that applies to one minibatch at a time. What kinds of problems do you expect this to cause?
+1. pReLU etkinleştirme fonksiyonunun türevini hesaplayın.
+1. Yalnızca ReLU (veya pReLU) kullanan bir MLP'nin sürekli bir parçalı doğrusal fonksiyon oluşturduğunu gösterin.
+1. $\operatorname{tanh}(x) + 1 = 2 \operatorname{sigmoid}(2x)$ olduğunu gösterin.
+1. Bir seferde bir minigruba uygulanan bir doğrusal olmayanlık durumumuz olduğunu varsayalım. Bunun ne tür sorunlara neden olmasını beklersiniz?
 
 :begin_tab:`mxnet`
-[Discussions](https://discuss.d2l.ai/t/90)
+[Tartışmalar](https://discuss.d2l.ai/t/90)
 :end_tab:
 
 :begin_tab:`pytorch`
-[Discussions](https://discuss.d2l.ai/t/91)
+[Tartışmalar](https://discuss.d2l.ai/t/91)
 :end_tab:
 
 :begin_tab:`tensorflow`
-[Discussions](https://discuss.d2l.ai/t/226)
+[Tartışmalar](https://discuss.d2l.ai/t/226)
 :end_tab:

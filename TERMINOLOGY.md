@@ -1,4 +1,5 @@
 ## Terimler
+
 bias -> sinir ağlarında ek girdi
 
 bias -> algoritmalardaki yanlılık
@@ -22,3 +23,5 @@ regularization -> düzenlileştirme
 softmax -> eşiksiz en büyük işlev veya softmaks
 
 stochastic -> rasgele
+
+recurrent neural network -> yinelemeli sinir ağı
