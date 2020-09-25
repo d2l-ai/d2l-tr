@@ -20,6 +20,8 @@ regression -> bağlanım veya regresyon
 
 regularization -> düzenlileştirme
 
+sample -> örneklem
+
 softmax -> eşiksiz en büyük işlev veya softmaks
 
 stochastic -> rasgele
