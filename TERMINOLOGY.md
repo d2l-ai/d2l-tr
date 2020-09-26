@@ -8,9 +8,13 @@ descent -> iniş
 
 dropout ->  hattan düşme
 
+early stopping -> erken durdurma
+
 gradient -> gradyan, eğim
 
 fully-connected -> tam-bağlı
+
+holdout -> harici tutulan
 
 loss function ->  kayıp ve yitim fonksiyonu
 
@@ -27,3 +31,5 @@ softmax -> eşiksiz en büyük işlev veya softmaks
 stochastic -> rasgele
 
 recurrent neural network -> yinelemeli sinir ağı
+
+validation set -> geçerleme kümesi

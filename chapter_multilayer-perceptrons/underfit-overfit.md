@@ -41,75 +41,74 @@ Sonraki bölümlerde, i.i.d varsayım ihlallerinden kaynaklanan sorunları tart�
 
 Modellerimizi eğittiğimizde, eğitim verilerine mümkün olduğu kadar uyan bir işlev aramaya çalışırız. İşlev, gerçek ilişkilendirmeler kadar kolay sahte desenleri yakalayabilecek kadar esnekse, görünmeyen verileri iyi genelleyen bir model üretmeden *çok iyi* performans gösterebilir. Bu tam olarak kaçınmak istediğimiz şeydir (veya en azından kontrol etmek istediğimiz). Derin öğrenmedeki tekniklerin çoğu, aşırı öğrenmeye karşı korumayı amaçlayan sezgisel yöntemler ve hilelerdir.
 
-### Model Complexity
 
-When we have simple models and abundant data, we expect the generalization error to resemble the training error. When we work with more complex models and fewer examples, we expect the training error to go down but the generalization gap to grow. What precisely constitutes model complexity is a complex matter. Many factors govern whether a model will generalize well. For example a model with more parameters might be considered more complex. A model whose parameters can take a wider range of values might be more complex. Often with neural networks, we think of a model that takes more training steps as more complex, and one subject to *early stopping* as less complex.
+### Model Karmaşıklığı
 
-It can be difficult to compare the complexity among members of substantially different model classes (say a decision tree vs. a neural network). For now, a simple rule of thumb is quite useful: A model that can readily explain arbitrary facts is what statisticians view as complex, whereas one that has only a limited expressive power but still manages to explain the data well is probably closer to the truth. In philosophy, this is closely related to Popper’s criterion of [falsifiability](https://en.wikipedia.org/wiki/Falsifiability) of a scientific theory: a theory is good if it fits data and if there are specific tests that can be used to disprove it. This is important since all statistical estimation is [post hoc](https://en.wikipedia.org/wiki/Post_hoc), i.e., we estimate after we observe the facts, hence vulnerable to the associated fallacy. For now, we will put the philosophy aside and stick to more tangible issues.
+Basit modellere ve bol veriye sahip olduğumuzda, genelleme hatasının eğitim hatasına benzemesini bekleriz. Daha karmaşık modellerle ve daha az örnekle çalıştığımızda, eğitim hatasının azalmasını, ancak genelleme açığının artmasını bekliyoruz. Model karmaşıklığını tam olarak oluşturan şey karmaşık bir konudur. Bir modelin iyi bir genelleme yapıp yapmayacağını birçok etken belirler. Örneğin, daha fazla parametresi olan bir model daha karmaşık kabul edilebilir. Parametrelerini daha geniş bir değer aralığından alabilen bir model daha karmaşık olabilir. Genellikle sinir ağlarında, daha fazla eğitim adımı atan bir modeli daha karmaşık olarak ve *erken durdurma*ya maruz kalan bir modeli daha az karmaşık olarak düşünürüz.
 
-In this section, to give you some intuition, we’ll focus on a few factors that tend to influence the generalizability of a model class:
+Aşırı farklı model sınıflarının üyeleri arasındaki karmaşıklığı karşılaştırmak zor olabilir (örneğin, bir karar ağacına karşı bir sinir ağı). Şimdilik, basit bir pratik kural oldukça kullanışlıdır: Gelişigüzel gerçekleri kolayca açıklayabilen bir modeli istatistikçiler karmaşık olarak görünürken, yalnızca sınırlı bir ifade gücüne sahip olan ancak yine de verileri iyi açıklamayı başaran model muhtemelen gerçeğe daha yakındır. Felsefede bu, Popper'ın bilimsel bir teorinin [yanlışlanabilirlik](https://en.wikipedia.org/wiki/Falsifiability) kriteriyle yakından ilgilidir: Bir teori, verilere uyuyorsa ve onu çürütebilecek belirli testler varsa iyidir. çürütmek için kullanılmalıdır. Bu önemlidir, çünkü tüm istatistiksel tahminler [olay sonrasıdır (post hoc)](https://en.wikipedia.org/wiki/Post_hoc), yani gerçekleri gözlemledikten sonra tahmin ederiz, dolayısıyla ilgili yanılgılara karşı savunmasız kalırız. Şimdilik felsefeyi bir kenara bırakıp daha somut meselelere bağlı kalacağız.
 
-1. The number of tunable parameters. When the number of tunable parameters, sometimes called the *degrees of freedom*, is large, models tend to be more susceptible to overfitting.
-1. The values taken by the parameters. When weights can take a wider range of values, models can be more susceptible to overfitting.
-1. The number of training examples. It’s trivially easy to overfit a dataset containing only one or two examples even if your model is simple. But overfitting a dataset with millions of examples requires an extremely flexible model.
+Bu bölümde, size biraz sezgi vermek için, bir model sınıfının genelleştirilebilirliğini etkileme eğiliminde olan birkaç etmene odaklanacağız:
 
-
-## Model Selection
-
-In machine learning, we usually select our final model after evaluating several candidate models. This process is called model selection. Sometimes the models subject to comparison are fundamentally different in nature (say, decision trees vs linear models). At other times, we are comparing members of the same class of models that have been trained with different hyperparameter settings.
-
-With multilayer perceptrons, for example, we may wish to compare models with different numbers of hidden layers, different numbers of hidden units, and various choices of the activation functions applied to each hidden layer. In order to determine the best among our candidate models, we will typically employ a validation set.
+1. Ayarlanabilir parametrelerin sayısı. Bazen *serbestlik derecesi* olarak adlandırılan ayarlanabilir parametrelerin sayısı büyük olduğunda, modeller aşırı öğrenmeye daha duyarlı olma eğilimindedir.
+1. Parametrelerin aldığı değerler. Ağırlıklar daha geniş bir değer aralığı alabildiğinde, modeller aşırı öğrenmeye daha duyarlı olabilir.
+1. Eğitim örneklerinin sayısı. Modeliniz basit olsa bile, yalnızca bir veya iki örnek içeren bir veri kümesinde aşırı öğrenmek çok kolaydır. Ancak milyonlarca örnekli bir veri kümesini aşırı öğrenmek, son derece esnek bir model gerektirir.
 
 
-### Validation Dataset
+## Model Seçimi
 
-In principle we should not touch our test set until after we have chosen all our hyper-parameters. Were we to use the test data in the model selection process, there is a risk that we might overfit the test data. Then we would be in serious trouble. If we overfit our training data, there is always the evaluation on test data to keep us honest. But if we overfit the test data, how would we ever know?
+Makine öğrenmesinde, genellikle birkaç aday modeli değerlendirdikten sonra son modelimizi seçeriz. Bu işleme model seçimi denir. Bazen karşılaştırmaya konu olan modeller doğalari gereği temelden farklıdır (örneğin, karar ağaçları ve doğrusal modeller). Diğer zamanlarda, farklı hiperparametre ayarlarıyla eğitilmiş aynı model sınıfının üyelerini karşılaştırıyoruz.
 
-
-Thus, we should never rely on the test data for model selection. And yet we cannot rely solely on the training data for model selection either because we cannot estimate the generalization error on the very data that we use to train the model.
-
-
-In practical applications, the picture gets muddier. While ideally we would only touch the test data once, to assess the very best model or to compare a small number of models to each other, real-world test data is seldom discarded after just one use. We can seldom afford a new test set for each round of experiments.
-
-The common practice to address this problem is to split our data three ways, incorporating a *validation set* in addition to the training and test sets.
-
-The result is a murky practice where the boundaries between validation and test data are worryingly ambiguous. Unless explicitly stated otherwise, in the experiments in this book we are really working with what should rightly be called training data and validation data, with no true test sets. Therefore, the accuracy reported in each experiment is really the validation accuracy and not a true test set accuracy. The good news is that we do not need too much data in the validation set. The uncertainty in our estimates can be shown to be of the order of $\mathcal{O}(n^{-\frac{1}{2}})$.
+Örneğin, çok katmanlı algılayıcılarda, modelleri farklı sayıda gizli katman, farklı sayıda gizli birim ve her gizli katmana uygulanan çeşitli etkinleştirme işlevleri seçenekleriyle karşılaştırma yapmak isteyebiliriz. Aday modellerimiz arasında en iyisini belirlemek için, genellikle bir geçerleme kümesi kullanırız.
 
 
-### $K$-Fold Cross-Validation
+### Geçerleme Veri Kümesi
 
-When training data is scarce, we might not even be able to afford to hold out enough data to constitute a proper validation set. One popular solution to this problem is to employ $K$*-fold cross-validation*. Here, the original training data is split into $K$ non-overlapping subsets. Then model training and validation are executed $K$ times, each time training on $K-1$ subsets and validating on a different subset (the one not used for training in that round). Finally, the training and validation error rates are estimated by averaging over the results from the $K$ experiments.
+Prensip olarak, tüm hiper parametrelerimizi seçinceye kadar test kümemize dokunmamalıyız. Model seçim sürecinde test verilerini kullanacak olursak, test verilerini aşırı öğrenme riski vardır. O zaman ciddi bir belaya girerdik. Eğitim verilerimizi aşırı öğrenirsek, test verileri üzerinden değerlendirme her zaman bizi dürüst tutmak için oradadır. Ama test verilerini aşırı öğrenirsek, nasıl bilebiliriz?
+
+Bu nedenle, model seçimi için asla test verilerine güvenmemeliyiz. Yine, model seçimi için yalnızca eğitim verilerine güvenemeyiz çünkü modeli eğitmek için kullandığımız verilerdeki genelleme hatasını tahmin edemiyoruz.
+
+Pratik uygulamalarda resim bulanıklaşır. İdeal olarak, en iyi modeli değerlendirmek veya az sayıda modeli birbiriyle karşılaştırmak için test verilerine yalnızca bir kez dokunsak da, gerçek dünya test verileri nadiren tek bir kullanımdan sonra atılır. Her deney turu için nadiren yeni bir test kümesi alabiliriz.
+
+Bu sorunu ele almaya yönelik yaygın uygulama, verilerimizi eğitim ve test kümelerine bir de *geçerleme kümesi* ekleyerek üçe bölmektir.
+
+Sonuç, geçerleme ve test verileri arasındaki sınırların endişe verici derecede bulanık olduğu belirsiz bir uygulamadır. Açıkça aksi belirtilmedikçe, bu kitaptaki deneylerde, gerçek test kümeleri olmadan, gerçekte haklı olarak eğitim verileri ve geçerleme verileri olarak adlandırılması gerekenlerle çalışıyoruz. Bu nedenle, her deneyde bildirilen doğruluk, gerçekte geçerleme doğruluğudur ve gerçek bir test kümesi doğruluğu değildir. İyi haber şu ki, geçerleme kümesinde çok fazla veriye ihtiyacımız yok. Tahminlerimizdeki belirsizliğin $\mathcal{O}(n^{-\frac{1}{2}})$ mertebesinde olduğu gösterilebilir.
 
 
-## Underfitting or Overfitting?
+### $K$-Kat Çapraz Geçerleme
 
-When we compare the training and validation errors, we want to be mindful of two common situations: First, we want to watch out for cases when our training error and validation error are both substantial but there is a little gap between them. If the model is unable to reduce the training error, that could mean that our model is too simple (i.e., insufficiently expressive) to capture the pattern that we are trying to model. Moreover, since the *generalization gap* between our training and validation errors is small, we have reason to believe that we could get away with a more complex model. This phenomenon is known as underfitting.
+Eğitim verisi kıt olduğunda, uygun bir geçerleme kümesi oluşturmak için yeterli veriyi tutmaya bile imkanımız olmayabilir. Bu soruna popüler bir çözüm, $K$*-kat çapraz geçerleme* kullanmaktır. Burada, esas eğitim verileri $K$ tane çakışmayan alt kümeye bölünmüştür. Ardından, model eğitimi ve geçerleme, her seferinde $K-1$ tane alt küme üzerinde eğitim ve farklı bir alt kümede (bu turda eğitim için kullanılmayan) geçerleme olmak üzere, $K$ kez yürütülür. Son olarak, eğitim ve geçerleme hata oranları $K$ deneyden elde edilen sonuçların ortalaması alınarak tahmin edilir.
 
-On the other hand, as we discussed above, we want to watch out for the cases when our training error is significantly lower than our validation error, indicating severe overfitting. Note that overfitting is not always a bad thing. With deep learning especially, it is well known that the best predictive models often perform far better on training data than on holdout data. Ultimately, we usually care more about the validation error than about the gap between the training and validation errors.
 
-Whether we overfit or underfit can depend both on the complexity of our model and the size of the available training datasets, two topics that we discuss below.
+## Eksik veya Aşırı Öğrenme?
 
-### Model Complexity
+Eğitim ve geçerleme hatalarını karşılaştırdığımızda, iki genel duruma dikkat etmek istiyoruz: Birincisi, eğitim hatamızın ve geçerleme hatamızın hem önemli hem de aralarında küçük bir boşluk olduğu durumlara dikkat etmek istiyoruz. Model eğitim hatasını azaltamıyorsa, bu, modelimizin modellemeye çalıştığımız deseni yakalamak için çok basit (yani, yeterince ifade edici değil) olduğu anlamına gelebilir. Dahası, eğitim ve geçerleme hatalarımız arasındaki *genelleme boşluğu* küçük olduğundan, daha karmaşık bir modelden kurtulabileceğimize inanmak için nedenimiz var. Bu olgu, eksik öğrenme olarak bilinir.
 
-To illustrate some classical intuition about overfitting and model complexity, we give an example using polynomials. Given training data consisting of a single feature $x$ and a corresponding real-valued label $y$, we try to find the polynomial of degree $d$
+Öte yandan, yukarıda tartıştığımız gibi, eğitim hatamızın geçerleme hatamızdan önemli ölçüde düşük olduğu ve ciddi şekilde aşırı öğrenme gösterdiği durumlara dikkat etmek istiyoruz. Aşırı öğrenmenin her zaman kötü bir şey olmadığını unutmayın. Özellikle derin öğrenmede, en iyi tahminci modellerin çoğu zaman eğitim verilerinde harici tutulan verilerden çok daha iyi performans gösterdiği iyi bilinmektedir. Sonuç olarak, genellikle eğitim ve geçerleme hataları arasındaki boşluktan daha ziyade geçerleme hatasını önemsiyoruz.
+
+Aşırı mı yoksa yetersiz mi öğrendiğimiz, hem modelimizin karmaşıklığına hem de mevcut eğitim veri kümelerinin boyutuna bağlı olabilir, bu iki konuyu aşağıda tartışıyoruz.
+
+
+### Model Karmaşıklığı
+
+Aşırı öğrenme ve model karmaşıklığı hakkında bazı klasik sezgileri göstermek için, polinomların kullanıldığı bir örnek veriyoruz. Tek bir $x$ özniteliği ve buna karşılık gelen gerçel değerli bir $y$ etiketinden oluşan eğitim verileri verildiğinde, $d$ dereceli polinomunu bulmaya çalışıyoruz.
 
 $$\hat{y}= \sum_{i=0}^d x^i w_i$$
 
-to estimate the labels $y$. This is just a linear regression problem where our features are given by the powers of $x$, the model's weights are given by $w_i$, and the bias is given by $w_0$ since $x^0 = 1$ for all $x$. Since this is just a linear regression problem, we can use the squared error as our loss function.
+Amacımız $y$ etiketlerini tahmin etmek. Bu, özniteliklerimizin $x$'in kuvvetleri tarafından, modelin ağırlıklarının $w_i$ tarafından ve tüm $x$ için $x^0 = 1$ olduğu ek girdinin $w_0$ tarafından verildiği doğrusal bir regresyon problemidir. Bu sadece doğrusal bir regresyon problemi olduğundan, kayıp fonksiyonumuz olarak hata karesini kullanabiliriz.
 
+Daha yüksek dereceden bir polinom fonksiyonu, daha düşük dereceli bir polinom fonksiyonundan daha karmaşıktır, çünkü yüksek dereceli polinom daha fazla parametreye sahiptir ve model fonksiyonunun seçim aralığı daha geniştir. Eğitim veri kümesini sabitlersek, yüksek dereceli polinom fonksiyonları, düşük dereceli polinomlara göre her zaman daha düşük (en kötü durumda, eşit) eğitim hatası elde etmelidir. Aslında, veri noktalarının her biri farklı $x$ değerlerine sahip olduğunda, veri noktalarının sayısına eşit dereceye sahip bir polinom fonksiyonu, eğitim kümesine mükemmel şekilde oturabilir. Polinom derecesi ile eksik ve aşırı öğrenme arasındaki ilişkiyi :numref:`fig_capacity_vs_error` şeklinde görselleştiriyoruz.
 
-A higher-order polynomial function is more complex than a lower order polynomial function, since the higher-order polynomial has more parameters and the model function’s selection range is wider. Fixing the training dataset, higher-order polynomial functions should always achieve lower (at worst, equal) training error relative to lower degree polynomials. In fact, whenever the data points each have a distinct value of $x$, a polynomial function with degree equal to the number of data points can fit the training set perfectly. We visualize the relationship between polynomial degree and under- vs over-fitting in :numref:`fig_capacity_vs_error`.
-
-![Influence of Model Complexity on Underfitting and Overfitting](../img/capacity_vs_error.svg)
+![Eksik ve aşırı öğrenmenin model karmaşıklığına etkisi](../img/capacity_vs_error.svg)
 :label:`fig_capacity_vs_error`
 
-### Dataset Size
+### Veri Kümesinin Boyutu
 
-The other big consideration to bear in mind is the dataset size. Fixing our model, the fewer samples we have in the training dataset, the more likely (and more severely) we are to encounter overfitting. As we increase the amount of training data, the generalization error typically decreases. Moreover, in general, more data never hurts. For a fixed task and data *distribution*, there is typically a relationship between model complexity and dataset size. Given more data, we might profitably attempt to fit a more complex model. Absent sufficient data, simpler models may be difficult to beat. For many tasks, deep learning only outperforms linear models when many thousands of training examples are available. In part, the current success of deep learning owes to the current abundance of massive datasets due to Internet companies, cheap storage, connected devices, and the broad digitization of the economy.
+Akılda tutulması gereken diğer büyük husus, veri kümesinin boyutudur. Modelimizi sabitlediğimizde, eğitim veri kümesinde ne kadar az numuneye sahip olursak, aşırı öğrenme ile karşılaşma olasılığımız o kadar (ve daha şiddetli) olacaktır. Eğitim verisi miktarını artırdıkça, genelleme hatası tipik olarak azalır. Dahası, genel olarak, daha fazla veri asla zarar vermez. Sabit bir görev ve veri *dağılımı* için, genellikle model karmaşıklığı ve veri kümesi boyutu arasında bir ilişki vardır. Daha fazla veri verildiğinde, karlı bir şekilde daha karmaşık bir model öğrenmeye teşebbüs edebiliriz. Yeterli veri olmadığında, daha basit modellerin alt edilmesi zor olabilir. Birçok görev için, derin öğrenme yalnızca binlerce eğitim örneği mevcut olduğunda doğrusal modellerden daha iyi performans gösterir. Kısmen, derin öğrenme mevcut başarısını, İnternet şirketleri, ucuz depolama, bağlı cihazlar ve ekonominin geniş dijitalleşmesi nedeniyle mevcut büyük veri kümelerinin bolluğuna borçludur.
 
-## Polynomial Regression
+## Polinom Regresyon
 
-We can now explore these concepts interactively by fitting polynomials to data. To get started we will import our usual packages.
+Polinomları verilere oturturken artık bu kavramları etkileşimli olarak keşfedebiliriz. Başlarken her zamanki paketlerimizi içe aktaracağız.
 
 ```{.python .input}
 from d2l import mxnet as d2l
@@ -136,14 +135,14 @@ import numpy as np
 import math
 ```
 
-### Generating the Dataset
+### Veri Kümesini Üretme
 
-First we need data. Given $x$, we will use the following cubic polynomial to generate the labels on training and test data:
+Önce verilere ihtiyacımız var. $x$ verildiğinde, eğitim ve test verileriyle ilgili etiketleri oluşturmak için aşağıdaki kübik polinomu kullanacağız:
 
 $$y = 5 + 1.2x - 3.4\frac{x^2}{2!} + 5.6 \frac{x^3}{3!} + \epsilon \text{ where }
 \epsilon \sim \mathcal{N}(0, 0.1).$$
 
-The noise term $\epsilon$ obeys a normal distribution with a mean of 0 and a standard deviation of 0.1. We will synthesize 100 samples each for the training set and test set.
+Gürültü terimi $\epsilon$, ortalaması 0 ve standart sapması 0.1 olan normal bir dağılıma uyar. Eğitim ve test kümelerinin her biri için 100 örnek sentezleyeceğiz.
 
 ```{.python .input}
 #@tab all
@@ -161,9 +160,9 @@ labels = np.dot(poly_features, true_w)
 labels += np.random.normal(scale=0.1, size=labels.shape)
 ```
 
-For optimization, we typically want to avoid very large values of gradients, losses, etc. This is why the monomials stored in `poly_features` are rescaled from $x^i$ to $\frac{1}{i!} x^i$. It allows us to avoid very large values for large exponents $i$. We use the Gamma function from the math module, where $n! = \Gamma(n+1)$.
+Optimizasyon için, genellikle çok büyük gradyan, kayıp vb. değerlerinden kaçınmak isteriz. `poly_features` içinde depolanan tek terimlilerin $x^i$'den $\frac{1}{i!} x^i$'ye kadar yeniden ölçeklendirilmesinin nedeni budur. Büyük üsler, $i$, için çok büyük değerlerden kaçınmamızı sağlar. Gamma fonksiyonunu matematik modülünden kullanıyoruz, burada $n! = \Gamma(n+1)$'dir.
 
-Take a look at the first 2 samples from the generated dataset. The value 1 is technically a feature, namely the constant feature corresponding to the bias.
+Üretilen veri kümesinden ilk 2 örneğe bir göz atın. 1 değeri teknik olarak bir özelliktir, yani ek girdiye karşılık gelen sabit özelliktir.
 
 ```{.python .input}
 #@tab all
@@ -184,9 +183,9 @@ true_w, features, poly_features, labels = [tf.constant(x, dtype=tf.float32)
     for x in [true_w, features, poly_features, labels]]
 ```
 
-### Training and Testing Model
+### Model Eğitimi ve Testi 
 
-Let us first implement a function to evaluate the loss on a given data.
+Önce belirli bir verideki kaybı değerlendirmek için bir fonksiyon uygulayalım.
 
 ```{.python .input}
 def evaluate_loss(net, data_iter, loss):  #@save
@@ -219,7 +218,7 @@ def evaluate_loss(net, data_iter, loss):  #@save
     return metric[0] / metric[1]
 ```
 
-Now define the training function.
+Şimdi eğitim işlevini tanımlayın.
 
 ```{.python .input}
 def train(train_features, test_features, train_labels, test_labels,
@@ -299,9 +298,9 @@ def train(train_features, test_features, train_labels, test_labels,
     print('weight:', net.get_weights()[0].T)
 ```
 
-### Third-Order Polynomial Function Fitting (Normal)
+### Üçüncü Dereceden Polinom Fonksiyon Oturtma (Normal)
 
-We will begin by first using a third-order polynomial function with the same order as the data generation function. The results show that this model’s training error rate when using the testing dataset is low. The trained model parameters are also close to the true values $w = [5, 1.2, -3.4, 5.6]$.
+İlk olarak, veri oluşturma işlevi ile aynı dereceye sahip üçüncü dereceden bir polinom işlevini kullanarak başlayacağız. Sonuçlar, test veri setini kullanırken bu modelin eğitim hatası oranının düşük olduğunu göstermektedir. Eğitilen model parametreleri de $w = [5, 1.2, -3.4, 5.6]$ gerçek değerlerine yakındır.
 
 ```{.python .input}
 #@tab all
@@ -311,9 +310,9 @@ train(poly_features[:n_train, 0:4], poly_features[n_train:, 0:4],
       labels[:n_train], labels[n_train:])
 ```
 
-### Linear Function Fitting (Underfitting)
+### Doğrusal Fonksiyon Uydurma (Eksik Öğrenme)
 
-Let’s take another look at linear function fitting. After the decline in the early epoch, it becomes difficult to further decrease this model’s training error rate. After the last epoch iteration has been completed, the training error rate is still high. When used to fit non-linear patterns (like the third-order polynomial function here) linear models are liable to underfit.
+Doğrusal fonksiyon oturtmaya başka bir bakış atalım. Erken dönemdeki düşüşten sonra, bu modelin eğitim hatası oranını daha da düşürmek zorlaşır. Son dönem yinelemesi tamamlandıktan sonra, eğitim hatası oranı hala yüksektir. Doğrusal olmayan desenleri (buradaki üçüncü dereceden polinom işlevi gibi) uydurmak için kullanıldığında doğrusal modeller eksik öğrenme gösterme eğilimindedir.
 
 ```{.python .input}
 #@tab all
@@ -322,11 +321,11 @@ train(poly_features[:n_train, 0:3], poly_features[n_train:, 0:3],
       labels[:n_train], labels[n_train:])
 ```
 
-### Insufficient Training (Overfitting)
+### Yetersiz Eğitim (Aşırı Öğrenme)
 
-Now let us try to train the model using a polynomial of too high degree. Here, there is insufficient data to learn that the higher-degree coefficients should have values close to zero. As a result, our overly-complex model is far too susceptible to being influenced by noise in the training data. Of course, our training error will now be low (even lower than if we had the right model!) but our test error will be high.
+Şimdi modeli çok yüksek dereceli bir polinom kullanarak eğitmeye çalışalım. Burada, daha yüksek dereceli katsayıların sıfıra yakın değerlere sahip olması gerektiğini öğrenmek için yeterli veri yoktur. Sonuç olarak, aşırı karmaşık modelimiz, eğitim verilerindeki gürültüden etkilenmeye çok fazla duyarlıdır. Tabii ki, eğitim hatamız şimdi düşük olacak (hatta doğru modelde sahip olduğumuzdan daha düşük!) ama test hatamız yüksek olacak.
 
-Try out different model complexities (`n_degree`) and training set sizes (`n_subset`) to gain some intuition of what is happening.
+Neler olduğuna dair bir sezgi edinmek için farklı model karmaşıklıklarını (`n_degree`) ve eğitim seti boyutlarını (`n_subset`) deneyin.
 
 ```{.python .input}
 #@tab all
@@ -337,36 +336,35 @@ train(poly_features[1:n_subset, 0:n_degree],
       labels[n_train:])
 ```
 
-In later chapters, we will continue to discuss overfitting problems and methods for dealing with them, such as weight decay and dropout.
+Daha sonraki bölümlerde, aşırı öğrenme problemlerini ve bunlarla başa çıkma yöntemlerini, örneğin ağırlık sönümü ve hattan düşme gibi, tartışmaya devam edeceğiz.
+
+## Özet
+
+* Genelleme hata oranı eğitim hata oranına dayalı olarak tahmin edilemediğinden, basitçe eğitim hata oranını en aza indirmek, genelleme hata oranında bir azalma anlamına gelmeyecektir. Makine öğrenmesi modellerinin, genelleme hatasını en aza indirgerken aşırı öğrenmeye karşı koruma sağlamak için dikkatli olması gerekir.
+* Model seçimi için bir geçerleme kümesi kullanılabilir (çok serbest kullanılmaması koşuluyla).
+* Eksik öğrenme, modelin eğitim hata oranını azaltamadığı anlamına gelirken, aşırı öğrenme, model eğitim hata oranının test veri kümesi oranından çok daha düşük olmasının bir sonucudur.
+* Uygun şekilde karmaşık bir model seçmeli ve yetersiz eğitim örneklemleri kullanmaktan kaçınmalıyız.
 
 
-## Summary
+## Alıştırmalar
 
-* Since the generalization error rate cannot be estimated based on the training error rate, simply minimizing the training error rate will not necessarily mean a reduction in the generalization error rate. Machine learning models need to be careful to safeguard against overfitting such as to minimize the generalization error.
-* A validation set can be used for model selection (provided that it is not used too liberally).
-* Underfitting means that the model is not able to reduce the training error rate, while overfitting is a result of the model training error rate being much lower than the testing dataset rate.
-* We should choose an appropriately complex model and avoid using insufficient training samples.
-
-
-## Exercises
-
-1. Can you solve the polynomial regression problem exactly? Hint: use linear algebra.
-1. Model selection for polynomials
-    * Plot the training error vs. model complexity (degree of the polynomial). What do you observe?
-    * Plot the test error in this case.
-    * Generate the same graph as a function of the amount of data?
-1. What happens if you drop the normalization of the polynomial features $x^i$ by $1/i!$. Can you fix this in some other way?
-1. What degree of polynomial do you need to reduce the training error to 0?
-1. Can you ever expect to see 0 generalization error?
+1. Polinom regresyon problemini tam olarak çözebilir misiniz? İpucu: Doğrusal cebir kullanın.
+1. Polinomlar için model seçimi
+     * Model karmaşıklığına (polinom derecesi) karşı eğitim hatasını çizin. Ne gözlemliyorsunuz?
+     * Bu durumda test hatasını çizin.
+     * Veri miktarının bir fonksiyonu olarak aynı grafiği oluşturabilir misiniz?
+1. $x^i$ polinom özniteliklerinin normalleşmesini, $1/i!$, düşürürseniz ne olur. Bunu başka bir şekilde düzeltebilir misiniz?
+1. Eğitim hatasını 0'a düşürmek için ne derece polinom gerekir?
+1. 0 genelleme hatası görmeyi bekleyebilir misiniz?
 
 :begin_tab:`mxnet`
-[Discussions](https://discuss.d2l.ai/t/96)
+[Tartışmalar](https://discuss.d2l.ai/t/96)
 :end_tab:
 
 :begin_tab:`pytorch`
-[Discussions](https://discuss.d2l.ai/t/97)
+[Tartışmalar](https://discuss.d2l.ai/t/97)
 :end_tab:
 
 :begin_tab:`tensorflow`
-[Discussions](https://discuss.d2l.ai/t/234)
+[Tartışmalar](https://discuss.d2l.ai/t/234)
 :end_tab:
