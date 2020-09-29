@@ -9,32 +9,31 @@ Polinom eğri oturtturma örneğimizde (:numref:`sec_model_selection`), modelimi
 
 $d$ derecesine sahip terimlerin sayısının, $d$ büyüdükçe hızla arttığını unutmayın. $k$ değişkenleri verildiğinde, $d$ derecesindeki tek terimli sayıların sayısı ${k - 1 + d} \choose {k - 1}$ olur. Diyelim ki $2$'den $3$'e kadar olan küçük derece değişiklikler bile modelimizin karmaşıklığını önemli ölçüde artırır. Bu nedenle, işlev karmaşıklığını ayarlamak için genellikle daha ince ayarlı bir araca ihtiyaç duyarız.
 
-## Squared Norm Regularization
+## Kare Norm Düzenlileştirmesi
 
-*Weight decay* (commonly called *L2* regularization), might be the most widely-used technique for regularizing parametric machine learning models. The technique is motivated by the basic intuition that among all functions $f$, the function $f = 0$ (assigning the value $0$ to all inputs) is in some sense the *simplest*, and that we can measure the complexity of a function by its distance from zero. But how precisely should we measure the distance between a function and zero? There is no single right answer. In fact, entire branches of mathematics, including parts of functional analysis and the theory of Banach spaces, are devoted to answering this issue.
+*Ağırlık sönümü* (genellikle *L2* düzenlileştirme olarak adlandırılır), parametrik makine öğrenmesi modellerini düzenlemek için en yaygın kullanılan teknik olabilir. Teknik, tüm $f$ işlevleri arasında, $f = 0$ işlevinin (tüm girdilere $0$ değerini atayarak) bir anlamda *en basit* olduğu ve sıfırdan uzaklığına göre bir fonksiyonun karmaşıklığını ölçebileceğimiz temel sezgisi tarafından motive edilir. Fakat bir fonksiyon ile sıfır arasındaki mesafeyi ne kadar kesinlikle ölçmeliyiz? Tek bir doğru cevap yok. Aslında, fonksiyonel analiz bölümleri ve Banach uzayları teorisi de dahil olmak üzere matematiğin tüm dalları, bu sorunu yanıtlamaya adanmıştır.
 
-One simple interpretation might be to measure the complexity of a linear function $f(\mathbf{x}) = \mathbf{w}^\top \mathbf{x}$ by some norm of its weight vector, e.g., $|| \mathbf{w} ||^2$. The most common method for ensuring a small weight vector is to add its norm as a penalty term to the problem of minimizing the loss. Thus we replace our original objective, *minimize the prediction loss on the training labels*, with new objective, *minimize the sum of the prediction loss and the penalty term*. Now, if our weight vector grows too large, our learning algorithm might *focus* on minimizing the weight norm $|| \mathbf{w} ||^2$ vs. minimizing the training error. That is exactly what we want. To illustrate things in code, let us revive our previous example from :numref:`sec_linear_regression` for linear regression. There, our loss was given by
+Basit bir yorumlama, bir $f(\mathbf{x}) = \mathbf{w}^\top \mathbf{x}$ doğrusal fonksiyonunun karmaşıklığını, ağırlık vektörünün bir normu ile ölçmek olabilir, örneğin, $|| \mathbf{w} ||^2$ gibi. Küçük bir ağırlık vektörü sağlamanın en yaygın yöntemi, onun normunu, kaybın en aza indirilmesi problemine bir ceza terimi olarak eklemektir. Böylece orijinal amaç fonksiyonumuzu, *eğitim etiketlerindeki tahmin kaybını en aza indirmek*, yeni bir maç fonksiyonu ile değiştiriyor, *tahmin kaybı ile ceza teriminin toplamını en aza indiriyoruz*. Şimdi, ağırlık vektörümüz çok büyürse, öğrenme algoritmamız eğitim hatasını en aza indirmeye karşı $|| \mathbf{w} ||^2$ ağırlık normunu en aza indirmeye *odaklanabilir*. Bu tam olarak istediğimiz şey. Bu şeyleri kodda örneklendirmek için, önceki doğrusal regresyon örneğimiz :numref:`sec_linear_regression`'i canlandıralım. Kaybımız şöyle verilir:
 
 $$l(\mathbf{w}, b) = \frac{1}{n}\sum_{i=1}^n \frac{1}{2}\left(\mathbf{w}^\top \mathbf{x}^{(i)} + b - y^{(i)}\right)^2.$$
 
-Recall that $\mathbf{x}^{(i)}$ are the observations, $y^{(i)}$ are labels, and $(\mathbf{w}, b)$ are the weight and bias parameters respectively. To penalize the size of the weight vector, we must somehow add $|| \mathbf{w} ||^2$ to the loss function, but how should the model trade off the standard loss for this new additive penalty? In practice, we characterize this tradeoff via the *regularization constant* $\lambda > 0$, a non-negative hyperparameter that we fit using validation data:
+$\mathbf{x}^{(i)}$'in gözlemler, $y^{(i)}$'nin etiketler ve $(\mathbf{w}, b)$ değerlerinin sırasıyla ağırlık ve ek girdi parametreleri olduğunu hatırlayın. Ağırlık vektörünün büyüklüğünü cezalandırmak için, bir şekilde $|| \mathbf{w} ||^2$'yi kayıp fonksiyonuna eklemeliyiz, ancak model bu yeni ilave ceza ile standart kaybı nasıl bir değiş tokuşa sokmalıdır? Pratikte, bu değiş tokuşu, geçerleme verilerini kullanarak öğrendiğimiz negatif olmayan bir hiperparametre, yani *düzenlileştirme sabiti* $\lambda> 0$ ile karakterize ediyoruz:
 
 $$l(\mathbf{w}, b) + \frac{\lambda}{2} \|\mathbf{w}\|^2.$$
 
-For $\lambda = 0$, we recover our original loss function. For $\lambda > 0$, we restrict the size of $|| \mathbf{w} ||$. The astute reader might wonder why we work with the squared norm and not the standard norm (i.e., the Euclidean distance). We do this for computational convenience. By squaring the L2 norm, we remove the square root, leaving the sum of squares of each component of the weight vector. This makes the derivative of the penalty easy to compute (the sum of derivatives equals the derivative of the sum).
+$\lambda = 0$ için, esas kayıp fonksiyonumuzu elde ediyoruz. $\lambda> 0$ için, $|| \mathbf{w} ||$'in boyutunu kısıtlıyoruz. Dikkatli okuyucular, neden standart normla (yani Öklid mesafesi) değil de kare normla çalıştığımızı merak edebilirler. Bunu hesaplama kolaylığı için yapıyoruz. L2 normunun karesini alarak, karekökü kaldırıyoruz ve ağırlık vektörünün her bir bileşeninin karelerinin toplamını bakıyoruz. Bu, cezanın türevini hesaplamayı kolaylaştırır (türevlerin toplamı, toplamın türevine eşittir).
 
-Moreover, you might ask why we work with the L2 norm in the first place and not, say, the L1 norm.
+Dahası, neden ilk olarak L2 normuyla çalıştığımızı ve örneğin L1 normuyla çalışmadığımızı sorabilirsiniz.
 
-In fact, other choices are valid and popular throughout statistics. While L2-regularized linear models constitute the classic *ridge regression* algorithm, L1-regularized linear regression is a similarly fundamental model in statistics (popularly known as *lasso regression*).
+Aslında, diğer seçenekler geçerli ve istatistiksel bakımdan popülerdir. L2-regresyonlu doğrusal modeller klasik *sırt regresyon* algoritmasını oluştururken, L1-regresyonlu doğrusal regresyon benzer şekilde istatistikte temel bir modeldir (popüler olarak *kement regresyon* diye bilinir).
 
-More generally, the $\ell_2$ is just one among an infinite class of norms call p-norms, many of which you might encounter in the future. In general, for some number $p$, the $\ell_p$ norm is defined as
+Daha genel olarak, $\ell_2$, birçoğu gelecekte karşılaşabileceğiniz p-normlar adı verilen sonsuz bir norm sınıfından sadece biridir. Genel olarak, herhangibir $p$ sayısı için, $\ell_p$ normu şu şekilde tanımlanır:
 
 $$\|\mathbf{w}\|_p^p := \sum_{i=1}^d |w_i|^p.$$
 
+L2 normuyla çalışmanın bir nedeni, ağırlık vektörünün büyük bileşenlerine daha büyük cezalar verilmesidir. Bu, öğrenme algoritmamızı, ağırlığı daha fazla sayıda özniteliğe eşit olarak dağıtan modellere doğru yönlendirir. Uygulamada, bu onları tek bir değişkendeki ölçüm hatasına karşı daha gürbüz hale getirebilir. Aksine, L1 cezaları, ağırlığı küçük bir öznitelik kümesine yoğunlaştıran modellere yol açar ve bu, başka nedenlerden dolayı istenebilir.
 
-One reason to work with the L2 norm is that it places and outsize penalty on large components of the weight vector. This biases our learning algorithm towards models that distribute weight evenly across a larger number of features. In practice, this might make them more robust to measurement error in a single variable. By contrast, L1 penalties lead to models that concentrate weight on a small set of features, which may be desirable for other reasons.
-
-The stochastic gradient descent updates for L2-regularized regression follow:
+L2 ile düzenlileştirilmiş regresyon için rasgele gradyan iniş güncellemeleri aşağıdaki gibidir:
 
 $$
 \begin{aligned}
@@ -42,17 +41,16 @@ $$
 \end{aligned}
 $$
 
-As before, we update $\mathbf{w}$ based on the amount by which our estimate differs from the observation. However, we also shrink the size of $\mathbf{w}$ towards $0$. That is why the method is sometimes called "weight decay": given the penalty term alone, our optimization algorithm *decays* the weight at each step of training. In contrast to feature selection, weight decay offers us a continuous mechanism for adjusting the complexity of $f$. Small values of $\lambda$ correspond to unconstrained $\mathbf{w}$, whereas large values of $\lambda$ constrain $\mathbf{w}$ considerably. Whether we include a corresponding bias penalty $b^2$ can vary across implementations, and may vary across layers of a neural network. Often, we do not regularize the bias term of a network's output layer.
+Daha önce olduğu gibi, $\mathbf{w}$'yu tahminimizin gözlemden farklı olduğu miktara göre güncelliyoruz. Bununla birlikte, $\mathbf{w}$'nun boyutunu $0$'a doğru küçültürüz. Bu nedenle, bu yönteme bazen "ağırlık sönümü" adı verilir: Yalnızca ceza terimi verildiğinde, optimizasyon algoritmamız, eğitimin her adımında ağırlığı *söndürür*. Özellik seçiminin tersine, ağırlık sönümü bize $f$'nin karmaşıklığını ayarlamak için süregelen bir mekanizma sunar. Küçük $\lambda$ değerleri, kısıtlanmamış $\mathbf{w}$'ya karşılık gelirken, büyük $\lambda$ değerleri $\mathbf{w}$'yu önemli ölçüde kısıtlar. Karşılık gelen ek girdi cezasını, $b^2$'yi, dahil edip etmememiz, uygulamalar arasında değişebilir ve hatta bir sinir ağının katmanları arasında değişebilir. Genellikle, bir ağın çıktı katmanının ek girdi terimini düzenli hale getirmeyiz.
 
+## Yüksek Boyutlu Doğrusal Regresyon
 
-## High-Dimensional Linear Regression
-
-We can illustrate the benefits of weight decay over feature selection through a simple synthetic example. First, we generate some data as before
+Basit bir sentetik örnekle ağırlık sönümlenmesinin öznitelik seçimi üzerinde faydalarını gösterebiliriz. İlk önce, daha önce olduğu gibi biraz veri oluşturuyoruz:
 
 $$y = 0.05 + \sum_{i = 1}^d 0.01 x_i + \epsilon \text{ where }
 \epsilon \sim \mathcal{N}(0, 0.01).$$
 
-choosing our label to be a linear function of our inputs, corrupted by Gaussian noise with zero mean and variance 0.01. To make the effects of overfitting pronounced, we can increase the dimensionality of our problem to $d = 200$ and work with a small training set containing only 20 examples.
+Etiketimizi girdilerimizin sıfır ortalamalı ve 0.01 varyanslı Gauss gürültüsüyle bozulmuş doğrusal bir fonksiyonundan seçeriz. Aşırı öğrenmenin etkilerini belirgin hale getirmek için, problemimizin boyutsallığını $d = 200$'e çıkarabilir ve sadece 20 örnek içeren küçük bir eğitim kümesi ile çalışabiliriz.
 
 ```{.python .input}
 %matplotlib inline
@@ -98,13 +96,13 @@ test_data = d2l.synthetic_data(true_w, true_b, n_test)
 test_iter = d2l.load_array(test_data, batch_size, is_train=False)
 ```
 
-## Implementation from Scratch
+## Sıfırdan Uygulama
 
-Next, we will implement weight decay from scratch, simply by adding the squared $\ell_2$ penalty to the original target function.
+Daha sonra, orijinal hedef işlevine basitçe kare $\ell_2$ cezasını ekleyerek, ağırlık sönümünü sıfırdan uygulayacağız.
 
-### Initializing Model Parameters
+### Model Parametrelerini İlkletme
 
-First, we will define a function to randomly initialize our model parameters and allocate memory for the gradients we will calculate.
+İlk olarak, model parametrelerimizi rastgele ilkletmek için bir fonksiyon tanımlayacağız ve hesaplayacağımız gradyanlar için bellek ayıracağız.
 
 ```{.python .input}
 def init_params():
@@ -131,9 +129,9 @@ def init_params():
     return [w, b]
 ```
 
-### Defining $\ell_2$ Norm Penalty
+### $\ell_2$ Norm Cezasının Tanımlanması
 
-Perhaps the most convenient way to implement this penalty is to square all terms in place and sum them up. We divide by $2$ by convention (when we take the derivative of a quadratic function, the $2$ and $1/2$ cancel out, ensuring that the expression for the update looks nice and simple).
+Belki de bu cezayı uygulamanın en uygun yolu, tüm terimlerin karesini almak ve bunları toplamaktır. Genel kanıya göre $2$'ye bölüyoruz (ikinci dereceden bir fonksiyonun türevini aldığımızda, $2$ ve $1/2$ birbirini götürerek güncelleme ifadesinin güzel ve basit görünmesini sağlar).
 
 ```{.python .input}
 def l2_penalty(w):
@@ -152,9 +150,9 @@ def l2_penalty(w):
     return tf.reduce_sum(tf.pow(w, 2)) / 2
 ```
 
-### Defining the Train and Test Functions
+### Eğitim ve Test İşlevlerini Tanımlama
 
-The following code fits a model on the training set and evaluates it on the test set. The linear network and the squared loss have not changed since the previous chapter, so we will just import them via `d2l.linreg` and `d2l.squared_loss`. The only change here is that our loss now includes the penalty term.
+Aşağıdaki kod, eğitim kümesine bir model uyarlar ve onu test kümesinde değerlendirir. Doğrusal ağ ve kare kayıp önceki bölümden bu yana değişmedi, bu yüzden onları sadece `d2l.linreg` ve `d2l.squared_loss` yoluyla içe aktaracağız. Buradaki tek değişiklik, kaybımızın artık ceza terimi içermesidir.
 
 ```{.python .input}
 def train(lambd):
@@ -221,38 +219,38 @@ def train(lambd):
     print('l1 norm of w:', tf.norm(w).numpy())
 ```
 
-### Training without Regularization
+### Düzenleştirmesiz Eğitim
 
-We now run this code with `lambd = 0`, disabling weight decay. Note that we overfit badly, decreasing the training error but not the test error---a textook case of overfitting.
+Şimdi bu kodu `lambd = 0` ile çalıştırarak ağırlık sönümünp devre dışı bırakıyoruz. Kötü bir şekilde fazla öğrendiğimizi, eğitim hatasını azalttığımızı ancak test hatasını azaltmadığımızı unutmayın---bir aşırı öğrenme ders kitabı vakası.
 
 ```{.python .input}
 #@tab all
 train(lambd=0)
 ```
 
-### Using Weight Decay
+### Ağırlık Sönümünü Kullanma
 
-Below, we run with substantial weight decay. Note that the training error increases but the test error decreases. This is precisely the effect we expect from regularization. As an exercise, you might want to check that the $\ell_2$ norm of the weights $\mathbf{w}$ has actually decreased.
+Aşağıda, önemli ölçüde ağırlık sönümü ile çalışıyoruz. Eğitim hatasının arttığını ancak test hatasının azaldığını unutmayın. Düzenlileştirmeden beklediğimiz etki tam da budur. Alıştırma olarak, $\mathbf{w}$ ağırlıklarının $\ell_2$ normunun gerçekten azaldığını kontrol etmek isteyebilirsiniz.
 
 ```{.python .input}
 #@tab all
 train(lambd=3)
 ```
 
-## Concise Implementation
+## Kısa Uygulama
 
-Because weight decay is ubiquitous in neural network optimization, the deep learning framework makes it especially convenient, integrating weight decay into the optimization algorithm itself for easy use in combination with any loss function. Moreover, this integration serves a computational benefit, allowing implementation tricks to add weight decay to the algorithm, without any additional computational overhead. Since the weight decay portion of the update depends only on the current value of each parameter, and the optimizer must touch each parameter once anyway.
+Ağırlık sönümü sinir ağı optimizasyonunda her yerde mevcut olduğu için, derin öğrenme çerçevesi, herhangi bir kayıp fonksiyonuyla birlikte kolay kullanım için ağırlık sönümü optimizasyon algoritmasını kendisine kaynaştırarak bunu özellikle kullanışlı hale getirir. Dahası, bu kaynaştırma, herhangi bir ek hesaplama yükü olmaksızın, uygulama marifetlerinin algoritmaya ağırlık sönümü eklemesine izin vererek hesaplama avantajı sağlar. Güncellemenin ağırlık sönümü kısmı yalnızca her bir parametrenin mevcut değerine bağlı olduğundan ve optimize edicinin herhalükarda her parametreye bir kez dokunması gerekir.
 
 :begin_tab:`mxnet`
-In the following code, we specify the weight decay hyperparameter directly through `wd` when instantiating our `Trainer`. By default, Gluon decays both weights and biases simultaneously. Note that the hyperparameter `wd` will be multiplied by `wd_mult` when updating model parameters. Thus, if we set `wd_mult` to $0$, the bias parameter $b$ will not decay.
+Aşağıdaki kodda, ağırlık sönümü hiper parametresini, `Trainer` (Eğitici) örneğimizi oluştururken doğrudan `wd` aracılığıyla belirtiyoruz. Varsayılan olarak Gluon hem ağırlıkları hem de ek girdileri aynı anda azaltır. Model parametreleri güncellenirken hiperparametre `wd`nin `wd_mult` ile çarpılacağına dikkat edin. Bu nedenle, `wd_mult`i $0$ olarak ayarlarsak, ek girdi parametresi $b$ sönmeyecektir.
 :end_tab:
 
 :begin_tab:`pytorch`
-In the following code, we specify the weight decay hyperparameter directly through `weight_decay` when instantiating our optimizer. By default, PyTorch decays both weights and biases simultaneously. Here we only set `weight_decay` for the weight, so the bias parameter $b$ will not decay.
+Aşağıdaki kodda, optimize edicimizi başlatırken ağırlık sönümü hiper parametresini doğrudan `weight_decay` aracılığıyla belirtiyoruz. PyTorch varsayılan olarak hem ağırlıkları hem de ek girdileri aynı anda azaltır. Burada ağırlık için yalnızca `weight_decay`'i ayarlıyoruz, böylece ek girdi parametresi $b$ sönmeyecektir.
 :end_tab:
 
 :begin_tab:`tensorflow`
-In the following code, we create a `l2` regularizer with the weight decay hyperparameter `wd` and apply it to the layer through the `kernel_regularizer` argument.
+Aşağıdaki kodda, ağırlık sönümü hiper parametresi `wd` ile bir `l2` düzenlileştirici oluşturuyoruz ve bunu katmana `kernel_regularizer` argümanı aracılığıyla uyguluyoruz.
 :end_tab:
 
 ```{.python .input}
@@ -337,7 +335,7 @@ def train_concise(wd):
     print('L1 norm of w:', tf.norm(net.get_weights()[0]).numpy())
 ```
 
-The plots look identical to those when we implemented weight decay from scratch. However, they run appreciably faster and are easier to implement, a benefit that will become more pronounced for large problems.
+Grafikler, ağırlık sönümünü sıfırdan uyguladığımızdakilerle aynı görünüyor. Bununla birlikte, önemli ölçüde daha hızlı çalışırlar ve uygulanması daha kolaydır, bu fayda büyük sorunlar için daha belirgin hale gelecektir.
 
 ```{.python .input}
 #@tab all
@@ -349,34 +347,35 @@ train_concise(0)
 train_concise(3)
 ```
 
-So far, we only touched upon one notion of what constitutes a simple *linear* function. Moreover, what constitutes a simple *nonlinear* function can be an even more complex question. For instance, [Reproducing Kernel Hilbert Spaces (RKHS)](https://en.wikipedia.org/wiki/Reproducing_kernel_Hilbert_space) allows one to apply tools introduced for linear functions in a nonlinear context. Unfortunately, RKHS-based algorithms tend to scale purely to large, high-dimensional data. In this book we will default to the simple heuristic of applying weight decay on all layers of a deep network.
-
-## Summary
-
-* Regularization is a common method for dealing with overfitting. It adds a penalty term to the loss function on the training set to reduce the complexity of the learned model.
-* One particular choice for keeping the model simple is weight decay using an $\ell_2$ penalty. This leads to weight decay in the update steps of the learning algorithm.
-* The weight decay functionality is provided in optimizers from deep learning frameworks.
-* You can have different optimizers within the same training loop, e.g., for different sets of parameters.
+Şimdiye kadar, basit bir *doğrusal* işlevi neyin oluşturduğuna dair yalnızca bir fikre değindik. Dahası, basit *doğrusal olmayan* bir işlevi neyin oluşturduğu daha da karmaşık bir soru olabilir. Örneğin, [Çekirdek Hilbert Uzaylarını Çoğaltma (Reproducing Kernel Hilbert Spaces - RKHS)](https://en.wikipedia.org/wiki/Reproducing_kernel_Hilbert_space), doğrusal  olmayan bir bağlamda doğrusal fonksiyonlar için tanınmış araçları uygulamaya izin verir. Ne yazık ki, RKHS tabanlı algoritmalar tamamen büyük, yüksek boyutlu verilere ölçeklenme eğilimindedir. Bu kitapta, derin bir ağın tüm katmanlarına ağırlık sönümü uygulamanın basit sezgisel yöntemini varsayılan olarak alacağız.
 
 
-## Exercises
+## Özet
 
-1. Experiment with the value of $\lambda$ in the estimation problem in this page. Plot training and test accuracy as a function of $\lambda$. What do you observe?
-1. Use a validation set to find the optimal value of $\lambda$. Is it really the optimal value? Does this matter?
-1. What would the update equations look like if instead of $\|\mathbf{w}\|^2$ we used $\sum_i |w_i|$ as our penalty of choice (this is called $\ell_1$ regularization).
-1. We know that $\|\mathbf{w}\|^2 = \mathbf{w}^\top \mathbf{w}$. Can you find a similar equation for matrices (mathematicians call this the [Frobenius norm](https://en.wikipedia.org/wiki/Matrix_norm#Frobenius_norm))?
-1. Review the relationship between training error and generalization error. In addition to weight decay, increased training, and the use of a model of suitable complexity, what other ways can you think of to deal with overfitting?
-1. In Bayesian statistics we use the product of prior and likelihood to arrive at a posterior via $P(w \mid x) \propto P(x \mid w) P(w)$. How can you identify $P(w)$ with regularization?
+* Düzenlileştirme, aşırı öğrenme ile başa çıkmak için yaygın bir yöntemdir. Öğrenilen modelin karmaşıklığını azaltmak için eğitim kümesindeki kayıp işlevine bir ceza terimi ekler.
+* Modeli basit tutmak için belirli bir seçenek, $\ell_2$ ceza kullanarak ağırlık sönümlemektir. Bu, öğrenme algoritmasının güncelleme adımlarında ağırlık sönümüne yol açar.
+* Ağırlık sönümü işlevi, derin öğrenme çerçevelerinden optimize edicilerde sağlanır.
+* Aynı eğitim döngüsü içinde farklı optimize edicileriniz olabilir; örneğin farklı parametre grupları için.
+
+
+## Alıştırmalar
+
+1. Bu sayfadaki tahmin probleminde $\lambda$ değeri ile deney yapınız. Eğitim ve test doğruluğunu $\lambda$ işlevinin bir işlevi olarak çizin. Ne gözlemliyorsunuz?
+1. En uygun $\lambda$ değerini bulmak için bir geçerleme kümesi kullanın. Gerçekten optimal değer bu mudur? Bu önemli mi?
+1. $\|\mathbf{w}\|^2$ yerine ceza seçimi olarak $\sum_i |w_i|$ kullansaydık (buna $\ell_1$ düzenlileştirme denir) güncelleme denklemleri nasıl görünürdü?
+1. $\|\mathbf{w}\|^2 = \mathbf{w}^\top \mathbf{w}$ olduğunu biliyoruz. Matrisler için benzer bir denklem bulabilir misiniz (matematikçiler buna [Frobenius normu](https://en.wikipedia.org/wiki/Matrix_norm#Frobenius_norm) diyorlar)?
+1. Eğitim hatası ile genelleme hatası arasındaki ilişkiyi gözden geçirin. Ağırlık sönümü, artan eğitim kümesi ve uygun karmaşıklık modelinin kullanılmasına ek olarak, aşırı öğrenme ile başa çıkmak için başka ne gibi yollar düşünebilirsiniz?
+1. Bayesçi istatistikte, $P(w \mid x) \propto P(x \mid w) P(w)$ aracılığıyla bir sonsal olasılığın ve önsel olasılığın çarpımını kullanırız. $P(w)$'yi düzenlileştirme ile nasıl tanımlayabilirsiniz?
 
 
 :begin_tab:`mxnet`
-[Discussions](https://discuss.d2l.ai/t/98)
+[Tartışmalar](https://discuss.d2l.ai/t/98)
 :end_tab:
 
 :begin_tab:`pytorch`
-[Discussions](https://discuss.d2l.ai/t/99)
+[Tartışmalar](https://discuss.d2l.ai/t/99)
 :end_tab:
 
 :begin_tab:`tensorflow`
-[Discussions](https://discuss.d2l.ai/t/236)
+[Tartışmalar](https://discuss.d2l.ai/t/236)
 :end_tab:
