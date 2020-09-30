@@ -1,8 +1,6 @@
 # Ağırlık Sönümü
 :label:`sec_weight_decay`
 
-Thus we often need a more fine-grained tool for adjusting function complexity.
-
 Artık aşırı öğrenme sorununu tanımladığımıza göre, modelleri düzenlileştirmek için bazı standart tekniklerle tanışabiliriz. Dışarı çıkıp daha fazla eğitim verisi toplayarak aşırı öğrenmeyi her zaman azaltabileceğimizi hatırlayın. Bu maliyetli, zaman alıcı veya tamamen kontrolümüz dışında olabilir ve kısa vadede koşturmayı imkansız hale getirebilir. Şimdilik, kaynaklarımızın izin verdiği kadar yüksek kaliteli veriye sahip olduğumuzu ve düzenlileştirmek tekniklerine odaklandığımızı varsayabiliriz.
 
 Polinom eğri oturtturma örneğimizde (:numref:`sec_model_selection`), modelimizin kapasitesini sadece yerleştirilmiş polinomun derecesini ayarlayarak sınırlayabileceğimizi hatırlayın. Gerçekten de, özniteliklerin sayısını sınırlamak, aşırı öğrenmeyi önlemek için popüler bir tekniktir. Bununla birlikte, öznitelikleri bir kenara atmak, iş için çok patavatsız bir araç olabilir. Polinom eğrisi oturtma örneğine bağlı kalarak, yüksek boyutlu girdilerde neler olabileceğini düşünün. Polinomların çok değişkenli verilere doğal uzantıları, basitçe değişkenlerin güçlerinin çarpımı, *tek terimli* olarak adlandırılır. Bir tek terimliğin derecesi, güçlerin toplamıdır. Örneğin, $x_1^2 x_2$ ve $x_3 x_5^2$'nin her ikisi de §3$ dereceli tek terimlidir.

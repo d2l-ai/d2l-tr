@@ -12,6 +12,8 @@ early stopping -> erken durdurma
 
 gradient -> gradyan, eğim
 
+feature -> öznitelik
+
 fully-connected -> tam-bağlı
 
 holdout -> harici tutulan
@@ -38,10 +40,14 @@ sample -> örneklem
 
 softmax -> eşiksiz en büyük işlev veya softmaks
 
+spam -> yaramaz posta
+
 stochastic -> rasgele
 
 recurrent neural network -> yinelemeli sinir ağı
 
 validation set -> geçerleme kümesi
+
+variance -> değişinti 
 
 weight decay -> ağırlık sönümü
