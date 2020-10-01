@@ -1,8 +1,12 @@
 ## Terimler
 
+backpropagation -> geri yayma
+
 bias -> sinir ağlarında ek girdi
 
 bias -> algoritmalardaki yanlılık
+
+co-adaptation -> birlikte-uyarlama
 
 descent -> iniş
 
@@ -24,9 +28,13 @@ loss function ->  kayıp ve yitim fonksiyonu
 
 minibatch -> minigrup
 
+perturbation -> düzensizlik
+
 posterior -> sonsal olasılık
 
 prior -> önsel olasılık
+
+recurrent neural network -> yinelemeli sinir ağı
 
 regression -> bağlanım veya regresyon
 
@@ -44,7 +52,7 @@ spam -> yaramaz posta
 
 stochastic -> rasgele
 
-recurrent neural network -> yinelemeli sinir ağı
+uniform -> tekdüze
 
 validation set -> geçerleme kümesi
 

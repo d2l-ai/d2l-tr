@@ -3,7 +3,7 @@
 
 :numref:`sec_weight_decay` içinde, ağırlıkların $\ell_2$ normunu cezalandırarak istatistiksel modelleri düzenlileştirmek için klasik yaklaşımı tanıttık. Olasılıksal terimlerle, ağırlıkların ortalaması $0$ bir Gauss dağılımından değerler aldığına dair önsel bir inancı varsaydığımızı iddia ederek bu tekniği haklı gösterebiliriz. Daha sezgisel olarak, modeli, az sayıdaki muhtemel sahte ilişkilere çok fazla bağlı yapmak yerine, ağırlıklarını birçok özniteliğe dağıtmaya teşvik ettiğimizi iddia edebiliriz.
 
-## Aşırı Öğrenme Tekrarı
+## Aşırı Öğrenmeye Tekrar Bakış
 
 Örneklerden daha fazla öznitelikle karşı karşıya kalan doğrusal modeller, aşırı öğrenme eğilimindedir. Ancak özniteliklerden daha fazla örnek verildiğinde, genellikle doğrusal modellere aşırı öğrenmeme için güvenebiliriz. Ne yazık ki, doğrusal modellerin genelleştirildiği güvenilirliğin bir bedeli vardır: Naif olarak uygulanan doğrusal modeller, öznitelikler arasındaki etkileşimleri hesaba katmaz. Doğrusal bir model, her öznitelik için bağlamı yok sayarak pozitif veya negatif bir ağırlık atamalıdır.
 
@@ -15,23 +15,23 @@ Derin sinir ağları, yanlılık-değişinti spektrumunun diğer ucunda bulunur.
 
 Bunun ne anlama geldiğini bir düşünün. Etiketler rastgele atanırsa ve 10 sınıf varsa, hiçbir sınıflandırıcı harici tutulan verilerinde %10'den daha iyi doğruluk sağlayamaz. Buradaki genelleme açığı %90 gibi büyük bir oran. Modellerimiz bu kadar aşırı öğrenebilecek kadar ifade edici ise, o zaman ne zaman aşırı öğrenmemelerini beklemeliyiz? Derin ağların kafa karıştırıcı genelleme özelliklerinin matematiksel temelleri, açık araştırma soruları olmaya devam ediyor ve teori yönelimli okuyucuyu bu konuda daha derine inmeye teşvik ediyoruz. Şimdilik, derin ağların genelleştirilmesini (deneysel olarak) iyileştirme eğiliminde olan pratik araçların daha dünyasal araştırmasına dönüyoruz.
 
-## Robustness through Perturbations
+## Düzensizliğe Gürbüzlük
 
-Let us think briefly about what we expect from a good predictive model. We want it to peform well on unseen data. Classical generalization theory suggests that to close the gap between train and test performance, we should aim for a *simple* model. Simplicity can come in the form of a small number of dimensions. We explored this when discussing the monomial basis functions of linear models :numref:`sec_model_selection`. Additionally, as we saw when discussing weight decay ($\ell_2$ regularization) :numref:`sec_weight_decay`, the (inverse) norm of the parameters represents another useful measure of simplicity. Another useful notion of simplicity is smoothness, i.e., that the function should not be sensitive to small changes to its inputs. For instance, when we classify images, we would expect that adding some random noise to the pixels should be mostly harmless.
+İyi bir tahminci modelden ne beklediğimizi kısaca düşünelim. Görünmeyen veriler üzerinde iyi başarım göstermelerini istiyoruz. Klasik genelleme teorisi, eğitim ve test performansı arasındaki aralığı kapatmak için *basit* bir modeli hedeflememiz gerektiğini öne sürer. Sadelik, az sayıda boyut şeklinde olabilir. :numref:`sec_model_selection` içinde doğrusal modellerin tek terimli temel fonksiyonlarını tartışırken bunu araştırdık. Ek olarak, ağırlık sönümünü ($\ell_2$ düzenlileştirmesi) tartışırken gördüğümüz gibi (:numref:`sec_weight_decay`), parametrelerin (ters) normu, basitliğin başka bir kullanışlı ölçüsünü temsil eder. Bir başka kullanışlı basitlik kavramı, pürüzsüzlüktür, yani işlevin girdilerindeki küçük değişikliklere hassas olmaması gerektiğidir. Örneğin, imgeleri sınıflandırdığımızda, piksellere bazı rastgele gürültü eklemenin çoğunlukla zararsız olmasını bekleriz.
 
-In 1995, Christopher Bishop formalized this idea when he proved that training with input noise is equivalent to Tikhonov regularization :cite:`Bishop.1995`. This work drew a clear mathematical connection between the requirement that a function be smooth (and thus simple), and the requirement that it be resilient to perturbations in the input.
+1995'te Christopher Bishop, girdi gürültüsü ile eğitimin Tikhonov düzenlemesine eşdeğer olduğunu kanıtladığında bu fikri resmileştirdi :cite:`Bishop.1995`. Bu çalışma, bir fonksiyonun düzgün (ve dolayısıyla basit) olması gerekliliği ile girdideki karışıklıklara dirençli olması gerekliliği arasında açık bir matematiksel bağlantı kurdu.
 
-Then, in 2014, Srivastava et al. :cite:`Srivastava.Hinton.Krizhevsky.ea.2014` developed a clever idea for how to apply Bishop's idea to the *internal* layers of the network, too. Namely, they proposed to inject noise into each layer of the network before calculating the subsequent layer during training. They realized that when training a deep network with many layers, injecting noise enforces smoothness just on the input-output mapping.
+Ardından 2014 yılında Srivastava ve ark. :cite:`Srivastava.Hinton.Krizhevsky.ea.2014`, Bishop'un fikrinin ağın *iç* katmanlarına da nasıl uygulanacağı konusunda akıllıca bir fikir geliştirdi. Yani, eğitim sırasında sonraki katmanı hesaplamadan önce ağın her katmanına gürültü yerleştirmeyi önerdiler. Birçok katman içeren derin bir ağı eğitirken, gürültü yerleştirmenin sadece girdi-çıktı eşlemesinde pürüzsüzlüğü zorladığını fark ettiler.
 
-Their idea, called *dropout*, involves injecting noise while computing each internal layer during forward propagation, and it has become a standard technique for training neural networks. The method is called *dropout* because we literally *drop out* some neurons during training. Throughout training, on each iteration, standard dropout consists of zeroing out some fraction (typically 50%) of the nodes in each layer before calculating the subsequent layer.
+*Hattan düşürme* olarak adlandırılan fikirleri, ileri yayılma sırasında her bir iç katmanı hesaplarken gürültü yerleştirmeyi içerir ve sinir ağlarını eğitmek için standart bir teknik haline gelmiştir. Bu yönteme *hattan düşürme* deniyor çünkü eğitim sırasında bazı nöronları tam anlamıyla *hattan düşürüyoruz*. Eğitim boyunca, her yinelemede, standart hattan düşürme, sonraki katmanı hesaplamadan önce her katmandaki düğümlerin bir kısmının (tipik olarak %50) sıfırlanmasından oluşur.
 
-To be clear, we are imposing our own narrative with the link to Bishop. The original paper on dropout offers intuition through a surprising analogy to sexual reproduction. The authors argue that neural network overfitting is characterized by a state in which each layer relies on a specific pattern of activations in the previous layer, calling this condition *co-adaptation*. Dropout, they claim, breaks up co-adaptation just as sexual reproduction is argued to break up co-adapted genes.
+Açık olmak gerekirse, Bishop'la bağlantı kurarak kendi hikayemizi dayatıyoruz. Hattan düşme ilgili orijinal makale, cinsel üreme ile şaşırtıcı bir benzetme yaparak bir önsezi sunuyor. Yazarlar, sinir ağının aşırı öğrenmesinin, her bir katmanın önceki katmandaki belirli bir etkinleştirme modeline dayandığı ve bu koşulu *birlikte-uyarlama* olarak adlandırdığı bir durumla karakterize edildiğini savunuyorlar. Onlar, tıpkı cinsel üremenin birlikte uyarlanmış genleri parçaladığının iddia edildiği gibi, hattan düşürmenin birlikte uyarlamayı bozduğunu iddia ediyorlar.
 
-The key challenge then is *how* to inject this noise. One idea is to inject the noise in an *unbiased* manner so that the expected value of each layer---while fixing the others---equals to the value it would have taken absent noise.
+O halde asıl zorluk bu gürültünün *nasıl* yerleştirileceğidir. Bir fikir, gürültüyü *tarafsız* bir şekilde yerleştirmektir, böylece her katmanın beklenen değeri---diğerlerini sabitlerken---gürültü eksikken alacağı değere eşittir.
 
-In Bishop's work, he added Gaussian noise to the inputs to a linear model: At each training iteration, he added noise sampled from a distribution with mean zero $\epsilon \sim \mathcal{N}(0,\sigma^2)$ to the input $\mathbf{x}$, yielding a perturbed point $\mathbf{x}' = \mathbf{x} + \epsilon$. In expectation, $E[\mathbf{x}'] = \mathbf{x}$.
+Bishop'un çalışmasında, doğrusal bir modelin girdilerine Gauss gürültüsünü ekledi: Her eğitim yinelemesinde, $\mathbf{x}$ girdisine ortalaması sıfır $ \epsilon \sim \mathcal{N}(0,\sigma^2)$ bir dağılımdan örneklenen gürültü ekleyerek dürtülmüş bir $\mathbf{x}' = \mathbf{x} + \epsilon$ noktası elde etti. Beklenti değeri, $E [\mathbf{x}'] = \mathbf{x}$'dir.
 
-In standard dropout regularization, one debiases each layer by normalizing by the fraction of nodes that were retained (not dropped out). In other words, dropout with *dropout probability* $p$ is applied as follows:
+Standart hattan düşürme düzenlileştirmesinde, bir kısmı tutulan (hattan düşürülmeyen) düğümlere göre normalleştirerek her katmanı yansızlaştırır. Diğer bir deyişle, *hattan düşürme olasılığı* $p$ olan hattan düşürme aşağıdaki gibi uygulanır:
 
 $$
 \begin{aligned}
@@ -43,15 +43,11 @@ h' =
 \end{aligned}
 $$
 
-By design, the expectation remains unchanged, i.e., $E[h'] = h$. Intermediate activations $h$ are replaced by a random variable $h'$ with matching expectation.
+Tasarım gereği, beklenti değişmeden kalır, yani $E[h'] = h$. Orta düzey etkinleştirmeler, $h$, beklentilere uygun rastgele bir değişken, $h'$, ile değiştirilir.
 
+## Pratikte Hattan Düşürme
 
-
-## Dropout in Practice
-
-Recall the multilayer perceptron (:numref:`sec_mlp`)
-with a hidden layer and 5 hidden units.
-Its architecture is given by
+Gizli bir katman ve 5 gizli birimli çok katmanlı algılayıcıyı (:numref:`sec_mlp`) hatırlayın. Mimarisi aşağıdaki gibidir:
 
 $$
 \begin{aligned}
@@ -61,19 +57,18 @@ $$
 \end{aligned}
 $$
 
-When we apply dropout to a hidden layer, zeroing out each hidden unit with probability $p$, the result can be viewed as a network containing only a subset of the original neurons. In :numref:`fig_dropout2`, $h_2$ and $h_5$ are removed. Consequently, the calculation of $y$ no longer depends on $h_2$ and $h_5$ and their respective gradient also vanishes when performing backprop. In this way, the calculation of the output layer cannot be overly dependent on any one element of $h_1, \ldots, h_5$.
+Hattan düşürmeyi gizli bir katmana uyguladığımızda, her gizli birimi $p$ olasılığı ile sıfırlayarsak, sonuç, orijinal nöronların yalnızca bir alt kümesini içeren bir ağ olarak görülebilir. :numref:`fig_dropout2`'de, $h_2$ ve $h_5$ kaldırılmıştır. Sonuç olarak, $y$ hesaplaması artık $h_2$ ve $h_5$ değerlerine bağlı değildir ve bunların ilgili gradyanları da geri yayma gerçekleştirilirken kaybolur. Bu şekilde, çıktı katmanının hesaplanması, $h_1, \ldots, h_5$ öğelerinin herhangi birine aşırı derecede bağımlı olamaz.
 
-![MLP before and after dropout](../img/dropout2.svg)
+![Hattan düşürme öncesi ve sonrası MlP](../img/dropout2.svg)
 :label:`fig_dropout2`
 
-Typically, ***we disable dropout at test time***. Given a trained model and a new example, we do not drop out any nodes (and thus do not need to normalize). However, there are some exceptions: some researchers use dropout at test time as a heuristic for estimating the *uncertainty* of neural network predictions: if the predictions agree across many different dropout masks, then we might say that the network is more confident. For now we will put off uncertainty estimation for subsequent chapters and volumes.
+Tipik olarak, ***test sırasında hattan düşürmeyi devre dışı bırakırız***. Eğitimli bir model ve yeni bir örnek verildiğinde, herhangi bir düğümü çıkarmıyoruz (ve bu nedenle normalleştirmemize gerek yok). Bununla birlikte, bazı istisnalar vardır: Bazı araştırmacılar, sinir ağı tahminlerinin *belirsizliğini* tahmin etmek için sezgisel olarak test zamanında hattan düşürmeyi kullanır. Tahminler birçok farklı hattan düşürme maskesinde uyuşuyorsa, ağın daha güvenli olduğunu söyleyebiliriz. Şimdilik sonraki bölümler  için belirsizlik tahminini erteleyeceğiz.
 
+## Sıfırdan Uygulama
 
-## Implementation from Scratch
+Hattan düşürme işlevini tek bir katman için uygulamak için, katmanımızın boyutları olduğu için Bernoulli (ikili) rastgele değişkenden olabildiğince çok örneklem almalıyız, burada rastgele değişken $1-p$ olasılıkla $1$ (tut), $p$ olasılıkla $0$ (düşüş) değerini alır. Bunu gerçekleştirmenin kolay bir yolu, ilk olarak $U[0, 1]$ tekdüze dağılımından örnekler almaktır. Daha sonra, $p$'dan büyük olduğu düğümlere karşılık gelen örnekleri tutarak geri kalanı hattan düşürebiliriz.
 
-To implement the dropout function for a single layer, we must draw as many samples from a Bernoulli (binary) random variable as our layer has dimensions, where the random variable takes value $1$ (keep) with probability $1-p$ and $0$ (drop) with probability $p$. One easy way to implement this is to first draw samples from the uniform distribution $U[0, 1]$. Then we can keep those nodes for which the corresponding sample is greater than $p$, dropping the rest.
-
-In the following code, we implement a `dropout_layer` function that drops out the elements in the tensor input `X` with probability `dropout`, rescaling the remainder as described above (dividing the survivors by `1.0-dropout`).
+Aşağıdaki kodda, `X` tensör girdisindeki öğeleri `hattan düşürme` olasılığı ile hattan düşüren ve kalanı yukarıda açıklandığı gibi yeniden ölçeklendiren bir `dropout_layer` işlevi uyguluyoruz (kurtulanları `1.0-dropout` ile böleriz).
 
 ```{.python .input}
 from d2l import mxnet as d2l
@@ -129,7 +124,7 @@ def dropout_layer(X, dropout):
     return tf.cast(mask, dtype=tf.float32) * X / (1.0 - dropout)
 ```
 
-We can test out the `dropout_layer` function on a few examples. In the following lines of code, we pass our input `X` through the dropout operation, with probabilities 0, 0.5, and 1, respectively.
+`dropout_layer` fonksiyonunu birkaç örnek üzerinde test edebiliriz. Aşağıdaki kod satırlarında, `X` girdimizi sırasıyla 0, 0.5 ve 1 olasılıklarla hattan düşürme işleminden geçiriyoruz.
 
 ```{.python .input}
 X = np.arange(16).reshape(2, 8)
@@ -156,9 +151,9 @@ print(dropout_layer(X, 0.5))
 print(dropout_layer(X, 1.))
 ```
 
-### Defining Model Parameters
+### Model Parametrelerini Tanımlama
 
-Again, we work with the Fashion-MNIST dataset introduced in :numref:`sec_softmax_scratch`. We define a multilayer perceptron with two hidden layers containing 256 outputs each.
+Yine, :numref:`sec_softmax_scratch`'de tanıtılan Fashion-MNIST veri kümesiyle çalışıyoruz. Her biri 256 çıktı içeren iki gizli katmana sahip çok katmanlı bir algılayıcı tanımlıyoruz.
 
 ```{.python .input}
 num_inputs, num_outputs, num_hiddens1, num_hiddens2 = 784, 10, 256, 256
@@ -185,9 +180,9 @@ num_inputs, num_outputs, num_hiddens1, num_hiddens2 = 784, 10, 256, 256
 num_outputs, num_hiddens1, num_hiddens2 = 10, 256, 256
 ```
 
-### Defining the Model
+### Modeli Tanımlama
 
-The model below applies dropout to the output of each hidden layer (following the activation function). We can set dropout probabilities for each layer separately. A common trend is to set a lower dropout probability closer to the input layer. Below we set it to 0.2 and 0.5 for the first and second hidden layer respectively. By checking `is_training` described in :numref:`sec_autograd`, we can ensure that dropout is only active during training.
+Aşağıdaki model, her bir gizli katmanın çıktısına (etkinleştirme işlevini takiben) hattan düşürme uygular. Her katman için ayrı ayrı hattan düşürme olasılıkları belirleyebiliriz. Yaygın bir eğilim, giriş katmanına yakınken daha düşük bir hattan düşürme olasılığı ayarlamaktır. Aşağıda, birinci ve ikinci gizli katman için onları sırasıyla 0.2 ve 0.5 olarak ayarladık. :numref:`sec_autograd` içinde açıklanan `is_training`'i kontrol ederek, hattan düşürmenin yalnızca eğitim sırasında etkin olmasını sağlayabiliriz.
 
 ```{.python .input}
 dropout1, dropout2 = 0.2, 0.5
@@ -267,9 +262,9 @@ class Net(tf.keras.Model):
 net = Net(num_outputs, num_hiddens1, num_hiddens2)
 ```
 
-### Training and Testing
+### Eğitim and Test Etme
 
-This is similar to the training and testing of multilayer perceptrons described previously.
+Bu, daha önce açıklanan çok katmanlı algılayıcıların eğitimine ve testine benzer.
 
 ```{.python .input}
 num_epochs, lr, batch_size = 10, 0.5, 256
@@ -297,9 +292,9 @@ trainer = tf.keras.optimizers.SGD(learning_rate=lr)
 d2l.train_ch3(net, train_iter, test_iter, loss, num_epochs, trainer)
 ```
 
-## Concise Implementation
+## Kısa Uygulama
 
-With the high-level APIs, all we need to do is add a `Dropout` layer after each fully-connected layer, passing in the dropout probability as the only argument to its constructor. During training, the `Dropout` layer will randomly drop out outputs of the previous layer (or equivalently, the inputs to the subsequent layer) according to the specified dropout probability. When not in training mode, the `Dropout` layer simply passes the data through during testing.
+Üst düzey API'lerle, tek yapmamız gereken, her tam-bağlı katmandan sonra bir `Dropout` katmanı eklemek ve hattan düşürme olasılığını yapıcısına tek argüman olarak aktarmaktır. Eğitim sırasında, `Dropout` katmanı, belirtilen hattan düşürme olasılığına göre önceki katmanın çıktılarını (veya eşdeğer olarak sonraki katmana olan girdileri) rasgele düşürür. Eğitim modunda olmadığında, `Dropout` katmanı verileri test sırasında basitçe iletir.
 
 ```{.python .input}
 net = nn.Sequential()
@@ -347,7 +342,7 @@ net = tf.keras.models.Sequential([
 ])
 ```
 
-Next, we train and test the model.
+Sonra, eğitir ve modeli test ederiz.
 
 ```{.python .input}
 trainer = gluon.Trainer(net.collect_params(), 'sgd', {'learning_rate': lr})
@@ -366,22 +361,21 @@ trainer = tf.keras.optimizers.SGD(learning_rate=lr)
 d2l.train_ch3(net, train_iter, test_iter, loss, num_epochs, trainer)
 ```
 
-## Summary
+## Özet
 
-* Beyond controlling the number of dimensions and the size of the weight vector, dropout is yet another tool to avoid overfitting. Often all three are used jointly.
-* Dropout replaces an activation $h$ with a random variable $h'$ with expected value $h$ and with variance given by the dropout probability $p$.
-* Dropout is only used during training.
+* Boyutların sayısını ve ağırlık vektörünün boyutunu kontrol etmenin ötesinde, hattan düşürme, aşırı öğrenmeyi önlemek için başka bir araçtır. Genellikle üçü birlikte kullanılır.
+* Hattan düşürme, $h$ etkinleştirmesini, bekletisi $h$ değerine sahip rastgele değişken bir $h'$ ve hattan düşürme olasılığı $p$ ile verilen varyansla değiştirir.
+* Hattan düşürme yalnızca eğitim sırasında kullanılır.
 
+## Alıştırmalar
 
-## Exercises
-
-1. What happens if you change the dropout probabilities for layers 1 and 2? In particular, what happens if you switch the ones for both layers? Design an experiment to answer these questions, describe your results quantitatively, and summarize the qualitative takeaways.
-1. Increase the number of epochs and compare the results obtained when using dropout with those when not using it.
-1. What is the variance of the activations in each hidden layer when dropout is and is not applied? Draw a plot to show how this quantity evolves over time for both models.
-1. Why is dropout not typically used at test time?
-1. Using the model in this section as an example, compare the effects of using dropout and weight decay. What happens when dropout and weight decay are used at the same time? Are the results additive, are there diminished returns or (worse), do they cancel each other out?
-1. What happens if we apply dropout to the individual weights of the weight matrix rather than the activations?
-1. Invent another technique for injecting random noise at each layer that is different from the standard dropout technique. Can you develop a method that outperforms dropout on the Fashion-MNIST dataset (for a fixed architecture)?
+1. Katman 1 ve 2 için hattan düşürme olasılıklarını değiştirirseniz ne olur? Özellikle, her iki katman için olanları yere değiştirirseniz ne olur? Bu soruları yanıtlamak için bir deney tasarlayınız, bulgularınızı nicel olarak açıklayınız ve nitel çıkarımları özetleyiniz.
+1. Dönem sayısını artırınız ve hattan düşürme kullanılırken elde edilen sonuçları kullanmadığınız zamanlarda elde ettıkleriniz ile karşılaştırınız.
+1. Hattan düşürme uygulandığında ve uygulanmadığında her bir gizli katmandaki etkinleştirmelerin varyansı nedir? Her iki model için de bu miktarın zaman içinde nasıl değiştiğini gösteren bir grafik çiziniz.
+1. Hattan düşürme neden tipik olarak test zamanında kullanılmaz?
+1. Bu bölümdeki modeli örnek olarak kullanarak, hattan düşürme ve ağırlık sönümünün etkilerini karşılaştırınız. Hattan düşürme ve ağırlık sönümü aynı anda kullanıldığında ne olur? Sonuçlar katkı sağlıyor mu, azalan getiri mi var yoksa (daha kötüsü) birbirlerini iptal ediyorlar mı?
+1. Hattan düşürmeyi, etkinleştirmeler yerine ağırlık matrisinin bireysel ağırlıklarına uygularsak ne olur?
+1. Her katmanda rastgele gürültü yerleştirmek için standart hattan düşürme tekniğinden farklı başka bir teknik bulunuz. Fashion-MNIST veri kümesinde (sabit bir mimari için) hattan düşürmeden daha iyi performans gösteren bir yöntem geliştirebilir misiniz?
 
 :begin_tab:`mxnet`
 [Tartışmalar](https://discuss.d2l.ai/t/100)
