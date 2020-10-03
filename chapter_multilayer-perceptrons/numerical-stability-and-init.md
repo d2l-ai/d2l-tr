@@ -4,24 +4,23 @@
 
 Buraya kadar, uyguladığımız her model, parametrelerini önceden belirlenmiş bazı dağılımlara göre ilklememizi gerektirdi. Şimdiye kadar, bu seçimlerin nasıl yapıldığının ayrıntılarını gözden geçirerek ilkleme düzenini doğal kabul ettik. Bu seçimlerin özellikle önemli olmadığı izlenimini bile almış olabilirsiniz. Aksine, ilkleme düzeninin seçimi sinir ağı öğrenmesinde önemli bir rol oynar ve sayısal kararlılığı korumak için çok önemli olabilir. Dahası, bu seçimler doğrusal olmayan etkinleştirme fonksiyonunun seçimi ile ilginç şekillerde bağlanabilir. Hangi işlevi seçtiğimiz ve parametreleri nasıl ilklettiğimiz, optimizasyon algoritmamızın ne kadar hızlı yakınsadığını belirleyebilir. Buradaki kötü seçimler, eğitim sırasında patlayan veya kaybolan gradyanlarla karşılaşmamıza neden olabilir. Bu bölümde, bu konuları daha ayrıntılı olarak inceliyoruz ve derin öğrenmedeki kariyeriniz boyunca yararlı bulacağınız bazı yararlı buluşsal yöntemleri tartışıyoruz.
 
-## Vanishing and Exploding Gradients
+## Kaybolan ve Patlayan Gradyanlar
 
-Consider a deep network with $L$ layers, input $\mathbf{x}$ and output $\mathbf{o}$. With each layer $l$ defined by a transformation $f_l$ parameterized by weights $\mathbf{W}_l$, our network can be expressed as:
+$L$ katmanlı $\mathbf{x}$ girdili ve $\mathbf{o}$ çıktılı derin bir ağ düşünün. Her $l$ katmanı $f_l$ ağırlıkları $\mathbf{W}_l$ ile parametreleştirilmiş bir dönüşüm tarafından tanımlandığında, ağımız şu şekilde ifade edilebilir:
 
 $$\mathbf{h}^{l+1} = f_l (\mathbf{h}^l) \text{ and thus } \mathbf{o} = f_L \circ \ldots, \circ f_1(\mathbf{x}).$$
 
-If all activations and inputs are vectors, we can write the gradient of $\mathbf{o}$ with respect to any set of parameters $\mathbf{W}_l$ as follows:
+Tüm etkinleştirmeler ve girdiler vektör ise, $\mathbf{o}$ gradyanını herhangi bir $\mathbf{W} _l$ parametre kümesine göre aşağıdaki gibi yazabiliriz:
 
 $$\partial_{\mathbf{W}_l} \mathbf{o} = \underbrace{\partial_{\mathbf{h}^{L-1}} \mathbf{h}^L}_{:= \mathbf{M}_L} \cdot \ldots, \cdot \underbrace{\partial_{\mathbf{h}^{l}} \mathbf{h}^{l+1}}_{:= \mathbf{M}_l} \underbrace{\partial_{\mathbf{W}_l} \mathbf{h}^l}_{:= \mathbf{v}_l}.$$
 
-In other words, this gradient is the product of $L-l$ matrices $\mathbf{M}_L \cdot \ldots, \cdot \mathbf{M}_l$ and the gradient vector $\mathbf{v}_l$. Thus we are susceptible to the same problems of numerical underflow that often crop up when multiplying together too many probabilities. When dealing with probabilities, a common trick is to switch into log-space, i.e., shifting pressure from the mantissa to the exponent of the numerical representation. Unfortunately, our problem above is more serious: initially the matrices $M_l$ may have a wide variety of eigenvalues. They might be small or large, and their product might be *very large* or *very small*.
+Başka bir deyişle, bu gradyan $L-l$ matrisleri  $\mathbf{M}_L \cdot \ldots, \cdot \mathbf{M}_l$ ve $\mathbf{v}_l$ gradyan vektörünün çarpımıdır. Bu nedenle, çok fazla olasılığı bir araya getirirken sıklıkla ortaya çıkan aynı sayısal küçümenlik sorunlarına duyarlıyız. Olasılıklarla uğraşırken, yaygın bir marifet, logaritma-uzayına geçmektir, yani basıncı mantisten sayısal temsilin üssüne kaydırmaktır. Ne yazık ki, yukarıdaki sorunumuz daha ciddidir: Başlangıçta $M_l$ matrisleri çok çeşitli özdeğerlere sahip olabilir. Küçük veya büyük olabilirler ve çarpımları *çok büyük* veya *çok küçük* olabilir.
 
-The risks posed by unstable gradients go beyond numerical representation. Gradients of unpredictable magnitude also threaten the stability of our optimization algorithms. We may be facing parameter updates that are either (i) excessively large, destroying our model (the *exploding* gradient problem); or (ii) excessively small (the *vanishing gradient problem*), rendering learning impossible as parameters hardly move on each update.
+Kararsız gradyanların yarattığı riskler sayısal temsilin ötesine geçer. Tahmin edilemeyen büyüklükteki gradyanlar, optimizasyon algoritmalarımızın kararlılığını da tehdit eder. Ya (i) aşırı büyük olan, modelimizi yok eden (*patlayan* gradyan problemi); veya (ii) aşırı derecede küçük (*kaybolan gradyan problemi*), parametreler neredeyse hiç hareket etmediği için öğrenmeyi imkansız kılan güncellemeler.
 
+### Kaybolan Gradyanlar
 
-### Vanishing Gradients
-
-One frequent culprit causing the vanishing gradient problem is the choice of the activation function $\sigma$ that is appended following each layer's linear operations. Historically, the sigmoid function $1/(1 + \exp(-x))$ (introduced in :numref:`sec_mlp`) was popular because it resembles a thresholding function. Since early artificial neural networks were inspired by biological neural networks, the idea of neurons that fire either *fully* or *not at all* (like biological neurons) seemed appealing. Let us take a closer look at the sigmoid to see why it can cause vanishing gradients.
+Kaybolan gradyan sorununa neden olan sık karşılaşılan bir suçlu, her katmanın doğrusal işlemlerinin ardından eklenen $\sigma$ etkinleştirme işlevinin seçimidir. Tarihsel olarak, sigmoid işlevi $1/(1 + \exp(-x))$ (bakınız :numref:`sec_mlp`), bir eşikleme işlevine benzediği için popülerdi. Erken yapay sinir ağları biyolojik sinir ağlarından ilham aldığından, ya *tamamen* ateşleyen ya da *hiç* ateşlemeyen (biyolojik nöronlar gibi) nöronlar fikri çekici görünüyordu. Neden yok olan gradyanlara neden olabileceğini görmek için sigmoide daha yakından bakalım.
 
 ```{.python .input}
 %matplotlib inline
@@ -65,12 +64,12 @@ d2l.plot(x.numpy(), [y.numpy(), t.gradient(y, x).numpy()],
          legend=['sigmoid', 'gradient'], figsize=(4.5, 2.5))
 ```
 
-As you can see, the sigmoid's gradient vanishes both when its inputs are large and when they are small. Moreover, when backpropagating through many layers, unless we are in the Goldilocks zone, where the inputs to many of the sigmoids are close to zero, the gradients of the overall product may vanish. When our network boasts many layers, unless we are careful, the gradient will likely be cut off at *some* layer. Indeed, this problem used to plague deep network training. Consequently, ReLUs, which are more stable (but less neurally plausible), have emerged as the default choice for practitioners.
+Gördüğünüz gibi sigmoidin gradyanı, girdileri hem büyük hem de küçük olduklarında kaybolur. Dahası, birçok katmanda geri yayma yaparken, birçok sigmoidin girdilerinin sıfıra yakın olduğu Goldilocks bölgesinde olmadıkça, tüm çarpımın gradyanları kaybolabilir. Ağımız birçok katmana sahip olduğunda, dikkatli olmadıkça, gradyan muhtemelen *herhangi bir* katmanda kesilecektir. Gerçekten de, bu problem derin ağ eğitiminda başa bela oluyordu. Sonuç olarak, daha kararlı (ancak sinirsel olarak daha az makul olan) ReLU'lar, pratisyenlerin varsayılan seçimi olarak öne çıktı.
 
 
-### Exploding Gradients
+### Patlayan Gradyanlar
 
-The opposite problem, when gradients explode, can be similarly vexing. To illustrate this a bit better, we draw $100$ Gaussian random matrices and multiply them with some initial matrix. For the scale that we picked (the choice of the variance $\sigma^2=1$), the matrix product explodes. When this happens due to the initialization of a deep network, we have no chance of getting a gradient descent optimizer to converge.
+Tersi problem de, gradyanlar patladığında, benzer şekilde can sıkıcı olabilir. Bunu biraz daha iyi açıklamak için, $100$ tane Gauss'luk rasgele matrisler çekip bunları bir başlangıç matrisiyle çarpıyoruz. Seçtiğimiz ölçek için ($\sigma^2=1$ varyans seçimi ile), matris çarpımı patlar. Bu, derin bir ağın ilklenmesi nedeniyle gerçekleştiğinde, yakınsama için bir gradyan iniş optimize ediciyi alma şansımız yoktur.
 
 ```{.python .input}
 M = np.random.normal(size=(4, 4))
@@ -101,30 +100,28 @@ for i in range(100):
 print('After multiplying 100 matrices\n', M.numpy())
 ```
 
-### Symmetry
+### Bakışım (Simetri)
 
-Another problem in deep network design is the symmetry inherent in their parametrization. Assume that we have a deep network with one hidden layer and two units, say $h_1$ and $h_2$. In this case, we could permute the weights $\mathbf{W}_1$ of the first layer and likewise permute the weights of the output layer to obtain the same function. There is nothing special differentiating the first hidden unit vs the second hidden unit. In other words, we have permutation symmetry among the hidden units of each layer.
+Derin ağ tasarımındaki bir başka sorun, parametrelendirilmesinde bulunan simetridir. Bir gizli katman ve iki birim , örneğin $h_1$ ve $h_2$, içeren derin bir ağımız olduğunu varsayalım. Bu durumda, ilk katmanın $\mathbf{W}_1$ ağırlıklarını ve aynı şekilde aynı işlevi elde etmek için çıktı katmanının ağırlıklarını devrişebiliriz (permütasyon). İlk gizli birimi veya ikinci gizli birimi türev alma arasında bir fark yoktur. Başka bir deyişle, her katmanın gizli birimleri arasında devrişim bakışımımız var.
 
-This is more than just a theoretical nuisance. Imagine what would happen if we initialized all of the parameters of some layer as $\mathbf{W}_l = c$ for some constant $c$. In this case, the gradients for all dimensions are identical: thus not only would each unit take the same value, but it would receive the same update. Stochastic gradient descent would never break the symmetry on its own and we might never be able to realize the network's expressive power. The hidden layer would behave as if it had only a single unit. Note that while SGD would not break this symmetry, dropout regularization would!
-
-
-## Parameter Initialization
-
-One way of addressing---or at least mitigating---the issues raised above is through careful initialization. Additional care during optimization and suitable regularization can further enhance stability.
+Bu teorik bir can sıkıntısından daha fazlasıdır. Sabit herhangi bir $c$ için herhangi bir katmanın tüm parametrelerini $\mathbf{W}_l = c$ olarak başlatırsak ne olacağını bir düşünün. Bu durumda, tüm boyutlar için gradyanlar aynıdır: Bu nedenle yalnızca her birim aynı değeri almakla kalmaz, aynı güncellemeyi de alır. Rasgele gradyan inişi, bakışımı asla kendi başına bozmaz ve ağın ifade gücünü asla gerçekleyemeyebiliriz. Gizli katman, yalnızca tek bir birimi varmış gibi davranacaktır. RGİ bu bakışımı bozmasa da, hattan düşürme düzenlileştirmesinin bozacağını unutmayın!
 
 
-### Default Initialization
+## Parametre İlkleme
 
-In the previous sections, e.g., in :numref:`sec_linear_concise`, we used a normal distribution with 0 mean and 0.01 variance to initialize the values of our weights. If we don't specify the initialization method, the framework will use a default random initialization method, which often works well in practice for moderate problem sizes.
+Yukarıda belirtilen sorunları ele almanın---ya da en azından hafifletmenin---bir yolu dikkatli ilkletmektir. Optimizasyon sırasında ek özen ve uygun düzenlileştirme, kararlılığı daha da artırabilir.
 
+### Varsayılan İlkletme
 
-### Xavier Initialization
+Önceki bölümlerde, örneğin :numref:`sec_linear_concise`'deki gibi, ağırlıklarımızın değerlerini ilkletmek için 0 ortalama ve 0.01 varyanslı normal bir dağılım kullandık. İlkleme yöntemini belirtmezsek, çerçeve, pratikte genellikle orta düzey problem boyutları için iyi çalışan varsayılan bir rastgele ilkleme yöntemi kullanacaktır.
 
-Let us look at the scale distribution of the activations of the hidden units $h_{i}$ for some layer. They are given by
+### Xavier İlklemesi
+
+Bir katman için $h_{i}$ gizli birimlerinin etkinleştirmelerinin ölçek dağılımına bakalım. Aşağıdaki gibi verilirler:
 
 $$h_{i} = \sum_{j=1}^{n_\mathrm{in}} W_{ij} x_j.$$
 
-The weights $W_{ij}$ are all drawn independently from the same distribution. Furthermore, let us assume that this distribution has zero mean and variance $\sigma^2$ (this does not mean that the distribution has to be Gaussian, just that the mean and variance need to exist). For now, let us assume that the inputs to layer $x_j$ also have zero mean and variance $\gamma^2$ and that they are independent of $\mathbf{W}$. In this case, we can compute the mean and variance of $h_i$ as follows:
+$W_{ij}$ ağırlıklarının tümü aynı dağılımdan bağımsız olarak çekilir. Dahası, bu dağılımın sıfır ortalamaya ve $\sigma^2$ varyansına sahip olduğunu varsayalım (bu, dağılımın Gaussian olması gerektiği anlamına gelmez, sadece ortalama ve varyansın var olması gerektiği anlamına gelir). Şimdilik, $x_j$ katmanındaki girdilerin de sıfır ortalamaya ve $\gamma^2$ vryansa sahip olduğunu ve $\mathbf{W}$'dan bağımsız olduklarını varsayalım. Bu durumda, $h_i$'nin ortalamasını ve varyansını şu şekilde hesaplayabiliriz:
 
 $$
 \begin{aligned}
@@ -136,7 +133,7 @@ $$
 \end{aligned}
 $$
 
-One way to keep the variance fixed is to set $n_\mathrm{in} \sigma^2 = 1$. Now consider backpropagation. There we face a similar problem, albeit with gradients being propagated from the top layers. That is, instead of $\mathbf{W} \mathbf{x}$, we need to deal with $\mathbf{W}^\top \mathbf{g}$, where $\mathbf{g}$ is the incoming gradient from the layer above. Using the same reasoning as for forward propagation, we see that the gradients' variance can blow up unless $n_\mathrm{out} \sigma^2 = 1$. This leaves us in a dilemma: we cannot possibly satisfy both conditions simultaneously. Instead, we simply try to satisfy:
+Varyansı sabit tutmanın bir yolu, $n_\mathrm{in} \sigma^2 = 1$ diye ayarlamaktır. Şimdi geri yaymayı düşünün. Orada, en üst katmanlardan yayılmakta olan gradyanlarla da olsa benzer bir sorunla karşı karşıyayız. Yani, $\mathbf{W} \mathbf{x}$ yerine, $\mathbf{W}^\top \mathbf{g}$ ile uğraşmamız gerekiyor, burada $\mathbf{g}$ gelen yukarıdaki katmandan gradyandır. İleri yaymayla aynı mantığı kullanarak, gradyanların varyansının $n_\mathrm{out} \sigma^2 = 1$ olmadıkça patlayabileceğini görüyoruz. Bu bizi bir ikilemde bırakıyor: Her iki koşulu aynı anda karşılayamayız. Bunun yerine, sadece şunlara uymaya çalışırız:
 
 $$
 \begin{aligned}
@@ -145,36 +142,36 @@ $$
 \end{aligned}
 $$
 
-This is the reasoning underlying the now-standard and practically beneficial *Xavier* initialization, named for its creator :cite:`Glorot.Bengio.2010`. Typically, the Xavier initialization samples weights from a Gaussian distribution with zero mean and variance $\sigma^2 = 2/(n_\mathrm{in} + n_\mathrm{out})$. We can also adapt Xavier's intuition to choose the variance when sampling weights from a uniform distribution. Note the distribution $U[-a, a]$ has variance $a^2/3$. Plugging $a^2/3$ into our condition on $\sigma^2$ yields the suggestion to initialize according to $U\left[-\sqrt{6/(n_\mathrm{in} + n_\mathrm{out})}, \sqrt{6/(n_\mathrm{in} + n_\mathrm{out})}\right]$.
-
-### Beyond
-
-The reasoning above barely scratches the surface of modern approaches to parameter initialization. A deep learning framework often implements over a dozen different heuristics. Moreover, parameter initialization continues to be a hot area of fundamental research in deep learning. Among these are heuristics specialized for tied (shared) parameters, super-resolution, sequence models, and other situations. If the topic interests you we suggest a deep dive into this module's offerings, reading the papers that proposed and analyzed each heuristic, and then exploring the latest publications on the topic. Perhaps you will stumble across (or even invent!) a clever idea and contribute an implementation to deep learning frameworks.
+Bu, yaratıcısının adını taşıyan, artık standart ve pratik olarak faydalı *Xavier* ilkletmesinin altında yatan mantıktır :cite:`Glorot.Bengio.2010`. Tipik olarak, Xavier ilkletmesi sıfır ortalama ve $\sigma^2 = 2/(n_\mathrm{in} + n_\mathrm{out})$ varyansına sahip bir Gauss dağılımından ağırlıkları örnekler. Aynı zamanda, tekdüze bir dağılımdan ağırlıkları örneklerken, Xavier'in sezgisini varyansı seçecek şekilde uyarlayabiliriz. $U[-a, a]$ dağılımının $a^2/3$ varyansına sahip olduğuna dikkat edin. $a^2/3$'ü $\sigma^2$ üzerindeki koşulumuza eklemek, $U\left[-\sqrt{6/(n_\mathrm{in} + n_\mathrm{out})}, \sqrt{6/(n_\mathrm{in} + n_\mathrm{out})}\right]$'a göre ilkletme önerisini verir.
 
 
-## Summary
+### Daha Ötesi
 
-* Vanishing and exploding gradients are common issues in deep networks. Great care in parameter initialization is required to ensure that gradients and parameters remain well controlled.
-* Initialization heuristics are needed to ensure that the initial gradients are neither too large nor too small.
-* ReLU activation functions mitigate the vanishing gradient problem. This can accelerate convergence.
-* Random initialization is key to ensure that symmetry is broken before optimization.
+Yukarıdaki mantık, parametre ilklendirmesine yönelik modern yaklaşımların yüzeyini anca çiziyor. Bir derin öğrenme çerçevesi genellikle bir düzineden fazla farklı buluşsal yöntem uygular. Dahası, parametre ilkletme, derin öğrenmede temel araştırma için sıcak bir alan olmaya devam ediyor. Bunlar arasında bağlı (paylaşılan) parametreler, süper çözünürlük, dizi modelleri ve diğer durumlar için özelleştirilmiş buluşsal yöntemler bulunur. Konu ilginizi çekiyorsa, bu modülün önerdiklerine derinlemesine dalmanızı, her buluşsal yöntemi öneren ve analiz eden calışmaları okumanızı ve ardından konuyla ilgili en son yayınlarda gezinmenizi öneririz. Belki de zekice bir fikre rastlarsınız (hatta icat edersiniz!) Ve derin öğrenme çerçevelerinde bir uygulamaya katkıda bulunursunuz.
 
-## Exercises
+## Özet
 
-1. Can you design other cases where a neural network might exhibit symmetry requiring breaking besides the permutation symmetry in a multilayer pereceptron's layers?
-1. Can we initialize all weight parameters in linear regression or in softmax regression to the same value?
-1. Look up analytic bounds on the eigenvalues of the product of two matrices. What does this tell you about ensuring that gradients are well conditioned?
-1. If we know that some terms diverge, can we fix this after the fact? Look at the paper on LARS for inspiration :cite:`You.Gitman.Ginsburg.2017`.
+* Kaybolan ve patlayan gradyanlar, derin ağlarda yaygın sorunlardır. Gradyanların ve parametrelerin iyi kontrol altında kalmasını sağlamak için parametre ilklemeye büyük özen gösterilmesi gerekir.
+* İlk gradyanların ne çok büyük ne de çok küçük olmasını sağlamak için ilkleme buluşsal yöntemlerine ihtiyaç vardır.
+* ReLU etkinleştirme fonksiyonları, kaybolan gradyan problemini azaltır. Bu yakınsamayı hızlandırabilir.
+* Rastgele ilkleme, optimizasyondan önce bakışımın bozulmasını sağlamak için anahtardır.
+
+## Alıştırmalar
+
+1. Bir sinir ağının, çok katmanlı bir algılayıcı katmanlarında devrişim bakışımının yanı sıra kırılma gerektiren bakışım sergileyebileceği başka durumlar tasarlayabilir misiniz?
+1. Doğrusal regresyonda veya softmaks regresyonunda tüm ağırlık parametrelerini aynı değere ilkleyebilir miyiz?
+1. İki matrisin çarpımının özdeğerlerindeki analitik sınırlara bakınız. Bu, gradyanların iyi şartlandırılmasının sağlanması konusunda size ne anlatıyor?
+1. Bazı terimlerin ıraksadığını biliyorsak, bunu sonradan düzeltebilir miyiz? İlham almak için LARS makalesine bakınız :cite:`You.Gitman.Ginsburg.2017`.
 
 
 :begin_tab:`mxnet`
-[Discussions](https://discuss.d2l.ai/t/103)
+[Tartışmalar](https://discuss.d2l.ai/t/103)
 :end_tab:
 
 :begin_tab:`pytorch`
-[Discussions](https://discuss.d2l.ai/t/104)
+[Tartışmalar](https://discuss.d2l.ai/t/104)
 :end_tab:
 
 :begin_tab:`tensorflow`
-[Discussions](https://discuss.d2l.ai/t/235)
+[Tartışmalar](https://discuss.d2l.ai/t/235)
 :end_tab:

@@ -34,6 +34,8 @@ loss function ->  kayıp ve yitim fonksiyonu
 
 minibatch -> minigrup
 
+permutation -> devrişim
+
 perturbation -> düzensizlik
 
 posterior -> sonsal olasılık
@@ -52,11 +54,17 @@ robust -> gürbüz
 
 sample -> örneklem
 
+sequence -> dizi
+
 softmax -> eşiksiz en büyük işlev veya softmaks
 
 spam -> yaramaz posta
 
 stochastic -> rasgele
+
+symmetry -> bakışım
+
+underflow -> küçümenlik
 
 uniform -> tekdüze
 
