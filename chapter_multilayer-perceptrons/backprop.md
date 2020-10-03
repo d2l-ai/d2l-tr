@@ -1,66 +1,65 @@
 # İleri Yayma, Geriye Yayma ve Hesaplamalı Çizge
 :label:`sec_backprop`
 
-So far, we have trained our models with minibatch stochastic gradient descent. However, when we implemented the algorithm, we only worried about the calculations involved in *forward propagation* through the model. When it came time to calculate the gradients, we just invoked the back propagation function provided by the framework.
+Şimdiye kadar modellerimizi minigrup rasgele gradyan inişi ile eğittik. Bununla birlikte, algoritmayı uyguladığımızda, yalnızca model aracılığıyla *ileri yayma* ile ilgili hesaplamalar hakkında endişelendik. Gradyanları hesaplama zamanı geldiğinde, çerçeve tarafından sağlanan geri yayma fonksiyonunu çalıştırdık.
 
-The automatic calculation of gradients profoundly simplifies the implementation of deep learning algorithms. Before automatic differentiation, even small changes to complicated models required recalculating complicated derivatives by hand. Surprisingly often, academic papers had to allocate numerous pages to deriving update rules. While we must continue to rely on autograd so we can focus on the interesting parts, you ought to *know* how these gradients are calculated under the hood if you want to go beyond a shallow understanding of deep learning.
+Gradyanların otomatik olarak hesaplanması, derin öğrenme algoritmalarının uygulanmasını büyük ölçüde basitleştirir. Otomatik türev almadan önce, karmaşık modellerde yapılan küçük değişiklikler bile karmaşık türevlerin elle yeniden hesaplanmasını gerektiriyordu. Şaşırtıcı bir şekilde, akademik makaleler güncelleme kurallarını türetmek için çok sayıda sayfa ayırmak zorunda kalırdı. İlginç kısımlara odaklanabilmemiz için otomotik türeve güvenmeye devam etmemiz gerekse de, sığ bir derin öğrenme anlayışının ötesine geçmek istiyorsanız, bu gradyanların kaputun altında nasıl hesaplandığını *bilmelisiniz*.
 
-In this section, we take a deep dive into the details of backward propagation (more commonly called *backpropagation* or *backprop*). To convey some insight for both the techniques and their implementations, we rely on some basic mathematics and computational graphs. To start, we focus our exposition on a three layer (one hidden) multilayer perceptron with weight decay ($\ell_2$ regularization).
-
-
-## Forward Propagation
-
-Forward propagation refers to the calculation and storage of intermediate variables (including outputs) for the neural network in order from the input layer to the output layer. We now work step-by-step through the mechanics of a deep network with one hidden layer. This may seem tedious but in the eternal words of funk virtuoso James Brown, you must "pay the cost to be the boss".
+Bu bölümde, geriye doğru yaymanın (daha yaygın olarak *geri yayma* veya *geriyay* olarak adlandırılır) ayrıntılarına derinlemesine dalacağız. Hem teknikler hem de uygulamaları hakkında bazı bilgiler vermek için birtakım temel matematik ve hesaplama çizgelerine güveniyoruz. Başlangıç ​​olarak, açıklamamızı ağırlık sönümü ($\ell_2$ düzenlileştirme) olan üç katmanlı (biri gizli) çok katmanlı algılayıcıya odaklıyoruz.
 
 
-For the sake of simplicity, let’s assume that the input example is $\mathbf{x}\in \mathbb{R}^d$ and that our hidden layer does not include a bias term. Here the intermediate variable is:
+## İleri Yayma
+
+İleri yayma, giriş katmanından çıktı katmanına sırayla sinir ağı için ara değişkenlerin (çıktılar dahil) hesaplanması ve depolanması anlamına gelir. Artık tek bir gizli katmana sahip derin bir ağın mekaniği üzerinde adım adım çalışacağız. Bu sıkıcı görünebilir ama funk virtüözü James Brown'un ebedi sözleriyle, "patron olmanın bedelini ödemelisiniz".
+
+Kolaylık olması açısından, girdi örneğinin $\mathbf{x}\in \mathbb{R}^d$ olduğunu ve gizli katmanımızın bir ek girdi terimi içermediğini varsayalım. İşte ara değişkenimiz:
 
 $$\mathbf{z}= \mathbf{W}^{(1)} \mathbf{x},$$
 
-where $\mathbf{W}^{(1)} \in \mathbb{R}^{h \times d}$ is the weight parameter of the hidden layer. After running the intermediate variable $\mathbf{z}\in \mathbb{R}^h$ through the activation function $\phi$ we obtain our hidden activation vector of length $h$,
+$\mathbf{W}^{(1)} \in \mathbb{R}^{h \times d}$ gizli katmanın ağırlık parametresidir. $\mathbf{z} \in \mathbb{R}^h$ ara değişkenini $\phi$ etkinleştirme fonksiyonu üzerinden çalıştırdıktan sonra, $h$ uzunluğundaki gizli etkinleştirme vektörümüzü elde ederiz,
 
 $$\mathbf{h}= \phi (\mathbf{z}).$$
 
-The hidden variable $\mathbf{h}$ is also an intermediate variable. Assuming the parameters of the output layer only possess a weight of $\mathbf{W}^{(2)} \in \mathbb{R}^{q \times h}$, we can obtain an output layer variable with a vector of length $q$:
+$\mathbf{h}$ gizli değişkeni de bir ara değişkendir. Çıktı katmanının parametrelerinin yalnızca $\mathbf{W}^{(2)} \in \mathbb{R}^{q \times h}$ ağırlığına sahip olduğunu varsayarsak, $q$ uzunluğunda vektörel bir çıktı katmanı değişkeni elde edebiliriz :
 
 $$\mathbf{o}= \mathbf{W}^{(2)} \mathbf{h}.$$
 
-Assuming the loss function is $l$ and the example label is $y$, we can then calculate the loss term for a single data example,
+Kayıp fonksiyonunun $l$ ve örnek etiketin $y$ olduğunu varsayarsak, tek bir veri örneği için kayıp terimini hesaplayabiliriz,
 
 $$L = l(\mathbf{o}, y).$$
 
-According to the definition of $\ell_2$ regularization, given the hyperparameter $\lambda$, the regularization term is
+$\ell_2$ düzenlileştirmenin tanımına göre, $\lambda$ hiper parametresi verildiğinde, düzenlileştirme terimi:
 
 $$s = \frac{\lambda}{2} \left(\|\mathbf{W}^{(1)}\|_F^2 + \|\mathbf{W}^{(2)}\|_F^2\right),$$
 
-where the Frobenius norm of the matrix is simply the $L_2$ norm applied after flattening the matrix into a vector. Finally, the model's regularized loss on a given data example is:
+burada matrisin Frobenius normu, matris bir vektöre düzleştirildikten sonra uygulanan $L_2$ normudur. Son olarak, modelin belirli bir veri örneğine göre düzenlileştirilmiş kaybı şudur:
 
 $$J = L + s.$$
 
-We refer to $J$ as the *objective function* in the following discussion.
+Aşağıdaki tartışmada $J$'ye *amaç fonksiyonu* olarak atıfta bulunacağız.
 
 
-## Computational Graph of Forward Propagation
+## İleri Yaymanın Hesaplamalı Çizgesi
 
-Plotting computational graphs helps us visualize the dependencies of operators and variables within the calculation. :numref:`fig_forward` contains the graph associated with the simple network described above. The lower-left corner signifies the input and the upper right corner the output. Notice that the direction of the arrows (which illustrate data flow) are primarily rightward and upward.
+Hesaplamalı çizgeleri çizmek, hesaplamadaki operatörlerin ve değişkenlerin bağımlılıklarını görselleştirmemize yardımcı olur. :numref:`fig_forward`, yukarıda açıklanan basit ağ ile ilişkili çizgeyi içerir. Sol alt köşe girdiyi, sağ üst köşesi çıktıyı belirtir. Okların yönünün (veri akışını gösteren) esasen sağa ve yukarıya doğru olduğuna dikkat edin.
 
-![Computational Graph](../img/forward.svg)
+![Hesaplamalı Çizgesi](../img/forward.svg)
 :label:`fig_forward`
 
 
-## Backpropagation
+## Geri Yayma
 
-Backpropagation refers to the method of calculating the gradient of neural network parameters. In short, the method traverses the network in reverse order, from the output to the input layer, according to the *chain rule* from calculus. The algorithm stores any intermediate variables (partial derivatives) required while calculating the gradient with respect to some parameters. Assume that we have functions $\mathsf{Y}=f(\mathsf{X})$ and $\mathsf{Z}=g(\mathsf{Y}) = g \circ f(\mathsf{X})$, in which the input and the output $\mathsf{X}, \mathsf{Y}, \mathsf{Z}$ are tensors of arbitrary shapes. By using the chain rule, we can compute the derivative of $\mathsf{Z}$ wrt. $\mathsf{X}$ via
+Geri yayma, sinir ağı parametrelerinin gradyanını hesaplama yöntemini ifade eder. Kısacası yöntem, analizden *zincir kuralına* göre ağı çıktıdan girdi katmanına ters sırada dolaşır. Algoritma, gradyanı bazı parametrelere göre hesaplarken gerekli olan tüm ara değişkenleri (kısmi türevler) depolar. $\mathsf{Y}=f(\mathsf{X})$ ve $\mathsf{Z}=g(\mathsf{Y}) = g \circ f(\mathsf{X})$, fonksiyonlarımız olduğunu $\mathsf{X}, \mathsf{Y}, \mathsf {Z}$ girdi ve çıktılarının rastgele şekilli tensörler olduğunu varsayalım. Zincir kuralını kullanarak, $\mathsf{Z}$'nin $\mathsf{X}$'e göre türevini hesaplayabiliriz. 
 
 $$\frac{\partial \mathsf{Z}}{\partial \mathsf{X}} = \text{prod}\left(\frac{\partial \mathsf{Z}}{\partial \mathsf{Y}}, \frac{\partial \mathsf{Y}}{\partial \mathsf{X}}\right).$$
 
-Here we use the $\text{prod}$ operator to multiply its arguments after the necessary operations, such as transposition and swapping input positions, have been carried out. For vectors, this is straightforward: it is simply matrix-matrix multiplication. For higher dimensional tensors, we use the appropriate counterpart. The operator $\text{prod}$ hides all the notation overhead.
+Burada, aktarma ve girdi konumlarını değiştirme gibi gerekli işlemler gerçekleştirildikten sonra argümanlarını çarpmak için $\text{prod}$ operatörünü kullanıyoruz. Vektörler için bu basittir: Bu basitçe matris-matris çarpımıdır. Daha yüksek boyutlu tensörler için uygun muadili kullanırız. $\text{prod}$ operatörü tüm gösterim ek yükünü gizler.
 
-The parameters of the simple network with one hidden layer are $\mathbf{W}^{(1)}$ and $\mathbf{W}^{(2)}$. The objective of backpropagation is to calculate the gradients $\partial J/\partial \mathbf{W}^{(1)}$ and $\partial J/\partial \mathbf{W}^{(2)}$. To accomplish this, we apply the chain rule and calculate, in turn, the gradient of each intermediate variable and parameter. The order of calculations are reversed relative to those performed in forward propagation, since we need to start with the outcome of the compute graph and work our way towards the parameters. The first step is to calculate the gradients of the objective function $J=L+s$ with respect to the loss term $L$ and the regularization term $s$.
+Bir gizli katmana sahip basit ağın parametreleri $\mathbf{W}^{(1)}$ ve $\mathbf{W}^{(2)}$'dir. Geri yaymanın amacı, $\partial J/\partial \mathbf{W}^{(1)}$ ve $\partial J/\partial \mathbf{W}^{(2)}$ gradyanlarını hesaplamaktır. Bunu başarmak için, zincir kuralını uygularız ve sırayla her bir ara değişken ve parametrenin gradyanını hesaplarız. Hesaplama çizgesinin sonucuyla başlamamız ve parametrelere doğru yolumuza devam etmemiz gerektiğinden, hesaplamaların sırası ileri yaymada gerçekleştirilenlere göre tersine çevrilir. İlk adım $J=L+s$ amaç fonksiyonunun gradyanlarını $L$ kayıp terimi ve $s$ düzenlileştirme terimine göre hesaplamaktır.
 
 $$\frac{\partial J}{\partial L} = 1 \; \text{and} \; \frac{\partial J}{\partial s} = 1.$$
 
-Next, we compute the gradient of the objective function with respect to variable of the output layer $\mathbf{o}$ according to the chain rule.
+Ardından, zincir kuralı ile $\mathbf{o}$ çıktı katmanının değişkenine göre amaç fonksiyonunun gradyanını hesaplıyoruz.
 
 $$
 \frac{\partial J}{\partial \mathbf{o}}
@@ -69,16 +68,13 @@ $$
 \in \mathbb{R}^q.
 $$
 
-Next, we calculate the gradients of the regularization term with respect to both parameters.
+Ardından, her iki parametreye göre düzenlileştirme teriminin gradyanlarını hesaplıyoruz.
 
 $$\frac{\partial s}{\partial \mathbf{W}^{(1)}} = \lambda \mathbf{W}^{(1)}
 \; \text{and} \;
 \frac{\partial s}{\partial \mathbf{W}^{(2)}} = \lambda \mathbf{W}^{(2)}.$$
 
-Now we are able calculate the gradient
-$\partial J/\partial \mathbf{W}^{(2)} \in \mathbb{R}^{q \times h}$
-of the model parameters closest to the output layer.
-Using the chain rule yields:
+Şimdi, çıktı katmanına en yakın model parametrelerinin gradyanını, $\partial J/\partial \mathbf{W}^{(2)} \in \mathbb{R}^{q \times h}$, hesaplayabiliriz. Zincir kuralını kullanalım:
 
 $$
 \frac{\partial J}{\partial \mathbf{W}^{(2)}}
@@ -86,8 +82,7 @@ $$
 = \frac{\partial J}{\partial \mathbf{o}} \mathbf{h}^\top + \lambda \mathbf{W}^{(2)}.
 $$
 
-To obtain the gradient with respect to $\mathbf{W}^{(1)}$ we need to continue backpropagation along the output layer to the hidden layer. The gradient with respect to the hidden layer's outputs $\partial J/\partial \mathbf{h} \in \mathbb{R}^h$ is given by
-
+$\mathbf{W}^{(1)}$'e göre gradyanı elde etmek için, çıktı katmanı boyunca gizli katmana geri yaymaya devam etmemiz gerekir. Gizli katmanın $\partial J/\partial \mathbf{h} \in \mathbb{R}^h$ çıktılarına göre gradyan şu şekilde verilir:
 
 $$
 \frac{\partial J}{\partial \mathbf{h}}
@@ -95,7 +90,7 @@ $$
 = {\mathbf{W}^{(2)}}^\top \frac{\partial J}{\partial \mathbf{o}}.
 $$
 
-Since the activation function $\phi$ applies elementwise, calculating the gradient $\partial J/\partial \mathbf{z} \in \mathbb{R}^h$ of the intermediate variable $\mathbf{z}$ requires that we use the elementwise multiplication operator, which we denote by $\odot$.
+$\phi$ etkinleştirme fonksiyonu eleman yönlü uygulandığından, $\mathbf{z}$ ara değişkeninin $\partial J/\partial \mathbf{z} \in \mathbb{R}^h$ gradyanını hesaplamak şunu gerektirir: $\odot$ ile gösterdiğimiz eleman yönlü çarpma operatörünü kullanın.
 
 $$
 \frac{\partial J}{\partial \mathbf{z}}
@@ -103,7 +98,7 @@ $$
 = \frac{\partial J}{\partial \mathbf{h}} \odot \phi'\left(\mathbf{z}\right).
 $$
 
-Finally, we can obtain the gradient $\partial J/\partial \mathbf{W}^{(1)} \in \mathbb{R}^{h \times d}$ of the model parameters closest to the input layer. According to the chain rule, we get
+Son olarak, girdi katmanına en yakın model parametrelerinin, $\partial J/\partial \mathbf{W}^{(1)} \in \mathbb{R}^{h \times d}$, gradyanını elde edebiliriz. Zincir kuralına göre hesaplarsak,
 
 $$
 \frac{\partial J}{\partial \mathbf{W}^{(1)}}
@@ -111,28 +106,27 @@ $$
 = \frac{\partial J}{\partial \mathbf{z}} \mathbf{x}^\top + \lambda \mathbf{W}^{(1)}.
 $$
 
-## Training a Model
+## Model Eğitimi
 
-When training networks, forward and backward propagation depend on each other. In particular, for forward propagation, we traverse the compute graph in the direction of dependencies and compute all the variables on its path. These are then used for backpropagation where the compute order on the graph is reversed. One of the consequences is that we need to retain the intermediate values until backpropagation is complete. This is also one of the reasons why backpropagation requires significantly more memory than plain prediction. We compute tensors as gradients and need to retain all the intermediate variables to invoke the chain rule. Another reason is that we typically train with minibatches containing more than one variable, thus more intermediate activations need to be stored.
+Ağları eğitirken, ileri ve geri yayma birbirine bağlıdır. Özellikle, ileri yayma için, hesaplama çizgesini bağımlılıklar yönünde gezeriz ve yoldaki tüm değişkenleri hesaplarız. Bunlar daha sonra grafikteki hesaplama sırasının tersine çevrildiği geri yayma için kullanılır. Sonuçlardan biri, geri yayma tamamlanana kadar ara değerleri korumamız gerektiğidir. Bu aynı zamanda, geri yaymanın basit tahminden önemli ölçüde daha fazla bellek gerektirmesinin nedenlerinden biridir. Tensörleri gradyan olarak hesaplıyoruz ve zincir kuralını çağırmak için tüm ara değişkenleri korumamız gerekiyor. Diğer bir neden ise, tipik olarak birden fazla değişken içeren minigruplarla eğitim yapmamızdır, bu nedenle daha fazla ara etkinleştirmenin depolanması gerekir.
 
-## Summary
+## Özet
 
-* Forward propagation sequentially calculates and stores intermediate variables within the compute graph defined by the neural network. It proceeds from input to output layer.
-* Back propagation sequentially calculates and stores the gradients of intermediate variables and parameters within the neural network in the reversed order.
-* When training deep learning models, forward propagation and back propagation are interdependent.
-* Training requires significantly more memory and storage.
+* İleri yayma, ara değişkenleri sırayla hesaplar ve sinir ağı tarafından tanımlanan hesaplama çizgesi içinde depolar. Girdiden çıktı katmanına doğru ilerler.
+* Geri yayma, sinir ağı içindeki ara değişkenlerin ve parametrelerin gradyanlarını ters sırayla sırayla hesaplar ve saklar.
+* Derin öğrenme modellerini eğitirken, ileri yayma ve geri yayma birbirine bağlıdır.
+* Eğitim, önemli ölçüde daha fazla bellek ve depolama alanı gerektirir.
 
+## Alıştırma
 
-## Exercises
+1. $\mathbf{x}$'in bazı sayıl (skaler) fonksiyonu $f$'in girdilerinin $n \times m$ matrisler olduğunu varsayın. $\mathbf{x}$'e göre $f$'in gradyanının boyutsallığı nedir?
+1. Bu bölümde açıklanan modelin gizli katmanına bir ek girdi ekleyiniz.
+     * İlgili hesaplama çizgesini çizin.
+     * İleri ve geri yayma denklemlerini türetiniz.
+1. Mevcut bölümde açıklanan modeldeki eğitim ve çıkarım için bellek ayak izini hesaplayın.
+1. *İkinci* türevleri hesaplamak istediğinizi varsayın. Hesaplama çizgesine ne olur? Hesaplamanın ne kadar sürmesini bekliyorsunuz?
+1. Hesaplama çizgenizin GPU'nuz için çok büyük olduğunu varsayın.
+     * Birden fazla GPU'ya bölebilir misiniz?
+     * Daha küçük bir minigrup üzerinde eğitime göre avantajları ve dezavantajları nelerdir?
 
-1. Assume that the inputs $\mathbf{x}$ to some scalar function $f$ are $n \times m$ matrices. What is the dimensionality of the gradient of $f$ with respect to $\mathbf{x}$?
-1. Add a bias to the hidden layer of the model described in this section.
-    * Draw the corresponding compute graph.
-    * Derive the forward and backward propagation equations.
-1. Compute the memory footprint for training and inference in model described in the current chapter.
-1. Assume that you want to compute *second* derivatives. What happens to the compute graph? How long do you expect the calculation to take?
-1. Assume that the compute graph is too large for your GPU.
-    * Can you partition it over more than one GPU?
-    * What are the advantages and disadvantages over training on a smaller minibatch?
-
-[Discussions](https://discuss.d2l.ai/t/102)
+[Tartışmalar](https://discuss.d2l.ai/t/102)

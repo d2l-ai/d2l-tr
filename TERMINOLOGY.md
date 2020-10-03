@@ -1,5 +1,7 @@
 ## Terimler
 
+backprop -> geriyay
+
 backpropagation -> geri yayma
 
 bias -> sinir ağlarında ek girdi
@@ -16,11 +18,15 @@ early stopping -> erken durdurma
 
 gradient -> gradyan, eğim
 
+graph -> çizge
+
 feature -> öznitelik
 
 fully-connected -> tam-bağlı
 
 holdout -> harici tutulan
+
+initialization -> ilkleme
 
 lasso regression -> kement regresyon
 
