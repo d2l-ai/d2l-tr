@@ -10,13 +10,19 @@ bias -> algoritmalardaki yanlılık
 
 co-adaptation -> birlikte-uyarlama
 
+covariate -> ortak değişken
+
 descent -> iniş
+
+domain -> etki alanı
 
 dropout ->  hattan düşme
 
 early stopping -> erken durdurma
 
 environment -> ortam
+
+generative adversarial networks -> çekişmeli üretici ağlar
 
 gradient -> gradyan, eğim
 

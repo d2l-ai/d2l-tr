@@ -18,87 +18,84 @@ Köpekler ve kediler arasında ayrım yapmak istediğimiz bir ikili sınıfland�
 Neyse ki, verilerimizin gelecekte nasıl değişebileceğine dair bazı kısıtlı varsayımlar altında, ilkeli algoritmalar kaymayı algılayabilir ve hatta bazen anında kendilerini uyarlayarak orijinal sınıflandırıcının doğruluğunu iyileştirebilir.
 
 
-### Covariate Shift
+### Ortak Değişken Kayması
 
-Among categories of distribution shift, *covariate shift* may be the most widely studied. Here, we assume that while the distribution of inputs may change over time, the labeling function, i.e., the conditional distribution $P(y \mid \mathbf{x})$ does not change. Statisticians call this *covariate shift* because the problem arises due to a a shift in the distribution of the *covariates* (the features). While we can sometimes reason about distribution shift without invoking causality, we note that covariate shift is the natural assumption to invoke in settings where we believe that $\mathbf{x}$ causes $y$.
+Dağılım kayması kategorileri arasında, *ortak değişken kayması* en yaygın olarak çalışılmışı olabilir. Burada, girdilerin dağılımının zamanla değişebileceğini varsayıyoruz, etiketleme fonksiyonu, yani koşullu dağılım $P(y \mid \mathbf{x})$ değişmez. İstatistikçiler buna *ortak değişken kayması* diyorlar çünkü problem *ortak değişkenlerin* (öznitelikler) dağılımındaki bir kayma nedeniyle ortaya çıkıyor. Bazen nedenselliğe başvurmadan dağıtım kayması hakkında akıl yürütebiliyor olsak da, ortak değişken kaymasının $\mathbf{x}$'in $y$'ye neden olduğuna inandığımız durumlarda çağrılacak doğal varsayım olduğuna dikkat ediyoruz.
 
-Consider the challenge of distinguishing cats and dogs. Our training data might consist of images of the following kind:
+Kedileri ve köpekleri ayırt etmenin zorluğunu düşünün. Eğitim verilerimiz aşağıdaki türden resimlerden oluşabilir:
 
-|cat|cat|dog|dog|
+|kedi|kedi|köpek|köpek|
 |:---------------:|:---------------:|:---------------:|:---------------:|
 |![](../img/cat3.jpg)|![](../img/cat2.jpg)|![](../img/dog1.jpg)|![](../img/dog2.jpg)|
 
-At test time we are asked to classify the following images:
+Test zamanında aşağıdaki resimleri sınıflandırmamız istenrbilir:
 
-|cat|cat|dog|dog|
+|kedi|kedi|köpek|köpek|
 |:---------------:|:---------------:|:---------------:|:---------------:|
 |![](../img/cat-cartoon1.png)|![](../img/cat-cartoon2.png)|![](../img/dog-cartoon1.png)|![](../img/dog-cartoon2.png)|
 
-The training set consists of photos, while the test set contains only cartoons. Training on a dataset with substantially different characteristics from the test set can spell trouble absent a coherent plan for how to adapt to the new domain.
+Eğitim kümesi fotoğraflardan oluşurken, test kümesi sadece çizimlerden oluşuyor. Test kümesinden büyük ölçüde farklı özelliklere sahip bir veri kümesi üzerinde eğitim, yeni etki alanına nasıl adapte olacağına dair tutarlı bir planın olmaması sorununu yaratabilir.
+
+### Etiket Kayması
+
+*Etiket kayması* ters problemi tanımlar. Burada, etiketin marjinali $P(y)$'nin değişebileceğini varsayıyoruz ($P(\mathbf{x})$'de bir değişikliğe neden olur) ancak sınıf koşullu dağılım $P(\mathbf{x} \mid y)$ etki alanları arasında sabit kalır. Etiket kayması, $y$'nin $\mathbf{x}$'e neden olduğuna inandığımızda yaptığımız makul bir varsayımdır. Örneğin, tanıların göreceli yaygınlığı zamanla değişse bile, semptomları (veya diğer belirtileri) verilen tanıları tahmin etmek isteyebiliriz. Etiket kayması burada uygun varsayımdır çünkü hastalıklar semptomlara neden olur. Bazı yozlaşmış durumlarda, etiket kayması ve ortak değişken kayma varsayımları aynı anda geçerli olabilir. Örneğin, etiket deterministik olduğunda, $y$ $\mathbf{x}$'e neden olsa bile, ortak değişken kayma varsayımı karşılanacaktır. İlginç bir şekilde, bu durumlarda, etiket kayması varsayımından kaynaklanan yöntemlerle çalışmak genellikle avantajlıdır. Bunun nedeni, (derin öğrenmede) yüksek boyutlu olma eğiliminde olan girdiye benzeyen nesnelerin aksine, bu yöntemlerin etikete benzeyen (genellikle düşük boyutlu olan) nesnelerde oynama yapmak eğiliminde olmasıdır.
 
 
-### Label Shift
+### Kavram Kayması
 
-*Label shift* describes the converse problem. Here, we assume that the label marginal $P(y)$ can change (inducing a change in $P(\mathbf{x})$) but the class-conditional distribution $P(\mathbf{x} \mid y)$ remains fixed across domains. Label shift is a reasonable assumption to make when we believe that $y$ causes $\mathbf{x}$. For example, we may want to predict diagnoses given their symptoms (or other manifestations), even as the relative prevalence of diagnoses are changing over time. Label shift is the appropriate assumption here because diseases cause symptoms. In some degenerate cases the label shift and covariate shift assumptions can hold simultaneously. For example, when the label is deterministic, the covariate shift assumption will be satisfied, even when $y$ causes $\mathbf{x}$. Interestingly, in these cases, it is often advantageous to work with methods that flow from the label shift assumption. That is because these methods tend to involve manipulating objects that look like the label (which is often low-dimensional), as opposed to objects that look like the input, which (in deep learning) tends to be high-dimensional.
+Ayrıca etiketlerin tanımları değiştiğinde ortaya çıkan ilgili *kavram kayması* sorunuyla da karşılaşabiliriz. Kulağa garip geliyor---bir *kedi* bir *kedi*dir, değil mi? Ancak, diğer kategoriler zaman içinde kullanımda değişikliklere tabidir. Akıl hastalığı için tanı kriterleri, modaya uygun olanlar ve iş unvanları önemli miktarda *kavram kaymasına* tabidir. Amerika Birleşik Devletleri çevresinde dolaşırsak, verilerimizin kaynağını coğrafyaya göre değiştirirsek, *meşrubat* adlarının dağılımıyla ilgili olarak, :numref:`fig_popvssoda`'da gösterildiği gibi önemli bir kavram kayması bulacağımız ortaya çıkar.
 
-
-
-### Concept Shift
-
-We may also encounter the related problem of *concept shift*, which arises when the very definitions of labels can change. This sounds weird---a *cat* is a *cat*, no? However, other categories are subject to changes in usage over time. Diagnostic criteria for mental illness, what passes for fashionable, and job titles, are all subject to considerable amounts of *concept shift*. It turns out that if we navigate around the United States, shifting the source of our data by geography, we will find considerable concept shift regarding the distribution of names for *soft drinks* as shown in :numref:`fig_popvssoda`.
-
-![Concept shift on soft drink names in the United States.](../img/popvssoda.png)
+![Amerika Birleşik Devletleri'nde meşrubat isimlerinde kavram değişikliği.](../img/popvssoda.png)
 :width:`400px`
 :label:`fig_popvssoda`
 
-If we were to build a machine translation system, the distribution $P(y \mid x)$ might be different depending on our location. This problem can be tricky to spot. We might hope to exploit knowledge that shift only takes place gradually (either in a temporal or geographic sense).
+Bir makine çeviri sistemi kuracak olsaydık, $P(y \mid x)$ dağılımı konumumuza bağlı olarak farklı olabilirdi. Bu sorunu tespit etmek zor olabilir. Değişimin yalnızca kademeli olarak gerçekleştiği bilgiden (hem zamansal hem de coğrafi anlamda) yararlanmayı umabiliriz.
 
 
+### Örenkler
 
-### Examples
-
-Before delving into formalism and algorithms, we can discuss some concrete situations where covariate or concept shift might not be obvious.
+Biçimselliğe ve algoritmalara girmeden önce, ortak değişken veya kavram kaymasının bariz olmayabileceği bazı somut durumları tartışabiliriz.
 
 
-#### Medical Diagnostics
+#### Tıbbi Teşhis
 
-Imagine that you want to design an algorithm to detect cancer. You collect data from healthy and sick people and you train your algorithm. It works fine, giving you high accuracy and you conclude that you’re ready for a successful career in medical diagnostics. *Not so fast.*
+Kanseri tespit etmek için bir algoritma tasarlamak istediğinizi hayal edin. Sağlıklı ve hasta insanlardan veri topluyorsunuz ve algoritmanızı geliştiriyorsunuz. İyi çalışıyor, size yüksek doğruluk sağlıyor ve tıbbi teşhis alanında başarılı bir kariyere hazır olduğunuz sonucuna varıyorsunuz. *O kadar da hızlı değil.*
 
-The distributions that gave rise to the training data and those you will encounter in the wild might differ considerably. This happened to an unfortunate startup that one of us worked with years ago. They were developing a blood test for a disease that predominantly affects older men and hoped to study it using blood samples that they had collected from patients. However, it is considerably more difficult to obtain blood samples from healthy men than sick patients already in the system. To compensate, the startup solicited blood donations from students on a university campus to serve as healthy controls in developing their test. Then they asked whether we could help them to build a classifier for detecting the disease.
+Eğitim verilerini ortaya çıkaranlar ile vahşi doğada karşılaşacağınız dağılımlar önemli ölçüde farklılık gösterebilir. Bu, bizden birinin yıllar önce çalıştığı talihsiz bir girişimin başına geldi. Çoğunlukla yaşlı erkekleri etkileyen bir hastalık için bir kan testi geliştiriyorlardı ve hastalardan topladıkları kan örneklerini kullanarak bu hastalığı incelemeyi umuyorlardı. Bununla birlikte, sağlıklı erkeklerden kan örnekleri almak, sistemdeki mevcut hastalardan almaktan çok daha zordur. Girişim, bununla başa çıkmak için, bir üniversite kampüsündeki öğrencilerden testlerini geliştirmede sağlıklı kontrol grubu olmaları amacıyla kan bağışı istedi. Ardından, onlara hastalığı tespit etmek için bir sınıflandırıcı oluşturmalarına yardım edip edemeyeceğimiz soruldu.
 
-As we explained to them, it would indeed be easy to distinguish between the healthy and sick cohorts with near-perfect accuracy. However, that's because the test subjects differed in age, hormone levels, physical activity, diet, alcohol consumption, and many more factors unrelated to the disease. This was unlikely to be the case with real patients. Due to their sampling procedure, we could expect to encounter extreme covariate shift. Moreover, this case was unlikely to be correctable via conventional methods. In short, they wasted a significant sum of money.
+Onlara açıkladığımız gibi, sağlıklı ve hasta grupları neredeyse mükemmel bir doğrulukla ayırt etmek gerçekten kolay olurdu. Çünkü, bunun nedeni, deneklerin yaş, hormon seviyeleri, fiziksel aktivite, diyet, alkol tüketimi ve hastalıkla ilgisi olmayan daha birçok faktör açısından farklılık göstermesidir. Gerçek hastalarda durum böyle değildi. Örneklem prosedürleri nedeniyle, aşırı ortak değişken kayması ile karşılaşmayı bekleyebiliriz. Dahası, bu durumun geleneksel yöntemlerle düzeltilmesi pek olası değildir. Kısacası, önemli miktarda para israf ettiler.
 
-#### Self Driving Cars
+#### Kendi Kendine Süren Arabalar
 
-Say a company wanted to leverage machine learning for developing self-driving cars. One key component here is a roadside detector. Since real annotated data is expensive to get, they had the (smart and questionable) idea to use synthetic data from a game rendering engine as additional training data. This worked really well on "test data" drawn from the rendering engine. Alas, inside a real car it was a disaster. As it turned out, the roadside had been rendered with a very simplistic texture. More importantly, *all* the roadside had been rendered with the *same* texture and the roadside detector learned about this "feature" very quickly.
+Bir şirketin sürücüsüz otomobiller geliştirmek için makine öğrenmesinden yararlanmak istediğini varsayalım. Buradaki temel bileşenlerden biri yol kenarı detektörüdür. Gerçek açıklamalı verilerin elde edilmesi pahalı olduğu için, bir oyun oluşturma motorundan gelen sentetik verileri ek eğitim verileri olarak kullanma (zekice ve şüpheli) fikirleri vardı. Bu, işleme motorundan alınan "test verileri" üzerinde gerçekten iyi çalıştı. Ne yazık ki, gerçek bir arabanın içinde tam bir felaketti. Görünüşe göre oluşturulan yol kenarı çok basit bir dokuya sahipti. Daha da önemlisi, *tüm* yol kenarı *aynı* dokuya sahipti ve yol kenarı dedektörü bu "özniteliği" çok çabuk öğrendi.
 
-A similar thing happened to the US Army when they first tried to detect tanks in the forest. They took aerial photographs of the forest without tanks, then drove the tanks into the forest and took another set of pictures. The classifier appeared to work *perfectly*. Unfortunately, it had merely learned how to distinguish trees with shadows from trees without shadows---the first set of pictures was taken in the early morning, the second one at noon.
+ABD Ordusu ormandaki tankları ilk defa tespit etmeye çalıştıklarında da benzer bir şey oldu. Ormanın tanksız hava fotoğraflarını çektiler, ardından tankları ormana sürdüler ve bir dizi fotoğraf daha çektiler. Sınıflandırıcının *mükemmel* çalıştığı görüldü. Ne yazık ki, o sadece gölgeli ağaçları gölgesiz ağaçlardan nasıl ayırt edeceğini öğrenmişti---ilk fotoğraf kümesi sabah erken, ikincisi öğlen çekilmişti.
 
-#### Nonstationary distributions
+#### Durağan Olmayan Dağılımlar
 
-A much more subtle situation arises when the distribution changes slowly and the model is not updated adequately. Here are some typical cases:
+Dağılım yavaş değiştiğinde ve model yeterince güncellenmediğinde çok daha hassas bir durum ortaya çıkar. İşte bazı tipik durumlar:
 
-* We train a computational advertising model and then fail to update it frequently (e.g., we forget to incorporate that an obscure new device called an iPad was just launched).
-* We build a spam filter. It works well at detecting all spam that we have seen so far. But then the spammers wisen up and craft new messages that look unlike anything we have seen before.
-* We build a product recommendation system. It works throughout the winter but then continues to recommend Santa hats long after Christmas.
+* Bir hesaplamalı reklamcılık modelini eğitiyor ve ardından onu sık sık güncellemekte başarısız oluyoruz (örneğin, iPad adı verilen belirsiz yeni bir cihazın henüz piyasaya sürüldüğünü dahil etmeyi unuttuk)
+* Bir yaramaz posta filtresi oluşturuyoruz. Şimdiye kadar gördüğümüz tüm yaramaz postaları tespit etmede iyi çalışıyor. Ancak daha sonra, yaramaz posta gönderenler akıllanıyor ve daha önce gördüğümüz hiçbir şeye benzemeyen yeni mesajlar oluşturuyorlar.
+* Ürün öneri sistemi oluşturuyoruz. Kış boyunca işe yarıyor, ancak Noel'den sonra da Noel Baba şapkalarını önermeye devam ediyor.
 
-#### More Anecdotes
+#### Daha Fazla Kısa Hikaye
 
-* We build a face detector. It works well on all benchmarks. Unfortunately it fails on test data---the offending examples are close-ups where the face fills the entire image (no such data was in the training set).
-* We build a web search engine for the USA market and want to deploy it in the UK.
-* We train an image classifier by compiling a large dataset where each among a large set of classes is equally represented in the dataset, say 1000 categories, represented by 1000 images each. Then we deploy the system in the real world, where the actual label distribution of photographs is decidedly non-uniform.
+* Yüz dedektörü yapıyoruz. Tüm kıyaslamalarda iyi çalışıyor. Ne yazık ki test verilerinde başarısız oluyor---rahatsız edici örnekler, yüzün tüm resmi doldurduğu yakın çekimlerdir (eğitim kümesinde böyle bir veri yoktu).
+* ABD pazarı için bir web arama motoru oluşturuyoruz ve bunu Birleşik Krallık'ta kullanmak istiyoruz.
+* Büyük bir sınıf kümesinin her birinin veri kümesinde eşit olarak temsil edildiği büyük bir veri kümesi derleyerek bir imge sınıflandırıcı eğitiyoruz, örneğin 1000 kategori var ve her biri 1000 görüntü ile temsil ediliyor. Ardından sistemi, fotoğrafların gerçek etiket dağılımının kesinlikle tekdüze olmadığı gerçek dünyada konuşlandırıyoruz.
 
-In short, there are many cases where training and test distributions $p(\mathbf{x}, y)$ are different. In some cases, we get lucky and the models work despite covariate, label, or concept shift. In other cases, we can do better by employing principled strategies to cope with the shift. The remainder of this section grows considerably more technical. The impatient reader could continue on to the next section as this material is not prerequisite to subsequent concepts.
+Kısacası, $p(\mathbf {x}, y)$ eğitim ve test dağılımlarının farklı olduğu birçok durum vardır. Bazı durumlarda şanslıyız ve modeller ortak değişken, etiket veya kavram kaymasına rağmen çalışıyor. Diğer durumlarda, kaymalarla başa çıkmak için ilkeli stratejiler kullanarak daha iyisini yapabiliriz. Bu bölümün geri kalanı önemli ölçüde daha teknik hale geliyor. Sabırsız okuyucu bir sonraki bölüme geçebilir çünkü bu içerik sonraki kavramlar için ön koşul değildir.
 
-### Covariate Shift Correction
+### Ortak Değişken Kaymasını Düzeltme
 
-Assume that we want to estimate some dependency $P(y \mid \mathbf{x})$ for which we have labeled data $(\mathbf{x}_i, y_i)$. Unfortunately, the observations $x_i$ are drawn from some *target* distribution $q(\mathbf{x})$ rather than the *source* distribution $p(\mathbf{x})$. To make progress, we need to reflect about what exactly is happening during training: we iterate over training data and associated labels $\{(\mathbf{x}_1, y_1), \ldots, (\mathbf{x}_n, y_n)\}$ and update the weight vectors of the model after every minibatch. We sometimes additionally apply some penalty to the parameters, using weight decay, dropout, or some other related technique. This means that we largely minimize the loss on the training.
+Verileri $(\mathbf{x}_i, y_i)$ olarak etiketlediğimiz $P(y \mid \mathbf{x})$ bağımlılığını tahmin etmek istediğimizi varsayalım. Ne yazık ki, $x_i$ gözlemleri, *kaynak* dağılımı $p(\mathbf{x})$ yerine *hedef* dağılım $q(\mathbf{x})$'dan alınmıştır. İlerleme yapmak için, eğitim sırasında tam olarak neler olduğunu düşünmemiz gerekiyor: Eğitim verilerini ve ilişkili etiketleri $\{(\mathbf{x}_1, y_1), \ldots, (\mathbf{x}_n, y_n)\}$ yineleriz ve her minigruptan sonra modelin ağırlık vektörlerini güncelleriz. Bazen ek olarak parametrelere ağırlık sönümü, hattan düşürme veya başka bir ilgili teknik kullanarak bazı cezalar uygularız. Bu, eğitimdeki kaybı büyük ölçüde en aza indirdiğimiz anlamına gelir.
 
 $$
 \mathop{\mathrm{minimize}}_w \frac{1}{n} \sum_{i=1}^n l(x_i, y_i, f(x_i)) + \mathrm{some~penalty}(w).
 $$
 
-Statisticians call the first term an *empirical average*, i.e., an average computed over the data drawn from $P(x) P(y \mid x)$. If the data is drawn from the "wrong" distribution $q$, we can correct for that by using the following simple identity:
+İstatistikçiler ilk terime *deneysel ortalama* diyorlar, yani $P(x) P(y \mid x)$'den alınan veriler üzerinden hesaplanan bir ortalama. Veriler "yanlış" dağıtımdan ($q$) alınmışsa, aşağıdaki basit eşitliği kullanarak bunu düzeltebiliriz:
 
 $$
 \begin{aligned}
@@ -107,31 +104,28 @@ $$
 \end{aligned}
 $$
 
-In other words, we need to re-weight each instance by the ratio of probabilities that it would have been drawn from the correct distribution $\beta(\mathbf{x}) := p(\mathbf{x})/q(\mathbf{x})$. Alas, we do not know that ratio, so before we can do anything useful we need to estimate it. Many methods are available, including some fancy operator-theoretic approaches that attempt to recalibrate the expectation operator directly using a minimum-norm or a maximum entropy principle. Note that for any such approach, we need samples drawn from both distributions---the "true" $p$, e.g., by access to training data, and the one used for generating the training set $q$ (the latter is trivially available). Note however, that we only need samples $\mathbf{x} \sim q(\mathbf{x})$; we do not to access labels $y \sim q(y)$.
+Başka bir deyişle, her bir örneği, doğru dağılımdan, $\beta(\mathbf{x}) := p(\mathbf{x})/q(\mathbf{x})$, elde edilecek olasılık oranına göre yeniden ağırlıklandırmamız gerekir. Ne yazık ki, bu oranı bilmiyoruz, bu yüzden yararlı bir şey yapmadan önce onu tahmin etmemiz gerekiyor. Beklenti operatörünü doğrudan bir minimum norm veya maksimum entropi ilkesi kullanarak yeniden ayarlamaya çalışan bazı süslü operatör-teorik yaklaşımlar da dahil olmak üzere birçok yöntem mevcuttur. Bu tür bir yaklaşım için, her iki dağılımdan da alınan örneklere ihtiyacımız olduğuna dikkat edin---örneğin eğitim verilerine erişen "gerçek" $p$ ve eğitim kümesi oluşturmak için kullanılan $q$ (ikincisi zaten mevcut). Ancak, sadece $\mathbf{x} \sim q(\mathbf{x})$ örneklerine ihtiyacımız olduğuna dikkat edin; $y \sim q(y)$ etiketlerine erişmiyoruz.
 
-In this case, there exists a very effective approach that will give almost as good results: logistic regression. This is all that is needed to compute estimate probability ratios. We learn a classifier to distinguish between data drawn from $p(\mathbf{x})$ and data drawn from $q(\mathbf{x})$. If it is impossible to distinguish between the two distributions then it means that the associated instances are equally likely to come from either one of the two distributions. On the other hand, any instances that can be well discriminated should be significantly overweighted or underweighted accordingly. For simplicity’s sake assume that we have an equal number of instances from both distributions, denoted by $\mathbf{x}_i \sim p(\mathbf{x})$ and $\mathbf{x}_i' \sim q(\mathbf{x})$, respectively. Now denote by $z_i$ labels that are 1 for data drawn from $p$ and -1 for data drawn from $q$. Then the probability in a mixed dataset is given by
+Bu durumda, neredeyse o kadar iyi sonuçlar verecek çok etkili bir yaklaşım vardır: Lojistik regresyon. Olasılık oranlarını hesaplamak için gereken tek şey budur. $p(\mathbf{x})$'den alınan veriler ile $q(\mathbf{x})$'den alınan verileri ayırt etmek için bir sınıflandırıcı öğreniyoruz. İki dağılım arasında ayrım yapmak imkansızsa, bu, ilişkili örneklerin iki dağılımdan birinden gelme olasılığının eşit olduğu anlamına gelir. Öte yandan, iyi ayırt edilebilen herhangi bir örnek, buna göre önemli ölçüde yüksek veya düşük ağırlıklı olmalıdır. Basit olması açısından, her iki dağılımdan da eşit sayıda örneğe sahip olduğumuzu ve sırasıyla $\mathbf{x}_i \sim p(\mathbf{x})$ ve $\mathbf{x}_i' \sim q(\mathbf{x})$ diye gösterildiklerini varsayalım. Şimdi, $p$'den alınan veriler için 1 ve $q$'dan alınan veriler için -1 olan $z_i$ etiketlerini belirtelim. Daha sonra, karışık bir veri kümesindeki olasılık şu şekilde verilir:
 
 $$P(z=1 \mid \mathbf{x}) = \frac{p(\mathbf{x})}{p(\mathbf{x})+q(\mathbf{x})} \text{ and hence } \frac{P(z=1 \mid \mathbf{x})}{P(z=-1 \mid \mathbf{x})} = \frac{p(\mathbf{x})}{q(\mathbf{x})}.$$
 
-Hence, if we use a logistic regression approach,
-where $P(z=1 \mid \mathbf{x})=\frac{1}{1+\exp(-f(\mathbf{x}))}$.
-it follows that
+Dolayısıyla, lojistik regresyon yaklaşımı kulanırsak, $P(z=1 \mid \mathbf{x})=\frac{1}{1+\exp(-f(\mathbf{x}))}$, şuna varırız:
 
 $$
 \beta(\mathbf{x}) = \frac{1/(1 + \exp(-f(\mathbf{x})))}{\exp(-f(\mathbf{x}))/(1 + \exp(-f(\mathbf{x})))} = \exp(f(\mathbf{x})).
 $$
 
-As a result, we need to solve two problems: first one to distinguish between data drawn from both distributions, and then a reweighted minimization problem where we weigh terms by $\beta$, e.g., via the head gradients. Here's a prototypical algorithm for that purpose which uses an unlabeled training set $X$ and test set $Z$:
+Sonuç olarak, iki sorunu çözmemiz gerekiyor: Birincisi her iki dağılımdan alınan verileri ayırt etmek ve ardından terimleri $\beta$ ile yeniden ağırlıklandırılmış bir küçültme problemini çözmek, örneğin ana gradyanlar aracılığıyla. İşte bu amaç için etiketlenmemiş bir eğitim kümesi $X$ ve test kümesi $Z$ kullanan prototip bir algoritma:
 
-1. Generate training set with $\{(\mathbf{x}_i, -1) ... (\mathbf{z}_j, 1)\}$.
-1. Train binary classifier using logistic regression to get function $f$.
-1. Weigh training data using $\beta_i = \exp(f(\mathbf{x}_i))$ or better $\beta_i = \min(\exp(f(\mathbf{x}_i)), c)$.
-1. Use weights $\beta_i$ for training on $X$ with labels $Y$.
+1. $\{(\mathbf{x}_i, -1) ... (\mathbf{z}_j, 1)\}$ ile eğitim kümesi oluşturun.
+1. $f$ fonksiyonunu elde etmek için lojistik regresyon kullanarak ikili sınıflandırıcıyı eğitin.
+1. $\beta_i = \exp(f(\mathbf{x}_i))$ veya daha iyisi $\beta_i = \min(\exp(f(\mathbf{x}_i)), c)$ kullanarak eğitim verilerini ağırlıklandırın.
+1. $X$ üzerinde eğitim için $Y$ etiketleriyle $\beta_i$ ağırlıkları kullanın.
 
-Note that this method relies on a crucial assumption. For this scheme to work, we need that each data point in the target (test time) distribution had nonzero probability of occurring at training time. If we find a point where $q(\mathbf{x}) > 0$ but $p(\mathbf{x}) = 0$, then the corresponding importance weight should be infinity.
+Bu yöntemin önemli bir varsayıma dayandığını unutmayın. Bu düzenin çalışması için, hedef (test zamanı) dağılımındaki her veri noktasının eğitim zamanında meydana gelme olasılığının sıfır olmayan bir şekilde olması gerekir. $q(\mathbf{x}) > 0$ ama $p(\mathbf{x}) = 0$ olan bir nokta bulursak, buna karşılık gelen önem ağırlığı sonsuz olmalıdır.
 
-*Generative Adversarial Networks* use a very similar idea to that described above to engineer a *data generator* that outputs data that cannot be distinguished from examples sampled from a reference dataset. In these approaches, we use one network, $f$ to distinguish real vs. fake data and a second network $g$ that tries to fool the discriminator $f$ into accepting fake data as real. We will discuss this in much more detail later.
-
+*Çekişmeli Üretici Ağlar*, bir referans veri kümesinden örneklenen örneklerden ayırt edilemeyen verileri çıkaran bir *veri üretici* oluşturmak için yukarıda tarif edilene çok benzer bir fikir kullanır. Bu yaklaşımlarda, gerçek ve sahte verileri ayırt etmek için bir $f$ ağı ve sahte verileri gerçek olarak kabul etmesi için $f$ ayrımcısını kandırmaya çalışan ikinci bir $g$ ağı kullanıyoruz. Bunu daha sonra çok daha detaylı tartışacağız.
 
 ### Label Shift Correction
 
@@ -188,8 +182,6 @@ Finally, it is important to remember that when you deploy machine learning syste
  1. In the next iteration, the updated model targets the same neighborhood even more heavily leading to yet more crimes discovered, etc.
 
 Often, the various mechanisms by which a model's predictions become coupled to its training data are unaccounted for in the modeling process. This can lead to what researchers call "runaway feedback loops." Additionally, we want to be careful about whether we are addressing the right problem in the first place. Predictive algorithms now play an outsize role in mediating the dissemination of information. Should the news that an individual encounters be determined by the set of Facebook pages they have *Liked*? These are just a few among the many pressing ethical dilemmas that you might encounter in a career in machine learning.
-
-
 
 ## Summary
 
