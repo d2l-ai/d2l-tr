@@ -16,6 +16,8 @@ dropout ->  hattan düşme
 
 early stopping -> erken durdurma
 
+environment -> ortam
+
 gradient -> gradyan, eğim
 
 graph -> çizge
@@ -47,6 +49,8 @@ recurrent neural network -> yinelemeli sinir ağı
 regression -> bağlanım veya regresyon
 
 regularization -> düzenlileştirme
+
+reinforcement learning -> pekiştirmeli öğrenme
 
 ridge regression -> sırt regresyon
 
