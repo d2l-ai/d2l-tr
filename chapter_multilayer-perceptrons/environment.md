@@ -52,7 +52,7 @@ Ayrıca etiketlerin tanımları değiştiğinde ortaya çıkan ilgili *kavram ka
 Bir makine çeviri sistemi kuracak olsaydık, $P(y \mid x)$ dağılımı konumumuza bağlı olarak farklı olabilirdi. Bu sorunu tespit etmek zor olabilir. Değişimin yalnızca kademeli olarak gerçekleştiği bilgiden (hem zamansal hem de coğrafi anlamda) yararlanmayı umabiliriz.
 
 
-### Örenkler
+### Örnekler
 
 Biçimselliğe ve algoritmalara girmeden önce, ortak değişken veya kavram kaymasının bariz olmayabileceği bazı somut durumları tartışabiliriz.
 
@@ -127,34 +127,32 @@ Bu yöntemin önemli bir varsayıma dayandığını unutmayın. Bu düzenin çal
 
 *Çekişmeli Üretici Ağlar*, bir referans veri kümesinden örneklenen örneklerden ayırt edilemeyen verileri çıkaran bir *veri üretici* oluşturmak için yukarıda tarif edilene çok benzer bir fikir kullanır. Bu yaklaşımlarda, gerçek ve sahte verileri ayırt etmek için bir $f$ ağı ve sahte verileri gerçek olarak kabul etmesi için $f$ ayrımcısını kandırmaya çalışan ikinci bir $g$ ağı kullanıyoruz. Bunu daha sonra çok daha detaylı tartışacağız.
 
-### Label Shift Correction
+### Etiket Kaymasını Düzeltme
 
-Assume that we are dealing with a $k$-way multiclass classification task. When the distribution of labels shifts over time, $p(y) \neq q(y)$ but the class-conditional distributions stay the same $p(\mathbf{x})=q(\mathbf{x})$. Here, our importance weights will correspond to the label likelihood ratios $q(y)/p(y)$. One nice thing about label shift is that if we have a reasonably good model (on the source distribution) then we can get consistent estimates of these weights without ever having to deal with the ambient dimension In deep learning, the inputs tend to be high-dimensional objects like images, while the labels are often simpler objects like categories.
+$k$-çeşit çok sınıflı bir sınıflandırma görevi ile uğraştığımızı varsayalım. Etiketlerin dağılımı zaman içinde değişir, $p(y) \neq q(y)$, ancak sınıf-koşullu dağılımları aynı $p(\mathbf{x})=q(\mathbf{x})$ olarak kalır. Burada, önem ağırlıklarımız etiket olabilirlik oranlarına $q(y)/p(y)$ karşılık gelecektir. Etiket kayması ile ilgili güzel bir şey, makul derecede iyi bir modelimiz varsa (kaynak dağılımında), ortam boyutuyla uğraşmak zorunda kalmadan bu ağırlıkların tutarlı tahminlerini elde edebiliriz. Derin öğrenmede, girdiler resimler gibi yüksek boyutlu nesneler olma eğilimindedir, etiketler ise genellikle kategoriler gibi daha basit nesnelerdir.
 
-To estimate the target label distribution, we first take our reasonably good off the shelf classifier (typically trained on the training data) and compute its confusion matrix using the validation set (also from the training distribution). The confusion matrix, C, is simply a $k \times k$ matrix, where each column corresponds to the *actual* label and each row corresponds to our model's predicted label. Each cell's value $c_{ij}$ is the fraction of predictions where the true label was $j$ *and* our model predicted $i$.
+Hedef etiket dağılımını tahmin etmek için, önce makul ölçüde iyi olan raftaki mevcut sınıflandırıcımızı (tipik olarak eğitim verileri üzerinde eğitilmiştir) alıp geçerleme kümesini kullanarak (o da eğitim dağılımından) hata matrisini hesaplıyoruz. Hata matrisi, C, basitçe bir $k \times k$ matrisidir, burada her sütun *gerçek* etikete ve her satır, modelimizce tahmin edilen etikete karşılık gelir. Her bir hücrenin değeri $c_ {ij}$, gerçek etiketin $j$ olduğu *ve* modelimizin $i$ tahmin ettiği tahminlerin oranıdır.
 
-Now, we cannot calculate the confusion matrix on the target data directly, because we do not get to see the labels for the examples that we see in the wild, unless we invest in a complex real-time annotation pipeline. What we can do, however, is average all of our models predictions at test time together, yielding the mean model output $\mu_y$.
+Şimdi, hedef verilerdeki hata matrisini doğrudan hesaplayamayız, çünkü karmaşık bir gerçek zamanlı açıklama veri işleme hattına yatırım yapmazsak, gerçek hayatta gördüğümüz örneklerin etiketlerini göremeyiz. Bununla birlikte, yapabileceğimiz şey, test zamanında tüm model tahminlerimizin ortalamasını almak ve ortalama model çıktısını $\mu_y$ vermek.
 
-It turns out that under some mild conditions---if our classifier was reasonably accurate in the first place, and if the target data contains only classes of images that we have seen before, and if the label shift assumption holds in the first place (the strongest assumption here), then we can recover the test set label distribution by solving a simple linear system $C \cdot q(y) = \mu_y$. If our classifier is sufficiently accurate to begin with, then the confusion $C$ will be invertible, and we get a solution $q(y) = C^{-1} \mu_y$. Here we abuse notation a bit, using $q(y)$ to denote the vector of label frequencies. Because we observe the labels on the source data, it is easy to estimate the distribution $p(y)$. Then for any training example $i$ with label $y$, we can take the ratio of our estimates $\hat{q}(y)/\hat{p}(y)$ to calculate the weight $w_i$, and plug this into the weighted risk minimization algorithm above.
+Bazı hafif koşullar altında---eğer sınıflandırıcımız ilk etapta makul ölçüde doğruysa ve hedef veriler yalnızca daha önce gördüğümüz imge sınıflarını içeriyorsa ve etiket kayması varsayımı ilk etapta geçerli ise (buradaki en güçlü varsayım), o zaman basit bir doğrusal sistemi $C \cdot q(y) = \mu_y$ çözerek test kümesi etiket dağılımını yeniden elde edebiliriz. Sınıflandırıcımız başlamak için yeterince doğruysa, o zaman hata matrisimiz $C$ tersine çevrilebilir ve $q(y) = C^{-1} \mu_y$ çözümünü elde ederiz. Burada, etiket frekanslarının vektörünü belirtmek için $q(y)$'yi kullanarak gösterimi biraz kötüye kullanıyoruz. Kaynak verilerdeki etiketleri gözlemlediğimiz için, $p(y)$ dağılımını tahmin etmek kolaydır. Daha sonra, $y$ etiketli herhangi bir eğitim örneği $i$'ye ait $w_i$ ağırlığını hesaplamak için tahminlerimizin oranını, $\hat{q}(y)/\hat{p}(y)$, alabiliriz ve bunu yukarıdaki ağırlıklı risk azaltma algoritmasına ekleriz.
 
+### Kavram Kayması Düzeltmesi
 
-### Concept Shift Correction
+Kavram kaymasını ilkeli bir şekilde düzeltmek çok daha zordur. Örneğin, sorunun birdenbire kedileri köpeklerden ayırt etmekten beyaz siyah hayvanları ayırmaya dönüştüğü bir durumda, yeni etiketler toplamadan ve sıfırdan eğitmeden çok daha iyisini yapabileceğimizi varsaymak mantıksız olacaktır. Neyse ki pratikte bu tür aşırı değişimler nadirdir. Bunun yerine, genellikle olan şey, görevin yavaş yavaş değişmeye devam etmesidir. İşleri daha somut hale getirmek için işte bazı örnekler:
 
-Concept shift is much harder to fix in a principled manner. For instance, in a situation where suddenly the problem changes from distinguishing cats from dogs to one of distinguishing white from black animals, it will be unreasonable to assume that we can do much better than just collecting new labels and training from scratch. Fortunately, in practice, such extreme shifts are rare. Instead, what usually happens is that the task keeps on changing slowly. To make things more concrete, here are some examples:
+* Hesaplamalı reklamcılıkta yeni ürünler piyasaya sürülür, eski ürünler daha az popüler hale gelir. Bu, reklamlar üzerindeki dağılımın ve popülerliğinin kademeli olarak değiştiği ve herhangi bir tıklama oranı tahmincisinin bununla birlikte kademeli olarak değişmesi gerektiği anlamına gelir.
+* Trafik kamerası lensleri, çevresel aşınma nedeniyle kademeli olarak bozulur ve görüntü kalitesini aşamalı olarak etkiler.
+* Haber içeriği kademeli olarak değişir (yani, haberlerin çoğu değişmeden kalır, ancak yeni hikayeler ortaya çıkar).
 
-* In computational advertising, new products are launched, old products become less popular. This means that the distribution over ads and their popularity changes gradually and any click-through rate predictor needs to change gradually with it.
-* Traffic camera lenses degrade gradually due to environmental wear, affecting image quality progressively.
-* News content changes gradually (i.e., most of the news remains unchanged but new stories appear).
+Bu gibi durumlarda, ağları verilerdeki değişime adapte etmek için eğitim ağlarında kullandığımız yaklaşımı kullanabiliriz. Başka bir deyişle, mevcut ağ ağırlıklarını kullanıyoruz ve sıfırdan eğitim yerine yeni verilerle birkaç güncelleme adımı gerçekleştiriyoruz.
 
-In such cases, we can use the same approach that we used for training networks to make them adapt to the change in the data. In other words, we use the existing network weights and simply perform a few update steps with the new data rather than training from scratch.
+## Öğrenme Sorunlarının Sınıflandırması
 
-## A Taxonomy of Learning Problems
+$p(x)$ ve $P(y \mid x)$'teki değişikliklerle nasıl başa çıkılacağı hakkında bilgi sahibi olarak, şimdi makine öğrenmesi problem formülasyonunun diğer bazı yönlerini ele alabiliriz.
 
-Armed with knowledge about how to deal with changes in $p(x)$ and in $P(y \mid x)$, we can now consider some other aspects of machine learning problem formulation.
-
-
-* **Batch Learning.** Here we have access to training data and labels $\{(x_1, y_1), \ldots, (x_n, y_n)\}$, which we use to train a network $f(x, w)$. Later on, we deploy this network to score new data $(x, y)$ drawn from the same distribution. This is the default assumption for any of the problems that we discuss here. For instance, we might train a cat detector based on lots of pictures of cats and dogs. Once we trained it, we ship it as part of a smart catdoor computer vision system that lets only cats in. This is then installed in a customer's home and is never updated again (barring extreme circumstances).
-* **Online Learning.** Now imagine that the data $(x_i, y_i)$ arrives one sample at a time. More specifically, assume that we first observe $x_i$, then we need to come up with an estimate $f(x_i, w)$ and only once we have done this, we observe $y_i$ and with it, we receive a reward (or incur a loss), given our decision. Many real problems fall into this category. E.g., we need to predict tomorrow's stock price, this allows us to trade based on that estimate and at the end of the day we find out whether our estimate allowed us to make a profit. In other words, we have the following cycle where we are continuously improving our model given new observations.
+* **Toplu Öğrenme.** Burada eğitim verilerine ve $\{(x_1, y_1), \ldots, (x_n, y_n)\}$ etiketlerine erişebiliyoruz, onları $f(x, w)$ ağını eğitme de kullanıyoruz. Daha sonra, aynı dağılımdan çekilen yeni verileri $(x, y)$ puanlamak için bu ağı konuşlandırıyoruz. Bu, burada tartıştığımız sorunlardan herhangi biri için varsayılan varsayımdır. Örneğin, çok sayıda kedi ve köpek resmine dayanarak bir kedi dedektörü eğitebiliriz. Eğittikten sonra, onu yalnızca kedilerin içeri girmesine izin veren akıllı bir kedi kapısı bilgisayar görüş sisteminin parçası olarak gönderiyoruz. Bu daha sonra bir müşterinin evine kurulur ve bir daha asla güncellenmez (aşırı koşullar hariç).
+* **Çevrimiçi Öğrenme.** Şimdi $(x_i, y_i)$ verisinin her seferinde bir örnek olarak geldiğini hayal edin. Daha belirleyici olarak, önce $x_i $'i gözlemlediğimizi, ardından bir $f(x_i, w)$ tahmini bulmamız gerektiğini ve yalnızca bunu yaptığımızda $y_i$'yi gözlemlediğimizi ve bununla bizim kararımıza göre bir ödül aldığımızı (veya bir zarar da olabilir) varsayalım. Birçok gerçek sorun bu kategoriye girer. Örneğin, yarınki hisse senedi fiyatını tahmin etmemiz gerekir, bu, bu tahmine dayalı olarak işlem yapmamızı sağlar ve günün sonunda tahminimizin kâr elde etmemize izin verip vermediğini öğreniriz. Başka bir deyişle, yeni gözlemlerle modelimizi sürekli iyileştirdiğimiz aşağıdaki döngüye sahibiz.
 
 $$
 \mathrm{model} ~ f_t \longrightarrow
@@ -197,5 +195,3 @@ Often, the various mechanisms by which a model's predictions become coupled to i
 1. What could go wrong if training and test sets are very different? What would happen to the sample weights?
 
 [Tartışmalar](https://discuss.d2l.ai/t/105)
-
-

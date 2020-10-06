@@ -10,6 +10,8 @@ bias -> algoritmalardaki yanlılık
 
 co-adaptation -> birlikte-uyarlama
 
+confusion-matrix -> hata matrisi
+
 covariate -> ortak değişken
 
 descent -> iniş
@@ -38,6 +40,8 @@ initialization -> ilkleme
 
 lasso regression -> kement regresyon
 
+likelihood -> olabilirlik
+
 loss function ->  kayıp ve yitim fonksiyonu
 
 minibatch -> minigrup
@@ -45,6 +49,8 @@ minibatch -> minigrup
 permutation -> devrişim
 
 perturbation -> düzensizlik
+
+pipeline -> veri/komut işleme hattı
 
 posterior -> sonsal olasılık
 
