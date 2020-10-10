@@ -5,9 +5,9 @@ Artık derin ağlar oluşturmak ve eğitmek için bazı temel araçları sunduğ
 
 Bu bölümde, veri ön işleme, model tasarımı ve hiperparametre seçimi ayrıntılarında size yol göstereceğiz. Uygulamalı bir yaklaşımla, bir veri bilimcisi olarak kariyerinizde size rehberlik edecek bazı sezgiler kazanacağınızı umuyoruz.
 
-## Downloading and Caching Datasets
+## Veri Kümelerini İndirme ve Önbelleğe Alma
 
-Throughout the book, we will train and test models on various downloaded datasets. Here, we implement several utility functions to facilitate data downloading. First, we maintain a dictionary `DATA_HUB` that maps a string (the *name* of the dataset) to a tuple containing both a URL to locate the dataset and a SHA-1 key which we will use to verify the integrity of the file. All of our datasets are hosted on site whose address is assigned to `DATA_URL` below.
+Kitap boyunca, indirilen çeşitli veri kümeleri üzerinde modelleri eğitecek ve test edeceğiz. Burada, veri indirmeyi kolaylaştırmak için çeşitli yardımcı fonksiyonlar gerçekleştiriyoruz. İlk olarak, bir dizeyi (veri kümesinin *adını*) hem veri kümesini bulmak için bir URL hem de dosyanın bütünlüğünü doğrulamak için kullanacağımız bir SHA-1 anahtarı içeren bir çokuzluya eşleyen bir `DATA_HUB` sözlüğü tutuyoruz. Tüm veri kümelerimiz, adresi aşağıda `DATA_URL`'ye atanan sitede barındırılmaktadır.
 
 ```{.python .input}
 #@tab all
@@ -21,7 +21,7 @@ DATA_HUB = dict()  #@save
 DATA_URL = 'http://d2l-data.s3-accelerate.amazonaws.com/'  #@save
 ```
 
-The following `download` function downloads the dataset, caching it in a local directory (in `../data` by default) and returns the name of the downloaded file. If a file corrsponding to this dataset already exists in the cache directory and its SHA-1 matches the one stored in `DATA_HUB`, our code will use the cached file to avoid clogging up your internet with redundant downloads.
+Aşağıdaki `download` işlevi, veri kümesini indirir, yerel bir dizinde (varsayılan olarak `../data`" içinde) önbelleğe alır ve indirilen dosyanın adını döndürür. Bu veri kümesine karşılık gelen bir dosya önbellek dizininde zaten mevcutsa ve SHA-1'i `DATA_HUB`'da depolananla eşleşiyorsa, kodumuz internetinizi gereksiz indirmelerle tıkamamak için önbelleğe alınmış dosyayı kullanacaktır.
 
 ```{.python .input}
 #@tab all
@@ -47,7 +47,7 @@ def download(name, cache_dir=os.path.join('..', 'data')):  #@save
     return fname
 ```
 
-We also implement two additional functions: one is to download and extract a zip/tar file and the other to download all the files from `DATA_HUB` (most of the datasets used in this book) into the cache directory.
+Ayrıca iki ek işlev de gerçekleştiriyoruz: Biri bir zip/tar dosyasını indirip çıkarmak, diğeri ise tüm dosyaları `DATA_HUB`'dan (bu kitapta kullanılan veri kümelerinin çoğu) önbellek dizinine indirmek.
 
 ```{.python .input}
 #@tab all
@@ -73,26 +73,28 @@ def download_all():  #@save
 
 ## Kaggle
 
-[Kaggle](https://www.kaggle.com) is a popular platform that hosts machine learning competitions. Each competition centers on a dataset and many are sponsored by stakeholders who offer prizes to the winning solutions. The platform helps users to interact via forums and shared code, fostering both collaboration and competition. While leaderboard chasing often spirals out of control, with researchers focusing myopically on pre-processing steps rather than asking fundamental questions, there is also tremendous value in the objectivity of a platform that facillitates direct quantitative comparisons between competing approaches as well as code sharing so that everyone can learn what did and did not work. If you want to participate in a Kaggle competitions, you will first need to register for an account (see :numref:`fig_kaggle`).
+[Kaggle](https://www.kaggle.com), makine öğrenmesi yarışmalarına ev sahipliği yapan popüler bir platformdur. Her yarışma bir veri kümesine odaklanır ve çoğu, kazanan çözümlere ödüller sunan paydaşlar tarafından desteklenir. Platform, kullanıcıların forumlar ve paylaşılan kodlar aracılığıyla etkileşime girmesine yardımcı olarak hem işbirliğini hem de rekabeti teşvik eder. Liderlik tahtası takibi çoğu zaman kontrolden çıkarken, araştırmacılar temel sorular sormaktan ziyade ön işleme adımlarına yakın olarak odaklanırken, bir platformun nesnelliğinde rakip yaklaşımlar arasında doğrudan nicel karşılaştırmaları ve böylece neyin işe yarayıp yaramadığını herkes öğrenebileceği kod paylaşımını kolaylaştıran muazzam bir değer vardır. Bir Kaggle yarışmasına katılmak istiyorsanız, önce bir hesap açmanız gerekir (bakınız :numref:`fig_kaggle`).
 
-![Kaggle website](../img/kaggle.png)
+![Kaggle web sitesi](../img/kaggle.png)
 :width:`400px`
 :label:`fig_kaggle`
 
-On the House Prices Prediction page, as illustrated in :numref:`fig_house_pricing`, you can find the dataset (under the "Data" tab), submit predictions, see your ranking, etc., The URL is right here:
+Ev Fiyatları Tahmin sayfasında,:numref: `fig_house_pricing`'da gösterildiği gibi, veri kümesini bulabilir ("Data" sekmesinin altında), tahminleri gönderebilir, sıralamanıza bakabilirsiniz, vb. URL tam buradadır:
 
 > https://www.kaggle.com/c/house-prices-advanced-regression-techniques
 
-![House Price Prediction](../img/house_pricing.png)
+![Ev Fiyatları Tahminleme](../img/house_pricing.png)
 :width:`400px`
 :label:`fig_house_pricing`
 
-## Accessing and Reading the Dataset
+## Veri Kümesine Erişim ve Okuma
 
-Note that the competition data is separated into training and test sets. Each record includes the property value of the house and attributes such as street type, year of construction, roof type, basement condition, etc. The features consist of various data types. For example, the year of construction is represented by an integer, the roof type by discrete categorical assignments, and other features by floating point numbers. And here is where reality complicates things: for some examples, some data is altogether missing with the missing value marked simply as *na*. The price of each house is included for the training set only (it is a competition after all). We will want to partition the training set to create a validation set, but we only get to evaluate our models on the official test set after uploading predictions to Kaggle. The "Data" tab on the competition tab has links to download the data.
+Yarışma verilerinin eğitim ve test kümelerine ayrıldığını unutmayın. Her kayıt, evin mülk değerini ve sokak tipi, yapım yılı, çatı tipi, bodrum durumu vb. öznitelikleri içerir. Öznitelikler çeşitli veri türlerinden oluşur. Örneğin, yapım yılı bir tamsayı ile, çatı tipi ayrı kategorik atamalarla ve diğer öznitelikler yüzen sayılarla temsil edilir. Ve burada gerçeklik işleri zorlaştırmaya başlar: Bazı örnekler için, bazı veriler tamamen eksiktir ve eksik değer sadece *na* olarak işaretlenmiştir. Her evin fiyatı sadece eğitim kümesi için dahildir (sonuçta bu bir yarışmadır). Bir geçerleme kümesi oluşturmak için eğitim kümesini bölümlere ayırmak isteyeceğiz, ancak modellerimizi yalnızca tahminleri Kaggle'a yükledikten sonra resmi test setinde değerlendirebiliriz. Yarışma sekmesindeki "Data" sekmesi, verileri indirmek için bağlantılar içerir.
 
 
 To get started, we will read in and process the data using `pandas`, an [efficient data analysis toolkit](http://pandas.pydata.org/pandas-docs/stable/), so you will want to make sure that you have `pandas` installed before proceeding further. Fortunately, if you are reading in Jupyter, we can install pandas without even leaving the notebook.
+
+Başlamak için, verileri bir [verimli veri analizi araç seti](http://pandas.pydata.org/pandas-docs/stable/) olan `pandas` kullanarak okuyup işleyeceğiz, bu nedenle Ddvam etmeden önce `pandas` kurduğunuza emin olmak isteyeceksiniz. Neyse ki, Jupyter'de okuyorsanız, pandas'ı not defterinden bile çıkmadan kurabiliriz.
 
 ```{.python .input}
 # If pandas is not installed, please uncomment the following line:
@@ -131,7 +133,7 @@ import pandas as pd
 import numpy as np
 ```
 
-For convenience, we can download and cache the Kaggle housing dataset using the script we defined above.
+Kolaylık olması için, yukarıda tanımladığımız komut dosyasını kullanarak Kaggle konut veri setini indirebilir ve önbelleğe alabiliriz.
 
 ```{.python .input}
 #@tab all
@@ -144,7 +146,7 @@ DATA_HUB['kaggle_house_test'] = (  #@save
     'fa19780a7b011d9b009e8bff8e99922a8ee2eb90')
 ```
 
-To load the two csv files containing training and test data respectively we use Pandas.
+Sırasıyla eğitim ve test verilerini içeren iki csv dosyasını yüklemek için pandas'ı kullanıyoruz.
 
 ```{.python .input}
 #@tab all
@@ -152,7 +154,7 @@ train_data = pd.read_csv(download('kaggle_house_train'))
 test_data = pd.read_csv(download('kaggle_house_test'))
 ```
 
-The training dataset includes $1460$ examples, $80$ features, and $1$ label, while the test data contains $1459$ examples and $80$ features.
+Eğitim veri kümesi $1460$ tane örnek, $80$ tane öznitelik ve $1$ tane etiket içerirken, test verileri $1459$ tane örnek ve $80$ tane öznitelik içerir.
 
 ```{.python .input}
 #@tab all
@@ -160,14 +162,14 @@ print(train_data.shape)
 print(test_data.shape)
 ```
 
-Let’s take a look at the first $4$ and last $2$ features as well as the label (SalePrice) from the first $4$ examples:
+İlk $4$ örnekten etiketin (SalePrice - SatışFiyatı) yanı sıra ilk $4$ ve son $2$ özniteliğe bir göz atalım:
 
 ```{.python .input}
 #@tab all
 print(train_data.iloc[0:4, [0, 1, 2, 3, -3, -2, -1]])
 ```
 
-We can see that in each example, the first feature is the ID. This helps the model identify each training example. While this is convenient, it does not carry any information for prediction purposes. Hence, we remove it from the dataset before feeding the data into the network.
+Her örnekte ilk özniteliğin kimlik numarası olduğunu görebiliriz. Bu, modelin her eğitim örneğini tanımlamasına yardımcı olur. Bu uygun olsa da, tahmin amaçlı herhangi bir bilgi taşımaz. Bu nedenle, verileri ağa beslemeden önce veri kümesinden kaldırıyoruz.
 
 ```{.python .input}
 #@tab all

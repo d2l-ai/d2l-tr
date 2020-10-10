@@ -32,6 +32,8 @@ graph -> çizge
 
 feature -> öznitelik
 
+floating number -> yüzen sayılar (gerçel sayı gösterimi)
+
 fully-connected -> tam-bağlı
 
 holdout -> harici tutulan
@@ -79,6 +81,8 @@ spam -> yaramaz posta
 stochastic -> rasgele
 
 symmetry -> bakışım
+
+tuple -> çokuzlu
 
 underflow -> küçümenlik
 
