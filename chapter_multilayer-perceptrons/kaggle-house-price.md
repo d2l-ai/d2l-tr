@@ -89,7 +89,7 @@ Ev Fiyatları Tahmin sayfasında,:numref: `fig_house_pricing`'da gösterildiği 
 
 ## Veri Kümesine Erişim ve Okuma
 
-Yarışma verilerinin eğitim ve test kümelerine ayrıldığını unutmayın. Her kayıt, evin mülk değerini ve sokak tipi, yapım yılı, çatı tipi, bodrum durumu vb. öznitelikleri içerir. Öznitelikler çeşitli veri türlerinden oluşur. Örneğin, yapım yılı bir tamsayı ile, çatı tipi ayrı kategorik atamalarla ve diğer öznitelikler yüzen sayılarla temsil edilir. Ve burada gerçeklik işleri zorlaştırmaya başlar: Bazı örnekler için, bazı veriler tamamen eksiktir ve eksik değer sadece *na* olarak işaretlenmiştir. Her evin fiyatı sadece eğitim kümesi için dahildir (sonuçta bu bir yarışmadır). Bir geçerleme kümesi oluşturmak için eğitim kümesini bölümlere ayırmak isteyeceğiz, ancak modellerimizi yalnızca tahminleri Kaggle'a yükledikten sonra resmi test setinde değerlendirebiliriz. Yarışma sekmesindeki "Data" sekmesi, verileri indirmek için bağlantılar içerir.
+Yarışma verilerinin eğitim ve test kümelerine ayrıldığını unutmayın. Her kayıt, evin mülk değerini ve sokak tipi, yapım yılı, çatı tipi, bodrum durumu vb. öznitelikleri içerir. Öznitelikler çeşitli veri türlerinden oluşur. Örneğin, yapım yılı bir tamsayı ile, çatı tipi ayrı kategorik atamalarla ve diğer öznitelikler kayan virgüllü sayılarla temsil edilir. Ve burada gerçeklik işleri zorlaştırmaya başlar: Bazı örnekler için, bazı veriler tamamen eksiktir ve eksik değer sadece *na* olarak işaretlenmiştir. Her evin fiyatı sadece eğitim kümesi için dahildir (sonuçta bu bir yarışmadır). Bir geçerleme kümesi oluşturmak için eğitim kümesini bölümlere ayırmak isteyeceğiz, ancak modellerimizi yalnızca tahminleri Kaggle'a yükledikten sonra resmi test setinde değerlendirebiliriz. Yarışma sekmesindeki "Data" sekmesi, verileri indirmek için bağlantılar içerir.
 
 
 To get started, we will read in and process the data using `pandas`, an [efficient data analysis toolkit](http://pandas.pydata.org/pandas-docs/stable/), so you will want to make sure that you have `pandas` installed before proceeding further. Fortunately, if you are reading in Jupyter, we can install pandas without even leaving the notebook.
@@ -176,13 +176,13 @@ Her örnekte ilk özniteliğin kimlik numarası olduğunu görebiliriz. Bu, mode
 all_features = pd.concat((train_data.iloc[:, 1:-1], test_data.iloc[:, 1:]))
 ```
 
-## Data Preprocessing
+## Veri Ön İşleme
 
-As stated above, we have a wide variety of data types. We will need to process the data before we can start modeling. Let us start with the numerical features. First, we apply a heuristic, replacing all missing values by the corresponding variable's mean. Then, to put all variables on a common scale, we rescale them to zero mean and unit variance:
+Yukarıda belirtildiği gibi, çok çeşitli veri türlerine sahibiz. Modellemeye başlamadan önce verileri işlememiz gerekecek. Sayısal özelliklerle başlayalım. İlk olarak, tüm eksik değerleri karşılık gelen değişkenin ortalaması ile değiştirerek bir buluşsal yöntem uygularız. Ardından, tüm değişkenleri ortak bir ölçeğe koymak için, onları sıfır ortalamaya ve birim varyansa yeniden ölçeklendiriyoruz:
 
 $$x \leftarrow \frac{x - \mu}{\sigma}.$$
 
-To verify that this indeed transforms our variable such that it has zero mean and unit variance, note that $E[(x-\mu)/\sigma] = (\mu - \mu)/\sigma = 0$ and that $E[(x-\mu)^2] = \sigma^2$. Intuitively, we *normalize* the data for two reasons. First, it proves convenient for optimization. Second, because we do not know *a priori* which features will be relevant, we do not want to penalize coefficients assigned to one variable more than on any other.
+Bunun değişkenimizi sıfır ortalamaya ve birim varyansına sahip olacak şekilde dönüştürdüğünü doğrulamak için, $E[(x-\mu)/\sigma] = (\mu - \mu)/\sigma = 0$ ve $E[(x-\mu)^2] = \sigma^2$ olduğuna dikkat edin. Sezgisel olarak, verileri iki nedenden dolayı *normalleştiriyoruz*. Birincisi, optimizasyon için uygun oluyor. İkinci olarak, hangi özniteliklerin ilgili olacağını *önsel* bilmediğimiz için, bir değişkene atanan katsayıları diğerlerinden daha fazla cezalandırmak istemiyoruz.
 
 ```{.python .input}
 #@tab all
@@ -194,7 +194,7 @@ all_features[numeric_features] = all_features[numeric_features].apply(
 all_features[numeric_features] = all_features[numeric_features].fillna(0)
 ```
 
-Next we deal with discrete values. This includes variables such as 'MSZoning'. We replace them by a one-hot encoding in the same way that we previously transformed multiclass labels into vectors. For instance, 'MSZoning' assumes the values 'RL' and 'RM'. These map onto vectors $(1, 0)$ and $(0, 1)$ respectively. Pandas does this automatically for us.
+Daha sonra ayrık değerlerle ilgileniyoruz. Bu, 'MSZoning' gibi değişkenleri içerir. Onları daha önce çok sınıflı etiketleri vektörlere dönüştürdüğümüz gibi bire bir kodlama ile değiştiriyoruz. Örneğin, "MSZoning", "RL" ve "RM" değerlerini varsayar. Bunlar sırasıyla $(1, 0)$ ve $(0, 1)$ vektörlerine eşlenir. Pandas bunu bizim için otomatik olarak yapar.
 
 ```{.python .input}
 #@tab all
@@ -204,7 +204,7 @@ all_features = pd.get_dummies(all_features, dummy_na=True)
 all_features.shape
 ```
 
-You can see that this conversion increases the number of features from 79 to 331. Finally, via the `values` attribute, we can extract the NumPy format from the Pandas dataframe and convert it into MXNet's native tensor representation for training.
+Bu dönüşümün özelliklerin sayısını 79'dan 331'e çıkardığını görebilirsiniz. Son olarak, `values` özniteliğiyle, NumPy formatını Pandas veri çerçevesinden çıkarabilir ve eğitim için MXNet'in yerel tensör temsiline dönüştürebiliriz.
 
 ```{.python .input}
 n_train = train_data.shape[0]
@@ -234,9 +234,9 @@ train_labels = np.array(train_data.SalePrice.values.reshape(-1, 1),
                         dtype=np.float32)
 ```
 
-## Training
+## Eğitim
 
-To get started we train a linear model with squared loss. Not surprisingly, our linear model will not lead to a competition-winning submission but it provides a sanity check to see whether there is meaningful information in the data. If we cannot do better than random guessing here, then there might be a good chance that we have a data processing bug. And if things work, the linear model will serve as a baseline giving us some intuition about how close the simple model gets to the best reported models, giving us a sense of how much gain we should expect from fancier models.
+Başlarken, hata karesi kullanan doğrusal bir model eğitiyoruz. Şaşırtıcı olmayan bir şekilde, doğrusal modelimiz rekabeti kazanan bir teslime yol açmayacaktır, ancak verilerde anlamlı bilgi olup olmadığını görmek için bir makulluk kontrolü sağlar. Burada rastgele tahmin etmekten daha iyisini yapamazsak, o zaman bir veri işleme hatasına sahip olma ihtimalimiz yüksek olabilir. Eğer işler yolunda giderse, doğrusal model bize basit modelin en iyi rapor edilen modellere ne kadar yaklaştığı konusunda biraz önsezi vererek bize daha süslü modellerden ne kadar kazanç beklememiz gerektiğine dair bir fikir verir.
 
 ```{.python .input}
 loss = gluon.loss.L2Loss()
@@ -269,9 +269,9 @@ def get_net():
     return net
 ```
 
-With house prices, as with stock prices, we care about relative quantities more than absolute quantities. Thus we tend to care more about the relative error $\frac{y - \hat{y}}{y}$ than about the absolute error $y - \hat{y}$. For instance, if our prediction is off by USD 100,000 when estimating the price of a house in Rural Ohio, where the value of a typical house is 125,000 USD, then we are probably doing a horrible job. On the other hand, if we err by this amount in Los Altos Hills, California, this might represent a stunningly accurate prediction (there, the median house price exceeds 4 million USD).
+Konut fiyatlarında, hisse senedi fiyatlarında olduğu gibi, göreceli miktarları mutlak miktarlardan daha fazla önemsiyoruz. Bu nedenle, $\frac{y - \hat{y}}{y}$ göreceli hatasını $y - \hat{y}$ mutlak hatasından daha çok önemsiyoruz. Örneğin, tipik bir evin değerinin 125000 Amerikan Doları olduğu Rural Ohio'daki bir evin fiyatını tahmin ederken tahminimiz 100000 USD yanlışsa, muhtemelen korkunç bir iş yapıyoruz demektir. Öte yandan, Los Altos Hills, California'da bu miktarda hata yaparsak, bu şaşırtıcı derecede doğru bir tahmini temsil edebilir (burada, ortalama ev fiyatı 4 milyon Amerikan Dolarını aşıyor).
 
-One way to address this problem is to measure the discrepancy in the logarithm of the price estimates. In fact, this is also the official error metric used by the competition to measure the quality of submissions. After all, a small value $\delta$ of $\log y - \log \hat{y}$ translates into $e^{-\delta} \leq \frac{\hat{y}}{y} \leq e^\delta$. This leads to the following loss function:
+Bu sorunu çözmenin bir yolu, fiyat tahminlerinin logaritmasındaki tutarsızlığı ölçmektir. Aslında, bu aynı zamanda yarışma tarafından gönderimlerin kalitesini ölçmek için kullanılan resmi hata metriğidir. Sonuçta, küçük bir $\delta$, $\log y - \log \hat{y}$ değerini $$e^{-\delta} \leq \frac{\hat{y}}{y} \leq e^\delta$'e çevirir. Bu, aşağıdaki kayıp işlevine yol açar:
 
 $$L = \sqrt{\frac{1}{n}\sum_{i=1}^n\left(\log y_i -\log \hat{y}_i\right)^2}.$$
 
@@ -304,7 +304,7 @@ def log_rmse(y_true, y_pred):
         tf.math.log(y_true), tf.math.log(clipped_preds))) / batch_size)
 ```
 
-Unlike in previous sections, our training functions will rely on the Adam optimizer (a slight variant on SGD that we will describe in greater detail later). The main appeal of Adam vs vanilla SGD is that the Adam optimizer, despite doing no better (and sometimes worse) given unlimited resources for hyperparameter optimization, people tend to find that it is significantly less sensitive to the initial learning rate. This will be covered in further detail later on when we discuss the details in :numref:`chap_optimization`.
+Önceki bölümlerden farklı olarak, eğitim işlevlerimiz Adam optimize edicisine dayanacaktır (daha sonra daha ayrıntılı olarak açıklayacağımız, RGE'nin (SGD) küçük bir varyantı). Adam'ın basit RGE'ye karşı ana cazibesi, Adam optimize edicinin, hiperparametre optimizasyonu için sınırsız kaynaklar verildiğinde daha iyisini yapmamasına (ve bazen daha kötüsünü yapmasına) rağmen, insanların başlangıç öğrenme oranına önemli ölçüde daha az duyarlı olduğunu bulma eğiliminde olmasıdır. Bu, daha sonra ayrıntıları tartışırken daha detaylı olarak ele alınacaktır :numref:`chap_optimization`.
 
 ```{.python .input}
 def train(net, train_features, train_labels, test_features, test_labels,
@@ -369,9 +369,9 @@ def train(net, train_features, train_labels, test_features, test_labels,
     return train_ls, test_ls
 ```
 
-## k-Fold Cross-Validation
+## k-Kat Çapraz-Geçerleme
 
-If you are reading in a linear fashion, you might recall that we introduced k-fold cross-validation in the section where we discussed how to deal with model selection (:numref:`sec_model_selection`). We will put this to good use to select the model design and to adjust the hyperparameters. We first need a function that returns the $i^\mathrm{th}$ fold of the data in a k-fold cross-validation procedure. It proceeds by slicing out the $i^\mathrm{th}$ segment as validation data and returning the rest as training data. Note that this is not the most efficient way of handling data and we would definitely do something much smarter if our dataset was considerably larger. But this added complexity might obfuscate our code unnecessarily so we can safely omit it here owing to the simplicity of our problem.
+Kitabı doğrusal bir şekilde okuyorsanız, model seçimiyle nasıl başa çıkılacağını tartıştığımız bölümde k-kat çapraz geçerlemeyi tanıttığımızı hatırlayabilirsiniz (:numref:`sec_model_selection`). Bunu, model tasarımını seçmek ve hiperparametreleri ayarlamak için iyi bir şekilde kullanacağız. Öncelikle, k-kat çapraz geçerleme prosedüründe verilerin $i.$ katını döndüren bir işleve ihtiyacımız var. $İ.$ parçayı geçerleme verisi olarak dilimleyerek ve geri kalanını eğitim verisi olarak döndürerek ilerler. Bunun veri işlemenin en verimli yolu olmadığını ve veri kümemiz çok daha büyük olsaydı kesinlikle çok daha akıllıca bir şey yapacağımızı unutmayın. Ancak bu ek karmaşıklık, kodumuzu gereksiz yere allak bullak edebilir, bu nedenle sorunumuzun basitliğinden dolayı burada güvenle atlayabiliriz.
 
 ```{.python .input}
 def get_k_fold_data(k, i, X, y):
@@ -429,7 +429,7 @@ def get_k_fold_data(k, i, X, y):
     return X_train, y_train, X_valid, y_valid
 ```
 
-The training and verification error averages are returned when we train $k$ times in the k-fold cross-validation.
+Eğitim ve geçerleme hatası ortalamaları, k-kat çapraz geçerleme ile $k$ kez eğitimimizde döndürülür.
 
 ```{.python .input}
 #@tab all
@@ -452,9 +452,9 @@ def k_fold(k, X_train, y_train, num_epochs,
     return train_l_sum / k, valid_l_sum / k
 ```
 
-## Model Selection
+## Model Seçimi
 
-In this example, we pick an untuned set of hyperparameters and leave it up to the reader to improve the model. Finding a good choice can take time, depending on how many variables one optimizes over. With a large enough dataset, and the normal sorts of hyperparameters, k-fold cross-validation tends to be reasonably resilient against multiple testing. However, if we try an unreasonably large number of options we might just get lucky and find that our validation performance is no longer representative of the true error.
+Bu örnekte, ayarlanmamış bir hiperparametre kümesi seçiyoruz ve modeli geliştirmek için okuyucuya bırakıyoruz. İyi bir seçim bulmak, kişinin kaç değişkeni optimize ettiğine bağlı olarak zaman alabilir. Yeterince büyük bir veri kümesi ve normal hiperparametreler ile k-kat çapraz geçerleme, çoklu testlere karşı makul ölçüde dirençli olma eğilimindedir. Bununla birlikte, mantıksız bir şekilde çok sayıda seçeneği denersek, sadece şanslı olabiliriz ve geçerleme performansımızın artık gerçek hatayı temsil etmediğini görebiliriz.
 
 ```{.python .input}
 #@tab all
@@ -465,11 +465,11 @@ print(f'{k}-fold validation: avg train rmse: {float(train_l):f}, '
       f'avg valid rmse: {float(valid_l):f}')
 ```
 
-Notice that someimes the number of training errors for a set of hyperparameters can be very low, even as the number of errors on $k$-fold cross-validation is considerably higher. This indicates that we are overfitting. Throughout training you will want to monitor both numbers. No overfitting might indicate that our data can support a more powerful model. Massive overfitting might suggest that we can gain by incorporating regularization techniques.
+$K$-kat çapraz geçerlemedeki hata sayısı önemli ölçüde daha yüksek olsa bile, bir dizi hiperparametre için eğitim hatası sayısının bazen çok düşük olabileceğine dikkat edin. Bu bizim aşırı öğrendiğimizi gösterir. Eğitim boyunca her iki sayıyı da izlemek isteyeceksiniz. Hiçbir aşırı öğrenme, verilerimizin daha güçlü bir modeli destekleyebileceğini gösteremez. Aşırı öğrenme, düzenlileştirme tekniklerini dahil ederek kazanç sağlayabileceğimizi gösterebilir.
 
-##  Predict and Submit
+## Tahmin Et ve Gönder
 
-Now that we know what a good choice of hyperparameters should be, we might as well use all the data to train on it (rather than just $1-1/k$ of the data that is used in the cross-validation slices). The model that we obtain in this way can then be applied to the test set. Saving the estimates in a CSV file will simplify uploading the results to Kaggle.
+Artık iyi bir hiperparametre seçiminin ne olması gerektiğini bildiğimize göre, onu eğitmek için tüm verileri de kullanabiliriz (çapraz geçerleme dilimlerinde kullanılan verinin yalnızca $1-1/k$'ı yerine). Bu şekilde elde ettiğimiz model daha sonra test kümesine uygulanabilir. Tahminlerin bir CSV dosyasına kaydedilmesi, sonuçların Kaggle'a yüklenmesini kolaylaştıracaktır.
 
 ```{.python .input}
 #@tab all
@@ -489,7 +489,7 @@ def train_and_pred(train_features, test_feature, train_labels, test_data,
     submission.to_csv('submission.csv', index=False)
 ```
 
-One nice sanity check is to see whether the predictions on the test set resemble those of the k-fold cross-validation process. If they do, it is time to upload them to Kaggle. The following code will generate a file called `submission.csv` (CSV is one of the file formats accepted by Kaggle):
+Güzel bir makulluk kontrolü, test kümesindeki tahminlerin k-kat çapraz geçerleme sürecindekilere benzeyip benzemediğini görmektir. Yaparlarsa, Kaggle'a yükleme zamanı gelmiştir. Aşağıdaki kod, `submission.csv` adlı bir dosya oluşturacaktır (CSV, Kaggle tarafından kabul edilen dosya biçimlerinden biridir):
 
 ```{.python .input}
 #@tab all
@@ -497,35 +497,35 @@ train_and_pred(train_features, test_features, train_labels, test_data,
                num_epochs, lr, weight_decay, batch_size)
 ```
 
-Next, as demonstrated in :numref:`fig_kaggle_submit2`, we can submit our predictions on Kaggle and see how they compare to the actual house prices (labels) on the test set. The steps are quite simple:
+Sonra, gösterildiği gibi :numref:`fig_kaggle_submit2`, tahminlerimizi Kaggle'a gönderebilir ve test kümesindeki gerçek ev fiyatları (etiketler) ile nasıl karşılaştırıldıklarını görebiliriz. Adımlar oldukça basittir:
 
-* Log in to the Kaggle website and visit the House Price Prediction Competition page.
-* Click the “Submit Predictions” or “Late Submission” button (as of this writing, the button is located on the right).
-* Click the “Upload Submission File” button in the dashed box at the bottom of the page and select the prediction file you wish to upload.
-* Click the “Make Submission” button at the bottom of the page to view your results.
+* Kaggle web sitesinde oturum açın ve Ev Fiyatı Tahmin Yarışması sayfasını ziyaret edin.
+* "Tahminleri Gönder" (“Submit Predictions”) veya "Geç Gönderim" (“Late Submission”) düğmesine tıklayın (bu yazı esnasında düğme sağda yer almaktadır).
+* Sayfanın alt kısmındaki kesik çizgili kutudaki "Gönderim Dosyasını Yükle" (“Upload Submission File”) düğmesini tıklayın ve yüklemek istediğiniz tahmin dosyasını seçin.
+* Sonuçlarınızı görmek için sayfanın altındaki "Gönderim Yap" (“Make Submission”) düğmesine tıklayın.
 
-![Submitting data to Kaggle](../img/kaggle_submit2.png)
+![Kaggle'a Veriyi Gönderme](../img/kaggle_submit2.png)
 :width:`400px`
 :label:`fig_kaggle_submit2`
 
-## Summary
+## Özet
 
-* Real data often contains a mix of different data types and needs to be preprocessed.
-* Rescaling real-valued data to zero mean and unit variance is a good default. So is replacing missing values with their mean.
-* Transforming categorical variables into indicator variables allows us to treat them like vectors.
-* We can use k-fold cross validation to select the model and adjust the hyper-parameters.
-* Logarithms are useful for relative loss.
+* Gerçek veriler genellikle farklı veri türlerinin bir karışımını içerir ve önceden işlenmesi gerekir.
+* Gerçek değerli verileri sıfır ortalamaya ve birim varyansına yeniden ölçeklemek iyi bir varsayılandır. Eksik değerleri ortalamalarıyla değiştirmek de öyle.
+* Kategorik değişkenleri gösterge değişkenlere dönüştürmek, onları vektörler gibi ele almamızı sağlar.
+* Modeli seçmek ve hiper parametreleri ayarlamak için k-kat çapraz geçerleme kullanabiliriz.
+* Logaritmalar göreceli kayıp için faydalıdır.
 
 
-## Exercises
+## Alıştırmalar
 
-1. Submit your predictions for this tutorial to Kaggle. How good are your predictions?
-1. Can you improve your model by minimizing the log-price directly? What happens if you try to predict the log price rather than the price?
-1. Is it always a good idea to replace missing values by their mean? Hint: can you construct a situation where the values are not missing at random?
-1. Find a better representation to deal with missing values. Hint: what happens if you add an indicator variable?
-1. Improve the score on Kaggle by tuning the hyperparameters through k-fold cross-validation.
-1. Improve the score by improving the model (layers, regularization, dropout).
-1. What happens if we do not standardize the continuous numerical features like we have done in this section?
+1. Bu eğitim bölümdeki tahminlerinizi Kaggle'a gönderin. Tahminleriniz ne kadar iyi?
+1. Logaritma-fiyatı doğrudan en aza indirerek modelinizi geliştirebilir misiniz? Fiyat yerine logaritma-fiyatı tahmin etmeye çalışırsanız ne olur?
+1. Eksik değerleri ortalamalarıyla değiştirmek her zaman iyi bir fikir midir? İpucu: Değerlerin rastgele eksik olmadığı bir durum oluşturabilir misiniz?
+1. Eksik değerlerle başa çıkmak için daha iyi bir gösterim bulunuz. İpucu: Bir gösterge değişkeni eklerseniz ne olur?
+1. K-kat çapraz geçerleme yoluyla hiperparametreleri ayarlayarak Kaggle'daki puanı iyileştiriniz.
+1. Modeli geliştirerek puanı iyileştirin (katmanlar, düzenlileştirme, hattan düşürme).
+1. Bu bölümde yaptığımız gibi sürekli sayısal özellikleri standartlaştırmazsak ne olur?
 
 :begin_tab:`mxnet`
 [Tartışmalar](https://discuss.d2l.ai/t/106)

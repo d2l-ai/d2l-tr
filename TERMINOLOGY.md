@@ -32,7 +32,7 @@ graph -> çizge
 
 feature -> öznitelik
 
-floating number -> yüzen sayılar (gerçel sayı gösterimi)
+floating number -> kayan virgüllü sayılar (gerçel sayı gösterimi)
 
 fully-connected -> tam-bağlı
 
@@ -47,6 +47,8 @@ likelihood -> olabilirlik
 loss function ->  kayıp ve yitim fonksiyonu
 
 minibatch -> minigrup
+
+one-hot coding -> bire bir kodlama
 
 permutation -> devrişim
 
@@ -71,6 +73,8 @@ ridge regression -> sırt regresyon
 robust -> gürbüz
 
 sample -> örneklem
+
+sanity check -> makulluk kontrolü
 
 sequence -> dizi
 
