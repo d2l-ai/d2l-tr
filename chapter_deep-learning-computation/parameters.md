@@ -51,7 +51,7 @@ net(x)
 
 ## Parametre Erişimi
 
-Zaten bildiğiniz modellerden parametrelere nasıl erişileceğiyle başlayalım. Bir model `Sequential` sınıfı aracılığıyla tanımlandığında, ilk olarak herhangi bir katmana, bir listeymiş gibi modelde üzerinden indisleme ile erişebiliriz. Her katmanın parametreleri, niteliğinde uygun bir şekilde bulunur. Tam bağlı ikinci katmanın parametrelerini aşağıdaki gibi inceleyebiliriz.
+Zaten bildiğiniz modellerden parametrelere nasıl erişileceğiyle başlayalım. Bir model `Sequential` sınıfı aracılığıyla tanımlandığında, ilk olarak herhangi bir katmana, bir listeymiş gibi modelde üzerinden indisleme ile erişebiliriz. Her katmanın parametreleri, niteliğinde uygun bir şekilde bulunur. Tam bağlı ikinci katmanın parametrelerini aşağıdaki gibi irdeleyebiliriz.
 
 ```{.python .input}
 print(net[1].params)
@@ -67,12 +67,12 @@ print(net[2].state_dict())
 print(net.layers[2].weights)
 ```
 
-The output tells us a few important things. First, this fully-connected layer contains two parameters, corresponding to that layer's weights and biases, respectively. Both are stored as single precision floats. Note that the names of the parameters allow us to *uniquely* identify each layer's parameters, even in a network containing hundreds of layers.
+Çıktı bize birkaç önemli şey gösteriyor. İlk olarak, bu tam bağlı katman, sırasıyla o katmanın ağırlıklarına ve ek girdilerine karşılık gelen iki parametre içerir. Her ikisi de tek hassas basamaklı kayan virgüllü sayı olarak saklanır. Parametrelerin adlarının, yüzlerce katman içeren bir ağda bile, her katmanın parametrelerini *benzersiz şekilde* tanımlamamıza izin verdiğini unutmayın.
 
 
-### Targeted Parameters
+### Hedeflenen Parametreler
 
-Note that each parameter is represented as an instance of the parameter class. To do anything useful with the parameters, we first need to access the underlying numerical values. There are several ways to do this. Some are simpler while others are more general. The following code extracts the bias from the second neural network layer, which returns a parameter class instance, and and further access that parameter's value.
+Her parametrenin, parametre sınıfının bir örneği olarak temsil edildiğine dikkat edin. Parametrelerle yararlı herhangi bir şey yapmak için önce altta yatan sayısal değerlere erişmemiz gerekir. Bunu yapmanın birkaç yolu var. Bazıları daha basitken diğerleri daha geneldir. Aşağıdaki kod, bir parametre sınıfı örneği döndüren ikinci sinir ağı katmanından ek girdiyi dışarı çıkarır ve bu parametrenin değerine daha ileri erişim sağlar.
 
 ```{.python .input}
 print(type(net[1].bias))
@@ -95,9 +95,9 @@ print(tf.convert_to_tensor(net.layers[2].weights[1]))
 ```
 
 :begin_tab:`mxnet,pytorch`
-Parameters are complex objects, containing data, gradients, and additional information. That's why we need to request the data explicitly.
+Parametreler; veri, gradyanlar ve ek bilgiler içeren karmaşık nesnelerdir. Bu nedenle verileri açıkça talep etmemiz gerekiyor.
 
-In addition to `data`, each `Parameter` also provides a `grad` method for accessing the gradient. Because we have not invoked backpropagation for this network yet, it is in its initial state.
+`data`'ya ek olarak, her `Parameter` gradyana erişmek için bir `grad` yöntemi sağlar. Henüz bu ağ için geri yaymayı çağırmadığımız için, ağ ilk durumundadır.
 :end_tab:
 
 ```{.python .input}
@@ -109,9 +109,9 @@ net[1].weight.grad()
 net[2].weight.grad == None
 ```
 
-### All Parameters at Once
+### Bütün Parametrelere Bir Kerede Erişim
 
-When we need to perform operations on all parameters, accessing them one-by-one can grow tedious. The situation can grow especially unwieldy when we work with more complex blocks, (e.g., nested blocks), since we would need to recurse through the entire tree in to extract each sub-block's parameters. Below we demonstrate accessing the parameters of the first fully-connected layer vs. accessing all layers.
+Tüm parametrelerde işlem yapmamız gerektiğinde, bunlara tek tek erişmek bıktırıcı olabilir. Her bir alt bloğun parametrelerini dışarı çıkarmayı tüm ağaç boyunca tekrarlamamız gerekeceğinden, daha karmaşık bloklarla (örneğin, iç içe geçmiş bloklarla) çalıştığımızda durum özellikle kullanışsızca büyüyebilir. Aşağıda, ilk tam bağlı katmanın parametrelerine erişmeye karşılık tüm katmanlara erişmeyi gösteriyoruz.
 
 ```{.python .input}
 print(net[0].collect_params())
@@ -130,7 +130,7 @@ print(net.layers[1].weights)
 print(net.get_weights())
 ```
 
-This provides us with another way of accessing the parameters of the network:
+Bu bize ağın parametrelerine erişmenin başka bir yolunu sağlar:
 
 ```{.python .input}
 net.collect_params()['dense1_bias'].data()
@@ -146,9 +146,9 @@ net.state_dict()['2.bias'].data
 net.get_weights()[1]
 ```
 
-### Collecting Parameters from Nested Blocks
+### İçiçe Bloklardan Parametreleri Toplama
 
-Let us see how the parameter naming conventions work if we nest multiple blocks inside each other. For that we first define a function that produces blocks (a block factory, so to speak) and then combine these inside yet larger blocks.
+Birden çok bloğu iç içe yerleştirirsek, parametre adlandırma kurallarının nasıl çalıştığını görelim. Bunun için önce blok üreten bir fonksiyon tanımlıyoruz (tabiri caizse bir blok fabrikası) ve sonra bunları daha büyük bloklar içinde birleştiriyoruz.
 
 ```{.python .input}
 def block1():
@@ -206,7 +206,7 @@ rgnet.add(tf.keras.layers.Dense(1))
 rgnet(x)
 ```
 
-Now that we have designed the network, let us see how it is organized.
+Ağı tasarladığımıza göre, şimdi nasıl düzenlendiğini görelim.
 
 ```{.python .input}
 print(rgnet.collect_params)
@@ -223,7 +223,7 @@ print(rgnet)
 print(rgnet.summary())
 ```
 
-Since the layers are hierarchically nested, we can also access them as though indexing through nested lists. For instance, we can access the first major block, within it the second subblock, and within that the bias of the first layer, with as follows:
+Katmanlar hiyerarşik olarak iç içe olduğundan, iç içe geçmiş listeler aracılığıyla dizinlenmiş gibi bunlara da erişebiliriz. Örneğin, birinci ana bloğa, içindeki ikinci alt bloğa ve bunun içindeki ilk katmanın ek girdisine aşağıdaki şekilde erişebiliriz:
 
 ```{.python .input}
 rgnet[0][1][0].bias.data()
@@ -239,9 +239,9 @@ rgnet[0][1][0].bias.data
 rgnet.layers[0].layers[1].layers[1].weights[1]
 ```
 
-## Parameter Initialization
+## Parametre İlkleme
 
-Now that we know how to access the parameters, let us look at how to initialize them properly. We discussed the need for initialization in :numref:`sec_numerical_stability`. The framework provides default random initializations to its layers. However, we often want to initialize our weights according to various other protocols. The framework provides most commonly used protocols, and also allows to create a customer initializer.
+Artık parametrelere nasıl erişeceğimizi bildiğimize göre, onları nasıl doğru şekilde ilkleteceğimze bakalım. İlkletme ihtiyacını :numref:`sec_numerical_stability`'de tartıştık. Çerçeve, katmanlarına varsayılan rastgele ilkletmeler sağlar. Bununla birlikte, ağırlıklarımızı öteki farklı protokollere göre ilkletmek istiyoruz. Çerçeve, en sık kullanılan protokolleri sağlar ve ayrıca bir tüketici ilkletici oluşturmaya izin verir.
 
 :begin_tab:`mxnet`
 By default, MXNet initializes weight matrices uniformly by drawing from $U[-0.07, 0.07]$ MXNet's `init` module provides a variety of preset initialization methods.
