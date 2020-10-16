@@ -49,9 +49,9 @@ x = tf.random.uniform((2, 4))
 net(x)
 ```
 
-## Parameter Access
+## Parametre Erişimi
 
-Let us start with how to access parameters from the models that you already know. When a model is defined via the `Sequential` class, we can first access any layer by indexing into the model as though it were a list. Each layer's parameters are conveniently located in its attribute. We can inspect the parameters of the second fully-connected layer as follows.
+Zaten bildiğiniz modellerden parametrelere nasıl erişileceğiyle başlayalım. Bir model `Sequential` sınıfı aracılığıyla tanımlandığında, ilk olarak herhangi bir katmana, bir listeymiş gibi modelde üzerinden indisleme ile erişebiliriz. Her katmanın parametreleri, niteliğinde uygun bir şekilde bulunur. Tam bağlı ikinci katmanın parametrelerini aşağıdaki gibi inceleyebiliriz.
 
 ```{.python .input}
 print(net[1].params)
