@@ -38,6 +38,8 @@ fully-connected -> tam-bağlı
 
 holdout -> harici tutulan
 
+hybridization -> melezleştirme
+
 initialization -> ilkleme
 
 lasso regression -> kement regresyon
@@ -75,6 +77,8 @@ robust -> gürbüz
 sample -> örneklem
 
 sanity check -> makulluk kontrolü
+
+scaler -> sayıl, skaler
 
 sequence -> dizi
 

@@ -71,17 +71,17 @@ Bu örnekte, modelimizi bir `nn.Sequential` örneğini oluşturarak, katmanları
 Bu örnekte, modelimizi bir `keras.models.Sequential` örneğini oluşturarak, katmanları bağımsız değişken olarak iletilmeleri gereken sırayla oluşturduk. Kısaca `Sequential`, Keras'ta bir blok sunan özel bir sınıf `keras.Model`'i tanımlar, ki kurucu `Model`lerin sıralı bir listesini tutar. İki tam bağlı katmanın her birinin, kendisi `Model`'in alt sınıfı olan `Dense` sınıfının bir örneği olduğuna dikkat edin. `forward` işlevi de oldukça basittir: Listedeki her bloğu birbirine zincirleyerek her birinin çıkışını bir sonrakine girdi olarak iletir. Şimdiye kadar, çıktılarını elde etmek için modellerimizi `net(X)` yapısı aracılığıyla çağırdığımızı unutmayın. Bu aslında Block sınıfının `__call__` işlevi aracılığıyla elde edilen ustaca bir Python marifeti olan `net.call(X)` için kısaltmadır.
 :end_tab:
 
-## A Custom Block
+## Özel Kesim Blok 
 
-Perhaps the easiest way to develop intuition about how a block works is to implement one ourselves. Before we implement our own custom block, we briefly summarize the basic functionality that each block must provide:
+Bir bloğun nasıl çalıştığına dair sezgiyi geliştirmenin belki de en kolay yolu, bir bloğu kendimiz uygulamaktır. Kendi özel kesim bloğumuzu uygulamadan önce, her bloğun sağlaması gereken temel işlevleri kısaca özetliyoruz:
 
-1. Ingest input data as arguments to its forward method.
-1. Generate an output by having forward return a value. Note that the output may have a different shape from the input. For example, the first fully-connected layer in our model above ingests an input of arbitrary dimension but returns an output of dimension 256.
-1. Calculate the gradient of its output with respect to its input, which can be accessed via its backward method. Typically this happens automatically.
-1. Store and provide access to those parameters necessary to execute the forward computation.
-1. Initialize these parameters as needed.
+1. Girdi verilerini ileriye doğru yöntemine bağımsız değişkenler olarak alın.
+1. İleriye doğru bir değer döndürerek bir çıktı oluşturun. Çıktının girdiden farklı bir şekle sahip olabileceğini unutmayın. Örneğin, yukarıdaki modelimizdeki ilk tam bağlı katman, rastgele bir boyut girdisi alır, ancak 256 boyutunda bir çıktı verir.
+1. Girdiye göre çıktısının gradyanını hesaplayın,ki bu da geriye doğru yöntemiyle erişilebilir. Genellikle bu otomatik olarak gerçekleşir.
+1. İleriye doğru hesaplamayı yürütmek için gerekli olan bu parametreleri saklayın ve bunlara erişim sağlayın.
+1. Bu parametreleri gerektiği gibi ilkletin.
 
-In the following snippet, we code up a block from scratch corresponding to a multilayer perceptron with one hidden layer with 256 hidden nodes, and a 10-dimensional output layer. Note that the `MLP` class below inherits the class represents a block. We will rely heavily on the parent class's methods, supplying only our own `__init__` and forward methods.
+Aşağıdaki kod parçacığında, 256 gizli düğüme sahip bir gizli katman ve 10 boyutlu bir çıktı katmanı ile çok katmanlı bir algılayıcıya karşılık gelen bir bloğu sıfırdan kodladık. Aşağıdaki `MLP` sınıfının kalıtsal çoğaltıldığını ve bir bloğu temsil ettiğini unutmayın. Yalnızca kendi `__init__` ve ileriye doğru yöntemlerimizi sağlayarak, büyük ölçüde ana sınıfın yöntemlerine güveneceğiz.
 
 ```{.python .input}
 class MLP(nn.Block):
@@ -145,9 +145,9 @@ class MLP(tf.keras.Model):
         return self.out(self.hidden((x)))
 ```
 
-To begin, let us focus on the forward method. Note that it takes `x` as input, calculates the hidden representation (`self.hidden(x)`) with the activation function applied, and outputs its logits (`self.out( ... )`). In this MLP implementation, both layers are instance variables. To see why this is reasonable, imagine instantiating two MLPs, `net1` and `net2`, and training them on different data. Naturally, we would expect them to represent two different learned models.
+Başlamak için ileri yönteme odaklanalım. Girdi olarak `x`i aldığını, gizli gösterimi (`self.hidden(x)`) etkinleştirme işlevi uygulanmış olarak hesapladığını ve logitlerini (`self.out(...)`) çıktı verdiğini unutmayın. Bu MLP uygulamasında, her iki katman da örnek değişkenlerdir. Bunun neden makul olduğunu anlamak için, iki MLP'yi (`net1` ve `net2`) somutlaştırdığınızı ve bunları farklı veriler üzerinde eğittiğinizi hayal edin. Doğal olarak, iki farklı öğrenilmiş modeli temsil etmelerini bekleriz.
 
-We instantiate the MLP's layers in the `__init__` method (the constructor) and subsequently invoke these layers on each call to the forward method. Note a few key details. First, our customized `__init__` method invokes the parent class's `__init__` method via `super().__init__()` sparing us the pain of restating boilerplate code applicable to most Blocks. We then instantiate our two fully-connected layers, assigning them to `self.hidden` and `self.out`. Note that unless we implement a new operator, we need not worry about backpropagation (the backward method) or parameter initialization. The system will generate these methods automatically. Let us try this out:
+MLP'nin katmanlarını `__init__` yönteminde (kurucu) başlatıyoruz ve daha sonra bu katmanları her bir ileri doğru yöntemi çağrısında çağırıyoruz. Birkaç önemli ayrıntıya dikkat edin. İlk olarak, özelleştirilmiş `__init__` yöntemimiz, `super() .__init__()` aracılığıyla üst sınıfın `__init__` yöntemini çağırır ve bizi çoğu bloğa uygulanabilen standart şablon kodunu yeniden biçimlendirme zahmetinden kurtarır. Daha sonra, tam bağlı iki katmanımızı `self.hidden` ve `self.out`'a atayarak somutlaştırıyoruz. Yeni bir operatör uygulamadığımız sürece, geriye yayma (geriye doğru yöntemi) veya parametre ilkleme konusunda endişelenmemize gerek olmadığını unutmayın. Sistem bu yöntemleri otomatik olarak üretecektir. Bunu deneyelim:
 
 ```{.python .input}
 net = MLP()
@@ -167,17 +167,16 @@ net = MLP()
 net(x)
 ```
 
-A key virtue of the block abstraction is its versatility. We can subclass the block class to create layers (such as the fully-connected layer class), entire models (such as the `MLP` above), or various components of intermediate complexity. We exploit this versatility throughout the following chapters, especially when addressing convolutional neural networks.
+Blok soyutlamanın önemli bir özelliği çok yönlülüğüdür. Katmanlar (tam bağlı katman sınıfı gibi), tüm modeller (yukarıdaki `MLP` gibi) veya ara karmaşıklığın çeşitli bileşenlerini oluşturmak için blok sınıfını alt sınıflara ayırabiliriz. Bu çok yönlülüğü sonraki bölümlerde, özellikle evrişimli sinir ağlarını ele alırken kullanıyoruz.
 
 
-## The Sequential Block
+## Dizili Blok
 
-We can now take a closer look at how the `Sequential` class works. Recall that `Sequential` was designed to daisy-chain other blocks together. To build our own simplified `MySequential`, we just need to define two key methods:
-1. A method to append blocks one by one to a list.
-2. A forward method to pass an input through the chain of Blocks (in the same order as they were appended).
+Artık `Sequential` (dizili) sınıfının nasıl çalıştığına daha yakından bakabiliriz. `Sequential`nın diğer blokları birbirine zincirleme bağlamak için tasarlandığını hatırlayın. Kendi basitleştirilmiş MySequential'ımızı oluşturmak için, sadece iki anahtar yöntem tanımlamamız gerekir:
+1. Blokları birer birer listeye eklemek için bir yöntem.
+2. Blok zincirinden bir girdiyi geçirmek için ileriye doğru bir yöntem (eklendikleri sırayla).
 
-The following `MySequential` class delivers the same
-functionality the default `Sequential` class:
+Aşağıdaki `MySequential` sınıfı aynı işlevselliği varsayılan `Sequential` sınıfıyla sunar:
 
 ```{.python .input}
 class MySequential(nn.Block):
@@ -233,18 +232,18 @@ class MySequential(tf.keras.Model):
 ```
 
 :begin_tab:`mxnet`
-The `add` method adds a single block to the ordered dictionary `_children`. You might wonder why every Gluon `Block` possesses a `_children` attribute and why we used it rather than just defining a Python list ourselves. In short the chief advantage of `_children` is that during our block's parameter initialization, Gluon knows to look in the `_children`dictionary to find sub-Blocks whose parameters also need to be initialized.
+`add` yöntemi, sıralı `_children` sözlüğüne tek bir blok ekler. Neden her Gluon `Block`'unun bir `_children` özelliğine sahip olduğunu ve sadece bir Python listesi tanımlamak yerine bunu neden kullandığımızı merak edebilirsiniz. Kısacası, `_children` in başlıca avantajı, bloğumuzun parametre ilklemesi sırasında Gluon'un, parametreleri de ilkelemesi gereken alt blokları bulmak için `_children` sözlüğüne bakmayı bilmesidir.
 :end_tab:
 
 :begin_tab:`pytorch`
-In the `__init__` method, we add every block to the ordered dictionary `_modules` one by one. You might wonder why every `Module` possesses a `_modules` attribute and why we used it rather than just defining a Python list ourselves. In short the chief advantage of `_modules` is that during our block's parameter initialization, the system knows to look in the `_modules` dictionary to find sub-blocks whose parameters also need to be initialized.
+`__init__` yönteminde, her bloğu sıralı `_modules` sözlüğüne tek tek ekliyoruz. Neden her `Module`ün bir `_modules` özelliğine sahip olduğunu ve sadece bir Python listesi tanımlamak yerine bunu neden kullandığımızı merak edebilirsiniz. Kısacası, `_modules` in başlıca avantajı, bloğumuzun parametre ilklemesi sırasında, sistemin, parametreleri de ilklemesi gereken alt blokları bulmak için `_modules` sözlüğüne bakmayı bilmesidir.
 :end_tab:
 
 :begin_tab:`tensorflow`
-FIXME, don't use `Sequential` to implement `MySequential`.
+FIXME, `MySequential` seçeneğini uygulamak için `Sequential` kullanmayın.
 :end_tab:
 
-When our `MySequential`'s forward method is invoked, each added block is executed in the order in which they were added. We can now reimplement an MLP using our `MySequential` class.
+`MySequential`'ımızın ileriye doğru yöntemi çağrıldığında, eklenen her blok eklendikleri sırayla yürütülür. Artık `MySequential` sınıfımızı kullanarak bir MLP'yi yeniden uygulayabiliriz.
 
 ```{.python .input}
 net = MySequential()
@@ -268,14 +267,13 @@ net = MySequential(
 net(x)
 ```
 
-Note that this use of `MySequential` is identical to the code we previously wrote for the `Sequential` class (as described in :numref:`sec_mlp_concise`).
+Bu `MySequential` kullanımının, daha önce `Sequential` sınıfı için yazdığımız kodla aynı olduğuna dikkat edin (burada açıklandığı gibi :numref:`sec_mlp_concise`).
 
+## İleriye Doğru Yönteminde Kodu Yürütme
 
-## Executing Code in the forward Method
+`Sequential` sınıf, model yapımını kolaylaştırarak, kendi sınıfımızı tanımlamak zorunda kalmadan yeni mimarileri bir araya getirmemize olanak tanır. Bununla birlikte, tüm mimariler basit papatya zinciri değildir. Daha fazla esneklik gerektiğinde, kendi bloklarımızı tanımlamak isteyeceğiz. Örneğin, Python'un kontrol akışını ileri doğru yöntemi ile yürütmek isteyebiliriz. Dahası, önceden tanımlanmış sinir ağı katmanlarına güvenmek yerine, keyfi matematiksel işlemler gerçekleştirmek isteyebiliriz.
 
-The `Sequential` class makes model construction easy, allowing us to assemble new architectures without having to define our own class. However, not all architectures are simple daisy chains. When greater flexibility is required, we will want to define our own blocks. For example, we might want to execute Python's control flow within the forward method. Moreover we might want to perform arbitrary mathematical operations, not simply relying on predefined neural network layers.
-
-You might have noticed that until now, all of the operations in our networks have acted upon our network's activations and its parameters. Sometimes, however, we might want to incorporate terms that are neither the result of previous layers nor updatable parameters. We call these *constant* parameters. Say for example that we want a layer that calculates the function $f(\mathbf{x},\mathbf{w}) = c \cdot \mathbf{w}^\top \mathbf{x}$, where $\mathbf{x}$ is the input, $\mathbf{w}$ is our parameter, and $c$ is some specified constant that is not updated during optimization.
+Şimdiye kadar ağlarımızdaki tüm işlemlerin ağımızın etkinleştirmelerine ve parametrelerine göre hareket ettiğini fark etmiş olabilirsiniz. Ancak bazen, ne önceki katmanların sonucu ne de güncellenebilir parametrelerin sonucu olmayan terimleri dahil etmek isteyebiliriz. Bunlara *sabit* parametreler diyoruz. Örneğin, $f(\mathbf{x},\mathbf{w}) = c \cdot \mathbf{w}^\top \mathbf{x}$ işlevini hesaplayan bir katman istediğimizi varsayalım, burada $\mathbf{x}$ girdi, $\mathbf{w}$ bizim parametremiz ve $c$ optimizasyon sırasında güncellenmeyen belirli bir sabittir.
 
 ```{.python .input}
 class FixedHiddenMLP(nn.Block):
@@ -353,9 +351,9 @@ class FixedHiddenMLP(tf.keras.Model):
         return tf.reduce_sum(x)
 ```
 
-In this `FixedHiddenMLP` model, we implement a hidden layer whose weights (`self.rand_weight`) are initialized randomly at instantiation and are thereafter constant. This weight is not a model parameter and thus it is never updated by backpropagation. The network then passes the output of this *fixed* layer through a fully-connected layer.
+Bu `FixedHiddenMLP` modelinde, ağırlıkları (`self.rand_weight`) örneklemede rastgele ilkletilen ve daha sonra sabit olan gizli bir katman uygularız. Bu ağırlık bir model parametresi değildir ve bu nedenle asla geri yayma ile güncellenmez. Ağ daha sonra bu *sabit* katmanın çıktısını tam bağlı bir katmandan geçirir.
 
-Note that before returning output, our model did something unusual. We ran a `while` loop, testing on the condition it's norm is larger than 1, and dividing our output vector by $2$ until it satisfied the condition. Finally, we returned the sum of the entries in `x`. To our knowledge, no standard neural network performs this operation. Note that this particular operation may not be useful in any real world task. Our point is only to show you how to integrate arbitrary code into the flow of your neural network computations.
+Çıktıyı döndürmeden önce, modelimizin olağandışı bir şey yaptığını unutmayın. Bir `while` döngüsü çalıştırdık, normunun 1'den büyük olması koşulunu test ettik ve çıktı vektörümüzü bu koşulu karşılayana kadar $2$'ye böldük. Son olarak, `x`'deki girdilerin toplamını döndürdük. Bildiğimiz kadarıyla hiçbir standart sinir ağı bu işlemi gerçekleştirmez. Bu özel işlemin herhangi bir gerçek dünya sorununda yararlı olmayabileceğini unutmayın. Amacımız, yalnızca rastgele kodu sinir ağı hesaplamalarınızın akışına nasıl tümleştirebileceğinizi göstermektir.
 
 ```{.python .input}
 net = FixedHiddenMLP()
@@ -369,7 +367,7 @@ net = FixedHiddenMLP()
 net(x)
 ```
 
-We can mix and match various ways of assembling blocks together. In the following example, we nest blocks in some creative ways.
+Blokları bir araya getirmenin çeşitli yollarını karıştırıp eşleştirebiliriz. Aşağıdaki örnekte, blokları birtakım yaratıcı yollarla iç içe yerleştiriyoruz.
 
 ```{.python .input}
 class NestMLP(nn.Block):
@@ -426,40 +424,40 @@ chimera.add(FixedHiddenMLP())
 chimera(x)
 ```
 
-## Compilation
+## Derleme
 
 :begin_tab:`mxnet, tensorflow` 
-The avid reader might start to worry about the efficiency of some of these operations. After all, we have lots of dictionary lookups, code execution, and lots of other Pythonic things taking place in what is supposed to be a high performance deep learning library. The problems of Python's [Global Interpreter Lock](https://wiki.python.org/moin/GlobalInterpreterLock) are well known. In the context of deep learning, we worry that our extremely fast GPU(s) might have to wait until a puny CPU runs Python code before it gets another job to run. The best way to speed up Python is by avoiding it altogether.
+Hevesli okuyucu, bu işlemlerden bazılarının verimliliği konusunda endişelenmeye başlayabilir. Sonuçta, yüksek performanslı bir derin öğrenme kütüphanesinde yer alan çok sayıda sözlük arama, kod yürütme ve daha birçok Pythonic (Python dilince) şeyimiz var. Python'un [Global Yorumlayıcı Kilidi](https://wiki.python.org/moin/GlobalInterpreterLock) sorunları iyi bilinmektedir. Derin öğrenme bağlamında, son derece hızlı GPU'larımızın, cılız bir CPU'nun Python kodunu çalıştırması için başka bir işe girmeden önce onu beklemeleri gerekebileceğinden endişeleniyoruz. Python'u hızlandırmanın en iyi yolu, ondan tamamen kaçınmaktır.
 :end_tab:
 
 :begin_tab:`mxnet`
-One way that Gluon does this by allowing for hybridization (:numref:`sec_hybridize`). Here, the Python interpreter executes a Block the first time it is invoked. The Gluon runtime records what is happening and the next time around it short-circuits calls to Python. This can accelerate things considerably in some cases but care needs to be taken when control flow (as above) leads down different branches on different passes through the net. We recommend that the interested reader check out the hybridization section (:numref:`sec_hybridize`) to learn about compilation after finishing the current chapter.
+Gluon'un melezleştirmesine izin vermek bunu yapmanın bir yoludur (:numref:`sec_hybridize`). Burada, Python yorumlayıcısı, ilk çalıştırıldığında bir Blok yürütür. Gluon çalışma zamanında neler olduğunu kaydeder ve bir dahaki sefere kısa devre yaparak Python'a çağrı yapar. Bu, bazı durumlarda işleri önemli ölçüde hızlandırabilir, ancak kontrol akışı (yukarıdaki gibi) ağdan farklı geçişlerde farklı dallara yol açtığı zaman dikkatli olunması gerekir. İlgilenen okuyucunun, mevcut bölümü bitirdikten sonra derleme hakkında bilgi edinmek için melezleştirme bölümüne (:numref:`sec_hybridize`) bakmasını öneririz.
 :end_tab:
 
-## Summary
+## Özet
 
-* Layers are blocks.
-* Many layers can comprise a block.
-* Many blocks can comprise a block.
-* A block can contain code.
-* Blocks take care of lots of housekeeping, including parameter initialization and backpropagation.
-* Sequential concatenations of layers and blocks are handled by the `Sequential` Block.
+* Katmanlar bloklardır.
+* Birçok katman bir blok içerebilir.
+* Bir blok birçok blok içerebilir.
+* Bir blok kod içerebilir.
+* Bloklar, parametre ilkleme ve geri yayma dahil olmak üzere birçok idare işini halleder.
+* Katmanların ve blokların dizili birleştirmeleri `Sequential` blok tarafından gerçekleştirilir.
 
 
-## Exercises
+## Alıştırmalar
 
-1. What kinds of problems will occur if you change `MySequential` to store blocks in a Python list.
-1. Implement a block that takes two blocks as an argument, say `net1` and `net2` and returns the concatenated output of both networks in the forward pass (this is also called a parallel block).
-1. Assume that you want to concatenate multiple instances of the same network. Implement a factory function that generates multiple instances of the same block and build a larger network from it.
+1. Blokları bir Python listesinde saklamak için `MySequential`ı değiştirirseniz ne tür sorunlar ortaya çıkacaktır.
+1. Bağımsız değişken olarak iki blok alan bir blok uygulayın, örneğin `net1` ve `net2` ve ileri doğru geçişte her iki ağın birleştirilmiş çıkışını döndürsün (buna paralel blok da denir).
+1. Aynı ağın birden çok örneğini birleştirmek istediğinizi varsayın. Aynı bloğun birden çok örneğini oluşturan ve ondan daha büyük bir ağ oluşturan bir fabrika işlevi uygulayın.
 
 :begin_tab:`mxnet`
-[Discussions](https://discuss.d2l.ai/t/54)
+[Tartışmalar](https://discuss.d2l.ai/t/54)
 :end_tab:
 
 :begin_tab:`pytorch`
-[Discussions](https://discuss.d2l.ai/t/55)
+[Tartışmalar](https://discuss.d2l.ai/t/55)
 :end_tab:
 
 :begin_tab:`tensorflow`
-[Discussions](https://discuss.d2l.ai/t/264)
+[Tartışmalar](https://discuss.d2l.ai/t/264)
 :end_tab:
