@@ -244,20 +244,20 @@ rgnet.layers[0].layers[1].layers[1].weights[1]
 Artık parametrelere nasıl erişeceğimizi bildiğimize göre, onları nasıl doğru şekilde ilkleteceğimze bakalım. İlkletme ihtiyacını :numref:`sec_numerical_stability`'de tartıştık. Çerçeve, katmanlarına varsayılan rastgele ilkletmeler sağlar. Bununla birlikte, ağırlıklarımızı öteki farklı protokollere göre ilkletmek istiyoruz. Çerçeve, en sık kullanılan protokolleri sağlar ve ayrıca bir tüketici ilkletici oluşturmaya izin verir.
 
 :begin_tab:`mxnet`
-By default, MXNet initializes weight matrices uniformly by drawing from $U[-0.07, 0.07]$ MXNet's `init` module provides a variety of preset initialization methods.
+Varsayılan olarak, MXNet ağırlık matrislerini $U[-0.07, 0.07]$'den çekerek eşit şekilde başlatır, MXNet'in `init` modülü önceden ayarlı çeşitli ilkleme yöntemleri sağlar.
 :end_tab:
 
 :begin_tab:`pytorch`
-By default, PyTorch initializes weight and bias matrices uniformly by drawing from a range that is computed according to the input and output dimension. PyTorch's `nn.init` module provides a variety of preset initialization methods.
+Varsayılan olarak PyTorch, girdi ve çıktı boyutuna göre hesaplanan bir aralıktan çekerek ağırlık ve ek girdi matrislerini tekdüze olarak başlatır. PyTorch'un `nn.init` modülü önceden ayarlı çeşitli ilkleme yöntemleri sağlar.
 :end_tab:
 
 :begin_tab:`tensorflow`
-By default, Keras initializes weight matrices uniformly by drawing from a range that is computed according to the input and output dimension, and the bias parameters are all set to $0$. TensorFlow provides a variety of initialization methods both in the root module and the `keras.initializers` module.
+Varsayılan olarak Keras, girdi ve çıktı boyutuna göre hesaplanan bir aralıktan çekerek ağırlık matrislerini tekdüze olarak başlatır ve ek girdi parametrelerinin tümü $0$ olarak atanır. TensorFlow, hem kök modülde hem de `keras.initializers` modülünde çeşitli ilkleme yöntemleri sağlar.
 :end_tab:
 
-### Built-in Initialization
+### Yerleşik İlkletme
 
-Let us begin by calling on built-in initializers. The code below initializes all weight parameters as Gaussian random variables with standard deviation $.01$, while bias parameters set to 0.
+Yerleşik ilketicileri çağırarak başlayalım. Aşağıdaki kod, tüm ağırlık parametrelerini standart sapması $.01$ olan Gauss rastgele değişkenler olarak başlatırken, ek girdi parametreleri 0 olarak ayarlanmıştır.
 
 ```{.python .input}
 # force_reinit ensures that variables are freshly initialized
@@ -290,8 +290,7 @@ net(x)
 net.weights[0], net.weights[1]
 ```
 
-We can also initialize all parameters
-to a given constant value (say, $1$).
+Ayrıca tüm parametreleri belirli bir sabit değere ilkleyebiliriz (örneğin, $1$ gibi).
 
 ```{.python .input}
 net.initialize(init=init.Constant(1), force_reinit=True)
@@ -323,7 +322,7 @@ net(x)
 net.weights[0], net.weights[1]
 ```
 
-We can also apply different initializers for certain Blocks. For example, below we initialize the first layer with the `Xavier` initializer and initialize the second layer to a constant value of 42.
+Ayrıca belirli bloklar için farklı ilkleyiciler uygulayabiliriz. Örneğin, aşağıda ilk katmanı `Xavier` ilkleyicisi ile ilkliyoruz ve ikinci katmanı sabit bir 42 değeri ile ilkliyoruz.
 
 ```{.python .input}
 net[0].weight.initialize(init=init.Xavier(), force_reinit=True)

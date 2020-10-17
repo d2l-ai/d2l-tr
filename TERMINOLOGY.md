@@ -8,6 +8,8 @@ bias -> sinir ağlarında ek girdi
 
 bias -> algoritmalardaki yanlılık
 
+built-in -> yerleşik, gömülü
+
 co-adaptation -> birlikte-uyarlama
 
 confusion-matrix -> hata matrisi
