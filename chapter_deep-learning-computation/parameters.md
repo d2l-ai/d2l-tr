@@ -363,9 +363,9 @@ print(net.layers[1].weights[0])
 print(net.layers[2].weights[0])
 ```
 
-### Custom Initialization
+### Özel Kesim İlkleme
 
-Sometimes, the initialization methods we need are not provided by the framework. In the example below, we define an initializer for the following strange distribution:
+Bazen, ihtiyaç duyduğumuz ilkletme yöntemleri çerçeve tarafından sağlanmayabilir. Aşağıdaki örnekte, aşağıdaki garip dağılım için bir ilkleyici tanımlıyoruz:
 
 $$
 \begin{aligned}
@@ -378,15 +378,15 @@ $$
 $$
 
 :begin_tab:`mxnet`
-Here we define a subclass of `Initializer`. Usually, we only need to implement the `_init_weight` function which takes a tensor argument (`data`) and assigns to it the desired initialized values.
+Burada `Initializer`'ın bir alt sınıfını tanımlıyoruz. Genellikle, yalnızca bir tensör bağımsız değişkeni (`data`) alan ve ona istenen ilkletilmiş değerleri atayan `_init_weight` işlevini uygulamamız gerekir.
 :end_tab:
 
 :begin_tab:`pytorch`
-Again, we implement a `my_init` function to apply to `net`.
+Yine, `net`'e uygulamak için bir `my_init` işlevi uyguluyoruz.
 :end_tab:
 
 :begin_tab:`tensorflow`
-Here we define a subclass of `Initializer` and implement the `__call__` function that return a desired tensor given the shape and data type.
+Burada `Initializer`'ın bir alt sınıfını tanımlıyoruz ve şekil ve veri türüne göre istenen bir tensörü döndüren `__call__` işlevini uyguluyoruz.
 :end_tab:
 
 ```{.python .input}
@@ -430,10 +430,10 @@ net(x)
 print(net.layers[1].weights[0])
 ```
 
-Note that we always have the option of setting parameters directly.
+Her zaman parametreleri doğrudan ayarlama seçeneğimiz olduğunu unutmayın.
 
 :begin_tab:`mxnet`
-A note for advanced users: if you want to adjust parameters within an `autograd` scope, you need to use `set_data` to avoid confusing the automatic differentiation mechanics.
+İleri düzey kullanıcılar için bir hatırlatma: Parametreleri bir `autograd` (otomatik türev) kapsamında ayarlamak istiyorsanız, otomatik türev alma mekanizmalarının karıştırılmasını önlemek için `set_data`'yı kullanmanız gerekir.
 :end_tab:
 
 ```{.python .input}
@@ -456,9 +456,9 @@ net.layers[1].weights[0][0, 0].assign(42)
 net.layers[1].weights[0]
 ```
 
-## Tied Parameters
+## Bağlı Parametreler
 
-Often, we want to share parameters across multiple layers. Later we will see that when learning word embeddings, it might be sensible to use the same parameters both for encoding and decoding words. We discussed one such case when we introduced :numref:`sec_model_construction`. Let us see how to do this a bit more elegantly. In the following we allocate a dense layer and then use its parameters specifically to set those of another layer.
+Genellikle, parametreleri birden çok katmanda paylaşmak isteriz. Daha sonra, kelime gömmelerini öğrenirken, kelimeleri şifrelemek ve deşifre etmek için aynı parametreleri kullanmanın mantıklı olabileceğini göreceğiz. Böyle bir durumu :numref:`sec_model_construction` bölümünde tartıştık. Bunu biraz daha zekice bir şekilde nasıl yapacağımızı görelim. Aşağıda yoğun (dense) bir katman ayırıyoruz ve ardından onun parametrelerini de özellikle başka bir katmanınkileri ayarlamak için kullanıyoruz.
 
 ```{.python .input}
 net = nn.Sequential()
@@ -517,29 +517,29 @@ net(x)
 print(len(net.layers) == 3)
 ```
 
-This example shows that the parameters of the second and third layer are tied. They are not just equal, they are represented by the same exact tensor. Thus, if we change one of the parameters, the other one changes, too. You might wonder, *when parameters are tied what happens to the gradients?* Since the model parameters contain gradients, the gradients of the second hidden layer and the third hidden layer are added together during backpropagation.
+Bu örnek, ikinci ve üçüncü katmanın parametrelerinin birbirine bağlı olduğunu göstermektedir. Sadece eşit değiller, tamamen aynı tensörle temsil ediliyorlar. Bu yüzden parametrelerden birini değiştirirsek diğeri de değişir. Merak edebilirsiniz, *parametreler bağlı olduğunda gradyanlara ne olur?* Model parametreleri gradyanlar içerdiğinden, ikinci ve üçüncü gizli katmanların gradyanları geri yayma sırasında birbiriyle toplanır.
 
-## Summary
+## Özet
 
-* We have several ways to access, initialize, and tie model parameters.
-* We can use custom initialization.
+* Model parametrelerine erişmek, ilklemek ve onları bağlamak için birkaç farklı yol var.
+* Özel kesim ilkleme kullanabiliriz.
 
 
-## Exercises
+## Alıştırmalar
 
-1. Use the FancyMLP defined in :numref:`sec_model_construction` and access the parameters of the various layers.
-1. Look at the initialization module document to explore different initializers.
-1. Construct a multilayer perceptron containing a shared parameter layer and train it. During the training process, observe the model parameters and gradients of each layer.
-1. Why is sharing parameters a good idea?
+1. :numref:`sec_model_construction` içinde tanımlanan FancyMLP'yi kullanınız ve çeşitli katmanların parametrelerine erişiniz.
+1. Farklı ilkleyicileri keşfetmek için ilkleme modülü dökümanına bakınız.
+1. Paylaşılan bir parametre katmanı içeren çok katmanlı bir algılayıcı oluşturunuz ve onu eğitiniz. Eğitim sürecinde, her katmanın model parametrelerini ve gradyanlarını gözlemleyiniz.
+1. Parametreleri paylaşmak neden iyi bir fikirdir?
 
 :begin_tab:`mxnet`
-[Discussions](https://discuss.d2l.ai/t/56)
+[Tartışmalar](https://discuss.d2l.ai/t/56)
 :end_tab:
 
 :begin_tab:`pytorch`
-[Discussions](https://discuss.d2l.ai/t/57)
+[Tartışmalar](https://discuss.d2l.ai/t/57)
 :end_tab:
 
 :begin_tab:`tensorflow`
-[Discussions](https://discuss.d2l.ai/t/269)
+[Tartışmalar](https://discuss.d2l.ai/t/269)
 :end_tab:
