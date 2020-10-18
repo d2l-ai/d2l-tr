@@ -94,9 +94,9 @@ Girdi boyutluluğunu, $\mathbf{x} \in \mathbb{R}^{20}$, öğrenir öğrenmez, ç
 
 ## Alıştırmalar
 
-1. What happens if you specify the input dimensions to the first layer but not to subsequent layers? Do you get immediate initialization?
-1. What happens if you specify mismatching dimensions?
-1. What would you need to do if you have input of varying dimensionality? Hint: look at parameter tying.
+1. İlk katmanda girdi boyutlarını belirtirseniz ancak sonraki katmanlarda girmezseniz ne olur? Anında ilklemeyi elde eder misiniz?
+1. Uyumsuz boyutlar belirtirseniz ne olur?
+1. Boyutluluğu değişken bir girdiye sahipseniz ne yapmanız gerekir? İpucu: Bağlı parametrelere bakınız.
 
 :begin_tab:`mxnet`
 [Tartışmalar](https://discuss.d2l.ai/t/280)
