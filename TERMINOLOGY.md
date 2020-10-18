@@ -18,6 +18,8 @@ confusion-matrix -> hata matrisi
 
 covariate -> ortak değişken
 
+deployment -> konuşlandırma
+
 descent -> iniş
 
 domain -> etki alanı
