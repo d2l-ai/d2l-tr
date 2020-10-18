@@ -1,5 +1,7 @@
 ## Terimler
 
+affine -> afin
+
 backprop -> geriyay
 
 backpropagation -> geri yayma
@@ -76,6 +78,8 @@ ridge regression -> sırt regresyon
 
 robust -> gürbüz
 
+quantization -> micemleme
+
 sample -> örneklem
 
 sanity check -> makulluk kontrolü
@@ -83,6 +87,8 @@ sanity check -> makulluk kontrolü
 scaler -> sayıl, skaler
 
 sequence -> dizi
+
+serialization -> serileştirme
 
 softmax -> eşiksiz en büyük işlev veya softmaks
 
