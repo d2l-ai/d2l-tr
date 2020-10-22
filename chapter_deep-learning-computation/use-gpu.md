@@ -12,9 +12,9 @@ Giriş bölümünde, son yirmi yılda hesaplamanın hızlı büyümesini tartı�
 |2010|10 G (reklamlar)|1 GB|1 TF (NVIDIA C2050)|
 |2020|1 T (social ağ)|100 GB|1 PF (NVIDIA DGX-2)|
 
-In this section, we begin to discuss how to harness this compute performance for your research. First by using single GPUs and at a later point, how to use multiple GPUs and multiple servers (with multiple GPUs).
+Bu bölümde, araştırmanız için bu hesaplama performansından nasıl yararlanılacağını tartışmaya başlıyoruz. Öncelikle tek GPU'ları kullanarak ve daha sonra, birden çok GPU ve birden çok sunucuyu (birden çok GPU ile) nasıl kullanacağınızı tartışacağız.
 
-In this section, we will discuss how to use a single NVIDIA GPU for calculations. First, make sure you have at least one NVIDIA GPU installed. Then, [download CUDA](https://developer.nvidia.com/cuda-downloads) and follow the prompts to set the appropriate path. Once these preparations are complete, the `nvidia-smi` command can be used to view the graphics card information.
+Bu bölümde, hesaplamalar için tek bir NVIDIA GPU'nun nasıl kullanılacağını tartışacağız. Öncelikle, kurulu en az bir NVIDIA GPU'nuz olduğundan emin olun. Ardından, [CUDA'yı indirin](https://developer.nvidia.com/cuda-downloads) ve uygun yere kurmak için istemleri takip edin. Bu hazırlıklar tamamlandıktan sonra, `nvidia-smi`, komutu grafik kartı bilgilerini görüntülemek için kullanılabilir.
 
 ```{.python .input}
 #@tab all
@@ -22,33 +22,35 @@ In this section, we will discuss how to use a single NVIDIA GPU for calculations
 ```
 
 :begin_tab:`mxnet`
-You might have noticed that MXNet tensor looks almost identical to NumPy.
+MXNet tensörünün NumPy'deki ile neredeyse aynı göründüğünü fark etmiş olabilirsiniz.
 
-But there are a few crucial differences. One of the key features that distinguishes MXNet from NumPy is its support for diverse hardware devices.
+Ancak birkaç önemli farklılık var. MXNet'i NumPy'den ayıran temel özelliklerden biri, çeşitli donanım aygıtlarına desteğidir.
 
-In MXNet, every array has a context. So far, by default, all variables and associated computation have been assigned to the CPU. Typically, other contexts might be various GPUs. Things can get even hairier when we deploy jobs across multiple servers. By assigning arrays to contexts intelligently, we can minimize the time spent transferring data between devices. For example, when training neural networks on a server with a GPU, we typically prefer for the model's parameters to live on the GPU.
+MXNet'te her dizilimin (array) bir bağlamı vardır. Şimdiye kadar, varsayılan olarak, tüm değişkenler ve ilişkili hesaplamalar CPU'ya atanmıştır. Tipik olarak, diğer bağlamlar çeşitli GPU'lar olabilir. İşleri birden çok sunucuya dağıttığımızda işler arap saçına dönebilir. Dizilimleri bağlamlara akıllıca atayarak, cihazlar arasında veri aktarımında harcanan zamanı en aza indirebiliriz. Örneğin, GPU'lu bir sunucuda sinir ağlarını eğitirken, genellikle modelin parametrelerinin GPU'da kalmasını tercih ederiz.
 
-Next, we need to confirm that the GPU version of MXNet is installed. If a CPU version of MXNet is already installed, we need to uninstall it first. For example, use the `pip uninstall mxnet` command, then install the corresponding MXNet version according to your CUDA version. Assuming you have CUDA 9.0 installed, you can install the MXNet version that supports CUDA 9.0 via `pip install mxnet-cu90`. To run the programs in this section, you need at least two GPUs.
+Ardından, MXNet'in GPU sürümünün kurulu olduğunu onaylamamız gerekiyor. MXNet'in bir CPU sürümü zaten kuruluysa, önce onu kaldırmamız gerekir. Örneğin, `pip uninstall mxnet` komutunu kullanın, ardından CUDA sürümünüze göre ilgili MXNet sürümünü kurun. CUDA 9.0'ın kurulu olduğunu varsayarsak, CUDA 9.0'ı destekleyen MXNet sürümünü `pip install mxnet-cu90` aracılığıyla kurabilirsiniz. Bu bölümdeki programları çalıştırmak için en az iki GPU'ya ihtiyacınız var.
 :end_tab:
 
 :begin_tab:`pytorch`
-In PyTorch, every array has a device, we often refer it as a context. So far, by default, all variables and associated computation have been assigned to the CPU. Typically, other contexts might be various GPUs. Things can get even hairier when we deploy jobs across multiple servers. By assigning arrays to contexts intelligently, we can minimize the time spent transferring data between devices. For example, when training neural networks on a server with a GPU, we typically prefer for the model's parameters to live on the GPU.
+PyTorch'ta her dizilimin bir aygıtı vardır, biz onu genellikle bağlam olarak adlandırırız. Şimdiye kadar, varsayılan olarak, tüm değişkenler ve ilişkili hesaplama CPU'ya atanmıştır. Tipik olarak, diğer bağlamlar çeşitli GPU'lar olabilir. İşleri birden çok sunucuya dağıttığımızda işler arap saçına dönebilir. Dizileri bağlamlara akıllıca atayarak, cihazlar arasında veri aktarımında harcanan zamanı en aza indirebiliriz. Örneğin, GPU'lu bir sunucuda sinir ağlarını eğitirken, genellikle modelin parametrelerinin GPU'da kalmasını tercih ederiz.
 
-Next, we need to confirm that the GPU version of PyTorch is installed. If a CPU version of PyTorch is already installed, we need to uninstall it first. For example, use the `pip uninstall torch` command, then install the corresponding PyTorch version according to your CUDA version. Assuming you have CUDA 9.0 installed, you can install the PyTorch version that supports CUDA 9.0 via `pip install torch-cu90`. To run the programs in this section, you need at least two GPUs.
+Ardından, PyTorch'un GPU sürümünün kurulu olduğunu onaylamamız gerekiyor. PyTorch'un bir CPU sürümü zaten kuruluysa, önce onu kaldırmamız gerekir. Örneğin, `pip uninstall torch` komutunu kullanın, ardından CUDA sürümünüze göre ilgili PyTorch sürümünü kurun. CUDA 9.0'ın kurulu olduğunu varsayarsak, CUDA 9.0'ı destekleyen PyTorch sürümünü `pip install torch-cu90` aracılığıyla kurabilirsiniz. Bu bölümdeki programları çalıştırmak için en az iki GPU'ya ihtiyacınız var.
 :end_tab:
 
-Note that this might be extravagant for most desktop computers but it is easily available in the cloud, e.g., by using the AWS EC2 multi-GPU instances. Almost all other sections do *not* require multiple GPUs. Instead, this is simply to illustrate how data flows between different devices.
+Bunun çoğu masaüstü bilgisayar için abartılı olabileceğini, ancak bulutta (ör. AWS EC2 çoklu-GPU bulut sunucularını kullanarak) kolayca kullanılabileceğini unutmayın. Hemen hemen diğer bütün bölümler birden fazla GPU *gerektirmez*. Bunun burdaki kullanım nedeni, basitçe verilerin farklı cihazlar arasında nasıl aktığını göstermektir.
 
-## Computing Devices
+By default, tensors are created in the main memory and then uses the CPU to calculate it.
 
-We can specify devices, such as CPUs and GPUs, for storage and calculation. By default, tensors are created in the main memory and then uses the CPU to calculate it.
+## Hesaplama Cihazları
+
+Depolama ve hesaplama için CPU ve GPU gibi cihazları belirtebiliriz. Varsayılan olarak, ana bellekte tensörler oluşturulur ve ardından bunu hesaplamak için CPU'yu kullanır.
 
 :begin_tab:`mxnet`
-In MXNet, the CPU and GPU can be indicated by `cpu()` and `gpu()`. It should be noted that `cpu()` (or any integer in the parentheses), means all physical CPUs and memory. This means that MXNet's calculations will try to use all CPU cores. However, `gpu()` only represents one card and the corresponding memory. If there are multiple GPUs, we use `gpu(i)` to represent the $i^\mathrm{th}$ GPU ($i$ starts from 0). Also, `gpu(0)` and `gpu()` are equivalent.
+MXNet'te CPU ve GPU, `cpu()` ve `gpu()` ile gösterilebilir. `cpu()` (veya parantez içindeki herhangi bir tam sayı), tüm fiziksel CPU'lar ve bellek anlamına gelir. Bu, MXNet'in hesaplamalarının tüm CPU çekirdeklerini kullanmaya çalışacağı anlamına gelir. Ancak, `gpu()` yalnızca bir kartı ve ona denk gelen belleği temsil eder. Birden fazla GPU varsa, $i^\mathrm{th}$ GPU'yu ($i$ 0'dan başlar) temsil etmek için `gpu(i)`'yu kullanırız. Ayrıca, `gpu(0)` ve `gpu()` eşdeğerdir.
 :end_tab:
 
 :begin_tab:`pytorch`
-In PyTorch, the CPU and GPU can be indicated by `torch.device('cpu')` and `torch.cuda.device('cuda')`. It should be noted that the `cpu` device means all physical CPUs and memory. This means that PyTorch's calculations will try to use all CPU cores. However, a `gpu` device only represents one card and the corresponding memory. If there are multiple GPUs, we use `torch.cuda.device(f'cuda{i}')` to represent the $i^\mathrm{th}$ GPU ($i$ starts from 0). Also, `gpu:0` and `gpu` are equivalent.
+PyTorch'ta CPU ve GPU, `torch.device('cpu')` ve `torch.cuda.device('cuda')` ile gösterilebilir. `cpu` aygıtının tüm fiziksel CPU'lar ve bellek anlamına geldiğine dikkat edilmelidir. Bu, PyTorch'un hesaplamalarının tüm CPU çekirdeklerini kullanmaya çalışacağı anlamına gelir. Bununla birlikte, bir `gpu` cihazı yalnızca bir kartı ve ona denk gelen belleği temsil eder. Birden çok GPU varsa, $i^\mathrm{th}$ GPU ($i$ 0'dan başlar) temsil etmek için `torch.cuda.device(f'cuda{i}')`yi kullanırız. Ayrıca `gpu:0` ve `gpu` eşdeğerdir.
 :end_tab:
 
 ```{.python .input}
@@ -74,7 +76,7 @@ import tensorflow as tf
 tf.device('/CPU:0'), tf.device('/GPU:0'), tf.device('/GPU:1')
 ```
 
-We can query the number of available GPUs.
+Mevcut GPU adetini sorgulayabiliriz.
 
 ```{.python .input}
 npx.num_gpus()
@@ -90,7 +92,7 @@ torch.cuda.device_count()
 len(tf.config.experimental.list_physical_devices('GPU'))
 ```
 
-Now we define two convenient functions that allow us to run codes even if the requested GPUs do not exist.
+Şimdi, istenen GPU'lar var olmasa bile kodları çalıştırmamıza izin veren iki kullanışlı işlev tanımlıyoruz.
 
 ```{.python .input}
 def try_gpu(i=0):  #@save
@@ -139,9 +141,9 @@ def try_all_gpus():  #@save
 try_gpu(), try_gpu(3), try_all_gpus()
 ```
 
-## Tensors and GPUs
+## Tensörler and GPUlar
 
-By default, tensors are created on the CPU. We can query the device where the tensor is located.
+Varsayılan olarak, CPU'da tensörler oluşturulur. Tensörün bulunduğu cihazı sorgulayabiliriz.
 
 ```{.python .input}
 x = np.array([1, 2, 3])
@@ -160,11 +162,11 @@ x = tf.constant([1, 2, 3])
 x.device
 ```
 
-It is important to note that whenever we want to operate on multiple terms, they need to be in the same context. For instance, if we sum two tensors, we need to make sure that both arguments live on the same device---otherwise the framework would not know where to store the result or even how to decide where to perform the computation.
+Birden çok terimle çalışmak istediğimizde, aynı bağlamda olmaları gerektiğine dikkat etmemiz önemlidir. Örneğin, iki tensörü toplarsak, her iki argümanın da aynı cihazda olduğundan emin olmamız gerekir---aksi takdirde çerçeve, sonucu nerede saklayacağını ve hatta hesaplamayı nerede gerçekleştireceğine nasıl karar vereceğini bilemez.
 
-### Storage on the GPU
+### GPU'da Depolama
 
-There are several ways to store a tensor on the GPU. For example, we can specify a storage device when creating a tensor. Next, we create the tensor variable `a` on the first `gpu`. Notice that when printing `a`, the device information changed. The tensor created on a GPU only consumes the memory of this GPU. We can use the `nvidia-smi` command to view GPU memory usage. In general, we need to make sure we do not create data that exceeds the GPU memory limit.
+GPU'da bir tensör depolamanın birkaç yolu vardır. Örneğin, bir tensör oluştururken bir depolama cihazı belirleyebiliriz. Sonra, ilk `gpu`da tensör değişkeni `a`'yı oluşturuyoruz. `a`'yı yazdırırken aygıt bilgilerinin değiştiğine dikkat edin. Bir GPU'da oluşturulan tensör yalnızca o GPU'nun belleğini harcar. GPU bellek kullanımını görüntülemek için `nvidia-smi` komutunu kullanabiliriz. Genel olarak, GPU bellek sınırını aşan veriler oluşturmadığımızdan emin olmamız gerekir.
 
 ```{.python .input}
 x = np.ones((2, 3), ctx=try_gpu())
@@ -184,7 +186,7 @@ with try_gpu():
 x
 ```
 
-Assuming you have at least two GPUs, the following code will create a random array on the second GPU.
+En az iki GPU'ya sahip olduğunuzu varsayarak, aşağıdaki kod ikinci GPU'da keyfi bir dizilim oluşturacaktır.
 
 ```{.python .input}
 y = np.random.uniform(size=(2, 3), ctx=try_gpu(1))
@@ -204,14 +206,14 @@ with try_gpu(1):
 y
 ```
 
-### Copying
+### Kopyalama
 
-If we want to compute $\mathbf{x} + \mathbf{y}$, we need to decide where to perform this operation. For instance, as shown in :numref:`fig_copyto`, we can transfer $\mathbf{x}$ to the second GPU and perform the operation there. *Do not* simply add `x + y`, since this will result in an exception. The runtime engine would not know what to do, it cannot find data on the same device and it fails.
+$\mathbf{x} + \mathbf{y}$'yı hesaplamak istiyorsak, bu işlemi nerede gerçekleştireceğimize karar vermemiz gerekir. Örneğin: numref:`fig_copyto`da gösterildiği gibi, $\mathbf{x}$'i ikinci GPU'ya aktarabilir ve işlemi orada gerçekleştirebiliriz. * Sadece `x + y` *toplamayın*, çünkü bu bir istisnayla sonuçlanacaktır. Koşma zamanı motoru ne yapacağını bilemez, veriyi aynı cihazda bulamaz ve başarısız olur.
 
-![Copyto copies arrays to the target device](../img/copyto.svg)
+![Copyto dizilimleri aynı cihaza kopyalar](../img/copyto.svg)
 :label:`fig_copyto`
 
-`copyto` copies the data to another device such that we can add them. Since $\mathbf{y}$ lives on the second GPU, we need to move $\mathbf{x}$ there before we can add the two.
+`copyto`, verileri toplayabileceğimiz şekilde başka bir cihaza kopyalar. $\mathbf{y}$ ikinci GPU'da olduğundan, ikisini toplayabilmemiz için önce $\mathbf{x}$'i oraya taşımamız gerekir.
 
 ```{.python .input}
 z = x.copyto(try_gpu(1))
@@ -234,7 +236,7 @@ print(x)
 print(z)
 ```
 
-Now that the data is on the same GPU (both $\mathbf{z}$ and $\mathbf{y}$ are), we can add them up.
+Artık veriler aynı GPU'da olduğuna göre (hem $\mathbf{z}$ hem de $\mathbf{y}$), onları toplayabiliriz.
 
 ```{.python .input}
 #@tab all
@@ -242,15 +244,15 @@ y + z
 ```
 
 :begin_tab:`mxnet`
-Imagine that your variable `z` already lives on your second GPU. What happens if we call still `z.copyto(gpu(1))`? It will make a copy and allocate new memory, even though that variable already lives on the desired device! There are times where, depending on the environment our code is running in, two variables may already live on the same device. So we only want to make a copy if the variables currently lives on different contexts. In these cases, we can call `as_in_ctx()`. If the variable already live in the specified context then this is a no-op. Unless you specifically want to make a copy, `as_in_ctx()` is the method of choice.
+`z` değişkeninizin halihazırda ikinci GPU'nuzda olduğunu hayal edin. Gene de `z.copyto(gpu(1))` çağırırsak ne olur? Değişken istenen cihazda zaten bulunsa bile, yeni bir kopya oluşturacak ve bellek tahsis edecektir! Kodumuzun çalıştığı ortama bağlı olarak, aynı cihazda iki değişkenin zaten var olduğu zamanlar vardır. Dolayısıyla, değişkenler şu anda farklı bağlamlarda yaşıyorsa yalnızca bir kopya yapmak isteriz. Bu durumlarda, `as_in_ctx()` çağırabiliriz. Değişken zaten belirtilen bağlamda yaşıyorsa, bu işlem-yok (no-op) demektir. Özellikle bir kopya yapmak istemediğiniz sürece, `as_in_ctx()` tercih edilen yöntemdir.
 :end_tab:
 
 :begin_tab:`pytorch`
-Imagine that your variable `z` already lives on your second GPU. What happens if we call still `z.cuda(1)`? It will returns `z` instead of make a copy and allocate new memory.
+`z` değişkeninizin halihazırda ikinci GPU'nuzda ver olduğunu hayal edin. Gene de `z.cuda(1)` diye çağırırsak ne olur? Kopyalamak ve yeni bellek ayırmak yerine `z`'yi döndürür.
 :end_tab:
 
 :begin_tab:`pytorch`
-Imagine that your variable `z` already lives on your second GPU. What happens if we call still `z2 = z` under the same device scope? It will returns `z` instead of make a copy and allocate new memory.
+`z` değişkeninizin halihazırda ikinci GPU'nuzda ver olduğunu hayal edin. Aynı cihaz kapsamı altında gene de `z2 = z`'yi çağırırsak ne olur? Kopyalamak ve yeni bellek ayırmak yerine `z`'yi döndürür.
 :end_tab:
 
 ```{.python .input}
@@ -269,18 +271,17 @@ with try_gpu(1):
 z2 is z
 ```
 
-### Side Notes
+### Ek Notlar
 
-People use GPUs to do machine learning because they expect them to be fast. But transferring variables between contexts is slow. So we want you to be 100% certain that you want to do something slow before we let you do it. If the framework just did the copy automatically without crashing then you might not realize that you had written some slow code.
+İnsanlar hızlı olmalarını bekledikleri için makine öğrenmesi için GPU'ları kullanıyorlar. Ancak değişkenlerin bağlamlar arasında aktarılması yavaştır. Bu yüzden, yapmanıza izin vermeden önce yavaş bir şey yapmak istediğinizden %100 emin olmanızı istiyoruz. Çerçeve kopyayı çökmeden otomatik olarak yaptıysa, yavaş çalışan bir kod yazdığınızı fark etmeyebilirsiniz.
 
-Also, transferring data between devices (CPU, GPUs, other machines) is something that is *much slower* than computation. It also makes parallelization a lot more difficult, since we have to wait for data to be sent (or rather to be received) before we can proceed with more operations. This is why copy operations should be taken with great care. As a rule of thumb, many small operations are much worse than one big operation. Moreover, several operations at a time are much better than many single operations interspersed in the code (unless you know what you are doing) This is the case since such operations can block if one device has to wait for the other before it can do something else. It is a bit like ordering your coffee in a queue rather than pre-ordering it by phone and finding out that it is ready when you are.
+Ayrıca, cihazlar (CPU, GPU'lar, diğer makineler) arasında veri aktarımı, hesaplamadan *çok daha yavaş* bir şeydir. Ayrıca, daha fazla işleme ilerlemeden önce verilerin gönderilmesini (veya daha doğrusu alınmasını) beklememiz gerektiğinden bu paralelleştirmeyi çok daha zor hale getirir. Bu nedenle kopyalama işlemlerine büyük özen gösterilmelidir. Genel bir kural olarak, birçok küçük işlem, tek bir büyük işlemden çok daha kötüdür. Dahası, bir seferde birkaç işlem, koda serpiştirilmiş birçok tek işlemden çok daha iyidir (ne yaptığınızı biliyorsanız o ayrı). Bu durumda, bir aygıtın bir şey yapmadan önce bir diğerini beklemesi gerektiğinde bu tür işlemler onu engelleyebilir. Başka. Bu biraz, kahvenizi telefonla ön sipariş vermek ve siz istediğinizde hazır olduğunu öğrenmek yerine sırada bekleyerek sipariş etmek gibidir.
 
-Last, when we print tensors or convert tensors to the NumPy format, if the data is not in main memory, the framework will copy it to the main memory first, resulting in additional transmission overhead. Even worse, it is now subject to the dreaded Global Interpreter Lock that makes everything wait for Python to complete.
+Son olarak, tensörleri yazdırdığımızda veya tensörleri NumPy formatına dönüştürdüğümüzde, veri ana bellekte değilse, çerçeve onu önce ana belleğe kopyalayacak ve bu da ek iletim yüküne neden olacaktır. Daha da kötüsü, şimdi Python'un her şeyi  tamamlanmasını beklemesine neden olan o korkunç Global Yorumlayıcı Kilidine tabidir.
 
+## Sinir Ağları ve GPUlar
 
-## Neural Networks and GPUs
-
-Similarly, a neural network model can specify devices. The following code put the model parameters on the GPU (we will see many more examples of how to run models on GPUs in the following, simply since they will become somewhat more compute intensive).
+Benzer şekilde, bir sinir ağı modeli cihazları belirtebilir. Aşağıdaki kod, model parametrelerini GPU'ya yerleştirir (biraz daha yoğun işlem gerektireceklerinden, aşağıda modellerin GPU'larda nasıl çalıştırılacağına dair daha birçok örnek göreceğiz).
 
 ```{.python .input}
 net = nn.Sequential()
@@ -302,14 +303,14 @@ with strategy.scope():
         tf.keras.layers.Dense(1)])
 ```
 
-When the input is a tensor on the GPU, Gluon will calculate the result on the same GPU.
+Girdi, GPU'da bir tensör olduğunda, Gluon sonucu aynı GPU'da hesaplayacaktır.
 
 ```{.python .input}
 #@tab all
 net(x)
 ```
 
-Let us confirm that the model parameters are stored on the same GPU.
+Model parametrelerinin aynı GPU'da depolandığını doğrulayalım.
 
 ```{.python .input}
 net[0].weight.data().ctx
@@ -325,29 +326,29 @@ net[0].weight.data.device
 net.layers[0].weights[0].device, net.layers[0].weights[1].device
 ```
 
-In short, as long as all data and parameters are on the same device, we can learn models efficiently. In the following we will see several such examples.
+Kısacası tüm veriler ve parametreler aynı cihazda olduğu sürece modelleri verimli bir şekilde öğrenebiliriz. Sonraki kısımlarda bu tür birkaç örnek göreceğiz.
 
-## Summary
+## Özet
 
-* We can specify devices for storage and calculation, such as CPU or GPU. By default, data are created in the main memory and then uses the CPU for calculations.
-* The framework requires all input data for calculation to be *on the same device*, be it CPU or the same GPU.
-* You can lose significant performance by moving data without care. A typical mistake is as follows: computing the loss for every minibatch on the GPU and reporting it back to the user on the command line (or logging it in a NumPy array) will trigger a global interpreter lock which stalls all GPUs. It is much better to allocate memory for logging inside the GPU and only move larger logs.
+* Depolama ve hesaplama için CPU veya GPU gibi cihazlar belirleyebiliriz. Varsayılan olarak, veriler ana bellekte oluşturulur ve ardından hesaplamalar için CPU kullanılır.
+* Çerçeve, hesaplama için tüm girdi verilerinin *aynı cihazda* olmasını gerektirir, ister CPU ister aynı GPU olsun.
+* Verileri dikkatsizce taşıyarak önemli bir performans kaybına uğrayabilirsiniz. Tipik bir hata şudur: GPU'daki her mini grup için kaybı hesaplamak ve bunu komut satırında kullanıcıya geri bildirmek (veya bir NumPy dizisinde kaydetmek), bu tüm GPU'ları durduran global yorumlayıcı kilidini tetikleyecektir. GPU içinde kayıt tutmak için bellek ayırmak ve yalnızca daha büyük kayıtları taşımak çok daha iyidir.
 
-## Exercises
+## Alıştırmalar
 
-1. Try a larger computation task, such as the multiplication of large matrices, and see the difference in speed between the CPU and GPU. What about a task with a small amount of calculations?
-1. How should we read and write model parameters on the GPU?
-1. Measure the time it takes to compute 1000 matrix-matrix multiplications of $100 \times 100$ matrices and log the matrix norm $\mathrm{tr} M M^\top$ one result at a time vs. keeping a log on the GPU and transferring only the final result.
-1. Measure how much time it takes to perform two matrix-matrix multiplications on two GPUs at the same time vs. in sequence on one GPU (hint: you should see almost linear scaling).
+1. Büyük matrislerin çarpımı gibi daha büyük bir hesaplama görevi deneyiniz ve CPU ile GPU arasındaki hız farkını görünüz. Az miktarda hesaplama içeren bir göreve ne olur?
+1. GPU'daki model parametrelerini nasıl okuyup yazmalıyız?
+1. $100 \times 100$lük 1000 matris-matris çarpımını hesaplamak için gereken süreyi ölçünüz ve her seferde matris normu $\mathrm{tr} M M^\top$ sonucunu günlüğe kaydetme ile GPU'da günlük tutma ve yalnızca son sonucun aktarılmayı kıyaslayınız.
+1. İki GPU'da iki matris-matris çarpımını aynı anda gerçekleştirme ile tek bir GPU'da sıralı gerçekleştirmenin ne kadar zaman aldığını ölçerek karşılaştırınız (İpucu: Neredeyse doğrusal bir ölçekleme görmelisiniz).
 
 :begin_tab:`mxnet`
-[Discussions](https://discuss.d2l.ai/t/62)
+[Tartışmalar](https://discuss.d2l.ai/t/62)
 :end_tab:
 
 :begin_tab:`pytorch`
-[Discussions](https://discuss.d2l.ai/t/63)
+[Tartışmalar](https://discuss.d2l.ai/t/63)
 :end_tab:
 
 :begin_tab:`tensorflow`
-[Discussions](https://discuss.d2l.ai/t/270)
+[Tartışmalar](https://discuss.d2l.ai/t/270)
 :end_tab:

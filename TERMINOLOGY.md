@@ -2,6 +2,8 @@
 
 affine -> afin
 
+array -> dizilim
+
 backprop -> geriyay
 
 backpropagation -> geri yayma
