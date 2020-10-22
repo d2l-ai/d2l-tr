@@ -32,6 +32,8 @@ environment -> ortam
 
 generative adversarial networks -> çekişmeli üretici ağlar
 
+gpu -> grafik işleme birimi
+
 gradient -> gradyan, eğim
 
 graph -> çizge
@@ -52,7 +54,7 @@ lasso regression -> kement regresyon
 
 likelihood -> olabilirlik
 
-loss function ->  kayıp ve yitim fonksiyonu
+loss function ->  kayıp veya yitim fonksiyonu
 
 minibatch -> minigrup
 
@@ -95,6 +97,8 @@ serialization -> serileştirme
 softmax -> eşiksiz en büyük işlev veya softmaks
 
 spam -> yaramaz posta
+
+string -> dizgi
 
 stochastic -> rasgele
 

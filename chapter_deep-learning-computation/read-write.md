@@ -2,9 +2,9 @@
 
 Şu ana kadar verilerin nasıl işleneceğini ve derin öğrenme modellerinin nasıl oluşturulacağını, eğitileceğini ve test edileceğini tartıştık. Bununla birlikte, bir noktada, öğrenilmiş modellerden yeterince mutlu olacağımızı, öyle ki sonuçları daha sonra çeşitli bağlamlarda kullanmak için saklamak isteyeceğimiz umuyoruz (belki de konuşlandırmada tahminlerde bulunmak için). Ek olarak, uzun bir eğitim sürecini çalıştırırken, sunucumuzun güç kablosuna takılırsak birkaç günlük hesaplamayı kaybetmememiz için en iyi mesleki uygulama, periyodik olarak ara sonuçları kaydetmektir (kontrol noktası belirleme). Bu nedenle, hem bireysel ağırlık vektörlerini hem de tüm modelleri nasıl yükleyeceğimizi ve depolayacağımızı öğrenmenin zamanı geldi. Bu bölüm her iki sorunu da irdelemektedir.
 
-## Loading and Saving Tensors
+## Tensörleri Yükleme ve Kaydetme
 
-For individual tensors, we can directly invoke the `load` and `save` functions to read and write them respectively. Both functions require that we supply a name, and `save` requires as input the variable to be saved.
+Tek tensörler için, sırasıyla okumak ve yazmak için `load` ve `save` işlevlerini doğrudan çağırabiliriz. Her iki işleve de bir ad girmemiz gerekir ve `save` işlevi için kaydedilecek değişkeni de girdi olarak girmemiz gerekir.
 
 ```{.python .input}
 from mxnet import np, npx
@@ -34,7 +34,7 @@ x = tf.range(4)
 np.save("x-file.npy", x)
 ```
 
-We can now read this data from the stored file back into memory.
+Artık bu verileri kayıtlı dosyadan belleğe geri okuyabiliriz.
 
 ```{.python .input}
 x2 = npx.load('x-file')
@@ -53,7 +53,7 @@ x2 = np.load('x-file.npy', allow_pickle=True)
 x2
 ```
 
-We can store a list of tensors and read them back into memory.
+Tensörlerin bir listesini kaydedebilir ve bunları belleğe geri okuyabiliriz.
 
 ```{.python .input}
 y = np.zeros(4)
@@ -78,7 +78,7 @@ x2, y2 = np.load('xy-files.npy', allow_pickle=True)
 (x2, y2)
 ```
 
-We can even write and read a dictionary that maps from strings to tensors. This is convenient when we want to read or write all the weights in a model.
+Dizgilerden (string) tensörlere eşleşen bir sözlük bile yazabilir ve okuyabiliriz. Bu, bir modeldeki tüm ağırlıkları okumak veya yazmak istediğimizde kullanışlıdır.
 
 ```{.python .input}
 mydict = {'x': x, 'y': y}
@@ -103,9 +103,9 @@ mydict2 = np.load('mydict.npy', allow_pickle=True)
 mydict2
 ```
 
-## Model Parameters
+## Model Parametreleri
 
-Saving individual weight vectors (or other tensors) is useful, but it gets very tedious if we want to save (and later load) an entire model. After all, we might have hundreds of parameter groups sprinkled throughout. For this reason the framework provides built-in functionality to load and save entire networks. An important detail to note is that this saves model *parameters* and not the entire model. For example, if we have a 3-layer MLP, we need to specify the *architecture* separately. The reason for this is that the models themselves can contain arbitrary code, hence they cannot be serialized as naturally Thus, in order to reinstate a model, we need to generate the architecture in code and then load the parameters from disk. Let us start with our familiar MLP.
+Bireysel ağırlık vektörlerini (veya diğer tensörleri) kaydetmek faydalıdır, ancak tüm modeli kaydetmek (ve daha sonra yüklemek) istiyorsak bu çok bezdirici hale gelir. Sonuçta, her yere dağıtılmış yüzlerce parametre grubumuz olabilir. Bu nedenle çerçeve, tüm ağları yüklemek ve kaydetmek için yerleşik işlevsellik sağlar. Farkında olunması gereken önemli bir ayrıntı, bunun tüm modeli değil, model *parametrelerini* kaydetmesidir. Örneğin, 3 katmanlı bir MLP'ye sahipsek, *mimariyi* ayrıca belirtmemiz gerekir. Bunun nedeni, modellerin kendilerinin keyfi kodlar içerebilmeleri, dolayısıyla doğal olarak serileştirilememeleridir. Bu nedenle, bir modeli eski haline getirmek için, kod içinde mimariyi oluşturmamız ve ardından parametreleri diskten yüklememiz gerekir. Tanıdık MLP'mizle başlayalım.
 
 ```{.python .input}
 class MLP(nn.Block):
@@ -158,7 +158,7 @@ x = tf.random.uniform((2, 20))
 y = net(x)
 ```
 
-Next, we store the parameters of the model as a file with the name `mlp.params`.
+Daha sonra modelin parametrelerini `mlp.params` adıyla bir dosya olarak kaydediyoruz.
 
 ```{.python .input}
 net.save_parameters('mlp.params')
@@ -174,7 +174,7 @@ torch.save(net.state_dict(), 'mlp.params')
 net.save_weights('mlp.params')
 ```
 
-To recover the model, we instantiate a clone of the original MLP model. Instead of randomly initializing the model parameters, we read the parameters stored in the file directly.
+Modeli geri yüklemek için, orijinal MLP modelinin bir klonunu örnekliyoruz. Model parametrelerini rastgele ilklemek yerine, dosyada saklanan parametreleri doğrudan okuyoruz.
 
 ```{.python .input}
 clone = MLP()
@@ -194,7 +194,7 @@ clone = MLP()
 clone.load_weights("mlp.params")
 ```
 
-Since both instances have the same model parameters, the computation result of the same input `x` should be the same. Let us verify this.
+Her iki örnek de aynı model parametrelerine sahip olduğundan, aynı `x` girdisinin hesaplama sonucu aynı olmalıdır. Bunu doğrulayalım.
 
 ```{.python .input}
 yclone = clone(x)
@@ -213,26 +213,26 @@ yclone = clone(x)
 yclone == y
 ```
 
-## Summary
+## Özet
 
-* The `save` and `load` functions can be used to perform File I/O for tensor objects.
-* We can save and load the entire sets of parameters for a network via a parameter dictionary.
-* Saving the architecture has to be done in code rather than in parameters.
+* `save` ve `load` fonksiyonları, tensör nesneler için Dosya Yazma/Okuma gerçekleştirmek için kullanılabilir.
+* Parametre sözlüğü aracılığıyla bir ağ için tüm parametre kümelerini kaydedebilir ve yükleyebiliriz.
+* Mimarinin kaydedilmesi parametreler yerine kodda yapılmalıdır.
 
-## Exercises
+## Alıştırmalar
 
-1. Even if there is no need to deploy trained models to a different device, what are the practical benefits of storing model parameters?
-1. Assume that we want to reuse only parts of a network to be incorporated into a network of a *different* architecture. How would you go about using, say the first two layers from a previous network in a new network.
-1. How would you go about saving network architecture and parameters? What restrictions would you impose on the architecture?
+1. Eğitilmiş modelleri farklı bir cihaza konuşlandırmaya gerek olmasa bile, model parametrelerini saklamanın pratik faydaları nelerdir?
+1. Bir ağın yalnızca belli bölümlerini *farklı* bir mimariye sahip bir ağa dahil edilecek şekilde yeniden kullanmak istediğimizi varsayalım. Yeni bir ağdaki eskı bir ağdan ilk iki katmanı nasıl kullanmaya başlarsınız?
+1. Ağ mimarisini ve parametrelerini kaydetmeye ne dersiniz? Mimariye ne gibi kısıtlamalar uygularsınız?
 
 :begin_tab:`mxnet`
-[Discussions](https://discuss.d2l.ai/t/60)
+[Tartışmalar](https://discuss.d2l.ai/t/60)
 :end_tab:
 
 :begin_tab:`pytorch`
-[Discussions](https://discuss.d2l.ai/t/61)
+[Tartışmalar](https://discuss.d2l.ai/t/61)
 :end_tab:
 
 :begin_tab:`tensorflow`
-[Discussions](https://discuss.d2l.ai/t/327)
+[Tartışmalar](https://discuss.d2l.ai/t/327)
 :end_tab:
