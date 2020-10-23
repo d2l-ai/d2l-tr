@@ -1,53 +1,47 @@
 # Önsöz
 
-Sadece birkaç yıl önce, büyük şirket ve girişimlerde akıllı ürün ve hizmetler
-geliştiren lejyoner derin öğrenme bilim insanları yoktu.
-Aramızdaki en gencimiz (biz yazarlar) alana girdiğinde,
+Sadece birkaç yıl önce, büyük şirket ve girişimlerde akıllı ürün ve hizmetler geliştiren ve derin öğrenme uzmanlarından oluşan birimler yoktu. 
+Yazarlar arasındaki en gencimiz bu alana girdiğinde,
 makine öğrenimi günlük gazetelerde manşetlere çıkmıyordu.
 Ebeveynlerimizin, bırakın onu neden tıpta veya hukukta bir kariyere tercih
 ettiğimizi, makine öğrenmesinin ne olduğu hakkında hiçbir fikri yoktu.
 Makine öğrenmesi gerçek dünyada dar uygulama alanlı ileriye dönük bir akademik
 disiplindi. Örneğin, konuşma tanıma ve bilgisayarlı görme benzeri uygulamalar o
-kadar çok alan bilgisi gerektiriyordu ki makine öğrenmesinin küçük bir
-bileşenleri olduğu tamamen ayrı alanlar olarak kabul ediliyordu. Sinir ağları,
-bu kitapta odaklandığımız derin öğrenme modellerinin öncülleri, modası geçmiş
+kadar çok alan bilgisi gerektiriyordu ki, makine öğrenmesi küçük bir
+bileşeni olan tamamen ayrı alanlar olarak kabul ediliyorlardı. Bu kitapta odaklandığımız derin öğrenme modellerinin öncülleri olan sinir ağları, modası geçmiş
 araçlar olarak görülüyordu.
 
 Sadece son beş yılda, derin öğrenme dünyayı şaşırttı ve  bilgisayarlı görmeden
 doğal dil işleme, otomatik konuşma tanıma, pekiştirici öğrenme ve istatistiksel
-modellemeye kadar farklı alanlarda hızlı ilerlemeyi sağladı.
+modellemeye kadar farklı alanlarda hızlı ilerleme sağladı.
 Elimizdeki bu ilerlemelerle, artık kendilerini her zamankinden daha fazla
-özerklikle (ve bazı şirketlerin sizi inandırdığından daha az özerklikle)
-kullanan otomobiller, otomatik olarak en sıradan e-postaları hazırlayarak
-insanların ezdirici büyüklükte gelen kutularından çıkmasına yardımcı olan
-akıllı yanıt sistemleri ve bir zamanlar Go gibi masa oyunlarında dünyanın en
-iyi insanlarına hükmeden, ki onlarca yıl uzakta bir özellik olarak
-tahmin ediliyordu, yazılım etmenleri üretebiliyoruz. Bu araçlar endüstri ve
-toplum üzerinde şimdiden geniş etkiler yaratıyor; filmlerin yapılma şeklini
-değiştiriyor, hastalıklar teşhis ediliyor ve temel bilimlerde, astrofizikten
+otonomlukla (ve bazı şirketlerin sizi inandırdığından daha az otonomlukla)
+kullanan otomobiller, standart e-postaları otomatik olarak hazırlayıp insanların devasa büyüklükteki e-posta kutularından kurtulmalarını sağlayan akıllı yanıt sistemleri ve go gibi masa oyunlarında dünyanın en
+iyi insanlarına hükmeden yazılımlar -ki bir zamanlar onlarca yıl uzakta bir özellik olarak
+tahmin ediliyordu- üretebiliyoruz. Bu araçlar endüstri ve
+toplum üzerinde şimdiden geniş etkiler yaratıyor, filmlerin yapılma şeklini
+değiştiriyor, hastalıklar teşhis ediyor ve temel bilimlerde, astrofizikten
 biyolojiye kadar, büyüyen bir rol oynuyor.
 
 
 ## Bu kitap hakkında
 
 Bu kitap, derin öğrenmeyi ulaşılabilir yapma girişimimizi temsil eder,
-size *kavramları*, *bağlamı* ve *kodu* öğretir.
+size *kavramları*, *ortamı* ve *kodu* öğretir.
 
 
-### Kod, Matematik ve HTML'yi Bir Arada Birleştirme
+### Kod, Matematik ve HTML'yi Bir Araya Getirme
 
-Herhangi bir bilgi işlem teknolojisinin tam etkisine ulaşması için,
-iyi anlaşılmış, iyi belgelenmiş ve olgun ve iyi bakımlı araçlar desteklenmesi gerekir.
-Anahtar fikirler açıkça damıtılmalı ve yeni uygulayıcıları güncel hale getirmek
+Herhangi bir bilgi işlem teknolojisinin tam etkinliğine ulaşması için,
+iyi anlaşılmış, iyi belgelenmiş, olgun ve güncellenen araçlarla desteklenmesi gerekir.
+Anahtar fikirler açıkça damıtılmalı ve yeni uygulama geliştiricileri güncel hale getirmek
 için gereken işi öğrenme süresi en aza indirilmelidir. Olgun kütüphaneler
-ortak görevleri otomatikleştirmeli ve örnek kod uygulayıcıların ortak
-uygulamaları ihtiyaçlarına göre değiştirmesini, uygulamasını ve genişletmesini
+ortak görevleri otomatikleştirmeli ve örnek kod uygulama geliştiricilerin ortak
+uygulamaları ihtiyaçlarına göre değiştirmesini ve yeni özellikler eklemesini
 kolaylaştırmalıdır. Dinamik web uygulamalarını örnek olarak alalım.
-1990'larda başarılı veritabanı tabanlı web uygulamaları geliştiren, Amazon gibi,
+1990'larda başarılı veritabanı temelli web uygulamaları geliştiren, Amazon gibi,
 çok sayıda şirket olmasına rağmen, bu teknolojinin yaratıcı girişimcilere yardım
-etme potansiyeli son on yılda kısmen, güçlü, iyi belgelenmiş çerçevelerin
-geliştirilmesi sayesinde çok daha büyük bir oranda gerçekleşti.
-
+etme potansiyeli, güçlü ve iyi belgelenmiş altyapıların geliştirilmesi sayesinde son on yılda çok daha büyük oranda gerçekleşti.
 
 Derin öğrenmenin potansiyelini test etmek benzersiz zorluklar getirir
 çünkü herhangi bir uygulama çeşitli disiplinleri bir araya getirir.
