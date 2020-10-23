@@ -84,7 +84,7 @@ ridge regression -> sırt regresyon
 
 robust -> gürbüz
 
-quantization -> micemleme
+quantization -> nicemleme
 
 sample -> örneklem
 
