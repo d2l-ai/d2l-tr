@@ -13,22 +13,22 @@
   <img width="200"  src="static/frontpage/_images/notebook.gif">
 </p>
 
-Bu açık kaynak kitap, derin öğrenmeyi ulaşılabilir yapma, kavramları, bağlamı ve kodu öğretme çabamızı temsil ediyor. Kitabın tamamı Jupyter not defterlerinde hazırlanarak açıklama figürlerini, matematiği ve etkileşimli örnekleri, kendi kendine yeterli kodla sorunsuz bir şekilde bütünleştirmektedir.
+Bu açık kaynak kitabın hedefi, kavramları, kodu ve ortamı öğreterek derin öğrenmeyi daha ulaşılabilir yapmaktır. Kitabın tamamı Jupyter not defterleri kullanılarak tasarlandı, bu sayede figürleri, matematiği ve etkileşimli örnekleri kodla sorunsuz bir şekilde bütünleştirebildik.
 
-Hedefimiz,
-1. herkes için serbestçe kullanılabilir
-1. uygulamalı bir makine öğrenimi bilimcisi olma yolunda bir başlangıç noktası sağlamak için yeterli teknik derinlik sunan
-1. okuyuculara pratikte problemlerin nasıl çözüleceğini gösteren çalıştırılabilir kod içeren
-1. hem bizim hem de genel olarak topluluk tarafından hızlı güncellemeler için izin veren
-1. teknik detayların etkileşimli tartışılması ve soruların cevaplanması için bir forum ile tamamlanan
+Hedeflerimiz:
+1. Herkesin serbestçe kullanabildiği
+1. Uygulamalı makine öğrenimi bilimcisi olma yolunda bir başlangıç noktası sağlamak için yeterli teknik derinlik sunan
+1. Okuyuculara pratikte problemlerin nasıl çözüleceğini gösteren çalıştırılabilir kod içeren
+1. Hem bizim hem de genel olarak topluluk tarafından yapılacak hızlı güncellemelere izin veren
+1. Teknik detayların etkileşimli tartışılması ve soruların cevaplanması için bir forum ile tamamlanan
 bir kaynak sunmaktır.
 
-<h5 align="center">D2L'yi ders kitabı veya referans kitabı olarak kullanan üniversiteler:</h5>
+<h5 align="center">D2L'yi ders kitabı veya referans kitap olarak kullanan üniversiteler:</h5>
 <p align="center">
   <img width="400"  src="static/frontpage/_images/map.png">
 </p>
 
-Bu kitabı yararlı buluyorsanız, lütfen bu depoya yıldız ekleyin (★) veya aşağıdaki bibtex girdisini kullanarak bu kitabı alıntılayın:
+Bu kitabı yararlı buluyorsanız, lütfen bu depoya yıldız ekleyin (★) veya aşağıdaki bibtex girdisini kullanarak kitabı alıntılayın:
 
 ```
 @book{zhang2020dive,
@@ -39,21 +39,21 @@ Bu kitabı yararlı buluyorsanız, lütfen bu depoya yıldız ekleyin (★) veya
 }
 ```
 
-## Onaylar
+## Uzmanların Kitap Hakkındaki Görüşleri
 
-> <p>"On yıldan kısa bir süre içinde, YZ devrimi araştırma laboratuarlarından geniş endüstrilere, günlük hayatımızın her köşesine yayıldı. Derin Öğrenmeye Dalış, derin öğrenme hakkında mükemmel bir metindir ve derin öğrenmenin neden YZ devrimini ateşlediğini öğrenmek isteyen herkesin dikkatini hak eder: zamanımızın en güçlü teknoloji gücü."</p>
+> <p>"On yıldan kısa bir süre içinde, yapay zeka(YZ) devrimi araştırma laboratuarlarından geniş endüstrilere, günlük hayatımızın her köşesine yayıldı. Derin Öğrenmeye Dalış, derin öğrenme hakkında mükemmel bir kaynak ve derin öğrenmenin neden zamanımızın en güçlü teknoloji gücü olan YZ devrimini ateşlediğini öğrenmek isteyen herkes okumalıdır."</p>
 > <b>&mdash; Jensen Huang, Founder and CEO, NVIDIA</b>
 
-> <p>"Bu, zamana uygun derin öğrenme ilkelerine sadece kapsamlı bir genel bakış sunmakla kalmayıp aynı zamanda uygulamalı programlama koduna sahip ayrıntılı algoritmalar ve dahası, bilgisayarlı görmedeki ve doğal dil işlemedeki derin öğrenmeye son teknoloji ürünü bir giriş sağlayan, ve büyüleyici bir kitaptır. Derin öğrenmeye dalmak istiyorsanız bu kitaba dalın!"</p>
+> <p>"Bu, zamana uygun derin öğrenme ilkelerine sadece kapsamlı bir genel bakış sunmakla kalmayıp aynı zamanda uygulamalı programlama koduna sahip ayrıntılı algoritmalar içeren ve dahası, bilgisayarlı görmedeki ve doğal dil işlemedeki derin öğrenmeye son teknoloji ürünü bir giriş sağlayan büyüleyici bir kitaptır. Derin öğrenmeye dalmak istiyorsanız bu kitaba dalın!"</p>
 > <b>&mdash; Jiawei Han, Michael Aiken Chair Professor, University of Illinois at Urbana-Champaign</b>
 
-> <p>"Bu, Jupyter not defterleri ile tümleşik uygulamalı deneyime odaklanarak, makine öğrenimi literatürüne son derece hoş bir eklemedir. Derin öğrenme öğrencileri bu alanda yetkin olmak için bu kitabı çok değerli bulmalıdır."</p>
+> <p>"Jupyter not defterleri ile tümleşik uygulamalı deneyime odaklanan, makine öğrenimi literatürüne son derece hoş bir eklemedir. Derin öğrenme öğrencileri bu alanda yetkin olmak için bu kitabı çok değerli bulmalıdır."</p>
 > <b>&mdash; Bernhard Schölkopf, Director, Max Planck Institute for Intelligent Systems</b>
 
 
 ## Katkıda bulunmak ([nasıl yapıldığını öğrenin] (https://d2l.ai/chapter_appendix-tools-for-deep-learning/contributing.html))
 
-Bu açık kaynak kitap pedagojik önerilerden, yazım hatası düzeltmelerinden ve topluluk katılımcılarından gelen diğer iyileştirmelerden faydalanmıştır. Yardımınız kitabı herkes için daha iyi hale getirmede değerlidir. Kitaptaki her bir D2L katılımcısını [takdir edeceğiz] (https://d2l.ai/chapter_preface/index.html#Acknowledgments).
+Bu açık kaynak kitap pedagojik önerilerden, yazım hatası düzeltmelerinden ve topluluk katılımcılarından gelen diğer iyileştirmelerden faydalanmıştır. Yardımınız kitabı herkes için daha iyi hale getirmede değerlidir. Kitaptaki her bir D2L katılımcısına [teşekkür edeceğiz] (https://d2l.ai/chapter_preface/index.html#Acknowledgments).
 
 ** Sayın [D2L katkıda bulunanlar] (https://github.com/d2l-ai/d2l-tr/graphs/contributors), lütfen GitHub kimliğinizi ve adınızı d2lbook.en@gmail.com adresine e-posta ile gönderiniz ki adınız [teşekkürler](https://d2l.ai/chapter_preface/index.html#Acknowledgments) bölümünde çıksın. Teşekkürler.**
 
