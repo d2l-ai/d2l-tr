@@ -18,11 +18,15 @@ co-adaptation -> birlikte-uyarlama
 
 confusion-matrix -> hata matrisi
 
+corpus -> külliyat
+
 covariate -> ortak değişken
 
 deployment -> konuşlandırma
 
 descent -> iniş
+
+discriminator -> ayrımcı
 
 domain -> etki alanı
 
@@ -75,6 +79,8 @@ prior -> önsel olasılık
 recurrent neural network -> yinelemeli sinir ağı
 
 regression -> bağlanım veya regresyon
+
+regressor -> bağlanımcı
 
 regularization -> düzenlileştirme
 
