@@ -43,9 +43,9 @@ from mxnet.gluon import nn
 npx.set_np()
 ```
 
-## Generate some "real" data
+## Bir miktar "gerçek" veri üretme
 
-Since this is going to be the world's lamest example, we simply generate data drawn from a Gaussian.
+Bu dünyanın en yavan örneği olacağından, basitçe bir Gauss'tan çekilen verileri üretiyoruz.
 
 ```{.python .input  n=2}
 X = np.random.normal(size=(1000, 2))
@@ -54,7 +54,7 @@ b = np.array([1, 2])
 data = X.dot(A) + b
 ```
 
-Let us see what we got. This should be a Gaussian shifted in some rather arbitrary way with mean $b$ and covariance matrix $A^TA$.
+Bakalım elimizde ne var. Bu, ortalamasi $b$ ve kovaryans matrisi $A^TA$ olan keyfi bir şekilde kaydırılmış bir Gaussian olmalıdır.
 
 ```{.python .input  n=3}
 d2l.set_figsize()
@@ -67,18 +67,18 @@ batch_size = 8
 data_iter = d2l.load_array((data,), batch_size)
 ```
 
-## Generator
+## Üretici
 
-Our generator network will be the simplest network possible - a single layer linear model. This is since we will be driving that linear network with a Gaussian data generator. Hence, it literally only needs to learn the parameters to fake things perfectly.
+Üretici ağımız mümkün olan en basit ağ olacak - tek katmanlı bir doğrusal model. Bunun nedeni, bu doğrusal ağı bir Gauss veri üretici ile yölendirecek olmamız. Böylece, kelimenin tam anlamıyla, sadece nesneleri mükemmel bir şekilde taklit etmek için parametreleri öğrenmesi gerekecektir.
 
 ```{.python .input  n=5}
 net_G = nn.Sequential()
 net_G.add(nn.Dense(2))
 ```
 
-## Discriminator
+## Ayrımcı
 
-For the discriminator we will be a bit more discriminating: we will use an MLP with 3 layers to make things a bit more interesting.
+Ayrımcı için biraz daha ayırt edici olacağız: İşleri biraz daha ilginç hale getirmek için 3 katmanlı bir MLP kullanacağız.
 
 ```{.python .input  n=6}
 net_D = nn.Sequential()
@@ -87,9 +87,9 @@ net_D.add(nn.Dense(5, activation='tanh'),
           nn.Dense(1))
 ```
 
-## Training
+## Eğitim
 
-First we define a function to update the discriminator.
+İlk olarak ayrımcıyı güncellemek için bir işlev tanımlarız.
 
 ```{.python .input  n=7}
 #@save
@@ -110,7 +110,7 @@ def update_D(X, Z, net_D, net_G, loss, trainer_D):
     return float(loss_D.sum())
 ```
 
-The generator is updated similarly. Here we reuse the cross-entropy loss but change the label of the fake data from $0$ to $1$.
+Üretici de benzer şekilde güncellenir. Burada çapraz entropi kaybını tekrar kullanıyoruz ama sahte verinin etiketini $0$'dan $1$'e çeviriyoruz.
 
 ```{.python .input  n=8}
 def update_G(Z, net_D, net_G, loss, trainer_G):  #@save
@@ -128,7 +128,7 @@ def update_G(Z, net_D, net_G, loss, trainer_G):  #@save
     return float(loss_G.sum())
 ```
 
-Both the discriminator and the generator performs a binary logistic regression with the cross-entropy loss. We use Adam to smooth the training process. In each iteration, we first update the discriminator and then the generator. We visualize both losses and generated examples.
+Hem ayrımcı hem de üretici, çapraz entropi kaybıyla ikili lojistik regresyon uygular. Eğitim sürecini kolaylaştırmak için Adam'ı kullanıyoruz. Her yinelemede, önce ayrımcıyı ve ardından üreticiyi güncelliyoruz. Hem kayıpları hem de üretilen örnekleri görselleştiriyoruz.
 
 ```{.python .input  n=9}
 def train(net_D, net_G, data_iter, num_epochs, lr_D, lr_G, latent_dim, data):
@@ -167,7 +167,7 @@ def train(net_D, net_G, data_iter, num_epochs, lr_D, lr_G, latent_dim, data):
           f'{metric[2] / timer.stop():.1f} examples/sec')
 ```
 
-Now we specify the hyper-parameters to fit the Gaussian distribution.
+Şimdi, Gauss dağılımına oturacak hiper parametreleri belirliyoruz.
 
 ```{.python .input  n=10}
 lr_D, lr_G, latent_dim, num_epochs = 0.05, 0.005, 2, 20
@@ -175,17 +175,16 @@ train(net_D, net_G, data_iter, num_epochs, lr_D, lr_G,
       latent_dim, data[:100].asnumpy())
 ```
 
-## Summary
+## Özet
 
-* Generative adversarial networks (GANs) composes of two deep networks, the generator and the discriminator.
-* The generator generates the image as much closer to the true image as possible to fool the discriminator, via maximizing the cross-entropy loss, *i.e.*, $\max \log(D(\mathbf{x'}))$.
-* The discriminator tries to distinguish the generated images from the true images, via minimizing the cross-entropy loss, *i.e.*, $\min - y \log D(\mathbf{x}) - (1-y)\log(1-D(\mathbf{x}))$.
+* Çekişmeli üretici ağlar (GAN'lar), iki derin ağdan oluşur: Üretici ve ayrımcı.
+* Üretici, çapraz entropi kaybını maksimize ederek *yani*, $\max \log(D(\mathbf{x'}))$ yoluyla, ayrımcıyı kandırmak için gerçek imgeye olabildiğince yakın bir imge oluşturur.
+* Ayrımcı, çapraz entropi kaybını en aza indirerek, oluşturulan imgeleri gerçek imgelerden ayırt etmeye çalışır, *yani*, $\min - y \log D(\mathbf{x}) - (1-y)\log(1-D(\mathbf{x}))$.
 
-## Exercises
+## Alıştırmalar
 
-* Does an equilibrium exist where the generator wins, *i.e.* the discriminator ends up unable to distinguish the two distributions on finite samples?
-
+* Üreticinin kazandığı yerde bir denge var mıdır, *mesela* ayrımcının sonlu örnekler üzerinden iki dağılımı ayırt edemediği?
 
 :begin_tab:`mxnet`
-[Discussions](https://discuss.d2l.ai/t/408)
+[Tartışmalar](https://discuss.d2l.ai/t/408)
 :end_tab:
