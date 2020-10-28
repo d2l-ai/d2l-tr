@@ -1,5 +1,9 @@
 ## Terimler
 
+affine -> afin
+
+array -> dizilim
+
 backprop -> geriyay
 
 backpropagation -> geri yayma
@@ -8,11 +12,15 @@ bias -> sinir ağlarında ek girdi
 
 bias -> algoritmalardaki yanlılık
 
+built-in -> yerleşik, gömülü
+
 co-adaptation -> birlikte-uyarlama
 
 confusion-matrix -> hata matrisi
 
 covariate -> ortak değişken
+
+deployment -> konuşlandırma
 
 descent -> iniş
 
@@ -26,6 +34,8 @@ environment -> ortam
 
 generative adversarial networks -> çekişmeli üretici ağlar
 
+gpu -> grafik işleme birimi
+
 gradient -> gradyan, eğim
 
 graph -> çizge
@@ -38,13 +48,15 @@ fully-connected -> tam-bağlı
 
 holdout -> harici tutulan
 
+hybridization -> melezleştirme
+
 initialization -> ilkleme
 
 lasso regression -> kement regresyon
 
 likelihood -> olabilirlik
 
-loss function ->  kayıp ve yitim fonksiyonu
+loss function ->  kayıp veya yitim fonksiyonu
 
 minibatch -> minigrup
 
@@ -72,15 +84,23 @@ ridge regression -> sırt regresyon
 
 robust -> gürbüz
 
+quantization -> micemleme
+
 sample -> örneklem
 
 sanity check -> makulluk kontrolü
 
+scaler -> sayıl, skaler
+
 sequence -> dizi
+
+serialization -> serileştirme
 
 softmax -> eşiksiz en büyük işlev veya softmaks
 
 spam -> yaramaz posta
+
+string -> dizgi
 
 stochastic -> rasgele
 
