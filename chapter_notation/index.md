@@ -1,7 +1,7 @@
-# Gösterim
+# Notasyon
 :label:`chap_notation`
 
-Bu kitap boyunca kullanılan gösterim aşağıda özetlenmiştir.
+Bu kitap boyunca kullanılan notasyon(gösterim) aşağıda özetlenmiştir.
 
 
 ## Sayılar
