@@ -1,19 +1,16 @@
 # Kurulum
 :label:`chap_installation`
 
-Sizi uygulamalı öğrenme deneyimine hazır hale getirmek ve Python'u,
-Jupyter not defterlerini, ilgili kütüphaneleri ve kitabın kendisini çalıştırmaya
-gereken kodu koşturmak için bir ortam kurmanıza ihtiyacımız var.
-
+Uygulayarak öğrenmeye başlamadan önce Python'u, Jupyter not defterlerini, 
+ilgili kütüphaneleri kurmalı ve kitapta kullanılacak kodu indirmelisiniz.
 
 ## Miniconda'yı Yükleme
 
-Başlamanın en basit yolu yüklemektir.
-[Miniconda] (https://conda.io/en/latest/miniconda.html).
+[Miniconda] (https://conda.io/en/latest/miniconda.html)'yı yükleyerek işe başlayabilirsini.
 Python 3.x sürümü gereklidir. Conda önceden yüklenmişse, aşağıdaki adımları
 atlayabilirsiniz. Sisteminize karşılık gelen Miniconda sh dosyasını web
-sitesinden indirin ve ardından yükleme işlemini komut satırından
-`sh <FILENAME> -b` komutunu kullanarak yürütün. MacOS kullanıcıları için:
+sitesinden indirin ve ardından komut satırından
+`sh <FILENAME> -b` komutunu kullanarak yükleme işlemini başlatın. MacOS kullanıcıları için:
 
 ```bash
 # The file name is subject to changes
@@ -28,15 +25,14 @@ Linux kullanıcıları için:
 sh Miniconda3-latest-Linux-x86_64.sh -b
 ```
 
-Ardından, doğrudan `conda` çalıştırabilmemiz için kabuğu sıfırlayın.
-Next, initialize the shell so we can run `conda` directly.
+Ardından, doğrudan `conda` çalıştırabilmeniz için kabuğu(shell) sıfırlayın.
 
 ```bash
 ~/miniconda3/bin/conda init
 ```
 
 Şimdi mevcut kabuğunuzu kapatıp yeniden açın. Artık aşağıdaki gibi yeni bir
-ortam oluşturabilmelisiniz:
+ortam oluşturabilirsiniz:
 
 ```bash
 conda create --name d2l -y
@@ -45,10 +41,10 @@ conda create --name d2l -y
 
 ## D2L Not Defterlerini İndirme
 
-Sonra, bu kitabın kodunu indirmemiz gerekiyor. Kodu indirmek ve açmak için
-herhangi bir HTML sayfasının üst kısmındaki "Tüm Not Defterleri" sekmesini
+Sonra, bu kitapta kullanılan kodu indirmeniz gerekiyor. Kodu indirmek ve açmak için
+herhangi bir HTML sayfasının üst kısmındaki "Tüm Not Defterleri" sekmesine
 tıklayabilirsiniz. Alternatif olarak, "unzip" varsa
-(yoksa "sudo apt install unzip") komutunu çalıştırın:
+(yoksa "sudo apt install unzip" yazarak kurabilirsiniz):
 
 ```bash
 mkdir d2l-en && cd d2l-en
@@ -56,8 +52,8 @@ curl https://d2l.ai/d2l-en.zip -o d2l-en.zip
 unzip d2l-en.zip && rm d2l-en.zip
 ```
 
-Şimdi `d2l` ortamını etkinleştirmek ve `pip` i kurmak isteyeceğiz.
-Bu komutu izleyen sorgular için `y` girin.
+Şimdi `d2l` ortamını etkinleştirip ve `pip` i kuracağız.
+Bu komutu izleyen sorulara cevap olarak `y` girin.
 
 ```bash
 conda activate d2l
@@ -70,13 +66,13 @@ conda install python=3.7 pip -y
 :begin_tab:`mxnet,pytorch`
 Derin öğrenme çerçevesini kurmadan önce, lütfen önce makinenizde uygun GPU'ların
 olup olmadığını kontrol edin (standart bir dizüstü bilgisayarda ekranı
-destekleyen GPU'lar bizim amacımıza uygun için sayılmaz). GPU sunucusuna kurulum
-yapıyorsanız, GPU destekli bir sürüm kurma talimatları için şu adrese ilerleyin
+destekleyen GPU'lar bizim amacımıza uygun sayılmaz). GPU'lu bir bilgisayara/sunucuya kurulum
+yapacaksanız, GPU destekli sürümün kurulum talimatları için şu adrese ilerleyin
 :ref:`subsec_gpu`.
 
-Aksi takdirde, CPU sürümünü yükleyebilirsiniz.
+GPU'lu bir bilgisayarınız/sunucunuz yoksa, CPU sürümünü yükleyebilirsiniz.
 Bu, ilk birkaç bölümü geçmeniz için yeterli beygir gücü olacak, ancak daha
-büyük modelleri çalıştırmadan önce GPU'lara erişmek isteyeceksiniz.
+büyük modelleri çalıştırmak için GPU'lara ihtiyacınız olacak.
 :end_tab:
 
 
@@ -123,10 +119,10 @@ jupyter notebook
 ```
 
 Bu noktada, http://localhost:8888 (genellikle otomatik olarak açılır) adresini
-web tarayıcınızda açabilirsiniz. Sonra kitabın her bölümü için kodu çalıştırabiliriz.
+web tarayıcınızda açabilirsiniz. Sonra kitabın her bölümü için kodu çalıştırabilirsiniz.
 Lütfen kitabın kodunu çalıştırmadan veya derin öğrenme çerçevesini veya `d2l`
 paketini güncellemeden önce çalışma zamanı ortamını etkinleştirmek için daima
-`conda enable d2l` yi yürütün. Ortamdan çıkmak için `conda deactivate` komutunu
+`conda enable d2l` komutunu çalıştırın. Ortamdan çıkmak için `conda deactivate` komutunu
 çalıştırın.
 
 
@@ -206,7 +202,7 @@ CUDA 10.0 için `cu100` ve CUDA 9.0 için `cu90`.
 
 ## Alıştırmalar
 
-1. Kitabın kodunu indirin ve koşma zamanı ortamını yükleyin.
+1. Kitabın kodunu indirin ve runtime ortamını yükleyin.
 
 :begin_tab:`mxnet`
 [Tartışmalar](https://discuss.d2l.ai/t/23)
