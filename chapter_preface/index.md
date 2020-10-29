@@ -11,7 +11,7 @@ kadar çok alan bilgisi gerektiriyordu ki, makine öğrenmesi küçük bir
 bileşeni olan tamamen ayrı alanlar olarak kabul ediliyorlardı. Bu kitapta odaklandığımız derin öğrenme modellerinin öncülleri olan sinir ağları, modası geçmiş
 araçlar olarak görülüyordu.
 
-Sadece son beş yılda, derin öğrenme dünyayı şaşırttı ve  bilgisayarlı görmeden
+Sadece son beş yılda, derin öğrenme dünyayı şaşırttı ve  bilgisayarla görmeden
 doğal dil işleme, otomatik konuşma tanıma, pekiştirici öğrenme ve istatistiksel
 modellemeye kadar farklı alanlarda hızlı ilerleme sağladı.
 Elimizdeki bu ilerlemelerle, artık kendilerini her zamankinden daha fazla
@@ -48,34 +48,28 @@ Derin öğrenmeyi uygulamak aynı anda
 + (i) belirli bir problemi belirli bir şekilde çözme motivasyonlarını
 + (ii) belirli bir modelleme yaklaşımının matematiğini
 + (iii) modellerin verilere uyumu(fitting) için kullanılan optimizasyon algoritmalarını
-+ (iv) modelleri verimli bir şekilde eğitmek için gerekli mühendisliği, sayısal hesaplamanın gizli tuzaklarında gezinme ve mevcut donanımdan en iyi şekilde yararlanma yöntemlerini
-
-anlamayı gerektirir.
++ (iv) modelleri verimli bir şekilde eğitmek için gerekli mühendisliği, sayısal hesaplamanın gizli tuzaklarında gezinme ve mevcut donanımdan en iyi şekilde yararlanma yöntemlerini anlamayı gerektirir.
 
 Sorunları formüle etmek için gerekli eleştirel düşünme becerilerini, onları çözmek için gereken matematiği ve bu çözümleri uygulamak için kullanılan yazılım araçlarını tek bir yerde öğretebilmek oldukça zor ancak bu kitaptaki amacımız istekli uygulayıcılara hız kazandıran bütünleşik
 bir kaynak sunmaktır.
 
 Bu kitap projesine başladığımızda, aşağıdaki özelliklerin hepsini bir arada barındıran hiçbir kaynak yoktu:
-
 + (i) güncel 
 + (ii) modern makine öğreniminin tamamını geniş bir teknik derinlikle kapsayan
 + (iii) ilgi çekici bir ders kitabından beklenen kaliteyi uygulamalı derslerde bulmayı beklediğiniz temiz çalıştırılabilir kod ile içiçe  serpiştirilmiş olarak sunan 
 
 Belirli bir derin öğrenme çerçevesinin nasıl kullanıldığını(örneğin, TensorFlow'daki matrislerle temel sayısal hesaplama) veya belirli tekniklerin nasıl uygulandığını (ör. LeNet, AlexNet, ResNets, vb. için kod parçaları) gösteren çeşitli blog yayınlarına ve GitHub depolarına dağılmış birçok kod örneği bulduk.
 Bu örnekler genellikle belirli bir yaklaşımı *nasıl* uygulayacağına odaklanmakta, ancak bazı algoritmik kararların *neden* verildiği tartışmasını dışlamaktaydı. Ara sıra bazı etkileşimli kaynaklar yalnızca derin öğrenmedeki belirli bir konuyu ele almak için ortaya çıkmış olsa da, örneğin
-[Distill] (http://distill.pub) web sitesinde veya kişisel bloglarda yayınlanan ilgi çekici blog yayınları, genellikle ilişkili koddan yoksundu.
+[Distill](http://distill.pub) web sitesinde veya kişisel bloglarda yayınlanan ilgi çekici blog yayınları, genellikle ilişkili koddan yoksundu.
 Öte yandan, ortaya çıkmış birçok ders kitabı, en önemlisi :cite:`Goodfellow.Bengio.Courville.2016` dir ki derin öğrenmenin arkasındaki kavramların kapsamlı bir araştırmasını sunar, kavramların koda nasıl aktarılacaklarını göstermezler ve bazen okuyucuları nasıl uygulayacakları konusunda fikirsiz bırakırlar.
 Ayrıca, birçok kaynak ticari kurs sağlayıcılarının ödeme duvarlarının arkasında gizlenmiştir.
 
 Biz yola çıkarken
-
 + (i) Herkesin erişimine açık olan,
 + (ii) Hakiki bir uygulamalı makine öğrenimi bilim insanı olma yolunda başlangıç noktası sağlamak için yeterli teknik derinlik sunan,
 + (iii) Okuyuculara problemleri pratikte *nasıl* çözecebilecklerini gösteren çalıştırılabilir kod içeren,
 + (iv) Hem toplumun hem de bizim hızlı güncellemelerine izin veren,
-+ (v) teknik detayların etkileşimli tartışılması ve soruların cevaplanması için bir [forum](http://discuss.d2l.ai) tarafından tamamlanan
-
-bir kaynak oluşturmayı hedefledik.
++ (v) Teknik detayların etkileşimli tartışılması ve soruların cevaplanması için bir [forum](http://discuss.d2l.ai) tarafından tamamlanan bir kaynak oluşturmayı hedefledik.
 
 Bu hedefler genellikle çatışıyordu.
 Denklemler, teoremler ve alıntılar LaTeX'te en iyi şekilde düzenlenebilir ve yönetilebilir.
@@ -132,7 +126,7 @@ Size bazı bileşenlerin nasıl çalıştığını öğrettikten sonra, Gluon s�
 
 Kitap kabaca farklı renklerde sunduğumuz üç bölüme ayrılabilir :numref:`fig_book_org`:
 
-![Book structure](../img/book-org.svg)
+![Kitabın yapısı](../img/book-org.svg)
 :label:`fig_book_org`
 
 * İlk bölüm temelleri ve ön bilgileri içerir.
@@ -307,8 +301,7 @@ bilgi tazeleyici sağlıyoruz.
 Örneğin, Bela Bollobas'ın Doğrusal Analizi :cite:`Bollobas.1999`, doğrusal
 cebiri ve fonksiyonel analizi çok derinlemesine inceler.
 İstatistiğin Tamamı :cite:`Wasserman.2013` istatistik için müthiş bir rehberdir.
-Python'u daha önce kullanmadıysanız, bu [Python eğitimi] 'ni
-(http://learnpython.org/) incelemek isteyebilirsiniz.
+Python'u daha önce kullanmadıysanız, bu [Python eğitimi'ni](http://learnpython.org/) incelemek isteyebilirsiniz.
 
 
 ### Forum
@@ -321,7 +314,7 @@ ilgili bölüm sayfası bağlantısını her bölümün sonunda bulabilirsiniz.
 
 ## Teşekkürler
 
-Hem İngilizce hem de Çince taslaklar için yüzlerce katılımcıya kendimizi borçlu
+Hem İngilizce, hem Çince, hem de Türkçe taslaklar için yüzlerce katılımcıya kendimizi borçlu
 hissediyoruz.
 İçeriğin geliştirilmesine yardımcı oldular ve değerli geri bildirimler sundular.
 Özellikle, bu İngilizce taslağa katkıda bulunan herkese, onu herkes için daha
@@ -350,6 +343,8 @@ cuongvng, pavelkomarov, vzlamal, NotAnotherSystem, J-Arun-Mani, jancio, eldarkur
 the-great-shazbot, doctorcolossus, gducharme, cclauss, Daniel-Mietchen, hoonose, biagiom,
 abhinavsp0730, jonathanhrandall, ysraell, Nodar Okroshiashvili, UgurKap, Jiyang Kang,
 StevenJokes, Tomer Kaftan, liweiwp, netyster, ypandya, NishantTharani, heiligerl.
+
+Türkçe çevirisindeki katkılarından dolayı Murat Semerci ve Barış Yaşin'e teşekkür ediyoruz.
 
 Amazon Web Services'e, özellikle Swami Sivasubramanian, Raju Gulabani, Charlie
 Bell ve Andrew Jassy'ye bu kitabı yazma konusundaki cömert desteklerinden

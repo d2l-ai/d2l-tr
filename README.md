@@ -41,8 +41,8 @@ Bu kitabı yararlı buluyorsanız, lütfen bu depoya yıldız ekleyin (★) veya
 
 ## Uzmanların Kitap Hakkındaki Görüşleri
 
-> <p>"On yıldan kısa bir süre içinde, yapay zeka(YZ) devrimi araştırma laboratuarlarından geniş endüstrilere, günlük hayatımızın her köşesine yayıldı. Derin Öğrenmeye Dalış, derin öğrenme hakkında mükemmel bir kaynak ve derin öğrenmenin neden zamanımızın en güçlü teknoloji gücü olan YZ devrimini ateşlediğini öğrenmek isteyen herkes okumalıdır."</p>
-> <b>&mdash; Jensen Huang, Founder and CEO, NVIDIA</b>
+> <p>"On yıldan kısa bir süre içinde, yapay zeka (YZ) devrimi araştırma laboratuarlarından geniş endüstrilere, günlük hayatımızın her köşesine yayıldı. Derin Öğrenmeye Dalış, derin öğrenme hakkında mükemmel bir kaynak ve derin öğrenmenin neden zamanımızın en güçlü teknoloji gücü olan YZ devrimini ateşlediğini öğrenmek isteyen herkes okumalıdır."</p>
+> <b>&mdash; Jensen Huang, Kurucu and CEO, NVIDIA</b>
 
 > <p>"Bu, zamana uygun derin öğrenme ilkelerine sadece kapsamlı bir genel bakış sunmakla kalmayıp aynı zamanda uygulamalı programlama koduna sahip ayrıntılı algoritmalar içeren ve dahası, bilgisayarlı görmedeki ve doğal dil işlemedeki derin öğrenmeye son teknoloji ürünü bir giriş sağlayan büyüleyici bir kitaptır. Derin öğrenmeye dalmak istiyorsanız bu kitaba dalın!"</p>
 > <b>&mdash; Jiawei Han, Michael Aiken Chair Professor, University of Illinois at Urbana-Champaign</b>
@@ -51,11 +51,11 @@ Bu kitabı yararlı buluyorsanız, lütfen bu depoya yıldız ekleyin (★) veya
 > <b>&mdash; Bernhard Schölkopf, Director, Max Planck Institute for Intelligent Systems</b>
 
 
-## Katkıda bulunmak ([nasıl yapıldığını öğrenin] (https://d2l.ai/chapter_appendix-tools-for-deep-learning/contributing.html))
+## Katkıda bulunma ([nasıl yapıldığını öğrenin](https://d2l.ai/chapter_appendix-tools-for-deep-learning/contributing.html))
 
-Bu açık kaynak kitap pedagojik önerilerden, yazım hatası düzeltmelerinden ve topluluk katılımcılarından gelen diğer iyileştirmelerden faydalanmıştır. Yardımınız kitabı herkes için daha iyi hale getirmede değerlidir. Kitaptaki her bir D2L katılımcısına [teşekkür edeceğiz] (https://d2l.ai/chapter_preface/index.html#Acknowledgments).
+Bu açık kaynak kitap pedagojik önerilerden, yazım hatası düzeltmelerinden ve topluluk katılımcılarından gelen diğer iyileştirmelerden faydalanmıştır. Yardımınız kitabı herkes için daha iyi hale getirmede değerlidir. Kitaptaki her bir D2L katılımcısına [teşekkür edeceğiz](https://d2l.ai/chapter_preface/index.html#Acknowledgments).
 
-** Sayın [D2L katkıda bulunanlar] (https://github.com/d2l-ai/d2l-tr/graphs/contributors), lütfen GitHub kimliğinizi ve adınızı d2lbook.en@gmail.com adresine e-posta ile gönderiniz ki adınız [teşekkürler](https://d2l.ai/chapter_preface/index.html#Acknowledgments) bölümünde çıksın. Teşekkürler.**
+** Sayın [D2L katkıda bulunanlar](https://github.com/d2l-ai/d2l-tr/graphs/contributors), lütfen GitHub kimliğinizi ve adınızı d2lbook.en@gmail.com adresine e-posta ile gönderiniz ki adınız [teşekkürler](https://d2l.ai/chapter_preface/index.html#Acknowledgments) bölümünde çıksın. Teşekkürler.**
 
 
 
@@ -65,4 +65,4 @@ Bu açık kaynak kitap Creative Commons Attribution-ShareAlike 4.0 Uluslararası
 
 Bu açık kaynak kitaptaki örnek ve referans kodu, değiştirilmiş bir MIT lisansı altında sunulur. [LICENSE-SAMPLECODE] (LICENSE-SAMPLECODE) dosyasına bakın.
 
-[Çince sürüm] (https://github.com/d2l-ai/d2l-zh) | [Sorunları tartışın ve bildirin] (https://discuss.d2l.ai/) | [Diğer bilgiler] (INFO.md)
+[İngilizce sürüm](https://github.com/d2l-ai/d2l-en) | [Sorunları tartışın ve bildirin](https://discuss.d2l.ai/) | [Diğer bilgiler](INFO.md)
