@@ -8,6 +8,8 @@ backprop -> geriyay
 
 backpropagation -> geri yayma
 
+batch -> toptan, toplu
+
 bias -> sinir ağlarında ek girdi
 
 bias -> algoritmalardaki yanlılık
@@ -15,6 +17,8 @@ bias -> algoritmalardaki yanlılık
 built-in -> yerleşik, gömülü
 
 co-adaptation -> birlikte-uyarlama
+
+computer vision -> bilgisayarla görme
 
 confusion-matrix -> hata matrisi
 
@@ -56,7 +60,13 @@ hybridization -> melezleştirme
 
 initialization -> ilkleme
 
+kernel -> çekirdek
+
 lasso regression -> kement regresyon
+
+latent -> saklı
+
+leaky -> sızıntılı
 
 likelihood -> olabilirlik
 
@@ -65,6 +75,10 @@ loss function ->  kayıp veya yitim fonksiyonu
 minibatch -> minigrup
 
 one-hot coding -> bire bir kodlama
+
+optimizer - > eniyileyici
+
+padding -> dolgu
 
 permutation -> devrişim
 
@@ -98,19 +112,27 @@ sanity check -> makulluk kontrolü
 
 scaler -> sayıl, skaler
 
+script -> betik
+
 sequence -> dizi
 
 serialization -> serileştirme
 
+shell -> kabuk
+
 softmax -> eşiksiz en büyük işlev veya softmaks
 
 spam -> yaramaz posta
+
+stride -> uzun adım
 
 string -> dizgi
 
 stochastic -> rasgele
 
 symmetry -> bakışım
+
+transpose -> devrik
 
 tuple -> çokuzlu
 
