@@ -6,7 +6,7 @@ ilgili kütüphaneleri kurmalı ve kitapta kullanılacak kodu indirmelisiniz.
 
 ## Miniconda'yı Yükleme
 
-[Miniconda] (https://conda.io/en/latest/miniconda.html)'yı yükleyerek işe başlayabilirsini.
+[Miniconda](https://conda.io/en/latest/miniconda.html)'yı yükleyerek işe başlayabilirsini.
 Python 3.x sürümü gereklidir. Conda önceden yüklenmişse, aşağıdaki adımları
 atlayabilirsiniz. Sisteminize karşılık gelen Miniconda sh dosyasını web
 sitesinden indirin ve ardından komut satırından

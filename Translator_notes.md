@@ -9,8 +9,7 @@ In case you want to contribute to the translation of this book, please, refer to
 
 ## Bazı Teknik Terimlerin Türk Çevrimleri Hakkında
 
-
-Türkçe, kendi kendini kapsayan ve kendi kendine yeterli bir dil olsa da, bazen son zamanlarda elde edilen veya önerilen bazı teknik terimler eksik olabilir. Derin öğrenme, yakın zamanda sahnede olan bir araştırma alanıdır. Bu nedenle, Türkçe çevrimleri üzerinde fikir birliğine varılamayacak kadar yeni terimler ortaya çıkabilir.
+Türkçe, kendi kendini kapsayan ve kendi kendine yeterli bir dil olsa da, bazen son zamanlarda elde edilen veya önerilen bazı teknik terimler eksik olabilir. Derin öğrenme, yakın zamanda sahnede olan bir araştırma alanıdır. Bu nedenle, Türkçe çevirileri üzerinde fikir birliğine varılamayacak kadar yeni terimler ortaya çıkabilir.
 
 Çeviri sırasında en çok Prof. Ethem Alpaydın tarafından web sitesinde yayınlanan Türkçe-İngilizce sözlüğe (https://www.cmpe.boun.edu.tr/~ethem/i2ml2e_tr/i2tr_sozluk.pdf) ve TÜBA Türkçe Bilim Terimleri Sözlüğüne (http://tubaterim.gov.tr/) başvurdum. Ek olarak da projeye terminoloji bölümü ekledim. Lütfen bu iki sözlüğe başvurmadan önce ona da bakınız.
 

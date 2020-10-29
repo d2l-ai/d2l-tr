@@ -13,7 +13,7 @@ from d2l import mxnet as d2l
 npx.set_np()
 ```
 
-## Pokemon Veri kümesi
+## Pokemon Veri Kümesi
 
 Kullanacağımız veri kümesi, [pokemondb](https://pokemondb.net/sprites) adresinden elde edilen Pokemon görselleri koleksiyonudur. İlk önce bu veri kümesini indirelim, çıkaralım ve yükleyelim.
 
