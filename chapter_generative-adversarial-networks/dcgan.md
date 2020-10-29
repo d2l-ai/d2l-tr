@@ -1,7 +1,7 @@
 # Derin Evrişimli Çekişmeli Üretici Ağlar
 :label:`sec_dcgan`
 
-:numref:`sec_basic_gan`'de, GAN'ların nasıl çalıştığına dair temel fikirleri tanıttık. Tekdüze veya normal dağılım gibi basit, örneklenmesi kolay bir dağılımdan örnekler alabileceklerini ve bunları bazı veri kümelerinin dağılımıyla eşleşiyor gibi görünen örneklere dönüştürebileceklerini gösterdik. Ayrıca bir 2B Gauss dağılımını eşleştirme örneğimiz amaca uygunken, özellikle de heyecan verici bir örnek değil.
+:numref:`sec_basic_gan`'de, GAN'ların nasıl çalıştığına dair temel fikirleri tanıttık. Tekdüze veya normal dağılım gibi basit, örneklenmesi kolay bir dağılımdan örnekler alabileceklerini ve bunları bazı veri kümelerinin dağılımıyla eşleşiyor gibi görünen örneklere dönüştürebileceklerini gösterdik. Ayrıca bir 2B Gauss dağılımını eşleştirme örneğimiz amaca uygunken, özellikle heyecan verici bir örnek değil.
 
 Bu bölümde, foto-gerçekçi imgeler oluşturmak için GAN'ları nasıl kullanabileceğinizi göstereceğiz. Modellerimizi derin evrişimli GAN'lara (DCGAN) dayandıracağız :cite:`Radford.Metz.Chintala.2015`. Ayrımcı bilgisayarla görme problemleri için çok başarılı olduğu kanıtlanmış evrişimli mimariyi ödünç alacağız ve GAN'lar aracılığıyla foto-gerçekçi imgeler oluşturmak için nasıl kullanılabileceklerini göstereceğiz.
 
