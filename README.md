@@ -65,4 +65,4 @@ Bu açık kaynak kitap Creative Commons Attribution-ShareAlike 4.0 Uluslararası
 
 Bu açık kaynak kitaptaki örnek ve referans kodu, değiştirilmiş bir MIT lisansı altında sunulur. [LICENSE-SAMPLECODE] (LICENSE-SAMPLECODE) dosyasına bakın.
 
-[İnglizce sürüm](https://github.com/d2l-ai/d2l-en) | [Sorunları tartışın ve bildirin](https://discuss.d2l.ai/) | [Diğer bilgiler](INFO.md)
+[İngilizce sürüm](https://github.com/d2l-ai/d2l-en) | [Sorunları tartışın ve bildirin](https://discuss.d2l.ai/) | [Diğer bilgiler](INFO.md)
