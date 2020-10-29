@@ -1,115 +1,87 @@
 # Önsöz
 
-Sadece birkaç yıl önce, büyük şirket ve girişimlerde akıllı ürün ve hizmetler
-geliştiren lejyoner derin öğrenme bilim insanları yoktu.
-Aramızdaki en gencimiz (biz yazarlar) alana girdiğinde,
+Sadece birkaç yıl önce, büyük şirket ve girişimlerde akıllı ürün ve hizmetler geliştiren ve derin öğrenme uzmanlarından oluşan birimler yoktu. 
+Yazarlar arasındaki en gencimiz bu alana girdiğinde,
 makine öğrenimi günlük gazetelerde manşetlere çıkmıyordu.
 Ebeveynlerimizin, bırakın onu neden tıpta veya hukukta bir kariyere tercih
 ettiğimizi, makine öğrenmesinin ne olduğu hakkında hiçbir fikri yoktu.
 Makine öğrenmesi gerçek dünyada dar uygulama alanlı ileriye dönük bir akademik
 disiplindi. Örneğin, konuşma tanıma ve bilgisayarlı görme benzeri uygulamalar o
-kadar çok alan bilgisi gerektiriyordu ki makine öğrenmesinin küçük bir
-bileşenleri olduğu tamamen ayrı alanlar olarak kabul ediliyordu. Sinir ağları,
-bu kitapta odaklandığımız derin öğrenme modellerinin öncülleri, modası geçmiş
+kadar çok alan bilgisi gerektiriyordu ki, makine öğrenmesi küçük bir
+bileşeni olan tamamen ayrı alanlar olarak kabul ediliyorlardı. Bu kitapta odaklandığımız derin öğrenme modellerinin öncülleri olan sinir ağları, modası geçmiş
 araçlar olarak görülüyordu.
 
 Sadece son beş yılda, derin öğrenme dünyayı şaşırttı ve  bilgisayarlı görmeden
 doğal dil işleme, otomatik konuşma tanıma, pekiştirici öğrenme ve istatistiksel
-modellemeye kadar farklı alanlarda hızlı ilerlemeyi sağladı.
+modellemeye kadar farklı alanlarda hızlı ilerleme sağladı.
 Elimizdeki bu ilerlemelerle, artık kendilerini her zamankinden daha fazla
-özerklikle (ve bazı şirketlerin sizi inandırdığından daha az özerklikle)
-kullanan otomobiller, otomatik olarak en sıradan e-postaları hazırlayarak
-insanların ezdirici büyüklükte gelen kutularından çıkmasına yardımcı olan
-akıllı yanıt sistemleri ve bir zamanlar Go gibi masa oyunlarında dünyanın en
-iyi insanlarına hükmeden, ki onlarca yıl uzakta bir özellik olarak
-tahmin ediliyordu, yazılım etmenleri üretebiliyoruz. Bu araçlar endüstri ve
-toplum üzerinde şimdiden geniş etkiler yaratıyor; filmlerin yapılma şeklini
-değiştiriyor, hastalıklar teşhis ediliyor ve temel bilimlerde, astrofizikten
+otonomlukla (ve bazı şirketlerin sizi inandırdığından daha az otonomlukla)
+kullanan otomobiller, standart e-postaları otomatik olarak hazırlayıp insanların devasa büyüklükteki e-posta kutularından kurtulmalarını sağlayan akıllı yanıt sistemleri ve go gibi masa oyunlarında dünyanın en
+iyi insanlarına hükmeden yazılımlar -ki bir zamanlar onlarca yıl uzakta bir özellik olarak
+tahmin ediliyordu- üretebiliyoruz. Bu araçlar endüstri ve
+toplum üzerinde şimdiden geniş etkiler yaratıyor, filmlerin yapılma şeklini
+değiştiriyor, hastalıklar teşhis ediyor ve temel bilimlerde, astrofizikten
 biyolojiye kadar, büyüyen bir rol oynuyor.
 
 
 ## Bu kitap hakkında
 
 Bu kitap, derin öğrenmeyi ulaşılabilir yapma girişimimizi temsil eder,
-size *kavramları*, *bağlamı* ve *kodu* öğretir.
+size *kavramları*, *ortamı* ve *kodu* öğretir.
 
 
-### Kod, Matematik ve HTML'yi Bir Arada Birleştirme
+### Kod, Matematik ve HTML'yi Bir Araya Getirme
 
-Herhangi bir bilgi işlem teknolojisinin tam etkisine ulaşması için,
-iyi anlaşılmış, iyi belgelenmiş ve olgun ve iyi bakımlı araçlar desteklenmesi gerekir.
-Anahtar fikirler açıkça damıtılmalı ve yeni uygulayıcıları güncel hale getirmek
+Herhangi bir bilgi işlem teknolojisinin tam etkinliğine ulaşması için,
+iyi anlaşılmış, iyi belgelenmiş, olgun ve güncellenen araçlarla desteklenmesi gerekir.
+Anahtar fikirler açıkça damıtılmalı ve yeni uygulama geliştiricileri güncel hale getirmek
 için gereken işi öğrenme süresi en aza indirilmelidir. Olgun kütüphaneler
-ortak görevleri otomatikleştirmeli ve örnek kod uygulayıcıların ortak
-uygulamaları ihtiyaçlarına göre değiştirmesini, uygulamasını ve genişletmesini
+ortak görevleri otomatikleştirmeli ve örnek kod uygulama geliştiricilerin ortak
+uygulamaları ihtiyaçlarına göre değiştirmesini ve yeni özellikler eklemesini
 kolaylaştırmalıdır. Dinamik web uygulamalarını örnek olarak alalım.
-1990'larda başarılı veritabanı tabanlı web uygulamaları geliştiren, Amazon gibi,
+1990'larda başarılı veritabanı temelli web uygulamaları geliştiren, Amazon gibi,
 çok sayıda şirket olmasına rağmen, bu teknolojinin yaratıcı girişimcilere yardım
-etme potansiyeli son on yılda kısmen, güçlü, iyi belgelenmiş çerçevelerin
-geliştirilmesi sayesinde çok daha büyük bir oranda gerçekleşti.
+etme potansiyeli, güçlü ve iyi belgelenmiş altyapıların geliştirilmesi sayesinde son on yılda çok daha büyük oranda gerçekleşti.
 
-
-Derin öğrenmenin potansiyelini test etmek benzersiz zorluklar getirir
-çünkü herhangi bir uygulama çeşitli disiplinleri bir araya getirir.
+Derin öğrenmenin potansiyelini test ederken, çeşitli disiplinler bir araya geldiği için zorluklarla karşılaşabilirsiniz.
 Derin öğrenmeyi uygulamak aynı anda
-(i) belirli bir şekilde bir problemi çözme motivasyonları;
-(ii) belirli bir modelleme yaklaşımının matematiği;
-(iii) modellerin verilere uyumu için optimizasyon algoritmaları ve
-(iv) modelleri verimli bir şekilde eğitmek için gerekli mühendislik,
-sayısal hesaplama gizli tuzaklarında gezinmeyi
-ve mevcut donanımdan en iyi şekilde yararlanmayı
++ (i) belirli bir problemi belirli bir şekilde çözme motivasyonlarını
++ (ii) belirli bir modelleme yaklaşımının matematiğini
++ (iii) modellerin verilere uyumu(fitting) için kullanılan optimizasyon algoritmalarını
++ (iv) modelleri verimli bir şekilde eğitmek için gerekli mühendisliği, sayısal hesaplamanın gizli tuzaklarında gezinme ve mevcut donanımdan en iyi şekilde yararlanma yöntemlerini
+
 anlamayı gerektirir.
-Sorunları formüle etmek için gerekli eleştirel düşünme becerilerini,
-onları çözmek için matematiği ve bunları uygulamak için yazılım araçları
-çözümlerini hepsi tek bir yerde öğretmek dişli zorluklar sunar.
-Bu kitaptaki amacımız istekli uygulayıcılara hız kazandıran birleşik
+
+Sorunları formüle etmek için gerekli eleştirel düşünme becerilerini, onları çözmek için gereken matematiği ve bu çözümleri uygulamak için kullanılan yazılım araçlarını tek bir yerde öğretebilmek oldukça zor ancak bu kitaptaki amacımız istekli uygulayıcılara hız kazandıran bütünleşik
 bir kaynak sunmaktır.
 
+Bu kitap projesine başladığımızda, aşağıdaki özelliklerin hepsini bir arada barındıran hiçbir kaynak yoktu:
 
-Bu kitap projesine başladığımızda, eş zamanlı olarak
-(i) güncel olan, (ii) modern makine öğreniminin tamamını geniş bir teknik
-derinlikle kapsayan ve (iii) ilgi çekici bir ders kitabından beklenen kaliteyi
-uygulamalı derslerde bulmayı beklediğiniz temiz çalıştırılabilir kod ile içiçe  
-serpiştirilmiş olarak sunan hiçbir kaynak yoktu.
-Belirli bir derin öğrenme çerçevesinin nasıl kullanıldığı
-(örneğin, TensorFlow'daki matrislerle temel sayısal hesaplamanın nasıl
-yapıldığı) veya belirli tekniklerin uygulandığı (ör. LeNet, AlexNet, ResNets,
-vb. için kod snippet'leri) gösteren çeşitli blog yayınlarına ve GitHub
-depolarına dağılmış için birçok kod örneği bulduk  .
-Bununla birlikte, bu örnekler genellikle belirli bir yaklaşımı *nasıl*
-uygulayacağına odaklanmakta, ancak bazı algoritmik kararların *neden* verildiği
-tartışmasını dışlamaktaydı. Ara sıra bazı etkileşimli kaynaklar yalnızca derin
-öğrenmedeki belirli bir konuyu ele almak için ortaya çıkmış olsa da, örneğin
-[Distill] (http://distill.pub) web sitesinde veya kişisel bloglarda yayınlanan
-ilgi çekici blog yayınları, genellikle ilişkili koddan yoksundu.
-Öte yandan, ortaya çıkmış birçok ders kitabı,
-en önemlisi :cite:`Goodfellow.Bengio.Courville.2016` dir
-ki derin öğrenmenin arkasındaki kavramların kapsamlı bir araştırmasını sunar,
-bu kaynaklar kavramların kod olarak açıklamalı gerçekleşmeleriyle birleştirmez
-ve bazen okuyucuları nasıl uygulayacakları konusunda fikirsiz bırakırlar.
-Ayrıca, birçok kaynak ticari kurs sağlayıcılarının ödeme duvarlarının arkasında
-gizlenmiştir.
++ (i) güncel 
++ (ii) modern makine öğreniminin tamamını geniş bir teknik derinlikle kapsayan
++ (iii) ilgi çekici bir ders kitabından beklenen kaliteyi uygulamalı derslerde bulmayı beklediğiniz temiz çalıştırılabilir kod ile içiçe  serpiştirilmiş olarak sunan 
 
+Belirli bir derin öğrenme çerçevesinin nasıl kullanıldığını(örneğin, TensorFlow'daki matrislerle temel sayısal hesaplama) veya belirli tekniklerin nasıl uygulandığını (ör. LeNet, AlexNet, ResNets, vb. için kod parçaları) gösteren çeşitli blog yayınlarına ve GitHub depolarına dağılmış birçok kod örneği bulduk.
+Bu örnekler genellikle belirli bir yaklaşımı *nasıl* uygulayacağına odaklanmakta, ancak bazı algoritmik kararların *neden* verildiği tartışmasını dışlamaktaydı. Ara sıra bazı etkileşimli kaynaklar yalnızca derin öğrenmedeki belirli bir konuyu ele almak için ortaya çıkmış olsa da, örneğin
+[Distill] (http://distill.pub) web sitesinde veya kişisel bloglarda yayınlanan ilgi çekici blog yayınları, genellikle ilişkili koddan yoksundu.
+Öte yandan, ortaya çıkmış birçok ders kitabı, en önemlisi :cite:`Goodfellow.Bengio.Courville.2016` dir ki derin öğrenmenin arkasındaki kavramların kapsamlı bir araştırmasını sunar, kavramların koda nasıl aktarılacaklarını göstermezler ve bazen okuyucuları nasıl uygulayacakları konusunda fikirsiz bırakırlar.
+Ayrıca, birçok kaynak ticari kurs sağlayıcılarının ödeme duvarlarının arkasında gizlenmiştir.
 
 Biz yola çıkarken
-(i) herkesin erişimine açık olan;
-(ii) hakiki bir uygulamalı makine öğrenimi bilim insanı olma yolunda başlangıç
-noktası sağlamak için yeterli teknik derinlik sunan;
-(iii) okuyuculara pratikte sorunları *nasıl* çözeceklerini gösteren
-çalıştırılabilir kod içeren;
-(iv) ayrıca genel olarak hem toplum hem de biz tarafından hızlı güncellemelere
-izin veren ve
-(v) teknik detayların etkileşimli tartışılması ve soruların cevaplanması için
-bir [forum](http://discuss.d2l.ai) tarafından tamamlanan
+
++ (i) Herkesin erişimine açık olan,
++ (ii) Hakiki bir uygulamalı makine öğrenimi bilim insanı olma yolunda başlangıç noktası sağlamak için yeterli teknik derinlik sunan,
++ (iii) Okuyuculara problemleri pratikte *nasıl* çözecebilecklerini gösteren çalıştırılabilir kod içeren,
++ (iv) Hem toplumun hem de bizim hızlı güncellemelerine izin veren,
++ (v) teknik detayların etkileşimli tartışılması ve soruların cevaplanması için bir [forum](http://discuss.d2l.ai) tarafından tamamlanan
+
 bir kaynak oluşturmayı hedefledik.
 
-
 Bu hedefler genellikle çatışıyordu.
-Denklemler, teoremler ve alıntılar en iyi şekilde LaTeX'te düzenlenir ve
-yönetilir.
+Denklemler, teoremler ve alıntılar LaTeX'te en iyi şekilde düzenlenebilir ve yönetilebilir.
 Kod en iyi Python'da açıklanır.
-Web sayfaları HTML ve JavaScript'te doğaldir.
-Ayrıca içeriğin hem yürütülebilir kod, fiziksel bir kitap, indirilebilir bir PDF
+Web sayfaları için HTML ve JavaScript idealdir.
+Ayrıca içeriğin hem çalıştırılabilir kod, fiziksel bir kitap, indirilebilir bir PDF
 olarak hem de internette bir web sitesi olarak erişilebilir olmasını istiyoruz.
 Şu anda bu taleplere tam olarak uygun hiçbir alet ve iş akışı yok, bu yüzden
 kendimiz bir araya getirmek zorunda kaldık.
@@ -118,93 +90,70 @@ açıklıyoruz :numref:`sec_how_to_contribute`.
 Kaynağı paylaşmak ve düzenlemelere izin vermek için GitHub'a,
 kod, denklemler ve metin karıştırmak için Jupyter not defterlerine,
 çoklu çıktılar oluşturmak için bir oluşturma motoru olarak Sphinx'e ve
-forum için Söylem'e karar verdik.
-Sistemimiz henüz mükemmel olmasa da, bu seçenekler rakip endişeler arasında iyi
-bir uzlaşma sağlamaktadır. Bunun böyle bir tümleşik iş akışı kullanılarak
+forum için Discourse'a karar verdik.
+Sistemimiz henüz mükemmel olmasa da, bu seçenekler farklı hedefler arasında iyi bir uzlaşma sağlamaktadır. Bunun böyle bir tümleşik iş akışı kullanılarak
 yayınlanan ilk kitap olabileceğine inanıyoruz.
-
 
 ### Yaparak öğrenmek
 
-Birçok ders kitabı, her biri ayrıntılı olarak bir dizi konuyu öğretir.
+Birçok ders kitabı, ayrıntılı bir dizi konuyu öğretir.
 Örneğin, Chris Bishop'un mükemmel ders kitabı :cite:`Bishop.2006`,
-her konuyu o kadar titizlikle öğretir ki,
-doğrusal regresyon konusunda bile hatrı sayılır bir çalışma gerektirir.
-Uzmanlar bu kitabı tam olarak bu titizliğinden dolayı sevmekle birlikte,
-yeni başlayanlar için bu özellik bu kitabın giriş metni olarak kullanışlılığını
-sınırlar.
-
+her konuyu o kadar titizlikle öğretir ki, doğrusal regresyon konusunda bile hatırı sayılır bir çalışma gerektirir.
+Uzmanlar bu kitabı tam olarak bu titizliğinden dolayı severler ancak, detay seviyesinin fazlalığından ötürü kitabın kullanışlılığı yeni başlayanlar için azdır.
 
 Bu kitapta, çoğu kavramı *tam zamanında* öğreteceğiz.
 Başka bir deyişle, bazı pratik sonlara ulaşmak için gerekli oldukları anda
 kavramları öğreneceksiniz.
 Başlangıçta doğrusal cebir ve olasılık gibi temelleri öğretmek için biraz
-zamanınızı alırken, daha özel olasılık dağılımları hakkında endişelenmeden
-önce ilk modelinizi eğitmenin memnuniyetini tatmanızı istiyoruz.
+zamanınızı alırken, daha özel olasılık dağılımlarına girmeden önce ilk modelinizi eğitmenin memnuniyetini tatmanızı istiyoruz.
 
-
-Temel matematiksel altyapıya hızlı giriş sağlayan birkaç ön not defteri dışında,
-sonraki her bölüm hem makul sayıda yeni kavramları tanıtır hem de
-gerçek bağımsız veri kümeleri kullanarak tek başına bağımsız çalışma örnekleri
-sağlar. Bu örgütsel bir zorluktur.
-Bazı modeller mantıksal olarak tek bir not defterinde gruplandırılabilir.
-Ve bazı fikirler en iyi şekilde birkaç model arka arkaya uygulanarak öğretilebilir.
-Öte yandan, *1 çalışma örneği, 1 not defteri* politikasına uymanın büyük bir
-avantajı vardır: Bu, kodumuzu kullanarak kendi araştırma projelerinizi
-başlatmanızı mümkün olduğunca kolaylaştırır.
-Sadece bir not defterini kopyalayın ve değiştirmeye başlayın.
-
+Temel matematiksel altyapıya hızlı giriş yapmanızı sağlayan baştaki birkaç bölüm dışında,
+sonraki her bölüm hem makul sayıda yeni kavramı tanıtır hem de bağımsız veri kümeleri kullanarak tek başına çalışan örnekler görmenizi
+sağlar. Bu durum organizasyonel bir zorluğa da yol açıyor çünkü bazı modeller mantıksal olarak tek bir not defterinde gruplandırılabilirken
+bazı fikirler en iyi şekilde birkaç model arka arkaya uygulanarak öğretilebiliyor.
+Öte yandan, *1 çalışma örneği, 1 not defteri* yaklaşımını benimsememizin büyük bir avantajı var: kodumuzu kullanarak kendi araştırma projelerinizi
+hızlıca başlatabilirsiniz. Sadece bir Jupyter not defterini kopyalayın ve değiştirmeye başlayın.
 
 Çalıştırılabilir kodu gerektiğinde arka plan materyalleri ile zenginleştireceğiz.
-Genel olarak, araçları tam olarak açıklamadan önce kullanılabilir hale getirme
-hatasını sık sık yapacağız (ve daha sonra arka planı açıklayarak takip edeceğiz).
-Örneğin, neden yararlı olduğunu veya neden işe yaradığını tam olarak açıklamadan
-önce *rastgele eğim inişi* kullanabiliriz.
-Bu, okuyucunun bazı idari kararlarla bize güvenmesini gerektirmesi pahasına,
-sorunları hızlı bir şekilde çözmek için gerekli ekipmanın verilmesine yardımcı
+Genel olarak, araçları bütün detaylarıyla açıklamadan önce nasıl kullanıldığını göstermeyi tercih edeceğiz.
+Örneğin, neden yararlı olduğunu veya neden işe yaradığını tam olarak açıklamadan önce *rastgele eğim inişini(stochastic gradient descent-SGD)* doğrudan kullanacağız.
+Bu, okuyucunun bazı kararlarda bize güvenmesi pahasına, sorunları hızlı bir şekilde çözmek için gerekli ekipmana hızlıca ulaşmasına yardımcı
 olur.
 
-
 Bu kitap derin öğrenme kavramlarını sıfırdan öğretecek.
-Bazen, derin öğrenme çerçevelerinin gelişmiş soyutlamaları ile tipik olarak
-kullanıcıdan gizlenen modeller hakkındaki ince detayları irdelemek istiyoruz.
-Bu, özellikle, temel eğitimlerde, belirli bir katmanda veya eniyileyicide
-gerçekleşen her şeyi anlamanızı istediğimizde ortaya çıkar.
-Bu durumlarda, genellikle örneğin iki versiyonunu sunacağız:
-Bir tanesi her şeyi sıfırdan uyguladığımız, sadece NumPy arayüzüne ve
-otomatik türev almaya dayananı ve diğeri ise Gluon kullanarak kısaca kodunu
-yazdığımız daha pratik bir örneği.
-Size bazı bileşenlerin nasıl çalıştığını öğrettikten sonra, Gluon sürümünü
-sonraki derslerde kullanıyoruz.
+Bazen, derin öğrenme çerçevelerinin gelişmiş soyutlamaları ile tipik olarak kullanıcıdan gizlenen modeller hakkındaki ince detayları irdelemek istiyoruz.
 
+Özellikle temel eğitimlerde, belirli bir katmanda veya eniyileyicide(optimizer) gerçekleşen her şeyi anlamanızı istediğimizde örneğin iki versiyonunu sunacağız:
+Bir tanesi her şeyi sıfırdan uyguladığımız, sadece NumPy arayüzüne ve otomatik türev almaya dayananı ve diğeri ise Gluon kullanarak kısaca kodunu
+yazdığımız daha pratik bir örneği.
+Size bazı bileşenlerin nasıl çalıştığını öğrettikten sonra, Gluon sürümünü sonraki derslerde kullanacağız.
 
 ### İçerik ve Yapı
 
-Kitap kabaca üç bölüme ayrılabilir,
-bunlar farklı renklerde sunulur :numref:`fig_book_org`:
+Kitap kabaca farklı renklerde sunduğumuz üç bölüme ayrılabilir :numref:`fig_book_org`:
 
 ![Book structure](../img/book-org.svg)
 :label:`fig_book_org`
 
 * İlk bölüm temelleri ve ön bilgileri içerir.
-:numref:`chap_introduction` derin öğrenmeye giriş sunar.
+:numref:`chap_introduction` derin öğrenmeye girişi içerir.
 Daha sonra, :numref:`chap_preliminaries`'da hızlı bir şekilde verilerin
 nasıl saklanacağı ve işleneceği ve temel kavramlara dayalı çeşitli sayısal
 işlemlerin nasıl uygulanacağı gibi derin öğrenme için gereken cebir,
-matematik ve olasılık önkoşulları size sunuyoruz.
-:numref:`chap_linear` ve :numref:`chap_perceptrons`, doğrusal bağlanım,
-çok katmanlı algılayıcılar ve düzenlileştirme gibi derin öğrenmenin en temel
+matematik ve olasılık önkoşullarını size sunuyoruz.
+:numref:`chap_linear` ve :numref:`chap_perceptrons`, doğrusal bağlanım(linear regression),
+çok katmanlı algılayıcılar(multilayer perceptrons) ve düzenlileştirme(regularization) gibi derin öğrenmenin en temel
 kavram ve tekniklerini kapsar.
 
 * Sonraki beş bölüm modern derin öğrenme tekniklerine odaklanmaktadır.
 :numref:`chap_computation` derin öğrenme hesaplamalarının çeşitli temel
-bileşenlerini açıklar ve daha sonra daha karmaşık modeller uygulamamız için
-zemin hazırlar. Daha sonra, :numref:`chap_cnn` ve :numref:`chap_modern_cnn`'de,
+bileşenlerini açıklar ve daha sonra daha karmaşık modeller uygulamamız için gereken
+zemini hazırlar. Daha sonra, :numref:`chap_cnn` ve :numref:`chap_modern_cnn`'de,
 çoğu modern bilgisayarlı görme sisteminin omurgasını oluşturan güçlü araçlar
 olan evrişimli sinir ağlarını (CNN'ler) sunuyoruz.
-Daha sonra :numref:`chap_rnn` ve :numref:`chap_modern_rnn`'da, tekrarlayan sinir
-ağlarını (RNN'ler), verilerdeki zamansal veya sıralı yapıları sömürüp doğal dil
-işleme ve zaman serisi tahmini için yaygın olarak kullanılan modellerdir,
+Sonrasında :numref:`chap_rnn` ve :numref:`chap_modern_rnn`'da, tekrarlayan sinir
+ağlarını (RNN - verilerdeki zamansal veya sıralı yapılardan yararlanan, doğal dil
+işleme ve zaman serisi tahmini için yaygın olarak kullanılan modeller),
 sunuyoruz.
 :numref:`chap_attention` içinde, dikkat mekanizmaları adı verilen bir teknik
 kullanan ve yakın zamanda doğal dil işlemede RNN'lerin yerini almaya başlamış
@@ -212,39 +161,37 @@ yeni bir model sınıfı sunuyoruz.
 Bu bölümler, derin öğrenmenin en modern uygulamalarının arkasındaki temel
 araçlarda hızlanmanızı sağlayacaktır.
 
-
 * Üçüncü bölüm ölçeklenebilirlik, verimlilik ve uygulamaları tartışmaktadır.
 İlk olarak :numref:`chap_optimization`'da, derin öğrenme modellerini eğitmek
 için kullanılan birkaç yaygın eniyileme algoritmasını tartışıyoruz.
 Bir sonraki bölüm :numref:`chap_performance`, derin öğrenme kodunuzun hesaplama
-performansını etkileyen birkaç anahtar etmen inceler.
+performansını etkileyen birkaç anahtar faktörü inceler.
 :numref:`chap_cv`'da, bilgisayarlı görmede derin öğrenmenin başlıca
-uygulamalarını gösteriyoruz.
+uygulamalarını göstereceğiz.
 :numref:`chap_nlp_pretrain` ve :numref:`chap_nlp_app` içinde de dil gösterimi
 modellerinin nasıl önceden eğitileciğini ve doğal dil işleme görevlerine nasıl
-uygulanacağını gösteririz.
+uygulanacağını bulabilirsiniz.
 
 ### Kod
 :label:`sec_code`
 
 Bu kitabın çoğu bölümünde derin öğrenmede interaktif bir öğrenme deneyiminin
-önemine olan inancımız nedeniyle yürütülebilir kod bulunmaktadır.
+önemine olan inancımız nedeniyle çalıştırılabilir kod bulunmaktadır.
 Şu anda, bazı sezgiler ancak deneme yanılma yoluyla, kodu küçük yollarla
 değiştirerek ve sonuçları gözlemleyerek geliştirilebilir.
 İdeal olarak, zarif bir matematik teorisi, istenen bir sonuca ulaşmak için
 kodumuzu nasıl değiştireceğimizi tam olarak söyleyebilir.
 Ne yazık ki, şu anda, bu zarif teoriler bizden uzak duruyor.
 En iyi girişimlerimize rağmen, çeşitli teknikler için resmi açıklamalar
-hala eksik, çünkü hem bu modellere açıklamaya gerekli matematik zor olabilir
-hem de bu konular hakkındaki ciddi araştırmalar sadece son zamanlarda ivmeye
-geçti. Derin öğrenme teorisi ilerledikçe, bu kitabın gelecekteki baskılarının
-mevcut baskının sağlayamayacağı yerlerde içgörü sağlayabileceğinden umut
+hala eksik, çünkü hem bu modelleri açıklamaya gerekli matematik zor olabilir
+hem de bu konular hakkındaki ciddi araştırmalar sadece son zamanlarda ivmelendi.
+Derin öğrenme teorisi ilerledikçe, bu kitabın gelecekteki baskılarının,
+mevcut baskının sağlayamayacağı yerlerde içgörü sağlayabileceğini umut
 ediyoruz.
-
 
 Bazen gereksiz tekrarlardan kaçınmak için bu kitapta sıkça içe aktarılan
 (import) ve  atıfta bulunulan işlevler, sınıflar, vb. 'd2l' paketinde
-kapsanmıştır.
+bulunmaktadır.
 İşlev, sınıf veya çoklu içe aktarma gibi herhangi bir blok bir pakete
 kaydedilecekse, bunu `#@save` ile işaretleriz. Bu işlevler ve sınıflar hakkında
 ayrıntılı bir genel bakışı :numref:`sec_d2l`'da' sunuyoruz .
@@ -276,7 +223,7 @@ d2l = sys.modules[__name__]
 :begin_tab:`mxnet`
 
 Bu kitaptaki kodun çoğu Apache MXNet'e dayanmaktadır.
-MXNet, derin öğrenme ve AWS'nin (Amazon Web Hizmetleri) yanı sıra birçok
+MXNet, derin öğrenme ve AWS'in (Amazon Web Services) yanı sıra birçok
 yüksekokul ve şirketin tercih ettiği açık kaynaklı bir çerçevedir.
 Bu kitaptaki tüm kodlar en yeni MXNet sürümü altında testlerden geçmiştir.
 Ancak, derin öğrenmenin hızla gelişmesi nedeniyle, *basılı sürümündeki* bazı
@@ -367,7 +314,7 @@ Python'u daha önce kullanmadıysanız, bu [Python eğitimi] 'ni
 ### Forum
 
 Bu kitapla ilgili olarak bir tartışma forumu başlattık,
-[discuss.d2l.ai](https://discuss.d2l.ai/) adresinde bulunmaktadır .
+[discuss.d2l.ai](https://discuss.d2l.ai/) adresinden ulaşabilirsiniz.
 Kitabın herhangi bir bölümü hakkında sorularınız olduğunda,
 ilgili bölüm sayfası bağlantısını her bölümün sonunda bulabilirsiniz.
 
@@ -378,8 +325,8 @@ Hem İngilizce hem de Çince taslaklar için yüzlerce katılımcıya kendimizi 
 hissediyoruz.
 İçeriğin geliştirilmesine yardımcı oldular ve değerli geri bildirimler sundular.
 Özellikle, bu İngilizce taslağa katkıda bulunan herkese, onu herkes için daha
-iyi hale getirmelerinden dolayı teşekkür ediyoruz.
-GitHub kimlikleri veya adları (belirli bir sıra olmadan) şöyle sıralıyoruz:
+iyi hale getirdikleri için teşekkür ediyoruz.
+GitHub kimliklerini veya isimleri (belirli bir sıra olmadan) şöyle sıralıyoruz:
 alxnorden, avinashingit, bowen0701, brettkoonce, Chaitanya Prakash Bapat,
 cryptonaut, Davide Fiocco, edgarroman, gkutiel, John Mitro, Liang Pu,
 Rahul Agarwal, Mohamed Ali Jamaoui, Michael (Stu) Stewart, Mike Müller,
