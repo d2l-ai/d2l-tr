@@ -66,7 +66,7 @@ stage("Build and Publish") {
       if (env.BRANCH_NAME == 'release') {
         sh label:"Release", script:"""set -ex
         conda activate ${ENV_NAME}
-        d2lbook build pkg
+        # d2lbook build pkg
         # d2lbook deploy html pdf pkg colab sagemaker --s3 s3://preview.d2l.ai/${JOB_NAME}/
         """
         
