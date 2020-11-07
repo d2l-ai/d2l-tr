@@ -67,7 +67,7 @@ stage("Build and Publish") {
         sh label:"Release", script:"""set -ex
         conda activate ${ENV_NAME}
         d2lbook build pkg
-        d2lbook deploy html pdf pkg colab sagemaker --s3 s3://preview.d2l.ai/${JOB_NAME}/
+        # d2lbook deploy html pdf pkg colab sagemaker --s3 s3://preview.d2l.ai/${JOB_NAME}/
         """
         
       } else {
