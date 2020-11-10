@@ -3,34 +3,32 @@
 
 
 Yakın zamana kadar, günlük etkileşimde bulunduğumuz hemen hemen her bilgisayar programı basit prensiplerle yazılım geliştiricileri tarafından kodlandı.
-Bir e-ticaret platformunu yönetmek için bir uygulama yazmak istediğimizi varsayalım. Soruna kafa yorarak birkaç saat boyunca bir beyaz tahta etrafında toplandıktan sonra, muhtemelen kabaca böyle bir şeye benzeyebilecek bir çalışma çözümü buluruz:
+Bir e-ticaret uygulaması yazmak istediğimizi varsayalım. Soruna bir beyaz tahta üzerinde birkaç saat kafa yorduktan sonra muhtemelen aşağıdaki gibi bir çözüme ulaşırız:
 (i) Kullanıcılar bir web tarayıcısında veya mobil uygulamada çalışan bir arabirim aracılığıyla uygulama ile etkileşimde bulunurlar,
-(ii) uygulamamız, her kullanıcının durumunu takip etmek ve geçmiş işlemlerin kayıtlarını tutmak için ticari düzeyde bir veritabanı motoruyla etkileşime girer ve (iii) uygulamamızın merkezinde, uygulamamızın *iş mantığı* (*beyinleri* diyebilirsiniz) yöntemsel olarak ayrıntılı bir şekilde programımızın akla gelebilecek her durumda gerçekleştirmesi gereken eylemi açıklar.
+(ii) Uygulamamız, her kullanıcının durumunu takip etmek ve geçmiş işlemlerin kayıtlarını tutmak için ticari düzeyde bir veritabanı motoruyla etkileşime girer ve (iii) Uygulamamızın merkezindeki iş mantığı(uygulamanın beyni), farklı senaryolarda uygulamanın nasıl davranacağını belirler.
 
 
-Uygulamamızın *beyinlerini* oluşturmak için karşılaşacağımızı tahmin ettiğimiz her köşe vakasına adım atmamız ve uygun kuralları belirlediğimiz gerekir.
-Bir müşteri alışveriş sepetine bir öğe eklemek için her tıkladığında, alışveriş sepeti veritabanı tablosuna bu kullanıcının kimliğini istenen ürünün kimliği ile ilişkilendirerek bir girdi ekleriz.
-Sadece birkaç geliştirici ilk seferinde tamamen doğru hale getirebilirken (karışıklıkları çözmek için bazı test çalışmaları gerekebilir), çoğunlukla, *önceden gerçek bir müşteri bile görmeden* böyle bir programı basit prensiplerle yazabilir ve güvenle başlatabiliriz.
-Genellikle de yeni durumlarda, işlevsel ürün ve sistemleri yönlendiren otomatik sistemleri basit prensiplerden tasarlama yeteneğimiz, dikkate değer bir bilişsel başarıdır.
-Ayrıca zamanının $\%100$'ünde çalışan çözümler tasarlayabildiğinizde, *makine öğrenmesi kullanmamalısınız*.
+Uygulamamızın *beynini* oluşturmak için karşılaşacağımızı tahmin ettiğimiz her senaryoyu değerlendirerek uygun kuralları belirlememiz gerekir.
+Bir müşteri alışveriş sepetine bir ürün eklemek için her tıkladığında, alışveriş sepeti veritabanı tablosuna bu müşterinin(kullanıcının) kimliğini istenen ürünün kimliği ile ilişkilendirerek bir kayıt ekleriz. Böyle bir programı basit prensiplerle yazabilir ve güvenle başlatabiliriz(çok az sayıda geliştirici ilk seferde tamamen doğru çalışan bir uygulama yazabilir, çoğunlukla hataları tespit etmek ve çözmek için de çalışmak gerekir). 
+Genellikle yeni durumlarda, işlevsel ürün ve sistemleri yöneten/yönlendiren uygulamaları tasarlama yeteneğimiz, dikkate değer bir bilişsel başarıdır.
+Ayrıca $\%100$ oranında işe yarayan çözümler tasarlayabildiğinizde, *makine öğrenmesi kullanmamalısınız*.
 
-
-Neyse ki, giderek artan makine öğrenmesi (MÖ) bilim insanları topluluğu için, otomatikleştirmek istediğimiz birçok görev insan yaratıcılığına bu kadar kolay boyun eğmiyor.
+Giderek artan makine öğrenmesi(MÖ) uzmanı için ne mutlu ki, otomatikleştirmek istediğimiz birçok görev insan yaratıcılığına bu kadar kolay boyun eğmiyor.
 Beyaz tahta etrafında bildiğiniz en akıllı zihinlerle toplandığınızı hayal edin, ancak bu sefer aşağıdaki sorunlardan birini ele alıyorsunuz:
 
-* Coğrafi bilgi, uydu görüntüleri ve yakın bir zaman penceresindeki geçmiş hava koşullarını göz önüne alındığında yarının hava durumunu tahmin eden bir program yazma.
+* Coğrafi bilgi, uydu görüntüleri ve yakın bir zaman aralığındaki geçmiş hava koşulları göz önüne alındığında yarının hava durumunu tahmin eden bir program yazma.
 * Serbest biçimli metinle ifade edilen bir soruyu alan ve onu doğru cevaplayan bir program yazma.
-* Verilen bir imgedeki, her birinin etrafında çerçeve çizerek, içerdiği tüm insanları tanımlayabilen bir program yazma.
-* Kullanıcılara keyif alabilecekleri ancak sıradan gezinmeleri esnasında karşılaşma olasılıkları yüksek olmayan ürünler sunan bir program yazma.
+* Verilen bir fotoğrafın içerdiği tüm insanları her birinin etrafına çerçeve çizerek tanımlayabilen bir program yazma.
+* Kullanıcılara internette gezinirken karşılaşma olasılıkları yüksek olmayan ancak keyif alabilecekleri ürünler sunan bir program yazma.
 
 
-Bu vakaların her birinde, seçkin programcılar bile çözümleri sıfırdan kodlayamazlar.
-Bunun nedenleri değişebilir. Bazen aradığımız program zaman içinde değişen bir kalıp takip eder ve programlarımızın adapte olması gerekir.
-Diğer durumlarda, ilişki (pikseller ve soyut kategoriler arasında) çok karmaşık olabilir ve bilinçli anlayışımızın ötesinde binlerce veya milyonlarca hesaplama gerektirebilir.
-(ki gözlerimiz görevi zahmetsizce yönetse bile). MÖ *deneyimlerden öğrenebilen* güçlü tekniklerin incelenmesidir.
-Bir MÖ algoritması, tipik olarak gözlemsel veriler veya bir çevre ile etkileşimler şeklinde, daha fazla deneyim biriktirdikçe performansı artar.
-Bunu, ne kadar deneyim kazanırsa kazansın, geliştiricilerin kendileri *öğrenip* yazılımın güncellenme zamanının geldiğine karar verene kadar, aynı iş mantığına göre çalışan gerekirci (deterministik) e-ticaret platformumuzla karşılaştırın.
-Bu kitapta size makine öğrenmesinin temellerini öğreteceğiz ve özellikle de bilgisayarlı görme, doğal dil işleme, sağlık ve genomik gibi farklı alanlarda yenilikleri yönlendiren güçlü bir teknikler kümesine, yani derin öğrenmeye odaklanacağız.
+Bu durumların her birinde, seçkin programcılar bile çözümleri sıfırdan kodlayamazlar.
+Bunun farklı nedenleri olabilir. Bazen aradığımız program zaman içinde değişen bir kalıp takip eder ve programlarımızın adapte olması gerekir.
+Diğer durumlarda, ilişki (pikseller ve soyut kategoriler arasında) çok karmaşık olabilir ve bilinçli anlayışımızın ötesinde binlerce veya milyonlarca hesaplama gerekebilir (ki gözlerimiz bu görevi halihâzırda zahmetsizce yönetse bile). MÖ *deneyimlerden öğrenebilen* güçlü tekniklerin incelenmesidir.
+Bir MÖ algoritmasının performansı, tipik gözlemsel veri veya bir çevre ile etkileşim şeklinde daha fazla deneyim biriktirdikçe artar.
+Bunu, ne kadar deneyim kazanırsa kazansın, aynı iş mantığına göre çalışmaya devam eden(
+geliştiricilerin kendileri *öğrenip* yazılımın güncellenme zamanının geldiğine karar verene kadar) deterministik (gerekirci) e-ticaret platformumuzla karşılaştırın.
+Bu kitapta size makine öğrenmesinin temellerini öğreteceğiz ve özellikle de bilgisayarlı görme, doğal dil işleme, sağlık ve genomik gibi farklı alanlarda yenilikleri yönlendiren güçlü bir teknik altyapıya, yani derin öğrenmeye odaklanacağız.
 
 
 ## Motive Edici Bir Örnek
