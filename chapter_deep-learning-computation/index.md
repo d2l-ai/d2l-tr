@@ -1,4 +1,4 @@
-# Deep Learning Computation
+# Derin Öğrenme Hesaplamaları
 :label:`chap_computation`
 
 Devasa veri kümeleri ve güçlü donanımın yanı sıra, harika yazılım araçları, derin öğrenmenin hızlı ilerlemesinde yadsınamaz bir rol oynamıştır. 2007'de yayınlanan çığır açan Theano kütüphanesinden başlayarak, esnek açık kaynaklı araçlar, araştırmacıların modelleri hızlı bir şekilde prototip haline getirmelerine, standart bileşenleri geri dönüştürürken tekrarlanan çalışmalardan kaçınmalarına ve aynı zamanda alt seviyede değişiklikler yapma yeteneğini sürdürmelerine olanak tanıdı. Zamanla, derin öğrenme kütüphaneleri giderek daha kaba soyutlamalar sunmak için evrimleşti. Yarı iletken tasarımcıların transistörlerin belirlenmesinden mantıksal devrelere kod yazmaya geçmesi gibi, sinir ağları araştırmacıları da tek tek yapay nöronların davranışları hakkında düşünmekten ağları tüm katmanlar açısından kavramaya geçtiler ve şimdi genellikle zihindeki çok daha kaba *bloklara* sahip mimariler tasarladılar.

@@ -7,7 +7,7 @@ During the translation, I have mostly referred to two Turkish-English dictionari
 In case you want to contribute to the translation of this book, please, refer to these resources so that a consistent terminology can be used throughout the book.
 
 
-## Bazı Teknik Terimlerin Türk Çevrimleri Hakkında
+## Bazı Teknik Terimlerin Türkçe Çevrimleri Hakkında
 
 Türkçe, kendi kendini kapsayan ve kendi kendine yeterli bir dil olsa da, bazen son zamanlarda elde edilen veya önerilen bazı teknik terimler eksik olabilir. Derin öğrenme, yakın zamanda sahnede olan bir araştırma alanıdır. Bu nedenle, Türkçe çevirileri üzerinde fikir birliğine varılamayacak kadar yeni terimler ortaya çıkabilir.
 

@@ -88,6 +88,8 @@ pipeline -> veri/komut işleme hattı
 
 posterior -> sonsal olasılık
 
+pretraining -> ön eğitim
+
 prior -> önsel olasılık
 
 recurrent neural network -> yinelemeli sinir ağı
