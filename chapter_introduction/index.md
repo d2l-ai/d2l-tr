@@ -3,57 +3,48 @@
 
 
 Yakın zamana kadar, günlük etkileşimde bulunduğumuz hemen hemen her bilgisayar programı basit prensiplerle yazılım geliştiricileri tarafından kodlandı.
-Bir e-ticaret platformunu yönetmek için bir uygulama yazmak istediğimizi varsayalım. Soruna kafa yorarak birkaç saat boyunca bir beyaz tahta etrafında toplandıktan sonra, muhtemelen kabaca böyle bir şeye benzeyebilecek bir çalışma çözümü buluruz:
+Bir e-ticaret uygulaması yazmak istediğimizi varsayalım. Soruna bir beyaz tahta üzerinde birkaç saat kafa yorduktan sonra muhtemelen aşağıdaki gibi bir çözüme ulaşırız:
 (i) Kullanıcılar bir web tarayıcısında veya mobil uygulamada çalışan bir arabirim aracılığıyla uygulama ile etkileşimde bulunurlar,
-(ii) uygulamamız, her kullanıcının durumunu takip etmek ve geçmiş işlemlerin kayıtlarını tutmak için ticari düzeyde bir veritabanı motoruyla etkileşime girer ve (iii) uygulamamızın merkezinde, uygulamamızın *iş mantığı* (*beyinleri* diyebilirsiniz) yöntemsel olarak ayrıntılı bir şekilde programımızın akla gelebilecek her durumda gerçekleştirmesi gereken eylemi açıklar.
+(ii) Uygulamamız, her kullanıcının durumunu takip etmek ve geçmiş işlemlerin kayıtlarını tutmak için ticari düzeyde bir veritabanı motoruyla etkileşime girer ve (iii) Uygulamamızın merkezindeki iş mantığı(uygulamanın beyni), farklı senaryolarda uygulamanın nasıl davranacağını belirler.
 
 
-Uygulamamızın *beyinlerini* oluşturmak için karşılaşacağımızı tahmin ettiğimiz her köşe vakasına adım atmamız ve uygun kuralları belirlediğimiz gerekir.
-Bir müşteri alışveriş sepetine bir öğe eklemek için her tıkladığında, alışveriş sepeti veritabanı tablosuna bu kullanıcının kimliğini istenen ürünün kimliği ile ilişkilendirerek bir girdi ekleriz.
-Sadece birkaç geliştirici ilk seferinde tamamen doğru hale getirebilirken (karışıklıkları çözmek için bazı test çalışmaları gerekebilir), çoğunlukla, *önceden gerçek bir müşteri bile görmeden* böyle bir programı basit prensiplerle yazabilir ve güvenle başlatabiliriz.
-Genellikle de yeni durumlarda, işlevsel ürün ve sistemleri yönlendiren otomatik sistemleri basit prensiplerden tasarlama yeteneğimiz, dikkate değer bir bilişsel başarıdır.
-Ayrıca zamanının $\%100$'ünde çalışan çözümler tasarlayabildiğinizde, *makine öğrenmesi kullanmamalısınız*.
+Uygulamamızın *beynini* oluşturmak için karşılaşacağımızı tahmin ettiğimiz her senaryoyu değerlendirerek uygun kuralları belirlememiz gerekir.
+Bir müşteri alışveriş sepetine bir ürün eklemek için her tıkladığında, alışveriş sepeti veritabanı tablosuna bu müşterinin(kullanıcının) kimliğini istenen ürünün kimliği ile ilişkilendirerek bir kayıt ekleriz. Böyle bir programı basit prensiplerle yazabilir ve güvenle başlatabiliriz(çok az sayıda geliştirici ilk seferde tamamen doğru çalışan bir uygulama yazabilir, çoğunlukla hataları tespit etmek ve çözmek için de çalışmak gerekir). 
+Genellikle yeni durumlarda, işlevsel ürün ve sistemleri yöneten/yönlendiren uygulamaları tasarlama yeteneğimiz, dikkate değer bir bilişsel başarıdır.
+Ayrıca $\%100$ oranında işe yarayan çözümler tasarlayabildiğinizde, *makine öğrenmesi kullanmamalısınız*.
 
-
-Neyse ki, giderek artan makine öğrenmesi (MÖ) bilim insanları topluluğu için, otomatikleştirmek istediğimiz birçok görev insan yaratıcılığına bu kadar kolay boyun eğmiyor.
+Giderek artan makine öğrenmesi(MÖ) uzmanı için ne mutlu ki, otomatikleştirmek istediğimiz birçok görev insan yaratıcılığına bu kadar kolay boyun eğmiyor.
 Beyaz tahta etrafında bildiğiniz en akıllı zihinlerle toplandığınızı hayal edin, ancak bu sefer aşağıdaki sorunlardan birini ele alıyorsunuz:
 
-* Coğrafi bilgi, uydu görüntüleri ve yakın bir zaman penceresindeki geçmiş hava koşullarını göz önüne alındığında yarının hava durumunu tahmin eden bir program yazma.
+* Coğrafi bilgi, uydu görüntüleri ve yakın bir zaman aralığındaki geçmiş hava koşulları göz önüne alındığında yarının hava durumunu tahmin eden bir program yazma.
 * Serbest biçimli metinle ifade edilen bir soruyu alan ve onu doğru cevaplayan bir program yazma.
-* Verilen bir imgedeki, her birinin etrafında çerçeve çizerek, içerdiği tüm insanları tanımlayabilen bir program yazma.
-* Kullanıcılara keyif alabilecekleri ancak sıradan gezinmeleri esnasında karşılaşma olasılıkları yüksek olmayan ürünler sunan bir program yazma.
+* Verilen bir fotoğrafın içerdiği tüm insanları her birinin etrafına çerçeve çizerek tanımlayabilen bir program yazma.
+* Kullanıcılara internette gezinirken karşılaşma olasılıkları yüksek olmayan ancak keyif alabilecekleri ürünler sunan bir program yazma.
 
 
-Bu vakaların her birinde, seçkin programcılar bile çözümleri sıfırdan kodlayamazlar.
-Bunun nedenleri değişebilir. Bazen aradığımız program zaman içinde değişen bir kalıp takip eder ve programlarımızın adapte olması gerekir.
-Diğer durumlarda, ilişki (pikseller ve soyut kategoriler arasında) çok karmaşık olabilir ve bilinçli anlayışımızın ötesinde binlerce veya milyonlarca hesaplama gerektirebilir.
-(ki gözlerimiz görevi zahmetsizce yönetse bile). MÖ *deneyimlerden öğrenebilen* güçlü tekniklerin incelenmesidir.
-Bir MÖ algoritması, tipik olarak gözlemsel veriler veya bir çevre ile etkileşimler şeklinde, daha fazla deneyim biriktirdikçe performansı artar.
-Bunu, ne kadar deneyim kazanırsa kazansın, geliştiricilerin kendileri *öğrenip* yazılımın güncellenme zamanının geldiğine karar verene kadar, aynı iş mantığına göre çalışan gerekirci (deterministik) e-ticaret platformumuzla karşılaştırın.
-Bu kitapta size makine öğrenmesinin temellerini öğreteceğiz ve özellikle de bilgisayarlı görme, doğal dil işleme, sağlık ve genomik gibi farklı alanlarda yenilikleri yönlendiren güçlü bir teknikler kümesine, yani derin öğrenmeye odaklanacağız.
+Bu durumların her birinde, seçkin programcılar bile çözümleri sıfırdan kodlayamazlar.
+Bunun farklı nedenleri olabilir. Bazen aradığımız program zaman içinde değişen bir kalıp takip eder ve programlarımızın adapte olması gerekir.
+Diğer durumlarda, ilişki (pikseller ve soyut kategoriler arasında) çok karmaşık olabilir ve bilinçli anlayışımızın ötesinde binlerce veya milyonlarca hesaplama gerekebilir (ki gözlerimiz bu görevi halihâzırda zahmetsizce yönetse bile). MÖ *deneyimlerden öğrenebilen* güçlü tekniklerin incelenmesidir.
+Bir MÖ algoritmasının performansı, tipik gözlemsel veri veya bir çevre ile etkileşim şeklinde daha fazla deneyim biriktirdikçe artar.
+Bunu, ne kadar deneyim kazanırsa kazansın, aynı iş mantığına göre çalışmaya devam eden(
+geliştiricilerin kendileri *öğrenip* yazılımın güncellenme zamanının geldiğine karar verene kadar) deterministik (gerekirci) e-ticaret platformumuzla karşılaştırın.
+Bu kitapta size makine öğrenmesinin temellerini öğreteceğiz ve özellikle de bilgisayarlı görme, doğal dil işleme, sağlık ve genomik gibi farklı alanlarda yenilikleri yönlendiren güçlü bir teknik altyapıya, yani derin öğrenmeye odaklanacağız.
 
 
 ## Motive Edici Bir Örnek
 
-Yazmaya başlamadan önce, biz bu kitabın yazarları, işgücünün çoğu gibi, kafeinli olmak zorundaydık.
-Arabaya bindik ve araba kullanmaya başladık.
-Alex, bir iPhone kullanıp telefonun ses tanıma sistemini uyandırarak "Hey Siri" diye seslendi.
-Sonra Mu "Blue Bottle kafesine yol tarifi" komutunu verdi.
-Telefon komutun uyarlamasını (transkripsiyonunu) hızlı bir şekilde gösterdi.
-Ayrıca yol tarifini istediğimizi fark etti ve talebimizi yerine getirmek için Maps (Haritalar) uygulamasını başlattı.
-Bir kez başlatıldığında, Haritalar uygulaması bir dizi rota belirledi.
-Her rotanın yanında, telefon tahmini bir yol süresi gösterdi.
-Biz bu hikayeyi pedagojik (eğitbilimsel) rahatlık için üretirken, sadece birkaç saniye içinde, bir akıllı telefondaki günlük etkileşimlerimizin birkaç makine öğrenmesi modeliyle işbirligi yaptığını gösteriyoruz.
+Bu kitabı yazmaya başlayabilmek için, birçok çalışan gibi, bol miktarda kahve tüketmemiz gerekiyordu. Arabaya bindik ve sürmeye başladık. Alex "Hey Siri" diye seslenerek iPhone'unun sesli asistan sistemini uyandırdı ve "Blue Bottle kafesine yol tarifi" komutunu verdi. Telefon komutun metnini (transkripsiyonunu) hızlı bir şekilde gösterdi. Ayrıca yol tarifini istediğimizi fark etti ve talebimizi yerine getirmek için Maps uygulamasını başlattı.
+Maps uygulaması bir dizi rota belirledi, her rotanın yanında tahmini bir varış süresi de gösterdi. Bu hikaye, bir akıllı telefondaki günlük etkileşimlerimizin saniyeler içinde birkaç makine öğrenmesi modeliyle işbirligi yaptığını gösteriyor.
 
 
-"Alexa", "Tamam, Google" veya "Siri" gibi bir *uyandırma kelimesine* yanıt vermek için bir program yazdığınızı düşünün.
-Bir odada kendiniz bir bilgisayar ve kod düzenleyicisinden başka bir şey olmadan kodlamayı deneyin :numref:`fig_wake_word`.
-Böyle bir programı basit ilkelerden (prensiplerden) nasıl yazarsınız?
+"Alexa", "OK, Google" veya "Hey Siri" gibi bir *uyandırma kelimesine* yanıt vermek için bir program yazdığınızı düşünün.
+Bir odada kendiniz bir bilgisayar ve kod editöründen başka bir şey olmadan kodlamayı deneyin :numref:`fig_wake_word`.
+Böyle bir programı basit ilkelerle (prensiplerle) nasıl yazarsınız?
 Bir düşünün ... problem zor.
 Mikrofon her saniye yaklaşık 44.000 örnek toplayacaktır.
 Her örnek, ses dalgasının genliğinin bir ölçümüdür.
 Hangi kural güvenilir bir şekilde, ses parçasının uyandırma sözcüğünü içerip içermediğine bağlı olarak bir ham ses parçasından emin ``{evet, hayır}`` tahminlerine eşleme yapabilir?
-Sıkıştıysanız endişelenmeyin.
+Cevabı bulmakta zorlanıyorsanız endişelenmeyin.
 Böyle bir programı nasıl sıfırdan yazacağımızı bilmiyoruz.
 Bu yüzden MÖ kullanıyoruz.
 
@@ -62,9 +53,9 @@ Bu yüzden MÖ kullanıyoruz.
 :label:`fig_wake_word`
 
 Olayın özünü şöyle açıklayabiliriz.
-Çoğu zaman, bir bilgisayara girdilerden çıktılara nasıl eşleştirebileceğini açıklayamayı bilmediğimiz de bile, kendimiz yine de bu bilişsel başarıyı gerçekleştirebiliyoruz.
+Çoğu zaman, bir bilgisayara girdilerle çıktıları nasıl eşleştirebileceğini açıklayamayı bilmediğimizde bile, kendimiz bu bilişsel başarıyı gerçekleştirebiliyoruz.
 Diğer bir deyişle, "Alexa" kelimesini tanımak için *bir bilgisayarı nasıl programlayacağınızı* bilmeseniz bile siz *kendiniz* "Alexa" kelimesini tanıyabilirsiniz.
-Bu yetenekle donanmış bizler ses örnekleri içeren büyük bir *veri kümesi* toplayabilir ve uyandırma kelimesini *içerenleri* ve *içermeyenleri* etiketleyebiliriz.
+Bu yetenekle donanmış bizler ses örnekleri içeren büyük bir *veri kümesi* toplayabilir ve uyandırma kelimesi *içerenleri* ve *içermeyenleri* etiketleyebiliriz.
 MÖ yaklaşımında, uyandırma kelimelerini tanımak için *açıktan* bir sistem tasarlamaya çalışmayız.
 Bunun yerine, davranışı bir miktar *parametre* ile belirlenen esnek bir program tanımlarız.
 Ardından, veri kümesini, ilgili görevdeki performans ölçüsüne göre, programımızın performansını artıran en iyi parametre kümesini belirlemek için kullanırız.
@@ -72,26 +63,26 @@ Ardından, veri kümesini, ilgili görevdeki performans ölçüsüne göre, prog
 Parametreleri, çevirerek programın davranışını değiştirebileceğimiz düğmeler olarak düşünebilirsiniz.
 Parametreleri sabitlendiğinde, programa *model* diyoruz.
 Sadece parametreleri manipüle ederek üretebileceğimiz tüm farklı programlara (girdi-çıktı eşlemeleri) *model ailesi* denir.
-Ve parametreleri seçmek için veri kümemizi kullanan *başkalaşım (meta) programına* *öğrenme algoritması* denir.
+Ve parametreleri seçmek için veri kümemizi kullanan * meta(başkalaşım) programa* *öğrenme algoritması* denir.
 
 Devam etmeden ve öğrenme algoritmasını kullanmadan önce, sorunu kesin olarak tanımlamalı, girdi ve çıktıların kesin doğasını tespit etmeli ve uygun bir model ailesi seçmeliyiz.
 Bu durumda, modelimiz *girdi* olarak bir ses parçasını alır ve *çıktı* olarak ``{evet, hayır}`` arasında bir seçim oluşturur.
 Her şey plana göre giderse, modelin parçanın uyandırma kelimesini içerip içermediğine dair tahminleri genellikle doğru olacaktır.
 
 
-Doğru model ailesini seçersek, o zaman model her "Alexa" kelimesini her duyduğunda ``evet``i seçecek düğmelerin bir ayarı olmalıdır.
+Doğru model ailesini seçersek, o zaman model "Alexa" kelimesini her duyduğunda ``evet``i seçecek düğmelerin bir ayarı olmalıdır.
 Uyandırma kelimesinin kesin seçimi keyfi olduğundan, muhtemelen yeterince zengin bir model ailesine ihtiyacımız olacak, öyle ki düğmelerin başka bir ayarı ile, sadece "Kayısı" kelimesini duyduktan sonra da ``evet`` seçilebilsin.
 Aynı model ailesinin *"Alexa"yı tanıma* ve *"Kayısı"yı tanıma* için uygun olması beklenir, çünkü sezgisel olarak benzer görevler gibi görünüyorlar.
 Bununla birlikte, temel olarak farklı girdiler veya çıktılarla uğraşmak istiyorsak, resimlerden altyazılara veya İngilizce cümlelerden Çince cümlelere eşlemek istiyorsak mesela, tamamen farklı bir model ailesine ihtiyacımız olabilir.
 
-Tahmin edebileceğiniz gibi, tüm düğmeleri rastgele bir şekilde ayarlarsak, modelimizin "Alexa", "Kayısı" veya başka bir İngilizce kelimeyi tanıması muhtemel değildir.
+Tahmin edebileceğiniz gibi, tüm düğmeleri rastgele bir şekilde ayarlarsak, modelimizin "Alexa", "Kayısı" veya başka bir kelimeyi tanıması muhtemel değildir.
 Derin öğrenmede, *öğrenme*, modelimizi istenen davranışa zorlayan düğmelerin doğru ayarını keşfettiğimiz süreçtir.
 
 Gösterildiği gibi :numref:`fig_ml_loop`, eğitim süreci genellikle şöyle görünür:
 
 1. Yararlı bir şey yapamayan rastgele başlatılan bir model ile başlayın.
 1. Etiketli verilerinizin bir kısmını alın (örneğin, ses parçaları ve onlara karşılık gelen ``{evet, hayır}`` etiketleri).
-1. Modelin bu örneklere göre daha az hata yapması için düğmeleri değiştirin.
+1. Modelin bu örneklere göre daha az hata yapması için düğmelerin ayarlarını değiştirin.
 1. Model harika olana kadar tekrarlayın.
 
 
@@ -100,7 +91,7 @@ Gösterildiği gibi :numref:`fig_ml_loop`, eğitim süreci genellikle şöyle g�
 
 Özetlemek gerekirse, bir uyandırma kelimesi tanıyıcısını kodlamak yerine, büyük bir etiketli veri kümesi *sunarsak* uyandırma sözcüklerini tanımayı *öğrenebilen* bir program kodlarız.
 Bu eylemi bir programın davranışını ona bir veri kümesi sunup *veri ile programlayarak* belirleme gibi düşünebilirsiniz.
-Makine öğrenme sistemimize, aşağıdaki resimler gibi, birçok kedi ve köpek örneği sağlayarak bir kedi dedektörü "programlayabiliriz":
+MÖ sistemimize, aşağıdaki resimler gibi, birçok kedi ve köpek örneği sağlayarak bir kedi dedektörü "programlayabiliriz":
 
 
 |kedi|kedi|köpek|köpek|
@@ -110,13 +101,13 @@ Makine öğrenme sistemimize, aşağıdaki resimler gibi, birçok kedi ve köpek
 
 Bu şekilde dedektör, sonunda, bir kedi ise çok büyük bir pozitif sayı, bir köpekse çok büyük bir negatif sayı ve emin değilse sıfıra daha yakın bir şey yaymayı öğrenir ve bu,  MÖ'nin neler yapabileceğinin ancak yüzeyini kazır.
 
-Derin öğrenme, makine öğrenmesi problemlerini çözmek için mevcut birçok popüler yöntemden sadece biridir.
-Şimdiye kadar, derin öğrenme değil, yalnızca geniş kapsamlı makine öğrenmesi hakkında konuştuk. Derin öğrenmenin neden önemli olduğunu görmek amacıyla, birkaç önemli noktayı vurgulamak için bir anlığına durmalıyız.
+Derin öğrenme(DÖ), makine öğrenmesi problemlerini çözmek için mevcut birçok popüler yöntemden sadece biridir.
+Şimdiye kadar, derin öğrenme hakkında değil, yalnızca geniş kapsamlı makine öğrenmesi hakkında konuştuk. Derin öğrenmenin neden önemli olduğunu görmek amacıyla, birkaç önemli noktayı vurgulamak için bir anlığına durmalıyız.
 
-Birincisi, şu ana kadar tartıştığımız problemler --- ham ses sinyalinden, görüntülerin ham piksel değerlerinden öğrenmek veya keyfi uzunluktaki cümleleri yabancı dillerdeki muadilleri arasında eşlemek --- derin öğrenmenin üstün olduğu ve geleneksel MÖ metotlarının sendelediği problemlerdir.
+Birincisi, şu ana kadar tartıştığımız problemler --- ham ses sinyalinden, görüntülerin ham piksel değerlerinden öğrenmek veya keyfi uzunluktaki cümleleri yabancı dillerdeki muadilleri ile eşlemek --- derin öğrenmenin üstün olduğu ve geleneksel MÖ metotlarının sendelediği problemlerdir.
 Derin modeller, birçok hesaplama *katmanını* öğrenmeleri anlamında *derindir*.
 Bu çok katmanlı (veya hiyerarşik) modellerin, düşük seviyeli algısal verileri önceki araçların yapamayacağı bir şekilde ele alabildiği ortaya çıkıyor.
-Eski günlerde, MÖ'yi bu sorunlara uygulamanın en önemli kısmı, verileri *sığ* modellere uygun bir biçime dönüştürmek için elle (manuel olarak) tasarlanmış yolları bulmaktan oluşuyordu.
+Eski günlerde, MÖ'yi bu sorunlara uygulamanın en önemli kısmı, veriyi *sığ* modellere uygun bir biçime dönüştürmek için elle (manuel olarak) tasarlanmış yolları bulmaktan oluşuyordu.
 Derin öğrenmenin önemli bir avantajı, sadece geleneksel öğrenme üretim hatlarının sonundaki *sığ* modellerin değil, aynı zamanda öznitelik mühendisliğinin emek yoğun sürecinin de yerini almasıdır.
 İkincisi,  derin öğrenme, *alana özgü önişlemlemenin* çoğunu eleyerek, daha önce bilgisayarlı görme, konuşma tanıma, doğal dil işleme, tıbbi bilişim ve diğer uygulama alanlarını ayıran sınırların çoğunu ortadan kaldırıp, çeşitli sorunlarla mücadelede ortak kullanılabilecek bir küme araç sunar.
 
