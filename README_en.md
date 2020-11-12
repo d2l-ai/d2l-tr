@@ -27,7 +27,7 @@ Our goal is to offer a resource that could
   <img width="400"  src="static/frontpage/_images/map.png">
 </p>
 
-If you find this book useful, please star (★) this repository or cite this book using the following bibtex entry:
+If you find this book useful, please star (‚òÖ) this repository or cite this book using the following bibtex entry:
 
 ```
 @book{zhang2020dive,
@@ -47,12 +47,12 @@ If you find this book useful, please star (★) this repository or cite this boo
 > <b>&mdash; Jiawei Han, Michael Aiken Chair Professor, University of Illinois at Urbana-Champaign</b>
 
 > <p>"This is a highly welcome addition to the machine learning literature, with a focus on hands-on experience implemented via the integration of Jupyter notebooks. Students of deep learning should find this invaluable to become proficient in this field."</p>
-> <b>&mdash; Bernhard Schölkopf, Director, Max Planck Institute for Intelligent Systems</b>
+> <b>&mdash; Bernhard Sch√∂lkopf, Director, Max Planck Institute for Intelligent Systems</b>
 
 
 ## Contribute ([learn how](https://d2l.ai/chapter_appendix-tools-for-deep-learning/contributing.html))
 
-This open source book has benefited from pedagogical suggestions, typo corrections, and other improvements from community contributors. Your help is valuable for making the book better for everyone. We will [acknowledge](https://d2l.ai/chapter_preface/index.html#Acknowledgments) each D2L contributor in the book.
+This open source book has benefited from pedagogical suggestions, typo corrections, and other improvements from community contributors. Your help is valuable for making the book better for everyone.
 
 **Dear [D2L contributors](https://github.com/d2l-ai/d2l-en/graphs/contributors), please email your GitHub ID and name to d2lbook.en@gmail.com so your name will appear on the [acknowledgments](https://d2l.ai/chapter_preface/index.html#Acknowledgments). Thanks.**
 
@@ -63,4 +63,4 @@ This open source book is made available under the Creative Commons Attribution-S
 
 The sample and reference code within this open source book is made available under a modified MIT license. See the [LICENSE-SAMPLECODE](LICENSE-SAMPLECODE) file.
 
-[Chinese version](https://github.com/d2l-ai/d2l-zh) | [Discuss and report issues](https://discuss.d2l.ai/) | [Other Information](INFO.md)
+[Chinese version](https://github.com/d2l-ai/d2l-zh) | [Discuss and report issues](https://discuss.d2l.ai/) | [Code of conduct](CODE_OF_CONDUCT.md) | [Other Information](INFO.md)

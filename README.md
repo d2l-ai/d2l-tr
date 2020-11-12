@@ -1,6 +1,6 @@
 # Derin Öğrenmeye Dalış (D2L.ai)
 
-[![İnşa Durumu](http://ci.d2l.ai/job/d2l-en/job/master/badge/icon)](http://ci.d2l.ai/job/d2l-en/job/master/)
+[![İnşa Durumu](http://ci.d2l.ai/job/d2l-tr/job/master/badge/icon)](http://ci.d2l.ai/job/d2l-tr/job/master/)
 
 [Kitap web sitesi](https://d2l.ai/) | [STAT 157 Dersi UC Berkeley, Bahar 2019](http://courses.d2l.ai/berkeley-stat-157/index.html)
 
@@ -53,7 +53,7 @@ Bu kitabı yararlı buluyorsanız, lütfen bu depoya yıldız ekleyin (★) veya
 
 ## Katkıda bulunma ([nasıl yapıldığını öğrenin](https://d2l.ai/chapter_appendix-tools-for-deep-learning/contributing.html))
 
-Bu açık kaynak kitap pedagojik önerilerden, yazım hatası düzeltmelerinden ve topluluk katılımcılarından gelen diğer iyileştirmelerden faydalanmıştır. Yardımınız kitabı herkes için daha iyi hale getirmede değerlidir. Kitaptaki her bir D2L katılımcısına [teşekkür edeceğiz](https://d2l.ai/chapter_preface/index.html#Acknowledgments).
+Bu açık kaynak kitap pedagojik önerilerden, yazım hatası düzeltmelerinden ve topluluk katılımcılarından gelen diğer iyileştirmelerden faydalanmıştır. Yardımınız kitabı herkes için daha iyi hale getirmede değerlidir.
 
 ** Sayın [D2L katkıda bulunanlar](https://github.com/d2l-ai/d2l-tr/graphs/contributors), lütfen GitHub kimliğinizi ve adınızı d2lbook.en@gmail.com adresine e-posta ile gönderiniz ki adınız [teşekkürler](https://d2l.ai/chapter_preface/index.html#Acknowledgments) bölümünde çıksın. Teşekkürler.**
 
@@ -61,8 +61,8 @@ Bu açık kaynak kitap pedagojik önerilerden, yazım hatası düzeltmelerinden 
 
 ## Lisans Özeti
 
-Bu açık kaynak kitap Creative Commons Attribution-ShareAlike 4.0 Uluslararası Lisansı altında sunulmaktadır. Bkz. [LİSANS] (LİSANS) dosyası.
+Bu açık kaynak kitap Creative Commons Attribution-ShareAlike 4.0 Uluslararası Lisansı altında sunulmaktadır. Bkz. [LİSANS](LİSANS) dosyası.
 
-Bu açık kaynak kitaptaki örnek ve referans kodu, değiştirilmiş bir MIT lisansı altında sunulur. [LICENSE-SAMPLECODE] (LICENSE-SAMPLECODE) dosyasına bakın.
+Bu açık kaynak kitaptaki örnek ve referans kodu, değiştirilmiş bir MIT lisansı altında sunulur. [LICENSE-SAMPLECODE](LICENSE-SAMPLECODE) dosyasına bakın.
 
-[İngilizce sürüm](https://github.com/d2l-ai/d2l-en) | [Sorunları tartışın ve bildirin](https://discuss.d2l.ai/) | [Diğer bilgiler](INFO.md)
+[İngilizce sürüm](https://github.com/d2l-ai/d2l-en) | [Sorunları tartışın ve bildirin](https://discuss.d2l.ai/) | [Davranış kodu](CODE_OF_CONDUCT.md) | [Diğer bilgiler](INFO.md)
