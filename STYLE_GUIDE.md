@@ -30,7 +30,7 @@
         * weight, bias, label
         * model training, model prediction (model inference)
         * training/testing/validation dataset
-        * data instance (preferred)/data point/training example/testing example/example of the dataset
+        * data point (preferred)/data instance/training example/testing example/example of the dataset
     * Distinguish：
         * hyperparameter vs parameter
         * minibatch stochastic gradient descent vs stochastic gradient descent
@@ -133,7 +133,7 @@
 
 ## References
 
-* Refer to [d2lbook](http://book.d2l.ai/examples/markdown.html#cross-references)how to add references for figure, table and equations.
+* Refer to [d2lbook](https://book.d2l.ai/user/markdown.html#cross-references) on how to add references for figure, table and equations.
 
 
 ## QR Code
