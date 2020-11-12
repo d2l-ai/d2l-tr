@@ -2,7 +2,7 @@
 
 [![İnşa Durumu](http://ci.d2l.ai/job/d2l-tr/job/master/badge/icon)](http://ci.d2l.ai/job/d2l-tr/job/master/)
 
-[Kitap web sitesi](https://d2l.ai/) | [STAT 157 Dersi UC Berkeley, Bahar 2019](http://courses.d2l.ai/berkeley-stat-157/index.html)
+[Kitap web sitesi](https://d2l.ai/) | [STAT 157 Dersi UC Berkeley, Bahar 2019](http://courses.d2l.ai/berkeley-stat-157/index.html) | [Translation Guide](https://docs.google.com/document/d/1jjDTVH_GsHImBb_RoE1siKXdmXN8I1Bd5QN--eSG8is)
 
 <h5 align="center"><i>Derin öğrenmeyi anlamanın en iyi yolu yaparak öğrenmektir.</i></h5>
 
