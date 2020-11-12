@@ -32,14 +32,6 @@ from torch.utils import data
 from torchvision import transforms
 
 
-# Defined in file: ./chapter_preliminaries/ndarray.md
-numpy = lambda a: a.detach().numpy()
-size = lambda a: a.numel()
-reshape = lambda a, *args: a.reshape(*args)
-ones = torch.ones
-zeros = torch.zeros
-
-
 # Defined in file: ./chapter_preliminaries/pandas.md
 def mkdir_if_not_exist(path):  #@save
     """Make a directory if it does not exist."""
@@ -80,7 +72,7 @@ def set_axes(axes, xlabel, ylabel, xlim, ylim, xscale, yscale, legend):
 def plot(X, Y=None, xlabel=None, ylabel=None, legend=None, xlim=None,
          ylim=None, xscale='linear', yscale='linear',
          fmts=('-', 'm--', 'g-.', 'r:'), figsize=(3.5, 2.5), axes=None):
-    """Plot data instances."""
+    """Plot data points."""
     if legend is None:
         legend = []
 
@@ -141,16 +133,16 @@ class Timer:  #@save
 # Defined in file: ./chapter_linear-networks/linear-regression-scratch.md
 def synthetic_data(w, b, num_examples):  #@save
     """Generate y = Xw + b + noise."""
-    X = torch.zeros(size=(num_examples, len(w))).normal_()
-    y = torch.matmul(X, w) + b
-    y += torch.zeros(size=y.shape).normal_(std=0.01)
-    return X, y
+    X = d2l.normal(0, 1, (num_examples, len(w)))
+    y = d2l.matmul(X, w) + b
+    y += d2l.normal(0, 0.01, y.shape)
+    return X, d2l.reshape(y, (-1, 1))
 
 
 # Defined in file: ./chapter_linear-networks/linear-regression-scratch.md
 def linreg(X, w, b):  #@save
     """The linear regression model."""
-    return torch.matmul(X, w) + b
+    return d2l.matmul(X, w) + b
 
 
 # Defined in file: ./chapter_linear-networks/linear-regression-scratch.md
@@ -224,16 +216,19 @@ def load_data_fashion_mnist(batch_size, resize=None):  #@save
 def accuracy(y_hat, y):  #@save
     """Compute the number of correct predictions."""
     if len(y_hat.shape) > 1 and y_hat.shape[1] > 1:
-        y_hat = y_hat.argmax(axis=1)
-    return float((y_hat.type(y.dtype) == y).sum())
+        y_hat = d2l.argmax(y_hat, axis=1)        
+    cmp = d2l.astype(y_hat, y.dtype) == y
+    return float(d2l.reduce_sum(d2l.astype(cmp, y.dtype)))
 
 
 # Defined in file: ./chapter_linear-networks/softmax-regression-scratch.md
 def evaluate_accuracy(net, data_iter):  #@save
     """Compute the accuracy for a model on a dataset."""
+    if isinstance(net, torch.nn.Module):
+        net.eval()  # Set the model to evaluation mode
     metric = Accumulator(2)  # No. of correct predictions, no. of predictions
     for _, (X, y) in enumerate(data_iter):
-        metric.add(accuracy(net(X), y), sum(y.shape))
+        metric.add(accuracy(net(X), y), d2l.size(y))
     return metric[0] / metric[1]
 
 
@@ -256,6 +251,9 @@ class Accumulator:  #@save
 # Defined in file: ./chapter_linear-networks/softmax-regression-scratch.md
 def train_epoch_ch3(net, train_iter, loss, updater):  #@save
     """The training loop defined in Chapter 3."""
+    # Set the model to training mode
+    if isinstance(net, torch.nn.Module):
+        net.train()
     # Sum of training loss, sum of training accuracy, no. of examples
     metric = Accumulator(3)
     for X, y in train_iter:
@@ -263,14 +261,17 @@ def train_epoch_ch3(net, train_iter, loss, updater):  #@save
         y_hat = net(X)
         l = loss(y_hat, y)
         if isinstance(updater, torch.optim.Optimizer):
+            # Using PyTorch in-built optimizer & loss criterion
             updater.zero_grad()
             l.backward()
             updater.step()
-            metric.add(float(l)*len(y), accuracy(y_hat, y), y.size().numel())
+            metric.add(float(l) * len(y), accuracy(y_hat, y),
+                       y.size().numel())
         else:
+            # Using custom built optimizer & loss criterion
             l.sum().backward()
             updater(X.shape[0])
-            metric.add(float(l.sum()), accuracy(y_hat, y), y.size().numel())
+            metric.add(float(l.sum()), accuracy(y_hat, y), y.numel())
     # Return training loss and training accuracy
     return metric[0] / metric[2], metric[1] / metric[2]
 
@@ -338,34 +339,33 @@ def predict_ch3(net, test_iter, n=6):  #@save
     for X, y in test_iter:
         break
     trues = d2l.get_fashion_mnist_labels(y)
-    preds = d2l.get_fashion_mnist_labels(net(X).argmax(axis=1))
-    titles = [true + '\n' + pred for true, pred in zip(trues, preds)]
-    d2l.show_images(X[0:n].reshape(n, 28, 28), 1, n, titles=titles[0:n])
+    preds = d2l.get_fashion_mnist_labels(d2l.argmax(net(X), axis=1))
+    titles = [true +'\n' + pred for true, pred in zip(trues, preds)]
+    d2l.show_images(
+        d2l.reshape(X[0:n], (n, 28, 28)), 1, n, titles=titles[0:n])
 
 
 # Defined in file: ./chapter_multilayer-perceptrons/underfit-overfit.md
 def evaluate_loss(net, data_iter, loss):  #@save
     """Evaluate the loss of a model on the given dataset."""
-    metric = d2l.Accumulator(2)  # sum_loss, num_examples
+    metric = d2l.Accumulator(2)  # Sum of losses, no. of examples
     for X, y in data_iter:
-        l = loss(net(X), y)
-        metric.add(l.sum(), l.numel())
+        out = net(X)
+        y = d2l.reshape(y, out.shape)
+        l = loss(out, y)
+        metric.add(d2l.reduce_sum(l), d2l.size(l))
     return metric[0] / metric[1]
 
 
 # Defined in file: ./chapter_multilayer-perceptrons/kaggle-house-price.md
-DATA_HUB = dict()  #@save
-DATA_URL = 'http://d2l-data.s3-accelerate.amazonaws.com/'  #@save
-
-
-# Defined in file: ./chapter_multilayer-perceptrons/kaggle-house-price.md
-DATA_URL = 'http://d2l-data.s3-accelerate.amazonaws.com/'  #@save
+DATA_HUB = dict()
+DATA_URL = 'http://d2l-data.s3-accelerate.amazonaws.com/'
 
 
 # Defined in file: ./chapter_multilayer-perceptrons/kaggle-house-price.md
 def download(name, cache_dir=os.path.join('..', 'data')):  #@save
     """Download a file inserted into DATA_HUB, return the local filename."""
-    assert name in DATA_HUB, f"{name} does not exist in {DATA_HUB}"
+    assert name in DATA_HUB, f"{name} does not exist in {DATA_HUB}."
     url, sha1_hash = DATA_HUB[name]
     d2l.mkdir_if_not_exist(cache_dir)
     fname = os.path.join(cache_dir, url.split('/')[-1])
@@ -374,10 +374,11 @@ def download(name, cache_dir=os.path.join('..', 'data')):  #@save
         with open(fname, 'rb') as f:
             while True:
                 data = f.read(1048576)
-                if not data: break
+                if not data:
+                    break
                 sha1.update(data)
         if sha1.hexdigest() == sha1_hash:
-            return fname # Hit cache
+            return fname  # Hit cache
     print(f'Downloading {fname} from {url}...')
     r = requests.get(url, stream=True, verify=True)
     with open(fname, 'wb') as f:
@@ -396,14 +397,14 @@ def download_extract(name, folder=None):  #@save
     elif ext in ('.tar', '.gz'):
         fp = tarfile.open(fname, 'r')
     else:
-        assert False, 'Only zip/tar files can be extracted'
+        assert False, 'Only zip/tar files can be extracted.'
     fp.extractall(base_dir)
     return os.path.join(base_dir, folder) if folder else data_dir
 
 
 # Defined in file: ./chapter_multilayer-perceptrons/kaggle-house-price.md
 def download_all():  #@save
-    """Download all files in the DATA_HUB"""
+    """Download all files in the DATA_HUB."""
     for name in DATA_HUB:
         download(name)
 
@@ -431,37 +432,40 @@ def try_gpu(i=0):  #@save
 # Defined in file: ./chapter_deep-learning-computation/use-gpu.md
 def try_all_gpus():  #@save
     """Return all available GPUs, or [cpu(),] if no GPU exists."""
-    ctxes = [torch.device(f'cuda:{i}')
+    devices = [torch.device(f'cuda:{i}')
              for i in range(torch.cuda.device_count())]
-    return ctxes if ctxes else [torch.device('cpu')]
+    return devices if devices else [torch.device('cpu')]
 
 
 # Defined in file: ./chapter_convolutional-neural-networks/conv-layer.md
 def corr2d(X, K):  #@save
     """Compute 2D cross-correlation."""
     h, w = K.shape
-    Y = torch.zeros((X.shape[0] - h + 1, X.shape[1] - w + 1))
+    Y = d2l.zeros((X.shape[0] - h + 1, X.shape[1] - w + 1))
     for i in range(Y.shape[0]):
         for j in range(Y.shape[1]):
-            Y[i, j] = (X[i: i + h, j: j + w] * K).sum()
+            Y[i, j] = d2l.reduce_sum((X[i: i + h, j: j + w] * K))
     return Y
 
 
 # Defined in file: ./chapter_convolutional-neural-networks/lenet.md
 def evaluate_accuracy_gpu(net, data_iter, device=None): #@save
+    """Compute the accuracy for a model on a dataset using a GPU."""
+    net.eval()  # Set the model to evaluation mode
     if not device:
         device = next(iter(net.parameters())).device
-    metric = d2l.Accumulator(2)  # num_corrected_examples, num_examples
+    # No. of correct predictions, no. of predictions
+    metric = d2l.Accumulator(2)
     for X, y in data_iter:
         X, y = X.to(device), y.to(device)
-        metric.add(d2l.accuracy(net(X), y), sum(y.shape))
+        metric.add(d2l.accuracy(net(X), y), d2l.size(y))
     return metric[0] / metric[1]
 
 
 # Defined in file: ./chapter_convolutional-neural-networks/lenet.md
 def train_ch6(net, train_iter, test_iter, num_epochs, lr,
               device=d2l.try_gpu()):
-    """Train and evaluate a model with CPU or GPU."""
+    """Train a model with a GPU (defined in Chapter 6)."""
     def init_weights(m):
         if type(m) == nn.Linear or type(m) == nn.Conv2d:
             torch.nn.init.xavier_uniform_(m.weight)
@@ -470,11 +474,12 @@ def train_ch6(net, train_iter, test_iter, num_epochs, lr,
     net.to(device)
     optimizer = torch.optim.SGD(net.parameters(), lr=lr)
     loss = nn.CrossEntropyLoss()
-    animator = d2l.Animator(xlabel='epoch', xlim=[0, num_epochs],
+    animator = d2l.Animator(xlabel='epoch', xlim=[1, num_epochs],
                             legend=['train loss', 'train acc', 'test acc'])
-    timer = d2l.Timer()
+    timer, num_batches = d2l.Timer(), len(train_iter)
     for epoch in range(num_epochs):
-        metric = d2l.Accumulator(3)  # train_loss, train_acc, num_examples
+        # Sum of training loss, sum of training accuracy, no. of examples
+        metric = d2l.Accumulator(3)
         for i, (X, y) in enumerate(train_iter):
             timer.start()
             net.train()
@@ -485,15 +490,16 @@ def train_ch6(net, train_iter, test_iter, num_epochs, lr,
             l.backward()
             optimizer.step()
             with torch.no_grad():
-                metric.add(l*X.shape[0], d2l.accuracy(y_hat, y), X.shape[0])
+                metric.add(l * X.shape[0], d2l.accuracy(y_hat, y), X.shape[0])
             timer.stop()
-            train_loss, train_acc = metric[0]/metric[2], metric[1]/metric[2]
-            if (i+1) % 50 == 0:
-                animator.add(epoch + i/len(train_iter),
-                             (train_loss, train_acc, None))
+            train_l = metric[0]/metric[2]
+            train_acc = metric[1]/metric[2]
+            if (i + 1) % (num_batches // 5) == 0 or i == num_batches - 1:
+                animator.add(epoch + (i + 1) / num_batches,
+                             (train_l, train_acc, None))
         test_acc = evaluate_accuracy_gpu(net, test_iter)
-        animator.add(epoch+1, (None, None, test_acc))
-    print(f'loss {train_loss:.3f}, train acc {train_acc:.3f}, '
+        animator.add(epoch + 1, (None, None, test_acc))
+    print(f'loss {train_l:.3f}, train acc {train_acc:.3f}, '
           f'test acc {test_acc:.3f}')
     print(f'{metric[2] * num_epochs / timer.sum():.1f} examples/sec '
           f'on {str(device)}')
@@ -501,6 +507,7 @@ def train_ch6(net, train_iter, test_iter, num_epochs, lr,
 
 # Defined in file: ./chapter_convolutional-modern/resnet.md
 class Residual(nn.Module):  #@save
+    """The Residual block of ResNet."""
     def __init__(self, input_channels, num_channels,
                  use_1x1conv=False, strides=1):
         super().__init__()
@@ -533,33 +540,36 @@ d2l.DATA_HUB['time_machine'] = (d2l.DATA_URL + 'timemachine.txt',
 
 # Defined in file: ./chapter_recurrent-neural-networks/text-preprocessing.md
 def read_time_machine():  #@save
-    """Load the time machine book into a list of sentences."""
+    """Load the time machine dataset into a list of text lines."""
     with open(d2l.download('time_machine'), 'r') as f:
         lines = f.readlines()
-    return [re.sub('[^A-Za-z]+', ' ', line.strip().lower())
-            for line in lines]
+    return [re.sub('[^A-Za-z]+', ' ', line).strip().lower() for line in lines]
 
 
 # Defined in file: ./chapter_recurrent-neural-networks/text-preprocessing.md
 def tokenize(lines, token='word'):  #@save
-    """Split sentences into word or char tokens."""
+    """Split text lines into word or character tokens."""
     if token == 'word':
-        return [line.split(' ') for line in lines]
+        return [line.split() for line in lines]
     elif token == 'char':
         return [list(line) for line in lines]
     else:
-        print('ERROR: unknown token type '+token)
+        print('ERROR: unknown token type: ' + token)
 
 
 # Defined in file: ./chapter_recurrent-neural-networks/text-preprocessing.md
 class Vocab:  #@save
-    def __init__(self, tokens, min_freq=0, reserved_tokens=None):
+    """Vocabulary for text."""
+    def __init__(self, tokens=None, min_freq=0, reserved_tokens=None):
+        if tokens is None:
+            tokens = []
         if reserved_tokens is None:
-            reserved_tokens = []
+            reserved_tokens = [] 
         # Sort according to frequencies
         counter = count_corpus(tokens)
         self.token_freqs = sorted(counter.items(), key=lambda x: x[0])
         self.token_freqs.sort(key=lambda x: x[1], reverse=True)
+        # The index for the unknown token is 0
         self.unk, uniq_tokens = 0, ['<unk>'] + reserved_tokens
         uniq_tokens += [token for token, freq in self.token_freqs
                         if freq >= min_freq and token not in uniq_tokens]
@@ -583,70 +593,81 @@ class Vocab:  #@save
 
 
 # Defined in file: ./chapter_recurrent-neural-networks/text-preprocessing.md
-def count_corpus(sentences):  #@save
-    # Flatten a list of token lists into a list of tokens
-    tokens = [tk for line in sentences for tk in line]
+def count_corpus(tokens):  #@save
+    """Count token frequencies."""
+    # Here `tokens` is a 1D list or 2D list
+    if len(tokens) == 0 or isinstance(tokens[0], list):
+        # Flatten a list of token lists into a list of tokens
+        tokens = [token for line in tokens for token in line]
     return collections.Counter(tokens)
 
 
 # Defined in file: ./chapter_recurrent-neural-networks/text-preprocessing.md
 def load_corpus_time_machine(max_tokens=-1):  #@save
+    """Return token indices and the vocabulary of the time machine dataset."""
     lines = read_time_machine()
     tokens = tokenize(lines, 'char')
     vocab = Vocab(tokens)
-    corpus = [vocab[tk] for line in tokens for tk in line]
+    # Since each text line in the time machine dataset is not necessarily a
+    # sentence or a paragraph, flatten all the text lines into a single list
+    corpus = [vocab[token] for line in tokens for token in line]
     if max_tokens > 0:
         corpus = corpus[:max_tokens]
     return corpus, vocab
 
 
 # Defined in file: ./chapter_recurrent-neural-networks/language-models-and-dataset.md
-def seq_data_iter_random(corpus, batch_size, num_steps):
-    # Offset the iterator over the data for uniform starts
+def seq_data_iter_random(corpus, batch_size, num_steps):  #@save
+    """Generate a minibatch of subsequences using random sampling."""
+    # Start with a random offset to partition a sequence
     corpus = corpus[random.randint(0, num_steps):]
-    # Subtract 1 extra since we need to account for label
-    num_examples = ((len(corpus) - 1) // num_steps)
-    example_indices = list(range(0, num_examples * num_steps, num_steps))
-    random.shuffle(example_indices)
+    # Subtract 1 since we need to account for labels
+    num_subseqs = (len(corpus) - 1) // num_steps
+    # The starting indices for subsequences of length `num_steps`
+    initial_indices = list(range(0, num_subseqs * num_steps, num_steps))
+    # In random sampling, the subsequences from two adjacent random
+    # minibatches during iteration are not necessarily adjacent on the
+    # original sequence
+    random.shuffle(initial_indices)
 
     def data(pos):
-        # This returns a sequence of length `num_steps` starting from `pos`
+        # Return a sequence of length `num_steps` starting from `pos`
         return corpus[pos: pos + num_steps]
 
-    # Discard half empty batches
-    num_batches = num_examples // batch_size
-    for i in range(0, batch_size * num_batches, batch_size):
-        # `batch_size` indicates the random examples read each time
-        batch_indices = example_indices[i:(i+batch_size)]
-        X = [data(j) for j in batch_indices]
-        Y = [data(j + 1) for j in batch_indices]
-        yield torch.Tensor(X), torch.Tensor(Y)
+    num_subseqs_per_example = num_subseqs // batch_size
+    for i in range(0, batch_size * num_subseqs_per_example, batch_size):
+        # Here, `initial_indices` contains randomized starting indices for
+        # subsequences
+        initial_indices_per_batch = initial_indices[i: i + batch_size]
+        X = [data(j) for j in initial_indices_per_batch]
+        Y = [data(j + 1) for j in initial_indices_per_batch]
+        yield d2l.tensor(X), d2l.tensor(Y)
 
 
 # Defined in file: ./chapter_recurrent-neural-networks/language-models-and-dataset.md
-def seq_data_iter_consecutive(corpus, batch_size, num_steps):
-    # Offset for the iterator over the data for uniform starts
+def seq_data_iter_sequential(corpus, batch_size, num_steps):  #@save
+    """Generate a minibatch of subsequences using sequential partitioning."""
+    # Start with a random offset to partition a sequence
     offset = random.randint(0, num_steps)
-    # Slice out data: ignore `num_steps` and just wrap around
-    num_indices = ((len(corpus) - offset - 1) // batch_size) * batch_size
-    Xs = torch.Tensor(corpus[offset:offset+num_indices])
-    Ys = torch.Tensor(corpus[offset+1:offset+1+num_indices])
+    num_tokens = ((len(corpus) - offset - 1) // batch_size) * batch_size
+    Xs = d2l.tensor(corpus[offset: offset + num_tokens])
+    Ys = d2l.tensor(corpus[offset + 1: offset + 1 + num_tokens])
     Xs, Ys = Xs.reshape(batch_size, -1), Ys.reshape(batch_size, -1)
     num_batches = Xs.shape[1] // num_steps
     for i in range(0, num_batches * num_steps, num_steps):
-        X = Xs[:, i:(i+num_steps)]
-        Y = Ys[:, i:(i+num_steps)]
+        X = Xs[:, i: i + num_steps]
+        Y = Ys[:, i: i + num_steps]
         yield X, Y
 
 
 # Defined in file: ./chapter_recurrent-neural-networks/language-models-and-dataset.md
-class SeqDataLoader:
-    """A iterator to load sequence data."""
+class SeqDataLoader:  #@save
+    """An iterator to load sequence data."""
     def __init__(self, batch_size, num_steps, use_random_iter, max_tokens):
         if use_random_iter:
             self.data_iter_fn = d2l.seq_data_iter_random
         else:
-            self.data_iter_fn = d2l.seq_data_iter_consecutive
+            self.data_iter_fn = d2l.seq_data_iter_sequential
         self.corpus, self.vocab = d2l.load_corpus_time_machine(max_tokens)
         self.batch_size, self.num_steps = batch_size, num_steps
 
@@ -655,25 +676,25 @@ class SeqDataLoader:
 
 
 # Defined in file: ./chapter_recurrent-neural-networks/language-models-and-dataset.md
-def load_data_time_machine(batch_size, num_steps, use_random_iter=False,
-                           max_tokens=10000):
+def load_data_time_machine(batch_size, num_steps,  #@save
+                           use_random_iter=False, max_tokens=10000):
+    """Return the iterator and the vocabulary of the time machine dataset."""
     data_iter = SeqDataLoader(
         batch_size, num_steps, use_random_iter, max_tokens)
     return data_iter, data_iter.vocab
 
 
 # Defined in file: ./chapter_recurrent-neural-networks/rnn-scratch.md
-class RNNModelScratch:
-    """A RNN Model based on scratch implementations."""
-
+class RNNModelScratch: #@save
+    """A RNN Model implemented from scratch."""
     def __init__(self, vocab_size, num_hiddens, device,
-                 get_params, init_state, forward):
+                 get_params, init_state, forward_fn):
         self.vocab_size, self.num_hiddens = vocab_size, num_hiddens
         self.params = get_params(vocab_size, num_hiddens, device)
-        self.init_state, self.forward_fn = init_state, forward
+        self.init_state, self.forward_fn = init_state, forward_fn
 
     def __call__(self, X, state):
-        X = F.one_hot(X.T.long(), self.vocab_size).type(torch.float32)
+        X = F.one_hot(X.T, self.vocab_size).type(torch.float32)
         return self.forward_fn(X, state, self.params)
 
     def begin_state(self, batch_size, device):
@@ -681,28 +702,28 @@ class RNNModelScratch:
 
 
 # Defined in file: ./chapter_recurrent-neural-networks/rnn-scratch.md
-def predict_ch8(prefix, num_predicts, model, vocab, device):
+def predict_ch8(prefix, num_preds, model, vocab, device):  #@save
+    """Generate new characters following the `prefix`."""
     state = model.begin_state(batch_size=1, device=device)
     outputs = [vocab[prefix[0]]]
-
-    def get_input():
-        return torch.tensor([outputs[-1]], device=device).reshape(1, 1)
-    for y in prefix[1:]:  # Warmup state with prefix
+    get_input = lambda: d2l.reshape(d2l.tensor(
+        [outputs[-1]], device=device), (1, 1))
+    for y in prefix[1:]:  # Warm-up period
         _, state = model(get_input(), state)
         outputs.append(vocab[y])
-    for _ in range(num_predicts):  # Predict num_predicts steps
-        Y, state = model(get_input(), state)
-        outputs.append(int(Y.argmax(dim=1).reshape(1)))
+    for _ in range(num_preds):  # Predict `num_preds` steps
+        y, state = model(get_input(), state)
+        outputs.append(int(y.argmax(dim=1).reshape(1)))
     return ''.join([vocab.idx_to_token[i] for i in outputs])
 
 
 # Defined in file: ./chapter_recurrent-neural-networks/rnn-scratch.md
-def grad_clipping(model, theta):
+def grad_clipping(model, theta):  #@save
+    """Clip the gradient."""
     if isinstance(model, nn.Module):
-        params = [p.data for p in model.parameters() if p.requires_grad]
+        params = [p for p in model.parameters() if p.requires_grad]
     else:
         params = model.params
-    
     norm = torch.sqrt(sum(torch.sum((p.grad ** 2)) for p in params))
     if norm > theta:
         for param in params:
@@ -710,23 +731,29 @@ def grad_clipping(model, theta):
 
 
 # Defined in file: ./chapter_recurrent-neural-networks/rnn-scratch.md
-def train_epoch_ch8(model, train_iter, loss, updater, device,
+def train_epoch_ch8(model, train_iter, loss, updater, device,  #@save
                     use_random_iter):
+    """Train a model within one epoch (defined in Chapter 8)."""
     state, timer = None, d2l.Timer()
-    metric = d2l.Accumulator(2)  # loss_sum, num_examples
+    metric = d2l.Accumulator(2)  # Sum of training loss, no. of tokens
     for X, Y in train_iter:
         if state is None or use_random_iter:
-            # Initialize state when either it is the first iteration or
-            # using random sampling.
+            # Initialize `state` when either it is the first iteration or
+            # using random sampling
             state = model.begin_state(batch_size=X.shape[0], device=device)
         else:
-            for s in state:
-                s.detach_()
+            if isinstance(model, nn.Module) and not isinstance(state, tuple):
+                # `state` is a tensor for `nn.GRU`
+                state.detach_()
+            else:
+                # `state` is a tuple of tensors for `nn.LSTM` and
+                # for our custom scratch implementation 
+                for s in state:
+                    s.detach_()
         y = Y.T.reshape(-1)
         X, y = X.to(device), y.to(device)
-        py, state = model(X, state)
-        l = loss(py, y.long()).mean()
-        
+        y_hat, state = model(X, state)
+        l = loss(y_hat, y.long()).mean()
         if isinstance(updater, torch.optim.Optimizer):
             updater.zero_grad()
             l.backward()
@@ -735,41 +762,78 @@ def train_epoch_ch8(model, train_iter, loss, updater, device,
         else:
             l.backward()
             grad_clipping(model, 1)
-            updater(batch_size=1)  # Since used mean already
-
+            # Since the `mean` function has been invoked
+            updater(batch_size=1)
         metric.add(l * d2l.size(y), d2l.size(y))
-    return math.exp(metric[0]/metric[1]), metric[1]/timer.stop()
+    return math.exp(metric[0] / metric[1]), metric[1] / timer.stop()
 
 
 # Defined in file: ./chapter_recurrent-neural-networks/rnn-scratch.md
 def train_ch8(model, train_iter, vocab, lr, num_epochs, device,
               use_random_iter=False):
-    # Initialize
+    """Train a model (defined in Chapter 8)."""
     loss = nn.CrossEntropyLoss()
     animator = d2l.Animator(xlabel='epoch', ylabel='perplexity',
-                            legend=['train'], xlim=[1, num_epochs])
+                            legend=['train'], xlim=[10, num_epochs])
+    # Initialize
     if isinstance(model, nn.Module):
-        trainer = torch.optim.SGD(model.parameters(), lr)
-
-        def updater(batch_size):
-            return trainer.step()
+        updater = torch.optim.SGD(model.parameters(), lr)
     else:
-        def updater(batch_size):
-            return d2l.sgd(model.params, lr, batch_size)
-
-    def predict(prefix):
-        return predict_ch8(prefix, 50, model, vocab, device)
-
-    # Train and check the progress.
+        updater = lambda batch_size: d2l.sgd(model.params, lr, batch_size)
+    predict = lambda prefix: predict_ch8(prefix, 50, model, vocab, device)
+    # Train and predict
     for epoch in range(num_epochs):
         ppl, speed = train_epoch_ch8(
             model, train_iter, loss, updater, device, use_random_iter)
-        if epoch % 10 == 0:
+        if (epoch + 1) % 10 == 0:
             print(predict('time traveller'))
-            animator.add(epoch+1, [ppl])
+            animator.add(epoch + 1, [ppl])
     print(f'perplexity {ppl:.1f}, {speed:.1f} tokens/sec on {str(device)}')
     print(predict('time traveller'))
     print(predict('traveller'))
+
+
+# Defined in file: ./chapter_recurrent-neural-networks/rnn-concise.md
+class RNNModel(nn.Module):
+    """The RNN model."""
+    def __init__(self, rnn_layer, vocab_size, **kwargs):
+        super(RNNModel, self).__init__(**kwargs)
+        self.rnn = rnn_layer
+        self.vocab_size = vocab_size
+        self.num_hiddens = self.rnn.hidden_size
+        # If the RNN is bidirectional (to be introduced later),
+        # `num_directions` should be 2, else it should be 1.
+        if not self.rnn.bidirectional:
+            self.num_directions = 1
+            self.linear = nn.Linear(self.num_hiddens, self.vocab_size)
+        else:
+            self.num_directions = 2
+            self.linear = nn.Linear(self.num_hiddens * 2, self.vocab_size)
+
+    def forward(self, inputs, state):
+        X = F.one_hot(inputs.T.long(), self.vocab_size)
+        X = X.to(torch.float32)
+        Y, state = self.rnn(X, state)
+        # The fully connected layer will first change the shape of `Y` to
+        # (`num_steps` * `batch_size`, `num_hiddens`). Its output shape is
+        # (`num_steps` * `batch_size`, `vocab_size`).
+        output = self.linear(Y.reshape((-1, Y.shape[-1])))
+        return output, state
+
+    def begin_state(self, device, batch_size=1):
+        if not isinstance(self.rnn, nn.LSTM):
+            # `nn.GRU` takes a tensor as hidden state
+            return  torch.zeros((self.num_directions * self.rnn.num_layers,
+                                 batch_size, self.num_hiddens), 
+                                device=device)
+        else:
+            # `nn.LSTM` takes a tuple of hidden states
+            return (torch.zeros((
+                self.num_directions * self.rnn.num_layers,
+                batch_size, self.num_hiddens), device=device),
+                    torch.zeros((
+                        self.num_directions * self.rnn.num_layers,
+                        batch_size, self.num_hiddens), device=device))
 
 
 # Defined in file: ./chapter_recurrent-modern/machine-translation-and-dataset.md
@@ -779,6 +843,7 @@ d2l.DATA_HUB['fra-eng'] = (d2l.DATA_URL + 'fra-eng.zip',
 
 # Defined in file: ./chapter_recurrent-modern/machine-translation-and-dataset.md
 def read_data_nmt():
+    """Load the English-French dataset."""
     data_dir = d2l.download_extract('fra-eng')
     with open(os.path.join(data_dir, 'fra.txt'), 'r') as f:
         return f.read()
@@ -786,17 +851,22 @@ def read_data_nmt():
 
 # Defined in file: ./chapter_recurrent-modern/machine-translation-and-dataset.md
 def preprocess_nmt(text):
+    """Preprocess the English-French dataset."""
     def no_space(char, prev_char):
-        return char in set(',.!') and prev_char != ' '
+        return char in set(',.!?') and prev_char != ' '
 
+    # Replace non-breaking space with space, and convert uppercase letters to
+    # lowercase ones
     text = text.replace('\u202f', ' ').replace('\xa0', ' ').lower()
-    out = [' ' + char if i > 0 and no_space(char, text[i-1]) else char
+    # Insert space between words and punctuation marks
+    out = [' ' + char if i > 0 and no_space(char, text[i - 1]) else char
            for i, char in enumerate(text)]
     return ''.join(out)
 
 
 # Defined in file: ./chapter_recurrent-modern/machine-translation-and-dataset.md
 def tokenize_nmt(text, num_examples=None):
+    """Tokenize the English-French dataset."""
     source, target = [], []
     for i, line in enumerate(text.split('\n')):
         if num_examples and i > num_examples:
@@ -810,37 +880,38 @@ def tokenize_nmt(text, num_examples=None):
 
 # Defined in file: ./chapter_recurrent-modern/machine-translation-and-dataset.md
 def truncate_pad(line, num_steps, padding_token):
+    """Truncate or pad sequences."""
     if len(line) > num_steps:
-        return line[:num_steps]  # Trim
+        return line[:num_steps]  # Truncate
     return line + [padding_token] * (num_steps - len(line))  # Pad
 
 
 # Defined in file: ./chapter_recurrent-modern/machine-translation-and-dataset.md
-def build_array(lines, vocab, num_steps, is_source):
+def build_array_nmt(lines, vocab, num_steps):
+    """Transform text sequences of machine translation into minibatches."""
     lines = [vocab[l] for l in lines]
-    if not is_source:
-        lines = [[vocab['<bos>']] + l + [vocab['<eos>']] for l in lines]
-    array = torch.tensor([truncate_pad(
+    lines = [l + [vocab['<eos>']] for l in lines]
+    array = d2l.tensor([truncate_pad(
         l, num_steps, vocab['<pad>']) for l in lines])
-    valid_len = (array != vocab['<pad>']).sum(dim=1)
+    valid_len = d2l.reduce_sum(
+        d2l.astype(array != vocab['<pad>'], d2l.int32), 1)
     return array, valid_len
 
 
 # Defined in file: ./chapter_recurrent-modern/machine-translation-and-dataset.md
-def load_data_nmt(batch_size, num_steps, num_examples=1000):
+def load_data_nmt(batch_size, num_steps, num_examples=600):
+    """Return the iterator and the vocabularies of the translation dataset."""
     text = preprocess_nmt(read_data_nmt())
     source, target = tokenize_nmt(text, num_examples)
-    src_vocab = d2l.Vocab(source, min_freq=3, 
+    src_vocab = d2l.Vocab(source, min_freq=2,
                           reserved_tokens=['<pad>', '<bos>', '<eos>'])
-    tgt_vocab = d2l.Vocab(target, min_freq=3, 
+    tgt_vocab = d2l.Vocab(target, min_freq=2,
                           reserved_tokens=['<pad>', '<bos>', '<eos>'])
-    src_array, src_valid_len = build_array(
-        source, src_vocab, num_steps, True)
-    tgt_array, tgt_valid_len = build_array(
-        target, tgt_vocab, num_steps, False)
+    src_array, src_valid_len = build_array_nmt(source, src_vocab, num_steps)
+    tgt_array, tgt_valid_len = build_array_nmt(target, tgt_vocab, num_steps)
     data_arrays = (src_array, src_valid_len, tgt_array, tgt_valid_len)
     data_iter = d2l.load_array(data_arrays, batch_size)
-    return src_vocab, tgt_vocab, data_iter
+    return data_iter, src_vocab, tgt_vocab
 
 
 # Defined in file: ./chapter_recurrent-modern/encoder-decoder.md
@@ -880,6 +951,153 @@ class EncoderDecoder(nn.Module):
         return self.decoder(dec_X, dec_state)
 
 
+# Defined in file: ./chapter_recurrent-modern/seq2seq.md
+class Seq2SeqEncoder(d2l.Encoder):
+    """The RNN encoder for sequence to sequence learning."""
+    def __init__(self, vocab_size, embed_size, num_hiddens, num_layers,
+                 dropout=0, **kwargs):
+        super(Seq2SeqEncoder, self).__init__(**kwargs)
+        # Embedding layer
+        self.embedding = nn.Embedding(vocab_size, embed_size)
+        self.rnn = nn.GRU(embed_size, num_hiddens, num_layers,
+                          dropout=dropout)
+
+    def forward(self, X, *args):
+        # The output `X` shape: (`batch_size`, `num_steps`, `embed_size`)
+        X = self.embedding(X)
+        # In RNN models, the first axis corresponds to time steps
+        X = X.permute(1, 0, 2)
+        # When state is not mentioned, it defaults to zeros
+        output, state = self.rnn(X)
+        # `output` shape: (`num_steps`, `batch_size`, `num_hiddens`)
+        # `state` shape: (`num_layers`, `batch_size`, `num_hiddens`)
+        return output, state
+
+
+# Defined in file: ./chapter_recurrent-modern/seq2seq.md
+def sequence_mask(X, valid_len, value=0):
+    """Mask irrelevant entries in sequences."""
+    maxlen = X.size(1)
+    mask = torch.arange((maxlen), dtype=torch.float32,
+                        device=X.device)[None, :] < valid_len[:, None]
+    X[~mask] = value
+    return X
+
+
+# Defined in file: ./chapter_recurrent-modern/seq2seq.md
+class MaskedSoftmaxCELoss(nn.CrossEntropyLoss):
+    """The softmax cross-entropy loss with masks."""
+    # `pred` shape: (`batch_size`, `num_steps`, `vocab_size`)
+    # `label` shape: (`batch_size`, `num_steps`)
+    # `valid_len` shape: (`batch_size`,)
+    def forward(self, pred, label, valid_len):
+        weights = torch.ones_like(label)
+        weights = sequence_mask(weights, valid_len)
+        self.reduction='none'
+        unweighted_loss = super(MaskedSoftmaxCELoss, self).forward(
+            pred.permute(0, 2, 1), label)
+        weighted_loss = (unweighted_loss * weights).mean(dim=1)
+        return weighted_loss
+
+
+# Defined in file: ./chapter_recurrent-modern/seq2seq.md
+def train_s2s_ch9(model, data_iter, lr, num_epochs, tgt_vocab, device):
+    """Train a model for sequence to sequence (defined in Chapter 9)."""
+    def xavier_init_weights(m):
+        if type(m) == nn.Linear:
+            torch.nn.init.xavier_uniform_(m.weight)
+        if type(m) == nn.GRU:
+            for param in m._flat_weights_names:
+                if "weight" in param:
+                    torch.nn.init.xavier_uniform_(m._parameters[param])
+    model.apply(xavier_init_weights)
+    model.to(device)
+    optimizer = torch.optim.Adam(model.parameters(), lr=lr)
+    loss = MaskedSoftmaxCELoss()
+    model.train()
+    animator = d2l.Animator(xlabel='epoch', ylabel='loss',
+                            xlim=[10, num_epochs])
+    for epoch in range(num_epochs):
+        timer = d2l.Timer()
+        metric = d2l.Accumulator(2)  # Sum of training loss, no. of tokens
+        for batch in data_iter:
+            X, X_valid_len, Y, Y_valid_len = [x.to(device) for x in batch]
+            bos = torch.tensor([tgt_vocab['<bos>']] * Y.shape[0],
+                               device=device).reshape(-1, 1)
+            dec_input = d2l.concat([bos, Y[:, :-1]], 1)  # Teacher forcing
+            Y_hat, _ = model(X, dec_input, X_valid_len)
+            l = loss(Y_hat, Y, Y_valid_len)
+            l.sum().backward()  # Make the loss scalar for `backward`
+            d2l.grad_clipping(model, 1)
+            num_tokens = Y_valid_len.sum()
+            optimizer.step()
+            with torch.no_grad():
+                metric.add(l.sum(), num_tokens)
+        if (epoch + 1) % 10 == 0:
+            animator.add(epoch + 1, (metric[0] / metric[1],))
+    print(f'loss {metric[0] / metric[1]:.3f}, {metric[1] / timer.stop():.1f} '
+          f'tokens/sec on {str(device)}')
+
+
+# Defined in file: ./chapter_recurrent-modern/seq2seq.md
+def predict_s2s_ch9(model, src_sentence, src_vocab, tgt_vocab, num_steps,
+                    device):
+    """Predict sequences (defined in Chapter 9)."""
+    src_tokens = src_vocab[src_sentence.lower().split(' ')] + [
+        src_vocab['<eos>']]
+    enc_valid_len = torch.tensor([len(src_tokens)], device=device)
+    src_tokens = d2l.truncate_pad(src_tokens, num_steps, src_vocab['<pad>'])
+    # Add the batch axis
+    enc_X = torch.unsqueeze(
+        torch.tensor(src_tokens, dtype=torch.long, device=device), dim=0)
+    enc_outputs = model.encoder(enc_X, enc_valid_len)
+    dec_state = model.decoder.init_state(enc_outputs, enc_valid_len)
+    # Add the batch axis
+    dec_X = torch.unsqueeze(torch.tensor(
+        [tgt_vocab['<bos>']], dtype=torch.long, device=device), dim=0)
+    output_seq = []
+    for _ in range(num_steps):
+        Y, dec_state = model.decoder(dec_X, dec_state)
+        # We use the token with the highest prediction likelihood as the input
+        # of the decoder at the next time step
+        dec_X = Y.argmax(dim=2)
+        pred = dec_X.squeeze(dim=0).type(torch.int32).item()
+        # Once the end-of-sequence token is predicted, the generation of
+        # the output sequence is complete
+        if pred == tgt_vocab['<eos>']:
+            break
+        output_seq.append(pred)
+    return ' '.join(tgt_vocab.to_tokens(output_seq))
+
+
+# Defined in file: ./chapter_recurrent-modern/seq2seq.md
+def bleu(pred_seq, label_seq, k):  #@save
+    """Compute the BLEU."""
+    pred_tokens, label_tokens = pred_seq.split(' '), label_seq.split(' ')
+    len_pred, len_label = len(pred_tokens), len(label_tokens)
+    score = math.exp(min(0, 1 - len_label / len_pred))
+    for n in range(1, k + 1):
+        num_matches, label_subs = 0, collections.defaultdict(int)
+        for i in range(len_label - n + 1):
+            label_subs[''.join(label_tokens[i: i + n])] += 1
+        for i in range(len_pred - n + 1):
+            if label_subs[''.join(pred_tokens[i: i + n])] > 0:
+                num_matches += 1
+                label_subs[''.join(pred_tokens[i: i + n])] -= 1
+        score *= math.pow(num_matches / (len_pred - n + 1), math.pow(0.5, n))
+    return score
+
+
+# Defined in file: ./chapter_recurrent-modern/seq2seq.md
+def translate(engs, fras, model, src_vocab, tgt_vocab, num_steps, device):
+    """Translate text sequences."""
+    for eng, fra in zip(engs, fras):
+        translation = predict_s2s_ch9(
+            model, eng, src_vocab, tgt_vocab, num_steps, device)
+        print(
+            f'{eng} => {translation}, bleu {bleu(translation, fra, k=2):.3f}')
+
+
 # Defined in file: ./chapter_attention-mechanisms/attention.md
 def masked_softmax(X, valid_len):
     """Perform softmax by filtering out some elements."""
@@ -894,9 +1112,7 @@ def masked_softmax(X, valid_len):
         else:
             valid_len = valid_len.reshape(-1)
         # Fill masked elements with a large negative, whose exp is 0
-        X = X.reshape(-1, shape[-1])
-        for count, row in enumerate(X):
-            row[int(valid_len[count]):]=-1e6
+        X = d2l.sequence_mask(X.reshape(-1, shape[-1]), valid_len, value=-1e6)
         return nn.functional.softmax(X.reshape(shape), dim=-1)
 
 
@@ -928,12 +1144,334 @@ class MLPAttention(nn.Module):
         self.dropout = nn.Dropout(dropout)
 
     def forward(self, query, key, value, valid_len):
-        query, key = self.W_k(query), self.W_q(key)
+        query, key = self.W_q(query), self.W_k(key)
         # Expand query to (`batch_size`, #queries, 1, units), and key to
         # (`batch_size`, 1, #kv_pairs, units). Then plus them with broadcast
         features = query.unsqueeze(2) + key.unsqueeze(1)
+        features = torch.tanh(features)
         scores = self.v(features).squeeze(-1)
         attention_weights = self.dropout(masked_softmax(scores, valid_len))
         return torch.bmm(attention_weights, value)
 
+
+# Defined in file: ./chapter_attention-mechanisms/transformer.md
+class MultiHeadAttention(nn.Module):
+    def __init__(self, key_size, query_size, value_size, num_hiddens,
+                 num_heads, dropout, bias=False, **kwargs):
+        super(MultiHeadAttention, self).__init__(**kwargs)
+        self.num_heads = num_heads
+        self.attention = d2l.DotProductAttention(dropout)
+        self.W_q = nn.Linear(query_size, num_hiddens, bias=bias)
+        self.W_k = nn.Linear(key_size, num_hiddens, bias=bias)
+        self.W_v = nn.Linear(value_size, num_hiddens, bias=bias)
+        self.W_o = nn.Linear(num_hiddens, num_hiddens, bias=bias)
+
+    def forward(self, query, key, value, valid_len):
+        # For self-attention, `query`, `key`, and `value` shape:
+        # (`batch_size`, `seq_len`, `dim`), where `seq_len` is the length of
+        # input sequence. `valid_len` shape is either (`batch_size`, ) or
+        # (`batch_size`, `seq_len`).
+
+        # Project and transpose `query`, `key`, and `value` from
+        # (`batch_size`, `seq_len`, `num_hiddens`) to
+        # (`batch_size` * `num_heads`, `seq_len`, `num_hiddens` / `num_heads`)
+        query = transpose_qkv(self.W_q(query), self.num_heads)
+        key = transpose_qkv(self.W_k(key), self.num_heads)
+        value = transpose_qkv(self.W_v(value), self.num_heads)
+
+        if valid_len is not None:
+            valid_len = torch.repeat_interleave(
+                valid_len, repeats=self.num_heads, dim=0)
+
+        # For self-attention, `output` shape:
+        # (`batch_size` * `num_heads`, `seq_len`, `num_hiddens` / `num_heads`)
+        output = self.attention(query, key, value, valid_len)
+
+        # `output_concat` shape: (`batch_size`, `seq_len`, `num_hiddens`)
+        output_concat = transpose_output(output, self.num_heads)
+        return self.W_o(output_concat)
+
+
+# Defined in file: ./chapter_attention-mechanisms/transformer.md
+def transpose_qkv(X, num_heads):
+    # Input `X` shape: (`batch_size`, `seq_len`, `num_hiddens`).
+    # Output `X` shape:
+    # (`batch_size`, `seq_len`, `num_heads`, `num_hiddens` / `num_heads`)
+    X = X.reshape(X.shape[0], X.shape[1], num_heads, -1)
+
+    # `X` shape:
+    # (`batch_size`, `num_heads`, `seq_len`, `num_hiddens` / `num_heads`)
+    X = X.permute(0, 2, 1, 3)
+
+    # `output` shape:
+    # (`batch_size` * `num_heads`, `seq_len`, `num_hiddens` / `num_heads`)
+    output = X.reshape(-1, X.shape[2], X.shape[3])
+    return output
+
+
+
+# Defined in file: ./chapter_attention-mechanisms/transformer.md
+def transpose_output(X, num_heads):
+    # A reversed version of `transpose_qkv`
+    X = X.reshape(-1, num_heads, X.shape[1], X.shape[2])
+    X = X.permute(0, 2, 1, 3)
+    return X.reshape(X.shape[0], X.shape[1], -1)
+
+
+# Defined in file: ./chapter_attention-mechanisms/transformer.md
+class PositionWiseFFN(nn.Module):
+    def __init__(self, ffn_num_input, ffn_num_hiddens, pw_num_outputs,
+                 **kwargs):
+        super(PositionWiseFFN, self).__init__(**kwargs)
+        self.dense1 = nn.Linear(ffn_num_input, ffn_num_hiddens)
+        self.relu = nn.ReLU()
+        self.dense2 = nn.Linear(ffn_num_hiddens, pw_num_outputs)
+
+    def forward(self, X):
+        return self.dense2(self.relu(self.dense1(X)))
+
+
+# Defined in file: ./chapter_attention-mechanisms/transformer.md
+class AddNorm(nn.Module):
+    def __init__(self, normalized_shape, dropout, **kwargs):
+        super(AddNorm, self).__init__(**kwargs)
+        self.dropout = nn.Dropout(dropout)
+        self.ln = nn.LayerNorm(normalized_shape)
+
+    def forward(self, X, Y):
+        return self.ln(self.dropout(Y) + X)
+
+
+# Defined in file: ./chapter_attention-mechanisms/transformer.md
+class EncoderBlock(nn.Module):
+    def __init__(self, key_size, query_size, value_size, num_hiddens,
+                 norm_shape, ffn_num_input, ffn_num_hiddens, num_heads,
+                 dropout, use_bias=False, **kwargs):
+        super(EncoderBlock, self).__init__(**kwargs)
+        self.attention = MultiHeadAttention(key_size, query_size, value_size,
+                                            num_hiddens, num_heads, dropout,
+                                            use_bias)
+        self.addnorm1 = AddNorm(norm_shape, dropout)
+        self.ffn = PositionWiseFFN(
+            ffn_num_input, ffn_num_hiddens, num_hiddens)
+        self.addnorm2 = AddNorm(norm_shape, dropout)
+
+    def forward(self, X, valid_len):
+        Y = self.addnorm1(X, self.attention(X, X, X, valid_len))
+        return self.addnorm2(Y, self.ffn(Y))
+
+
+# Defined in file: ./chapter_attention-mechanisms/transformer.md
+class TransformerEncoder(d2l.Encoder):
+    def __init__(self, vocab_size, key_size, query_size, value_size,
+                 num_hiddens, norm_shape, ffn_num_input, ffn_num_hiddens,
+                 num_heads, num_layers, dropout, use_bias=False, **kwargs):
+        super(TransformerEncoder, self).__init__(**kwargs)
+        self.num_hiddens = num_hiddens
+        self.embedding = nn.Embedding(vocab_size, num_hiddens)
+        self.pos_encoding = PositionalEncoding(num_hiddens, dropout)
+        self.blks = nn.Sequential()
+        for i in range(num_layers):
+            self.blks.add_module("block"+str(i),
+                EncoderBlock(key_size, query_size, value_size, num_hiddens,
+                             norm_shape, ffn_num_input, ffn_num_hiddens,
+                             num_heads, dropout, use_bias))
+
+    def forward(self, X, valid_len, *args):
+        X = self.pos_encoding(self.embedding(X) * math.sqrt(self.num_hiddens))
+        for blk in self.blks:
+            X = blk(X, valid_len)
+        return X
+
+
+# Defined in file: ./chapter_optimization/optimization-intro.md
+def annotate(text, xy, xytext):  #@save
+    d2l.plt.gca().annotate(text, xy=xy, xytext=xytext,
+                           arrowprops=dict(arrowstyle='->'))
+
+
+# Defined in file: ./chapter_optimization/gd.md
+def train_2d(trainer, steps=20):  #@save
+    """Optimize a 2-dim objective function with a customized trainer."""
+    # s1 and s2 are internal state variables and will
+    # be used later in the chapter
+    x1, x2, s1, s2 = -5, -2, 0, 0
+    results = [(x1, x2)]
+    for i in range(steps):
+        x1, x2, s1, s2 = trainer(x1, x2, s1, s2)
+        results.append((x1, x2))
+    return results
+
+
+# Defined in file: ./chapter_optimization/gd.md
+def show_trace_2d(f, results):  #@save
+    """Show the trace of 2D variables during optimization."""
+    d2l.set_figsize()
+    d2l.plt.plot(*zip(*results), '-o', color='#ff7f0e')
+    x1, x2 = d2l.meshgrid(d2l.arange(-5.5, 1.0, 0.1),
+                          d2l.arange(-3.0, 1.0, 0.1))
+    d2l.plt.contour(x1, x2, f(x1, x2), colors='#1f77b4')
+    d2l.plt.xlabel('x1')
+    d2l.plt.ylabel('x2')
+
+
+# Defined in file: ./chapter_optimization/minibatch-sgd.md
+d2l.DATA_HUB['airfoil'] = (d2l.DATA_URL + 'airfoil_self_noise.dat',
+                           '76e5be1548fd8222e5074cf0faae75edff8cf93f')
+
+
+# Defined in file: ./chapter_optimization/minibatch-sgd.md
+def get_data_ch11(batch_size=10, n=1500):
+    data = np.genfromtxt(d2l.download('airfoil'),
+                         dtype=np.float32, delimiter='\t')
+    data = torch.from_numpy((data - data.mean(axis=0)) / data.std(axis=0))
+    data_iter = d2l.load_array((data[:n, :-1], data[:n, -1]),
+                               batch_size, is_train=True)
+    return data_iter, data.shape[1]-1
+
+
+# Defined in file: ./chapter_optimization/minibatch-sgd.md
+def train_ch11(trainer_fn, states, hyperparams, data_iter,
+               feature_dim, num_epochs=2):
+    # Initialization
+    w = torch.normal(mean=0.0, std=0.01, size=(feature_dim, 1),
+                     requires_grad=True)
+    b = torch.zeros((1), requires_grad=True)
+    net, loss = lambda X: d2l.linreg(X, w, b), d2l.squared_loss
+    # Train
+    animator = d2l.Animator(xlabel='epoch', ylabel='loss',
+                            xlim=[0, num_epochs], ylim=[0.22, 0.35])
+    n, timer = 0, d2l.Timer()
+    for _ in range(num_epochs):
+        for X, y in data_iter:
+            l = loss(net(X), y).mean()
+            l.backward()
+            trainer_fn([w, b], states, hyperparams)
+            n += X.shape[0]
+            if n % 200 == 0:
+                timer.stop()
+                animator.add(n/X.shape[0]/len(data_iter),
+                             (d2l.evaluate_loss(net, data_iter, loss),))
+                timer.start()
+    print(f'loss: {animator.Y[0][-1]:.3f}, {timer.avg():.3f} sec/epoch')
+    return timer.cumsum(), animator.Y[0]
+
+
+# Defined in file: ./chapter_optimization/minibatch-sgd.md
+def train_concise_ch11(trainer_fn, hyperparams, data_iter, num_epochs=4):
+    # Initialization
+    net = nn.Sequential(nn.Linear(5, 1))
+    def init_weights(m):
+        if type(m) == nn.Linear:
+            torch.nn.init.normal_(m.weight, std=0.01)
+    net.apply(init_weights)
+    
+    optimizer = trainer_fn(net.parameters(), **hyperparams)
+    
+    loss = nn.MSELoss()
+    # Note: L2 Loss = 1/2 * MSE Loss. PyTorch has MSE Loss which is slightly
+    # different from MXNet's L2Loss by a factor of 2. Hence we halve the loss 
+    # value to get L2Loss in PyTorch
+    animator = d2l.Animator(xlabel='epoch', ylabel='loss',
+                            xlim=[0, num_epochs], ylim=[0.22, 0.35])
+    n, timer = 0, d2l.Timer()
+    for _ in range(num_epochs):
+        for X, y in data_iter:
+            optimizer.zero_grad()
+            out = net(X)
+            y = y.reshape(out.shape)
+            l = loss(out, y)/2
+            l.backward()
+            optimizer.step()
+            n += X.shape[0]
+            if n % 200 == 0:
+                timer.stop()
+                animator.add(n/X.shape[0]/len(data_iter),
+                             (d2l.evaluate_loss(net, data_iter, loss)/2,))
+                timer.start()
+    print(f'loss: {animator.Y[0][-1]:.3f}, {timer.avg():.3f} sec/epoch')
+
+
+# Defined in file: ./chapter_computer-vision/bounding-box.md
+def bbox_to_rect(bbox, color):
+    """Convert bounding box to matplotlib format."""
+    # Convert the bounding box (top-left x, top-left y, bottom-right x,
+    # bottom-right y) format to matplotlib format: ((upper-left x,
+    # upper-left y), width, height)
+    return d2l.plt.Rectangle(
+        xy=(bbox[0], bbox[1]), width=bbox[2]-bbox[0], height=bbox[3]-bbox[1],
+        fill=False, edgecolor=color, linewidth=2)
+
+
+# Defined in file: ./chapter_generative-adversarial-networks/gan.md
+def update_D(X, Z, net_D, net_G, loss, trainer_D):
+    """Update discriminator."""
+    batch_size = X.shape[0]
+    ones = torch.ones((batch_size,), device=X.device)
+    zeros = torch.zeros((batch_size,), device=X.device)
+    trainer_D.zero_grad()
+    real_Y = net_D(X)
+    fake_X = net_G(Z)
+    # Do not need to compute gradient for `net_G`, detach it from
+    # computing gradients.
+    fake_Y = net_D(fake_X.detach())
+    loss_D = (loss(real_Y, ones.reshape(real_Y.shape)) + 
+              loss(fake_Y, zeros.reshape(fake_Y.shape))) / 2
+    loss_D.backward()
+    trainer_D.step()
+    return loss_D
+
+
+# Defined in file: ./chapter_generative-adversarial-networks/gan.md
+def update_G(Z, net_D, net_G, loss, trainer_G):
+    """Update generator."""
+    batch_size = Z.shape[0]
+    ones = torch.ones((batch_size,), device=Z.device)
+    trainer_G.zero_grad()
+    # We could reuse `fake_X` from `update_D` to save computation
+    fake_X = net_G(Z)
+    # Recomputing `fake_Y` is needed since `net_D` is changed
+    fake_Y = net_D(fake_X)
+    loss_G = loss(fake_Y, ones.reshape(fake_Y.shape))
+    loss_G.backward()
+    trainer_G.step()
+    return loss_G
+
+
+# Defined in file: ./chapter_generative-adversarial-networks/dcgan.md
+d2l.DATA_HUB['pokemon'] = (d2l.DATA_URL + 'pokemon.zip',
+                           'c065c0e2593b8b161a2d7873e42418bf6a21106c')
+
+
+# Alias defined in config.ini
+
+
+ones = torch.ones
+zeros = torch.zeros
+tensor = torch.tensor
+arange = torch.arange
+meshgrid = torch.meshgrid
+sin = torch.sin
+sinh = torch.sinh
+cos = torch.cos
+cosh = torch.cosh
+tanh = torch.tanh
+linspace = torch.linspace
+exp = torch.exp
+log = torch.log
+normal = torch.normal
+matmul = torch.matmul
+int32 = torch.int32
+float32 = torch.float32
+concat = torch.cat
+stack = torch.stack
+abs = torch.abs
+numpy = lambda x, *args, **kwargs: x.detach().numpy(*args, **kwargs)
+size = lambda x, *args, **kwargs: x.numel(*args, **kwargs)
+reshape = lambda x, *args, **kwargs: x.reshape(*args, **kwargs)
+to = lambda x, *args, **kwargs: x.to(*args, **kwargs)
+reduce_sum = lambda x, *args, **kwargs: x.sum(*args, **kwargs)
+argmax = lambda x, *args, **kwargs: x.argmax(*args, **kwargs)
+astype = lambda x, *args, **kwargs: x.type(*args, **kwargs)
+transpose = lambda x, *args, **kwargs: x.t(*args, **kwargs)
 
