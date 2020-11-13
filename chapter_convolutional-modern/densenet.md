@@ -1,0 +1,380 @@
+# Yoğun Bağlı Ağlar (DenseNet)
+
+ResNet, derin ağlardaki işlevlerin nasıl parametrize edileceği görüşünü önemli ölçüde değiştirdi. *DenseNet* (yoğun kıvrımsal ağ) bir dereceye kadar bu :cite:`Huang.Liu.Van-Der-Maaten.ea.2017`'ün mantıksal uzantısıdır. Nasıl ulaşacağımızı anlamak için, matematiğe küçük bir dolambaçlı yoldan gidelim.
+
+## ResNet'ten DenseNet'e
+
+Fonksiyonlar için Taylor genişlemesini hatırlayın. $x = 0$ noktası için şu şekilde yazılabilir:
+
+$$f(x) = f(0) + f'(0) x + \frac{f''(0)}{2!}  x^2 + \frac{f'''(0)}{3!}  x^3 + \ldots.$$
+
+Önemli nokta, bir işlevi giderek daha yüksek sıralama terimlerine ayırmasıdır. Benzer bir damarda, ResNet fonksiyonları
+
+$$f(\mathbf{x}) = \mathbf{x} + g(\mathbf{x}).$$
+
+Yani, ResNet $f$'i basit bir doğrusal terime ve daha karmaşık doğrusal olmayan bir terime ayırır. İki terimin ötesinde bilgi yakalamak (zorunlu olarak eklemek değil) istersek ne olur? Bir çözüm DenseNet :cite:`Huang.Liu.Van-Der-Maaten.ea.2017` oldu.
+
+![The main difference between ResNet (left) and DenseNet (right) in cross-layer connections: use of addition and use of concatenation. ](../img/densenet-block.svg)
+:label:`fig_densenet_block`
+
+:numref:`fig_densenet_block`'te gösterildiği gibi, ResNet ve DenseNet arasındaki anahtar fark, ikinci durumda çıkışların eklenmeden*bitişik* ($[,]$ ile gösterilir) olmasıdır. Sonuç olarak, giderek daha karmaşık bir işlev dizisini uyguladıktan sonra $\mathbf{x}$'ten değerlerine bir eşleme gerçekleştiriyoruz:
+
+$$\mathbf{x} \to \left[
+\mathbf{x},
+f_1(\mathbf{x}),
+f_2([\mathbf{x}, f_1(\mathbf{x})]), f_3([\mathbf{x}, f_1(\mathbf{x}), f_2([\mathbf{x}, f_1(\mathbf{x})])]), \ldots\right].$$
+
+Sonunda, tüm bu işlevler tekrar özellik sayısını azaltmak için MLP'de birleştirilir. Uygulama açısından bu oldukça basittir: terimler eklemek yerine, bunları birleştiririz. DenseNet adı, değişkenler arasındaki bağımlılık grafiğinin oldukça yoğunlaştığı gerçeğinden kaynaklanmaktadır. Böyle bir zincirin son katmanı, önceki tüm katmanlara yoğun bir şekilde bağlanır. Yoğun bağlantılar :numref:`fig_densenet`'te gösterilmiştir.
+
+![Dense connections in DenseNet.](../img/densenet.svg)
+:label:`fig_densenet`
+
+DenseNet oluşturan ana bileşenler*yoğun bloklar* ve *geçiş katmanları*. Birincisi, girişlerin ve çıkışların nasıl birleştirildiğini tanımlarken, ikincisi kanal sayısını kontrol eder, böylece çok büyük değildir.
+
+## Yoğun Bloklar
+
+DenseNet, ResNet'in değiştirilmiş “toplu normalleştirme, aktivasyon ve evrim” yapısını kullanır (bkz. :numref:`sec_resnet` egzersiz). İlk olarak, bu evrişim blok yapısını uyguluyoruz.
+
+```{.python .input}
+from d2l import mxnet as d2l
+from mxnet import np, npx
+from mxnet.gluon import nn
+npx.set_np()
+
+def conv_block(num_channels):
+    blk = nn.Sequential()
+    blk.add(nn.BatchNorm(),
+            nn.Activation('relu'),
+            nn.Conv2D(num_channels, kernel_size=3, padding=1))
+    return blk
+```
+
+```{.python .input}
+#@tab pytorch
+from d2l import torch as d2l
+import torch
+from torch import nn
+
+def conv_block(input_channels, num_channels):
+    return nn.Sequential(
+        nn.BatchNorm2d(input_channels), nn.ReLU(),
+        nn.Conv2d(input_channels, num_channels, kernel_size=3, padding=1))
+```
+
+```{.python .input}
+#@tab tensorflow
+from d2l import tensorflow as d2l
+import tensorflow as tf
+
+class ConvBlock(tf.keras.layers.Layer):
+    def __init__(self, num_channels):
+        super(ConvBlock, self).__init__()
+        self.bn = tf.keras.layers.BatchNormalization()
+        self.relu = tf.keras.layers.ReLU()
+        self.conv = tf.keras.layers.Conv2D(
+            filters=num_channels, kernel_size=(3, 3), padding='same')
+
+        self.listLayers = [self.bn, self.relu, self.conv]
+
+    def call(self, x):
+        y = x
+        for layer in self.listLayers.layers:
+            y = layer(y)
+        y = tf.keras.layers.concatenate([x,y], axis=-1)
+        return y
+```
+
+*Yoğun blok*, her biri aynı sayıda çıkış kanalı kullanan birden fazla evrişim bloğundan oluşur. Bununla birlikte, ileri yayılımda, kanal boyutundaki her evrişim bloğunun giriş ve çıkışını birleştiririz.
+
+```{.python .input}
+class DenseBlock(nn.Block):
+    def __init__(self, num_convs, num_channels, **kwargs):
+        super().__init__(**kwargs)
+        self.net = nn.Sequential()
+        for _ in range(num_convs):
+            self.net.add(conv_block(num_channels))
+
+    def forward(self, X):
+        for blk in self.net:
+            Y = blk(X)
+            # Concatenate the input and output of each block on the channel
+            # dimension
+            X = np.concatenate((X, Y), axis=1)
+        return X
+```
+
+```{.python .input}
+#@tab pytorch
+class DenseBlock(nn.Module):
+    def __init__(self, num_convs, input_channels, num_channels):
+        super(DenseBlock, self).__init__()
+        layer = []
+        for i in range(num_convs):
+            layer.append(conv_block(
+                num_channels * i + input_channels, num_channels))
+        self.net = nn.Sequential(*layer)
+
+    def forward(self, X):
+        for blk in self.net:
+            Y = blk(X)
+            # Concatenate the input and output of each block on the channel
+            # dimension
+            X = torch.cat((X, Y), dim=1)
+        return X
+```
+
+```{.python .input}
+#@tab tensorflow
+class DenseBlock(tf.keras.layers.Layer):
+    def __init__(self, num_convs, num_channels):
+        super(DenseBlock, self).__init__()
+        self.listLayers = []
+        for _ in range(num_convs):
+            self.listLayers.append(ConvBlock(num_channels))
+
+    def call(self, x):
+        for layer in self.listLayers.layers:
+            x = layer(x)
+        return x
+```
+
+Aşağıdaki örnekte, 10 çıkış kanalından oluşan 2 evrişim bloğu içeren bir `DenseBlock` örneği tanımlıyoruz. 3 kanallı bir giriş kullanırken, $3+2\times 10=23$ kanallı bir çıkış alacağız. Evrişim blok kanallarının sayısı, giriş kanallarının sayısına göre çıkış kanallarının sayısındaki büyümeyi kontrol eder. Bu aynı zamanda *büyüme oranı* olarak da adlandırılır.
+
+```{.python .input}
+blk = DenseBlock(2, 10)
+blk.initialize()
+X = np.random.uniform(size=(4, 3, 8, 8))
+Y = blk(X)
+Y.shape
+```
+
+```{.python .input}
+#@tab pytorch
+blk = DenseBlock(2, 3, 10)
+X = torch.randn(4, 3, 8, 8)
+Y = blk(X)
+Y.shape
+```
+
+```{.python .input}
+#@tab tensorflow
+blk = DenseBlock(2, 10)
+X = tf.random.uniform((4, 8, 8, 3))
+Y = blk(X)
+Y.shape
+```
+
+## Geçiş Katmanları
+
+Her yoğun blok kanal sayısını artıracağından, çok fazla eklemek aşırı karmaşık bir modele yol açacaktır. Modelin karmaşıklığını kontrol etmek için bir *geçiş katmanı* kullanılır. $1\times 1$ kıvrımsal katmanı kullanarak kanal sayısını azaltır ve ortalama havuzlama tabakasının yüksekliğini ve genişliğini 2'lik bir adımla yarıya indirir ve modelin karmaşıklığını daha da azaltır.
+
+```{.python .input}
+def transition_block(num_channels):
+    blk = nn.Sequential()
+    blk.add(nn.BatchNorm(), nn.Activation('relu'),
+            nn.Conv2D(num_channels, kernel_size=1),
+            nn.AvgPool2D(pool_size=2, strides=2))
+    return blk
+```
+
+```{.python .input}
+#@tab pytorch
+def transition_block(input_channels, num_channels):
+    return nn.Sequential(
+        nn.BatchNorm2d(input_channels), nn.ReLU(),
+        nn.Conv2d(input_channels, num_channels, kernel_size=1),
+        nn.AvgPool2d(kernel_size=2, stride=2))
+```
+
+```{.python .input}
+#@tab tensorflow
+class TransitionBlock(tf.keras.layers.Layer):
+    def __init__(self, num_channels, **kwargs):
+        super(TransitionBlock, self).__init__(**kwargs)
+        self.batch_norm = tf.keras.layers.BatchNormalization()
+        self.relu = tf.keras.layers.ReLU()
+        self.conv = tf.keras.layers.Conv2D(num_channels, kernel_size=1)
+        self.avg_pool = tf.keras.layers.AvgPool2D(pool_size=2, strides=2)
+
+    def call(self, x):
+        x = self.batch_norm(x)
+        x = self.relu(x)
+        x = self.conv(x)
+        return self.avg_pool(x)
+```
+
+Önceki örnekte yoğun bloğun çıktısına 10 kanallı bir geçiş katmanı uygulayın. Bu, çıkış kanallarının sayısını 10'a düşürür ve yüksekliği ve genişliği yarıya indirir.
+
+```{.python .input}
+blk = transition_block(10)
+blk.initialize()
+blk(Y).shape
+```
+
+```{.python .input}
+#@tab pytorch
+blk = transition_block(23, 10)
+blk(Y).shape
+```
+
+```{.python .input}
+#@tab tensorflow
+blk = TransitionBlock(10)
+blk(Y).shape
+```
+
+## DenseNet Modeli
+
+Sonra, bir DenseNet modeli inşa edeceğiz. DenseNet, ilk olarak ResNet'te olduğu gibi aynı tek kıvrımsal katmanı ve maksimum havuzlama katmanını kullanır.
+
+```{.python .input}
+net = nn.Sequential()
+net.add(nn.Conv2D(64, kernel_size=7, strides=2, padding=3),
+        nn.BatchNorm(), nn.Activation('relu'),
+        nn.MaxPool2D(pool_size=3, strides=2, padding=1))
+```
+
+```{.python .input}
+#@tab pytorch
+b1 = nn.Sequential(
+    nn.Conv2d(1, 64, kernel_size=7, stride=2, padding=3),
+    nn.BatchNorm2d(64), nn.ReLU(),
+    nn.MaxPool2d(kernel_size=3, stride=2, padding=1))
+```
+
+```{.python .input}
+#@tab tensorflow
+def block_1():
+    return tf.keras.Sequential([
+       tf.keras.layers.Conv2D(64, kernel_size=7, strides=2, padding='same'),
+       tf.keras.layers.BatchNormalization(),
+       tf.keras.layers.ReLU(),
+       tf.keras.layers.MaxPool2D(pool_size=3, strides=2, padding='same')])
+```
+
+Daha sonra, ResNet'in kullandığı artık bloklardan oluşan dört modüle benzer, DenseNet dört yoğun blok kullanır. ResNet'e benzer şekilde, her yoğun blokta kullanılan kıvrımsal katmanların sayısını da ayarlayabiliriz. Burada, :numref:`sec_resnet`'teki ResNet-18 modeliyle uyumlu olarak 4 olarak ayarladık. Ayrıca, yoğun bloktaki kıvrımsal katmanlar için kanal sayısını (yani büyüme hızı) 32'ye ayarladık, böylece her yoğun bloğa 128 kanal eklenecektir.
+
+ResNet'te, her modül arasındaki yükseklik ve genişlik, 2 adımlı bir kalıntı bloğu ile azaltılır. Burada, yükseklik ve genişliği yarıya indirip kanal sayısını yarıya indirerek geçiş katmanını kullanıyoruz.
+
+```{.python .input}
+# `num_channels`: the current number of channels
+num_channels, growth_rate = 64, 32
+num_convs_in_dense_blocks = [4, 4, 4, 4]
+
+for i, num_convs in enumerate(num_convs_in_dense_blocks):
+    net.add(DenseBlock(num_convs, growth_rate))
+    # This is the number of output channels in the previous dense block
+    num_channels += num_convs * growth_rate
+    # A transition layer that halves the number of channels is added between
+    # the dense blocks
+    if i != len(num_convs_in_dense_blocks) - 1:
+        num_channels //= 2
+        net.add(transition_block(num_channels))
+```
+
+```{.python .input}
+#@tab pytorch
+# `num_channels`: the current number of channels
+num_channels, growth_rate = 64, 32
+num_convs_in_dense_blocks = [4, 4, 4, 4]
+blks = []
+for i, num_convs in enumerate(num_convs_in_dense_blocks):
+    blks.append(DenseBlock(num_convs, num_channels, growth_rate))
+    # This is the number of output channels in the previous dense block
+    num_channels += num_convs * growth_rate
+    # A transition layer that haves the number of channels is added between
+    # the dense blocks
+    if i != len(num_convs_in_dense_blocks) - 1:
+        blks.append(transition_block(num_channels, num_channels // 2))
+        num_channels = num_channels // 2
+```
+
+```{.python .input}
+#@tab tensorflow
+def block_2():
+    net = block_1()
+    # `num_channels`: the current number of channels
+    num_channels, growth_rate = 64, 32
+    num_convs_in_dense_blocks = [4, 4, 4, 4]
+
+    for i, num_convs in enumerate(num_convs_in_dense_blocks):
+        net.add(DenseBlock(num_convs, growth_rate))
+        # This is the number of output channels in the previous dense block
+        num_channels += num_convs * growth_rate
+        # A transition layer that haves the number of channels is added
+        # between the dense blocks
+        if i != len(num_convs_in_dense_blocks) - 1:
+            num_channels //= 2
+            net.add(TransitionBlock(num_channels))
+    return net
+```
+
+ResNet'e benzer şekilde, çıktıyı üretmek için küresel bir havuzlama katmanı ve tam bağlı bir katman bağlanır.
+
+```{.python .input}
+net.add(nn.BatchNorm(),
+        nn.Activation('relu'),
+        nn.GlobalAvgPool2D(),
+        nn.Dense(10))
+```
+
+```{.python .input}
+#@tab pytorch
+net = nn.Sequential(
+    b1, *blks,
+    nn.BatchNorm2d(num_channels), nn.ReLU(),
+    nn.AdaptiveMaxPool2d((1, 1)),
+    nn.Flatten(),
+    nn.Linear(num_channels, 10))
+```
+
+```{.python .input}
+#@tab tensorflow
+def net():
+    net = block_2()
+    net.add(tf.keras.layers.BatchNormalization())
+    net.add(tf.keras.layers.ReLU())
+    net.add(tf.keras.layers.GlobalAvgPool2D())
+    net.add(tf.keras.layers.Flatten())
+    net.add(tf.keras.layers.Dense(10))
+    return net
+```
+
+## Eğitim
+
+Burada daha derin bir ağ kullandığımızdan, bu bölümde, hesaplamayı basitleştirmek için giriş yüksekliğini ve genişliğini 224'ten 96'ya düşüreceğiz.
+
+```{.python .input}
+#@tab all
+lr, num_epochs, batch_size = 0.1, 10, 256
+train_iter, test_iter = d2l.load_data_fashion_mnist(batch_size, resize=96)
+d2l.train_ch6(net, train_iter, test_iter, num_epochs, lr)
+```
+
+## Özet
+
+* DenseNet, giriş ve çıkışların bir araya getirildiği ResNet'in aksine, çapraz katman bağlantıları açısından, kanal boyutundaki giriş ve çıkışları birleştirir.
+* DenseNet'i oluşturan ana bileşenler yoğun bloklar ve geçiş katmanlarıdır.
+* Kanal sayısını tekrar küçülten geçiş katmanları ekleyerek ağı oluştururken boyutsallığı kontrol altında tutmamız gerekir.
+
+## Egzersizler
+
+1. Neden geçiş katmanında maksimum havuzlama yerine ortalama havuzlama kullanıyoruz?
+1. DenseNet kağıdında belirtilen avantajlardan biri, model parametrelerinin ResNet'ten daha küçük olmasıdır. Neden bu dava?
+1. DenseNet'in eleştirildiği bir sorun, yüksek bellek tüketimi.
+    1. Dava gerçekten bu mu? Gerçek GPU bellek tüketimini görmek için giriş şeklini $224\times 224$ olarak değiştirmeye çalışın.
+    1. Bellek tüketimini azaltmanın alternatif bir yolunu düşünebiliyor musunuz? Çerçeveyi nasıl değiştirmeniz gerekir?
+1. DenseNet kağıt :cite:`Huang.Liu.Van-Der-Maaten.ea.2017` Tablo 1'de sunulan çeşitli DenseNet sürümlerini uygulayın.
+1. DenseNet fikrini uygulayarak MLP tabanlı bir model tasarlar. :numref:`sec_kaggle_house`'teki konut fiyatı tahmini görevine uygulayın.
+
+:begin_tab:`mxnet`
+[Discussions](https://discuss.d2l.ai/t/87)
+:end_tab:
+
+:begin_tab:`pytorch`
+[Discussions](https://discuss.d2l.ai/t/88)
+:end_tab:
+
+:begin_tab:`tensorflow`
+[Discussions](https://discuss.d2l.ai/t/331)
+:end_tab:
