@@ -1,13 +1,15 @@
-# Tam Bağlı Katmanlardan Konvolutions
+# Tam Bağlı Katmanlardan Evrişimlere
 :label:`sec_why-conv`
 
-Bugüne kadar, şimdiye kadar tartıştığımız modeller, tablo verileriyle uğraşırken uygun seçenekler olmaya devam ediyor. Tablo olarak, verilerin, özelliklere karşılık gelen örneklere ve sütunlara karşılık gelen satırlardan oluştuğunu kastediyoruz. Tabla şeklinde verilerle, aradığımız kalıpların özellikler arasında etkileşimler içerebileceğini tahmin edebiliriz, ancak özelliklerin nasıl etkileşime girdiğine ilişkin herhangi bir yapı*öncelikli* varsayamayız.
+Bugüne kadar, buraya kadar tartıştığımız modeller, çizelge halindeki (tabular) veriyle uğraşırken uygun seçenekler olmaya devam ediyor. Çizelge hali ile, verinin, özniteliklere karşılık gelen örneklerden ve sütunlara karşılık gelen satırlardan oluştuğunu kastediyoruz. Çizelge veriyle, aradığımız desenlerin öznitelikler arasında etkileşimler içerebileceğini tahmin edebiliriz, ancak özniteliklerin nasıl etkileşime girdiğine ilişkin herhangi bir *önsel* yapıyı varsayamayız.
 
-Bazen, zanaatkar mimarilerin yapımına rehberlik etmek için gerçekten bilgi eksikliğimiz vardır. Bu gibi durumlarda, bir MLP yapabileceğimizin en iyisi olabilir. Bununla birlikte, yüksek boyutlu algısal veriler için, bu tür yapısız ağlar kullanışsız hale gelebilir.
+Bazen, zanaatkar (işini bilen) mimarilerin yapımına rehberlik etmek için gerçekten bilgi eksikliğimiz olur. Bu gibi durumlarda, bir MLP yapabileceğimizin en iyisi olabilir. Bununla birlikte, yüksek boyutlu algısal veriler için, bu tür yapı içermeyen ağlar kullanışsız hale gelebilir.
 
-Örneğin, kedileri köpeklerden ayırma örneğimize dönelim. Veri toplamada kapsamlı bir iş yaptığımızı, tek megapiksel fotoğrafların açıklamalı bir veri kümesini topladığımızı söyleyin. Bu, ağa her girişin bir milyon boyuta sahip olduğu anlamına gelir. Bin gizli boyutta agresif bir azalma bile $10^6 \times 10^3 = 10^9$ parametreleri ile karakterize tam bağlı bir katman gerektirir. Çok sayıda GPU'umuz, dağıtılmış optimizasyon için bir yeteneğimiz ve olağanüstü bir sabır olmadıkça, bu ağın parametrelerini öğrenmek mümkün olmayabilir.
+Mesela, kedileri köpeklerden ayırma örneğimize dönelim. Veri toplamada kapsamlı bir iş yaptığımızı, bir megapiksel fotoğraflardan açıklamalı bir veri kümesi topladık diyelim. Bu, ağa giren her girdinin bir milyon boyuta sahip olduğu anlamına gelir. Bin gizli boyutluk saldırgan bir azalma bile $10^6 \times 10^3 = 10^9$ parametre ile karakterize edilen tam bağlı bir katman gerektirir. Çok sayıda GPU'umuz, dağıtılmış eniyileme için bir marifetimiz ve olağanüstü bir sabrımız olmadıkça, bu ağın parametrelerini öğrenmek mümkün olmayabilir.
 
-Dikkatli bir okuyucu, bir megapiksel çözünürlüğün gerekli olmayabileceği temelinde bu argümana itiraz edebilir. Bununla birlikte, yüz bin pikselden paçayı kurtarabilsek de, 1000 büyüklüğündeki gizli katmanımız, görüntülerin iyi temsillerini öğrenmek için gereken gizli birimlerin sayısını büyük ölçüde hafife alıyor, bu nedenle pratik bir sistem hala milyarlarca parametre gerektirecektir. Dahası, bir sınıflandırıcıyı bu kadar çok parametre uyarak öğrenmek muazzam bir veri kümesini toplamayı gerektirebilir. Ve bugün hem insanlar hem de bilgisayarlar kedileri köpeklerden oldukça iyi ayırt edebiliyor, görünüşte bu sezgilerle çelişiyor. Bunun nedeni, görüntülerin insanlar ve makine öğrenimi modelleri tarafından istismar edilebilecek zengin bir yapı sergilemesidir. Konvolüsyonel sinir ağları (CNN), makine öğreniminin doğal görüntülerdeki bilinen yapıların bazılarını kullanmak için benimsediği yaratıcı bir yoldur.
+Dikkatli bir okuyucu, bu argümana bir megapiksel çözünürlüğün gerekli olmayabileceği temelinde itiraz edebilir. Bununla birlikte, yüz bin pikselden paçayı kurtarabilsek de, 1000 büyüklüğündeki gizli katmanımız, imgelerin iyi temsillerini öğrenmek için gereken gizli birimlerin sayısını büyük ölçüde hafife alıyor, bu nedenle pratik bir sistem hala milyarlarca parametre gerektirecektir. Dahası, bir sınıflandırıcıyı bu kadar çok parametre oturtarak öğrenmek muazzam bir veri kümesini toplamayı gerektirebilir. Ayrıca, bugün hem insanlar hem de bilgisayarlar kedileri köpeklerden oldukça iyi ayırt edebiliyor, bu da görünüşte bu sezgilerle çelişiyor. Bunun nedeni, imgelerin insanlar ve makine öğrenmesi modelleri tarafından istismar edilebilecek zengin bir yapı sergilemesidir. Evrişimli sinir ağları (CNN), makine öğrenmesinin doğal görüntülerdeki bilinen yapıların bazılarını kullanmak için benimsediği yaratıcı bir yoldur.
+
+xxxxx
 
 ## Değişmezlik
 
@@ -103,7 +105,7 @@ Halen ele almamız gereken birçok operasyon var. Örneğin, tüm gizli temsille
 * CNNS, evrimsel katmanlar içeren özel bir sinir ağları ailesidir.
 * Giriş ve çıkıştaki kanallar, modelimizin her mekansal konumda bir görüntünün birden çok yönünü yakalamalarına olanak tanır.
 
-## Egzersizler
+## Alıştırmalar
 
 1. Evrişim çekirdeğinin boyutu $\Delta = 0$ olduğunu varsayalım. Bu durumda, evrişim çekirdeğinin her kanal kümesi için bağımsız olarak bir MLP uyguladığını gösterin.
 1. Çeviri değişmezliği neden iyi bir fikir olmayabilir?
@@ -112,4 +114,4 @@ Halen ele almamız gereken birçok operasyon var. Örneğin, tüm gizli temsille
 1. Kıvrımsal katmanların metin verileri için de geçerli olabileceğini düşünüyor musunuz? Neden ya da neden olmasın?
 1. Bunu kanıtla $f * g = g * f$.
 
-[Discussions](https://discuss.d2l.ai/t/64)
+[Tartışmalar](https://discuss.d2l.ai/t/64)

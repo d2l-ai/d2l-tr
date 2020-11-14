@@ -86,6 +86,8 @@ perturbation -> düzensizlik
 
 pipeline -> veri/komut işleme hattı
 
+pooling -> biriktirme
+
 posterior -> sonsal olasılık
 
 pretraining -> ön eğitim
@@ -116,6 +118,8 @@ scaler -> sayıl, skaler
 
 script -> betik
 
+semantic segmentation -> anlamsal bölünme
+
 sequence -> dizi
 
 serialization -> serileştirme
@@ -133,6 +137,8 @@ string -> dizgi
 stochastic -> rasgele
 
 symmetry -> bakışım
+
+tabular -> çizelge halindeki
 
 transpose -> devrik
 
