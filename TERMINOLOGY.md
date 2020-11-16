@@ -60,6 +60,8 @@ hybridization -> melezleştirme
 
 initialization -> ilkleme
 
+invariance -> değişmezlik
+
 kernel -> çekirdek
 
 lasso regression -> kement regresyon

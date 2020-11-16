@@ -2,7 +2,7 @@
 
 [![İnşa Durumu](http://ci.d2l.ai/job/d2l-tr/job/master/badge/icon)](http://ci.d2l.ai/job/d2l-tr/job/master/)
 
-[Kitap web sitesi](https://d2l.ai/) | [STAT 157 Dersi UC Berkeley, Bahar 2019](http://courses.d2l.ai/berkeley-stat-157/index.html) | [Translation Guide](https://docs.google.com/document/d/1jjDTVH_GsHImBb_RoE1siKXdmXN8I1Bd5QN--eSG8is)
+[Kitap web sitesi](https://d2l.ai/) | [STAT 157 Dersi UC Berkeley, Bahar 2019](http://courses.d2l.ai/berkeley-stat-157/index.html) | [Çeviri Rehberi](https://docs.google.com/document/d/1jjDTVH_GsHImBb_RoE1siKXdmXN8I1Bd5QN--eSG8is)
 
 <h5 align="center"><i>Derin öğrenmeyi anlamanın en iyi yolu yaparak öğrenmektir.</i></h5>
 
@@ -55,7 +55,7 @@ Bu kitabı yararlı buluyorsanız, lütfen bu depoya yıldız ekleyin (★) veya
 
 Bu açık kaynak kitap pedagojik önerilerden, yazım hatası düzeltmelerinden ve topluluk katılımcılarından gelen diğer iyileştirmelerden faydalanmıştır. Yardımınız kitabı herkes için daha iyi hale getirmede değerlidir.
 
-** Sayın [D2L katkıda bulunanlar](https://github.com/d2l-ai/d2l-tr/graphs/contributors), lütfen GitHub kimliğinizi ve adınızı d2lbook.en@gmail.com adresine e-posta ile gönderiniz ki adınız [teşekkürler](https://d2l.ai/chapter_preface/index.html#Acknowledgments) bölümünde çıksın. Teşekkürler.**
+** Sayın [D2L'ye katkıda bulunanlar](https://github.com/d2l-ai/d2l-tr/graphs/contributors), lütfen GitHub kimliğinizi ve adınızı d2lbook.en@gmail.com adresine e-posta ile gönderiniz ki adınız [teşekkürler](https://d2l.ai/chapter_preface/index.html#Acknowledgments) bölümünde çıksın. Teşekkürler.**
 
 
 

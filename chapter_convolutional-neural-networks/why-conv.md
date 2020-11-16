@@ -9,22 +9,20 @@ Mesela, kedileri köpeklerden ayırma örneğimize dönelim. Veri toplamada kaps
 
 Dikkatli bir okuyucu, bu argümana bir megapiksel çözünürlüğün gerekli olmayabileceği temelinde itiraz edebilir. Bununla birlikte, yüz bin pikselden paçayı kurtarabilsek de, 1000 büyüklüğündeki gizli katmanımız, imgelerin iyi temsillerini öğrenmek için gereken gizli birimlerin sayısını büyük ölçüde hafife alıyor, bu nedenle pratik bir sistem hala milyarlarca parametre gerektirecektir. Dahası, bir sınıflandırıcıyı bu kadar çok parametre oturtarak öğrenmek muazzam bir veri kümesini toplamayı gerektirebilir. Ayrıca, bugün hem insanlar hem de bilgisayarlar kedileri köpeklerden oldukça iyi ayırt edebiliyor, bu da görünüşte bu sezgilerle çelişiyor. Bunun nedeni, imgelerin insanlar ve makine öğrenmesi modelleri tarafından istismar edilebilecek zengin bir yapı sergilemesidir. Evrişimli sinir ağları (CNN), makine öğrenmesinin doğal görüntülerdeki bilinen yapıların bazılarını kullanmak için benimsediği yaratıcı bir yoldur.
 
-xxxxx
-
 ## Değişmezlik
 
-Görüntüdeki bir nesneyi algılamak istediğinizi düşünün. Nesneleri tanımak için kullandığımız yöntemin görüntüdeki nesnenin kesin konumu ile aşırı derecede ilgili olmaması mantıklı görünüyor. İdeal olarak, sistemimiz bu bilgiyi kullanmalıdır. Domuzlar genellikle uçmaz ve uçaklar genellikle yüzmez. Yine de, görüntünün en üstünde görünen bir domuzun olduğunu fark etmeliyiz. Burada “Waldo Nerede” çocuk oyunundan biraz ilham alabiliriz (:numref:`img_waldo`'te tasvir edilmiştir). Oyun faaliyetleri ile patlama kaotik sahneleri bir dizi oluşur. Waldo her birinde bir yerde ortaya çıkıyor, tipik olarak alışılmadık bir yerde gizleniyor. Okuyucunun amacı onu bulmak. Karakteristik kıyafetine rağmen, dikkat dağıtıcı çok sayıda nedeniyle şaşırtıcı derecede zor olabilir. Ancak, *Waldo'un neye benzediği*, Waldo'un nerede bulunduğuna bağlı değildir. Görüntüyü her yama için bir puan atayabilen bir Waldo dedektörü ile süpürebiliriz ve bu da yamanın Waldo içerme olasılığını gösterir. CNN'ler bu fikrini sistematize ederek, daha az parametre ile yararlı gösterimleri öğrenmek için kullanırlar.
+İmgedeki bir nesneyi tespit etmek istediğinizi düşünün. Nesneleri tanımak için kullandığımız yöntemin görüntüdeki nesnenin kesin konumu ile aşırı derecede ilgili olmaması akla yatkın görünüyor. İdeal olarak, sistemimiz bu bilgiyi kullanmalıdır. Domuzlar genellikle uçmaz ve uçaklar genellikle yüzmez. Yine de, imgenin en üstünde görünen bir domuzu gene de fark etmeliyiz. Burada “Waldo Nerede” isimli çocuk oyunundan biraz ilham alabiliriz (:numref:`img_waldo`'te tasvir edilmiştir). Oyun kaotik sahneler ile dolu bir dizi faaliyetten oluşur. Waldo her birinde bir yerlerden ortaya çıkıyor, tipik olarakta alışılmadık bir yerde gizleniyor. Okuyucunun amacı onu bulmaktır. Karakteristik kıyafetine rağmen, dikkat dağıtıcı çok sayıda unsur nedeniyle şaşırtıcı derecede zor olabilir. Ancak, *Waldo'nun neye benzediği*, Waldo'nun nerede bulunduğuna bağlı değildir. İmgeyi her yama için bir puan atayabilen bir Waldo dedektörü ile tarayabiliriz ve bu da yamanın Waldo içerme olabilirliliğini gösterir. CNN'ler bu *konumsal değişmezlik* fikrini sistemleştirerek, daha az parametre ile yararlı gösterimleri öğrenmek için kullanırlar.
 
-![An image of the "Where's Waldo" game.](../img/where-wally-walker-books.jpg)
+!["Waldo Nerede" oyundan bir resim.](../img/where-wally-walker-books.jpg)
 :width:`400px`
 :label:`img_waldo`
 
-Bilgisayar görüşü için uygun bir sinir ağı mimarisi tasarımımızı yönlendirmek için birkaç desiderata numaralandırarak bu sezgileri daha somut hale getirebiliriz:
+Bilgisayarla görmede uygun bir sinir ağı mimarisi tasarımımıza rehberlik etmesi için birkaç arzulanan şeyi numaralandırarak bu sezgileri daha somut hale getirebiliriz:
 
-1. En erken katmanlarda, ağımız görüntüde nerede göründüğüne bakılmaksızın aynı yamaya benzer şekilde yanıt vermelidir. Bu ilke*çeviri değişmezi* olarak adlandırılır.
-1. Ağın en erken katmanları, uzak bölgelerdeki görüntünün içeriğine bakılmaksızın yerel bölgelere odaklanmalıdır. Bu, *yerlik* ilkesidir. Sonuç olarak, bu yerel temsiller tüm görüntü düzeyinde tahminler yapmak için toplanabilir.
+1. En erken katmanlarda, ağımız görüntüde nerede göründüğüne bakılmaksızın aynı yamaya benzer şekilde yanıt vermelidir. Bu ilke *çeviri değişmezliği* olarak adlandırılır.
+1. Ağın en erken katmanları, uzak bölgelerdeki görüntünün içeriğine bakılmaksızın yerel bölgelere odaklanmalıdır. Bu, *yerellik* ilkesidir. Sonuç olarak, bu yerel temsiller tüm görüntü düzeyinde tahminler yapmak için toplanabilir.
 
-Bunun nasıl matematiğe dönüştüğünü görelim.
+Bunun matematik ile nasıl ifade edildiğini görelim.
 
 ## MLP'yi Kısıtlama
 
@@ -112,6 +110,6 @@ Halen ele almamız gereken birçok operasyon var. Örneğin, tüm gizli temsille
 1. Bir görüntünün sınırındaki piksel konumlarına karşılık gelen gizli temsillerin nasıl tedavi edileceğine karar verirken hangi sorunlarla uğraşmalıyız?
 1. Ses için benzer bir konvolüsyonel katmanı tanımlayın.
 1. Kıvrımsal katmanların metin verileri için de geçerli olabileceğini düşünüyor musunuz? Neden ya da neden olmasın?
-1. Bunu kanıtla $f * g = g * f$.
+1. Bunu kanıtlayın: $f * g = g * f$.
 
 [Tartışmalar](https://discuss.d2l.ai/t/64)
