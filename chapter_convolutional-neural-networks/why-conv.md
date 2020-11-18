@@ -99,7 +99,7 @@ Halen ele almamız gereken birçok işlem var. Örneğin, tüm gizli temsilleri 
 * Yerellik, karşılık gelen gizli temsilleri hesaplamak için yalnızca küçük bir piksel komşuluğunun kullanılacağı anlamına gelir.
 * İmge işlemede, evrişimli katmanlar genellikle tam bağlı katmanlardan çok daha az parametre gerektirir.
 * CNN'ler, evrişimli katmanlar içeren özel bir sinir ağları ailesidir.
-* Girdi ve çıktıtaki kanallar, modelimizin bir görüntünün her uzaysal konumda birden çok yönünü yakalamasına olanak tanır.
+* Girdi ve çıktıdaki kanallar, modelimizin bir görüntünün her uzaysal konumda birden çok yönünü yakalamasına olanak tanır.
 
 ## Alıştırmalar
 

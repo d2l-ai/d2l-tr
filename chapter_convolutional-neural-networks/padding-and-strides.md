@@ -1,4 +1,4 @@
-# Dolgu ve Stride
+# Dolgu ve Uzun Adımlar
 :label:`sec_padding`
 
 :numref:`fig_correlation`'ün önceki örneğinde, girişimiz hem yükseklik hem de 3 genişliğine sahipti ve evrişim çekirdeğimiz 2'nin hem yüksekliği hem de genişliği vardı, bu da $2\times2$ boyutuyla bir çıkış gösterimi sağladı. :numref:`sec_conv_layer`'te genelleştirdiğimiz gibi, giriş şeklinin $n_h\times n_w$ olduğunu ve evrişim çekirdeğinin şeklinin $k_h\times k_w$ olduğunu varsayarsak, çıkış şekli $(n_h-k_h+1) \times (n_w-k_w+1)$ olacaktır. Bu nedenle, konvolusyonel tabakanın çıkış şekli, girdinin şekli ve konvolüsyon çekirdeğinin şekli ile belirlenir.
@@ -193,7 +193,7 @@ Kısalık uğruna, giriş yüksekliğinin ve genişliğinin her iki tarafındaki
 * Ayatım, çıktının çözünürlüğünü azaltabilir, örneğin çıkışın yüksekliğini ve genişliğini, girişin yüksekliğinin ve genişliğinin yalnızca $1/n$'ya düşürür ($n$, $1$'ten büyük bir tamsayıdır).
 * Dolgu ve adım, verilerin boyutsallığını etkin bir şekilde ayarlamak için kullanılabilir.
 
-## Egzersizler
+## Alıştırmalar
 
 1. Bu bölümdeki son örnek için, deneysel sonuçla tutarlı olup olmadığını görmek için çıktı şeklini hesaplamak için matematik kullanın.
 1. Bu bölümdeki deneylerde diğer dolgu ve adım kombinasyonlarını deneyin.
@@ -201,13 +201,13 @@ Kısalık uğruna, giriş yüksekliğinin ve genişliğinin her iki tarafındaki
 1. 1'den büyük bir adımın hesaplamalı faydaları nelerdir?
 
 :begin_tab:`mxnet`
-[Discussions](https://discuss.d2l.ai/t/67)
+[Tartışmalar](https://discuss.d2l.ai/t/67)
 :end_tab:
 
 :begin_tab:`pytorch`
-[Discussions](https://discuss.d2l.ai/t/68)
+[Tartışmalar](https://discuss.d2l.ai/t/68)
 :end_tab:
 
 :begin_tab:`tensorflow`
-[Discussions](https://discuss.d2l.ai/t/272)
+[Tartışmalar](https://discuss.d2l.ai/t/272)
 :end_tab:
