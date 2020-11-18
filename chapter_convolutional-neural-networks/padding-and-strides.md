@@ -1,13 +1,13 @@
 # Dolgu ve Uzun Adımlar
 :label:`sec_padding`
 
-:numref:`fig_correlation`'ün önceki örneğinde, girişimiz hem yükseklik hem de 3 genişliğine sahipti ve evrişim çekirdeğimiz 2'nin hem yüksekliği hem de genişliği vardı, bu da $2\times2$ boyutuyla bir çıkış gösterimi sağladı. :numref:`sec_conv_layer`'te genelleştirdiğimiz gibi, giriş şeklinin $n_h\times n_w$ olduğunu ve evrişim çekirdeğinin şeklinin $k_h\times k_w$ olduğunu varsayarsak, çıkış şekli $(n_h-k_h+1) \times (n_w-k_w+1)$ olacaktır. Bu nedenle, konvolusyonel tabakanın çıkış şekli, girdinin şekli ve konvolüsyon çekirdeğinin şekli ile belirlenir.
+:numref:`fig_correlation`'ün önceki örneğinde, girdimizin hem yüksekliği hem de genişliği 3 idi ve evrişim çekirdeğimizin hem yüksekliği hem de genişliği 2'idi, bu da $2\times2$ boyutlu bir çıktı gösterimi sağladı. :numref:`sec_conv_layer`'te genelleştirdiğimiz gibi, girdinin şeklinin $n_h\times n_w$ olduğunu ve evrişim çekirdeğinin şeklinin $k_h\times k_w$ olduğunu varsayarsak, çıktının şekli $(n_h-k_h+1) \times (n_w-k_w+1)$ olacaktır. Bu nedenle, evrişimli tabakanın çıktı şekli, girdinin şekli ve evrişim çekirdeğinin şekli ile belirlenir.
 
-Birkaç durumda, çıktının boyutunu etkileyen dolgu ve çizgili kıvrımlar da dahil olmak üzere teknikleri dahil ediyoruz. Motivasyon olarak, çekirdeklerin genellikle $1$'den daha büyük genişlik ve yüksekliğe sahip olduğundan, birçok ardışık kıvrımları uyguladıktan sonra, girişimizden çok daha küçük olan çıkışlarla sarılma eğilimindeyiz. $240 \times 240$ piksel görüntüyle başlarsak, $10$ katmanları $5 \times 5$ kıvrımların $200 \times 200$ piksele indirir, görüntünün 30$\ %$ 'ını keser ve orijinal görüntünün sınırları hakkında ilginç bilgileri yok eder.
-*Dolgu*, bu sorunu ele almak için en popüler araçtır.
+Birkaç durumda, çıktının boyutunu etkileyen dolguyu ve uzun adımlı evrişimleri de bazı içeren teknikleri işe dahil ediyoruz. Motivasyon olarak, çekirdeklerin genellikle $1$'den daha büyük genişlik ve yüksekliğe sahip olduğuna dikkat edin, birçok ardışık evrişim uyguladıktan sonra, girdimizden çok daha küçük olan çıktılarla sarılma eğilimindeyiz. $240 \times 240$ piksel imgeyle başlarsak, $10$ tane $5 \times 5$ evrişim katmanı imgeyi $200 \times 200$ piksele indirir, imgenin $\% 30$'unu keserek atar ve orijinal imgenin sınırları hakkında ilginç bilgileri yok eder. *Dolgu*, bu sorunu ele almada en popüler araçtır.
 
-Diğer durumlarda, boyutsallığı büyük ölçüde azaltmak isteyebiliriz, örneğin orijinal giriş çözünürlüğünün kullanışsız olduğunu görürsek.
-*Çizgili kıvrımlar*, bu örneklerde yardımcı olabilecek popüler bir tekniktir.
+Diğer durumlarda, boyutsallığı büyük ölçüde azaltmak isteyebiliriz, örneğin orijinal giriş çözünürlüğünün kullanışsız olduğunu görürsek. *Çizgili kıvrımlar*, bu örneklerde yardımcı olabilecek popüler bir tekniktir.
+
+xxxx
 
 ## Dolgu
 
