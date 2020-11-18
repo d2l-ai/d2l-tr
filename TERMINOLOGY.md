@@ -38,7 +38,15 @@ dropout ->  hattan düşme
 
 early stopping -> erken durdurma
 
+elementwise -> eleman yönlü
+
 environment -> ortam
+
+feature -> öznitelik
+
+floating number -> kayan virgüllü sayılar (gerçel sayı gösterimi)
+
+fully-connected -> tam-bağlı
 
 generative adversarial networks -> çekişmeli üretici ağlar
 
@@ -47,12 +55,6 @@ gpu -> grafik işleme birimi
 gradient -> gradyan, eğim
 
 graph -> çizge
-
-feature -> öznitelik
-
-floating number -> kayan virgüllü sayılar (gerçel sayı gösterimi)
-
-fully-connected -> tam-bağlı
 
 holdout -> harici tutulan
 
@@ -82,6 +84,8 @@ optimizer - > eniyileyici
 
 padding -> dolgu
 
+parse -> ayrıştırmak
+
 permutation -> devrişim
 
 perturbation -> düzensizlik
@@ -95,6 +99,8 @@ posterior -> sonsal olasılık
 pretraining -> ön eğitim
 
 prior -> önsel olasılık
+
+receptive field -> alım alanı
 
 recurrent neural network -> yinelemeli sinir ağı
 
