@@ -52,62 +52,62 @@ $$[\mathbf{H}]_{i, j} = u + \sum_{a = -\Delta}^{\Delta} \sum_{b = -\Delta}^{\Del
 
 Özetle, :eqref:`eq_conv-layer`'ün bir *evrişimli katman* olduğuna dikkat edin. *Evrişimli sinir ağları* (CNN), evrişimli katmanlar içeren özel bir sinir ağları ailesidir. Derin öğrenme araştırma topluluğunda $\mathbf{V}$, bir *evrişim çekirdeği*, bir *filtre* veya genellikle katmanın öğrenilebilir parametreler olan *ağırlıkları* olarak adlandırılır. Yerel bölge küçük olduğunda, tam bağlı bir ağ ile karşılaştırıldığında fark çarpıcı olabilir. Daha önce, bir imge işleme ağındaki tek bir katmanı temsil etmek için milyarlarca parametre gerekirken şimdi genellikle girdilerin veya gizli temsillerin boyutsallığını değiştirmeden sadece birkaç yüz taneye ihtiyacımız var. Parametrelerdeki bu ciddi azalma için ödenen bedel, özelliklerimizin artık çeviri değişmez olması ve katmanımızın her gizli etkinleştirmenin değerine karar verirken yalnızca yerel bilgileri içerebilmesidir. Tüm öğrenme tümevarımsal önyargının uygulmaya koymasına  bağlıdır. Bu önyargı gerçekle aynı yönde olduğunda, görünmeyen verilere iyi genelleyen örneklem-verimli modeller elde ederiz. Ancak elbette, bu önyargılar gerçekle aynı yönde değilse, örneğin, imgelerin çeviri değişmez olmadığı ortaya çıkarsa, modellerimiz eğitim verilerimize oturması için bile debelenmesi gerekir.
 
-## Konvolutions
+## Evrişimler
 
-Daha ileri gitmeden önce, yukarıdaki işlemin neden bir evrim olarak adlandırıldığını kısaca gözden geçirmeliyiz. Matematikte, iki fonksiyon arasındaki *kıvrım*, diyelim ki $f, g: \mathbb{R}^d \to \mathbb{R}$
+Daha ilerlemeden önce, yukarıdaki işlemin neden bir evrişim (birlikte evrimleşme) olarak adlandırıldığını kısaca gözden geçirmeliyiz. Matematikte, iki fonksiyon arasındaki *evrişim*, mesela $f, g: \mathbb{R}^d \to \mathbb{R}$ için, şöyle tanımlanır:
 
 $$(f * g)(\mathbf{x}) = \int f(\mathbf{z}) g(\mathbf{x}-\mathbf{z}) d\mathbf{z}.$$
 
-Yani, bir işlev “çevrilmiş” ve $\mathbf{x}$ ile kaydırıldığında $f$ ve $g$ arasındaki örtüşmeyi ölçüyoruz. Ayrık nesnelere sahip olduğumuzda, integral bir toplama dönüşür. Örneğin, $\mathbb{Z}$ üzerinde çalışan indeksi olan kare toplanabilir sonsuz boyutlu vektörler kümesindeki vektörler için aşağıdaki tanımı elde ederiz:
+Yani, bir işlev “çevrilmiş” ve $\mathbf{x}$ ile kaydırılmış olduğunda $f$ ve $g$ arasındaki örtüşmeyi ölçüyoruz. Ayrık nesnelere sahip olduğumuzda, integral bir toplama dönüşür. Örneğin, $\mathbb{Z}$ üzerinde çalışan indisi olan kare toplanabilir sonsuz boyutlu vektörler kümesinden vektörler için aşağıdaki tanımı elde ederiz:
 
 $$(f * g)(i) = \sum_a f(a) g(i-a).$$
 
-İki boyutlu tensörler için, sırasıyla $f$ için $(a, b)$ ve $(i-a, j-b)$ için $(i-a, j-b)$ endeksleri ile karşılık gelen bir toplama sahibiz:
+İki boyutlu tensörler için, sırasıyla $f$ için $(a, b)$ ve $g$ için $(i-a, j-b)$ indisleri ile karşılık gelen bir toplama işlemine sahibiz:
 
 $$(f * g)(i, j) = \sum_a\sum_b f(a, b) g(i-a, j-b).$$
 :eqlabel:`eq_2d-conv-discrete`
 
-Bu, :eqref:`eq_conv-layer`'e benzer, büyük bir farkla. Bunun yerine $(i+a, j+b)$ kullanmak yerine farkı kullanıyoruz. Yine de, bu ayrımın çoğunlukla kozmetik olduğunu unutmayın çünkü :eqref:`eq_conv-layer` ve :eqref:`eq_2d-conv-discrete` arasındaki gösterimi her zaman eşleştirebiliriz. :eqref:`eq_conv-layer`'teki orijinal tanımımız, bir *çapraz korelasyonu daha doğru bir şekilde tanımlıyor. Aşağıdaki bölümde buna geri döneceğiz.
+Bu, :eqref:`eq_conv-layer`'e benzer, ama büyük bir farkla. $(i+a, j+b)$ kullanmak yerine farkı kullanıyoruz. Yine de, bu ayrımın çoğunlukla gösterişsel olduğunu unutmayın, çünkü :eqref:`eq_conv-layer` ve :eqref:`eq_2d-conv-discrete` arasındaki gösterimi her zaman eşleştirebiliriz. :eqref:`eq_conv-layer`'teki orijinal tanımımız, daha doğru bir şekilde *çapraz korelasyonu* tanımlıyor. Aşağıdaki bölümde buna geri döneceğiz.
 
-## “Waldo Nerede” Revisited
+## “Waldo Nerede”ye Tekrar Bakış
 
-Waldo dedektörümüze dönersek, bunun neye benzediğini görelim. Konvolusyonel tabaka, belirli bir boyuttaki pencereleri seçer ve :numref:`fig_waldo_mask`'te gösterildiği gibi $\mathsf{V}$'e göre yoğunlukları ağırlaştırır. Bir model öğrenmeyi hedefleyebiliriz, böylece “waldoness” en yüksek nerede olursa olsun, gizli katman temsillerinde bir zirve bulmalıyız.
+Waldo dedektörümüze dönersek, bunun neye benzediğini görelim. Evrişimli tabaka, belirli bir boyuttaki pencereleri seçer ve :numref:`fig_waldo_mask`'te gösterildiği gibi $\mathsf{V}$'e göre yoğunlukları ağırlıklandırır. Bir model öğrenmeyi hedefleyebiliriz, böylece “Waldoluk” en yüksek nerede olursa olsun, gizli katman temsillerinde bir yüksek değer bulmalıyız.
 
-![Detect Waldo.](../img/waldo-mask.jpg)
+![Waldo'yu bul.](../img/waldo-mask.jpg)
 :width:`400px`
 :label:`fig_waldo_mask`
 
 ### Kanallar
 :label:`subsec_why-conv-channels`
 
-Bu yaklaşımla ilgili tek bir sorun var. Şimdiye kadar, görüntülerin 3 kanaldan oluştuğunu görmezden geldik: kırmızı, yeşil ve mavi. Gerçekte, görüntüler iki boyutlu nesneler değil, yükseklik, genişlik ve kanal ile karakterize edilen üçüncü dereceden tensörlerdir, örn. şekil $1024 \times 1024 \times 3$ piksel. Bu eksenlerin ilk ikisi mekansal ilişkileri ilgilendirirken, üçüncüsü her piksel konumuna çok boyutlu bir temsil atama olarak kabul edilebilir. Biz böylece endeksi $\mathsf{X}$ olarak $[\mathsf{X}]_{i, j, k}$. Konvolüsyonel filtre buna göre adapte olmak zorundadır. $[\mathbf{V}]_{a,b}$ yerine artık $[\mathsf{V}]_{a,b,c}$ var.
+Bu yaklaşımla ilgili tek bir sorun var. Şimdiye kadar, imgelerin 3 kanaldan oluştuğunu görmezden geldik: Kırmızı, yeşil ve mavi. Gerçekte, imgeler iki boyutlu nesneler değil, yükseklik, genişlik ve kanal ile karakterize edilen üçüncü dereceden tensörlerdir, örn.  $1024 \times 1024 \times 3$ şekilli pikseller. Bu eksenlerin ilk ikisi konumsal ilişkileri ilgilendirirken, üçüncüsü her piksel konumuna çok boyutlu bir temsil atama olarak kabul edilebilir. Böylece, $\mathsf{X}$'i $[\mathsf{X}]_{i, j, k}$ olarak indisleriz. Evrişimli filtre buna göre uyarlanmak zorundadır. $[\mathbf{V}]_{a,b}$ yerine artık $[\mathsf{V}]_{a,b,c}$ var.
 
-Dahası, girdimiz üçüncü mertebeden bir tensörden oluştuğunda, gizli temsillerimizi üçüncü mertebeden tensörler $\mathsf{H}$ olarak benzer şekilde formüle etmek iyi bir fikir olduğu ortaya çıkıyor. Başka bir deyişle, her mekansal konuma karşılık gelen tek bir gizli gösterime sahip olmaktan ziyade, her mekansal konuma karşılık gelen gizli temsillerin tüm vektörünü istiyoruz. Gizli temsilleri, birbirinin üzerine yığılmış bir dizi iki boyutlu ızgarayı içeren olarak düşünebiliriz. Girdilerde olduğu gibi, bunlara bazen *kanallar* denir. Bunlara bazen *özellik haritaları* olarak da adlandırılırlar, çünkü her biri sonraki katmana uzamlaştırılmış bir öğrenilen özellik kümesi sağlar. Sezgisel olarak, girişlere daha yakın olan alt katmanlarda, bazı kanalların kenarları tanımak için uzmanlaşabileceğini, diğerlerinin dokuları tanıyabileceğini hayal edebilirsiniz.
+Dahası, girdimiz üçüncü mertebeden bir tensörden oluştuğu gibi, gizli temsillerimizi de benzer şekilde üçüncü mertebeden tensörler $\mathsf{H}$ olarak formüle etmenin iyi bir fikir olduğu ortaya çıkıyor. Başka bir deyişle, her uzaysal konuma karşılık gelen tek bir gizli gösterime sahip olmaktan ziyade, her uzaysal konuma karşılık gelen gizli temsillerin tüm vektörünü istiyoruz. Gizli temsilleri, birbirinin üzerine yığılmış bir dizi iki boyutlu ızgaralar topluluğu olarak düşünebiliriz. Girdilerde olduğu gibi, bunlara bazen *kanallar* denir. Bunlara bazen *öznitelik eşlemeleri* de denir, çünkü her biri sonraki katmana uzamlaştırılmış bir öğrenilmiş öznitelikler kümesi sağlar. Sezgisel olarak, girdilere daha yakın olan alt katmanlarda, bazı kanalların kenarları tanımak için uzmanlaşabileceğini, diğerlerinin de dokuları tanıyabileceğini tasavvur edebilirsiniz.
 
-Her iki girişte ($\mathsf{X}$) ve gizli temsillerde ($\mathsf{H}$) birden fazla kanalı desteklemek için $\mathsf{V}$:$[\mathsf{V}]_{a, b, c, d}$'ye dördüncü bir koordinat ekleyebiliriz. Sahip olduğumuz her şeyi bir araya getirmek:
+Hem girdide ($\mathsf{X}$) hem de gizli temsillerde ($\mathsf{H}$) birden fazla kanalı desteklemek için $\mathsf{V}$:$[\mathsf{V}]_{a, b, c, d}$'ye dördüncü bir koordinat ekleyebiliriz. Sahip olduğumuz her şeyi bir araya getirirsek:
 
 $$[\mathsf{H}]_{i,j,d} = \sum_{a = -\Delta}^{\Delta} \sum_{b = -\Delta}^{\Delta} \sum_c [\mathsf{V}]_{a, b, c, d} [\mathsf{X}]_{i+a, j+b, c},$$
 :eqlabel:`eq_conv-layer-channels`
 
-burada $d$ gizli temsillerde çıkış kanalları dizinleri $\mathsf{H}$. Sonraki konvolüsyonel tabaka, giriş olarak üçüncü mertebeden bir tensör olan $\mathsf{H}$ almaya devam edecektir. Daha genel olarak, :eqref:`eq_conv-layer-channels`, birden fazla kanal için bir evrimsel tabakanın tanımıdır; burada $\mathsf{V}$, katmanın bir çekirdeği veya filtresidir.
+burada $d$, $\mathsf{H}$ gizli temsillerinde çıktı kanalları dizinler. Sonraki evrişimli tabaka, girdi olarak üçüncü mertebeden bir tensör olan $\mathsf{H}$'i almaya devam edecektir. Daha genel olarak, :eqref:`eq_conv-layer-channels`, birden fazla kanal için bir evrişimli tabakanın tanımıdır; burada $\mathsf{V}$, katmanın bir çekirdeği veya filtresidir.
 
-Halen ele almamız gereken birçok operasyon var. Örneğin, tüm gizli temsilleri tek bir çıktıda nasıl birleştireceğimizi bulmamız gerekiyor, örn. resimde herhangi bir yerde* var mı? Ayrıca işleri verimli bir şekilde nasıl hesaplayacağımıza, birden fazla katmanı nasıl birleştireceğimize, uygun etkinleştirme işlevlerine ve pratikte etkili ağlar oluşturmak için makul tasarım seçimlerinin nasıl yapılacağına karar vermeliyiz. Bölümün geri kalanında bu sorunlara dönüyoruz.
+Halen ele almamız gereken birçok işlem var. Örneğin, tüm gizli temsilleri tek bir çıktıda nasıl birleştireceğimizi bulmamız gerekiyor, örn. resimde *herhangi bir yerde* Waldo var mı? Ayrıca işleri verimli bir şekilde nasıl hesaplayacağımıza, birden fazla katmanı nasıl birleştireceğimize, uygun etkinleştirme işlevlerine ve pratikte etkili ağlar oluşturmak için makul tasarım seçimlerinin nasıl yapılacağına karar vermeliyiz. Bölümün geri kalanında bu sorunlara eğiliyoruz.
 
 ## Özet
 
-* Görüntülerdeki çeviri değişmezliği, bir görüntünün tüm yamalarının aynı şekilde işleneceğini ima eder.
-* Yerellik, karşılık gelen gizli temsilleri hesaplamak için yalnızca küçük bir piksel mahallesinin kullanılacağı anlamına gelir.
-* Görüntü işlemede, kıvrımsal katmanlar genellikle tam bağlı katmanlardan çok daha az parametre gerektirir.
-* CNNS, evrimsel katmanlar içeren özel bir sinir ağları ailesidir.
-* Giriş ve çıkıştaki kanallar, modelimizin her mekansal konumda bir görüntünün birden çok yönünü yakalamalarına olanak tanır.
+* İmgelerdeki çeviri değişmezliği, bir imgenin tüm yamalarının aynı şekilde işleneceğini ima eder.
+* Yerellik, karşılık gelen gizli temsilleri hesaplamak için yalnızca küçük bir piksel komşuluğunun kullanılacağı anlamına gelir.
+* İmge işlemede, evrişimli katmanlar genellikle tam bağlı katmanlardan çok daha az parametre gerektirir.
+* CNN'ler, evrişimli katmanlar içeren özel bir sinir ağları ailesidir.
+* Girdi ve çıktıtaki kanallar, modelimizin bir görüntünün her uzaysal konumda birden çok yönünü yakalamasına olanak tanır.
 
 ## Alıştırmalar
 
 1. Evrişim çekirdeğinin boyutu $\Delta = 0$ olduğunu varsayalım. Bu durumda, evrişim çekirdeğinin her kanal kümesi için bağımsız olarak bir MLP uyguladığını gösterin.
 1. Çeviri değişmezliği neden iyi bir fikir olmayabilir?
-1. Bir görüntünün sınırındaki piksel konumlarına karşılık gelen gizli temsillerin nasıl tedavi edileceğine karar verirken hangi sorunlarla uğraşmalıyız?
-1. Ses için benzer bir konvolüsyonel katmanı tanımlayın.
-1. Kıvrımsal katmanların metin verileri için de geçerli olabileceğini düşünüyor musunuz? Neden ya da neden olmasın?
+1. Bir imgenin sınırındaki piksel konumlarına karşılık gelen gizli temsillerine nasıl muamele edileceğine karar verirken hangi sorunlarla baş etmeliyiz?
+1. Ses için benzer bir evrişimli katman tanımlayın.
+1. Evrişimli katmanların metin verileri için de geçerli olabileceğini düşünüyor musunuz? Neden ya da neden olmasın?
 1. Bunu kanıtlayın: $f * g = g * f$.
 
 [Tartışmalar](https://discuss.d2l.ai/t/64)
