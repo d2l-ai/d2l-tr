@@ -188,12 +188,12 @@ Kısa olması amacıyla, girdi yüksekliğinin ve genişliğinin her iki tarafı
 ## Özet
 
 * Dolgu, çıktının yüksekliğini ve genişliğini artırabilir. Bu, genellikle çıktıya girdi ile aynı yükseklik ve genişlik vermek için kullanılır.
-* Uzun adım, çıktının çözünürlüğünü azaltabilir, örneğin çıktının yüksekliğini ve genişliğini, girdinin yüksekliğinin ve genişliğinin yalnızca $1/n$'sına düşürür ($n$, $1$'ten büyük bir tamsayıdır).
+* Uzun adım, çıktının çözünürlüğünü azaltabilir, örneğin çıktının yüksekliğini ve genişliğini, girdinin yüksekliğinin ve genişliğinin yalnızca $1/n$'sına düşürür ($n$, $1$'den büyük bir tamsayıdır).
 * Dolgu ve uzun adım, verilerin boyutsallığını etkin bir şekilde ayarlamak için kullanılabilir.
 
 ## Alıştırmalar
 
-1. Bu bölümdeki son örnek için, deneysel sonuçla tutarlı olup olmadığını görmek amacıyla çıktı şeklini hesaplamak için matematiği kullanın.
+1. Bu bölümdeki son örnek için, deneysel sonuçla tutarlı olup olmadığını görmek amacıyla çıktı şeklini matematik kullanarak hesaplayın.
 1. Bu bölümdeki deneylerde diğer dolgu ve uzun adım kombinasyonlarını deneyin.
 1. Ses sinyalleri için, 2'lik bir uzun adım neye karşılık gelir?
 1. 1'den büyük bir uzun adımın hesaplamalı faydaları nelerdir?
