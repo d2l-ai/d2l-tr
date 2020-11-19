@@ -34,6 +34,8 @@ discriminator -> ayrımcı
 
 domain -> etki alanı
 
+downsampling -> altörnekleme
+
 dropout ->  hattan düşme
 
 early stopping -> erken durdurma
