@@ -114,6 +114,8 @@ regularization -> düzenlileştirme
 
 reinforcement learning -> pekiştirmeli öğrenme
 
+residual networks -> artık ağlar
+
 ridge regression -> sırt regresyon
 
 robust -> gürbüz
