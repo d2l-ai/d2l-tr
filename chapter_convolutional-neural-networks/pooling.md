@@ -108,7 +108,7 @@ X = d2l.reshape(d2l.arange(16, dtype=d2l.float32), (1, 4, 4, 1))
 X
 ```
 
-Varsayılan olarak, çerçevenin yerleşik sınıfındaki örnekteki uzun adım ve biriktirme penceresi aynı şekle sahiptir. Aşağıda, `(3, 3)` şeklindeki bir biriktirme penceresi kullanıyoruz, bu nedenle varsayılan olarak `(3, 3)`'lü bir adım şekli alıyoruz.
+Varsayılan olarak, çerçevenin yerleşik sınıfındaki örnekteki uzun adım ve biriktirme penceresi aynı şekle sahiptir. Aşağıda, `(3, 3)` şeklindeki bir biriktirme penceresi kullanıyoruz, bu nedenle varsayılan olarak `(3, 3)`'lük bir adım şekli alıyoruz.
 
 ```{.python .input}
 pool2d = nn.MaxPool2D(3)
@@ -129,7 +129,7 @@ pool2d = tf.keras.layers.MaxPool2D(pool_size=[3, 3])
 pool2d(X)
 ```
 
-Ayamak ve dolgu manuel olarak belirtilebilir.
+Uzun adım ve dolgu manuel olarak belirtilebilir.
 
 ```{.python .input}
 pool2d = nn.MaxPool2D(3, padding=1, strides=2)
@@ -149,7 +149,7 @@ pool2d = tf.keras.layers.MaxPool2D(pool_size=[3, 3], padding='same',
 pool2d(X)
 ```
 
-Tabii ki, keyfi bir dikdörtgen biriktirme penceresi belirleyebilir ve sırasıyla yükseklik ve genişlik için dolgu ve adım belirtebiliriz.
+Tabii ki, keyfi bir dikdörtgen biriktirme penceresi belirleyebilir ve sırasıyla yükseklik ve genişlik için dolguyu ve uzun adımı belirtebiliriz.
 
 ```{.python .input}
 pool2d = nn.MaxPool2D((2, 3), padding=(1, 2), strides=(2, 3))
@@ -169,9 +169,9 @@ pool2d = tf.keras.layers.MaxPool2D(pool_size=[2, 3], padding='same',
 pool2d(X)
 ```
 
-## Birden Çok Kanal
+## Çoklu Kanal
 
-Çok kanallı girdi verilerini işlerken, biriktirme katmanı, girdileri bir kıvrımsal katmanda olduğu gibi kanallar üzerinden toplamak yerine her girdi kanalını ayrı ayrı havuzlar. Bu, biriktirme katmanının çıktı kanallarının sayısının girdi kanalı sayısıyla aynı olduğu anlamına gelir. Aşağıda, 2 kanallı bir girdi oluşturmak için kanal boyutundaki `X` ve `X + 1` tensörleri birleştiririz.
+Çok kanallı girdi verilerini işlerken, biriktirme katmanı, girdileri bir evrişimli katmanda olduğu gibi kanallar üzerinden toplamak yerine her girdi kanalını ayrı ayrı biriktirir. Bu, biriktirme katmanının çıktı kanallarının sayısının girdi kanalı sayısıyla aynı olduğu anlamına gelir. Aşağıda, 2 kanallı bir girdi oluşturmak için kanal boyutundaki `X` ve `X + 1` tensörleri birleştiriyoruz.
 
 ```{.python .input}
 #@tab mxnet, pytorch
@@ -184,7 +184,7 @@ X
 X = tf.reshape(tf.stack([X, X+1], 0), (1, 2, 4, 4))
 ```
 
-Gördüğümüz gibi, çıktı kanallarının sayısı biriktirmedan sonra hala 2'dir.
+Gördüğümüz gibi, çıktı kanallarının sayısı biriktirmeden sonra hala 2'dir.
 
 ```{.python .input}
 pool2d = nn.MaxPool2D(3, padding=1, strides=2)
@@ -206,19 +206,19 @@ pool2d(X)
 ## Özet
 
 * Biriktirme penceresinde girdi öğelerini alarak, maksimum biriktirme işlemi çıktı olarak maksimum değeri atar ve ortalama biriktirme işlemi ortalama değeri çıktı olarak atar.
-* Bir biriktirme tabakasının en önemli avantajlarından biri, konvolusyonel tabakanın konumuna aşırı duyarlılığını hafifletmektir.
-* Havuz katmanı için dolgu ve adım belirtebiliriz.
-* Uzamsal boyutları (örn. genişlik ve yükseklik) azaltmak için 1'den büyük bir adımla birlikte maksimum biriktirme kullanılabilir.
+* Bir biriktirme tabakasının en önemli avantajlarından biri, evrişimli tabakanın konumuna aşırı duyarlılığını hafifletmektir.
+* Biriktirme katmanı için dolgu ve uzun adım belirtebiliriz.
+* Uzamsal boyutları (örn. genişlik ve yükseklik) azaltmak için 1'den büyük bir uzun adımla birlikte maksimum biriktirme kullanılabilir.
 * Biriktirme katmanının çıktı kanalı sayısı, girdi kanallarının sayısıyla aynıdır.
 
 ## Alıştırmalar
 
-1. Bir evrişim tabakasının özel bir durumu olarak ortalama biriktirme uygulayabilir misiniz? Eğer öyleyse, yap.
-1. Bir evrişim tabakasının özel bir durumu olarak maksimum biriktirme uygulayabilir misiniz? Eğer öyleyse, yap.
-1. Havuz katmanının hesaplama maliyeti nedir? Havuz katmanına girdi boyutu $c\times h\times w$ olduğunu varsayalım, havuz penceresi $p_h\times p_w$ bir dolgu $(p_h, p_w)$ ve bir adım $(s_h, s_w)$ bir şekle sahiptir.
-1. Neden maksimum biriktirme ve ortalama biriktirme farklı çalışmasını bekliyorsunuz?
-1. Ayrı bir minimum biriktirme katmanına ihtiyacımız var mı? Başka bir işlemle değiştirebilir misin?
-1. Ortalama ve maksimum biriktirme arasında düşünebileceğiniz başka bir işlem var mı (ipucu: softmax'i geri çağırma)? Neden bu kadar popüler olmasın?
+1. Bir evrişim tabakasının özel bir durumu olarak ortalama biriktirme uygulayabilir misiniz? Eğer öyleyse, yapınız.
+1. Bir evrişim tabakasının özel bir durumu olarak maksimum biriktirme uygulayabilir misiniz? Eğer öyleyse, yapınız.
+1. Biriktirme katmanının hesaplama maliyeti nedir? Biriktirme katmanına girdi boyutunun $c\times h\times w$ olduğunu, biriktirme penceresinin $p_h\times p_w$ bir şekle sahip, $(p_h, p_w)$ dolgulu ve $(s_h, s_w)$ uzun adımlı olduğunu varsayalım.
+1. Neden maksimum biriktirme ile ortalama biriktirmenin farklı çalışmasını beklersiniz?
+1. Ayrı bir minimum biriktirme katmanına ihtiyacımız var mıdır? Onu başka bir işlemle değiştirebilir misiniz?
+1. Ortalama ve maksimum biriktirme arasında düşünebileceğiniz başka bir işlem var mıdır (İpucu: Softmaks'i anımsayın)? Neden o kadar popüler olmayacaktır?
 
 :begin_tab:`mxnet`
 [Tartışmalar](https://discuss.d2l.ai/t/71)
