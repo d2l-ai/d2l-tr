@@ -11,14 +11,14 @@ Bu bölümde, evrişimli katmanların konuma duyarlılığını azaltmak ve gös
 
 ## Maksimum Biriktirme ve Ortalama Biriktirme
 
-*Biriktirme* operatörleri, kıvrımsal katmanlar gibi, sabit şekilli pencerenin (bazen *biriktirme penceresi* olarak da bilinir) geçtiği her konum için tek bir çıktı hesaplayarak, adımına göre girdideki tüm bölgelere kaydırılan sabit şekilli bir pencereden oluşur. Bununla birlikte, evrimsel katmandaki girdi ve çekirdeklerin çapraz korelasyon hesaplamasının aksine, biriktirme katmanı hiçbir parametre içermez (*çekirdek* yoktur). Bunun yerine, biriktirme operatörleri deterministtir ve genellikle biriktirme penceresindeki öğelerin maksimum veya ortalama değerini hesaplar. Bu işlemler sırasıyla *maksimum havuz* (*kısaca havuz*) ve *ortalama havuz* olarak adlandırılır.
+*Biriktirme* işlemcileri, evrişimli katmanlar gibi, sabit şekilli pencerenin (bazen *biriktirme penceresi* olarak da bilinir) geçtiği her konum için tek bir çıktı hesaplayarak, uzun adımına göre girdideki tüm bölgelere kaydırılan sabit şekilli bir pencereden oluşur. Bununla birlikte, evrişimli katmandaki girdi ve çekirdeklerin çapraz korelasyon hesaplamasının aksine, biriktirme katmanı hiçbir parametre içermez (*çekirdek* yoktur). Bunun yerine, biriktirme uygulayıcıları belirleyicidir (determinist) ve genellikle biriktirme penceresindeki öğelerin maksimum veya ortalama değerini hesaplar. Bu işlemler sırasıyla *maksimum biriktirme* (*kısaca biriktirme*) ve *ortalama biriktirme* olarak adlandırılır.
 
-Her iki durumda da, çapraz korelasyon operatöründe olduğu gibi, biriktirme penceresinin girdi tensörünün sol üstünden başlayarak girdi tensörünün soldan sağa ve yukarıdan aşağıya doğru kayması olarak düşünebiliriz. biriktirme penceresinin vurduğu her konumda, maksimum veya ortalama biriktirmenın kullanılmasına bağlı olarak, pencerede girdi alt tensörünün maksimum veya ortalama değerini hesaplar.
+Her iki durumda da, çapraz korelasyon uygulayıcısında olduğu gibi, biriktirme penceresinin girdi tensörünün sol üstünden başlayarak girdi tensörünün soldan sağa ve yukarıdan aşağıya doğru kayması olarak düşünebiliriz. Biriktirme penceresinin vurduğu her konumda, maksimum veya ortalama biriktirmenın kullanılmasına bağlı olarak, pencerede girdi alt tensörünün maksimum veya ortalama değerini hesaplar.
 
-![Maximum pooling with a pooling window shape of $2\times 2$. The shaded portions are the first output element as well as the input tensor elements used for the output computation: $\max(0, 1, 3, 4)=4$.](../img/pooling.svg)
+![$2 \times 2$ şeklinde bir biriktirme penceresi ile maksimum biriktirme. Gölgeli kısımlar, ilk çıktı elemanı ve çıktı hesaplaması için kullanılan girdi tensör elemanlarıdır: $\max(0, 1, 3, 4)=4$.](../img/pooling.svg)
 :label:`fig_pooling`
 
-:numref:`fig_pooling`'teki çıktı tensör 2 yüksekliğe ve 2 genişliğe sahiptir. Dört öğe, her biriktirme penceresindeki maksimum değerden türetilir:
+:numref:`fig_pooling`'teki çıktı tensör 2'lik yüksekliğe ve 2'lik, genişliğe sahiptir. Dört öğe, her biriktirme penceresindeki maksimum değerden türetilir:
 
 $$
 \max(0, 1, 3, 4)=4,\\
@@ -27,11 +27,11 @@ $$
 \max(4, 5, 7, 8)=8.\\
 $$
 
-Havuz penceresi şeklindeki $p \times q$ biriktirme katmanına $p \times q$ biriktirme katmanı denir. biriktirme işlemi $p \times q$ biriktirme olarak adlandırılır.
+Biriktirme penceresi şeklindeki $p \times q$ biriktirme katmanına $p \times q$ biriktirme katmanı denir. Biriktirme işlemi $p \times q$ biriktirme olarak adlandırılır.
 
-Bize bu bölümün başında belirtilen nesne kenar algılama örneğine dönelim. Şimdi $2\times 2$ maksimum biriktirme için girdi olarak konvolusyonel tabakanın çıktısını kullanacağız. Konvolüsyonel katman girdisini `X` ve biriktirme katmanı çıktısını `Y` olarak ayarlayın. `X[i, j]` ve `X[i, j + 1]` değerlerinin farklı olup olmadığı veya `X[i, j + 1]` ve `X[i, j + 2]` farklı olup olmadığı, biriktirme katmanı her zaman `Y[i, j] = 1` çıktılarını verir. Yani, $2\times 2$ maksimum biriktirme katmanını kullanarak, evrimsel katman tarafından tanınan desenin yükseklik veya genişlik olarak birden fazla eleman hareket edip etmediğini hala tespit edebiliriz.
+Bu bölümün başında belirtilen nesne kenar algılama örneğine dönelim. Şimdi $2\times 2$ maksimum biriktirme için girdi olarak evrişimli tabakanın çıktısını kullanacağız. Evrişimli katman girdisini `X` ve biriktirme katmanı çıktısını `Y` olarak düzenleyelim. `X[i, j]` ve `X[i, j + 1]` veya `X[i, j + 1]` ve `X[i, j + 2]` değerleri farklı olsa da olmasa da, biriktirme katmanı her zaman `Y[i, j] = 1` çıktısını verir. Yani, $2\times 2$ maksimum biriktirme katmanını kullanarak, evrişimli katman tarafından tanınan desenin yükseklik veya genişlik olarak birden fazla eleman yine de hareket edip etmediğini tespit edebiliriz.
 
-Aşağıdaki kodda, `pool2d` işlevinde biriktirme katmanının ileri yayılmasını uyguluyoruz. Bu işlev :numref:`sec_conv_layer`'teki `corr2d` işlevine benzer. Ancak, burada çekirdeğimiz yok, çıktıyı girdideki her bölgenin maksimum veya ortalaması olarak hesaplıyoruz.
+Aşağıdaki kodda, `pool2d` işlevinde biriktirme katmanının ileri yaymasını uyguluyoruz. Bu işlev :numref:`sec_conv_layer`'teki `corr2d` işlevine benzer. Ancak, burada çekirdeğimiz yok, çıktıyı girdideki her bölgenin maksimumu veya ortalaması olarak hesaplıyoruz.
 
 ```{.python .input}
 from d2l import mxnet as d2l
@@ -77,7 +77,7 @@ def pool2d(X, pool_size, mode='max'):
     return Y
 ```
 
-İki boyutlu maksimum biriktirme tabakasının çıktısını doğrulamak için :numref:`fig_pooling`'te girdi tensörünü `X`'i inşa edebiliriz.
+İki boyutlu maksimum biriktirme tabakasının çıktısını doğrulamak için :numref:`fig_pooling`'te girdi tensörü `X`'i inşa ediyoruz.
 
 ```{.python .input}
 #@tab all
@@ -85,16 +85,16 @@ X = d2l.tensor([[0.0, 1.0, 2.0], [3.0, 4.0, 5.0], [6.0, 7.0, 8.0]])
 pool2d(X, (2, 2))
 ```
 
-Ayrıca, ortalama biriktirme katmanını deneriz.
+Ayrıca, ortalama biriktirme katmanıyla da deney yapalım.
 
 ```{.python .input}
 #@tab all
 pool2d(X, (2, 2), 'avg')
 ```
 
-## Dolgu ve Stride
+## Dolgu ve Uzun Adım
 
-Konvolusyonel katmanlarda olduğu gibi, biriktirme katmanları da çıktı şeklini değiştirebilir. Ve daha önce olduğu gibi, girdii doldurarak ve adım adımını ayarlayarak istenen çıktı şeklini elde etmek için işlemi değiştirebiliriz. Derin öğrenme çerçevesinden yerleşik iki boyutlu maksimum biriktirme katmanı aracılığıyla biriktirme katmanlarında dolgu ve adımların kullanımını gösterebiliriz. İlk olarak bir girdi tensörü inşa ediyoruz `X` şekli dört boyuta sahip, burada örneklerin sayısı ve kanal sayısı her ikisi de 1.
+Evrişimli katmanlarda olduğu gibi, biriktirme katmanları da çıktının şeklini değiştirebilir. Ve daha önce olduğu gibi, girdiyi dolgulayarak ve uzun adımı ayarlayarak istenen çıktı şeklini elde etmek için işlemi değiştirebiliriz. Derin öğrenme çerçevesinden yerleşik iki boyutlu maksimum biriktirme katmanı aracılığıyla biriktirme katmanlarında dolgu ve uzun adımların kullanımını gösterebiliriz. İlk olarak dört boyutlu şekle sahip bir `X` girdi tensörü inşa ediyoruz, burada örneklerin ve kanalların sayısının her ikisi de 1'dir.
 
 ```{.python .input}
 #@tab mxnet, pytorch
@@ -108,7 +108,7 @@ X = d2l.reshape(d2l.arange(16, dtype=d2l.float32), (1, 4, 4, 1))
 X
 ```
 
-Varsayılan olarak, çerçevenin yerleşik sınıfındaki örnekteki adım ve biriktirme penceresi aynı şekle sahiptir. Aşağıda, `(3, 3)` şeklindeki bir biriktirme penceresi kullanıyoruz, bu nedenle varsayılan olarak `(3, 3)`'lü bir adım şekli alıyoruz.
+Varsayılan olarak, çerçevenin yerleşik sınıfındaki örnekteki uzun adım ve biriktirme penceresi aynı şekle sahiptir. Aşağıda, `(3, 3)` şeklindeki bir biriktirme penceresi kullanıyoruz, bu nedenle varsayılan olarak `(3, 3)`'lü bir adım şekli alıyoruz.
 
 ```{.python .input}
 pool2d = nn.MaxPool2D(3)
