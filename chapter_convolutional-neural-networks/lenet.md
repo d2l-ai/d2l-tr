@@ -1,11 +1,11 @@
-# Konvolüsyonel Sinir Ağları (LeNet)
+# Evrişimli Sinir Ağları (LeNet)
 :label:`sec_lenet`
 
-Artık tam fonksiyonlu bir CNN'yi monte etmek için gerekli tüm malzemeye sahibiz. Görüntü verileriyle daha önceki karşılaşmamızda, Moda-MNIST veri setindeki giyim resimlerine bir softmax regresyon modeli (:numref:`sec_softmax_scratch`) ve bir MLP modeli (:numref:`sec_mlp_scratch`) uyguladık. Bu tür verileri softmax regresyon ve MLP'lere uygun hale getirmek için, önce $28\times28$ matrisinden her görüntüyü sabit uzunlukta $784$ boyutlu bir vektöre düzleştirdik ve daha sonra bunları tam bağlı katmanlarla işledik. Artık evrimsel katmanlar üzerinde bir tutamımız olduğuna göre, görüntülerimizdeki mekansal yapıyı koruyabiliriz. Tam bağlı katmanları evrimsel katmanlarla değiştirmenin ek bir avantajı olarak, çok daha az parametre gerektiren daha fazla parsimonious modellerin keyfini çıkaracağız.
+Artık tam fonksiyonlu bir CNN kurmak için gerekli tüm malzemelere sahibiz. imge verileriyle daha önceki karşılaşmamızda, Moda-MNIST veri kümesindeki giyim resimlerine bir softmaks bağlanım modeli (:numref:`sec_softmax_scratch`) ve bir MLP modeli (:numref:`sec_mlp_scratch`) uyguladık. Bu tür verileri softmaks bağlanıma ve MLP'lere uygun hale getirmek için, önce $28\times28$ matrisinden her imgeyi sabit uzunlukta $784$ boyutlu bir vektöre düzleştirdik ve daha sonra bunları tam bağlı katmanlarla işledik. Artık evrişimli katmanlar üzerinde bir tutuşumuz olduğuna göre, imgelerimizdeki uzaysal yapıyı koruyabiliriz. Tam bağlı katmanları evrişimsel katmanlarla değiştirmenin ek bir avantajı olarak, çok daha az parametre gerektiren daha cimri modellerin keyfini çıkaracağız.
 
-Bu bölümde, ilk yayınlanan CNN'ler arasında bilgisayar görme görevlerinde performansından dolayı geniş bir dikkat çekmek için *LeNet* tanıtacağız. Model, :cite:`LeCun.Bottou.Bengio.ea.1998` görüntülerindeki el yazısı rakamları tanımak amacıyla AT&T Bell Labs'te araştırmacı olan Yann LeCun tarafından tanıtıldı (ve adlandırıldı). Bu çalışma, teknolojiyi geliştiren on yıllık bir araştırmanın doruk noktalarını temsil ediyordu. 1989'da LeCun, CNN'leri geri yayılım yoluyla başarılı bir şekilde eğitmek için ilk çalışmayı yayınladı.
+Bu bölümde, ilk yayınlanan CNN'ler arasından bilgisayarla görme görevlerinde performansından dolayı dikkat çekmek için *LeNet*'i tanıtacağız. Model, (:cite:`LeCun.Bottou.Bengio.ea.1998`) imgelerdeki el yazısı rakamlarını tanımak amacıyla AT&T Bell Labs'te araştırmacı olan Yann LeCun tarafından tanıtıldı (ve adlandırıldı). Bu çalışma, bu teknolojiyi geliştiren on yıllık bir araştırmanın doruk noktalarını temsil ediyordu. 1989'da LeCun, CNN'leri geri yayma yoluyla başarılı bir şekilde eğiten ilk çalışmayı yayınladı.
 
-LeNet, destek vektör makinelerinin performansıyla eşleşen olağanüstü sonuçlar elde etti, daha sonra denetimli öğrenmede baskın bir yaklaşım. LeNet sonunda ATM makinelerinde mevduat işlemek için rakamları tanımak için adapte edilmiştir. Bugüne kadar, bazı ATM'ler hala Yann ve meslektaşı Leon Bottou'nun 1990'larda yazdığı kodu çalıştırıyor!
+LeNet, destek vektörü makinelerinin performansıyla eşleşen olağanüstü sonuçlar elde etti, daha sonra gözetimli öğrenmede baskın bir yaklaşım oldu. LeNet en sonunda ATM makinelerinde mevduat işlemede rakamları tanımak için uyarlanmıştır. Günümüze kadar, bazı ATM'ler hala Yann ve meslektaşı Leon Bottou'nun 1990'larda yazdığı kodu çalıştırıyor!
 
 ## LeNet
 
@@ -83,7 +83,7 @@ def net():
 
 Orijinal modelle küçük bir özgürlük aldık, son kattaki Gauss aktivasyonunu kaldırdık. Bunun dışında, bu ağ orijinal LeNet-5 mimarisiyle eşleşir.
 
-Tek kanallı (siyah beyaz) $28 \times 28$ görüntüsünü ağ üzerinden geçirerek ve çıkış şeklini her katmanda yazdırarak, işlemlerinin :numref:`img_lenet_vert`'ten beklediğimiz şeyle hizaladığından emin olmak için modeli inceleyebiliriz.
+Tek kanallı (siyah beyaz) $28 \times 28$ imgesünü ağ üzerinden geçirerek ve çıkış şeklini her katmanda yazdırarak, işlemlerinin :numref:`img_lenet_vert`'ten beklediğimiz şeyle hizaladığından emin olmak için modeli inceleyebiliriz.
 
 ![Compressed notation for LeNet-5.](../img/lenet-vert.svg)
 :label:`img_lenet_vert`
@@ -310,7 +310,7 @@ train_ch6(net, train_iter, test_iter, num_epochs, lr)
 * Geleneksel CNN'lerde, evrimsel bloklar tarafından kodlanan temsiller, çıktı yaymadan önce bir veya daha fazla tam bağlı katman tarafından işlenir.
 * LeNet tartışmasız böyle bir ağın ilk başarılı dağıtımı oldu.
 
-## Egzersizler
+## Alıştırmalar
 
 1. Ortalama havuzlama ile maksimum havuzlama değiştirin. Ne olur?
 1. Doğruluğunu artırmak için LeNet'e dayalı daha karmaşık bir ağ oluşturmaya çalışın.
@@ -324,13 +324,13 @@ train_ch6(net, train_iter, test_iter, num_epochs, lr)
 1. Farklı girişler için LeNet'in birinci ve ikinci katmanının aktivasyonlarını gösterin (ör. kazak ve paltolar).
 
 :begin_tab:`mxnet`
-[Discussions](https://discuss.d2l.ai/t/73)
+[Tartışmalar](https://discuss.d2l.ai/t/73)
 :end_tab:
 
 :begin_tab:`pytorch`
-[Discussions](https://discuss.d2l.ai/t/74)
+[Tartışmalar](https://discuss.d2l.ai/t/74)
 :end_tab:
 
 :begin_tab:`tensorflow`
-[Discussions](https://discuss.d2l.ai/t/275)
+[Tartışmalar](https://discuss.d2l.ai/t/275)
 :end_tab:
