@@ -16,4 +16,5 @@ why-conv
 conv-layer
 padding-and-strides
 channels
+pooling
 ```
