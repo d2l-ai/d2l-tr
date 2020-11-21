@@ -44,6 +44,8 @@ elementwise -> eleman yönlü
 
 environment -> ortam
 
+epoch -> dönem
+
 feature -> öznitelik
 
 floating number -> kayan virgüllü sayılar (gerçel sayı gösterimi)

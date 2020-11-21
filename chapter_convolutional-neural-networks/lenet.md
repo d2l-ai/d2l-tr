@@ -9,16 +9,16 @@ LeNet, destek vektörü makinelerinin performansıyla eşleşen olağanüstü so
 
 ## LeNet
 
-Yüksek düzeyde, LeNet (LeNet-5) iki bölümden oluşur: (i) iki evrimsel katmandan oluşan bir evrimsel kodlayıcı; ve (ii) üç tam bağlı katmandan oluşan yoğun bir blok; Mimari :numref:`img_lenet`'te özetlenmiştir.
+Yüksek düzeyde, LeNet (LeNet-5) iki parçadan oluşur: (i) iki evrişimli katmandan oluşan bir evrişimli kodlayıcı; ve (ii) üç tam bağlı katmandan oluşan yoğun bir blok: Mimarisi :numref:`img_lenet`'te özetlenmiştir.
 
-![Data flow in LeNet. The input is a handwritten digit, the output a probability over 10 possible outcomes.](../img/lenet.svg)
+![LeNet'te veri akışı. Giriş el yazısı bir rakamdır, çıktı ise 10 olası sonucun üzerinde bir olasılıktır.](../img/lenet.svg)
 :label:`img_lenet`
 
-Her bir konvolüsyonel bloktaki temel birimler, bir konvolüsyonel tabaka, bir sigmoid aktivasyon fonksiyonu ve müteakip bir ortalama havuzlama işlemidir. ReLU'lar ve max-pooling daha iyi çalışırken, bu keşifler henüz 1990'larda yapılmamıştı. Her bir konvolüsyonel katman bir $5\times 5$ çekirdeği ve sigmoid aktivasyon işlevi kullanır. Bu katmanlar, mekansal olarak düzenlenmiş girdileri bir dizi iki boyutlu özellik eşlemelerine eşler ve genellikle kanal sayısını arttırır. İlk evrimsel tabaka 6 çıkış kanalına, ikincisi ise 16'ya sahiptir. Her $2\times2$ havuzlama işlemi (adım 2), uzamsal altörnekleme yoluyla boyutsallığı $4$ katına düşürür. Konvolusyonel blok tarafından verilen şekle sahip bir çıkış yayar (parti boyutu, kanal sayısı, yükseklik, genişlik).
+Her bir evrişimli bloktaki temel birimler, bir evrişimli tabaka, bir sigmoid etkinleştirme fonksiyonu ve sonrasında bir ortalama biriktirme işlemidir. ReLU'lar ve maksimum biriktirme daha iyi çalışırken, bu keşifler henüz 1990'larda yapılmamıştı. Her bir evrişimli katman bir $5\times 5$ çekirdeği ve sigmoid etkinleştirme işlevi kullanır. Bu katmanlar, konumsal olarak düzenlenmiş girdileri bir dizi iki boyutlu öznitelik eşlemelerine eşler ve genellikle kanal sayısını arttırır. İlk evrişimli tabaka 6 tane çıktı kanalına, ikincisi ise 16 taneye sahiptir. Her $2\times2$ biriktirme işlemi (2'lik uzun adım), uzamsal altörnekleme yoluyla boyutsallığı $4$ kat düşürür. Evrişimli blok tarafından verilen şekle sahip bir çıktı yayar (parti boyutu, kanal sayısı, yükseklik, genişlik).
 
-Konvolusyonel bloktan yoğun bloğa çıktıyı geçirmek için, minibatchtaki her örneği düzleştirmeliyiz. Başka bir deyişle, bu dört boyutlu girdiyi alıp tam bağlı katmanlar tarafından beklenen iki boyutlu girdiye dönüştürüyoruz: bir hatırlatma olarak, arzu ettiğimiz iki boyutlu gösterim, minibatch örneklerini indekslemek için ilk boyutu kullanır ve ikincisini düz vektörü vermek için kullanır her örnek temsili. LeNet'in yoğun bloğu sırasıyla 120, 84 ve 10 çıkış ile üç tam bağlı katman içerir. Hala sınıflandırma gerçekleştirdiğimiz için, 10 boyutlu çıktı katmanı olası çıktı sınıflarının sayısına karşılık gelir.
+Evrişimli bloktan yoğun bloğa çıktıyı geçirmek için, minigruptaki her örneği düzleştirmeliyiz. Başka bir deyişle, bu dört boyutlu girdiyi alıp tam bağlı katmanlar tarafından beklenen iki boyutlu girdiye dönüştürüyoruz: Bir hatırlatma olarak, arzu ettiğimiz iki boyutlu gösterim, minigrup örneklerini indekslemek için ilk boyutu kullanır ve ikincisini örneği temsil eden düz vektörü vermek için kullanır. LeNet'in yoğun bloğu sırasıyla 120, 84 ve 10 çıktılı üç tam bağlı katman içerir. Hala sınıflandırma gerçekleştirdiğimiz için, 10 boyutlu çıktı katmanı olası çıktı sınıflarının sayısına karşılık gelir.
 
-LeNet'in içinde neler olup bittiğini gerçekten anladığınız noktaya gelirken, umarım aşağıdaki kod parçacığı sizi modern derin öğrenme çerçeveleri ile bu tür modellerin uygulanmasının son derece basit olduğuna ikna edecektir. Sadece `Sequential` bloğunu başlatmamız ve uygun katmanları birbirine bağlamamız gerekiyor.
+LeNet'in içinde neler olup bittiğini gerçekten anladığınız noktaya gelirken, umarım aşağıdaki kod parçacığı sizi modern derin öğrenme çerçeveleri ile bu tür modellerin uygulanmasının son derece basit olduğuna ikna edecektir. Sadece `Sequential` bloğunu örneklendirmeniz ve uygun katmanları birbirine bağlamamız gerekiyor.
 
 ```{.python .input}
 from d2l import mxnet as d2l
@@ -81,11 +81,11 @@ def net():
         tf.keras.layers.Dense(10)])
 ```
 
-Orijinal modelle küçük bir özgürlük aldık, son kattaki Gauss aktivasyonunu kaldırdık. Bunun dışında, bu ağ orijinal LeNet-5 mimarisiyle eşleşir.
+Orijinal modelde biraz özgürce davrandık, son kattaki Gauss etkinleştirmesini kaldırdık. Bunun dışında, bu ağ orijinal LeNet-5 mimarisiyle eşleşir.
 
-Tek kanallı (siyah beyaz) $28 \times 28$ imgesünü ağ üzerinden geçirerek ve çıkış şeklini her katmanda yazdırarak, işlemlerinin :numref:`img_lenet_vert`'ten beklediğimiz şeyle hizaladığından emin olmak için modeli inceleyebiliriz.
+Tek kanallı (siyah beyaz) $28 \times 28$ imgesini ağ üzerinden geçirerek ve çıktı şeklini her katmanda yazdırarak, işlemlerinin :numref:`img_lenet_vert`'ten beklediğimiz şeyle hizaladığından emin olmak için modeli inceleyebiliriz.
 
-![Compressed notation for LeNet-5.](../img/lenet-vert.svg)
+![LeNet-5'in sıkıştırılmış gösterimi.](../img/lenet-vert.svg)
 :label:`img_lenet_vert`
 
 ```{.python .input}
@@ -112,11 +112,11 @@ for layer in net().layers:
     print(layer.__class__.__name__, 'output shape: \t', X.shape)
 ```
 
-Konvolusyonel blok boyunca her katmanda gösterim yüksekliğinin ve genişliğinin azaltıldığını (önceki katmanla karşılaştırıldığında) unutmayın. İlk kıvrımsal katman, $5 \times 5$ çekirdeğinin kullanılmasından kaynaklanan yükseklik ve genişlik azalmasını telafi etmek için 2 piksel dolgu kullanır. Buna karşılık, ikinci kıvrımlı tabaka dolgudan vazgeçer ve böylece yükseklik ve genişlik her ikisi de 4 piksel azaltılır. Katmanların yığınına çıktığımızda, kanalların sayısı, ilk konvolüsyonel tabakadan sonra girişteki 1'den 6'ya ve ikinci kıvrımsal tabakadan sonra 16'ya yükselir. Bununla birlikte, her bir havuzlama katmanı yüksekliği ve genişliği yarıya indirir. Son olarak, her tam bağlı katman boyutsallığı azaltır ve sonunda boyutu sınıf sayısıyla eşleşen bir çıktı yayar.
+Evrişimli blok boyunca her katmanda gösterim yüksekliğinin ve genişliğinin azaltıldığını (önceki katmanla karşılaştırıldığında) unutmayın. İlk evrişimli katman, $5 \times 5$ çekirdeğinin kullanılmasından kaynaklanan yükseklik ve genişlik azalmasını telafi etmek için 2 piksellik dolgu kullanır. Buna karşılık, ikinci evrişimli tabaka dolgudan vazgeçer ve böylece yüksekliğin ve genişliğin her ikisi de 4'er piksel azaltılır. Katman yığınında yukarı çıktığımızda, kanalların sayısı, ilk evrişimli tabakadan sonra girdideki 1'den 6'ya ve ikinci evrişimli tabakadan sonra 16'ya yükselir. Bununla birlikte, her bir biriktirme katmanı yüksekliği ve genişliği yarıya indirir. Son olarak, her tam bağlı katman boyutsallığı azaltır ve nihai olarak boyutu sınıf sayısıyla eşleşen bir çıktı yayar.
 
 ## Eğitim
 
-Modeli uyguladığımıza göre, LeNet'in Moda-MNIST üzerinde nasıl olduğunu görmek için bir deney yapalım.
+Modeli uyguladığımıza göre, LeNet'in Moda-MNIST üzerinde nasıl çalışacağını görmek için bir deney yapalım.
 
 ```{.python .input}
 #@tab all
@@ -124,10 +124,10 @@ batch_size = 256
 train_iter, test_iter = d2l.load_data_fashion_mnist(batch_size=batch_size)
 ```
 
-CNN'ler daha az parametre olsa da, her parametre daha fazla çarpmaya katılır çünkü benzer derin MLP'lerden daha hesaplanmaları daha pahalı olabilir. GPU'ya erişiminiz varsa, bu işlemi hızlandırmak için harekete geçirmek için iyi bir zaman olabilir.
+CNN'lerde daha az parametre olsa da, hesaplamalar benzer derin MLP'lerden daha külfetli olabilir çünkü her parametre daha fazla çarpmada kullanılır. GPU'ya erişiminiz varsa, bu işlemi hızlandırmak için harekete geçirmenin tam zamanı olabilir.
 
 :begin_tab:`mxnet, pytorch`
-Değerlendirme için :numref:`sec_softmax_scratch`'te tarif ettiğimiz `evaluate_accuracy` işlevinde hafif bir değişiklik yapmamız gerekiyor. Tam veri kümesi ana bellekte olduğundan, model veri kümesiyle hesaplamak için GPU'yu kullanmadan önce GPU belleğine kopyalamamız gerekir.
+Değerlendirme için :numref:`sec_softmax_scratch`'te tarif ettiğimiz `evaluate_accuracy` işlevinde hafif bir değişiklik yapmamız gerekiyor. Bütün veri kümesi ana bellekte olduğundan, modelin veri kümesiyle hesaplama yapabilmesi için GPU'yu kullanmadan önce veriyi GPU belleğine kopyalamamız gerekir.
 :end_tab:
 
 ```{.python .input}
@@ -158,9 +158,9 @@ def evaluate_accuracy_gpu(net, data_iter, device=None): #@save
     return metric[0] / metric[1]
 ```
 
-Ayrıca GPU'larla başa çıkmak için eğitim fonksiyonumuzu güncellememiz gerekiyor. :numref:`sec_softmax_scratch`'te tanımlanan `train_epoch_ch3`'in aksine, şimdi ileri ve geri yayılımı yapmadan önce her bir veri minibatchini belirlenen cihazımıza (umarım GPU) taşımamız gerekiyor.
+Ayrıca GPU'larla başa çıkmak için eğitim fonksiyonumuzu güncellememiz gerekiyor. :numref:`sec_softmax_scratch`'te tanımlanan `train_epoch_ch3`'in aksine, şimdi ileri ve geri yayma yapmadan önce her bir veri minigrubunu belirlenen cihazımıza (GPU olması beklenir) taşımamız gerekiyor.
 
-Eğitim fonksiyonu `train_ch6`, :numref:`sec_softmax_scratch`'te tanımlanan `train_ch3`'ya da benzer. Birçok katman ileriye doğru ilerleyen ağları uygulayacağımızdan, öncelikle üst düzey API'lere güveneceğiz. Aşağıdaki eğitim işlevi, giriş olarak üst düzey API'lerden oluşturulan bir modeli varsayar ve buna göre optimize edilir. :numref:`subsec_xavier` yılında tanıtıldığı gibi Xavier başlatma kullanarak `device` argümanı ile belirtilen cihazdaki model parametrelerini başlatıyoruz. Tıpkı MLP'lerde olduğu gibi, kayıp fonksiyonumuz çapraz entropi ve minibatch stokastik gradyan iniş yoluyla en aza indiriyoruz. Her bir devirin çalışması on saniye sürdüğünden, eğitim kaybını daha sık görselleştiririz.
+Eğitim fonksiyonu `train_ch6`, :numref:`sec_softmax_scratch`'te tanımlanan `train_ch3`'ya da benzer. Birçok ileriye doğru ilerleyen katmanlardan oluşan ağları uygulayacağımızdan, öncelikle üst düzey API'lere güveneceğiz. Aşağıdaki eğitim işlevi, girdi olarak üst düzey API'lerden oluşturulan bir modeli varsayar ve buna göre eniyilenir. :numref:`subsec_xavier`'da tanıtıldığı gibi Xavier ilklemede `device` argümanı ile belirtilen cihazdaki model parametrelerini başlatıyoruz. Tıpkı MLP'lerde olduğu gibi, kayıp fonksiyonumuzu çapraz entropi ve minigrup rasgele eğim inişi yoluyla en aza indiriyoruz. Her bir dönemin çalışması on saniye sürdüğünden, eğitim kaybını daha sık görselleştiriyoruz.
 
 ```{.python .input}
 #@save
@@ -304,24 +304,24 @@ train_ch6(net, train_iter, test_iter, num_epochs, lr)
 
 ## Özet
 
-* CNN, evrimsel katmanları kullanan bir ağdır.
-* Bir CNN'de, konvolüsyonları, doğrusal olmayanları ve (genellikle) havuzlama işlemlerini ara veriyoruz.
-* Bir CNN'de, evrimsel katmanlar tipik olarak, gösterimlerin mekansal çözünürlüğünü yavaş yavaş azaltacak şekilde düzenlenir ve kanal sayısını arttırırlar.
-* Geleneksel CNN'lerde, evrimsel bloklar tarafından kodlanan temsiller, çıktı yaymadan önce bir veya daha fazla tam bağlı katman tarafından işlenir.
-* LeNet tartışmasız böyle bir ağın ilk başarılı dağıtımı oldu.
+* CNN, evrişimli katmanları kullanan bir ağdır.
+* Bir CNN'de, evrişimlerinin arasına, doğrusal olmayanları işlemleri ve (genellikle) biriktirme işlemlerini koyuyoruz.
+* Bir CNN'de, evrişimli katmanlar tipik olarak, kanal sayısını arttırırken gösterimlerin mekansal çözünürlüğünü yavaş yavaş azaltacak şekilde düzenlenir.
+* Geleneksel CNN'lerde, evrişimli bloklar tarafından kodlanan temsiller, çıktı yayılmadan önce bir veya daha fazla tam bağlı katman tarafından işlenir.
+* LeNet, tartışmasız, böyle bir ağın ilk başarılı konuşlandırması oldu.
 
 ## Alıştırmalar
 
-1. Ortalama havuzlama ile maksimum havuzlama değiştirin. Ne olur?
+1. Ortalama biriktirme ile maksimum biriktirmeyi değiştirin. Ne olur?
 1. Doğruluğunu artırmak için LeNet'e dayalı daha karmaşık bir ağ oluşturmaya çalışın.
-    1. Evrim penceresi boyutunu ayarlayın.
-    1. Çıkış kanallarının sayısını ayarlayın.
+    1. Evrişim penceresi boyutunu ayarlayın.
+    1. Çıktı kanallarının sayısını ayarlayın.
     1. Etkinleştirme işlevini ayarlayın (örneğin, ReLU).
     1. Evrişim katmanlarının sayısını ayarlayın.
     1. Tam bağlı katmanların sayısını ayarlayın.
-    1. Öğrenme oranlarını ve diğer eğitim ayrıntılarını ayarlayın (örneğin, başlatma ve epoch sayısı.)
-1. Özgün MNIST veri kümesi üzerinde geliştirilmiş ağ deneyin.
-1. Farklı girişler için LeNet'in birinci ve ikinci katmanının aktivasyonlarını gösterin (ör. kazak ve paltolar).
+    1. Öğrenme oranlarını ve diğer eğitim ayrıntılarını ayarlayın (örneğin, başlatma ve dönem sayısı).
+1. Özgün MNIST veri kümesi üzerinde geliştirdiğiniz ağı deneyin.
+1. Farklı girdiler için LeNet'in birinci ve ikinci katmanının etkinleştirmelerini gösterin (ör. kazak ve paltolar gibi).
 
 :begin_tab:`mxnet`
 [Tartışmalar](https://discuss.d2l.ai/t/73)
