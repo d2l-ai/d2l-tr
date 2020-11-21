@@ -35,7 +35,7 @@ Ardından, doğrudan `conda` çalıştırabilmeniz için kabuğu(shell) sıfırl
 ortam oluşturabilirsiniz:
 
 ```bash
-conda create --name d2l -y
+conda create --name d2l python=3.8 -y
 ```
 
 
@@ -52,34 +52,32 @@ curl https://d2l.ai/d2l-en.zip -o d2l-en.zip
 unzip d2l-en.zip && rm d2l-en.zip
 ```
 
-Şimdi `d2l` ortamını etkinleştirip ve `pip` i kuracağız.
-Bu komutu izleyen sorulara cevap olarak `y` girin.
+Şimdi `d2l` ortamını etkinleştireceğizç
 
 ```bash
 conda activate d2l
-conda install python=3.7 pip -y
+
 ```
 
 
 ## Çerçeveyi ve `d2l` Paketini Yükleme
 
-:begin_tab:`mxnet,pytorch`
+
 Derin öğrenme çerçevesini kurmadan önce, lütfen önce makinenizde uygun GPU'ların
 olup olmadığını kontrol edin (standart bir dizüstü bilgisayarda ekranı
 destekleyen GPU'lar bizim amacımıza uygun sayılmaz). GPU'lu bir bilgisayara/sunucuya kurulum
 yapacaksanız, GPU destekli sürümün kurulum talimatları için şu adrese ilerleyin
 :ref:`subsec_gpu`.
 
-GPU'lu bir bilgisayarınız/sunucunuz yoksa, CPU sürümünü yükleyebilirsiniz.
-Bu, ilk birkaç bölümü geçmeniz için yeterli beygir gücü olacak, ancak daha
+GPU'lu bir bilgisayarınız/sunucunuz yoksa, CPU sürümünü aşağıdaki gibi yükleyebilirsiniz.
+Bu, ilk birkaç bölümü geçmeniz için yeterli beygir gücünü sağlayacak ancak daha
 büyük modelleri çalıştırmak için GPU'lara ihtiyacınız olacak.
-:end_tab:
 
 
 :begin_tab:`mxnet`
 
 ```bash
-pip install mxnet==1.6.0
+pip install mxnet==1.7.0.post1
 ```
 
 
@@ -88,7 +86,7 @@ pip install mxnet==1.6.0
 :begin_tab:`pytorch`
 
 ```bash
-pip install torch==1.5.1 torchvision
+pip install torch torchvision -f https://download.pytorch.org/whl/torch_stable.html
 ```
 
 
@@ -99,7 +97,7 @@ TensorFlow'u hem CPU hem de GPU desteğiyle aşağıdakileri kullanarak
 yükleyebilirsiniz:
 
 ```bash
-pip install tensorflow==2.2.0 tensorflow-probability==0.10.0
+pip install tensorflow tensorflow-probability
 ```
 
 
@@ -109,6 +107,7 @@ Ayrıca, bu kitapta sık kullanılan işlevleri ve sınıfları içeren `d2l` pa
 de yüklüyoruz.
 
 ```bash
+# -U: Bütün paketleri en yeni versiyonlarına güncelle
 pip install -U d2l
 ```
 
@@ -130,7 +129,7 @@ paketini güncellemeden önce çalışma zamanı ortamını etkinleştirmek içi
 ## GPU Desteği
 :label:`subsec_gpu`
 
-:begin_tab:`mxnet, pytorch`
+:begin_tab:`mxnet`
 Varsayılan olarak, derin öğrenme çerçevesi, herhangi bir bilgisayarda
 (çoğu dizüstü bilgisayar dahil) çalışmasını sağlamak için GPU desteği olmadan
 yüklenir.
@@ -140,64 +139,33 @@ Bilgisayarınızda NVIDIA grafik kartları varsa ve
 sürüm yüklemeniz gerekir.
 Yalnızca CPU sürümünü yüklediyseniz, önce bunu çalıştırarak
 kaldırmanız gerekebilir:
-:end_tab:
 
-:begin_tab:`tensorflow`
-Varsayılan olarak, TensorFlow GPU desteği ile yüklenir.
-Bilgisayarınızda NVIDIA grafik kartları varsa ve
-[CUDA](https://developer.nvidia.com/cuda-downloads) yüklüyse, tamamen hazırsınız
-demektir.
-:end_tab:
-
-:begin_tab:`mxnet`
 
 ```bash
 pip uninstall mxnet
 ```
 
 
-:end_tab:
 
-:begin_tab:`pytorch`
-
-```bash
-pip uninstall torch
-```
-
-
-:end_tab:
-
-:begin_tab:`mxnet,pytorch`
-Sonrasında yüklü CUDA sürümünüzü bulmamız gerekiyor.
+Sonrasında yüklü CUDA sürümünüzü bulmanız gerekiyor.
 `nvcc --version` veya `cat /usr/local/cuda/version.txt` ile kontrol edebilirsiniz.
 CUDA 10.1'i yüklediğinizi varsayalım, o zaman aşağıdaki komutla kurabilirsiniz:
-:end_tab:
-
-:begin_tab:`mxnet`
 
 ```bash
-# For Windows users
-pip install mxnet-cu101==1.6.0b20190926
+# Windows kullanıcıları için
+pip install mxnet-cu101==1.7.0 -f https://dist.mxnet.io/python
 
-# For Linux and macOS users
-pip install mxnet-cu101==1.6.0
+# Linux ve macOS kullanıcıları için
+pip install mxnet-cu101==1.7.0
 ```
 
-
+Son rakamları CUDA versiyonunuza göre değiştirebilirsiniz. Örn. CUDA 10.0 için `cu100` CUDA 9.0 için `cu90`.
 :end_tab:
 
-:begin_tab:`pytorch`
 
-```bash
-pip install torch==1.5.1+cu101 -f https://download.pytorch.org/whl/torch_stable.html
-```
-
-
-:end_tab:
-
-:begin_tab:`mxnet,pytorch`
-Son rakamları CUDA sürümünüze göre değiştirebilirsiniz; örneğin,
-CUDA 10.0 için `cu100` ve CUDA 9.0 için `cu90`.
+:begin_tab:`pytorch,tensorflow`
+Derin öğrenme çercevesi, aksi belirtilmediyse GPU desteğiyle kurulacaktır. 
+Eğer bilgisayarınızda NVIDIA GPU'su varsa ve [CUDA](https://developer.nvidia.com/cuda-downloads) kuruluysa, artık hazırsınız.
 :end_tab:
 
 ## Alıştırmalar
