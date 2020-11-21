@@ -34,11 +34,23 @@ discriminator -> ayrımcı
 
 domain -> etki alanı
 
+downsampling -> altörnekleme
+
 dropout ->  hattan düşme
 
 early stopping -> erken durdurma
 
+elementwise -> eleman yönlü
+
 environment -> ortam
+
+epoch -> dönem
+
+feature -> öznitelik
+
+floating number -> kayan virgüllü sayılar (gerçel sayı gösterimi)
+
+fully-connected -> tam-bağlı
 
 generative adversarial networks -> çekişmeli üretici ağlar
 
@@ -48,17 +60,13 @@ gradient -> gradyan, eğim
 
 graph -> çizge
 
-feature -> öznitelik
-
-floating number -> kayan virgüllü sayılar (gerçel sayı gösterimi)
-
-fully-connected -> tam-bağlı
-
 holdout -> harici tutulan
 
 hybridization -> melezleştirme
 
 initialization -> ilkleme
+
+invariance -> değişmezlik
 
 kernel -> çekirdek
 
@@ -80,17 +88,23 @@ optimizer - > eniyileyici
 
 padding -> dolgu
 
+parse -> ayrıştırmak
+
 permutation -> devrişim
 
 perturbation -> düzensizlik
 
 pipeline -> veri/komut işleme hattı
 
+pooling -> biriktirme
+
 posterior -> sonsal olasılık
 
 pretraining -> ön eğitim
 
 prior -> önsel olasılık
+
+receptive field -> alım alanı
 
 recurrent neural network -> yinelemeli sinir ağı
 
@@ -101,6 +115,8 @@ regressor -> bağlanımcı
 regularization -> düzenlileştirme
 
 reinforcement learning -> pekiştirmeli öğrenme
+
+residual networks -> artık ağlar
 
 ridge regression -> sırt regresyon
 
@@ -115,6 +131,8 @@ sanity check -> makulluk kontrolü
 scaler -> sayıl, skaler
 
 script -> betik
+
+semantic segmentation -> anlamsal bölünme
 
 sequence -> dizi
 
@@ -133,6 +151,8 @@ string -> dizgi
 stochastic -> rasgele
 
 symmetry -> bakışım
+
+tabular -> çizelge halindeki
 
 transpose -> devrik
 
