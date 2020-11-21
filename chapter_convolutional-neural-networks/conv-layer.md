@@ -1,18 +1,18 @@
-# Görüntüler için Konvolutions
+# İmgeler için Evrişimler
 :label:`sec_conv_layer`
 
-Artık evrimsel katmanların teoride nasıl çalıştığını anladığımıza göre, pratikte nasıl çalıştıklarını görmeye hazırız. Görüntü verilerindeki yapıyı keşfetmek için etkili mimariler olarak evrimsel sinir ağlarının motivasyonunu temel alan örneklerimiz olarak görüntülere sadık kalıyoruz.
+Artık evrişimli katmanların teoride nasıl çalıştığını anladığımıza göre, uygulamada nasıl çalıştıklarını görmeye hazırız. İmge verilerindeki yapıyı keşfetmek için etkili mimariler olarak evrişimli sinir ağlarının motivasyonunu temel alarak imgeler üzerinde çalışan örneğimize bağlı kalıyoruz.
 
 ## Çapraz Korelasyon İşlemi
 
-Kesin olarak konuşulan, evrimsel katmanların yanlış adlandırıldığını hatırlayın, çünkü ifade ettikleri işlemler çapraz korelasyon olarak daha doğru bir şekilde tanımlanmıştır. :numref:`sec_why-conv`'teki evrimsel tabakaların açıklamalarına dayanarak, böyle bir katmanda, bir giriş tensör ve bir çekirdek tensör çapraz korelasyon işlemi yoluyla bir çıkış tensörü üretmek için birleştirilir.
+Kesin olarak konuşulan, evrişimli katmanların yanlış adlandırıldığını hatırlayın, çünkü ifade ettikleri işlemler daha doğru bir şekilde çapraz korelasyon olarak tanımlanabilir. :numref:`sec_why-conv`'teki evrişimli tabaka açıklamalarına göre, böyle bir katmanda, bir girdi tensör ve bir çekirdek tensör çapraz korelasyon işlemi yoluyla bir çıktı tensörü üretmek için birleştirilir.
 
-Şimdilik kanalları yok sayalım ve bunun iki boyutlu veri ve gizli temsillerle nasıl çalıştığını görelim. :numref:`fig_correlation`'te, giriş, 3 yüksekliği ve 3 genişliğindeki iki boyutlu bir tensördür. Tensörün şeklini $3 \times 3$ veya ($3$, $3$) olarak işaretliyoruz. Çekirdeğin yüksekliği ve genişliği her ikisi de 2'dir. *Çekirdek penceresinin* (veya *evrim penceresi*) şekli çekirdeğin yüksekliği ve genişliği ile verilir (burada $2 \times 2$).
+Şimdilik kanalları yok sayalım ve bunun iki boyutlu veri ve gizli temsillerle nasıl çalıştığını görelim. :numref:`fig_correlation`'te, girdi, yüksekliği 3 ve genişliği 3 olan iki boyutlu bir tensördür. Tensörün şeklini $3 \times 3$ veya ($3$, $3$) diye belirtiyoruz. Çekirdeğin yüksekliğinin ve genişliğinin her ikisi de 2'dir. *Çekirdek penceresinin* (veya *evrişim penceresi*) şekli çekirdeğin yüksekliği ve genişliği ile verilir (burada $2 \times 2$'dir).
 
-![Two-dimensional cross-correlation operation. The shaded portions are the first output element as well as the input and kernel tensor elements used for the output computation: $0\times0+1\times1+3\times2+4\times3=19$.](../img/correlation.svg)
+![İki boyutlu çapraz korelasyon işlemi. Gölgeli kısımlar, çıktı hesaplaması için kullanılan girdi ve çekirdek tensör elemanlarının yanı sıra ilk çıktı elemanıdır: $0\times0+1\times1+3\times2+4\times3=19$.](../img/correlation.svg)
 :label:`fig_correlation`
 
-İki boyutlu çapraz korelasyon işleminde, giriş tensörünün sol üst köşesinde konumlandırılmış evrim penceresi ile başlar ve hem soldan sağa hem de yukarıdan aşağıya doğru giriş tensörü boyunca kaydırırız. Evrişim penceresi belirli bir konuma kaydırıldığında, bu pencerede bulunan giriş subtensör ve çekirdek tensör eleman olarak çarpılır ve elde edilen tensör tek bir skaler değer oluşturarak toplanır. Bu sonuç, ilgili konumdaki çıkış tensörünün değerini verir. Burada, çıkış tensörünün yüksekliği 2 ve genişliği 2'dir ve dört eleman iki boyutlu çapraz korelasyon işleminden türetilmiştir:
+İki boyutlu çapraz korelasyon işleminde, girdi tensörünün sol üst köşesinde konumlandırılmış evrişim penceresi ile başlar ve hem soldan sağa hem de yukarıdan aşağıya doğru girdi tensörü boyunca kaydırırız. Evrişim penceresi belirli bir konuma kaydırıldığında, bu pencerede bulunan girdi alt-tensör ve çekirdek tensör eleman yönlü olarak çarpılır ve elde edilen tensör tek bir sayıl (skaler) değer oluşturacak şekilde toplanır. Bu sonuç, çıktı tensörünün ilgili konumdaki değerini verir. Burada, çıktı tensörünün yüksekliği 2 ve genişliği 2'dir ve dört eleman iki boyutlu çapraz korelasyon işleminden türetilmiştir:
 
 $$
 0\times0+1\times1+3\times2+4\times3=19,\\
@@ -21,11 +21,11 @@ $$
 4\times0+5\times1+7\times2+8\times3=43.
 $$
 
-Her eksen boyunca, çıkış boyutunun giriş boyutundan biraz daha küçük olduğunu unutmayın. Çekirdeğin genişliği ve yüksekliği birden fazla olduğundan, çekirdeğin tamamen görüntü içine sığdığı konumlar için çapraz korelasyonu düzgün bir şekilde hesaplayabiliriz, çıktı boyutu $n_h \times n_w$ eksi evrim çekirdeğinin boyutu $k_h \times k_w$ ile verilir.
+Her eksen boyunca, çıktı boyutunun girdi boyutundan biraz daha küçük olduğunu unutmayın. Çekirdeğin genişliği ve yüksekliği birden büyük olduğundan, çekirdeğin tamamen imge içine sığdığı konumlar için çapraz korelasyonu düzgün bir şekilde hesaplayabiliriz, çıktı boyutu $n_h \times n_w$ eksi evrişim çekirdeğinin boyutu $k_h \times k_w$ ile verilir.
 
 $$(n_h-k_h+1) \times (n_w-k_w+1).$$
 
-Evrim çekirdeğini görüntü boyunca “kaydırmak” için yeterli alana ihtiyacımız olduğu için durum budur. Daha sonra, görüntüyü sınırının etrafında sıfırlarla doldurarak boyutun değişmeden nasıl tutulacağını göreceğiz, böylece çekirdeği kaydırmak için yeterli alan var. Daha sonra, `X` giriş tensör `X` ve bir çekirdek tensör `K` kabul eden ve bir çıkış tensör `Y` döndüren `corr2d` işlevinde bu işlemi uyguluyoruz.
+Evrişim çekirdeğini imge boyunca “kaydırmak” için yeterli alana ihtiyacımız olduğu durum budur. Daha sonra, imgeyi sınırının etrafında sıfırlarla doldurarak boyutun değişmeden nasıl tutulacağını göreceğiz, böylece çekirdeği kaydırmak için yeterli alanımız olacak. Daha sonra, bir girdi tensör `X` ve bir çekirdek tensör `K` kabul eden ve bir çıktı tensör `Y` döndüren `corr2d` işlevinde bu işlemi uyguluyoruz.
 
 ```{.python .input}
 from d2l import mxnet as d2l
@@ -69,7 +69,7 @@ def corr2d(X, K):  #@save
     return Y
 ```
 
-İki boyutlu çapraz korelasyon işleminin yukarıdaki uygulamasının çıktısını doğrulamak için :numref:`fig_correlation`'ten `X`'i ve çekirdek tensörünü `K`'yı inşa edebiliriz.
+İki boyutlu çapraz korelasyon işleminin yukarıdaki uygulamasının çıktısını doğrulamak için :numref:`fig_correlation`'ten girdi tensörünü `X`'i ve çekirdek tensörünü `K`'yı inşa edebiliriz.
 
 ```{.python .input}
 #@tab all
@@ -78,11 +78,11 @@ K = d2l.tensor([[0.0, 1.0], [2.0, 3.0]])
 corr2d(X, K)
 ```
 
-## Konvolüsyonel Katmanlar
+## Evrişimli Katmanlar
 
-Bir kıvrımsal katman, girdi ve çekirdeği çapraz bağlar ve çıktı üretmek için bir skaler önyargı ekler. Bir kıvrımsal tabakanın iki parametresi çekirdek ve skaler yanlılıktır. Modelleri evrimsel katmanlara göre eğitirken, tam bağlantılı bir katmanda olduğu gibi, çekirdekleri genelde rastgele olarak başlatırız.
+Bir evrişimli katman, girdi ve çekirdeği çapraz-ilişkilendirir (cross-correlate) ve çıktı üretmek için bir skaler ek girdi ekler. Bir evrişimli tabakanın iki parametresi çekirdek ve skaler ek girdidir. Modelleri evrişimli katmanlara göre eğitirken, tam bağlı bir katmanda olduğu gibi, çekirdekleri genelde rastgele olarak ilkleriz.
 
-Yukarıda tanımlanan `corr2d` işlevine dayanan iki boyutlu bir evrimsel katman uygulamaya hazırız. `__init__` yapıcı işlevinde, iki model parametresi olarak `weight` ve `bias`'yi beyan ederiz. İleri yayılma işlevi `corr2d` işlevini çağırır ve önyargı ekler.
+Yukarıda tanımlanan `corr2d` işlevine dayanan iki boyutlu bir evrişimli katmanı uygulamaya hazırız. `__init__` kurucu işlevinde, iki model parametresi olarak `weight` ve `bias`'i beyan ederiz. İleri yayma işlevi `corr2d` işlevini çağırır ve ek girdiyi ekler.
 
 ```{.python .input}
 class Conv2D(nn.Block):
@@ -124,11 +124,11 @@ class Conv2D(tf.keras.layers.Layer):
         return corr2d(inputs, self.weight) + self.bias
 ```
 
-$h \times w$ evrişim veya $h \times w$ evrim çekirdeğinde, evrim çekirdeğinin yüksekliği ve genişliği sırasıyla $h$ ve $w$'dir. Ayrıca $h \times w$ evrişim çekirdeğine sahip bir evrimsel tabaka olarak sadece $h \times w$ evrimsel tabaka olarak atıfta bulunuyoruz.
+$h \times w$ evrişiminde veya $h \times w$ evrişim çekirdeğinde, evrişim çekirdeğinin yüksekliği ve genişliği sırasıyla $h$ ve $w$'dir. Ayrıca $h \times w$ evrişim çekirdeğine sahip bir evrişimli tabakaya kısaca $h \times w$ evrişim tabaka diye atıfta bulunuyoruz.
 
-## Görüntülerde Nesne Kenarı Algılama
+## İmgelerde Nesne Kenarı Algılama
 
-Kıvrımsal bir katmanın basit bir uygulamasını ayrıştırmak için biraz zaman ayıralım: piksel değişiminin yerini bularak bir görüntüdeki nesnenin kenarını tespit etme. İlk olarak, $6\times 8$ piksellik bir “görüntü” oluşturuyoruz. Orta dört sütun siyah (0) ve geri kalanı beyazdır (1).
+Evrişimli bir katmanın basit bir uygulamasını ayrıştırmak için biraz zaman ayıralım: Piksel değişiminin yerini bularak bir imgedeki nesnenin kenarını tespit etme. İlk olarak, $6\times 8$ piksellik bir “imge” oluşturuyoruz. Orta dört sütun siyah (0) ve geri kalanı beyaz (1) olsun.
 
 ```{.python .input}
 #@tab mxnet, pytorch
@@ -144,14 +144,14 @@ X[:, 2:6].assign(tf.zeros(X[:, 2:6].shape))
 X
 ```
 
-Daha sonra, 1 yüksekliğinde ve 2 genişliğinde bir çekirdek `K` inşa ediyoruz. Giriş ile çapraz korelasyon işlemini gerçekleştirdiğimizde, yatay olarak bitişik elemanlar aynıysa, çıkış 0'dır. Aksi takdirde, çıktı sıfır değildir.
+Daha sonra, 1 yüksekliğinde ve 2 genişliğinde bir çekirdek `K` inşa ediyoruz. Girdi ile çapraz korelasyon işlemini gerçekleştirdiğimizde, yatay olarak bitişik elemanlar aynıysa, çıkış 0'dır. Aksi takdirde, çıktı sıfır değildir.
 
 ```{.python .input}
 #@tab all
 K = d2l.tensor([[1.0, -1.0]])
 ```
 
-`X` (girdimiz) ve `K` (çekirdeğimiz) argümanlarıyla çapraz korelasyon işlemini gerçekleştirmeye hazırız. Gördüğünüz gibi, kenar için beyazdan siyaha ve -1 için siyahtan beyaza kenar tespit ediyoruz. Diğer tüm çıkışlar 0 değerini alır.
+`X` (girdimiz) ve `K` (çekirdeğimiz) argümanlarıyla çapraz korelasyon işlemini gerçekleştirmeye hazırız. Gördüğünüz gibi,  beyazdan siyaha kenar için 1 ve siyahtan beyaza kenar için -1 tespit ediyoruz. Diğer tüm çıktılar 0 değerini alır.
 
 ```{.python .input}
 #@tab all
@@ -159,18 +159,18 @@ Y = corr2d(X, K)
 Y
 ```
 
-Artık çekirdeği transpoze edilmiş görüntüye uygulayabiliriz. Beklendiği gibi, yok oluyor. Çekirdek `K` yalnızca dikey kenarları algılar.
+Artık çekirdeği devrik imgeye uygulayabiliriz. Beklendiği gibi, yok oluyor. Çekirdek `K` yalnızca dikey kenarları algılar.
 
 ```{.python .input}
 #@tab all
 corr2d(d2l.transpose(X), K)
 ```
 
-## Bir Çekirdek Öğrenme
+## Bir Çekirdeği Öğrenme
 
-Sonlu farklar `[1, -1]` ile bir kenar dedektörü tasarlamak, aradığımız şeyin tam olarak ne olduğunu biliyorsak düzgün olur. Ancak, daha büyük çekirdeklere baktığımızda ve ardışık kıvrımların katmanlarını göz önünde bulundurduğumuzda, her filtrenin manuel olarak ne yapması gerektiğini tam olarak belirtmek imkansız olabilir.
+Sonlu farklar `[1, -1]` ile bir kenar dedektörü tasarlamak, aradığımız şeyin tam olarak ne olduğunu biliyorsak temiz olur. Ancak, daha büyük çekirdeklere baktığımızda ve ardışık evrişim katmanlarını göz önünde bulundurduğumuzda, her filtrenin manuel olarak ne yapması gerektiğini tam olarak belirtmek imkansız olabilir.
 
-Şimdi `X`'ten `Y`'ü oluşturan çekirdeği yalnızca giriş-çıkış çiftlerine bakarak öğrenip öğrenemeyeceğimizi görelim. Önce bir kıvrımsal tabaka oluşturup çekirdeğini rastgele bir tensör olarak başlatırız. Daha sonra, her yinelemede, `Y`'ü evrimsel tabakanın çıktısıyla karşılaştırmak için kareli hatayı kullanacağız. Daha sonra çekirdeği güncellemek için degradeyi hesaplayabiliriz. Basitlik uğruna, aşağıda iki boyutlu evrimsel katmanlar için yerleşik sınıfı kullanıyoruz ve önyargıyı görmezden geliyoruz.
+Şimdi `X`'ten `Y`'yi oluşturan çekirdeği yalnızca girdi-çıktı çiftlerine bakarak öğrenip öğrenemeyeceğimizi görelim. Önce bir evrişimli tabaka oluşturup çekirdeğini rastgele bir tensör olarak ilkletiriz. Daha sonra, her yinelemede, `Y`'yi evrişimli tabakanın çıktısıyla karşılaştırmak için kare hatayı kullanacağız. Daha sonra çekirdeği güncellemek için gradyanı hesaplayabiliriz. Basitlik uğruna, aşağıda iki boyutlu evrişimli katmanlar için yerleşik sınıfı kullanıyoruz ve ek girdiyi görmezden geliyoruz.
 
 ```{.python .input}
 # Construct a two-dimensional convolutional layer with 1 output channel and a
@@ -245,7 +245,7 @@ for i in range(10):
             print(f'batch {i + 1}, loss {tf.reduce_sum(l):.3f}')
 ```
 
-Hata 10 yineleme sonra küçük bir değere düştü unutmayın. Şimdi öğrendiğimiz çekirdek tensörüne bir göz atacağız.
+Hatanın 10 yineleme sonra küçük bir değere düştüğünü fark ediniz. Şimdi öğrendiğimiz çekirdek tensörüne bir göz atacağız.
 
 ```{.python .input}
 d2l.reshape(conv2d.weight.data(), (1, 2))
@@ -263,51 +263,51 @@ d2l.reshape(conv2d.get_weights()[0], (1, 2))
 
 Gerçekten de, öğrenilen çekirdek tensör, daha önce tanımladığımız çekirdek tensörüne `K`'e oldukça yakındır.
 
-## Çapraz Korelasyon ve Konvolüsyon
+## Çapraz Korelasyon ve Evrişim
 
-Çapraz korelasyon ve evrim işlemleri arasındaki yazışmaların :numref:`sec_why-conv`'ten gözlem hatırlayın. Burada iki boyutlu evrimsel katmanları düşünmeye devam edelim. Bu tür katmanlar çapraz korelasyon yerine :eqref:`eq_2d-conv-discrete`'te tanımlandığı gibi katı evrim işlemlerini gerçekleştirirse ne olur? Sıkı *kıvrım* işleminin çıktısını elde etmek için, iki boyutlu çekirdek tensörünü hem yatay hem de dikey olarak çevirmemiz ve daha sonra giriş tensörüyle *çapraz korelasyon * işlemini gerçekleştirmemiz gerekir.
+Çapraz korelasyon ve evrişim işlemleri arasındaki ilişkilendirmeler için :numref:`sec_why-conv`'teki gözlemlerimizi hatırlayın. Burada iki boyutlu evrişimli katmanları düşünmeye devam edelim. Bu tür katmanlar çapraz korelasyon yerine :eqref:`eq_2d-conv-discrete`'te tanımlandığı gibi tam evrişim işlemlerini gerçekleştirirse ne olur? Tam *evrişim* işleminin çıktısını elde etmek için, iki boyutlu çekirdek tensörünü hem yatay hem de dikey olarak çevirmemiz ve daha sonra giriş tensörüyle *çapraz korelasyon* işlemini gerçekleştirmemiz gerekir.
 
-Çekirdekler derin öğrenmede verilerden öğrenildiğinden, bu tür katmanlar katı evrim işlemlerini veya çapraz korelasyon işlemlerini gerçekleştirse de, evrimsel katmanların çıktılarının etkilenmeden kalması dikkat çekicidir.
+Çekirdekler derin öğrenmede verilerden öğrenildiğinden, bu tür katmanlar tam evrişim işlemlerini veya çapraz korelasyon işlemlerini gerçekleştirse de, evrişimli katmanların çıktılarının etkilenmeden kalması dikkat çekicidir.
 
-Bunu göstermek için, bir kıvrımsal katmanın *çapraz korelasyon* gerçekleştirdiğini ve çekirdeği :numref:`fig_correlation`'te öğrendiğini varsayalım, burada $\mathbf{K}$ matris olarak gösterilir. Bu katman yerine katı *kıvrım* gerçekleştirdiğinde, diğer koşulların değişmeden kaldığını varsayarsak, $\mathbf{K}'$ $\mathbf{K}'$ hem yatay hem de dikey olarak çevrildikten sonra $\mathbf{K}$ ile aynı olacaktır. Yani, evrimsel tabaka :numref:`fig_correlation` ve $\mathbf{K}'$'deki giriş için katı *konvolution* gerçekleştirdiğinde, :numref:`fig_correlation`'te aynı çıktı (giriş ve $\mathbf{K}$ çapraz korelasyon) elde edilecektir.
+Bunu göstermek için, bir evrişimli katmanın *çapraz korelasyon* gerçekleştirdiğini ve çekirdeği :numref:`fig_correlation`'te öğrendiğini varsayalım, burada $\mathbf{K}$ matris olarak ifade ediliyor. Bu katman yerine tam *evrişim* gerçekleştirdiğinde, diğer koşulların değişmeden kaldığını varsayarsak, $\mathbf{K}'$ $\mathbf{K}'$ hem yatay hem de dikey olarak çevrildikten sonra $\mathbf{K}$ ile aynı olacaktır. Yani, evrişimli tabaka :numref:`fig_correlation` ve $\mathbf{K}'$'deki girdi için tam *evrişim* gerçekleştirdiğinde, :numref:`fig_correlation`'te aynı çıktı (girdi ve $\mathbf{K}$'nin çapraz korelasyon) elde edilecektir.
 
-Derin öğrenme literatürüne sahip standart terminolojiye uygun olarak, çapraz korelasyon işlemine bir evrim olarak atıfta bulunmaya devam edeceğiz, sıkı bir şekilde konuşsak da, biraz farklı olsa da. Ayrıca, bir katman temsilini veya bir evrişim çekirdeğini temsil eden herhangi bir tensörün girişini (veya bileşenini) ifade etmek için *element* terimini kullanırız.
+Derin öğrenme yazınındaki standart terminolojiye uygun olarak, çapraz korelasyon işlemine bir evrişim olarak atıfta bulunmaya devam edeceğiz, katı bir şekilde konuşursak da, biraz farklı olsa da. Ayrıca, bir katman temsilini veya bir evrişim çekirdeğini temsil eden herhangi bir tensörün girdisini (veya bileşenini) ifade etmek için *eleman (öğe)* terimini kullanıyoruz.
 
-## Özellik Haritası ve Alıcı Alan
+## Öznitelik Eşleme ve Alım Alanı (Receptive Field)
 
-:numref:`subsec_why-conv-channels`'te açıklandığı gibi, :numref:`fig_correlation`'teki evrimsel katman çıktısı bazen *özellik haritası* olarak adlandırılır, çünkü uzamsal boyutlarda (örn. genişlik ve yükseklik) sonraki katmana öğrenilen temsiller (özellikler) olarak kabul edilebilir. CNN'lerde, bazı tabakanın herhangi bir elemanı $x$ için, *alıcı alanı*, ileri yayılma sırasında $x$'nın hesaplanmasını etkileyebilecek tüm elemanları (önceki katmanlardan) ifade eder. Alıcı alan girdinin gerçek boyutundan daha büyük olabileceğini unutmayın.
+:numref:`subsec_why-conv-channels`'te açıklandığı gibi, :numref:`fig_correlation`'teki evrişimli katman çıktısı bazen *öznitelik eşleme (feature mapping)* olarak adlandırılır, çünkü uzamsal boyutlarda (örn. genişlik ve yükseklik) sonraki katmana öğrenilmiş temsiller (öznitelikler) olarak kabul edilebilir. CNN'lerde, her hangi tabakanın herhangi bir elemanı $x$ için, *alım alanı*, ileri yayma sırasında $x$'nin hesaplanmasını etkileyebilecek tüm elemanları (önceki katmanlardan) ifade eder. Alım alanın girdinin gerçek boyutundan daha büyük olabileceğini unutmayın.
 
-Alıcı alanı açıklamak için :numref:`fig_correlation`'ü kullanmaya devam edelim. $2 \times 2$ evrişim çekirdeği göz önüne alındığında, gölgeli çıkış elemanının alıcı alanı ($19$ değeri) girdinin gölgeli kısmındaki dört öğedir. Şimdi $2 \times 2$ çıkışını $\mathbf{Y}$ olarak gösterelim ve $\mathbf{Y}$ tek bir eleman çıkışı olarak $2 \times 2$ evrimsel tabaka ile daha derin bir CNN düşünelim $z$. Bu durumda, $\mathbf{Y}$'deki $z$'nın alıcı alanı $\mathbf{Y}$'nin dört unsurunu içerirken, girişteki alıcı alan dokuz giriş elemanını içerir. Böylece, bir özellik haritasındaki herhangi bir elemanın daha geniş bir alan üzerindeki giriş özelliklerini algılamak için daha büyük bir alıcı alana ihtiyacı olduğunda, daha derin bir ağ kurabiliriz.
+Alım alanını açıklamak için :numref:`fig_correlation`'ü kullanmaya devam edelim. $2 \times 2$ evrişim çekirdeği göz önüne alındığında, gölgeli çıktı elemanının alım alanı ($19$ değeri) girdinin gölgeli kısmındaki dört öğedir. Şimdi $2 \times 2$ çıktısını $\mathbf{Y}$ olarak ifade edelim ve $\mathbf{Y}$'yi girdi alıp tek $z$ eleman çıktısı veren $2 \times 2$ evrişimli tabakalı daha derin bir CNN düşünelim. Bu durumda, $\mathbf{Y}$'deki $z$'nin alım alanı $\mathbf{Y}$'nin dört öğesini içerirken, girdideki alım alanı dokuz girdi elemanını içerir. Böylece, bir öznitelik eşlemedeki herhangi bir elemanın daha geniş bir alan üzerindeki girdi özelliklerini algılamak için daha büyük bir alım alanına ihtiyacı olduğunda, daha derin bir ağ kurabiliriz.
 
 ## Özet
 
-* İki boyutlu bir konvolüsyonel tabakanın çekirdek hesaplaması, iki boyutlu bir çapraz korelasyon işlemidir. En basit haliyle, bu iki boyutlu giriş verisi ve çekirdek üzerinde çapraz korelasyon işlemi gerçekleştirir ve sonra bir önyargı ekler.
-* Görüntülerdeki kenarları tespit etmek için bir çekirdek tasarlayabiliriz.
+* İki boyutlu bir evrişimli tabakanın çekirdek hesaplaması, iki boyutlu bir çapraz korelasyon işlemidir. En basit haliyle, bu iki boyutlu girdi verisi ve çekirdek üzerinde çapraz korelasyon işlemi gerçekleştirir ve sonra bir ek girdi ekler.
+* İmgelerdeki kenarları tespit etmek için bir çekirdek tasarlayabiliriz.
 * Çekirdeğin parametrelerini verilerden öğrenebiliriz.
-* Verilerden öğrenilen çekirdekler ile, kıvrımsal katmanların çıktıları, bu tür katmanların gerçekleştirilen işlemlerinden bağımsız olarak (sıkı konvolüsyon veya çapraz korelasyon) etkilenmez.
-* Bir özellik haritasındaki herhangi bir öğe, girişteki daha geniş özellikleri algılamak için daha büyük bir alıcı alana ihtiyaç duyduğunda, daha derin bir ağ düşünülebilir.
+* Verilerden öğrenilen çekirdekler ile, evrişimli katmanların çıktıları, bu tür katmanlarda gerçekleştirilen işlemlerden bağımsız kalarak (tam evrişim veya çapraz korelasyon) etkilenmez.
+* Bir öznitelik eşlemedeki herhangi bir öğe, girdideki daha geniş öznitelikleri algılamak için daha büyük bir alım alanına ihtiyaç duyduğunda, daha derin bir ağ düşünülebilir.
 
-## Egzersizler
+## Alıştırmalar
 
-1. Bir görüntü oluşturmak `X` diyagonal kenarları ile.
-    1. Çekirdek `K`'ü bu bölümde uygularsanız ne olur?
-    1. `X`'ü transpoze ederseniz ne olur?
-    1. `K`'ü transpoze ederseniz ne olur?
-1. Oluşturduğumuz `Conv2D` sınıfının degradeyi otomatik olarak bulmaya çalıştığınızda ne tür bir hata mesajı görüyorsunuz?
-1. Giriş ve çekirdek tensörlerini değiştirerek çapraz korelasyon işlemini matris çarpımı olarak nasıl temsil edersiniz?
+1. Çapraz kenarlı bir `X` imgesi oluşturun.
+    1. Çekirdek `K`'yi bu bölümde uygularsanız ne olur?
+    1. `X` devrik olursa ne olur?
+    1. `K` devrik olursa ne olur?
+1. Oluşturduğumuz `Conv2D` sınıfının gradyanını otomatik olarak bulmaya çalıştığınızda ne tür bir hata mesajı görürsunuz?
+1. Girdi ve çekirdek tensörlerini değiştirerek çapraz korelasyon işlemini nasıl bir matris çarpımı olarak temsil edebilirsiniz?
 1. Bazı çekirdekleri manuel olarak tasarlayın.
-    1. İkinci türev için bir çekirdeğin şekli nedir?
-    1. Bir integral için çekirdek nedir?
-    1. Derece türevi elde etmek için bir çekirdeğin minimum boyutu nedir $d$?
+    1. İkinci türev için bir çekirdeğin biçimi nedir?
+    1. İntegral için bir çekirdek nedir?
+    1. $d$ derece türevi elde etmek için bir çekirdeğin minimum boyutu nedir?
 
 :begin_tab:`mxnet`
-[Discussions](https://discuss.d2l.ai/t/65)
+[Tartışmalar](https://discuss.d2l.ai/t/65)
 :end_tab:
 
 :begin_tab:`pytorch`
-[Discussions](https://discuss.d2l.ai/t/66)
+[Tartışmalar](https://discuss.d2l.ai/t/66)
 :end_tab:
 
 :begin_tab:`tensorflow`
-[Discussions](https://discuss.d2l.ai/t/271)
+[Tartışmalar](https://discuss.d2l.ai/t/271)
 :end_tab:
