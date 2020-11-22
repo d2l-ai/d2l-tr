@@ -22,9 +22,13 @@ computer vision -> bilgisayarla görme
 
 confusion-matrix -> hata matrisi
 
+convex -> dışbükey
+
 corpus -> külliyat
 
 covariate -> ortak değişken
+
+crowdsourcing -> kitle kaynak kullanımı
 
 deployment -> konuşlandırma
 

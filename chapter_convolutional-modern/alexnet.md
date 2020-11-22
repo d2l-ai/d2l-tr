@@ -7,7 +7,7 @@ Bilgisayarla görme için, bu karşılaştırma belki de adil değildir. Bu, evr
 
 Bazı sinir ağı hızlandırıcıları 1990'larda da mevcut olmasına rağmen, çok sayıda parametreyle derin çok kanallı, çok katmanlı CNN'ler yapmak için henüz yeterince güçlü değillerdi. Dahası, veri kümeleri hala nispeten küçüktü. Bu engellere ek olarak, parametre ilkleme sezgisel yöntemleri, rasgele eğim inişin akıllı biçimleri, daralmayan etkinleştirme fonksiyonları ve etkili düzenlileştirme teknikleri de dahil olmak üzere sinir ağlarını eğitmek için anahtar püf noktaları hala eksikti.
 
-Böylece, *uçtan uça* (pikselden sınıflandırmaya) sistemleri eğitmek yerine, klasik işlem hatları daha çok şöyle görünüyordu:
+Böylece, *uçtan uça* (pikselden sınıflandırmaya) sistemleri eğitmekten ziyade, klasik işlem hatları daha çok şöyle görünüyordu:
 
 1. İlginç bir veri kümesi elde edin. İlk günlerde, bu veri kümeleri pahalı sensörlere ihtiyaç duyuyordu (o zamanlarda 1 megapiksel görüntüler son teknolojiydi).
 2. Veri kümesini, optik, geometri, diğer analitik araçlar ve bazen şanslı lisansüstü öğrencilerin rastlantısal keşiflerine dayanan elle hazırlanmış özniteliklerle ön işleyin.
@@ -18,36 +18,34 @@ Makine öğrenmesi araştırmacılarıyla konuştuysanız, makine öğrenmesinin
 
 ## Temsilleri Öğrenme
 
-İşleri devletinin bir başka yolu da, boru hattının en önemli kısmının temsil olmasıdır. Ve 2012 yılına kadar temsil mekanik olarak hesaplandı. Aslında, yeni bir özellik fonksiyonu seti mühendisliği, sonuçları iyileştirme ve yöntemi yazma belirgin bir kağıt türüydü. SIFT :cite:`Lowe.2004`, SURF :cite:`Bay.Tuytelaars.Van-Gool.2006`, HOG (odaklı gradyan histogramları) :cite:`Dalal.Triggs.2005`, [bags of visual words](https://en.wikipedia.org/wiki/Bag-of-words_model_in_computer_vision) ve benzeri özellik çıkarıcılar tüneğe hükmetti.
+Vaziyeti ortaya dökmenin bir diğer yolu da işlem hattının en önemli kısmının temsil olmasıdır. 2012 yılına kadar temsil mekanik olarak hesaplanırdı. Aslında, yeni bir öznitelik fonksiyonu kümesi işleme, sonuçları iyileştirme ve yöntemi yazma belirgin bir makale türüydü. SIFT :cite:`Lowe.2004`, SURF :cite:`Bay.Tuytelaars.Van-Gool.2006`, HOG (yönlendirilmiş gradyan histogramları) :cite:`Dalal.Triggs.2005`, [görsel sözcük torbası](https://en.wikipedia.org/wiki/Bag-of-words_model_in_computer_vision) ve benzeri öznitelik çıkarıcılar sözünü dinletti.
 
-Yann LeCun, Geoff Hinton, Yoshua Bengio, Andrew Ng, Shun-ichi Amari ve Juergen Schmidhuber de dahil olmak üzere bir başka araştırmacı grubunun farklı planları vardı. Onlar özellikleri kendilerini öğrenilmesi gerektiğine inanıyordu. Dahası, makul derecede karmaşık olması için, özelliklerin hiyerarşik olarak, her biri öğrenilebilir parametrelere sahip birden çok ortak öğrenilen katmanla oluşması gerektiğine inanıyorlardı. Görüntü durumunda, en düşük katmanlar kenarları, renkleri ve dokuları algılayabilir. Gerçekten de, Alex Krizhevsky, Ilya Sutskever ve Geoff Hinton, bir CNN yeni bir varyantı önerdi
-*AlexNet*,
-2012 ImageNet meydan okumasında mükemmel performans elde etti. AlexNet, :cite:`Krizhevsky.Sutskever.Hinton.2012`'ün atılım yapan ImageNet sınıflandırma kağıdının ilk yazarı olan Alex Krizhevsky'nin adını aldı.
+Yann LeCun, Geoff Hinton, Yoshua Bengio, Andrew Ng, Shun-ichi Amari ve Juergen Schmidhuber de dahil olmak üzere bir başka araştırmacı grubunun farklı planları vardı. Onlar özniteliklerin kendilerinin öğrenilmesi gerektiğine inanıyordu. Dahası, makul derecede karmaşık olması için, özniteliklerin hiyerarşik olarak, her biri öğrenilebilir parametrelere sahip birden çok ortak öğrenilen katmanla oluşması gerektiğine inanıyorlardı. İmge durumunda, en düşük katmanlar kenarları, renkleri ve dokuları algılayabilir. Gerçekten de, Alex Krizhevsky, Ilya Sutskever ve Geoff Hinton, yeni bir CNN biçimi önerdi
+*AlexNet* ve 2012 ImageNet yarışmasında mükemmel performans elde etti. AlexNet, :cite:`Krizhevsky.Sutskever.Hinton.2012`'ün atılım yapan ImageNet sınıflandırma makalesinin ilk yazarı olan Alex Krizhevsky'nin adını aldı.
 
-İlginçtir ki, ağın en düşük katmanlarında, model bazı geleneksel filtrelere benzeyen özellik çıkarıcıları öğrendi. :numref:`fig_filters`, AlexNet :cite:`Krizhevsky.Sutskever.Hinton.2012` kağıdından çoğaltılıyor ve alt düzey görüntü tanımlayıcılarını açıklıyor.
+İlginçtir ki, ağın en düşük katmanlarında, model bazı geleneksel filtrelere benzeyen öznitelik çıkarıcıları öğrendi. Şekil :numref:`fig_filters`, AlexNet :cite:`Krizhevsky.Sutskever.Hinton.2012` makalesinden tekrar üretilmiştir ve alt düzey imge tanımlayıcılarını göstermektedir.
 
-![Image filters learned by the first layer of AlexNet.](../img/filters.png)
+![Alexnet'in ilk katmanındaki öğrenilmiş imgeler](../img/filters.png)
 :width:`400px`
 :label:`fig_filters`
 
-Ağdaki daha yüksek katmanlar, gözler, burunlar, çimen bıçakları vb. gibi daha büyük yapıları temsil edecek şekilde bu temsillerin üzerine inşa edilebilir. Daha yüksek katmanlar bile insanlar, uçaklar, köpekler veya frizbi gibi tüm nesneleri temsil edebilir. Nihayetinde, son gizli durum, farklı kategorilere ait verilerin kolayca ayrılabilmesi için içeriğini özetleyen görüntünün kompakt bir temsilini öğrenir.
+Ağdaki daha üst katmanlar, gözler, burunlar, çimen çizgileri vb. gibi daha büyük yapıları temsil edecek şekilde bu temsillerin üzerine inşa edilebilir. Daha üst katmanlar bile insanlar, uçaklar, köpekler veya frizbi gibi tüm nesneleri temsil edebilir. Nihayetinde, son gizli hal, farklı kategorilere ait verilerin kolayca ayrılabilmesi için içeriğini özetleyen imgenin sıkıştırılmış bir temsilini öğrenir.
 
-Çok katmanlı CNN'ler için nihai atılım 2012'de gelirken, çekirdek bir grup araştırmacı, görsel verilerin hiyerarşik temsillerini uzun yıllar öğrenmeye çalışarak kendilerini bu fikre adamıştı. 2012'deki nihai atılım iki temel faktöre atfedilebilir.
+Çok katmanlı CNN'ler için nihai atılım 2012'de gelirken, çekirdek bir grup araştırmacı, uzun yıllar görsel verilerin hiyerarşik temsillerini öğrenmeye çalışarak kendilerini bu fikre adamıştı. 2012'deki nihai atılım iki temel faktöre bağlanabilir.
 
-### Eksiksiz Bileşen: Veri
+### Eksik Bileşen: Veri
 
-Birçok katmana sahip derin modeller, dışbükey optimizasyonlara (örneğin doğrusal ve çekirdek yöntemleri) dayalı geleneksel yöntemlerden önemli ölçüde daha iyi performans gösterdikleri rejime girmek için büyük miktarda veri gerektirir. Bununla birlikte, bilgisayarların sınırlı depolama kapasitesi, sensörlerin göreceli giderleri ve 1990'lardaki nispeten daha sıkı araştırma bütçeleri göz önüne alındığında, çoğu araştırma küçük veri kümelerine dayanıyordu. Çok sayıda makale, UCI veri kümelerinin koleksiyonuna değindi, bunların birçoğu düşük çözünürlükte doğal olmayan ortamlarda yakalanan sadece yüzlerce veya (birkaç) binlerce görüntü içeriyordu.
+Birçok katmana sahip derin modeller, dışbükey optimizasyonlara (örneğin doğrusal ve çekirdek yöntemleri) dayalı geleneksel yöntemlerden önemli ölçüde daha iyi performans gösterdikleri düzene girmek için büyük miktarda veri gerektirirler. Bununla birlikte, bilgisayarların sınırlı depolama kapasitesi, sensörlerin göreceli pahalı fiyatları ve 1990'lardaki nispeten daha kısıtlı araştırma bütçeleri göz önüne alındığında, çoğu araştırma küçük veri kümelerine dayanıyordu. Çok sayıda makale, UCI veri kümelerinin koleksiyonuna değiniyordi, bunların birçoğu düşük çözünürlükte doğal olmayan ortamlarda çekilmiş sadece yüzlerce veya (birkaç) binlerce imge içeriyordu.
 
-2009'da ImageNet veri kümesi yayımlandı ve araştırmacıları 1000 farklı nesne kategorisinden her biri 1000 farklı 1 milyon örnekten modelleri öğrenmeye zorladı. Bu veri kümesini tanıtan Fei-Fei Li liderliğindeki araştırmacılar, her kategori için büyük aday setlerini ön filtrelemek için Google Image Search kullandı ve ilgili kategoriye ait olup olmadığını her görüntü için onaylamak için Amazon Mechanical Turk crowdsourcing boru hattını kullandı. Bu ölçek eşi görülmemiş. ImageNet Challenge olarak adlandırılan ilişkili rekabet, bilgisayar görme ve makine öğrenimi araştırmalarını ileriye itti, araştırmacıları hangi modellerin daha önce akademisyenlerin düşündüklerinden daha büyük bir ölçekte en iyi performans gösterdiğini belirlemelerine zorladı.
+2009'da ImageNet veri kümesi yayımlandı ve araştırmacıları 1000 farklı nesne kategorisinden her biri farklı 1000 eleman içeren toplamda 1 milyon örnek ile modeller öğrenmeye zorladı. Bu veri kümesini tanıtan Fei-Fei Li liderliğindeki araştırmacılar, her kategori için büyük aday kümelerini ön filtrelemek için Google Image Search kullandı ve her imgenin ilgili kategoriye ait olup olmadığını onaylatmak için Amazon Mechanical Turk kitle kaynak kullanımı işlem hattını kullandı. Bu eşi görülmemiş bir ölçekti. ImageNet yarışması olarak adlandırılan ilgili rekabet, bilgisayarla görme ve makine öğrenmesi araştırmalarını ileriye itti, araştırmacıları hangi modellerin daha önce akademisyenlerin düşündüklerinden daha büyük bir ölçekte en iyi performans gösterdiğini belirlemelerine zorladı.
 
-### Eksiksiz Malzeme: Donanım
+### Eksik Malzeme: Donanım
 
-Derin öğrenme modelleri, bilgi işlem döngülerinin doymak bilmeyen tüketicileridir. Eğitim yüzlerce devir alabilir ve her yineleme, hesaplamalı olarak pahalı doğrusal cebir işlemlerinin birçok katmanından veri geçirmeyi gerektirir. Bu, 1990'ların ve 2000'lerin başında, daha verimli bir şekilde optimize edilmiş dışbükey hedeflere dayanan basit algoritmaların tercih edilmesinin başlıca nedenlerinden biridir.
+Derin öğrenme modelleri, bilgi işlem döngülerinin doymak bilmeyen tüketicileridir. Eğitim yüzlerce dönem alabilir ve her yineleme, veriyi hesaplamalı olarak pahalı doğrusal cebir işlemlerine sahip birçok katmanından geçirmeyi gerektirir. Bu, 1990'ların ve 2000'lerin başında, daha verimli bir şekilde optimize edilmiş dışbükey amaç fonksiyonlarına dayanan basit algoritmaların tercih edilmesinin başlıca nedenlerinden biridir.
 
-*Grafik işlem birimleri* (GPU'lar) bir oyun değiştirici olduğu kanıtlandı
-derin öğrenmeyi mümkün kılmada. Bu yongalar uzun bilgisayar oyunlarından yararlanmak için grafik işlemeyi hızlandırmak için geliştirilmiştir. Özellikle, birçok bilgisayar grafik görevi için gerekli olan yüksek verim $4 \times 4$ matris vektör ürünleri için optimize edilmişlerdir. Neyse ki, bu matematik, evrimsel katmanları hesaplamak için gerekli olana çarpıcı bir şekilde benzer. Bu süre zarfında NVIDIA ve ATI, GPU'ları genel bilgi işlem işlemleri için optimize etmeye ve bunları *genel amaçlı GPU'lar* (GPGPU) olarak pazarlamaya başlamıştı.
+*Grafik işleme birimleri* (GPU'lar) derin öğrenmeyi mümkün kılmada bir oyun değiştirici olduğu kanıtladı. Bu yongalar uzun zamandan beri bilgisayar oyunlarında faydalanmak için grafik işlemeyi hızlandırmak amacıyla geliştirilmiştir. Özellikle, birçok bilgisayar grafik görevimde gerekli olan yüksek verim $4 \times 4$ matris vektör çarpımları için optimize edilmişlerdir. Neyse ki, buradaki matematik, evrişimli katmanları hesaplamak için gerekli olana çarpıcı bir şekilde benzer. Bu süre zarfında NVIDIA ve ATI, GPU'ları genel hesaplama işlemleri için optimize etmeye ve bunları *genel amaçlı GPU'lar* (GPGPU) olarak pazarlamaya başlamıştı.
 
-Bazı sezgiler sağlamak için, modern bir mikroişlemcinin (CPU) çekirdeklerini göz önünde bulundurun. Çekirdeklerin her biri, yüksek bir saat frekansında çalışan ve büyük önbellekleri (birkaç megabayta kadar L3) spor yapan oldukça güçlüdür. Her çekirdek, şube belirleyicileri, derin bir boru hattı ve çok çeşitli programları çalıştırmasını sağlayan diğer çan ve ıslıklarla birlikte çok çeşitli talimatları uygulamak için çok uygundur. Bununla birlikte, bu belirgin güç aynı zamanda Aşil topuğudur: genel amaçlı çekirdekler inşa etmek çok pahalıdır. Çok sayıda yonga alanı, sofistike bir destek yapısı (bellek arabirimleri, çekirdekler arasında önbelleğe alma mantığı, yüksek hızlı ara bağlantılar vb.) gerektirirler ve herhangi bir görevde nispeten kötüdürler. Modern dizüstü bilgisayarlar 4 adede kadar çekirdeğe sahiptir ve hatta üst düzey sunucular bile 64 çekirdeği nadiren aşmaktadır, çünkü maliyet etkin değildir.
+Biraz sezgi sağlamak için, modern bir mikroişlemcinin (CPU) çekirdeklerini göz önünde bulundurun. Çekirdeklerin her biri, yüksek bir saat frekansı ve gösterişli büyük önbellekleri (birkaç megabayta kadar L3) ile oldukça güçlü çalışır. Her çekirdek, dallanma tahmincileri, derin bir işlem hattı ve çok çeşitli programları çalıştırmasını sağlayan diğer çekici ek özellikleri ile birlikte birçok çeşitli talimatı uygulamak için çok uygundur. Bununla birlikte, bu belirgin güç aynı zamanda Aşil topuğudur: Genel amaçlı çekirdekler inşa etmek çok pahalıdır. Çok sayıda yonga alanı, karmaşık bir destek yapısı (bellek arabirimleri, çekirdekler arasında önbelleğe alma mantığı, yüksek hızlı ara bağlantılar vb.) gerektirirler ve herhangi bir özel görevde nispeten kötüdürler. Modern dizüstü bilgisayarlar 4 adede kadar çekirdeğe sahiptir ve hatta üst düzey sunucular bile 64 çekirdeği nadiren aşmaktadır, çünkü uygun maliyetli değildir.
 
 Karşılaştırma olarak, GPU'lar $100 \sim 1000$ küçük işleme elemanlarından oluşur (ayrıntılar NVIDIA, ATI, ARM ve diğer yonga satıcıları arasında biraz farklılık gösterir), genellikle daha büyük gruplar halinde gruplandırılır (NVIDIA bunları çözgü olarak adlandırır). Her çekirdek nispeten zayıf olsa da, bazen 1GHz altı saat frekansında bile olsa, GPU'ların büyüklük sıralamasını CPU'lardan daha hızlı hale getiren bu tür çekirdeklerin toplam sayısıdır. Örneğin, NVIDIA'nın yeni Volta nesli, özel talimatlar için çip başına 120 TFlop (ve daha genel amaçlı olanlar için 24 TFlop'a kadar) sunarken, CPU'ların kayan nokta performansı bugüne kadar 1 TFlop'u aşmadı. Bunun mümkün olmasının nedeni aslında oldukça basittir: Birincisi, güç tüketimi saat frekansı ile*dört dereceden olarak* büyümeye eğilimlidir. Bu nedenle, 4 kat daha hızlı çalışan bir CPU çekirdeğinin güç bütçesi için (tipik bir sayı), $1/4$ hızında 16 GPU çekirdeğini kullanabilirsiniz, bu da performansın $16 \times 1/4 = 4$ katını verir. Ayrıca, GPU çekirdekleri çok daha basittir (aslında, uzun bir süre için genel amaçlı kod yürütebilir* bile değillerdi), bu da onları daha verimli hale getirir. Son olarak, derin öğrenmede birçok işlem yüksek bellek bant genişliği gerektirir. Yine, GPU'lar burada en az 10 kat daha geniş olan otobüslerle parlıyor.
 
@@ -252,7 +250,7 @@ d2l.train_ch6(net, train_iter, test_iter, num_epochs, lr)
 * AlexNet'in uygulamasında LeNet'ten sadece birkaç satır daha var gibi görünse de, akademik topluluğun bu kavramsal değişimi benimsemesi ve mükemmel deneysel sonuçlarından yararlanması uzun yıllar aldı. Bu aynı zamanda verimli hesaplama araçlarının eksikliğinden kaynaklanıyordu.
 * Dropout, ReLU ve ön işleme, bilgisayar görme görevlerinde mükemmel performans elde etmedeki diğer önemli adımlardı.
 
-## Egzersizler
+## Alıştırmalar
 
 1. Çadırların sayısını artırmayı deneyin. LeNet ile karşılaştırıldığında, sonuçlar nasıl farklı? Neden?
 1. AlexNet Moda-MNIST veri kümesi için çok karmaşık olabilir.
@@ -266,13 +264,13 @@ d2l.train_ch6(net, train_iter, test_iter, num_epochs, lr)
 1. LeNet-5'e bırakma ve ReLU uygulayın. İyileşiyor mu? Ön işleme ne dersin?
 
 :begin_tab:`mxnet`
-[Discussions](https://discuss.d2l.ai/t/75)
+[Tartışmalar](https://discuss.d2l.ai/t/75)
 :end_tab:
 
 :begin_tab:`pytorch`
-[Discussions](https://discuss.d2l.ai/t/76)
+[Tartışmalar](https://discuss.d2l.ai/t/76)
 :end_tab:
 
 :begin_tab:`tensorflow`
-[Discussions](https://discuss.d2l.ai/t/276)
+[Tartışmalar](https://discuss.d2l.ai/t/276)
 :end_tab:
