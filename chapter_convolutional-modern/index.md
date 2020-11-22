@@ -10,5 +10,5 @@ Bu modeller, büyük ölçekli bir görme yarışmasında geleneksel bilgisayarl
 ```toc
 :maxdepth: 2
 
-
+alexnet
 ```

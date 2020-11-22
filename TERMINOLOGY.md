@@ -100,6 +100,8 @@ pooling -> biriktirme
 
 posterior -> sonsal olasılık
 
+preprocess -> ön işlemek
+
 pretraining -> ön eğitim
 
 prior -> önsel olasılık
