@@ -1,11 +1,11 @@
 # Blokları Kullanan Ağlar (VGG)
 :label:`sec_vgg`
 
-AlexNet derin CNN'lerin iyi sonuçlar elde edebileceğine dair ampirik kanıtlar sunarken, yeni ağlar tasarlamada sonraki araştırmacılara rehberlik etmek için genel bir şablon sağlamadı. Aşağıdaki bölümlerde, derin ağları tasarlamak için yaygın olarak kullanılan çeşitli sezgisel kavramları tanıtacağız.
+AlexNet derin CNN'lerin iyi sonuçlar elde edebileceğine dair deneysel kanıtlar sunarken, yeni ağlar tasarlamada sonraki araştırmacılara rehberlik etmek için genel bir şablon sağlamadı. Aşağıdaki bölümlerde, derin ağları tasarlamak için yaygın olarak kullanılan çeşitli sezgisel kavramları tanıtacağız.
 
-Bu alandaki ilerleme, mühendislerin transistörlerin yerleştirilmesinden mantıksal elemanlara mantık bloklarına geçtiği talaş tasarımında yansıtmaktadır. Benzer şekilde, sinir ağı mimarilerinin tasarımı, araştırmacıların bireysel nöronlar açısından düşünmekten bütün katmanlara ve şimdi bloklara, katmanların kalıplarını tekrarlayarak hareket etmeleriyle giderek daha soyut bir hale gelmişti.
+Bu alandaki ilerleme, mühendislerin transistörleri yerleştirilmede mantıksal elemanlardan mantık bloklarına geçtiği yonga tasarımına benzemektedir. Benzer şekilde, sinir ağı mimarilerinin tasarımı, araştırmacıların bireysel nöron tabanlı düşünmekten tam katmanlara ve şimdi de katmanların kalıplarını tekrarlayan bloklara geçerek daha soyut bir hale gelmişti.
 
-Blokları kullanma fikri ilk olarak Oxford Üniversitesi'ndeki [Görsel Geometri Grubu](http://www.robots.ox.ac.uk/~vgg/) (VGG), kendi adını taşıyan *VGG* ağında ortaya çıkmıştır. Bu tekrarlanan yapıları, döngüler ve alt programlar kullanarak herhangi bir modern derin öğrenme çerçevesi ile kodda uygulamak kolaydır.
+Blokları kullanma fikri ilk olarak Oxford Üniversitesi'ndeki [Görsel Geometri Grubu](http://www.robots.ox.ac.uk/~vgg/)'nun (VGG), kendi adını taşıyan *VGG* ağında ortaya çıkmıştır. Bu tekrarlanan yapıları, döngüler ve alt programlar kullanarak herhangi bir modern derin öğrenme çerçevesi ile kodda uygulamak kolaydır.
 
 ## VGG Blokları
 
@@ -195,7 +195,7 @@ d2l.train_ch6(net, train_iter, test_iter, num_epochs, lr)
 * Blokların kullanımı, ağ tanımının çok kompakt temsillerine yol açar. Karmaşık ağların verimli tasarımını sağlar.
 * Simonyan ve Ziserman, VGG makalelerinde çeşitli mimarilerle deneyler yaptılar. Özellikle, derin ve dar kıvrımların (yani $3 \times 3$) birkaç katmanının daha az geniş kıvrım katmanından daha etkili olduğunu buldular.
 
-## Egzersizler
+## Alıştırmalar
 
 1. Katmanların boyutlarını yazdırırken 11 yerine sadece 8 sonuç gördük. Kalan 3 katmanlı bilgi nereye gitti?
 1. AlexNet ile karşılaştırıldığında, VGG hesaplama açısından çok daha yavaştır ve ayrıca daha fazla GPU belleğine ihtiyaç duyar. Bunun nedenlerini analiz edin.
@@ -203,13 +203,13 @@ d2l.train_ch6(net, train_iter, test_iter, num_epochs, lr)
 1. VGG-16 veya VGG-19 gibi diğer yaygın modelleri oluşturmak için VGG kağıt :cite:`Simonyan.Zisserman.2014` Tablo 1'e bakın.
 
 :begin_tab:`mxnet`
-[Discussions](https://discuss.d2l.ai/t/77)
+[Tartışmalar](https://discuss.d2l.ai/t/77)
 :end_tab:
 
 :begin_tab:`pytorch`
-[Discussions](https://discuss.d2l.ai/t/78)
+[Tartışmalar](https://discuss.d2l.ai/t/78)
 :end_tab:
 
 :begin_tab:`tensorflow`
-[Discussions](https://discuss.d2l.ai/t/277)
+[Tartışmalar](https://discuss.d2l.ai/t/277)
 :end_tab:

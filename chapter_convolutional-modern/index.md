@@ -11,4 +11,5 @@ Bu modeller, büyük ölçekli bir görme yarışmasında geleneksel bilgisayarl
 :maxdepth: 2
 
 alexnet
+vgg
 ```
