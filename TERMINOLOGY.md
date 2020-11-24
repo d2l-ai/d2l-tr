@@ -16,6 +16,8 @@ bias -> algoritmalardaki yanlılık
 
 built-in -> yerleşik, gömülü
 
+bus -> veriyolu
+
 co-adaptation -> birlikte-uyarlama
 
 computer vision -> bilgisayarla görme
@@ -171,5 +173,7 @@ uniform -> tekdüze
 validation set -> geçerleme kümesi
 
 variance -> değişinti 
+
+warp -> bükülme
 
 weight decay -> ağırlık sönümü
