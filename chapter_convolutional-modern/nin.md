@@ -1,9 +1,7 @@
-# Ağda Ağ (NiN)
+# Ağ İçinde Ağ (Network in Network - NiN)
 :label:`sec_nin`
 
-LeNet, AlexNet ve VGG ortak bir tasarım deseni paylaşır: ekstrakt özellikleri bir dizi evrişim ve havuzlama katmanları aracılığıyla *mekansal* yapıyı istismar ve daha sonra tam bağlı katmanlar aracılığıyla temsil sonrası işlem sonrası. AlexNet ve VGG tarafından LeNet üzerindeki gelişmeler esas olarak bu daha sonraki ağların bu iki modülü nasıl genişlediğini ve derinleştirdiğini anlatıyor. Alternatif olarak, süreç içinde daha önce tam bağlı katmanları kullanmayı hayal edebiliriz. Bununla birlikte, yoğun katmanların dikkatsiz kullanımı, temsilin mekansal yapısını tamamen bırakabilir.
-*ağda ağ* (* NiN*) blokları bir alternatif sunuyor.
-Çok basit bir anlayışa dayalı olarak önerildi: her piksel için kanallarda ayrı ayrı bir MLP kullanmak :cite:`Lin.Chen.Yan.2013`.
+LeNet, AlexNet ve VGG ortak bir tasarım deseni paylaşır: Öznitelikleri bir dizi evrişim ve biriktirme katmanları aracılığıyla *mekansal* yapıdan faydalanarak çıkar ve daha sonra tam bağlı katmanlar aracılığıyla temsilleri sonradan işle. AlexNet ve VGG ile LeNet üzerindeki gelişmeler esas olarak bu daha sonraki ağların bu iki modülü nasıl genişlettiğinde ve derinleştirdiğinde yatıyor. Alternatif olarak, tam bağlı katmanları süreç içinde daha önce kullanmayı hayal edebiliriz. Bununla birlikte, yoğun katmanların dikkatsiz kullanımı, temsilin mekansal yapısını tamamen görmezden gelebilir; *ağ içindeki ağ* (*NiN*) blokları burada bir alternatif sunuyor. Çok basit bir anlayışa dayalı olarak önerildiler: Her piksel için kanallarda ayrı ayrı bir MLP kullanmak :cite:`Lin.Chen.Yan.2013`.
 
 ## NiN Blokları
 
@@ -61,9 +59,9 @@ def nin_block(num_channels, kernel_size, strides, padding):
 
 ## NiN Modeli
 
-Orijinal NiN ağı, AlexNet'ten kısa bir süre sonra önerildi ve açıkça bazı ilham aldı. NiN, $11\times 11$, $5\times 5$ ve $3\times 3$ pencere şekilleri ile evrimsel katmanlar kullanır ve karşılık gelen çıkış kanalı sayıları AlexNet'teki ile aynıdır. Her NiN bloğu, 2'lik bir adım ve $3\times 3$'lık bir pencere şekli ile maksimum bir havuzlama katmanı izler.
+Orijinal NiN ağı, AlexNet'ten kısa bir süre sonra önerildi ve açıkça bazı ilham aldı. NiN, $11\times 11$, $5\times 5$ ve $3\times 3$ pencere şekilleri ile evrimsel katmanlar kullanır ve karşılık gelen çıkış kanalı sayıları AlexNet'teki ile aynıdır. Her NiN bloğu, 2'lik bir adım ve $3\times 3$'lık bir pencere şekli ile maksimum bir biriktirme katmanı izler.
 
-NiN ve AlexNet arasındaki önemli bir fark, NiN'in tamamen bağlı katmanlardan kaçınmasıdır. Bunun yerine NiN, etiket sınıflarının sayısına eşit sayıda çıkış kanalı içeren bir NiN bloğu kullanır ve ardından *global* ortalama havuzlama katmanı izleyerek bir lojistik vektörü oluşturur. NiN'in tasarımının bir avantajı, gerekli model parametrelerinin sayısını önemli ölçüde azaltmasıdır. Bununla birlikte, pratikte, bu tasarım bazen artan model eğitim süresi gerektirir.
+NiN ve AlexNet arasındaki önemli bir fark, NiN'in tamamen bağlı katmanlardan kaçınmasıdır. Bunun yerine NiN, etiket sınıflarının sayısına eşit sayıda çıkış kanalı içeren bir NiN bloğu kullanır ve ardından *global* ortalama biriktirme katmanı izleyerek bir lojistik vektörü oluşturur. NiN'in tasarımının bir avantajı, gerekli model parametrelerinin sayısını önemli ölçüde azaltmasıdır. Bununla birlikte, pratikte, bu tasarım bazen artan model eğitim süresi gerektirir.
 
 ```{.python .input}
 net = nn.Sequential()
@@ -163,11 +161,11 @@ d2l.train_ch6(net, train_iter, test_iter, num_epochs, lr)
 ## Özet
 
 * NiN, konvolusyonel bir tabaka ve birden fazla $1\times 1$ evrimsel katmanlardan oluşan bloklar kullanır. Bu, piksel başına daha fazla doğrusal olmamasına izin vermek için kıvrımsal yığın içinde kullanılabilir.
-* NiN, tam bağlı katmanları kaldırır ve kanal sayısını istenen çıkış sayısına indirdikten sonra (örneğin, Moda-MNIST için 10) küresel ortalama havuzlama ile değiştirir (örneğin, tüm konumlar üzerinden toplanır).
+* NiN, tam bağlı katmanları kaldırır ve kanal sayısını istenen çıkış sayısına indirdikten sonra (örneğin, Moda-MNIST için 10) küresel ortalama biriktirme ile değiştirir (örneğin, tüm konumlar üzerinden toplanır).
 * Tam bağlı katmanların çıkarılması aşırı uyumu azaltır. NiN önemli ölçüde daha az parametreye sahiptir.
 * NiN tasarımı, müteakip birçok CNN tasarımını etkiledi.
 
-## Egzersizler
+## Alıştırmalar
 
 1. Sınıflandırma doğruluğunu artırmak için hiperparametreleri ayarlayın.
 1. NiN bloğunda neden iki $1\times 1$ evrimsel katman var? Bunlardan birini çıkarın ve deneysel fenomenleri gözlemleyin ve analiz edin.
@@ -179,13 +177,13 @@ d2l.train_ch6(net, train_iter, test_iter, num_epochs, lr)
 1. $384 \times 5 \times 5$ gösterimini bir adımda $10 \times 5 \times 5$ temsiline indirgeme ile ilgili olası sorunlar nelerdir?
 
 :begin_tab:`mxnet`
-[Discussions](https://discuss.d2l.ai/t/79)
+[Tartışmalar](https://discuss.d2l.ai/t/79)
 :end_tab:
 
 :begin_tab:`pytorch`
-[Discussions](https://discuss.d2l.ai/t/80)
+[Tartışmalar](https://discuss.d2l.ai/t/80)
 :end_tab:
 
 :begin_tab:`tensorflow`
-[Discussions](https://discuss.d2l.ai/t/332)
+[Tartışmalar](https://discuss.d2l.ai/t/332)
 :end_tab:
