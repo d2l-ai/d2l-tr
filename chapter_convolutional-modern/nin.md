@@ -5,11 +5,11 @@ LeNet, AlexNet ve VGG ortak bir tasarım deseni paylaşır: Öznitelikleri bir d
 
 ## NiN Blokları
 
-Konvolusyonel katmanların giriş ve çıkışlarının, örneğe, kanala, yüksekliğe ve genişliğe karşılık gelen eksenlere sahip dört boyutlu tensörlerden oluştuğunu hatırlayın. Ayrıca, tam bağlı katmanların giriş ve çıkışlarının tipik olarak örnek ve özelliğe karşılık gelen iki boyutlu tensörler olduğunu hatırlayın. NiN'in arkasındaki fikir, her piksel konumuna (her yükseklik ve genişlik için) tam bağlı bir katman uygulamaktır. Ağırlıkları her mekansal konum boyunca bağlarsak, bunu bir $1\times 1$ kıvrımsal katman (:numref:`sec_channels`'te açıklandığı gibi) veya her piksel konumuna bağımsız olarak hareket eden tam bağlı bir katman olarak düşünebiliriz. Bunu görmenin bir başka yolu da mekansal boyuttaki her elemanın (yükseklik ve genişlik) bir örneğe eşdeğer ve bir kanalın bir özelliğe eşdeğer olduğunu düşünmektir.
+Evrişimli katmanların girdi ve çıktılarının, örneğe, kanala, yüksekliğe ve genişliğe karşılık gelen eksenlere sahip dört boyutlu tensörlerden oluştuğunu hatırlayın. Ayrıca, tam bağlı katmanların girdi ve çıktılarının tipik olarak örnek ve özniteliğe karşılık gelen iki boyutlu tensörler olduğunu hatırlayın. NiN'in arkasındaki fikir, her piksel konumuna (her yükseklik ve genişlik için) tam bağlı bir katman uygulamaktır. Ağırlıkları her mekansal konum boyunca bağlarsak, bunu bir $1\times 1$ evrişimli katman (:numref:`sec_channels`'te açıklandığı gibi) veya her piksel konumunda bağımsız olarak hareket eden tam bağlı bir katman olarak düşünebiliriz. Bunu görmenin bir başka yolu da mekansal boyuttaki her elemanın (yükseklik ve genişlik) bir örneğe eşdeğer ve bir kanalın bir özniteliğe eşdeğer olduğunu düşünmektir.
 
-:numref:`fig_nin`, VGG ve NiN arasındaki ana yapısal farklılıkları ve bloklarını göstermektedir. NiN bloğu, bir kıvrımsal katmandan ve ardından ReLU aktivasyonlarıyla piksel başına tam bağlı katmanlar olarak hareket eden iki $1\times 1$ evrimsel katmandan oluşur. İlk katmanın evrişim penceresi şekli genellikle kullanıcı tarafından ayarlanır. Sonraki pencere şekilleri $1 \times 1$'ya sabitlenir.
+:numref:`fig_nin`, VGG ve NiN arasındaki ana yapısal farklılıkları ve bloklarını göstermektedir. NiN bloğu, bir evrişimli katmandan ve ardından ReLU etkinleştirmeleri ile piksel başına tam bağlı katmanlar olarak hareket eden iki $1\times 1$ evrişimli katmandan oluşur. İlk katmanın evrişim penceresi şekli genellikle kullanıcı tarafından ayarlanır. Sonraki pencere şekilleri $1 \times 1$'ya sabitlenir.
 
-![Comparing architectures of VGG and NiN, and their blocks.](../img/nin.svg)
+![VGG and NiN mimarilerinin ve bloklarının karşılaştırılması](../img/nin.svg)
 :width:`600px`
 :label:`fig_nin`
 
@@ -59,9 +59,9 @@ def nin_block(num_channels, kernel_size, strides, padding):
 
 ## NiN Modeli
 
-Orijinal NiN ağı, AlexNet'ten kısa bir süre sonra önerildi ve açıkça bazı ilham aldı. NiN, $11\times 11$, $5\times 5$ ve $3\times 3$ pencere şekilleri ile evrimsel katmanlar kullanır ve karşılık gelen çıkış kanalı sayıları AlexNet'teki ile aynıdır. Her NiN bloğu, 2'lik bir adım ve $3\times 3$'lık bir pencere şekli ile maksimum bir biriktirme katmanı izler.
+Orijinal NiN ağı, AlexNet'ten kısa bir süre sonra önerildi ve açıkçası ondan biraz ilham almıştır. NiN, $11\times 11$, $5\times 5$ ve $3\times 3$ pencere şekilleri ile evrişimli katmanlar kullanır ve karşılık gelen çıktı kanalı sayıları AlexNet'teki ile aynıdır. Her NiN bloğu, 2'lik bir adım ve $3\times 3$'lük bir pencere şekli ile bir maksimum biriktirme katmanı izler.
 
-NiN ve AlexNet arasındaki önemli bir fark, NiN'in tamamen bağlı katmanlardan kaçınmasıdır. Bunun yerine NiN, etiket sınıflarının sayısına eşit sayıda çıkış kanalı içeren bir NiN bloğu kullanır ve ardından *global* ortalama biriktirme katmanı izleyerek bir lojistik vektörü oluşturur. NiN'in tasarımının bir avantajı, gerekli model parametrelerinin sayısını önemli ölçüde azaltmasıdır. Bununla birlikte, pratikte, bu tasarım bazen artan model eğitim süresi gerektirir.
+NiN ve AlexNet arasındaki önemli bir fark, NiN'in tam bağlı katmanlardan kaçınmasıdır. Bunun yerine NiN, etiket sınıflarının sayısına eşit sayıda çıktı kanalı içeren bir NiN bloğu kullanır ve onun ardından gelen *global* ortalama biriktirme katmanı ile bir logit vektörü oluşturur. NiN'in tasarımının bir avantajı, gerekli model parametrelerinin sayısını önemli ölçüde azaltmasıdır. Bununla birlikte, pratikte, bu tasarım bazen artan model eğitim süresi gerektirir.
 
 ```{.python .input}
 net = nn.Sequential()
@@ -121,7 +121,7 @@ def net():
         ])
 ```
 
-Her bloğun çıkış şeklini görmek için bir veri örneği oluşturuyoruz.
+Her bloğun çıktı şeklini görmek için bir veri örneği oluşturuyoruz.
 
 ```{.python .input}
 X = np.random.uniform(size=(1, 1, 224, 224))
@@ -149,7 +149,7 @@ for layer in net().layers:
 
 ## Eğitim
 
-Moda-MNIST modeli eğitmek için daha önce olduğu gibi. NiN'in eğitimi AlexNet ve VGG için benzer.
+Daha önce olduğu gibi modeli eğitmek için Moda-MNIST'i kullanıyoruz. NiN'in eğitimi AlexNet ve VGG'ninkine benzerdir.
 
 ```{.python .input}
 #@tab all
@@ -160,21 +160,21 @@ d2l.train_ch6(net, train_iter, test_iter, num_epochs, lr)
 
 ## Özet
 
-* NiN, konvolusyonel bir tabaka ve birden fazla $1\times 1$ evrimsel katmanlardan oluşan bloklar kullanır. Bu, piksel başına daha fazla doğrusal olmamasına izin vermek için kıvrımsal yığın içinde kullanılabilir.
-* NiN, tam bağlı katmanları kaldırır ve kanal sayısını istenen çıkış sayısına indirdikten sonra (örneğin, Moda-MNIST için 10) küresel ortalama biriktirme ile değiştirir (örneğin, tüm konumlar üzerinden toplanır).
-* Tam bağlı katmanların çıkarılması aşırı uyumu azaltır. NiN önemli ölçüde daha az parametreye sahiptir.
+* NiN, evrişimli bir tabaka ve birden fazla $1\times 1$ evrişimli katmanlardan oluşan bloklar kullanır. Bu, piksel başına daha fazla doğrusal olmayan işleve izin vermek için evrişimli yığın içinde kullanılabilir.
+* NiN, tam bağlı katmanları kaldırır ve onları kanal sayısını istenen çıktı sayısına indirdikten sonra (örneğin, Moda-MNIST için 10) küresel ortalama biriktirme ile yer değiştirir (yani, tüm konumlar üzerinden toplar).
+* Tam bağlı katmanların çıkarılması aşırı öğrenmeyi azaltır. NiN önemli ölçüde daha az parametreye sahiptir.
 * NiN tasarımı, müteakip birçok CNN tasarımını etkiledi.
 
 ## Alıştırmalar
 
 1. Sınıflandırma doğruluğunu artırmak için hiperparametreleri ayarlayın.
-1. NiN bloğunda neden iki $1\times 1$ evrimsel katman var? Bunlardan birini çıkarın ve deneysel fenomenleri gözlemleyin ve analiz edin.
+1. NiN bloğunda neden iki $1\times 1$ evrişimli katman var? Bunlardan birini çıkarın, deneysel olguları gözlemleyin ve çözümleyin.
 1. NiN için kaynak kullanımını hesaplayın.
     1. Parametrelerin sayısı nedir?
-    1. Hesaplama miktarı nedir?
+    1. İşlemi miktarı nedir?
     1. Eğitim sırasında ihtiyaç duyulan bellek miktarı nedir?
     1. Tahmin sırasında gereken bellek miktarı nedir?
-1. $384 \times 5 \times 5$ gösterimini bir adımda $10 \times 5 \times 5$ temsiline indirgeme ile ilgili olası sorunlar nelerdir?
+1. $384 \times 5 \times 5$ gösterimini bir adımda $10 \times 5 \times 5$ gösterimine indirgeme ile ilgili olası sorunlar nelerdir?
 
 :begin_tab:`mxnet`
 [Tartışmalar](https://discuss.d2l.ai/t/79)
