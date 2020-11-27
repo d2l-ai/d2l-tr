@@ -1,9 +1,9 @@
 # Toplu Normalleştirme
 :label:`sec_batch_norm`
 
-Derin sinir ağlarını eğitmek zordur. Ve makul bir süre içinde birleşmelerini sağlamak zor olabilir. Bu bölümde, derin ağların :cite:`Ioffe.Szegedy.2015` yakınsamasını sürekli olarak hızlandıran popüler ve etkili bir teknik olan *toplu normalleştirme* açıklıyoruz. Daha sonra :numref:`sec_resnet`'te kapsanan artık bloklarla birlikte toplu normalleştirme, uygulayıcıların 100'den fazla katmanla ağları rutin olarak eğitmelerini mümkün kılmıştır.
+Derin sinir ağlarını eğitmek zordur. Üstelik makul bir süre içinde yakınsamalarını sağlamak çetrefilli olabilir. Bu bölümde, derin ağların :cite:`Ioffe.Szegedy.2015` yakınsamasını sürekli olarak hızlandıran popüler ve etkili bir teknik olan *toplu normalleştirme*'yi tanıtıyoruz. Daha sonra :numref:`sec_resnet`'te kapsanan artık bloklarla birlikte toplu normalleştirme, uygulayıcıların 100'den fazla katmanlı ağları rutin olarak eğitmelerini mümkün kılmıştır.
 
-## Eğitim Derin Ağlar
+## Derin Ağları Eğitme
 
 Toplu normalleştirmeyi motive etmek için, özellikle makine öğrenimi modellerini ve sinir ağlarını eğitirken ortaya çıkan birkaç pratik zorluğu gözden geçirelim.
 

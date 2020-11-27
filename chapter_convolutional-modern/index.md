@@ -14,4 +14,5 @@ alexnet
 vgg
 nin
 googlenet
+batch-norm
 ```
