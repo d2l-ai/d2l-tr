@@ -13,4 +13,5 @@ Bu modeller, büyük ölçekli bir görme yarışmasında geleneksel bilgisayarl
 alexnet
 vgg
 nin
+googlenet
 ```

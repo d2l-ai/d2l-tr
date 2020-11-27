@@ -22,6 +22,8 @@ co-adaptation -> birlikte-uyarlama
 
 computer vision -> bilgisayarla görme
 
+concatenation -> bitiştirme
+
 confusion-matrix -> hata matrisi
 
 convex -> dışbükey
@@ -85,6 +87,8 @@ leaky -> sızıntılı
 likelihood -> olabilirlik
 
 loss function ->  kayıp veya yitim fonksiyonu
+
+meme -> mizah unsuru
 
 minibatch -> minigrup
 
