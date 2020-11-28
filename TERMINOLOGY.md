@@ -58,6 +58,8 @@ feature -> öznitelik
 
 floating number -> kayan virgüllü sayılar (gerçel sayı gösterimi)
 
+full rank -> tam kerteli
+
 fully-connected -> tam-bağlı
 
 generative adversarial networks -> çekişmeli üretici ağlar
@@ -73,6 +75,8 @@ holdout -> harici tutulan
 hybridization -> melezleştirme
 
 initialization -> ilkleme
+
+internal covariate shift -> dahili eşdeğişken kayması
 
 invariance -> değişmezlik
 
