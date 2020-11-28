@@ -15,4 +15,5 @@ vgg
 nin
 googlenet
 batch-norm
+resnet
 ```

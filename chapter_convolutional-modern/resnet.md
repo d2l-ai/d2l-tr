@@ -1,7 +1,7 @@
 # Artık Ağlar (ResNet)
 :label:`sec_resnet`
 
-Giderek daha derin ağlar tasarlarken, katman eklemenin ağın karmaşıklığını ve ifade gücünü nasıl artırabileceğini anlamak zorunludur. Daha da önemlisi, katmanlar ekleyerek ağları sadece farklı olmaktan çok daha etkileyici hale getiren ağları tasarlama yeteneğidir. Biraz ilerleme sağlamak için biraz matematiğe ihtiyacımız var.
+Giderek daha derin ağlar tasarlarken, katman eklemenin ağın karmaşıklığını ve ifade gücünü nasıl artırabileceğini anlamak zorunluluk haline gelmektedir. Daha da önemlisi, katmanlar ekleyerek ağları sadece farklı olmaktan çok daha açıklayıcı hale getiren ağları tasarlama yeteneğidir. Biraz ilerleme sağlamak için bir parça matematiğe ihtiyacımız var.
 
 ## Fonksiyon Sınıfları
 

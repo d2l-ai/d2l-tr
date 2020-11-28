@@ -448,7 +448,7 @@ Toplu normalleşmenin başarısını takiben, başarısının *dahili eşdeğiş
 * Model eğitimi sırasında, toplu normalleştirme, minigrubun ortalama ve standart sapmasını kullanarak sinir ağının ara çıktısını sürekli olarak ayarlar, böylece sinir ağı boyunca her katmandaki ara çıktının değerleri daha kararlı olur.
 * Tam bağlı katmanlar ve evrişimli katmanlar için toplu normalleştirme yöntemleri biraz farklıdır.
 * Bir hattan düşürme katmanı gibi, toplu normalleştirme katmanları da eğitim modunda ve tahmin modunda farklı hesaplama sonuçlarına sahiptir.
-* Toplu normalleştirmenin, öncelikle düzenlileştirme olmak üzere birçok yararlı yan etkisi vardır. Öte yandan, orijinal motivasyondaki iç eşdeğişken kaymasını azaltma geçerli bir açıklama gibi görünmüyor.
+* Toplu normalleştirmenin, öncelikle düzenlileştirme olmak üzere birçok yararlı yan etkisi vardır. Öte yandan, orijinal motivasyondaki dahili eşdeğişken kaymasını azaltma geçerli bir açıklama gibi görünmüyor.
 
 ## Alıştırmalar
 
