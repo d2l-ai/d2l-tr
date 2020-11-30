@@ -19,10 +19,10 @@ Boyut 1 olan minigruplarla toplu normalleştirmeyi uygulamaya çalışırsak, hi
 
 Biçimsel olarak, bir minigrup olan $\mathcal{B}$'ye dahil olan $\mathbf {x} \in \mathcal {B}$, toplu normalleştirmeye ($\mathrm{BN}$) girdi olursa, toplu normalleştirme $\mathbf{x}$ aşağıdaki ifadeye dönüşür:
 
-$$\mathrm{BN}(\mathbf{x}) = \boldsymbol{\gamma} \odot \frac{\mathbf{x} - \hat{\boldsymbol{\mu}}_\mathcal{B}}{\hat{\boldsymbol{\sigma}}_\mathcal{B}} + \boldsymbol{\beta}.$$
+$$\mathrm{BN}(\mathbf{x}) = \boldsymbol{\gamma} \odot \frac{\mathbf{x} - \hat{\boldsymbol{\mu}}_\mathcal{B}}{\hat{\boldsymbol{\sigma}}_\mathcal{B}} + \boldsymbol{\beta}.$$ 
 :eqlabel:`eq_batchnorm`
 
-:eqref:`eq_batchnorm`'te, $\hat{\boldsymbol{\mu}}_\mathcal{B}$ örneklem ortalaması ve $\hat{\boldsymbol{\sigma}}_\mathcal{B}$ minigrup $\mathcal{B}$'nın örneklem standart sapmasıdır. Standartlaştırma uygulandıktan sonra, ortaya çıkan minigrup sıfır ortalama ve birim varyansa sahiptir. Birim varyans seçimi (diğer bazı sihirli sayılara karşı) keyfi bir seçim olduğundan, genel olarak eleman-yönlü  *ölçek parametresi* $\boldsymbol{\gamma}$ ve *kayma parametresi* dahil ederiz ve onlar $\boldsymbol{\beta}$ $\mathbf{x}$ ile aynı şekle sahiptirler. $\boldsymbol{\gamma}$ ve $\boldsymbol{\beta}$'in diğer model parametreleriyle birlikte öğrenilmesi gereken parametreler olduğunu unutmayın.
+:eqref:`eq_batchnorm`'te, $\hat{\boldsymbol{\mu}}_\mathcal{B}$ örneklem ortalaması ve $\hat{\boldsymbol{\sigma}}_\mathcal{B}$ minigrup $\mathcal{B}$'nın örneklem standart sapmasıdır. Standartlaştırma uygulandıktan sonra, ortaya çıkan minigrup sıfır ortalama ve birim varyansa sahiptir. Birim varyans seçimi (diğer bazı sihirli sayılara karşı) keyfi bir seçim olduğundan, genel olarak eleman-yönlü  *ölçek parametresi* $\boldsymbol{\gamma}$'yı ve *kayma parametresi*  $\boldsymbol{\beta}$'yı dahil ederiz ve onlar$\mathbf{x}$ ile aynı şekle sahiptirler. $\boldsymbol{\gamma}$ ve $\boldsymbol{\beta}$'in diğer model parametreleriyle birlikte öğrenilmesi gereken parametreler olduğunu unutmayın.
 
 Sonuç olarak, ara katmanlar için değişken büyüklükleri eğitim sırasında ayrılamaz, çünkü toplu normalleştirme bunları belirli bir ortalama ve boyuta ($\hat{\boldsymbol{\mu}}_\mathcal{B}$ ve ${\hat{\boldsymbol{\sigma}}_\mathcal{B}}$ üzerinden) aktif olarak ortalar ve yeniden ölçeklendirir. Uygulayıcının sezgi veya bilgeliğinin bir parçası, toplu normalleştirmenin daha saldırgan öğrenme oranlarına izin vermesi gibi görünmesidir.
 

@@ -5,18 +5,18 @@ Giderek daha derin ağlar tasarlarken, katman eklemenin ağın karmaşıklığı
 
 ## Fonksiyon Sınıfları
 
-Belirli bir ağ mimarisinin (öğrenme hızları ve diğer hiperparametre ayarları ile birlikte) ulaşabileceği işlevlerin sınıfı olan $\mathcal{F}$'ü düşünün. Yani, $f \in \mathcal{F}$'un tümü için uygun bir veri kümesi üzerinde eğitim yoluyla elde edilebilecek bazı parametreler (örneğin, ağırlıklar ve önyargılar) vardır. $f^*$'in gerçekten bulmak istediğimiz “gerçek” fonksiyonu olduğunu varsayalım. Eğer $\mathcal{F}$'te ise, iyi durumdayız ancak tipik olarak bu kadar şanslı olmayacağız. Bunun yerine, $\mathcal{F}$ içinde en iyi bahis olan bazı $f^*_\mathcal{F}$ bulmaya çalışacağız. Örneğin, $\mathbf{X}$ özellikleri ve $\mathbf{y}$ etiketleri olan bir veri kümesi göz önüne alındığında, aşağıdaki optimizasyon sorununu çözerek bulmayı deneyebiliriz:
+Belirli bir ağ mimarisinin (öğrenme hızları ve diğer hiperparametre ayarları ile birlikte) ulaşabileceği işlevlerin sınıfı olan $\mathcal{F}$'i düşünün. Yani, $f \in \mathcal{F}$'un tümü için uygun bir veri kümesi üzerinde eğitim yoluyla elde edilebilecek bazı parametreler (örneğin, ağırlıklar ve ek girdiler) vardır. $f^*$'in gerçekten bulmak istediğimiz “gerçek” fonksiyon olduğunu varsayalım. Eğer $\mathcal{F}$'te ise, iyi durumdayız ancak tipik olarak bu kadar şanslı olmayacağız. Bunun yerine, $\mathcal{F}$ içinde en iyi aday olan herhangi bir $f^*_\mathcal{F}$ bulmaya çalışacağız. Örneğin, $\mathbf{X}$ öznitelikleri ve $\mathbf{y}$ etiketleri olan bir veri kümesi göz önüne alındığında, aşağıdaki eniyileme sorununu çözerek aday bulmayı deneyebiliriz:
 
 $$f^*_\mathcal{F} \stackrel{\mathrm{def}}{=} \mathop{\mathrm{argmin}}_f L(\mathbf{X}, \mathbf{y}, f) \text{ subject to } f \in \mathcal{F}.$$
 
-Sadece farklı ve daha güçlü bir mimari tasarlarsak $\mathcal{F}'$ daha iyi bir sonuca varmamız gerektiğini varsaymak mantıklıdır. Başka bir deyişle, $f^*_{\mathcal{F}'}$'nin $f^*_{\mathcal{F}}$'dan “daha iyi” olmasını bekleriz. Ancak, eğer $\mathcal{F} \not\subseteq \mathcal{F}'$ bunun gerçekleşmesi gerektiğinin garantisi yoktur. Aslında, $f^*_{\mathcal{F}'}$ daha kötü olabilir. :numref:`fig_functionclasses` tarafından gösterildiği gibi, iç içe olmayan işlev sınıfları için, daha büyük bir işlev sınıfı her zaman “truth” işlevine $f^*$ yakınlaşmaz. Örneğin, :numref:`fig_functionclasses`'ün solunda $\mathcal{F}_3$'ün $f^*$'a $\mathcal{F}_1$'den daha yakın olmasına rağmen, $\mathcal{F}_6$ uzaklaşıyor ve karmaşıklığın daha da arttırılmasının $f^*$ arasındaki mesafeyi azaltabileceğinin garantisi yoktur. İç içe işlev sınıfları ile burada $\mathcal{F}_1 \subseteq \ldots \subseteq \mathcal{F}_6$ sağında :numref:`fig_functionclasses`, biz iç içe olmayan işlev sınıfları yukarıda bahsedilen sorunu önleyebilirsiniz.
+Sadece farklı ve daha güçlü bir mimari tasarlarsak $\mathcal{F}'$ daha iyi bir sonuca varmamız gerektiğini varsaymak mantıklıdır. Başka bir deyişle, $f^*_{\mathcal{F}'}$'nin $f^*_{\mathcal{F}}$'dan “daha iyi” olmasını bekleriz. Ancak, eğer $\mathcal{F} \not\subseteq \mathcal{F}'$ ise, bunun gerçekleşmesi gerektiğinin garantisi yoktur. Aslında, $f^*_{\mathcal{F}'}$ daha kötü olabilir. :numref:`fig_functionclasses`'de gösterildiği gibi, iç içe olmayan işlev sınıfları için, daha büyük bir işlev sınıfı her zaman “gerçek” işlevi $f^*$'ye yakınlaşmaz. Örneğin, :numref:`fig_functionclasses`'in solunda $\mathcal{F}_3$'ün $f^*$'a $\mathcal{F}_1$'den daha yakın olmasına rağmen, $\mathcal{F}_6$ uzaklaşıyor ve karmaşıklığın daha da arttırılmasının $f^*$'ye mesafeyi azaltabileceğinin garantisi yoktur. İç içe işlev sınıfları ile, $\mathcal{F}_1 \subseteq \ldots \subseteq \mathcal{F}_6$, burada :numref:`fig_functionclasses`'ın sağında gösteriliyor, yukarıda bahsedilen iç içe olmayan işlev sınıfları sorunundan kaçınabilirsiniz.
 
-![For non-nested function classes, a larger (indicated by area) function class does not guarantee to get closer to the "truth" function ($f^*$). This does not happen in nested function classes.](../img/functionclasses.svg)
+![İç içe olmayan işlev sınıfları için, daha büyük (alanla gösteriliyor) işlev sınıfı, "doğruluk" işlevine ($f^*$) yaklaşmayı garanti etmez. Bu, yuvalanmış işlev sınıflarında gerçekleşmez.](../img/functionclasses.svg)
 :label:`fig_functionclasses`
 
-Böylece, daha büyük fonksiyon sınıfları daha küçük olanları içeriyorsa, onları artırmanın ağın etkileyici gücünü kesinlikle arttırdığını garanti ederiz. Derin sinir ağları için, yeni eklenen katmanı bir kimlik fonksiyonu $f(\mathbf{x}) = \mathbf{x}$ olarak eğitebilirsek, yeni model orijinal model kadar etkili olacaktır. Yeni model, eğitim veri kümesine uyacak şekilde daha iyi bir çözüm elde edebileceğinden, eklenen katman eğitim hatalarını azaltmayı kolaylaştırabilir.
+Böylece, daha büyük fonksiyon sınıfları daha küçük olanları içeriyorsa, onları artırmanın ağın açıklayıcı gücünü kesinlikle arttırdığını garanti ederiz. Derin sinir ağları için, yeni eklenen katmanı bir birim fonksiyonu $f(\mathbf{x}) = \mathbf{x}$ olarak eğitebilirsek, yeni model orijinal model kadar etkili olacaktır. Yeni model, eğitim veri kümesine uyacak şekilde daha iyi bir çözüm elde edebileceğinden, eklenen katman eğitim hatalarını azaltmayı kolaylaştırabilir.
 
-Bu o ve diğerleri sorudur. çok derin bilgisayar görme modelleri üzerinde çalışırken kabul :cite:`He.Zhang.Ren.ea.2016`. Önerilen *artık ağ* (*ResNet*) özünde, her ek katmanın kendi unsurlarından biri olarak kimlik işlevini daha kolay içermesi gerektiği fikridir. Bu hususlar oldukça derin fakat şaşırtıcı derecede basit bir çözüme yol açtılar, *artık blok*. ResNet, 2015 yılında ImageNet Büyük Ölçekli Görsel Tanıma Yarışmasını kazandı. Tasarımın derin sinir ağlarının nasıl kurulacağı üzerinde derin bir etkisi vardı.
+Bu çok derin bilgisayarla görme modelleri üzerinde çalışırken He ve diğerlerinin :cite:`He.Zhang.Ren.ea.2016` üstünde düşündüğü sorudur. Önerilen *artık ağ*ın (*ResNet*) özünde, her ek katmanın kendi elemanlarıdan biri olarak birim işlevini daha kolaylıkla içermesi gerektiği fikri vardır. Bu fikirler oldukça derindi, fakat şaşırtıcı derecede basit bir çözüme ulaştılar; *artık blok*. ResNet, 2015 yılında ImageNet Büyük Ölçekli Görsel Tanıma Yarışmasını kazandı. Tasarımın derin sinir ağlarının nasıl kurulacağı üzerinde derin bir etkisi oldu.
 
 ## Kalıntı Blokları
 
@@ -356,7 +356,7 @@ d2l.train_ch6(net, train_iter, test_iter, num_epochs, lr)
 * Kalıntı blokları ile etkili bir derin sinir ağı eğitebiliriz. Girişler, katmanlar arasında kalan bağlantılar üzerinden daha hızlı yayılabilir.
 * ResNet, hem evrimsel hem de sıralı doğa için müteakip derin sinir ağlarının tasarımı üzerinde büyük bir etkiye sahipti.
 
-## Egzersizler
+## Alıştırmalar
 
 1. :numref:`fig_inception`'teki Inception bloğu ile artık blok arasındaki büyük farklar nelerdir? Inception bloğundaki bazı yolları kaldırdıktan sonra birbirleriyle nasıl ilişkilidir?
 1. Farklı varyantları uygulamak için ResNet kağıt :cite:`He.Zhang.Ren.ea.2016` Tablo 1'e bakın.
@@ -365,13 +365,13 @@ d2l.train_ch6(net, train_iter, test_iter, num_epochs, lr)
 1. İşlev sınıfları iç içe olsa bile neden işlevlerin karmaşıklığını bağlamadan artıramıyoruz?
 
 :begin_tab:`mxnet`
-[Discussions](https://discuss.d2l.ai/t/85)
+[Tartışmalar](https://discuss.d2l.ai/t/85)
 :end_tab:
 
 :begin_tab:`pytorch`
-[Discussions](https://discuss.d2l.ai/t/86)
+[Tartışmalar](https://discuss.d2l.ai/t/86)
 :end_tab:
 
 :begin_tab:`tensorflow`
-[Discussions](https://discuss.d2l.ai/t/333)
+[Tartışmalar](https://discuss.d2l.ai/t/333)
 :end_tab:
