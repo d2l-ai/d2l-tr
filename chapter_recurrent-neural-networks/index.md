@@ -1,7 +1,7 @@
-# Tekrarlayan Sinir Ağları
+# Yinelemeli Sinir Ağları
 :label:`chap_rnn`
 
-Şimdiye kadar iki tür veriyle karşılaştık: tablo verileri ve görüntü verileri. İkincisi için, içlerindeki düzenlilikten yararlanmak için özel katmanlar tasarladık. Başka bir deyişle, bir görüntüdeki piksellere izin vereceksek, analog TV zamanlarındaki bir test modelinin arka planına çok benzeyen bir şeyin içeriğinden bahsetmek çok daha zor olurdu.
+Şimdiye kadar iki tür veriyle karşılaştık: Tablo verileri ve imge verileri. İkincisi için, içlerindeki düzenlilikten yararlanmak için özel katmanlar tasarladık. Başka bir deyişle, bir imgedeki piksellerin yerini değiştirirsek, analog TV zamanlarındaki gibi bir test deseninin arka planına çok benzeyen bir şeyin içeriğinden bahsetmek çok daha zor olurdu.
 
 En önemlisi, şimdiye kadar, verilerimizin hepsinin bir dağıtımdan çekildiğini ve tüm örneklerin bağımsız ve aynı şekilde dağıtıldığını (i.d.) varsaydık. Ne yazık ki, bu çoğu veri için doğru değildir. Örneğin, bu paragraftaki sözcükler sırayla yazılır ve rastgele geçirilirse anlamını deşifre etmek oldukça zor olur. Aynı şekilde, bir videoda görüntü kareleri, bir konuşmadaki ses sinyali ve bir web sitesinde gezinme davranışı sıralı sırayı takip eder. Bu nedenle, bu tür veriler için özel modellerin bunları tanımlamada daha iyi olacağını varsaymak mantıklıdır.
 
@@ -14,11 +14,5 @@ Tekrarlayan ağları kullanma örneklerinin çoğu metin verilerine dayanmaktad�
 ```toc
 :maxdepth: 2
 
-sequence
-text-preprocessing
-language-models-and-dataset
-rnn
-rnn-scratch
-rnn-concise
-bptt
+
 ```
