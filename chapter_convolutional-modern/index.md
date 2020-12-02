@@ -16,4 +16,5 @@ nin
 googlenet
 batch-norm
 resnet
+densenet
 ```
