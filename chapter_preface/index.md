@@ -5,7 +5,7 @@ Sadece birkaç yıl önce, büyük şirket ve girişimlerde akıllı ürün ve h
 Sadece son beş yılda, derin öğrenme dünyayı şaşırttı ve  bilgisayarla görmeden doğal dil işleme, otomatik konuşma tanıma, pekiştirici öğrenme ve istatistiksel modellemeye kadar farklı alanlarda hızlı ilerleme sağladı. Elimizdeki bu ilerlemelerle, artık kendilerini her zamankinden daha fazla otonomlukla (ve bazı şirketlerin sizi inandırdığından daha az otonomlukla) kullanan otomobiller, standart e-postaları otomatik olarak hazırlayıp insanların devasa büyüklükteki e-posta kutularından kurtulmalarını sağlayan akıllı yanıt sistemleri ve go gibi masa oyunlarında dünyanın en iyi insanlarına hükmeden yazılımlar -ki bir zamanlar onlarca yıl uzakta bir özellik olarak tahmin ediliyordu- üretebiliyoruz. Bu araçlar endüstri ve toplum üzerinde şimdiden geniş etkiler yaratıyor, filmlerin yapılma şeklini değiştiriyor, hastalıklar teşhis ediyor ve temel bilimlerde, astrofizikten biyolojiye kadar, büyüyen bir rol oynuyor.
 
 
-## Bu kitap hakkında
+## Bu Kitap Hakkında
 
 Bu kitap, derin öğrenmeyi ulaşılabilir yapma girişimimizi temsil eder, size *kavramları*, *ortamı* ve *kodu* öğretir.
 
@@ -39,7 +39,7 @@ Biz yola çıkarken
 
 Bu hedefler genellikle çatışıyordu. Denklemler, teoremler ve alıntılar LaTeX'te en iyi şekilde düzenlenebilir ve yönetilebilir. Kod en iyi Python'da açıklanır. Web sayfaları için HTML ve JavaScript idealdir. Ayrıca içeriğin hem çalıştırılabilir kod, fiziksel bir kitap, indirilebilir bir PDF olarak hem de internette bir web sitesi olarak erişilebilir olmasını istiyoruz. Şu anda bu taleplere tam olarak uygun hiçbir alet ve iş akışı yok, bu yüzden kendimiz bir araya getirmek zorunda kaldık. Yaklaşımımızı ayrıntılı olarak şurada açıklıyoruz :numref:`sec_how_to_contribute`. Kaynağı paylaşmak ve düzenlemelere izin vermek için GitHub'a, kod, denklemler ve metin karıştırmak için Jupyter not defterlerine, çoklu çıktılar oluşturmak için bir oluşturma motoru olarak Sphinx'e ve forum için Discourse'a karar verdik. Sistemimiz henüz mükemmel olmasa da, bu seçenekler farklı hedefler arasında iyi bir uzlaşma sağlamaktadır. Bunun böyle bir tümleşik iş akışı kullanılarak yayınlanan ilk kitap olabileceğine inanıyoruz.
 
-### Yaparak öğrenmek
+### Yaparak Öğrenmek
 
 Birçok ders kitabı, ayrıntılı bir dizi konuyu öğretir. Örneğin, Chris Bishop'un mükemmel ders kitabı :cite:`Bishop.2006`, her konuyu o kadar titizlikle öğretir ki, doğrusal regresyon konusunda bile hatırı sayılır bir çalışma gerektirir. Uzmanlar bu kitabı tam olarak bu titizliğinden dolayı severler ancak, detay seviyesinin fazlalığından ötürü kitabın kullanışlılığı yeni başlayanlar için azdır.
 
@@ -142,7 +142,7 @@ import numpy as np
 import tensorflow as tf
 ```
 
-### Hedef kitle
+### Hedef Kitle
 
 Bu kitap derin öğrenme pratik tekniklerini sağlam bir şekilde kavramak isteyen öğrenciler (lisans veya lisansüstü), mühendisler ve araştırmacılar içindir. Her kavramı sıfırdan açıkladığımız için, derin öğrenme veya makine öğreniminde geçmis bir birikim gerekmez. Derin öğrenme yöntemlerini tam olarak açıklamak biraz matematik ve programlama gerektirir, ancak doğrusal cebir, matematik, olasılık ve Python programlama dahil bazı temel bilgilerle geldiğinizi varsayacağız. Ayrıca, Ek'te (Apendiks), bu kitapta yer alan matematiğin çoğu hakkında bir bilgi tazeleyici sağlıyoruz. Çoğu zaman, matematiksel titizlik yerine sezgiye ve fikirlere öncelik vereceğiz. İlgilenen okuyucuyu daha da ileri götürebilecek müthiş kitaplar vardır. Örneğin, Bela Bollobas'ın Doğrusal Analizi :cite:`Bollobas.1999`, doğrusal cebiri ve fonksiyonel analizi çok derinlemesine inceler. İstatistiğin Tamamı :cite:`Wasserman.2013` istatistik için müthiş bir rehberdir. Python'u daha önce kullanmadıysanız, bu [Python eğitimi'ni](http://learnpython.org/) incelemek isteyebilirsiniz.
 
