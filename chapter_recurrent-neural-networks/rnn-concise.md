@@ -1,0 +1,198 @@
+# Tekrarlayan Sinir Ağlarının Özlü Uygulaması
+:label:`sec_rnn-concise`
+
+:numref:`sec_rnn_scratch` RNN'lerin nasıl uygulandığını görmek için öğretici olsa da, bu uygun veya hızlı değildir. Bu bölümde, derin öğrenme çerçevesinin üst düzey API'leri tarafından sağlanan işlevleri kullanarak aynı dil modelinin nasıl daha verimli bir şekilde uygulanacağı gösterilecektir. Zaman makinesi veri kümesini okuyarak daha önce olduğu gibi başlıyoruz.
+
+```{.python .input}
+from d2l import mxnet as d2l
+from mxnet import np, npx
+from mxnet.gluon import nn, rnn
+npx.set_np()
+
+batch_size, num_steps = 32, 35
+train_iter, vocab = d2l.load_data_time_machine(batch_size, num_steps)
+```
+
+```{.python .input}
+#@tab pytorch
+from d2l import torch as d2l
+import torch
+from torch import nn
+from torch.nn import functional as F
+
+batch_size, num_steps = 32, 35
+train_iter, vocab = d2l.load_data_time_machine(batch_size, num_steps)
+```
+
+## Modelin Tanımlanması
+
+Yüksek seviyeli API'ler, tekrarlayan sinir ağlarının uygulamalarını sağlar. Tekrarlayan sinir ağı tabakasını `rnn_layer`'e tek bir gizli katman ve 256 gizli birimle inşa ediyoruz. Aslında, birden fazla katmana sahip olmanın ne anlama geldiğini henüz tartışmadık; bu :numref:`sec_deep_rnn`'te gerçekleşecek. Şimdilik, birden fazla katman sadece bir sonraki RNN katmanı için giriş olarak kullanılan RNN katmanının çıktısına tutarı olduğunu söylemek yeterli.
+
+```{.python .input}
+num_hiddens = 256
+rnn_layer = rnn.RNN(num_hiddens)
+rnn_layer.initialize()
+```
+
+```{.python .input}
+#@tab pytorch
+num_hiddens = 256
+rnn_layer = nn.RNN(len(vocab), num_hiddens)
+```
+
+:begin_tab:`mxnet`
+Gizli durumu başlatmak basittir. Üye fonksiyonunu çağırıyoruz `begin_state`. Bu, minibatch (gizli katman sayısı, toplu iş boyutu, gizli birim sayısı) olan her örnek için bir başlangıç gizli durumu içeren bir liste (`state`) döndürür. Daha sonra tanıtılacak bazı modellerde (örneğin, uzun kısa süreli bellek), bu liste başka bilgiler de içerir.
+:end_tab:
+
+:begin_tab:`pytorch`
+Şekli olan gizli durumu başlatmak için bir tensör kullanırız (gizli katman sayısı, toplu iş boyutu, gizli birim sayısı).
+:end_tab:
+
+```{.python .input}
+state = rnn_layer.begin_state(batch_size=batch_size)
+len(state), state[0].shape
+```
+
+```{.python .input}
+#@tab pytorch
+state = torch.zeros((1, batch_size, num_hiddens))
+state.shape
+```
+
+Gizli bir durum ve bir girdi ile, çıktıyı güncellenmiş gizli durumla hesaplayabiliriz. `rnn_layer`'in “çıkış” (`Y`) 'inin çıkış katmanlarının hesaplanmasını içermediği vurgulanmalıdır: her bir* zaman adımındaki gizli durumu ifade eder ve sonraki çıkış katmanına giriş olarak kullanılabilir.
+
+:begin_tab:`mxnet`
+Ayrıca, `rnn_layer` tarafından döndürülen güncelleştirilmiş gizli durumu (`state_new`) minibatch 'son* zaman adımında gizli duruma başvurur. Sıralı bölümleme bir çağın içinde sonraki minibatch için gizli durumu başlatmak için kullanılabilir. Birden çok gizli katman için, her katmanın gizli durumu bu değişkende saklanır (`state_new`). Daha sonra tanıtılacak bazı modellerde (örneğin, uzun kısa süreli bellek), bu değişken başka bilgiler de içerir.
+:end_tab:
+
+```{.python .input}
+X = np.random.uniform(size=(num_steps, batch_size, len(vocab)))
+Y, state_new = rnn_layer(X, state)
+Y.shape, len(state_new), state_new[0].shape
+```
+
+```{.python .input}
+#@tab pytorch
+X = torch.rand(size=(num_steps, batch_size, len(vocab)))
+Y, state_new = rnn_layer(X, state)
+Y.shape, state_new.shape
+```
+
+:numref:`sec_rnn_scratch`'e benzer şekilde, tam bir RNN modeli için bir `RNNModel` sınıfı tanımlarız. `rnn_layer`'in yalnızca gizli tekrarlayan katmanları içerdiğini unutmayın, ayrı bir çıkış katmanı oluşturmamız gerekir.
+
+```{.python .input}
+#@save
+class RNNModel(nn.Block):
+    """The RNN model."""
+    def __init__(self, rnn_layer, vocab_size, **kwargs):
+        super(RNNModel, self).__init__(**kwargs)
+        self.rnn = rnn_layer
+        self.vocab_size = vocab_size
+        self.dense = nn.Dense(vocab_size)
+
+    def forward(self, inputs, state):
+        X = npx.one_hot(inputs.T, self.vocab_size)
+        Y, state = self.rnn(X, state)
+        # The fully-connected layer will first change the shape of `Y` to
+        # (`num_steps` * `batch_size`, `num_hiddens`). Its output shape is
+        # (`num_steps` * `batch_size`, `vocab_size`).
+        output = self.dense(Y.reshape(-1, Y.shape[-1]))
+        return output, state
+
+    def begin_state(self, *args, **kwargs):
+        return self.rnn.begin_state(*args, **kwargs)
+```
+
+```{.python .input}
+#@tab pytorch
+#@save
+class RNNModel(nn.Module):
+    """The RNN model."""
+    def __init__(self, rnn_layer, vocab_size, **kwargs):
+        super(RNNModel, self).__init__(**kwargs)
+        self.rnn = rnn_layer
+        self.vocab_size = vocab_size
+        self.num_hiddens = self.rnn.hidden_size
+        # If the RNN is bidirectional (to be introduced later),
+        # `num_directions` should be 2, else it should be 1.
+        if not self.rnn.bidirectional:
+            self.num_directions = 1
+            self.linear = nn.Linear(self.num_hiddens, self.vocab_size)
+        else:
+            self.num_directions = 2
+            self.linear = nn.Linear(self.num_hiddens * 2, self.vocab_size)
+
+    def forward(self, inputs, state):
+        X = F.one_hot(inputs.T.long(), self.vocab_size)
+        X = X.to(torch.float32)
+        Y, state = self.rnn(X, state)
+        # The fully connected layer will first change the shape of `Y` to
+        # (`num_steps` * `batch_size`, `num_hiddens`). Its output shape is
+        # (`num_steps` * `batch_size`, `vocab_size`).
+        output = self.linear(Y.reshape((-1, Y.shape[-1])))
+        return output, state
+
+    def begin_state(self, device, batch_size=1):
+        if not isinstance(self.rnn, nn.LSTM):
+            # `nn.GRU` takes a tensor as hidden state
+            return  torch.zeros((self.num_directions * self.rnn.num_layers,
+                                 batch_size, self.num_hiddens), 
+                                device=device)
+        else:
+            # `nn.LSTM` takes a tuple of hidden states
+            return (torch.zeros((
+                self.num_directions * self.rnn.num_layers,
+                batch_size, self.num_hiddens), device=device),
+                    torch.zeros((
+                        self.num_directions * self.rnn.num_layers,
+                        batch_size, self.num_hiddens), device=device))
+```
+
+## Eğitim ve Tahmin
+
+Modeli eğitmeden önce, rastgele ağırlıklara sahip bir modelle bir tahmin yapalım.
+
+```{.python .input}
+device = d2l.try_gpu()
+model = RNNModel(rnn_layer, len(vocab))
+model.initialize(force_reinit=True, ctx=device)
+d2l.predict_ch8('time traveller', 10, model, vocab, device)
+```
+
+```{.python .input}
+#@tab pytorch
+device = d2l.try_gpu()
+model = RNNModel(rnn_layer, vocab_size=len(vocab))
+model = model.to(device)
+d2l.predict_ch8('time traveller', 10, model, vocab, device)
+```
+
+Oldukça açık olduğu gibi, bu model hiç çalışmıyor. Ardından, :numref:`sec_rnn_scratch`'te tanımlanan aynı hiperparametrelerle `train_ch8`'i aradık ve modelimizi üst düzey API'lerle eğitiyoruz.
+
+```{.python .input}
+#@tab all
+num_epochs, lr = 500, 1
+d2l.train_ch8(model, train_iter, vocab, lr, num_epochs, device)
+```
+
+Son bölümle karşılaştırıldığında, bu model, derin öğrenme çerçevesinin üst düzey API'leriyle daha iyi hale getirilmesinden dolayı daha kısa bir süre içinde olsa da, benzer bir şaşkınlığa ulaşmaktadır.
+
+## Özet
+
+* Derin öğrenme çerçevesinin üst düzey API'leri RNN katmanının uygulanmasını sağlar.
+* Üst düzey API'lerin RNN katmanı, çıktı ve çıktı çıktı katmanı hesaplama içermeyen güncelleştirilmiş bir gizli durum döndürür.
+* Üst düzey API'lerin kullanılması, uygulanmasını sıfırdan kullanmaktan daha hızlı RNN eğitimine yol açar.
+
+## Egzersizler
+
+1. RNN modelini üst düzey API'leri kullanarak aşırı uydurabilir misiniz?
+1. RNN modelinde gizli katman sayısını artırırsanız ne olur? Modelin çalışmasını sağlayabilecek misin?
+1. Bir RNN kullanarak :numref:`sec_sequence`'ün otoregresif modelini uygulayın.
+
+:begin_tab:`mxnet`
+[Discussions](https://discuss.d2l.ai/t/335)
+:end_tab:
+
+:begin_tab:`pytorch`
+[Discussions](https://discuss.d2l.ai/t/1053)
+:end_tab:
