@@ -18,14 +18,14 @@ Böylece, daha büyük fonksiyon sınıfları daha küçük olanları içeriyors
 
 Bu çok derin bilgisayarla görme modelleri üzerinde çalışırken He ve diğerlerinin :cite:`He.Zhang.Ren.ea.2016` üstünde düşündüğü sorudur. Önerilen *artık ağ*ın (*ResNet*) özünde, her ek katmanın kendi elemanlarıdan biri olarak birim işlevini daha kolaylıkla içermesi gerektiği fikri vardır. Bu fikirler oldukça derindi, fakat şaşırtıcı derecede basit bir çözüme ulaştılar; *artık blok*. ResNet, 2015 yılında ImageNet Büyük Ölçekli Görsel Tanıma Yarışmasını kazandı. Tasarımın derin sinir ağlarının nasıl kurulacağı üzerinde derin bir etkisi oldu.
 
-## Kalıntı Blokları
+## Artık Blokları
 
-:numref:`fig_residual_block`'te gösterildiği gibi, bir sinir ağının yerel bir bölümüne odaklanalım. Girişi $\mathbf{x}$ ile belirtin. Öğrenerek elde etmek istediğimiz altta yatan eşlemenin üstteki aktivasyon işlevine giriş olarak kullanılacak $f(\mathbf{x})$ olduğunu varsayıyoruz. :numref:`fig_residual_block`'ün solunda, noktalı çizgi kutusundaki kısım doğrudan $f(\mathbf{x})$ eşlemeyi öğrenmelidir. Sağda, noktalı çizgi kutusundaki bölümün, artık bloğun adını nasıl elde ettiği *artık eşleme* $f(\mathbf{x}) - \mathbf{x}$'i öğrenmesi gerekir. Kimlik eşlemesi $f(\mathbf{x}) = \mathbf{x}$ istenen altta yatan eşleme ise, artık eşlemeyi öğrenmek daha kolaydır: Sadece noktalı çizgi kutusundaki üst ağırlık katmanının ağırlıklarını ve önyargılarını (örn. tam bağlı katman ve kıvrımsal katman) sıfıra itmemiz gerekir. :numref:`fig_residual_block`'teki doğru şekil, ResNet'in *artık bloğu* rezidüel bloğunu göstermektedir; burada $\mathbf{x}$ katman girişini ekleme operatörüne taşıyan düz çizgiye *artık bağlantı* (veya *kısayol bağlantısı*) denir. Artık bloklarla girişler, katmanlar arasında kalan bağlantılar üzerinden daha hızlı yayılabilir.
+:numref:`fig_residual_block`'te gösterildiği gibi, bir sinir ağının yerel bir bölümüne odaklanalım. Girdiyi $\mathbf{x}$ ile belirtin. Öğrenerek elde etmek istediğimiz altta yatan eşlemenin üstteki etkinleştirme işlevine girdi olarak kullanılacak $f(\mathbf{x})$ olduğunu varsayıyoruz. :numref:`fig_residual_block`'ün solunda, kesik çizgili kutudaki kısım doğrudan $f(\mathbf{x})$ eşlemesini öğrenmelidir. Sağda, kesik çizgili kutudaki bölümün, artık bloğun adını belirleyen *artık eşleme* $f(\mathbf{x}) - \mathbf{x}$'i öğrenmesi gerekir. Birim eşlemesi $f(\mathbf{x}) = \mathbf{x}$ istenen altta yatan eşleme ise, artık eşlemeyi öğrenmek daha kolaydır: Sadece kesik çizgili kutudaki üst ağırlık katmanının ağırlıklarını ve ek girdilerini (örn. tam bağlı katman ve evrişimli katman) sıfıra itmemiz gerekir. :numref:`fig_residual_block`'teki sağdaki şekil, ResNet'in *artık bloğu*nu göstermektedir; burada $\mathbf{x}$ katman girdisini toplama işlemine taşıyan düz çizgiye *artık bağlantı* (veya *kısayol bağlantısı*) denir. Artık bloklarla girdiler, katmanlar arasında kalan bağlantılar üzerinden daha hızlı yayılabilir.
 
-![A regular block (left) and a residual block (right).](../img/residual-block.svg)
+![Normal bir blok (solda) ve bir artık blok (sağda).](../img/residual-block.svg)
 :label:`fig_residual_block`
 
-ResNet, VGG'nin tam $3\times 3$ kıvrımsal katman tasarımını takip eder. Artık blok, aynı sayıda çıkış kanalına sahip iki $3\times 3$ evrimsel katmana sahiptir. Her bir kıvrımsal katman, bir toplu normalleştirme katmanı ve bir ReLU etkinleştirme işlevi izler. Ardından, bu iki evrişim işlemini atlayıp girişi doğrudan son ReLU etkinleştirme işlevinden önce ekleriz. Bu tür bir tasarım, iki kıvrımsal katmanın çıktısının girdiyle aynı şekle sahip olmasını gerektirir, böylece birlikte eklenebilirler. Kanal sayısını değiştirmek istiyorsak, girişi ekleme işlemi için istenen şekle dönüştürmek için ek bir $1\times 1$ evrimsel katman tanıtmamız gerekir. Aşağıdaki koda bir göz atalım.
+ResNet, VGG'nin  $3\times 3$ evrişimli katman tam tasarımını izler. Artık blok, aynı sayıda çıktı kanalına sahip iki $3\times 3$ evrişimli katmana sahiptir. Her bir evrişimli katmanı, bir toplu normalleştirme katmanı ve bir ReLU etkinleştirme işlevi izler. Ardından, bu iki evrişim işlemini atlayıp girdiyi doğrudan son ReLU etkinleştirme işlevinden önce ekleriz. Bu tür bir tasarım, iki evrişimli katmanın çıktısının girdiyle aynı şekle sahip olmasını gerektirir, ancak böylece birlikte toplanabilirler. Kanal sayısını değiştirmek istiyorsak, girdiyi toplama işlemi için istenen şekle dönüştürürken ek bir $1\times 1$ evrişimli katman koymamız gerekir. Aşağıdaki koda bir göz atalım.
 
 ```{.python .input}
 from d2l import mxnet as d2l
@@ -119,12 +119,12 @@ class Residual(tf.keras.Model):  #@save
         return tf.keras.activations.relu(Y)
 ```
 
-Bu kod iki tür ağ oluşturur: biri, `use_1x1conv=False`'te ReLU doğrusal olmayanlığını uygulamadan önce çıktıya girdiyi eklediğimiz ve eklemeden önce $1 \times 1$ evrişim vasıtasıyla kanalları ve çözünürlüğü ayarladığımız bir yer. :numref:`fig_resnet_block` şunu göstermektedir:
+Bu kod iki tür ağ oluşturur: Biri, `use_1x1conv=False`'te ReLU doğrusal olmayanlığını uygulamadan önce çıktı ile  girdiyi topladığımız ve diğeri toplamadan önce $1 \times 1$ evrişim vasıtasıyla kanalları ve çözünürlüğü ayarladığımız. :numref:`fig_resnet_block`'te bunu görebiliriz:
 
-![ResNet block with and without $1 \times 1$ convolution.](../img/resnet-block.svg)
+![$1 \times 1$ evrişim içeren ve içermeyen ResNet bloğu.](../img/resnet-block.svg)
 :label:`fig_resnet_block`
 
-Şimdi giriş ve çıkışın aynı şekle sahip olduğu bir duruma bakalım.
+Şimdi girdi ve çıktının aynı şekle sahip olduğu bir duruma bakalım.
 
 ```{.python .input}
 blk = Residual(3)
@@ -149,7 +149,7 @@ Y = blk(X)
 Y.shape
 ```
 
-Ayrıca çıkış kanallarının sayısını artırırken çıkış yüksekliğini ve genişliğini yarıya indirme seçeneğine de sahibiz.
+Ayrıca çıktı kanallarının sayısını artırırken çıktı yüksekliğini ve genişliğini yarıya indirme seçeneğine de sahibiz.
 
 ```{.python .input}
 blk = Residual(6, use_1x1conv=True, strides=2)
@@ -171,7 +171,7 @@ blk(X).shape
 
 ## ResNet Modeli
 
-ResNet'in ilk iki katmanı, daha önce tarif ettiğimiz GoogLeNet'inkiyle aynıdır: 64 çıkış kanalı ile $7\times 7$ evrimsel katman ve 2'lik bir adım ile $3\times 3$ maksimum havuzlama katmanı takip eder. Fark, ResNet'teki her konvolüsyonel katmandan sonra eklenen toplu normalleştirme tabakasıdır.
+ResNet'in ilk iki katmanı, daha önce tarif ettiğimiz GoogLeNet'inkiyle aynıdır: 64 çıktı kanallı ve 2'lik bir uzun adımlı $7\times 7$ evrişimli katmanını 2'lik bir uzun adımlı $3\times 3$ maksimum biriktirme katmanı takip eder. Fark, ResNet'teki her evrişimli katmandan sonra eklenen toplu normalleştirme katmanıdır.
 
 ```{.python .input}
 net = nn.Sequential()
@@ -196,9 +196,9 @@ b1 = tf.keras.models.Sequential([
     tf.keras.layers.MaxPool2D(pool_size=3, strides=2, padding='same')])
 ```
 
-GoogLeNet, Inception bloklarından oluşan dört modül kullanır. Bununla birlikte, ResNet, her biri aynı sayıda çıkış kanalına sahip birkaç artık blok kullanan artık bloklardan oluşan dört modül kullanır. İlk modüldeki kanal sayısı, giriş kanallarının sayısı ile aynıdır. 2 adımlı maksimum bir havuzlama tabakası kullanıldığından, yüksekliği ve genişliği azaltmak gerekli değildir. Sonraki modüllerin her biri için ilk artık blokta, kanal sayısı önceki modülünkine kıyasla iki katına çıkarılır ve yükseklik ve genişlik yarıya indirilir.
+GoogLeNet, başlangıç bloklarından oluşan dört modül kullanır. Bununla birlikte, ResNet, her biri aynı sayıda çıktı kanalına sahip içinde birkaç artık blok kullanan artık bloklardan oluşan dört modül kullanır. İlk modüldeki kanal sayısı, girdi kanallarının sayısı ile aynıdır. 2'lik uzun adımlı maksimum bir biriktirme katmanı kullanıldığından, yüksekliği ve genişliği azaltmak gerekli değildir. Sonraki modüllerin her biri için ilk artık blokta, kanal sayısı önceki modülünkine kıyasla iki katına çıkarılır ve yükseklik ve genişlik yarıya indirilir.
 
-Şimdi, bu modülü uyguluyoruz. İlk modülde özel işlemin gerçekleştirildiğini unutmayın.
+Şimdi, bu modülü uyguluyoruz. İlk modülde özel işlemenin gerçekleştirildiğine dikkat edin.
 
 ```{.python .input}
 def resnet_block(num_channels, num_residuals, first_block=False):
@@ -270,7 +270,7 @@ b4 = ResnetBlock(256, 2)
 b5 = ResnetBlock(512, 2)
 ```
 
-Son olarak, tıpkı GoogLeNet gibi küresel bir ortalama havuzlama katmanı ekliyoruz ve ardından tam bağlı katman çıktısını izliyoruz.
+Son olarak, tıpkı GoogLeNet gibi global bir ortalama biriktirme katmanı ekliyoruz ve ardına tam bağlı çıktı katmanı koyuyoruz.
 
 ```{.python .input}
 net.add(nn.GlobalAvgPool2D(), nn.Dense(10))
@@ -307,12 +307,12 @@ def net():
         tf.keras.layers.Dense(units=10)])
 ```
 
-Her modülde 4 evrimsel katman vardır ($1\times 1$ evrimsel katman hariç). İlk $7\times 7$ konvolüsyonel tabaka ve son tam bağlı tabaka ile birlikte toplamda 18 katman vardır. Bu nedenle, bu model yaygın olarak ResNet-18 olarak bilinir. Modülde farklı sayıda kanal ve artık blokları yapılandırarak, daha derin 152 katmanlı ResNet-152 gibi farklı ResNet modelleri oluşturabiliriz. ResNet'in ana mimarisi GoogLeNet'e benzer olsa da, ResNet'in yapısı daha basit ve daha kolaydır. Tüm bu faktörler ResNet'in hızlı ve yaygın kullanımı ile sonuçlandı. :numref:`fig_resnet18` tam ResNet-18'i tasvir ediyor.
+Her modülde 4 evrişimli katman vardır ($1\times 1$ evrişimli katman hariç). İlk $7\times 7$ evrişimli katman ve son tam bağlı tabaka ile birlikte toplamda 18 katman vardır. Bu nedenle, bu model yaygın olarak ResNet-18 olarak bilinir. Modülde farklı sayıda kanal ve artık blokları yapılandırarak, daha derin 152 katmanlı ResNet-152 gibi farklı ResNet modelleri oluşturabiliriz. ResNet'in ana mimarisi GoogLeNet'e benzer olsa da, ResNet'in yapısı daha basit ve değiştirmesi daha kolaydır. Tüm bu faktörler ResNet'in hızlı ve yaygın kullanımı ile sonuçlandı. :numref:`fig_resnet18`'te bütün ResNet-18'i görselleştiriyoruz.
 
 ![The ResNet-18 architecture.](../img/resnet18.svg)
 :label:`fig_resnet18`
 
-ResNet'i eğitmeden önce, giriş şeklinin ResNet'teki farklı modüllerde nasıl değiştiğini gözlemleyelim. Önceki tüm mimarilerinde olduğu gibi, çözünürlük azalırken, kanal sayısı küresel ortalama havuzlama katmanının tüm özellikleri topladığı noktaya kadar artar.
+ResNet'i eğitmeden önce, girdi şeklinin ResNet'teki farklı modüllerde nasıl değiştiğini gözlemleyelim. Önceki tüm mimarilerinde olduğu gibi, çözünürlük azalırken, kanal sayısı küresel ortalama biriktirme katmanının tüm öznitelikleri topladığı noktaya kadar artar.
 
 ```{.python .input}
 X = np.random.uniform(size=(1, 1, 224, 224))
@@ -340,7 +340,7 @@ for layer in net().layers:
 
 ## Eğitim
 
-ResNet'i moda-MNIST veri kümesi üzerinde eğitiyoruz, tıpkı eskisi gibi.
+ResNet'i moda-MNIST veri kümesi üzerinde eğitiyoruz, tıpkı öncekiler gibi.
 
 ```{.python .input}
 #@tab all
@@ -351,18 +351,18 @@ d2l.train_ch6(net, train_iter, test_iter, num_epochs, lr)
 
 ## Özet
 
-* İç içe işlev sınıfları istenir. Derin sinir ağlarında bir kimlik fonksiyonu olarak ek bir katman öğrenmek (bu aşırı bir durum olsa da) kolaylaştırılmalıdır.
-* Artık eşleme, ağırlık katmanındaki parametreleri sıfıra itmek gibi kimlik işlevini daha kolay öğrenebilir.
-* Kalıntı blokları ile etkili bir derin sinir ağı eğitebiliriz. Girişler, katmanlar arasında kalan bağlantılar üzerinden daha hızlı yayılabilir.
-* ResNet, hem evrimsel hem de sıralı doğa için müteakip derin sinir ağlarının tasarımı üzerinde büyük bir etkiye sahipti.
+* İç içe işlev sınıfları istenir. Derin sinir ağlarında bir birim fonksiyonu olarak ek bir katman öğrenmek (bu aşırı bir durum olsa da) kolaylaştırılmalıdır.
+* Artık eşleme, ağırlık katmanındaki parametreleri sıfıra iterek birim işlevini daha kolay öğrenebilir.
+* Artık blokları ile etkili bir derin sinir ağı eğitebiliriz. Girdiler, katmanlar arasındaki artık bağlantılar üzerinden daha hızlı yayılabilir.
+* ResNet, hem evrişimli hem de sıralı içerikli müteakip derin sinir ağlarının tasarımı üzerinde büyük bir etkiye sahip oldu.
 
 ## Alıştırmalar
 
-1. :numref:`fig_inception`'teki Inception bloğu ile artık blok arasındaki büyük farklar nelerdir? Inception bloğundaki bazı yolları kaldırdıktan sonra birbirleriyle nasıl ilişkilidir?
-1. Farklı varyantları uygulamak için ResNet kağıt :cite:`He.Zhang.Ren.ea.2016` Tablo 1'e bakın.
-1. Daha derin ağlar için ResNet, model karmaşıklığını azaltmak için bir “darboğaz” mimarisi sunar. Uygulamaya çalış.
-1. ResNet'in sonraki sürümlerinde yazarlar “evrim, toplu normalleştirme ve aktivasyon” yapısını “toplu normalleştirme, aktivasyon ve evrim” yapısına değiştirdiler. Bu gelişmeyi kendiniz yapın. Ayrıntılar için :cite:`He.Zhang.Ren.ea.2016*1`'teki Şekil 1'e bakın.
-1. İşlev sınıfları iç içe olsa bile neden işlevlerin karmaşıklığını bağlamadan artıramıyoruz?
+1. :numref:`fig_inception`'teki başlangıç bloğu ile artık blok arasındaki ana farklılıklar nelerdir? Başlangıç bloğundaki bazı yolları kaldırırsak, birbirleriyle nasıl ilişkili olurlar?
+1. Farklı sürümleri uygulamak için ResNet makalesindeki :cite:`He.Zhang.Ren.ea.2016` Tablo 1'e bakın.
+1. Daha derin ağlar için ResNet, model karmaşıklığını azaltmada bir “darboğaz” mimarisi sunar. Uygulamaya çalışın.
+1. ResNet'in sonraki sürümlerinde yazarlar “evrişim, toplu normalleştirme ve etkinleştirme” yapısını “toplu normalleştirme, etkinleştirme ve evrişim” yapısına değiştirdiler. Bu gelişmeyi kendiniz uygulayın. Ayrıntılar için :cite:`He.Zhang.Ren.ea.2016*1`'teki Şekil 1'e bakın.
+1. İşlev sınıfları iç içe olsa bile neden işlevlerin karmaşıklığını sınırsız artıramıyoruz?
 
 :begin_tab:`mxnet`
 [Tartışmalar](https://discuss.d2l.ai/t/85)
