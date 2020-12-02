@@ -1,15 +1,15 @@
 # Blokları Kullanan Ağlar (VGG)
 :label:`sec_vgg`
 
-AlexNet derin CNN'lerin iyi sonuçlar elde edebileceğine dair ampirik kanıtlar sunarken, yeni ağlar tasarlamada sonraki araştırmacılara rehberlik etmek için genel bir şablon sağlamadı. Aşağıdaki bölümlerde, derin ağları tasarlamak için yaygın olarak kullanılan çeşitli sezgisel kavramları tanıtacağız.
+AlexNet derin CNN'lerin iyi sonuçlar elde edebileceğine dair deneysel kanıtlar sunarken, yeni ağlar tasarlamada sonraki araştırmacılara rehberlik etmek için genel bir şablon sağlamadı. Aşağıdaki bölümlerde, derin ağları tasarlamak için yaygın olarak kullanılan çeşitli sezgisel kavramları tanıtacağız.
 
-Bu alandaki ilerleme, mühendislerin transistörlerin yerleştirilmesinden mantıksal elemanlara mantık bloklarına geçtiği talaş tasarımında yansıtmaktadır. Benzer şekilde, sinir ağı mimarilerinin tasarımı, araştırmacıların bireysel nöronlar açısından düşünmekten bütün katmanlara ve şimdi bloklara, katmanların kalıplarını tekrarlayarak hareket etmeleriyle giderek daha soyut bir hale gelmişti.
+Bu alandaki ilerleme, mühendislerin transistörleri yerleştirilmede mantıksal elemanlardan mantık bloklarına geçtiği yonga tasarımına benzemektedir. Benzer şekilde, sinir ağı mimarilerinin tasarımı, araştırmacıların bireysel nöron tabanlı düşünmekten tam katmanlara ve şimdi de katmanların kalıplarını tekrarlayan bloklara geçerek daha soyut bir hale gelmişti.
 
-Blokları kullanma fikri ilk olarak Oxford Üniversitesi'ndeki [Görsel Geometri Grubu](http://www.robots.ox.ac.uk/~vgg/) (VGG), kendi adını taşıyan *VGG* ağında ortaya çıkmıştır. Bu tekrarlanan yapıları, döngüler ve alt programlar kullanarak herhangi bir modern derin öğrenme çerçevesi ile kodda uygulamak kolaydır.
+Blokları kullanma fikri ilk olarak Oxford Üniversitesi'ndeki [Görsel Geometri Grubu](http://www.robots.ox.ac.uk/~vgg/)'nun (VGG), kendi adını taşıyan *VGG* ağında ortaya çıkmıştır. Bu tekrarlanan yapıları, döngüler ve alt programlar kullanarak herhangi bir modern derin öğrenme çerçevesi ile kodda uygulamak kolaydır.
 
 ## VGG Blokları
 
-Klasik CNN'lerin temel yapı taşı aşağıdakilerin bir dizisidir: (i) çözünürlüğü korumak için dolgulu bir kıvrımsal katman, (ii) ReLU gibi bir doğrusal olmayan, (iii) maksimum havuzlama katmanı gibi bir havuzlama katmanı. Bir VGG bloğu, uzamsal altörnekleme için bir maksimum havuzlama katmanı izleyen bir kıvrımsal katman dizisinden oluşur. Orijinal VGG kağıdında :cite:`Simonyan.Zisserman.2014`, yazarlar $3\times3$ çekirdeklerle (yükseklik ve genişlik tutarak) ve $2 \times 2$ maksimum 2 adımla havuzlama (her bloktan sonra çözünürlüğü yarıya indirerek) ile kıvrımlar kullandılar. Aşağıdaki kodda, bir VGG bloğu uygulamak için `vgg_block` adlı bir işlev tanımlıyoruz. İşlev, evrimsel katmanların sayısına karşılık gelen iki argüman alır `num_convs` ve çıkış kanalı sayısı `num_channels`.
+Klasik CNN'lerin temel yapı taşı aşağıdakilerin bir dizisidir: (i) Çözünürlüğü korumak için dolgulu bir evrişimli katman, (ii) ReLU gibi bir doğrusal olmayan işlev, (iii) Maksimum biriktirme katmanı gibi bir biriktirme katmanı. Bir VGG bloğu, uzamsal altörnekleme için bir maksimum biriktirme katmanı izleyen bir evrişimli katman dizisinden oluşur. Orijinal VGG makalesinde :cite:`Simonyan.Zisserman.2014`, yazarlar $3\times3$ çekirdeklerle evrişim (yüksekliği ve genişliği aynı tutarak) ve 2 birim uzun adımlı $2 \times 2$ maksimum biriktirme (her bloktan sonra çözünürlüğü yarıya indirerek) kullandılar. Aşağıdaki kodda, bir VGG bloğu uygulamak için `vgg_block` adlı bir işlev tanımlıyoruz. İşlev, evrişimli katmanların sayısına `num_convs` ve çıktı kanalı sayısına `num_channels` karşılık gelen iki argüman alır.
 
 ```{.python .input}
 from d2l import mxnet as d2l
@@ -59,22 +59,22 @@ def vgg_block(num_convs, num_channels):
 
 ## VGG Ağı
 
-AlexNet ve LeNet gibi, VGG Ağı iki kısma bölünebilir: Birincisi çoğunlukla konvolüsyonel ve havuzlama katmanlarından ve ikincisi tam bağlı katmanlardan oluşur. Bu tasvir edilmiştir :numref:`fig_vgg`.
+AlexNet ve LeNet gibi, VGG Ağı iki kısma bölünebilir: Birincisi çoğunlukla evrişim ve biriktirme katmanlarından ve ikincisi tam bağlı katmanlardan oluşur. Bu :numref:`fig_vgg`'te tasvir edilmiştir.
 
-![From AlexNet to VGG that is designed from building blocks.](../img/vgg.svg)
+![AlexNet'ten yapı bloklarından tasarlanmış VGG'ye](../img/vgg.svg)
 :width:`400px`
 :label:`fig_vgg`
 
-Ağın kıvrımsal kısmı, :numref:`fig_vgg`'ten (`vgg_block` işlevinde de tanımlanmıştır) birkaç VGG bloğu arkaya bağlar. Aşağıdaki değişken `conv_arch`, her biri iki değer içeren bir dizinin (blok başına bir) listesinden oluşur: evrimsel katmanların sayısı ve çıkış kanallarının sayısı, tam olarak `vgg_block` işlevini çağırmak için gerekli argümanlardır. VGG ağının tam bağlı kısmı AlexNet'te kapsananla aynıdır.
+Ağın evrişimli kısmı, :numref:`fig_vgg`'tek (`vgg_block` işlevinde de tanımlanmıştır) birkaç VGG bloğunu arka arkaya bağlar. Aşağıdaki `conv_arch` değişken, her biri iki değer içeren bir çokuzlu (blok başına bir) listesinden oluşur: Evrişimli katmanların sayısı ve çıktı kanallarının sayısı,ki tam olarak `vgg_block` işlevini çağırmak için gerekli argümanlardır. VGG ağının tam bağlı kısmı AlexNet'te kapsananla aynıdır.
 
-Orijinal VGG ağı, ilk ikisinin her biri bir evrimsel tabakaya sahip olduğu ve ikincisi üçünün her biri iki konvolüsyonel katman içerdiği 5 evrimsel blok vardı. İlk blokta 64 çıkış kanalı vardır ve sonraki her blok, bu sayı 512'ye ulaşıncaya kadar çıkış kanalı sayısını iki katına çıkarır. Bu ağ 8 evrimsel katman ve 3 tam bağlı katman kullandığından, genellikle VGG-11 olarak adlandırılır.
+Orijinal VGG ağında, ilk ikisinin her birinin bir evrişimli tabakaya sahip olduğu ve sonraki üçünün her birinin iki evrişimli katman içerdiği 5 evrişimli blok vardı. İlk blokta 64 çıktı kanalı vardır ve sonraki her blok, bu sayı 512'ye ulaşıncaya kadar çıktı kanalı sayısını iki katına çıkarır. Bu ağ 8 evrişimli katman ve 3 tam bağlı katman kullandığından, genellikle VGG-11 olarak adlandırılır.
 
 ```{.python .input}
 #@tab all
 conv_arch = ((1, 64), (1, 128), (2, 256), (2, 512), (2, 512))
 ```
 
-Aşağıdaki kod VGG-11'i uygular. Bu, `conv_arch` üzerinde bir for-loop yürütme basit bir konudur.
+Aşağıdaki kodda VGG-11'i uygulanıyor. Bu, `conv_arch` üzerinde bir -for- döngüsü yürütme gibi basit bir konudur.
 
 ```{.python .input}
 def vgg(conv_arch):
@@ -131,7 +131,7 @@ def vgg(conv_arch):
 net = vgg(conv_arch)
 ```
 
-Daha sonra, her katmanın çıkış şeklini gözlemlemek için 224 yükseklik ve genişliğe sahip tek kanallı bir veri örneği oluşturacağız.
+Daha sonra, her katmanın çıktı şeklini gözlemlemek için 224'lik yükseklik ve genişliğe sahip tek kanallı bir veri örneği oluşturacağız.
 
 ```{.python .input}
 net.initialize()
@@ -161,7 +161,7 @@ Gördüğünüz gibi, her blokta yükseklik ve genişliği yarıya indiriyoruz, 
 
 ## Eğitim
 
-VGG-11 AlexNet'ten daha hesaplamalı olarak daha ağır olduğundan, daha az sayıda kanala sahip bir ağ oluşturuyoruz. Bu, Moda-MNIST üzerinde eğitim için fazlasıyla yeterli.
+VGG-11 AlexNet'ten hesaplamalı olarak daha ağır olduğundan, daha az sayıda kanala sahip bir ağ oluşturuyoruz. Bu, Moda-MNIST üzerinde eğitim için fazlasıyla yeterlidir.
 
 ```{.python .input}
 #@tab mxnet, pytorch
@@ -180,7 +180,7 @@ small_conv_arch = [(pair[0], pair[1] // ratio) for pair in conv_arch]
 net = lambda: vgg(small_conv_arch)
 ```
 
-Biraz daha büyük bir öğrenme hızı kullanmanın yanı sıra, model eğitim süreci :numref:`sec_alexnet`'teki AlexNet'e benzer.
+Biraz daha büyük bir öğrenme hızı kullanmanın haricinde, model eğitim süreci :numref:`sec_alexnet`'teki AlexNet'e benzerdir.
 
 ```{.python .input}
 #@tab all
@@ -191,25 +191,25 @@ d2l.train_ch6(net, train_iter, test_iter, num_epochs, lr)
 
 ## Özet
 
-* VGG-11 yeniden kullanılabilir evrimsel blokları kullanarak bir ağ oluşturur. Farklı VGG modelleri, her bloktaki kıvrımsal katman ve çıkış kanallarının sayısındaki farklılıklarla tanımlanabilir.
-* Blokların kullanımı, ağ tanımının çok kompakt temsillerine yol açar. Karmaşık ağların verimli tasarımını sağlar.
-* Simonyan ve Ziserman, VGG makalelerinde çeşitli mimarilerle deneyler yaptılar. Özellikle, derin ve dar kıvrımların (yani $3 \times 3$) birkaç katmanının daha az geniş kıvrım katmanından daha etkili olduğunu buldular.
+* VGG-11 yeniden kullanılabilir evrişimli bloklar kullanarak bir ağ oluşturur. Farklı VGG modelleri, her bloktaki evrişimli katman ve çıktı kanallarının sayısındaki farklılıklarla tanımlanabilir.
+* Blokların kullanımı, ağ tanımının çok sıkıştırılmış temsillerine yol açar. Karmaşık ağların verimli tasarımını sağlar.
+* Simonyan ve Ziserman, VGG makalelerinde çeşitli mimarilerle deneyler yaptılar. Özellikle, derin ve dar evrişimlerin (yani $3 \times 3$) birkaç katmanının daha az sayıda geniş evrişimli katmandan daha etkili olduğunu buldular.
 
-## Egzersizler
+## Alıştırmalar
 
-1. Katmanların boyutlarını yazdırırken 11 yerine sadece 8 sonuç gördük. Kalan 3 katmanlı bilgi nereye gitti?
+1. Katmanların boyutlarını yazdırırken 11 yerine sadece 8 sonuç gördük. Kalan 3 katman bilgisi nereye gitti?
 1. AlexNet ile karşılaştırıldığında, VGG hesaplama açısından çok daha yavaştır ve ayrıca daha fazla GPU belleğine ihtiyaç duyar. Bunun nedenlerini analiz edin.
-1. Moda-MNIST içindeki görüntülerin yüksekliğini ve genişliğini 224'ten 96'ya değiştirmeyi deneyin. Bunun deneyler üzerinde ne etkisi var?
-1. VGG-16 veya VGG-19 gibi diğer yaygın modelleri oluşturmak için VGG kağıt :cite:`Simonyan.Zisserman.2014` Tablo 1'e bakın.
+1. Moda-MNIST içindeki imgelerin yüksekliğini ve genişliğini 224'ten 96'ya değiştirmeyi deneyin. Bunun deneyler üzerinde ne etkisi olur?
+1. VGG-16 veya VGG-19 gibi diğer yaygın modelleri oluşturmak için VGG makalesideki :cite:`Simonyan.Zisserman.2014` Tablo 1'e bakın.
 
 :begin_tab:`mxnet`
-[Discussions](https://discuss.d2l.ai/t/77)
+[Tartışmalar](https://discuss.d2l.ai/t/77)
 :end_tab:
 
 :begin_tab:`pytorch`
-[Discussions](https://discuss.d2l.ai/t/78)
+[Tartışmalar](https://discuss.d2l.ai/t/78)
 :end_tab:
 
 :begin_tab:`tensorflow`
-[Discussions](https://discuss.d2l.ai/t/277)
+[Tartışmalar](https://discuss.d2l.ai/t/277)
 :end_tab:
