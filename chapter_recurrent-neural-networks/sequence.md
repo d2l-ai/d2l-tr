@@ -1,4 +1,4 @@
-# Sıra Modelleri
+# Dizi Modelleri
 :label:`sec_sequence`
 
 Netflix'te film izlediğinizi düşünün. İyi bir Netflix kullanıcısı olarak, filmlerin her birini dini olarak değerlendirmeye karar verirsiniz. Sonuçta, iyi bir film iyi bir filmdir, ve sen onlardan daha fazla izlemek istiyorsun, değil mi? Görünüşe göre, işler o kadar basit değil. İnsanların filmler hakkındaki görüşleri zamanla oldukça önemli ölçüde değişebilir. Aslında, psikologların bazı etkileri için isimleri bile vardır:
@@ -354,7 +354,7 @@ Bu, geleceğe daha da ileriye doğru tahmin etmeye çalıştıkça, öngörünü
 * Nedensel modellerde (örn. ileriye giden zaman), ileri yönün tahmin edilmesi genellikle ters yönden çok daha kolaydır.
 * $t$'e kadar gözlenen bir dizi için, $t+k$ zaman adımındaki tahmin edilen çıktı*$k$ adım öngörü* olur. $k$'yı artırarak zaman içinde daha da tahmin ettiğimiz gibi, hatalar birikir ve tahminin kalitesi genellikle dramatik bir şekilde bozulur.
 
-## Egzersizler
+## Alıştırmalar
 
 1. Bu bölümün deneyinde modeli geliştirin.
     1. Geçmiş 4 gözlemden daha fazlasını mı dahil ediyorsun? Gerçekten kaç taneye ihtiyacın var?
@@ -366,13 +366,13 @@ Bu, geleceğe daha da ileriye doğru tahmin etmeye çalıştıkça, öngörünü
 1. Verilerin dinamiğini yakalamak için gizli bir otoregresif modelin ne zaman gerekli olabileceğine dair bir örnek verin.
 
 :begin_tab:`mxnet`
-[Discussions](https://discuss.d2l.ai/t/113)
+[Tartışmalar](https://discuss.d2l.ai/t/113)
 :end_tab:
 
 :begin_tab:`pytorch`
-[Discussions](https://discuss.d2l.ai/t/114)
+[Tartışmalar](https://discuss.d2l.ai/t/114)
 :end_tab:
 
 :begin_tab:`tensorflow`
-[Discussions](https://discuss.d2l.ai/t/1048)
+[Tartışmalar](https://discuss.d2l.ai/t/1048)
 :end_tab:

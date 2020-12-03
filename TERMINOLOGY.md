@@ -58,6 +58,8 @@ feature -> öznitelik
 
 floating number -> kayan virgüllü sayılar (gerçel sayı gösterimi)
 
+frame -> çerçeve
+
 full rank -> tam kerteli
 
 fully-connected -> tam-bağlı
