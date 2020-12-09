@@ -14,18 +14,18 @@ Kısacası, film reytinglerinde sabitlik dışında her şey vardır. Böylece, 
 * Birçok kullanıcı, uygulamaları açtıkları zamana göre son derece özel davranışlara sahiptir. Örneğin, sosyal medya uygulamaları kullanımı öğrencilerde okul zamanından sonra çok daha yaygındır. Borsa alım satım uygulamaları piyasalar açık olduğunda daha yaygın olarak kullanılır.
 * Yarının hisse senedi fiyatlarını tahmin etmek, dün kaçırdığımız bir hisse senedi fiyatının boşluklarını doldurmaktan çok daha zordur, her ne kadar ikisi de bir sayıyı tahmin etme meselesi olsa da. Sonuçta, öngörü, geçmişe görüden çok daha zordur. İstatistiklerde, ilki (bilinen gözlemlerin ötesinde tahmin) *dışdeğerleme (extrapolation)* olarak adlandırılırken, ikincisi (mevcut gözlemler arasındaki tahmin) *aradeğerleme (interpolation)* olarak adlandırılır.
 * Müzik, konuşma, metin ve videolar doğaları gereği dizilidir. Eğer onlarda yer değişimine verseydik, çok az anlam ifade ederlerdi. *Köpek adamı ısırdı* manşeti, kelimelerin aynı olmasına rağmen, *adam köpeği ısırdı* manşetinden çok daha az şaşırtıcıdır.
-* Depremler kuvvetle ilişkilidir, yani büyük bir depremden sonra güçlü deprem olmadan çok daha fazla, çok daha küçük artçı şoklar vardır. Aslında depremler uzamsal olarak ilişkilidir, yani artçı şoklar genellikle kısa bir süre içinde ve yakın bir yerde meydana gelir.
-* Twitter kavgalarında, dans düzenlerinde ve tartışmalarında görülebileceği gibi, insanlar birbirleri ile ardışık bir şekilde etkileşime girerler.
+* Depremler son derece ilişkilidir, yani büyük bir deprem sonrası güçlü deprem olmayan zamana kıyasla çok daha fazla, çok daha küçük artçı şoklar vardır. Aslında depremler uzamsal olarak ilişkilidir, yani artçı şoklar genellikle kısa bir süre içinde ve yakın bir yerde meydana gelir.
+* Twitter kavgalarında, dans düzenlerinde ve tartışmalarda görülebileceği gibi, insanlar birbirleri ile ardışık bir şekilde etkileşime girerler.
 
 ## İstatistiksel Araçlar
 
-Dizi verileriyle uğraşmak için istatistiksel araçlara ve yeni derin sinir ağı mimarilerine ihtiyacımız var. İşleri basit tutmak için örnek olarak :numref:`fig_ftse100`'te gösterilen hisse senedi fiyatını (FTSE 100 endeksi) kullanırız.
+Dizi verileriyle uğraşmak için istatistiksel araçlara ve yeni derin sinir ağı mimarilerine ihtiyacımız var. İşleri basit tutmak için örnek olarak :numref:`fig_ftse100`'te gösterilen hisse senedi fiyatını (FTSE 100 endeksi) kullanalım.
 
-![FTSE 100 index over about 30 years.](../img/ftse100.png)
+![Yaklaşık 30 yıldan fazla sürenin FTSE 100 endeksi.](../img/ftse100.png)
 :width:`400px`
 :label:`fig_ftse100`
 
-Fiyatları $x_t$ ile gösterelim, yani*zaman adım* $t \in \mathbb{Z}^+$ fiyatını gözlemliyoruz $x_t$. Bu metindeki diziler için $t$'in genellikle ayrık olacağını ve tamsayılara veya alt kümesine göre değişeceğini unutmayın. $t$. günde borsada iyi yapmak isteyen bir tüccarın $x_t$ üzerinden tahmin ettiğini varsayalım
+Fiyatları $x_t$ ile gösterelim, yani *zaman adım* $t \in \mathbb{Z}^+$'de $x_t$ fiyatını gözlemliyoruz. Bu kitapdeki diziler için $t$'in genellikle ayrık olacağını ve tamsayılara veya alt kümesine göre değişeceğini unutmayın. $t$. günde borsada iyi kazanmak isteyen bir tüccarın $x_t$ üzerinden tahmin ettiğini varsayalım:
 
 $$x_t \sim P(x_t \mid x_{t-1}, \ldots, x_1).$$
 
