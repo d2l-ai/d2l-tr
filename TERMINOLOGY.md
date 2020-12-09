@@ -2,6 +2,8 @@
 
 affine -> afin
 
+anchor -> çapa
+
 array -> dizilim
 
 backprop -> geriyay
@@ -54,6 +56,8 @@ environment -> ortam
 
 epoch -> dönem
 
+extrapolation-> dışdeğerleme
+
 feature -> öznitelik
 
 floating number -> kayan virgüllü sayılar (gerçel sayı gösterimi)
@@ -72,6 +76,8 @@ gradient -> gradyan, eğim
 
 graph -> çizge
 
+hedonic adaptation -> zevksel uyarlama
+
 holdout -> harici tutulan
 
 hybridization -> melezleştirme
@@ -79,6 +85,8 @@ hybridization -> melezleştirme
 initialization -> ilkleme
 
 internal covariate shift -> dahili eşdeğişken kayması
+
+interpolation -> aradeğerleme
 
 invariance -> değişmezlik
 

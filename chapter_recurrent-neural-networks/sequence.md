@@ -1,20 +1,19 @@
 # Dizi Modelleri
 :label:`sec_sequence`
 
-Netflix'te film izlediğinizi düşünün. İyi bir Netflix kullanıcısı olarak, filmlerin her birini dini olarak değerlendirmeye karar verirsiniz. Sonuçta, iyi bir film iyi bir filmdir, ve sen onlardan daha fazla izlemek istiyorsun, değil mi? Görünüşe göre, işler o kadar basit değil. İnsanların filmler hakkındaki görüşleri zamanla oldukça önemli ölçüde değişebilir. Aslında, psikologların bazı etkileri için isimleri bile vardır:
+Netflix'te film izlediğinizi düşünün. İyi bir Netflix kullanıcısı olarak, filmlerin her birini dürüstçe değerlendirmeye karar veriyorsunuz. Sonuçta, iyi bir film iyi bir filmdir, ve siz onlardan daha fazla izlemek istiyorsunuz, değil mi? Görünüşe göre, bu işler o kadar basit değil. İnsanların filmler hakkındaki görüşleri zamanla oldukça önemli ölçüde değişebilir. Aslında, psikologların bazı etkiler için koydukları isimler bile vardır:
 
-* Başkasının fikrine dayalı olarak “demirleme” var. Örneğin, Oscar ödüllerinden sonra, ilgili filmin reytingleri hala aynı film olmasına rağmen yükselir. Bu etki, ödül unutulana kadar birkaç ay boyunca devam eder. Bu etkisi yarım noktadan fazla puan puan yükseltir olduğu gösterilmiştir
-:cite:`Wu.Ahmed.Beutel.ea.2017`.
-* İnsanların yeni normal olarak geliştirilmiş veya kötüleşmiş bir durumu kabul etmek için hızla adapte olduğu *hedonic adaptation* vardır. Örneğin, birçok iyi film izledikten sonra, bir sonraki filmin eşit derecede iyi veya daha iyi olması beklentileri yüksektir. Bu nedenle, büyük filmler izlendikten sonra ortalama bir film bile kötü sayılabilir.
-* Mevsimsellik var. Çok az izleyici Ağustos ayında Noel Baba filmi izlemek ister.
+* Başkasının fikrine dayalı olarak “çapalama” vardır. Örneğin, Oscar ödüllerinden sonra, ilgili filmin reytingleri hala film aynı olmasına rağmen yükselir. Bu etki, ödül unutulana kadar birkaç ay boyunca devam eder. Bu etkinin yarım puandan fazla reyting yükselttiği gösterilmiştir :cite:`Wu.Ahmed.Beutel.ea.2017`.
+* İnsanların yeni normal olarak geliştirilmiş veya kötüleşmiş bir durumu kabul etmek için hızla adapte olduğu *zevksel uyarlama* vardır. Örneğin, birçok iyi film izledikten sonra, bir sonraki filmin eşit derecede iyi veya daha iyi olması beklentisi yüksektir. Bu nedenle, harika filmler izlendikten sonra ortalama bir film bile kötü sayılabilir.
+* Mevsimsellik vardır. Çok az izleyici Ağustos ayında Noel Baba filmi izlemek ister.
 * Bazı durumlarda, filmler yapımdaki yönetmenlerin veya aktörlerin yanlış davranışlarından dolayı sevilmeyen hale gelir.
-* Bazı filmler kült filmlere dönüşür, çünkü neredeyse komik bir şekilde kötüydüler. *Outer Space* ve Troll 2* bu nedenle yüksek derecede şöhret elde etti.
+* Bazı filmler kült filmlere dönüşmüştür, çünkü neredeyse komik bir şekilde kötüydüler. *Outer Space* ve *Troll 2* bu nedenle yüksek derecede şöhret elde etti.
 
-Kısacası, film reytingleri sabit dışında her şey vardır. Böylece, zamansal dinamikleri kullanarak daha doğru film önerileri :cite:`Koren.2009` yol açtı. Tabii ki, dizi verileri sadece film derecelendirmeleri ile ilgili değildir. Aşağıdakiler daha fazla illüstrasyonlar verir.
+Kısacası, film reytinglerinde sabitlik dışında her şey vardır. Böylece, zamansal dinamikleri kullanmak daha doğru film önerilerine yol açtı :cite:`Koren.2009`. Tabii ki, dizi verileri sadece film derecelendirmeleri ile ilgili değildir. Aşağıda daha fazla örnek görebilirsiniz.
 
-* Birçok kullanıcı, uygulamaları açtıkları zaman geldiğinde son derece özel davranışlara sahiptir. Örneğin, sosyal medya uygulamaları okuldan sonra öğrencilerle çok daha popüler. Borsa alım satım uygulamaları piyasalar açık olduğunda daha yaygın olarak kullanılır.
-* Yarının hisse senedi fiyatlarını tahmin etmek, dün kaçırdığımız bir hisse senedi fiyatının boşluklarını doldurmaktan çok daha zor, her ikisi de bir sayıyı tahmin etme meselesi olsa da. Sonuçta, öngörü, arka görüşten çok daha zordur. İstatistiklerde, eski (bilinen gözlemlerin ötesinde tahmin) *ekstrapolasyon* olarak adlandırılırken, ikincisi (mevcut gözlemler arasındaki tahmin) *enterpolation* olarak adlandırılır.
-* Müzik, konuşma, metin ve videolar doğada sıralı. Eğer onlara izin verseydik çok az anlam ifade ederlerdi. * Köpek ısırığı manşeti, kelimelerin aynı olmasına rağmen, * adam köpeği ısırdığından* çok daha az şaşırtıcıdır.
+* Birçok kullanıcı, uygulamaları açtıkları zamana göre son derece özel davranışlara sahiptir. Örneğin, sosyal medya uygulamaları kullanımı öğrencilerde okul zamanından sonra çok daha yaygındır. Borsa alım satım uygulamaları piyasalar açık olduğunda daha yaygın olarak kullanılır.
+* Yarının hisse senedi fiyatlarını tahmin etmek, dün kaçırdığımız bir hisse senedi fiyatının boşluklarını doldurmaktan çok daha zordur, her ne kadar ikisi de bir sayıyı tahmin etme meselesi olsa da. Sonuçta, öngörü, geçmişe görüden çok daha zordur. İstatistiklerde, ilki (bilinen gözlemlerin ötesinde tahmin) *dışdeğerleme (extrapolation)* olarak adlandırılırken, ikincisi (mevcut gözlemler arasındaki tahmin) *aradeğerleme (interpolation)* olarak adlandırılır.
+* Müzik, konuşma, metin ve videolar doğaları gereği dizilidir. Eğer onlarda yer değişimine verseydik, çok az anlam ifade ederlerdi. *Köpek adamı ısırdı* manşeti, kelimelerin aynı olmasına rağmen, *adam köpeği ısırdı* manşetinden çok daha az şaşırtıcıdır.
 * Depremler kuvvetle ilişkilidir, yani büyük bir depremden sonra güçlü deprem olmadan çok daha fazla, çok daha küçük artçı şoklar vardır. Aslında depremler uzamsal olarak ilişkilidir, yani artçı şoklar genellikle kısa bir süre içinde ve yakın bir yerde meydana gelir.
 * Twitter kavgalarında, dans düzenlerinde ve tartışmalarında görülebileceği gibi, insanlar birbirleri ile ardışık bir şekilde etkileşime girerler.
 
