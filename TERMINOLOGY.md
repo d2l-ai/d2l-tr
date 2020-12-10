@@ -6,6 +6,8 @@ anchor -> çapa
 
 array -> dizilim
 
+autoregressive -> özbağlanımlı
+
 backprop -> geriyay
 
 backpropagation -> geri yayma

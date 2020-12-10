@@ -25,19 +25,19 @@ Dizi verileriyle uğraşmak için istatistiksel araçlara ve yeni derin sinir a�
 :width:`400px`
 :label:`fig_ftse100`
 
-Fiyatları $x_t$ ile gösterelim, yani *zaman adım* $t \in \mathbb{Z}^+$'de $x_t$ fiyatını gözlemliyoruz. Bu kitapdeki diziler için $t$'in genellikle ayrık olacağını ve tamsayılara veya alt kümesine göre değişeceğini unutmayın. $t$. günde borsada iyi kazanmak isteyen bir tüccarın $x_t$ üzerinden tahmin ettiğini varsayalım:
+Fiyatları $x_t$ ile gösterelim, yani *zaman adım* $t \in \mathbb{Z}^+$'de $x_t$ fiyatını gözlemliyoruz. Bu kitapdeki diziler için $t$'in genellikle ayrık olacağını ve tamsayılara veya alt kümesine göre değişeceğini unutmayın. $t$. günde borsada iyi kazanmak isteyen bir borsa simsarının $x_t$ üzerinden tahmin ettiğini varsayalım:
 
 $$x_t \sim P(x_t \mid x_{t-1}, \ldots, x_1).$$
 
-### Otoregresif Modeller
+### Özbağlanımlı Modeller 
 
-Bunu başarmak için, tüccarımız :numref:`sec_linear_concise`'te eğittiğimiz gibi bir regresyon modelini kullanabilir. Sadece bir büyük sorun var: $x_{t-1}, \ldots, x_1$, $t$'e bağlı olarak değişir. Yani, karşılaştığımız veri miktarı ile sayı artar ve bu hesaplamalı olarak izlenebilir hale getirmek için bir yaklaşıma ihtiyacımız olacak. Bu bölümde izleyenlerin çoğu $P(x_t \mid x_{t-1}, \ldots, x_1)$'nin verimli bir şekilde nasıl tahmin edileceği etrafında dönecektir. Kısacası, aşağıdaki gibi iki stratejiye iniyor.
+Bunu başarmak için, simsarımız :numref:`sec_linear_concise`'te eğittiğimiz gibi bir regresyon modelini kullanabilir. Sadece bir büyük sorun var: Girdilerimizin adedi, $x_{t-1}, \ldots, x_1$, $t$'ye bağlı olarak değişir. Yani, karşılaştığımız veri miktarı ile sayı artar ve bunu hesaplamalı olarak işlenebilir hale getirmek için bir yaklaşıma ihtiyacımız vardır. Bu bölümde konuların çoğu $P(x_t \mid x_{t-1}, \ldots, x_1)$'nin verimli bir şekilde nasıl tahmin edileceği etrafında dönecektir. Kısacası, aşağıdaki gibi iki stratejiye indirgeniyor.
 
-İlk olarak, potansiyel olarak oldukça uzun dizinin $x_{t-1}, \ldots, x_1$ gerçekten gerekli olmadığını varsayalım. Bu durumda kendimizi $\tau$ uzunluğunda bir süre ile içerebilir ve sadece $x_{t-1}, \ldots, x_{t-\tau}$ gözlemlerini kullanabiliriz. Acil fayda, şimdi argüman sayısının en azından $t > \tau$ için her zaman aynı olmasıdır. Bu, yukarıda belirtildiği gibi derin bir ağı eğitmemizi sağlar. Bu tür modeller, kelimenin tam anlamıyla kendileri üzerinde gerileme gerçekleştirdikleri için *otoregresif modeller* olarak adlandırılacaktır.
+İlk olarak, potansiyel olarak oldukça uzun dizinin $x_{t-1}, \ldots, x_1$ gerçekten gerekli olmadığını varsayalım. Bu durumda kendimizi $\tau$ uzunluğunda bir süre ile memnun edebilir ve sadece $x_{t-1}, \ldots, x_{t-\tau}$ gözlemlerini kullanabiliriz. İlk faydası, artık argüman sayısının en azından $t > \tau$ için her zaman aynı olmasıdır. Bu, yukarıda belirtildiği gibi derin bir ağı eğitmemizi sağlar. Bu tür modeller, kelimenin tam anlamıyla kendileri üzerinde bağlanım gerçekleştirdikleri için *özbağlanımlı modeller* olarak adlandırılacaktır.
 
-:numref:`fig_sequence-model`'te gösterilen ikinci strateji, geçmiş gözlemlerin $h_t$'sının bir özetini tutmak ve aynı zamanda $\hat{x}_t$'e ek olarak $h_t$'yı güncellemektir. Bu, $\hat{x}_t = P(x_t \mid h_{t})$ ile $x_t$'i ve ayrıca $h_t = g(h_{t-1}, x_{t-1})$ formunun güncellemelerini tahmin eden modellere yol açar. $h_t$ asla gözlenmediğinden, bu modellere *latent otoregresif modeller* de denir.
+:numref:`fig_sequence-model`'te gösterilen ikinci strateji, geçmiş gözlemlerin $h_t$'sının bir özetini tutmak ve aynı zamanda $\hat{x}_t$'in tahmine ek olarak $h_t$'yı güncellemektir. Bu, bize $\hat{x}_t = P(x_t \mid h_{t})$ ile $x_t$'i tahmin eden ve dahası $h_t = g(h_{t-1}, x_{t-1})$ formunu güncelleyen modellere yönlendirir. $h_t$ asla gözlenmediğinden, bu modellere *Saklı özbağlanımlı modeller* de denir.
 
-![A latent autoregressive model.](../img/sequence-model.svg)
+![Saklı özbağlanımlı model.](../img/sequence-model.svg)
 :label:`fig_sequence-model`
 
 Her iki durumda da eğitim verilerinin nasıl oluşturulacağına dair açık bir soru ortaya çıkıyor. Biri tipik olarak tarihsel gözlemleri kullanarak, şu ana kadar olan gözlemlere verilen bir sonraki gözlemi tahmin eder. Açıkçası biz hala durmak için zaman beklemiyoruz. Bununla birlikte, ortak bir varsayım, $x_t$'ün spesifik değerlerinin değişebileceği halde, en azından dizinin dinamiklerinin değişmeyeceği yönündedir. Bu makul, çünkü roman dinamikleri sadece bu, roman ve böylece şimdiye kadar sahip olduğumuz verileri kullanarak öngörülebilir değil. İstatistikçiler değişmeyen dinamikleri çağırırlar. Ne olursa olsun ne, biz böylece aracılığıyla tüm dizinin bir tahmin alacak
