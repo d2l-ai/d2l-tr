@@ -66,11 +66,11 @@ Sadece geçmiş gözlemlerin çok kısa bir tarihini hesaba katmamız gerektiği
 
 ### Nedensellik
 
-Prensip olarak, ters sırada $P(x_1, \ldots, x_T)$'ün açılmasında yanlış bir şey yoktur. Sonuçta, koşullandırma ile her zaman üzerinden yazabiliriz
+Prensipte, $P(x_1, \ldots, x_T)$'nin ters sırada açılmasında yanlış bir şey yoktur. Sonuçta, koşullandırma ile her zaman aşağıdaki gibi yazabiliriz:
 
 $$P(x_1, \ldots, x_T) = \prod_{t=T}^1 P(x_t \mid x_{t+1}, \ldots, x_T).$$
 
-Aslında, eğer bir Markov modelimiz varsa, ters koşullu olasılık dağılımı da elde edebiliriz. Bununla birlikte, birçok durumda, veriler için doğal bir yön var, yani zaman içinde ileriye gidiyor. Gelecekteki olayların geçmişi etkilemeyeceği açıktır. Bu nedenle, eğer $x_t$'i değiştirirsek, $x_{t+1}$'un ilerlemesine ne olacağını etkileyebiliriz ama tersi değil. Yani, $x_t$ değiştirirsek, geçmiş olayların üzerindeki dağıtım değişmez. Sonuç olarak, $P(x_t \mid x_{t+1})$'den ziyade $P(x_{t+1} \mid x_t)$'yi açıklamak daha kolay olmalıdır. Örneğin, bazı durumlarda $\epsilon$ bazı katkı maddesi gürültüsü için $x_{t+1} = f(x_t) + \epsilon$'yi bulabildiğimiz gösterilmiştir, oysa tersi doğru değildir :cite:`Hoyer.Janzing.Mooij.ea.2009`. Bu harika bir haber, çünkü tipik olarak tahmin etmekle ilgilendiğimiz ileri yöndür. Peters ve diğerleri tarafından kitap. Bu konuda daha fazla açıkladı :cite:`Peters.Janzing.Scholkopf.2017`. Yüzeyini zar zor çiziyoruz.
+Aslında, eğer bir Markov modelimiz varsa, bir ters koşullu olasılık dağılımı da elde edebiliriz. Bununla birlikte, birçok durumda, veriler için doğal bir yön vardır, yani zaman içinde ileriye giderler. Gelecekteki olayların geçmişi etkilemeyeceği açıktır. Bu nedenle, eğer $x_t$'i değiştirirsek, $x_{t+1}$'nin ilerlemesine ne olacağını etkileyebiliriz ama tersi değil. Yani, $x_t$'i değiştirirsek, geçmiş olayların üzerindeki dağılım değişmez. Sonuç olarak, $P(x_t \mid x_{t+1})$'den ziyade $P(x_{t+1} \mid x_t)$'yi açıklamak daha kolay olmalıdır. Örneğin, bazı durumlarda $\epsilon$ gürültüsü için $x_{t+1} = f(x_t) + \epsilon$'yi bulabildiğimiz gösterilmiştir, oysa tersi doğru değildir :cite:`Hoyer.Janzing.Mooij.ea.2009`. Bu harika bir haber, çünkü tipik olarak tahmin etmekle ilgilendiğimiz ileri yöndür. Peters ve diğerlerinin kitabı bu konuda daha fazla açıklama yapmaktadır :cite:`Peters.Janzing.Scholkopf.2017`. Biz de sadece yüzeyine bakıyoruz.
 
 ## Eğitim
 
