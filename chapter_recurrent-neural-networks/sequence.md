@@ -35,24 +35,24 @@ Bunu başarmak için, simsarımız :numref:`sec_linear_concise`'te eğittiğimiz
 
 İlk olarak, potansiyel olarak oldukça uzun dizinin $x_{t-1}, \ldots, x_1$ gerçekten gerekli olmadığını varsayalım. Bu durumda kendimizi $\tau$ uzunluğunda bir süre ile memnun edebilir ve sadece $x_{t-1}, \ldots, x_{t-\tau}$ gözlemlerini kullanabiliriz. İlk faydası, artık argüman sayısının en azından $t > \tau$ için her zaman aynı olmasıdır. Bu, yukarıda belirtildiği gibi derin bir ağı eğitmemizi sağlar. Bu tür modeller, kelimenin tam anlamıyla kendileri üzerinde bağlanım gerçekleştirdikleri için *özbağlanımlı modeller* olarak adlandırılacaktır.
 
-:numref:`fig_sequence-model`'te gösterilen ikinci strateji, geçmiş gözlemlerin $h_t$'sının bir özetini tutmak ve aynı zamanda $\hat{x}_t$'in tahmine ek olarak $h_t$'yı güncellemektir. Bu, bize $\hat{x}_t = P(x_t \mid h_{t})$ ile $x_t$'i tahmin eden ve dahası $h_t = g(h_{t-1}, x_{t-1})$ formunu güncelleyen modellere yönlendirir. $h_t$ asla gözlenmediğinden, bu modellere *Saklı özbağlanımlı modeller* de denir.
+:numref:`fig_sequence-model`'te gösterilen ikinci strateji, geçmiş gözlemlerin $h_t$'sının bir özetini tutmak ve aynı zamanda $\hat{x}_t$'in tahmine ek olarak $h_t$'yı güncellemektir. Bu, bize $\hat{x}_t = P(x_t \mid h_{t})$ ile $x_t$'i tahmin eden ve dahası $h_t = g(h_{t-1}, x_{t-1})$ formunu güncelleyen modellere yönlendirir. $h_t$ asla gözlenmediğinden, bu modellere *saklı özbağlanımlı modeller* de denir.
 
 ![Saklı özbağlanımlı model.](../img/sequence-model.svg)
 :label:`fig_sequence-model`
 
-Her iki durumda da eğitim verilerinin nasıl oluşturulacağına dair açık bir soru ortaya çıkıyor. Biri tipik olarak tarihsel gözlemleri kullanarak, şu ana kadar olan gözlemlere verilen bir sonraki gözlemi tahmin eder. Açıkçası biz hala durmak için zaman beklemiyoruz. Bununla birlikte, ortak bir varsayım, $x_t$'ün spesifik değerlerinin değişebileceği halde, en azından dizinin dinamiklerinin değişmeyeceği yönündedir. Bu makul, çünkü roman dinamikleri sadece bu, roman ve böylece şimdiye kadar sahip olduğumuz verileri kullanarak öngörülebilir değil. İstatistikçiler değişmeyen dinamikleri çağırırlar. Ne olursa olsun ne, biz böylece aracılığıyla tüm dizinin bir tahmin alacak
+Her iki durumda da eğitim verilerinin nasıl oluşturulacağına dair açık bir soru ortaya çıkıyor. Kullanıcı tipik olarak tarihsel gözlemleri kullanarak, şu ana kadar verilen gözlemlere dayanarak bir sonraki gözlemi tahmin eder. Açıkça zamanın hareketsiz kalmasını beklemeyiz. Bununla birlikte, genel varsayım, $x_t$'in özgül değerlerinin değişebileceği halde, en azından dizinin dinamiklerinin değişmeyeceği yönündedir. Bu mantıklı, çünkü yeni dinamikler adı gibi yeni ve bu nedenle şimdiye kadar sahip olduğumuz verileri kullanarak tahmin edilemezler. İstatistikçiler değişmeyen dinamiklere durağan derler. Ne olursa olsun, böylece aşağıdaki ifade aracılığıyla tüm diziyi tahminleyebiliriz:
 
 $$P(x_1, \ldots, x_T) = \prod_{t=1}^T P(x_t \mid x_{t-1}, \ldots, x_1).$$
 
-Sürekli sayılar yerine kelimeler gibi ayrık nesnelerle uğraşırsak yukarıdaki hususların hala geçerli olduğunu unutmayın. Tek fark, böyle bir durumda $P(x_t \mid  x_{t-1}, \ldots, x_1)$'ü tahmin etmek için bir regresyon modeli yerine bir sınıflandırıcı kullanmamız gerektiğidir.
+Sürekli sayılar yerine kelimeler gibi ayrık nesnelerle uğraştığımızda da yukarıdaki hususların hala geçerli olduğunu unutmayın. Tek fark, böyle bir durumda $P(x_t \mid  x_{t-1}, \ldots, x_1)$'ü tahmin etmek için bir regresyon modeli yerine bir sınıflandırıcı kullanmamız gerektiğidir.
 
 ### Markov Modelleri
 
-Otoregresif bir modelde $x_t$'yi tahmin etmek için $x_{t-1}, \ldots, x_1$ yerine sadece $x_{t-1}, \ldots, x_{t-\tau}$ kullandığımız tahminini hatırlayın. Bu yaklaşım doğru olduğunda, dizinin bir *Markov koşulu* karşıladığını söyleriz. Özellikle, eğer $\tau = 1$, biz bir *birinci dereceden Markov modeli* ve $P(x)$
+Özbağlanımlı bir modelde $x_t$'yi tahmin etmek için $x_{t-1}, \ldots, x_1$ yerine sadece $x_{t-1}, \ldots, x_{t-\tau}$ kullandığımız yaklaşımı hatırlayın. Bu yaklaşım doğru olduğunda, dizinin bir *Markov koşulu* karşıladığını söyleriz. Özellikle, eğer $\tau = 1$ ise, bir *birinci dereceden Markov modeli*miz vardır ve $P(x)$ şöyle ifade edilir:
 
 $$P(x_1, \ldots, x_T) = \prod_{t=1}^T P(x_t \mid x_{t-1}) \text{ where } P(x_1 \mid x_0) = P(x_1).$$
 
-Bu tür modeller özellikle $x_t$ yalnızca ayrı bir değer varsayar, çünkü bu durumda dinamik programlama zincir boyunca değerleri tam olarak hesaplamak için kullanılabilir. Örneğin, $P(x_{t+1} \mid x_{t-1})$'in verimli bir şekilde hesaplanmasını sağlayabiliriz:
+Bu tür modeller özellikle $x_t$ yalnızca ayrı bir değer varsayıldığında iyi çalışır, çünkü bu durumda dinamik programlama zincir boyunca değerleri tam olarak hesaplamak için kullanılabilir. Örneğin, $P(x_{t+1} \mid x_{t-1})$'in verimli bir şekilde hesaplanmasını sağlayabiliriz:
 
 $$\begin{aligned}
 P(x_{t+1} \mid x_{t-1})
@@ -62,7 +62,7 @@ P(x_{t+1} \mid x_{t-1})
 \end{aligned}
 $$
 
-Sadece geçmiş gözlemlerin çok kısa bir tarihini hesaba katmamız gerektiği gerçeğini kullanarak: $P(x_{t+1} \mid x_t, x_{t-1}) = P(x_{t+1} \mid x_t)$. Dinamik programlama detaylarına girmek bu bölümün kapsamı dışındadır. Kontrol ve pekiştirme öğrenme algoritmaları bu tür araçları kapsamlı olarak kullanır.
+Sadece geçmiş gözlemlerin çok kısa bir tarihini hesaba katmamız gerektiği gerçeğini kullanabiliriz: $P(x_{t+1} \mid x_t, x_{t-1}) = P(x_{t+1} \mid x_t)$. Dinamik programlama detaylarına girmek bu bölümün kapsamı dışındadır. Kontrol ve pekiştirmeli öğrenme algoritmaları bu tür araçları kapsamlı olarak kullanır.
 
 ### Nedensellik
 
