@@ -70,11 +70,11 @@ Prensipte, $P(x_1, \ldots, x_T)$'nin ters sırada açılmasında yanlış bir ş
 
 $$P(x_1, \ldots, x_T) = \prod_{t=T}^1 P(x_t \mid x_{t+1}, \ldots, x_T).$$
 
-Aslında, eğer bir Markov modelimiz varsa, bir ters koşullu olasılık dağılımı da elde edebiliriz. Bununla birlikte, birçok durumda, veriler için doğal bir yön vardır, yani zaman içinde ileriye giderler. Gelecekteki olayların geçmişi etkilemeyeceği açıktır. Bu nedenle, eğer $x_t$'i değiştirirsek, $x_{t+1}$'nin ilerlemesine ne olacağını etkileyebiliriz ama tersi değil. Yani, $x_t$'i değiştirirsek, geçmiş olayların üzerindeki dağılım değişmez. Sonuç olarak, $P(x_t \mid x_{t+1})$'den ziyade $P(x_{t+1} \mid x_t)$'yi açıklamak daha kolay olmalıdır. Örneğin, bazı durumlarda $\epsilon$ gürültüsü için $x_{t+1} = f(x_t) + \epsilon$'yi bulabildiğimiz gösterilmiştir, oysa tersi doğru değildir :cite:`Hoyer.Janzing.Mooij.ea.2009`. Bu harika bir haber, çünkü tipik olarak tahmin etmekle ilgilendiğimiz ileri yöndür. Peters ve diğerlerinin kitabı bu konuda daha fazla açıklama yapmaktadır :cite:`Peters.Janzing.Scholkopf.2017`. Biz de sadece yüzeyine bakıyoruz.
+Aslında, eğer bir Markov modelimiz varsa, bir ters koşullu olasılık dağılımı da elde edebiliriz. Bununla birlikte, birçok durumda, veriler için doğal bir yön vardır, yani zaman içinde ileriye giderler. Gelecekteki olayların geçmişi etkilemeyeceği açıktır. Bu nedenle, eğer $x_t$'i değiştirirsek, $x_{t+1}$'nin ilerlemesine ne olacağını etkileyebiliriz ama tersi değil. Yani, $x_t$'i değiştirirsek, geçmiş olayların üzerindeki dağılım değişmez. Sonuç olarak, $P(x_t \mid x_{t+1})$'den ziyade $P(x_{t+1} \mid x_t)$'yi açıklamak daha kolay olmalıdır. Örneğin, bazı durumlarda $\epsilon$ gürültüsü için $x_{t+1} = f(x_t) + \epsilon$'yi bulabildiğimiz gösterilmiştir, oysa tersi doğru değildir :cite:`Hoyer.Janzing.Mooij.ea.2009`. Bu harika bir haber, çünkü tipik olarak tahmin etmekle ilgilendiğimiz ileri yöndür. Peters ve diğerlerinin kitabı bu konuda daha fazla açıklama yapmaktadır :cite:`Peters.Janzing.Scholkopf.2017`. Bizse sadece yüzeyine bakıyoruz.
 
 ## Eğitim
 
-Bu kadar çok istatistiksel aracı inceledikten sonra, bunu pratikte deneyelim. Bazı veriler üreterek başlıyoruz. İşleri basit tutmak için, $1, 2, \ldots, 1000$ adımlar için bazı katkı maddesi gürültülü bir sinüs fonksiyonu kullanarak sıra verilerimizi üretiyoruz.
+Bu kadar çok istatistiksel aracı inceledikten sonra, bunu pratikte de deneyelim. Biraz veri üreterek başlıyoruz. İşleri basit tutmak için, $1, 2, \ldots, 1000$ adımları için biraz gürültülü bir sinüs fonksiyonu kullanarak dizi verimizi üretiyoruz.
 
 ```{.python .input}
 %matplotlib inline
@@ -115,7 +115,7 @@ x = d2l.sin(0.01 * time) + d2l.normal([T], 0, 0.2)
 d2l.plot(time, [x], 'time', 'x', xlim=[1, 1000], figsize=(6, 3))
 ```
 
-Ardından, böyle bir diziyi modelimizin üzerinde eğitebileceği özelliklere ve etiketlere dönüştürmemiz gerekiyor. $\tau$ gömme boyutuna dayanarak, verileri $y_t = x_t$ ve $\mathbf{x}_t = [x_{t-\tau}, \ldots, x_{t-1}]$ çiftleri halinde eşleriz. Zekice okuyucu, bunun bize $\tau$ daha az veri örneği verdiğini fark etmiş olabilir, çünkü bunların ilk $\tau$ için yeterli geçmişe sahip değiliz. Basit bir düzeltme, özellikle dizinin uzunsa, bu birkaç terimi atmaktır. Alternatif olarak diziyi sıfırlarla doldur. Burada eğitim için sadece ilk 600 özellikli etiket çiftini kullanıyoruz.
+Ardından, böyle bir diziyi modelimizin üzerinde eğitebileceği özniteliklere ve etiketlere dönüştürmemiz gerekiyor. $\tau$ gömme boyutuna dayanarak, verileri $y_t = x_t$ ve $\mathbf{x}_t = [x_{t-\tau}, \ldots, x_{t-1}]$ çiftleri halinde eşleriz. Dikkatli okuyucu, bunun bize $\tau$ adet daha az veri örneği verdiğini fark etmiş olabilir, çünkü ilk $\tau$ için yeterli geçmişe sahip değiliz. Basit bir düzeltme, özellikle dizi uzunsa, bu ilk birkaç terimi atmaktır. Alternatif olarak diziye sıfırlarla dolgu yapabiliriz. Burada eğitim için sadece ilk 600 öznitelik-etiket çiftini kullanıyoruz.
 
 ```{.python .input}
 #@tab mxnet, pytorch
@@ -143,7 +143,7 @@ train_iter = d2l.load_array((features[:n_train], labels[:n_train]),
                             batch_size, is_train=True)
 ```
 
-Burada mimariyi oldukça basit tutuyoruz: sadece iki tam bağlı katman ile bir MLP, ReLU aktivasyonu ve kare kaybı.
+Burada mimariyi oldukça basit tutuyoruz: Sadece iki tam bağlı katmanlı bir MLP, ReLU etkinleştirmesi ve kare kaybı.
 
 ```{.python .input}
 # A simple MLP
@@ -192,7 +192,7 @@ def get_net():
 loss = tf.keras.losses.MeanSquaredError()
 ```
 
-Şimdi modeli eğitmeye hazırız. Aşağıdaki kod esas olarak :numref:`sec_linear_concise` gibi önceki bölümlerdeki eğitim döngüsüyle aynıdır. Böylece, çok fazla ayrıntıya girmeyeceğiz.
+Şimdi modeli eğitmeye hazırız. Aşağıdaki kod esas olarak :numref:`sec_linear_concise` gibi, önceki bölümlerdeki eğitim döngüsüyle aynıdır. Bu yüzden, çok fazla ayrıntıya girmeyeceğiz.
 
 ```{.python .input}
 def train(net, train_iter, loss, epochs, lr):
@@ -249,7 +249,7 @@ train(net, train_iter, loss, 5, 0.01)
 
 ## Tahmin
 
-Eğitim kaybı küçük olduğu için modelimizin iyi çalışmasını bekleriz. Bunun pratikte ne anlama geldiğini görelim. Kontrol edilmesi gereken ilk şey, modelin sadece bir sonraki adım adımında, yani *bir adım öngörü* ne kadar iyi tahmin edebildiğidir.
+Eğitim kaybı küçük olduğu için modelimizin iyi çalışmasını bekleriz. Bunun pratikte ne anlama geldiğini görelim. Kontrol edilmesi gereken ilk şey, modelin sadece bir sonraki adımında ne kadar iyi tahmin edebildiğidir, yani *bir adım sonrasını tahmin*.
 
 ```{.python .input}
 #@tab all
@@ -258,7 +258,7 @@ d2l.plot([time, time[tau:]], [d2l.numpy(x), d2l.numpy(onestep_preds)], 'time',
          'x', legend=['data', '1-step preds'], xlim=[1, 1000], figsize=(6, 3))
 ```
 
-Bir adım önündeki tahminler, beklediğimiz gibi güzel görünüyor. 604 (`n_train + tau`) gözlemlerin ötesinde bile tahminler hala güvenilir görünüyor. Bununla birlikte, bunun için küçük bir sorun var: Sıra verilerini yalnızca 604 zaman adımına kadar gözlemlersek, gelecekteki tüm bir adım önde gelen tahminler için girdileri almayı umut edemeyiz. Bunun yerine, her seferinde bir adım ileriye doğru ilerlemeliyiz:
+Bir adım sonrası tahminler, beklediğimiz gibi güzel görünüyor. 604 (`n_train + tau`) gözlemin ötesinde bile tahminler hala güvenilir görünüyor. Bununla birlikte, burada küçük bir sorun var: Sıra verilerini yalnızca 604 zaman adımına kadar gözlemlersek, gelecekteki tüm bir adım önde gelen tahminler için girdileri almayı umut edemeyiz. Bunun yerine, her seferinde bir adım ileriye doğru ilerlemeliyiz:
 
 $$
 \hat{x}_{605} = f(x_{601}, x_{602}, x_{603}, x_{604}), \\
