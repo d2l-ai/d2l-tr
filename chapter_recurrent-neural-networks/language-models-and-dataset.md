@@ -11,21 +11,21 @@ Bununla birlikte, dil modelleri sınırlı formlarında bile mükemmel hizmet ve
 
 ## Dil Modeli Öğrenme
 
-Bariz soru, bir belgeyi, hatta bir dizi belirteç nasıl modellememiz gerektiğidir. Metin verilerini kelime düzeyinde belirtediğimizi varsayalım. :numref:`sec_sequence`'teki dizi modellerine uyguladığımız analize başvuruda bulunabiliriz. Temel olasılık kurallarını uygulayarak başlayalım:
+Bariz soru, bir belgeyi, hatta bir dizi andıcı nasıl modellememiz gerektiğidir. Metin verilerini kelime düzeyinde andıçladığımızı varsayalım. :numref:`sec_sequence`'teki dizi modellerine uyguladığımız analize başvuruda bulunabiliriz. Temel olasılık kurallarını uygulayarak başlayalım:
 
 $$P(x_1, x_2, \ldots, x_T) = \prod_{t=1}^T P(x_t  \mid  x_1, \ldots, x_{t-1}).$$
 
 Örneğin, dört kelime içeren bir metin dizisinin olasılığı şu şekilde verilecektir:
 
-$$P(\text{deep}, \text{learning}, \text{is}, \text{fun}) =  P(\text{deep}) P(\text{learning}  \mid  \text{deep}) P(\text{is}  \mid  \text{deep}, \text{learning}) P(\text{fun}  \mid  \text{deep}, \text{learning}, \text{is}).$$
+$$P(\text{derin}, \text{öğrenme}, \text{çok}, \text{eğlencelidir}) =  P(\text{derin}) P(\text{öğrenme}  \mid  \text{derin}) P(\text{çok}}  \mid  \text{derin}, \text{öğrenme}) P(\text{eğlencelidir}  \mid  \text{derin}, \text{öğrenme}, \text{çok}}).$$
 
-Dil modelini hesaplamak için, kelimelerin olasılığını ve önceki birkaç kelimeye verilen bir kelimenin koşullu olasılığını hesaplamamız gerekir. Bu olasılıklar esasen dil modeli parametreleridir.
+Dil modelini hesaplamak için, kelimelerin olasılığını ve bir kelimenin önceki birkaç kelimeye koşullu olasılığını hesaplamamız gerekir. Bu olasılıklar esasen dil modeli parametreleridir.
 
-Burada, eğitim veri kümelerinin tüm Vikipedi girişleri, [Project Gutenberg](https://en.wikipedia.org/wiki/Project_Gutenberg) ve Web'de yayınlanan tüm metinler gibi büyük bir metin bölümü olduğunu varsayıyoruz. Kelimelerin olasılığı, eğitim veri kümeindeki belirli bir kelimenin göreli kelime frekansından hesaplanabilir. Örneğin, $\hat{P}(\text{deep})$ tahmini, “derin” kelimesiyle başlayan herhangi bir cümlenin olasılığı olarak hesaplanabilir. Biraz daha az doğru bir yaklaşım, “derin” kelimesinin tüm oluşumlarını saymak ve onu korpus içindeki toplam kelime sayısına bölmek olacaktır. Bu, özellikle sık kullanılan kelimeler için oldukça iyi çalışır. İlerleme, biz tahmin etmeye çalışabiliriz
+Burada, eğitim veri kümelerinin tüm Vikipedi girdileri, [Gutenberg Projesi](https://en.wikipedia.org/wiki/Project_Gutenberg) ve Web'de yayınlanan tüm metinler gibi büyük bir metin külliyatı olduğunu varsayıyoruz. Kelimelerin olasılığı, eğitim veri kümesindeki belirli bir kelimenin göreceli kelime frekansından hesaplanabilir. Örneğin, $\hat{P}(\text{deep})$ tahmini, “derin” kelimesiyle başlayan herhangi bir cümlenin olasılığı olarak hesaplanabilir. Biraz daha az doğru bir yaklaşım, “derin” kelimesinin tüm oluşlarını saymak ve onu külliyat içindeki toplam kelime sayısına bölmek olacaktır. Bu, özellikle sık kullanılan kelimeler için oldukça iyi çalışır. Devam edersek, tahmin etmeyi deneyebiliriz:
 
 $$\hat{P}(\text{learning} \mid \text{deep}) = \frac{n(\text{deep, learning})}{n(\text{deep})},$$
 
-burada $n(x)$ ve $n(x, x')$, sırasıyla singletons ve ardışık kelime çiftlerinin oluşumlarının sayısıdır. Ne yazık ki, bir kelime çiftinin olasılığını tahmin etmek biraz daha zordur, çünkü “derin öğrenme” oluşumu çok daha az sıktır. Özellikle, bazı olağandışı kelime kombinasyonları için, doğru tahminler elde etmek için yeterli oluşum bulmak zor olabilir. İşler üç kelimelik kombinasyonlar ve ötesinde daha da kötüsü için bir dönüş alır. Veri kümemizde muhtemelen göremeyeceğimiz birçok makul üç kelimelik kombinasyon olacaktır. Bu tür sözcük kombinasyonlarını sıfır olmayan sayım atamak için bazı çözüm sağlamadığımız sürece, bunları bir dil modelinde kullanamayacağız. Veri kümesi küçükse veya kelimeler çok nadirse, bunlardan bir tanesini bile bulamayabiliriz.
+burada $n(x)$ ve $n(x, x')$, sırasıyla tekli ve ardışık kelime çiftlerinin oluşlarının sayısıdır. Ne yazık ki, bir kelime çiftinin olasılığını tahmin etmek biraz daha zordur, çünkü “derin öğrenme” oluşları çok daha az sıklıktadır. Özellikle, bazı olağandışı kelime birleşimleri için, doğru tahminler elde etmek için yeterli oluş bulmak zor olabilir. İşler üç kelimelik birleşimler ve ötesi için daha da kötüsü bir hal alır. Veri kümemizde muhtemelen göremeyeceğimiz birçok makul üç kelimelik birleşim olacaktır. Bu tür sözcük birleşimlerini sıfır olmayan sayım atamak için bazı çözümler sağlamadığımız sürece, bunları bir dil modelinde kullanamayacağız. Veri kümesi küçükse veya kelimeler çok nadirse, bunlardan bir tanesini bile bulamayabiliriz.
 
 Ortak bir strateji, bir çeşit Laplace düzeltme* gerçekleştirmektir. Çözüm, tüm sayımlara küçük bir sabit eklemektir. $n$ ile eğitim setindeki toplam kelime sayısını ve $m$'i benzersiz kelimelerin sayısını belirtin. Bu çözüm, singletons ile yardımcı olur, örn.
 
