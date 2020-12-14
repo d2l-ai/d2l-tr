@@ -23,11 +23,11 @@ Dil modelini hesaplamak için, kelimelerin olasılığını ve bir kelimenin ön
 
 Burada, eğitim veri kümelerinin tüm Vikipedi girdileri, [Gutenberg Projesi](https://en.wikipedia.org/wiki/Project_Gutenberg) ve Web'de yayınlanan tüm metinler gibi büyük bir metin külliyatı olduğunu varsayıyoruz. Kelimelerin olasılığı, eğitim veri kümesindeki belirli bir kelimenin göreceli kelime frekansından hesaplanabilir. Örneğin, $\hat{P}(\text{deep})$ tahmini, “derin” kelimesiyle başlayan herhangi bir cümlenin olasılığı olarak hesaplanabilir. Biraz daha az doğru bir yaklaşım, “derin” kelimesinin tüm oluşlarını saymak ve onu külliyat içindeki toplam kelime sayısına bölmek olacaktır. Bu, özellikle sık kullanılan kelimeler için oldukça iyi çalışır. Devam edersek, tahmin etmeyi deneyebiliriz:
 
-$$\hat{P}(\text{learning} \mid \text{deep}) = \frac{n(\text{deep, learning})}{n(\text{deep})},$$
+$$\hat{P}(\text{öğrenme} \mid \text{derin}) = \frac{n(\text{derin, öğrenme})}{n(\text{derin})},$$
 
 burada $n(x)$ ve $n(x, x')$, sırasıyla tekli ve ardışık kelime çiftlerinin oluşlarının sayısıdır. Ne yazık ki, bir kelime çiftinin olasılığını tahmin etmek biraz daha zordur, çünkü “derin öğrenme” oluşları çok daha az sıklıktadır. Özellikle, bazı olağandışı kelime birleşimleri için, doğru tahminler elde etmek için yeterli oluş bulmak zor olabilir. İşler üç kelimelik birleşimler ve ötesi için daha da kötüsü bir hal alır. Veri kümemizde muhtemelen göremeyeceğimiz birçok makul üç kelimelik birleşim olacaktır. Bu tür sözcük birleşimlerini sıfır olmayan sayım atamak için bazı çözümler sağlamadığımız sürece, bunları bir dil modelinde kullanamayacağız. Veri kümesi küçükse veya kelimeler çok nadirse, bunlardan bir tanesini bile bulamayabiliriz.
 
-Ortak bir strateji, bir çeşit Laplace düzeltme* gerçekleştirmektir. Çözüm, tüm sayımlara küçük bir sabit eklemektir. $n$ ile eğitim setindeki toplam kelime sayısını ve $m$'i benzersiz kelimelerin sayısını belirtin. Bu çözüm, singletons ile yardımcı olur, örn.
+Genel bir strateji, bir çeşit *Laplace düzleştirme* uygulamaktır. Çözüm, tüm sayımlara küçük bir sabit eklemektir. $n$ ile eğitim kümesindeki toplam kelime sayısını ve $m$ ile benzersiz kelimelerin sayısını gösterelim. Bu çözüm, teklilerde yardımcı olur, örn.
 
 $$\begin{aligned}
 	\hat{P}(x) & = \frac{n(x) + \epsilon_1/m}{n + \epsilon_1}, \\
@@ -35,9 +35,9 @@ $$\begin{aligned}
 	\hat{P}(x'' \mid x,x') & = \frac{n(x, x',x'') + \epsilon_3 \hat{P}(x'')}{n(x, x') + \epsilon_3}.
 \end{aligned}$$
 
-Burada $\epsilon_1,\epsilon_2$ ve $\epsilon_3$ hiperparametrelerdir. Örnek olarak $\epsilon_1$'yi alın: $\epsilon_1 = 0$ olduğunda, yumuşatma uygulanmaz; $\epsilon_1$ pozitif sonsuzluğa yaklaştığında, $\hat{P}(x)$ tekdüze olasılığa $1/m$ yaklaşır. Yukarıdakiler, diğer tekniklerin :cite:`Wood.Gasthaus.Archambeau.ea.2011`'ü başarabileceklerinin oldukça ilkel bir varyantıdır.
+Burada $\epsilon_1,\epsilon_2$ ve $\epsilon_3$ hiperparametrelerdir. Örnek olarak $\epsilon_1$'yi alın: $\epsilon_1 = 0$ olduğunda, düzleştirme uygulanmaz; $\epsilon_1$ pozitif sonsuzluğa yaklaştığında, $\hat{P}(x)$ tekdüze $1/m$ olasılığına yaklaşır. Yukarıdakiler, diğer tekniklerin başarabileceklerinin oldukça ilkel bir türüdür :cite:`Wood.Gasthaus.Archambeau.ea.2011`.
 
-Ne yazık ki, bunun gibi modeller aşağıdaki nedenlerden dolayı oldukça hızlı bir şekilde kullanışsız oluyor. İlk olarak, tüm sayımları saklamamız gerekiyor. İkincisi, bu kelimelerin anlamını tamamen görmezden geliyor. Örneğin, “kedi” ve “kedi” ilgili bağlamlarda ortaya çıkmalıdır. Bu tür modelleri ek bağlamlara ayarlamak oldukça zordur, oysa, derin öğrenme tabanlı dil modelleri bunu dikkate almak için çok uygundur. Son, uzun kelime dizileri yeni olmak neredeyse kesin, bu nedenle sadece daha önce görülen kelime dizilerinin sıklığını sayan bir model orada kötü gerçekleştirmek için bağlıdır.
+Ne yazık ki, bunun gibi modeller aşağıdaki nedenlerden dolayı oldukça hızlı bir şekilde hantallaşır. İlk olarak, tüm sayımları saklamamız gerekir. İkincisi, kelimelerin anlamını tamamen görmezden gelinir. Örneğin, “kedi” ve “pisi” ilgili bağlamlarda ortaya çıkmalıdır. Bu tür modelleri ek bağlamlara ayarlamak oldukça zordur, oysa, derin öğrenme tabanlı dil modelleri bunu dikkate almak için çok uygundur. Son olarak, uzun kelime dizilerinin sıradışı olması neredeyse kesindir, bu nedenle sadece daha önce görülen kelime dizilerinin sıklığını sayan bir model orada kötü başarım göstermeye mahkumdur.
 
 ## Markov Modeller ve $n$-gram
 

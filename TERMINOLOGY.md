@@ -170,6 +170,8 @@ serialization -> serileştirme
 
 shell -> kabuk
 
+smoothing -> düzleştirme
+
 softmax -> eşiksiz en büyük işlev veya softmaks
 
 spam -> yaramaz posta
