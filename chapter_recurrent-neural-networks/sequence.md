@@ -269,7 +269,7 @@ $$
 \ldots
 $$
 
-Genel olarak, $x_t$'e kadar gözlenen bir dizi için $\hat{x}_{t+k}$ zaman adımında öngörülen çıkış $\hat{x}_{t+k}$*$k$-adım öngörü* olarak adlandırılır. $x_{604}$'ya kadar gözlemlediğimizden, $k$-adım öngörüsü $\hat{x}_{604+k}$'dir. Başka bir deyişle, çok ileride öngörüler yapmak için kendi tahminlerimizi kullanmak zorunda kalacağız. Bakalım ne kadar iyi gidiyor.
+Genel olarak, $x_t$'ye kadar gözlenen bir dizi için $t+k$ zaman adımında tahmin edilen çıktı $\hat{x}_{t+k}$, *$k$-adım tahmin* olarak adlandırılır. $x_{604}$'ya kadar gözlemlediğimizden, $k$-adım tahminimiz $\hat{x}_{604+k}$'dir. Başka bir deyişle, çok ileriki tahminler için kendi tahminlerimizi kullanmak zorunda kalacağız. Bakalım ne kadar iyi gidicek.
 
 ```{.python .input}
 #@tab mxnet, pytorch
@@ -298,9 +298,9 @@ d2l.plot([time, time[tau:], time[n_train + tau:]],
          xlim=[1, 1000], figsize=(6, 3))
 ```
 
-Yukarıdaki örnekte gösterildiği gibi, bu muhteşem bir başarısızlık. Tahminler birkaç tahmin adımından sonra oldukça hızlı bir şekilde bir sabite bozulur. Algoritma neden bu kadar kötü çalışıyordu? Bu sonuçta hataların oluşması gerçeğinden kaynaklanmaktadır. 1. adımdan sonra bazı hata $\epsilon_1 = \bar\epsilon$ olduğunu varsayalım. Şimdi 2. adım için*giriş* $\epsilon_1$ tarafından tedirgürleniyor, bu nedenle $\epsilon_2 = \bar\epsilon + c \epsilon_1$ bazı sabit $c$ ve benzeri için bazı hatalar yaşıyoruz. Hata, gerçek gözlemlerden oldukça hızlı bir şekilde ayrılabilir. Bu yaygın bir fenomendir. Örneğin, önümüzdeki 24 saat için hava tahminleri oldukça doğru olma eğilimindedir ama bunun ötesinde doğruluk hızla azalır. Bu bölümde ve ötesinde bunun iyileştirilmesi için yöntemleri tartışacağız.
+Yukarıdaki örnekte görüldüğü gibi, tam bir felaket. Tahminler birkaç tahminden sonra oldukça hızlı bir şekilde bir sabite sönümlenir. Peki algoritma neden bu kadar kötü çalıştı? Bu sonuç hataların birikmesinden kaynaklanmaktadır. 1. adımdan sonra hatamızın $\epsilon_1 = \bar\epsilon$ olduğunu varsayalım. Şimdi 2. adımda *girdi* $\epsilon_1$ tarafından dürtülüyor ve bazı $c$ sabiti için $\epsilon_2 = \bar\epsilon + c \epsilon_1$ formunda hatalar görüyoruz. Hata, gerçek gözlemlerden oldukça hızlı bir şekilde uzaklaşabilir. Bu yaygın bir olgudur. Örneğin, önümüzdeki 24 saat için hava tahminleri oldukça doğru olma eğilimindedir ama bunun ötesinde doğruluk hızla azalır. Bu bölümde ve sonrasında bunun iyileştirilmesi için olası yöntemleri tartışacağız.
 
-$k = 1, 4, 16, 64$ için tüm dizideki tahminleri hesaplayarak $k$ adım önde gelen tahminlerdeki zorluklara daha yakından bir göz atalım.
+$k = 1, 4, 16, 64$ için tüm dizideki tahminleri hesaplayarak $k$ adım ilerideki tahminlerdeki zorluklara daha yakından bir göz atalım.
 
 ```{.python .input}
 #@tab all
@@ -344,25 +344,25 @@ d2l.plot([time[tau + i - 1: T - max_steps + i] for i in steps],
          figsize=(6, 3))
 ```
 
-Bu, geleceğe daha da ileriye doğru tahmin etmeye çalıştıkça, öngörünün kalitesinin nasıl değiştiğini açıkça göstermektedir. 4 adım önündeki tahminler hala iyi görünse de, bunun ötesinde her şey neredeyse işe yaramaz.
+Bu, gelecekte daha da ileriyi doğru tahmin etmeye çalıştıkça, tahminin kalitesinin nasıl değiştiğini açıkça göstermektedir. 4 adım ilerideki tahminler hala iyi görünse de, bunun ötesinde herhangi birşey neredeyse işe yaramaz.
 
 ## Özet
 
-* İnterpolasyon ve ekstrapolasyon arasında zorluk oldukça fark vardır. Sonuç olarak, bir diziniz varsa, eğitim sırasında verilerin zamansal sırasına daima saygı gösterin, yani gelecekteki verileri asla eğitmeyiniz.
-* Dizi modelleri tahmin için özel istatistiksel araçlar gerektirir. İki popüler seçenek otoregresif modeller ve latent-değişken otoregresif modellerdir.
-* Nedensel modellerde (örn. ileriye giden zaman), ileri yönün tahmin edilmesi genellikle ters yönden çok daha kolaydır.
-* $t$'e kadar gözlenen bir dizi için, $t+k$ zaman adımındaki tahmin edilen çıktı*$k$ adım öngörü* olur. $k$'yı artırarak zaman içinde daha da tahmin ettiğimiz gibi, hatalar birikir ve tahminin kalitesi genellikle dramatik bir şekilde bozulur.
+* Aradeğerleme ve dışdeğerleme arasında zorluk bakımında oldukça fark vardır. Sonuç olarak, bir diziniz varsa, eğitim sırasında verilerin zamansal sırasına daima saygı gösterin, yani gelecekteki veriler ile asla eğitmeyin.
+* Dizi modelleri tahmin için özel istatistiksel araçlar gerektirir. İki popüler seçenek özbağlanımlı modeller ve saklı-değişken özbağlanımlı modellerdir.
+* Nedensel modellerde (örn. ileriye akan zaman), ileri yönün tahmin edilmesi genellikle ters yönden çok daha kolaydır.
+* $t$'ye kadar gözlenen bir dizi için, $t+k$ zaman adımındaki tahmin edilen çıktı *$k$-adım tahmin* olur. $k$'yı artırarak daha da ileriki zaman için tahmin ettiğimizde, hatalar birikir ve tahminin kalitesi genellikle dramatik bir şekilde bozulur.
 
 ## Alıştırmalar
 
-1. Bu bölümün deneyinde modeli geliştirin.
-    1. Geçmiş 4 gözlemden daha fazlasını mı dahil ediyorsun? Gerçekten kaç taneye ihtiyacın var?
-    1. Gürültü olmasaydı kaç tane geçmiş gözlemlere ihtiyacınız olurdu? İpucu: diferansiyel denklem olarak $\sin$ ve $\cos$ yazabilirsiniz.
-    1. Toplam özellik sayısını sabit tutarken eski gözlemleri de dahil edebilir misiniz? Bu doğruluğu artırır mı? Neden?
-    1. Sinir ağı mimarisini değiştirebilir ve performansı değerlendirebilir.
-1. Bir yatırımcı satın almak için iyi bir güvenlik bulmak istiyor. Hangisinin iyi olacağına karar vermek için geçmiş dönüşlere bakar. Bu stratejide ne yanlış gidebilir ki?
-1. Nedensellik metin için de geçerli midir? Hangi dereceye kadar?
-1. Verilerin dinamiğini yakalamak için gizli bir otoregresif modelin ne zaman gerekli olabileceğine dair bir örnek verin.
+1. Bu bölümün deneyindeki modeli geliştirin.
+    1. Geçmiş 4 gözlemden daha fazlasını mı dahil ediyor musunuz? Gerçekten kaç taneye ihtiyacınız var?
+    1. Gürültü olmasaydı kaç tane geçmiş gözleme ihtiyacınız olurdu? İpucu: $\sin$ ve $\cos$'u diferansiyel denklem olarak  yazabilirsiniz.
+    1. Toplam öznitelik sayısını sabit tutarken eski gözlemleri de dahil edebilir misiniz? Bu doğruluğu artırır mı? Neden?
+    1. Sinir ağı mimarisini değiştirin ve performansını değerlendirin.
+1. Bir yatırımcı satın almak için iyi bir yatırım bulmak istiyor. Hangisinin iyi olacağına karar vermek için geçmiş dönemlere bakıyor. Bu stratejide ne yanlış gidebilir ki?
+1. Nedensellik metinler için de geçerli midir? Peki ne dereceye kadar?
+1. Verinin dinamiğini yakalamak için gizli bir özbağlanımlı modelin ne zaman gerekli olabileceğine dair bir örnek verin.
 
 :begin_tab:`mxnet`
 [Tartışmalar](https://discuss.d2l.ai/t/113)
