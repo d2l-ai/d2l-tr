@@ -16,4 +16,5 @@ Yinelemeli ağları kullanan örneklerin çoğu metin verilerine dayanmaktadır.
 
 sequence
 text-preprocessing
+language-models-and-dataset
 ```

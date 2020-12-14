@@ -1,13 +1,13 @@
-# Dil Modelleri ve Dataset
+# Dil Modelleri ve Veri Kümesi
 :label:`sec_language_model`
 
-:numref:`sec_text_preprocessing`'te, metin verilerini belirteçlere nasıl eşleyeceğimizi görüyoruz; burada bu belirteçler, sözcükler veya karakterler gibi ayrı gözlemler dizisi olarak görülebiliyor. $T$ uzunluğunda bir metin dizisinde belirteçleri sırayla $x_1, x_2, \ldots, x_T$ olduğunu varsayalım. Daha sonra, metin dizisinde, $x_t$ ($1 \leq t \leq T$), $t$ adımındaki gözlem veya etiket olarak kabul edilebilir. Böyle bir metin dizisi göz önüne alındığında, *dil modelinin amacı* dizinin ortak olasılığını tahmin etmektir
+:numref:`sec_text_preprocessing`'te, metin verilerini andıçlara nasıl eşleyeceğimizi görüyoruz; burada bu andıçlar, sözcükler veya karakterler gibi ayrık gözlemler dizisi olarak görülebiliyor. $T$ uzunluğunda bir metin dizisinde andıçların sırayla $x_1, x_2, \ldots, x_T$ olduğunu varsayalım. Daha sonra, metin dizisinde, $x_t$ ($1 \leq t \leq T$), $t$ adımındaki gözlem veya etiket olarak kabul edilebilir. Böyle bir metin dizisi göz önüne alındığında, *dil modelinin amacı* dizinin bileşik olasılığını tahmin etmektir
 
 $$P(x_1, x_2, \ldots, x_T).$$
 
-Dil modelleri inanılmaz derecede kullanışlıdır. Örneğin, ideal bir dil modeli, tek başına doğal metin oluşturabilir, sadece bir seferde bir jeton çizerek $x_t \sim P(x_t \mid x_{t-1}, \ldots, x_1)$. Daktilo kullanan maymunun aksine, böyle bir modelden çıkan tüm metinler doğal dil, örneğin İngilizce metin olarak geçer. Ayrıca, sadece önceki diyalog parçalarındaki metni koşullandırarak anlamlı bir diyalog oluşturmak için yeterli olacaktır. Açıkçası, böyle bir sistemi tasarlamaktan çok uzaktayız, çünkü sadece gramer olarak mantıklı içerik üretmek yerine metni *anlamak* gerekir.
+Dil modelleri inanılmaz derecede kullanışlıdır. Örneğin, ideal bir dil modeli, sadece bir seferde bir andıç çekerek tek başına doğal metin oluşturabilir: $x_t \sim P(x_t \mid x_{t-1}, \ldots, x_1)$. Daktilo kullanan maymunun aksine, böyle bir modelden çıkan tüm metinler doğal dil, örneğin İngilizce metin olarak geçer. Ayrıca, sadece metni önceki diyalog parçalarına koşullandırarak anlamlı bir diyalog oluşturmak için yeterli olacaktır. Açıkçası, böyle bir sistemi tasarlamaktan çok uzaktayız, çünkü sadece dilbilgisi olarak mantıklı içerik üretmek yerine metni *anlamak* gerekir.
 
-Bununla birlikte, dil modelleri sınırlı formlarında bile mükemmel hizmet vermektedir. Örneğin, “konuşmayı tanımak” ve “güzel bir sahili mahvedebilmek” ifadeleri çok benzer. Bu, ikinci çeviriyi tuhaf olarak reddeden bir dil modeli aracılığıyla kolayca çözülen konuşma tanımada belirsizliğe neden olabilir. Aynı şekilde, bir belge özetleme algoritmasında “köpek ısırıkları adamı” çok daha sık “adam köpek ısırır” ya da “Ben büyükanne yemek istiyorum” oldukça rahatsız edici bir ifade, oysa “Ben yemek istiyorum, büyükanne” çok daha iyi huylu olduğunu bilmek önemlidir.
+Bununla birlikte, dil modelleri sınırlı formlarında bile mükemmel hizmet vermektedir. Örneğin, “konuşmayı tanımak” ve “konuşma tınmak” ifadeleri çok benzerdir. Bu konuşma tanımada belirsizliğe neden olabilir, ki ikinci çeviriyi tuhaf görüp reddeden bir dil modeli aracılığıyla kolayca çözülebilir. Aynı şekilde, bir belge özetleme algoritmasında “köpek adamı ısırdı” ifadesinin “adam köpeği ısırdı” ifadesinden çok daha sık ya da “Ben büyükanne yemek istiyorum” oldukça rahatsız edici bir ifade iken, “Ben yemek istiyorum, büyükanne” cümlesinin çok daha anlamlı olduğunu bilmek önemlidir.
 
 ## Dil Modeli Öğrenme
 
