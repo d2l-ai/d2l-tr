@@ -184,6 +184,8 @@ symmetry -> bakışım
 
 tabular -> çizelge halindeki
 
+token -> andıç
+
 transpose -> devrik
 
 tuple -> çokuzlu
@@ -194,7 +196,9 @@ uniform -> tekdüze
 
 validation set -> geçerleme kümesi
 
-variance -> değişinti 
+variance -> değişinti
+
+vocabulary -> kelime dağarcığı
 
 warp -> bükülme
 

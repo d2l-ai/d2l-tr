@@ -15,4 +15,5 @@ Yinelemeli ağları kullanan örneklerin çoğu metin verilerine dayanmaktadır.
 :maxdepth: 2
 
 sequence
+text-preprocessing
 ```

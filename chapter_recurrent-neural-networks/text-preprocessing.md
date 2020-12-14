@@ -1,12 +1,12 @@
-# Metin Önişleme
+# Metin Ön 	İşleme
 :label:`sec_text_preprocessing`
 
-Dizi verileri için istatistiksel araçları ve tahmin zorluklarını inceledik ve değerlendirdik. Bu veriler birçok form alabilir. Özellikle, kitabın birçok bölümünde odaklanacağımız gibi, metin dizisi verilerinin en popüler örneklerinden biridir. Örneğin, bir makale basitçe bir sözcük dizisi veya hatta bir karakter dizisi olarak görülebilir. Dizi verileriyle gelecekteki deneylerimizi kolaylaştırmak için, bu bölümü metin için ortak ön işleme adımlarını açıklamak üzere adayacağız. Genellikle, aşağıdaki adımlar şunlardır:
+Dizi verileri için istatistiksel araçları ve tahmin zorluklarını inceledik ve değerlendirdik. Bu veriler birçok şekil alabilir. Özellikle, kitabın birçok bölümünde odaklanacağımız gibi, metin dizi verilerinin en popüler örneklerinden biridir. Örneğin, bir makale basitçe bir sözcük dizisi veya hatta bir karakter dizisi olarak görülebilir. Dizi verileriyle gelecekteki deneylerimizi kolaylaştırmak amacıyla, bu bölümü metin için ortak ön işleme adımlarını açıklamak üzere adayacağız. Genellikle, aşağıdaki adımlar vardır:
 
-1. Metni dize olarak belleğe yükleyin.
-1. Dizeleri belirteçlere ayırın (örn. kelimeler ve karakterler).
-1. Bölünmüş belirteçleri sayısal endekslerle eşlemek için bir kelime tablosu oluşturun.
-1. Metni sayısal endekslerin dizilerine dönüştürün, böylece modeller tarafından kolayca manipüle edilebilir.
+1. Metni dizgi (string) olarak belleğe yükleyin.
+1. Dizgileri andıçlara (token) ayırın (örn. kelimeler ve karakterler).
+1. Bölünmüş andıçları sayısal indekslerle eşlemek için bir kelime tablosu oluşturun.
+1. Metni sayısal indekslerin dizilerine dönüştürün, böylece modeller tarafından kolayca işlenebilirler.
 
 ```{.python .input}
 import collections
@@ -28,9 +28,9 @@ from d2l import tensorflow as d2l
 import re
 ```
 
-## Veri kümesini okuma
+## Veri Kümesini Okuma
 
-Başlamak için H. G. Wells'in [*The Time Machine*](http://www.gutenberg.org/ebooks/35)'ten metin yüklüyoruz. Bu biraz üzerinde 30000 kelime oldukça küçük bir korpus, ama göstermek istediğimiz şey için bu gayet iyi. Daha gerçekçi belge koleksiyonları milyarlarca kelime içerir. Aşağıdaki işlev, veri kümesini her satırın bir dize olduğu metin satırları listesine okur. Basitlik için, burada noktalama işaretlerini ve büyük harfleri görmezden geliyoruz.
+Başlamak için H. G. Wells'in [*Zaman Makinesi*](http://www.gutenberg.org/ebooks/35)'nden metin yüklüyoruz. Bu 30000 kelimenin biraz üzerinde oldukça küçük bir külliyat, ama göstermek istediğimiz şey için gayet iyi. Daha gerçekçi belge koleksiyonları milyarlarca kelime içerir. Aşağıdaki işlev, veri kümesini her satırın bir dizgi olduğu metin satırları listesine okur. Basitlik için, burada noktalama işaretlerini ve büyük harfleri görmezden geliyoruz.
 
 ```{.python .input}
 #@tab all
@@ -50,9 +50,9 @@ print(lines[0])
 print(lines[10])
 ```
 
-## Tokenization
+## Andıçlama
 
-Aşağıdaki `tokenize` işlevi, giriş olarak bir liste (`lines`) alır ve burada her liste bir metin dizisi (örneğin, bir metin satırı). Her metin dizisi bir belirteç listesine bölünür. *token* metindeki temel birimdir. Sonunda, her belirteç bir dize olduğu belirteç listelerinin bir listesi döndürülür.
+Aşağıdaki `tokenize` işlevi, girdi olarak bir liste (`lines`) alır ve burada her liste bir metin dizisidir (örneğin, bir metin satırı). Her metin dizisi bir andıç listesine bölünür. *Andıç* metindeki temel birimdir. Sonunda, her andıcın bir dizgi olduğu andıç listelerinin bir listesi döndürülür.
 
 ```{.python .input}
 #@tab all
@@ -70,9 +70,9 @@ for i in range(11):
     print(tokens[i])
 ```
 
-## Kelime hazinesi
+## Kelime Dağarcığı
 
-Simgenin dize tipi, sayısal girişleri alan modeller tarafından kullanılmak için elverişsizdir. Şimdi dize belirteçlerini 0'dan başlayan sayısal endekslere eşlemek için, genellikle *kelime dağarcığı* olarak adlandırılan bir sözlük oluşturalım. Bunu yapmak için, önce eğitim kümesindeki tüm belgelerdeki benzersiz belirteçleri, yani bir *corpus* sayarız ve daha sonra her benzersiz simgeye frekansına göre sayısal bir dizin atarız. Nadiren ortaya çıkan belirteçler karmaşıklığı azaltmak için genellikle kaldırılır. Korpus içinde bulunmayan veya kaldırılan herhangi bir belirteç, bilinmeyen özel bir belirteç “<unk>” olarak eşleştirilir. İsteğe bağlı olarak, “<pad>” dolgu için “”, bir dizinin <bos> başlangıcını sunmak için “” ve bir dizinin <eos> sonu için “” gibi ayrılmış belirteçlerin bir listesini ekleriz.
+Andıcın dizgi tipi, sayısal girdiler alan modeller tarafından kullanılmak için elverişsizdir. Şimdi dizgi andıçlarını 0'dan başlayan sayısal indekslere eşlemek için, genellikle *kelime dağarcığı* olarak adlandırılan bir sözlük oluşturalım. Bunu yapmak için, önce eğitim kümesindeki tüm belgelerdeki benzersiz andıçları, yani bir *külliyat*ı, sayarız ve daha sonra her benzersiz andıca frekansına göre sayısal bir indeks atarız. Genellikle nadiren ortaya çıkan andıçlar karmaşıklığı azaltmak için kaldırılır. Külliyat içinde bulunmayan veya kaldırılan herhangi bir andıç, bilinmeyen özel bir andıç "<unk>" olarak eşleştirilir. İsteğe bağlı olarak, dolgu için "<pad>", bir dizinin başlangıcını sunmak için "<bos>" ve bir dizinin sonu için "<eos>" gibi ayrılmış andıçların bir listesini ekleriz.
 
 ```{.python .input}
 #@tab all
@@ -118,7 +118,7 @@ def count_corpus(tokens):  #@save
     return collections.Counter(tokens)
 ```
 
-Zaman makinesi veri kümesini korpus olarak kullanarak bir kelime hazinesi oluşturuyoruz. Daha sonra ilk birkaç sık belirteci endeksleriyle yazdırıyoruz.
+Zaman makinesi veri kümesini külliyat olarak kullanarak bir kelime dağarcığı oluşturuyoruz. Daha sonra ilk birkaç sık andıcı dizinleriyle yazdırıyoruz.
 
 ```{.python .input}
 #@tab all
@@ -126,7 +126,7 @@ vocab = Vocab(tokens)
 print(list(vocab.token_to_idx.items())[:10])
 ```
 
-Şimdi her metin satırını sayısal endekslerin bir listesine dönüştürebiliriz.
+Şimdi her metin satırını sayısal indekslerin bir listesine dönüştürebiliriz.
 
 ```{.python .input}
 #@tab all
@@ -135,9 +135,9 @@ for i in [0, 10]:
     print('indices:', vocab[tokens[i]])
 ```
 
-## Her şeyini bir araya koymak
+## Her Şeyi Bir Araya Getirmek
 
-Yukarıdaki işlevleri kullanarak, `corpus`, belirteç endekslerinin bir listesini ve `vocab`'yı döndüren `load_corpus_time_machine` işlevine her şeyi paketliyoruz. Burada yaptığımız değişiklikler şunlardır: i) Metni daha sonraki bölümlerdeki eğitimi basitleştirmek için kelimelere değil, karakterlere tokenize ediyoruz; ii) `corpus` tek bir listedir, belirteç listelerinin bir listesidir, çünkü zaman makinesi veri kümesindeki her metin satırı mutlaka bir cümle veya paragraf değildir.
+Yukarıdaki işlevleri kullanarak, `corpus` (külliyat), andıç indekslerinin bir listesini ve `vocab`'ı döndüren `load_corpus_time_machine` işlevine her şeyi paketliyoruz. Burada yaptığımız değişiklikler şunlardır: i) Metni daha sonraki bölümlerdeki eğitimi basitleştirmek için kelimelere değil, karakterlere andıçlıyoruz; ii) `corpus` tek bir listedir, andıç listelerinin bir listesidir, çünkü zaman makinesi veri kümesindeki her metin satırı mutlaka bir cümle veya paragraf değildir.
 
 ```{.python .input}
 #@tab all
@@ -160,11 +160,11 @@ len(corpus), len(vocab)
 ## Özet
 
 * Metin, dizi verilerinin önemli bir şeklidir.
-* Metni ön işlemek için genellikle metni belirteçlere böleriz, simge dizelerini sayısal endekslere eşlemek için bir kelime hazinesi oluştururuz ve modellerin işlenmesi için metin verilerini belirteç dizinlerine dönüştürürüz.
+* Metni ön işlemek için genellikle metni andıçlara böleriz, andıç dizgilerini sayısal indekslere eşlemek için bir kelime dağarcığı oluştururuz ve modellerin işlenmesi için metin verilerini andıç dizinlerine dönüştürürüz.
 
-## Egzersizler
+## Alıştırmalar
 
-1. Tokenization önemli bir önişleme adıdır. Farklı diller için değişir. Metni tokenize etmek için yaygın olarak kullanılan üç yöntem daha bulmaya çalışın.
-1. Bu bölümün denemesinde, metni sözcüklere tokenize edin ve `Vocab` örneğinin `min_freq` bağımsız değişkenlerini farklılık gösterin. Bu, kelime dağarcığı boyutunu nasıl etkiler?
+1. Andıçlama önemli bir önişleme adımıdır. Farklı diller için değişiktir. Metni andıçlamak için yaygın olarak kullanılan üç yöntem daha bulmaya çalışın.
+1. Bu bölümün deneyinde, metni sözcüklere andıçlayın ve `Vocab` örneğinin `min_freq` argümanlarını değiştirin. Bu, kelime dağarcığı boyutunu nasıl etkiler?
 
-[Discussions](https://discuss.d2l.ai/t/115)
+[Tartışmalar](https://discuss.d2l.ai/t/115)
