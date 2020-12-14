@@ -281,7 +281,7 @@ def load_data_time_machine(batch_size, num_steps,  #@save
 * Çok fazla yapı var, ancak Laplace yumuşatma yoluyla nadir kelime kombinasyonlarıyla verimli bir şekilde başa çıkmak için yeterli frekans yok.
 * Uzun dizileri okumak için ana seçenekler rastgele örnekleme ve sıralı bölümlemedir. İkincisi, yineleme sırasında iki bitişik minibatch'den sonraların orijinal sırasına bitişik olmasını sağlayabilirsiniz.
 
-## Egzersizler
+## Alıştırmalar
 
 1. Eğitim veri kümesinde $100,000$ kelime olduğunu varsayalım. Dört gramın ne kadar kelime frekansı ve çok kelimelik bitişik frekans depolaması gerekiyor?
 1. Bir diyaloğu nasıl modellersiniz?
@@ -294,13 +294,13 @@ def load_data_time_machine(batch_size, num_steps,  #@save
 1. Eğer bir dizi örneğinin tam bir cümle olmasını istiyorsak, bu minibatch örneklemede ne tür bir sorun ortaya çıkarır? Sorunu nasıl çözebiliriz?
 
 :begin_tab:`mxnet`
-[Discussions](https://discuss.d2l.ai/t/117)
+[Tartışmalar](https://discuss.d2l.ai/t/117)
 :end_tab:
 
 :begin_tab:`pytorch`
-[Discussions](https://discuss.d2l.ai/t/118)
+[Tartışmalar](https://discuss.d2l.ai/t/118)
 :end_tab:
 
 :begin_tab:`tensorflow`
-[Discussions](https://discuss.d2l.ai/t/1049)
+[Tartışmalar](https://discuss.d2l.ai/t/1049)
 :end_tab:
