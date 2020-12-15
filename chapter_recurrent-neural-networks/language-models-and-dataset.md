@@ -41,7 +41,7 @@ Ne yazık ki, bunun gibi modeller aşağıdaki nedenlerden dolayı oldukça hız
 
 ## Markov Modeller ve $n$-gram
 
-Derin öğrenmeyi içeren çözümleri tartışmadan önce, daha fazla terminoloji ve konsepte ihtiyacımız var. :numref:`sec_sequence`'teki Markov Modelleri hakkındaki tartışmamızı hatırlayın. Bunu dil modellemesine uygulayalım. Diziler üzerinden bir dağıtım ilk mertebeden Markov özelliğini karşılar eğer $P(x_{t+1} \mid x_t, \ldots, x_1) = P(x_{t+1} \mid x_t)$. Daha yüksek siparişler daha uzun bağımlılıklara karşılık gelir. Bu, bir diziyi modellemek için uygulayabileceğimiz bir dizi yaklaşım yol açar:
+Derin öğrenmeyi içeren çözümleri tartışmadan önce, daha fazla terime ve kavrama ihtiyacımız var. :numref:`sec_sequence`'teki Markov Modelleri hakkındaki tartışmamızı hatırlayın. Bunu dil modellemesine uygulayalım. Eğer $P(x_{t+1} \mid x_t, \ldots, x_1) = P(x_{t+1} \mid x_t)$ ise, diziler üzerinden bir dağılım birinci mertebeden Markov özelliğini karşılar. Daha yüksek mertebeler daha uzun bağımlılıklara karşılık gelir. Bu, bir diziyi modellemek için uygulayabileceğimiz birtakım yaklaşımlara yol açar:
 
 $$
 \begin{aligned}
@@ -51,11 +51,11 @@ P(x_1, x_2, x_3, x_4) &=  P(x_1) P(x_2  \mid  x_1) P(x_3  \mid  x_1, x_2) P(x_4 
 \end{aligned}
 $$
 
-Bir, iki ve üç değişkeni içeren olasılık formülleri genellikle sırasıyla*unigram*, *bigram* ve *trigram* modelleri olarak adlandırılır. Aşağıda, daha iyi modellerin nasıl tasarlanacağını öğreneceğiz.
+Bir, iki ve üç değişken içeren olasılık formülleri genellikle sırasıyla *unigram*, *bigram* ve *trigram* modelleri olarak adlandırılır. Aşağıda, daha iyi modellerin nasıl tasarlanacağını öğreneceğiz.
 
 ## Doğal Dil İstatistikleri
 
-Bunun gerçek veriler üzerinde nasıl çalıştığını görelim. :numref:`sec_text_preprocessing`'te tanıtılan zaman makinesi veri kümesine dayanan bir kelime hazinesi oluşturuyoruz ve en sık kullanılan 10 kelimeyi basıyoruz.
+Bunun gerçek veriler üzerinde nasıl çalıştığını görelim. :numref:`sec_text_preprocessing`'te tanıtılan zaman makinesi veri kümesine dayanan bir kelime dağarcığı oluşturuyoruz ve en sık kullanılan 10 kelimeyi basıyoruz.
 
 ```{.python .input}
 from d2l import mxnet as d2l
@@ -88,7 +88,7 @@ vocab = d2l.Vocab(corpus)
 vocab.token_freqs[:10]
 ```
 
-Gördüğümüz gibi, en popüler kelimeler aslında bakmak oldukça sıkıcı. Genellikle *stop kelimeleri* olarak adlandırılır ve böylece filtrelenir. Yine de, onlar hala anlam taşıyor ve biz de onları kullanacağız. Ayrıca, kelime frekansının oldukça hızlı bir şekilde bozulduğu oldukça açıktır. $10^{\mathrm{th}}$ en sık kullanılan kelime, en popüler olanı kadar yaygın $1/5$'ten azdır. Daha iyi bir fikir elde etmek için, kelime frekansının şeklini çiziyoruz.
+Gördüğümüz gibi, en popüler kelimelere bakmak aslında oldukça sıkıcı. Genellikle *duraklama kelimeleri* olarak adlandırılır ve böylece filtrelenir. Yine de, hala anlam taşırlar ve biz de onları kullanacağız. Ayrıca, kelime frekansının oldukça hızlı bir şekilde sönümlendiği oldukça açıktır. $10$. en sık kullanılan kelime, en popüler olanının $1/5$'nden daha az yaygındır. Daha iyi bir fikir elde etmek için, kelime frekansının şeklini çiziyoruz.
 
 ```{.python .input}
 #@tab all
@@ -97,16 +97,16 @@ d2l.plot(freqs, xlabel='token: x', ylabel='frequency: n(x)',
          xscale='log', yscale='log')
 ```
 
-Burada oldukça temel bir şey üzerindeyiz: kelime frekansı iyi tanımlanmış bir şekilde hızla bozuluyor. İlk birkaç kelimeyi istisnalar olarak ele aldıktan sonra, kalan tüm kelimeler kabaca bir günlük arsa üzerinde düz bir çizgi izler. Bu, kelimelerin en sık $i^\mathrm{th}$ kelimenin $n_i$ frekansının $n_i$ olduğunu belirten *Zipf yasası* tatmin ettiği anlamına gelir:
+Burada oldukça temel bir şey üzerindeyiz: Kelime frekansı iyi tanımlanmış bir şekilde hızla sönümleniyor. İlk birkaç kelime istisna olarak ele alındıktan sonra, kalan tüm kelimeler log-log figür üzerinde kabaca düz bir çizgi izler. Bu, kelimelerin en sık $i$. kelimesinin $n_i$ frekansının aşağıdaki gibi olduğunu belirten *Zipf yasası*nı tatmin ettiği anlamına gelir:
 
 $$n_i \propto \frac{1}{i^\alpha},$$
 :eqlabel:`eq_zipf_law`
 
-eşdeğerdir
+ki o da aşağıdaki ifadeye eşdeğerdir
 
 $$\log n_i = -\alpha \log i + c,$$
 
-burada $\alpha$, dağılımı karakterize eden üsdür ve $c$ bir sabittir. Sayım istatistiklerine ve düzgünleştirmeye göre kelimeleri modellemek istiyorsak, bu zaten bize duraklama vermelidir. Sonuçta, nadir kelimeler olarak da bilinen kuyruk sıklığını önemli ölçüde abartıracağız. Peki ya diğer kelime kombinasyonları, örneğin bigram, trigram, ve ötesinde? Bigram frekansının unigram frekansı ile aynı şekilde davranıp davranmadığını görelim.
+burada $\alpha$, dağılımı karakterize eden üstür ve $c$ bir sabittir. Sayım istatistiklerine ve düzleştirmeye göre kelimeleri modellemek istiyorsak, zaten burada ara vermeliyiz. Sonuçta, nadir kelimeler olarak da bilinen kuyruk sıklığına önemli ölçüde saparak fazla değer vereceğiz. Peki ya diğer kelime birleşimleri, örneğin bigramlar, trigramlar ve ötesi? Bigram frekansının unigram frekansı ile aynı şekilde davranıp davranmadığını görelim.
 
 ```{.python .input}
 #@tab all
@@ -115,7 +115,7 @@ bigram_vocab = d2l.Vocab(bigram_tokens)
 bigram_vocab.token_freqs[:10]
 ```
 
-Burada dikkat çeken bir şey var. En sık görülen on kelime çiftinden dokuzu hem stop kelimelerinden oluşur hem de yalnızca bir tanesi gerçek kitapla (“zaman”) ilgilidir. Ayrıca, trigram frekansının aynı şekilde davranıp davranmadığını görelim.
+Burada dikkat çeken bir şey var. En sık görülen on kelime çiftinden dokuzunun üyeleri duraklama kelimelerinden oluşur ve yalnızca bir tanesi gerçek kitapla (“zaman”) ilgilidir. Ayrıca, trigram frekansının aynı şekilde davranıp davranmadığını görelim.
 
 ```{.python .input}
 #@tab all
@@ -125,7 +125,7 @@ trigram_vocab = d2l.Vocab(trigram_tokens)
 trigram_vocab.token_freqs[:10]
 ```
 
-Son olarak, bu üç model arasında belirteç frekansını görselleştirmemize izin verin: unigramlar, bigramlar ve trigramlar.
+Son olarak, bu üç model arasında andıç frekansını görselleştirmemize izin verin: Unigramlar, bigramlar ve trigramlar.
 
 ```{.python .input}
 #@tab all
@@ -136,21 +136,20 @@ d2l.plot([freqs, bigram_freqs, trigram_freqs], xlabel='token: x',
          legend=['unigram', 'bigram', 'trigram'])
 ```
 
-Bu rakam bir dizi nedenden dolayı oldukça heyecan verici. Birincisi, unigram kelimelerin ötesinde, sıra uzunluğuna bağlı olarak :eqref:`eq_zipf_law`'te $\alpha$'da daha küçük bir üs ile de olsa Zipf yasasını takip ediyor gibi görünmektedir. İkincisi, farklı $n$-gram sayısı o kadar büyük değildir. Bu bize dilde çok fazla yapı olduğuna dair umut veriyor. Üçüncü olarak, birçok $n$-gram çok nadiren ortaya çıkar, bu da Laplace yumuşatmayı dil modellemesi için uygun değildir. Bunun yerine, derin öğrenme tabanlı modeller kullanacağız.
+Bu rakam birtakım nedenlerden dolayı oldukça heyecan verici. Birincisi, unigram kelimelerin ötesinde, kelime dizileri dizi uzunluğuna bağlı olarak :eqref:`eq_zipf_law`'te $\alpha$'da daha küçük bir üs ile de olsa Zipf yasasını takip ediyor gibi görünmektedir. İkincisi, farklı $n$-gram sayısı o kadar büyük değildir. Bu bize dilde çok fazla yapı olduğuna dair umut veriyor. Üçüncü olarak, birçok $n$-gram çok nadiren ortaya çıkar, bu da Laplace düzleştirmeyi dil modellemesi için uygunsuz hale getirir. Bunun yerine, derin öğrenme tabanlı modeller kullanacağız.
 
 ## Uzun Dizi Verilerini Okuma
 
-Seri verileri doğası gereği sıralı olduğundan, işleme konusunu ele almamız gerekiyor. Bunu :numref:`sec_sequence`'te oldukça geçici bir şekilde yaptık. Diziler, modeller tarafından tek seferde işlenemeyecek kadar uzun olduğunda, bu tür dizileri okumak için bölmek isteyebiliriz. Şimdi genel stratejileri tanımlayalım. Modeli tanıtmadan önce, ağın önceden tanımlanmış uzunlukta bir dizi dizisini işlediği bir dil modelini eğitmek için bir sinir ağı kullanacağımızı varsayalım, bir seferde $n$ zaman adımlarını. Şimdi soru, özelliklerin ve etiketlerin minibatchlerinin rastgele nasıl okunacağı.
+Dizi verileri doğası gereği dizili olduğundan, işleme konusunu ele almamız gerekiyor. Bunu :numref:`sec_sequence`'te oldukça geçici bir şekilde yaptık. Diziler, modeller tarafından tek seferde işlenemeyecek kadar uzun olduğunda, bu tür dizileri okumak için bölmek isteyebiliriz. Şimdi genel stratejileri tanımlayalım. Modeli tanıtmadan önce, ağın önceden tanımlanmış uzunlukta, bir seferde $n$ zaman adımı mesela, bir minigrup dizisini işlediği bir dil modelini eğitmek için bir sinir ağı kullanacağımızı varsayalım. Şimdi asıl soru, özniteliklerin ve etiketlerin minigruplarının rastgele nasıl okunacağıdır.
 
-Başlamak için, bir metin dizisi keyfi olarak uzun olabileceğinden, *The Time Machine* kitabının tamamı gibi, bu kadar uzun bir diziyi aynı sayıda zaman adımıyla sonraya ayırabiliriz. Sinir ağımızı eğitirken, bu tür sonradan bir minibatch modele beslenecektir. Ağın bir seferde $n$ zaman adımlarının bir alt sırasını işlediğini varsayalım. :numref:`fig_timemachine_5gram`, orijinal bir metin dizisinden sonradan elde etmenin tüm farklı yollarını gösterir; burada $n=5$ ve her seferinde bir belirteç bir karaktere karşılık gelir. Başlangıç pozisyonunu gösteren keyfi bir ofset seçebileceğimizden oldukça özgürlüğümüz olduğunu unutmayın.
+Başlarken, bir metin dizisi keyfi olarak uzun olabileceğinden, *Zaman Makinesi* kitabının tamamı gibi, bu kadar uzun bir diziyi aynı sayıda zaman adımlı altdizilere parçalayabiliriz. Sinir ağımızı eğitirken, bu tür altdizilerden bir minigrup modele beslenecektir. Ağın bir seferde $n$ zaman adımlı bir altdizisini işlediğini varsayalım. :numref:`fig_timemachine_5gram`, orijinal bir metin dizisinden altdizi elde etmenin tüm farklı yollarını gösterir; burada $n=5$ ve her seferinde bir andıç bir karaktere karşılık gelir. Başlangıç pozisyonunu gösteren keyfi bir bağıl konum (offset) seçebileceğimizden oldukça özgür olduğumuzu unutmayın.
 
-![Different offsets lead to different subsequences when splitting up text.](../img/timemachine-5gram.svg)
+![Farklı bağıl konumlar, metni bölerken farklı altdizilere yol açar.](../img/timemachine-5gram.svg)
 :label:`fig_timemachine_5gram`
 
-Bu nedenle, :numref:`fig_timemachine_5gram`'ten hangisini seçmeliyiz? Aslında, hepsi eşit derecede iyi. Ancak, sadece bir ofset seçersek, ağımızı eğitmek için olası tüm sonakların sınırlı kapsamı vardır. Bu nedenle, hem *kapsama* hem de *rasgelelik* almak için bir diziyi bölümlemek için rastgele bir uzaklık ile başlayabiliriz. Aşağıda, her ikisi için de bunu nasıl gerçekleştireceğimizi açıklıyoruz
-*rastgele örnekleme* ve*sıralı bölümleme* stratejileri.
+Bu nedenle, :numref:`fig_timemachine_5gram`'ten hangisini seçmeliyiz? Aslında, hepsi eşit derecede iyidir. Ancak, sadece bir bağıl konum seçersek, ağımızı eğitmek için olası tüm altdizilerin sınırlı kapsamı vardır. Bu nedenle, hem *kapsama* hem de *rasgelelik* elde etmek için bir diziyi bölümlerken rastgele bir bağıl konum ile başlayabiliriz. Aşağıda, bunu hem *rastgele örneklemleme* hem de *sıralı bölümleme* stratejileri için nasıl gerçekleştireceğimizi açıklıyoruz.
 
-### Rastgele Örnekleme
+### Rastgele Örneklemleme
 
 Rastgele örneklemede, her örnek, orijinal uzun dizide keyfi olarak yakalanan bir alt sıradır. Yineleme sırasında iki bitişik rasgele minibatch'lerden sonralar mutlaka özgün dizisi bitişik değildir. Dil modellemesi için hedef, şimdiye kadar gördüğümüz belirteçlere dayanan bir sonraki belirteci tahmin etmektir, bu nedenle etiketler orijinal dizidir, bir belirteç ile kaydırılır.
 

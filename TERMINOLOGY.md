@@ -108,6 +108,8 @@ meme -> mizah unsuru
 
 minibatch -> minigrup
 
+offset -> bağıl konum
+
 one-hot coding -> bire bir kodlama
 
 optimizer - > eniyileyici
