@@ -147,13 +147,13 @@ Başlarken, bir metin dizisi keyfi olarak uzun olabileceğinden, *Zaman Makinesi
 ![Farklı bağıl konumlar, metni bölerken farklı altdizilere yol açar.](../img/timemachine-5gram.svg)
 :label:`fig_timemachine_5gram`
 
-Bu nedenle, :numref:`fig_timemachine_5gram`'ten hangisini seçmeliyiz? Aslında, hepsi eşit derecede iyidir. Ancak, sadece bir bağıl konum seçersek, ağımızı eğitmek için olası tüm altdizilerin sınırlı kapsamı vardır. Bu nedenle, hem *kapsama* hem de *rasgelelik* elde etmek için bir diziyi bölümlerken rastgele bir bağıl konum ile başlayabiliriz. Aşağıda, bunu hem *rastgele örneklemleme* hem de *sıralı bölümleme* stratejileri için nasıl gerçekleştireceğimizi açıklıyoruz.
+Bu nedenle, :numref:`fig_timemachine_5gram`'ten hangisini seçmeliyiz? Aslında, hepsi eşit derecede iyidir. Ancak, sadece bir bağıl konum seçersek, ağımızı eğitmek için olası tüm altdizilerin sınırlı kapsamı vardır. Bu nedenle, hem *kapsama* hem de *rasgelelik* elde etmek için bir diziyi bölümlerken rastgele bir bağıl konum ile başlayabiliriz. Aşağıda, bunu hem *rastgele örnekleme* hem de *sıralı bölümleme* stratejileri için nasıl gerçekleştireceğimizi açıklıyoruz.
 
-### Rastgele Örneklemleme
+### Rastgele Örnekleme
 
-Rastgele örneklemede, her örnek, orijinal uzun dizide keyfi olarak yakalanan bir alt sıradır. Yineleme sırasında iki bitişik rasgele minibatch'lerden sonralar mutlaka özgün dizisi bitişik değildir. Dil modellemesi için hedef, şimdiye kadar gördüğümüz belirteçlere dayanan bir sonraki belirteci tahmin etmektir, bu nedenle etiketler orijinal dizidir, bir belirteç ile kaydırılır.
+Rastgele örneklemede, her örnek, orijinal uzun dizide keyfi olarak yakalanan bir altdizidir. Yineleme sırasında iki bitişik rasgele minigruptaki altdiziler mutlaka orijinal diziside bitişik olmak zorunda değildir. Dil modellemesi için hedef, şimdiye kadar gördüğümüz andıçlara dayanan bir sonraki andıcı tahmin etmektir, bu nedenle etiketler bir andıç kaydırılmış orijinal dizidir.
 
-Aşağıdaki kod, her seferinde verilerden bir mini batch rasgele oluşturur. Burada, `batch_size` bağımsız değişkeni her mini batch alt sırası örneklerinin sayısını belirtir ve `num_steps` her alt dizideki zaman adımlarının önceden tanımlanmış sayısıdır.
+Aşağıdaki kod, her seferinde verilerden bir rasgele minigrup oluşturur. Burada, `batch_size` bağımsız değişkeni her minigruptaki altdizi örneklerinin sayısını belirtir ve `num_steps` her altdizideki zaman adımlarının önceden tanımlanmış sayısıdır.
 
 ```{.python .input}
 #@tab all
@@ -185,7 +185,7 @@ def seq_data_iter_random(corpus, batch_size, num_steps):  #@save
         yield d2l.tensor(X), d2l.tensor(Y)
 ```
 
-El ile 0'dan 34'e kadar bir dizi oluşturalım. Biz toplu boyutu ve zaman adımlarının sayıları sırasıyla 2 ve 5 olduğunu varsayalım. Bu, $\lfloor (35 - 1) / 5 \rfloor= 6$ özellikli etiket alt sıralama çiftleri üretebileceğimiz anlamına gelir. 2 minibatch boyutu ile sadece 3 minibatch elde ediyoruz.
+Elimiz ile 0'dan 34'e kadar bir dizi oluşturalım. Biz grup boyutunun ve zaman adımlarının sayısının sırasıyla 2 ve 5 olduğunu varsayalım. Bu, $\lfloor (35 - 1) / 5 \rfloor= 6$ öznitelik-etiket altdizi çiftleri üretebileceğimiz anlamına gelir. 2 minigrup boyutu ile sadece 3 minigrup elde ediyoruz.
 
 ```{.python .input}
 #@tab all
@@ -196,7 +196,7 @@ for X, Y in seq_data_iter_random(my_seq, batch_size=2, num_steps=5):
 
 ### Sıralı Bölümleme
 
-Orijinal dizinin rasgele örneklemesine ek olarak, yineleme sırasında iki bitişik minibatch'den sonraki işlemlerin orijinal diziye bitişik olmasını da sağlayabiliriz. Bu strateji, minibatches üzerinde yineleme yaparken bölünmüş sonradan sırasını korur, dolayısıyla sıralı bölümleme olarak adlandırılır.
+Orijinal dizinin rastgele örneklemesine ek olarak, yineleme sırasında iki bitişik minigrubun altdizilerinin orijinal dizide bitişik olmasını da sağlayabiliriz. Bu strateji, minigruplar üzerinde yineleme yaparken bölünmüş altdizilerin sırasını korur, dolayısıyla sıralı bölümleme olarak adlandırılır.
 
 ```{.python .input}
 #@tab mxnet, pytorch
@@ -233,7 +233,7 @@ def seq_data_iter_sequential(corpus, batch_size, num_steps):  #@save
         yield X, Y
 ```
 
-Aynı ayarları kullanarak, sıralı bölümleme tarafından okunan sonradan her minibatch için `X` ve etiketleri `Y` yazdıracağız. Yineleme sırasında iki bitişik minibatches sonradan gelen orijinal dizisi üzerinde gerçekten bitişik olduğunu unutmayın.
+Aynı ayarları kullanarak, sıralı bölümleme tarafından okunan her altdizi minigrubu için `X` ve etiketleri `Y` yazdıracağız. Yineleme sırasında iki bitişik minigrubun altdizilerinin orijinal dizisi üzerinde gerçekten bitişik olduğunu unutmayın.
 
 ```{.python .input}
 #@tab all
