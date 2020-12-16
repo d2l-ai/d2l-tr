@@ -290,7 +290,7 @@ def load_data_time_machine(batch_size, num_steps,  #@save
     1. Rastgele bir bağıl konum olması neden iyi bir fikir?
     1. Belgedeki diziler üzerinde mükemmel bir şekilde tekdüze bir dağılıma yol açıyor mu?
     1. İşleri daha tekdüze hale getirmek için ne yapmalısın?
-1. Eğer bir dizi örneğinin tam bir cümle olmasını istiyorsak, bu minigrup örneklemede ne tür bir sorun ortaya çıkarır? Sorunu nasıl çözebiliriz?
+1. Eğer bir dizi örneğinin tam bir cümle olmasını istiyorsak, bu minigrup örneklemede ne tür bir sorun ortaya çıkarır? Bu sorunu nasıl çözebiliriz?
 
 :begin_tab:`mxnet`
 [Tartışmalar](https://discuss.d2l.ai/t/117)
