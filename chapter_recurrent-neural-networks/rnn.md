@@ -1,7 +1,7 @@
-# Tekrarlayan Sinir Ağları
+# Yinelemeli Sinir Ağları
 :label:`sec_rnn`
 
-:numref:`sec_language_model`'te $n$-gramlık modellerini tanıttık; burada $x_t$ kelimesinin $x_t$'in zaman adımındaki koşullu olasılığının sadece $n-1$ önceki kelimelere bağlı olduğu $n$-gramlık modeller. Biz $x_t$ üzerinde $t-(n-1)$ zaman adımından daha erken kelimelerin olası etkisini dahil etmek istiyorsanız, biz $n$ artırmak gerekir. Bununla birlikte, model parametrelerinin sayısı da katlanarak artacaktır, çünkü $|\mathcal{V}|^n$ bir kelime seti için $\mathcal{V}$ numaralarını depolamamız gerekir. Bu nedenle, $P(x_t \mid x_{t-1}, \ldots, x_{t-n+1})$'yı modellemek yerine gizli bir değişken model kullanılması tercih edilir:
+:numref:`sec_language_model`'te $n$-gramlık modelleri tanıttık; burada $x_t$ kelimesinin $x_t$'in zaman adımındaki koşullu olasılığının sadece $n-1$ önceki kelimelere bağlı olduğu $n$-gramlık modeller. Biz $x_t$ üzerinde $t-(n-1)$ zaman adımından daha erken kelimelerin olası etkisini dahil etmek istiyorsanız, biz $n$ artırmak gerekir. Bununla birlikte, model parametrelerinin sayısı da katlanarak artacaktır, çünkü $|\mathcal{V}|^n$ bir kelime seti için $\mathcal{V}$ numaralarını depolamamız gerekir. Bu nedenle, $P(x_t \mid x_{t-1}, \ldots, x_{t-n+1})$'yı modellemek yerine gizli bir değişken model kullanılması tercih edilir:
 
 $$P(x_t \mid x_{t-1}, \ldots, x_1) \approx P(x_t \mid h_{t-1}),$$
 
