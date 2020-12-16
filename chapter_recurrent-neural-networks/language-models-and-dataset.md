@@ -241,7 +241,7 @@ for X, Y in seq_data_iter_sequential(my_seq, batch_size=2, num_steps=5):
     print('X: ', X, '\nY:', Y)
 ```
 
-Şimdi yukarıdaki iki örnekleme işlevini bir sınıfa sarıyoruz, böylece daha sonra bir veri yineleyici olarak kullanabiliriz.
+Şimdi yukarıdaki iki örnekleme işlevini bir sınıf ile sarmalıyoruz, böylece daha sonra bir veri yineleyici olarak kullanabiliriz.
 
 ```{.python .input}
 #@tab all
@@ -274,23 +274,23 @@ def load_data_time_machine(batch_size, num_steps,  #@save
 ## Özet
 
 * Dil modelleri doğal dil işlemenin anahtarıdır.
-* $n$-gram, bağımlılığı keserek uzun dizilerle başa çıkmak için uygun bir model sağlar.
-* Uzun diziler, çok nadiren veya asla ortaya çıktıkları problemden muzdariptir.
-* Zipf yasası sadece unigram değil, aynı zamanda diğer $n$-gram için kelime dağılımını yönetir.
-* Çok fazla yapı var, ancak Laplace yumuşatma yoluyla nadir kelime kombinasyonlarıyla verimli bir şekilde başa çıkmak için yeterli frekans yok.
-* Uzun dizileri okumak için ana seçenekler rastgele örnekleme ve sıralı bölümlemedir. İkincisi, yineleme sırasında iki bitişik minibatch'den sonraların orijinal sırasına bitişik olmasını sağlayabilirsiniz.
+* $n$-gram, bağımlılığı budayarak uzun dizilerle başa çıkmak için uygun bir model sağlar.
+* Uzun diziler, çok nadiren olma veya neredeyse hiç olmama problemden muzdariptir.
+* Zipf yasası sadece unigram değil, aynı zamanda diğer $n$-gramlar için de kelime dağılımını yönetir.
+* Çok fazla yapı var, ancak Laplace düzleştirmesi yoluyla nadir kelime birleşimleri ile verimli bir şekilde başa çıkmak için yeterli sıklıkta kullanım yok.
+* Uzun dizileri okumak için ana seçenekler rastgele örnekleme ve sıralı bölümlemedir. İkincisi, yineleme sırasında iki bitişik minigruptaki altdizilerin orijinal dizide de bitişik olmasını sağlar.
 
 ## Alıştırmalar
 
-1. Eğitim veri kümesinde $100,000$ kelime olduğunu varsayalım. Dört gramın ne kadar kelime frekansı ve çok kelimelik bitişik frekans depolaması gerekiyor?
+1. Eğitim veri kümesinde $100,000$ kelime olduğunu varsayalım. Dört-gramın ne kadar kelime frekansı ve çok kelimeli bitişik frekans depolaması gerekiyor?
 1. Bir diyaloğu nasıl modellersiniz?
-1. Unigramlar, bigramlar ve trigramlar için Zipf yasasının üsünü tahmin edin.
+1. Unigramlar, bigramlar ve trigramlar için Zipf yasasının üssünü tahmin edin.
 1. Uzun dizi verilerini okumak için başka hangi yöntemleri düşünebilirsiniz?
-1. Uzun dizileri okumak için kullandığımız rastgele uzaklığı düşünün.
-    1. Rastgele bir ofset olması neden iyi bir fikir?
-    1. Belgedeki diziler üzerinde mükemmel bir şekilde eşit bir dağılıma yol açıyor mu?
-    1. İşleri daha düzgün hale getirmek için ne yapmalısın?
-1. Eğer bir dizi örneğinin tam bir cümle olmasını istiyorsak, bu minibatch örneklemede ne tür bir sorun ortaya çıkarır? Sorunu nasıl çözebiliriz?
+1. Uzun dizileri okumak için kullandığımız rastgele bağıl konumu düşünün.
+    1. Rastgele bir bağıl konum olması neden iyi bir fikir?
+    1. Belgedeki diziler üzerinde mükemmel bir şekilde tekdüze bir dağılıma yol açıyor mu?
+    1. İşleri daha tekdüze hale getirmek için ne yapmalısın?
+1. Eğer bir dizi örneğinin tam bir cümle olmasını istiyorsak, bu minigrup örneklemede ne tür bir sorun ortaya çıkarır? Sorunu nasıl çözebiliriz?
 
 :begin_tab:`mxnet`
 [Tartışmalar](https://discuss.d2l.ai/t/117)
