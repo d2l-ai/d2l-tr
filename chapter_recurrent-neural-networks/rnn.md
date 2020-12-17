@@ -102,55 +102,54 @@ d2l.matmul(d2l.concat((X, H), 1), d2l.concat((W_xh, W_hh), 0))
 ![RNN'ye dayalı karakter düzeyinde bir dil modeli. Girdi ve etiket dizileri sırasıyla "machin" ve "achine" dir.](../img/rnn-train.svg)
 :label:`fig_rnn_train`
 
-Eğitim işlemi sırasında, çıkış katmanından çıktıda her zaman adım için bir softmax işlemi çalıştırır ve daha sonra model çıktısı ile etiket arasındaki hatayı hesaplamak için çapraz entropi kaybını kullanırız. Gizli katmandaki gizli durumun tekrarlayan hesaplanması nedeniyle, :numref:`fig_rnn_train`, $\mathbf{O}_3$'teki zaman adım 3'ün çıkışı, “m”, “a” ve “c” metin dizisi ile belirlenir. Eğitim verilerindeki dizinin bir sonraki karakteri “h” olduğu için, zaman adım 3 kaybı, “m”, “a”, “c” ve bu zaman adımının “h” etiketine göre oluşturulan bir sonraki karakterin olasılık dağılımına bağlı olacaktır.
+Eğitim işlemi sırasında, çıktı katmanından çıktıda her zaman adım için bir softmaks işlemi çalıştırırız ve daha sonra model çıktısı ile etiket arasındaki hatayı hesaplamak için çapraz entropi kaybını kullanırız. Gizli katmandaki gizli durumun yinelemeli hesaplanması nedeniyle, :numref:`fig_rnn_train`, $\mathbf{O}_3$'teki 3. zaman adımının çıktısı, “m”, “a” ve “c” metin dizisi ile belirlenir. Eğitim verilerindeki dizinin bir sonraki karakteri “h” olduğu için, 3. zaman adımının kaybı, “m”, “a”, “c”'ye göre oluşturulan bir sonraki karakterin olasılık dağılımına ve bu zaman adımının “h” etiketine bağlı olacaktır.
 
-Uygulamada, her belirteç bir $d$ boyutlu vektör ile temsil edilir ve bir toplu boyutu $n>1$ kullanıyoruz. Bu nedenle, $t$'deki $\mathbf X_t$ giriş :numref:`subsec_rnn_w_hidden_states`'te tartıştığımız şeyle aynı olan $n\times d$ matrisi olacaktır.
+Uygulamada, her andıç bir $d$ boyutlu vektör ile temsil edilir ve grup boyutu olarak $n>1$ kullanırız. Bu nedenle, $t$'deki $\mathbf X_t$ girdisi :numref:`subsec_rnn_w_hidden_states`'te tartıştığımız gibi $n\times d$ şekilli bir matris olacaktır.
 
-## Şaşksızlık
+## Şaşkınlık
 :label:`subsec_perplexity`
 
-Son olarak, sonraki bölümlerde RNN tabanlı modellerimizi değerlendirmek için kullanılacak dil modeli kalitesini nasıl ölçeceğimizi tartışalım. Bir yol, metnin ne kadar şaşırtıcı olduğunu kontrol etmektir. İyi bir dil modeli, daha sonra ne göreceğimizi yüksek hassasiyetli belirteçlerle tahmin edebilir. Farklı dil modelleri tarafından önerilen “Yağmur yağıyor” ifadesinin aşağıdaki devamlarını göz önünde bulundurun:
+Son olarak, sonraki bölümlerde RNN tabanlı modellerimizi değerlendirmek için kullanılacak dil modelinin kalitesini nasıl ölçeceğimizi tartışalım. Bir yol, metnin ne kadar şaşırtıcı olduğunu kontrol etmektir. İyi bir dil modeli, daha sonra ne göreceğimizi yüksek hassasiyetli andıçlarla tahmin edebilir. Farklı dil modelleri tarafından önerilen “Yağmur yağıyor” ifadesinin aşağıdaki devamlarını göz önünde bulundurun:
 
 1. “Dışarıda yağmur yağıyor”
 1. “Muz ağacı yağıyor”
 1. “Piouw yağıyor; kcj pwepoiut”
 
-Kalite açısından, örnek 1 açıkça en iyisidir. Sözcükler mantıklı ve mantıksal olarak tutarlı. Hangi kelimenin anlamsal olarak takip ettiğini tam olarak doğru bir şekilde yansıtmayabilir (“San Francisco'da” ve “kışın” mükemmel şekilde makul uzantıları olurdu), model hangi kelimeyi takip ettiğini yakalayabilir. Örnek 2, mantıksız bir uzantı üreterek oldukça kötüdür. Yine de, en azından model kelimelerin nasıl yazılacağını ve kelimeler arasındaki korelasyon derecesini öğrendi. Son olarak, örnek 3, verileri düzgün şekilde uymayan kötü eğitilmiş bir modeli gösterir.
+Kalite açısından, örnek 1 açıkça en iyisidir. Sözcükler mantıklı ve mantıksal olarak da tutarlı. Hangi kelimenin anlamsal olarak takip ettiğini tam olarak doğru bir şekilde yansıtmayabilir (“San Francisco'da” ve “kışın” mükemmel şekilde makul uzantıları olurdu), ama model hangi kelimenin takip edebileceğini yakalayabilir. Örnek 2, mantıksız bir uzantı ürettiğinden oldukça kötüdür. Yine de, model en azından kelimelerin nasıl yazılacağını ve kelimeler arasındaki korelasyon derecesini öğrendi. Son olarak, örnek 3, veriye düzgün şekilde uymayan kötü eğitilmiş bir modeli gösterir.
 
-Dizinin olasılığını hesaplayarak modelin kalitesini ölçebiliriz. Ne yazık ki bu, anlaşılması zor ve karşılaştırılması zor bir sayıdır. Sonuçta, daha kısa dizilerin daha uzun olanlardan daha fazla gerçekleşme olasılığı daha yüksektir, bu nedenle modeli Tolstoy'un magnum opus'unda değerlendirir
-*Savaş ve Barış* kaçınılmaz olarak Saint-Exupery'nin “Küçük Prens” romanından çok daha küçük bir olasılık üretecektir. Ekip olan bir ortalamanın eşdeğeridir.
+Dizinin olabilirliğini hesaplayarak modelin kalitesini ölçebiliriz. Ne yazık ki bu, anlaşılması ve karşılaştırılması zor bir sayıdır. Sonuçta, daha kısa dizilerin daha uzun olanlara göre gerçekleşme olasılığı daha yüksektir, bu nedenle model Tolstoy'un şaheseri *Savaş ve Barış*'ı değerlendirirken kaçınılmaz olarak Saint-Exupery'nin “Küçük Prens” romanından çok daha küçük bir olabilirlik üretecektir. Eksik olan bir ortalama eşdeğeridir.
 
-Bilgi teorisi burada işe yarar. softmax regresyonunu (:numref:`subsec_info_theory_basics`) tanıttığımızda entropi, sürpriz ve çapraz entropi tanımladık ve [online appendix on information theory](https://d2l.ai/chapter_appendix-mathematics-for-deep-learning/information-theory.html)'da daha fazla bilgi teorisi tartışıldı. Metni sıkıştırmak istiyorsak, geçerli belirteç kümesi verilen bir sonraki belirteci tahmin etmeyi sorabiliriz. Daha iyi bir dil modeli, bir sonraki belirteci daha doğru tahmin etmemizi sağlamalıdır. Böylece, diziyi sıkıştırmak için daha az bit harcamamıza izin vermelidir. Böylece, bir dizinin tüm $n$ belirteçleri üzerinden ortalaması yapılan çapraz entropi kaybıyla ölçebiliriz:
+Bilgi teorisi burada işe yarar. Softmaks bağlanımını (:numref:`subsec_info_theory_basics`) tanıttığımızda entropiyi, sürprizi ve çapraz entropiyi tanımladık ve [online appendix on information theory](https://d2l.ai/chapter_appendix-mathematics-for-deep-learning/information-theory.html)'da bilgi teorisi daha fazla tartışılmaktadır. Metni sıkıştırmak istiyorsak, geçerli andıç kümesi verilince bir sonraki andıcı tahmin etmeyi sorabiliriz. Daha iyi bir dil modeli, bizim bir sonraki andıcı daha doğru tahmin etmemizi sağlamalıdır. Böylece, diziyi sıkıştırmak için daha az bit harcamamıza izin vermelidir. Böylece, bir dizinin tüm $n$ andıçları üzerinden ortalamasıyla çapraz entropi kaybıyla ölçebiliriz:
 
 $$\frac{1}{n} \sum_{t=1}^n -\log P(x_t \mid x_{t-1}, \ldots, x_1),$$
 :eqlabel:`eq_avg_ce_for_lm`
 
-Burada $P$ bir dil modeli tarafından verilir ve $x_t$, diziden $t$ adımında gözlenen gerçek simgedir. Bu, farklı uzunluklardaki belgelerdeki performansı karşılaştırılabilir hale getirir. Tarihsel nedenlerden dolayı, doğal dil işlemede bilim adamları *şaşkınlık* adı verilen bir miktar kullanmayı tercih ederler. Kısacası, :eqref:`eq_avg_ce_for_lm`'ün üssü:
+Burada $P$ bir dil modeli tarafından verilir ve $x_t$, diziden $t$ adımında gözlenen gerçek andıçtır. Bu, farklı uzunluklardaki belgelerdeki performansları karşılaştırılabilir hale getirir. Tarihsel nedenlerden dolayı, doğal dil işlemedeki bilim adamları *şaşkınlık (perplexity)* adı verilen bir ölçüm kullanmayı tercih ederler. Kısacası, :eqref:`eq_avg_ce_for_lm`'ün üssüdür:
 
 $$\exp\left(-\frac{1}{n} \sum_{t=1}^n \log P(x_t \mid x_{t-1}, \ldots, x_1)\right).$$
 
-Şaşkınlık, hangi simgeyi seçeceğimize karar verirken sahip olduğumuz gerçek seçeneklerin sayısının harmonik ortalaması olarak en iyi anlaşılabilir. Bize vakaların bir dizi bakalım:
+Şaşkınlık, en iyi hangi andıcı seçeceğimize karar verirken sahip olduğumuz gerçek seçeneklerin sayısının harmonik ortalaması olarak anlaşılabilir. Birkaç vakaya bakalım:
 
-* En iyi senaryoda, model her zaman etiket belirteci olasılığını 1 olarak mükemmel şekilde tahmin eder. Bu durumda modelin şaşkınlığı 1'dir.
-* En kötü senaryoda, model her zaman etiket belirteci olasılığını 0 olarak öngörür. Bu durumda şaşkınlık pozitif sonsuzdur.
-* Taban çizgisinde, model, sözcük dağarcığının tüm kullanılabilir belirteçleri üzerinde tekdüze bir dağılım öngörür. Bu durumda, şaşkınlık, kelime dağarcığının benzersiz belirteçlerinin sayısına eşittir. Aslında, diziyi herhangi bir sıkıştırma olmadan saklarsak, kodlamak için yapabileceğimiz en iyi şey bu olurdu. Bu nedenle, bu, herhangi bir yararlı modelin yenmesi gereken önemsiz bir üst sınır sağlar.
+* En iyi senaryoda, model her zaman etiket andıcı olasılığını 1 olarak mükemmel şekilde tahmin eder. Bu durumda modelin şaşkınlığı 1'dir.
+* En kötü senaryoda, model her zaman etiket andıcı olasılığını 0 olarak öngörür. Bu durumda şaşkınlık pozitif sonsuzdur.
+* Referans olarak model, sözcük dağarcığının tüm kullanılabilir andıçları üzerinde tekdüze bir dağılım öngörür. Bu durumda, şaşkınlık, kelime dağarcığının benzersiz andıçlarının sayısına eşittir. Aslında, diziyi herhangi bir sıkıştırma olmadan saklarsak, kodlamak için yapabileceğimiz en iyi şey bu olurdu. Bu nedenle, bu, herhangi bir yararlı modelin yenmesi gereken bariz bir üst sınır sağlar.
 
 Aşağıdaki bölümlerde, karakter düzeyi dil modelleri için RNN'leri uygulayacağız ve bu modelleri değerlendirmek için şaşkınlığı kullanacağız.
 
 ## Özet
 
-* Gizli durumlar için tekrarlayan hesaplama kullanan bir sinir ağı, tekrarlayan bir sinir ağı (RNN) olarak adlandırılır.
-* Bir RNN'nin gizli durumu, dizinin geçmiş bilgilerini geçerli zaman adımına kadar yakalayabilir.
+* Gizli durumlar için yinelemeli hesaplama kullanan bir sinir ağı, yinelemeli bir sinir ağı (RNN) olarak adlandırılır.
+* Bir RNN'nin gizli durumu, dizinin şimdiki zaman adımına kadarki geçmiş bilgilerini tutabilir.
 * Zaman adımlarının sayısı arttıkça RNN model parametrelerinin sayısı artmaz.
 * Bir RNN kullanarak karakter düzeyinde dil modelleri oluşturabiliriz.
 * Dil modellerinin kalitesini değerlendirmek için şaşkınlığı kullanabiliriz.
 
 ## Alıştırmalar
 
-1. Bir metin dizisindeki bir sonraki karakteri tahmin etmek için bir RNN kullanırsak, herhangi bir çıktı için gerekli boyut nedir?
-1. Neden RNN'ler metin dizisindeki önceki tüm belirteçlere dayalı bir zaman adımında bir belirteç koşullu olasılığını ifade edebilir?
-1. Uzun bir sekansta geriye yayılırsa degradeye ne olur?
-1. Bu bölümde açıklanan dil modeliyle ilgili bazı sorunlar nelerdir?
+1. Bir metin dizisindeki bir sonraki karakteri tahmin etmek için bir RNN kullanırsak, bir çıktı için gerekli boyut nedir?
+1. RNN'ler bir zaman adımındaki andıcın metin dizisindeki önceki tüm andıçlara dayalı koşullu olasılığını nasıl ifade edebilir?
+1. Uzun bir dizide geri yayarsak gradyana ne olur?
+1. Bu bölümde açıklanan dil modeliyle ilgili sorunlar nelerdir?
 
 :begin_tab:`mxnet`
 [Tartışmalar](https://discuss.d2l.ai/t/337)

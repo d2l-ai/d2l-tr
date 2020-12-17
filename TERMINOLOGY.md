@@ -120,6 +120,8 @@ parse -> ayrıştırmak
 
 permutation -> devrişim
 
+perplexity -> şaşkınlık
+
 perturbation -> düzensizlik
 
 pipeline -> veri/komut işleme hattı
