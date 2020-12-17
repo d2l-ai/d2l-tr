@@ -1,4 +1,4 @@
-# Tekrarlayan Sinir Ağlarının Sıfırdan Uygulanması
+# Yinelemeli Sinir Ağlarının Sıfırdan Uygulanması
 :label:`sec_rnn_scratch`
 
 Bu bölümde, :numref:`sec_rnn`'deki açıklamalarımıza göre, karakter düzeyinde bir dil modeli için sıfırdan bir RNN uygulayacağız. Böyle bir model H. G. Wells*The Time Machine* üzerinde eğitilecektir. Daha önce olduğu gibi, önce :numref:`sec_language_model`'te tanıtılan veri kümesini okuyarak başlıyoruz.
@@ -670,7 +670,7 @@ Yukarıdaki RNN modelini sıfırdan uygulamak öğretici olsa da, uygun değildi
 * Isınma süresi, herhangi bir tahmin yapmadan önce bir modelin kendisini güncellemesine (örneğin, başlatılan değerinden daha iyi bir gizli durum elde etmesine) olanak tanır.
 * Degrade kırpma degrade patlamasını önler, ancak kaybolan degradeleri düzeltemez.
 
-## Egzersizler
+## Alıştırmalar
 
 1. Tek sıcak kodlamanın, her nesne için farklı bir gömme seçmeye eşdeğer olduğunu gösterin.
 1. Şaşkınlığı iyileştirmek için hiperparametreleri (örn. çağların sayısı, gizli birimlerin sayısı, bir mini batchtaki zaman adımlarının sayısı ve öğrenme oranı) ayarlayın.
@@ -685,13 +685,13 @@ Yukarıdaki RNN modelini sıfırdan uygulamak öğretici olsa da, uygun değildi
 1. Bu bölümde kullanılan etkinleştirme işlevini ReLU ile değiştirin ve bu bölümdeki deneyleri tekrarlayın. Hala degrade kırpmaya ihtiyacımız var mı? Neden?
 
 :begin_tab:`mxnet`
-[Discussions](https://discuss.d2l.ai/t/336)
+[Tartışmalar](https://discuss.d2l.ai/t/336)
 :end_tab:
 
 :begin_tab:`pytorch`
-[Discussions](https://discuss.d2l.ai/t/486)
+[Tartışmalar](https://discuss.d2l.ai/t/486)
 :end_tab:
 
 :begin_tab:`tensorflow`
-[Discussions](https://discuss.d2l.ai/t/1052)
+[Tartışmalar](https://discuss.d2l.ai/t/1052)
 :end_tab:
