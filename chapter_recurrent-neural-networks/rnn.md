@@ -5,7 +5,7 @@
 
 $$P(x_t \mid x_{t-1}, \ldots, x_1) \approx P(x_t \mid h_{t-1}),$$
 
-burada $h_{t-1}$, $t-1$ adıma kadar dizi bilgisi depolayan bir *gizli durum*dur (gizli değişken olarak da bilinir). Genel olarak, herhangi bir $t$ zaman adımındaki gizli durum, mevcut girdi $x_{t}$ ve önceki gizli durum $h_{t-1}$ temel alınarak hesaplanabilir:
+burada $h_{t-1}$, $t-1$ adıma kadar dizi bilgisi depolayan bir *gizli durum*dur (gizli değişken olarak da bilinir). Genel olarak, herhangi bir $t$ zaman adımındaki gizli durum, şimdiki girdi $x_{t}$ ve önceki gizli durum $h_{t-1}$ temel alınarak hesaplanabilir:
 
 $$h_t = f(x_{t}, h_{t-1}).$$
 :eqlabel:`eq_ht_xt`
@@ -31,29 +31,27 @@ burada $\mathbf{O} \in \mathbb{R}^{n \times q}$ çıktı değişkeni, $\mathbf{W
 
 Bu, :numref:`sec_sequence`'te daha önce çözdüğümüz bağlanım problemine tamamen benzer, dolayısıyla ayrıntıları atlıyoruz. Öznitelik-etiket çiftlerini rastgele seçebileceğimizi ve ağımızın parametrelerini otomatik türev alma ve rasgele eğim inişi yoluyla öğrenebileceğimizi söylemek yeterli.
 
-## Gizli Devletler ile Tekrarlayan Sinir Ağları
+## Gizli Durumlu Yinelemeli Sinir Ağları
 :label:`subsec_rnn_w_hidden_states`
 
-Gizli devletlerimiz olduğunda işler tamamen farklıdır. Yapıyı biraz daha ayrıntılı olarak inceleyelim.
+Gizli durumlarımız olduğunda işler tamamen farklıdır. Yapıyı biraz daha ayrıntılı olarak inceleyelim.
 
-Biz girişleri bir minibatch olduğunu varsayalım $\mathbf{X}_t \in \mathbb{R}^{n \times d}$ zaman adım $t$. Başka bir deyişle, $n$ dizi örneklerinden oluşan bir minibatch için, $\mathbf{X}_t$'ün her satırı, diziden $t$ adımındaki bir örneğe karşılık gelir. Ardından, $\mathbf{H}_t  \in \mathbb{R}^{n \times h}$ ile $t$ zaman adımının gizli değişkeni belirtin. MLP'den farklı olarak, burada gizli değişkeni $\mathbf{H}_{t-1}$'i önceki zaman adımından kaydediyoruz ve geçerli zaman adımında önceki zaman adımının gizli değişkeni nasıl kullanılacağını açıklamak için $\mathbf{W}_{hh} \in \mathbb{R}^{h \times h}$ yeni bir ağırlık parametresi tanıtıyoruz. Özellikle, geçerli zaman adımının gizli değişkeninin hesaplanması, önceki zaman adımının gizli değişkeni ile birlikte geçerli zaman adımının girdisi tarafından belirlenir:
+$t$ zaman adımında girdileri $\mathbf{X}_t \in \mathbb{R}^{n \times d}$ olan bir minigrubumuz olduğunu varsayalım. Başka bir deyişle, $n$ dizi örneklerinden oluşan bir minigrup için, $\mathbf{X}_t$'ün her satırı, dizinin $t$ adımındaki bir örneğine karşılık gelir. Ardından, $\mathbf{H}_t  \in \mathbb{R}^{n \times h}$ ile $t$ zaman adımındaki gizli değişkeni belirtelim. MLP'den farklı olarak, burada gizli değişkeni $\mathbf{H}_{t-1}$'yi önceki zaman adımından kaydediyoruz ve şimdiki zaman adımında önceki zaman adımının gizli değişkeni nasıl kullanılacağını açıklamak için $\mathbf{W}_{hh} \in \mathbb{R}^{h \times h}$ yeni ağırlık parametresini tanıtıyoruz. Özellikle, şimdiki zaman adımının gizli değişkeninin hesabı, önceki zaman adımının gizli değişkeni ile birlikte şimdiki zaman adımının girdisi tarafından belirlenir:
 
 $$\mathbf{H}_t = \phi(\mathbf{X}_t \mathbf{W}_{xh} + \mathbf{H}_{t-1} \mathbf{W}_{hh}  + \mathbf{b}_h).$$
 :eqlabel:`rnn_h_with_state`
 
-:eqref:`rnn_h_without_state` ile karşılaştırıldığında, :eqref:`rnn_h_with_state` bir terim daha $\mathbf{H}_{t-1} \mathbf{W}_{hh}$ ekler ve böylece :eqref:`eq_ht_xt`'ü başlatır. Bitişik zaman adımlarının $\mathbf{H}_t$ ve $\mathbf{H}_{t-1}$ gizli değişkenleri arasındaki ilişkiden, bu değişkenlerin sıranın tarihsel bilgilerini güncel zaman adımına kadar yakaladığını ve sakladığını biliyoruz, tıpkı sinir ağının şimdiki zaman adımının durumu veya hafızası gibi. Bu nedenle, böyle bir gizli değişkeni *gizli durum* olarak adlandırılır. Gizli durum geçerli zaman adımında önceki zaman adımının aynı tanımını kullandığından, :eqref:`rnn_h_with_state` hesaplama*yineleme* olur. Bu nedenle, tekrarlayan hesaplamalara dayalı gizli durumlara sahip sinir ağları
-*tekrarlayan sinir ağları*.
-RNN'lerde :eqref:`rnn_h_with_state`'ün hesaplanmasını gerçekleştiren katmanlar*tekrarlayan katmanlar* olarak adlandırılır.
+:eqref:`rnn_h_without_state` ile karşılaştırıldığında, :eqref:`rnn_h_with_state` bir terim daha, $\mathbf{H}_{t-1} \mathbf{W}_{hh}$, ekler ve böylece :eqref:`eq_ht_xt`'den bir örnek oluşturur. Bitişik zaman adımlarındaki $\mathbf{H}_t$ ve $\mathbf{H}_{t-1}$ gizli değişkenlerinin arasındaki ilişkiden, bu değişkenlerin dizinin tarihsel bilgilerini şu anki zaman adımına kadar yakaladığını ve sakladığını biliyoruz; tıpkı sinir ağının şimdiki zaman adımının durumu veya hafızası gibi. Bu nedenle, böyle bir gizli değişken *gizli durum* olarak adlandırılır. Gizli durum şu anki zaman adımında önceki zaman adımının aynı tanımını kullandığından, :eqref:`rnn_h_with_state` hesaplama *yineleme* olur. Bu nedenle, yinelemeli hesaplamalara dayalı gizli durumlara sahip sinir ağları *yinelemeli sinir ağları*dır. RNN'lerde :eqref:`rnn_h_with_state`'ün hesaplanmasını gerçekleştiren katmanlar *yinelemeli katmanlar* olarak adlandırılır.
 
-RNN oluşturmak için birçok farklı yol vardır. :eqref:`rnn_h_with_state` tarafından tanımlanan gizli bir duruma sahip RNN'ler çok yaygındır. Zaman adımı $t$ için çıktı katmanının çıktısı MLP'deki hesaplamaya benzer:
+RNN oluşturmak için birçok farklı yol vardır. :eqref:`rnn_h_with_state`'de tanımlanan gizli bir duruma sahip RNN'ler çok yaygındır. Zaman adımı $t$ için çıktı katmanının çıktısı MLP'deki hesaplamaya benzer:
 
 $$\mathbf{O}_t = \mathbf{H}_t \mathbf{W}_{hq} + \mathbf{b}_q.$$
 
-RNN parametreleri $\mathbf{W}_{xh} \in \mathbb{R}^{d \times h}, \mathbf{W}_{hh} \in \mathbb{R}^{h \times h}$ ağırlıkları ve $\mathbf{b}_q \in \mathbb{R}^{1 \times q}$ çıkış katmanının $\mathbf{W}_{hq} \in \mathbb{R}^{h \times q}$ ağırlıkları ve $\mathbf{b}_q \in \mathbb{R}^{1 \times q}$ önyargı ile birlikte gizli katmanın $\mathbf{b}_h \in \mathbb{R}^{1 \times h}$ önyargılarını içerir. Farklı zaman adımlarında bile, RNN'lerin her zaman bu model parametrelerini kullandığını belirtmek gerekir. Bu nedenle, bir RNN parameterizasyon maliyeti zaman adım sayısı arttıkça büyümez.
+RNN parametreleri gizli katmanın $\mathbf{W}_{xh} \in \mathbb{R}^{d \times h}, \mathbf{W}_{hh} \in \mathbb{R}^{h \times h}$ ağırlıkları ve $\mathbf{b}_h \in \mathbb{R}^{1 \times h}$ ek girdisi ile birlikte çıktı katmanının $\mathbf{W}_{hq} \in \mathbb{R}^{h \times q}$ ağırlıkları ve $\mathbf{b}_q \in \mathbb{R}^{1 \times q}$ ek girdilerini içerir. Farklı zaman adımlarında bile, RNN'lerin her zaman bu model parametrelerini kullandığını belirtmek gerekir. Bu nedenle, bir RNN parametrelendirmenin maliyeti zaman adım sayısı arttıkça büyümez.
 
-:numref:`fig_rnn`, bitişik üç zaman adımında bir RNN'nin hesaplama mantığını göstermektedir. Herhangi bir zamanda adım $t$, gizli durumun hesaplanması şu şekilde kabul edilebilir: i) $\mathbf{X}_t$ giriş $t$ geçerli zaman adımında ve $\mathbf{H}_{t-1}$ gizli durum $\mathbf{H}_{t-1}$ önceki zaman adımı $t-1$; ii) birleştirme sonucunu etkinleştirme ile tam bağlı bir katmana beslemek fonksiyon $\phi$. Böyle tam bağlı bir katmanın çıktısı, $t$ geçerli zaman adımının $\mathbf{H}_t$'inin gizli durumudur. Bu durumda, model parametreleri $\mathbf{W}_{xh}$ ve $\mathbf{W}_{hh}$'ün birleştirilmesi ve $\mathbf{b}_h$'lik bir önyargı olup, hepsi :eqref:`rnn_h_with_state`'ten itibaren $\mathbf{b}_h$'dir. Geçerli zaman adımının $t$, $\mathbf{H}_t$ gizli durumu, $t+1$ sonraki adımın $\mathbf{H}_{t+1}$ gizli durumunun hesaplanmasına katılacak. Dahası, $\mathbf{H}_t$, $t$ geçerli zaman adımının $\mathbf{O}_t$ çıkışını hesaplamak için tam bağlı çıktı katmanına da beslenir.
+:numref:`fig_rnn`, bitişik üç zaman adımında bir RNN'nin hesaplama mantığını göstermektedir. Herhangi bir $t$ zamanda adımında, gizli durumun hesaplanması şu şekilde düşünülebilir: i) $t$ şimdiki zaman adımındaki $\mathbf{X}_t$ girdisi ile önceki $t-1$ zaman adımındaki $\mathbf{H}_{t-1}$ gizli durumu bitiştirme; ii) bitiştirme sonucunu $\phi$ etkinleştirme fonksiyonlu tam bağlı bir katmana besleme. Bu şekilde tam bağlı bir katmanın çıktısı, $t$ şimdiki zaman adımı $\mathbf{H}_t$ gizli durumudur. Bu durumda, model parametrelerinin hepsi :eqref:`rnn_h_with_state`'teki $\mathbf{W}_{xh}$ ve $\mathbf{W}_{hh}$'ün bitiştirilmesi ve $\mathbf{b}_h$ ek girdisidir. Şimdiki $t$ zaman adımının $\mathbf{H}_t$ gizli durumu, sonraki $t+1$ adımının $\mathbf{H}_{t+1}$ gizli durumunun hesaplanmasına katılacaktır. Dahası, $\mathbf{H}_t$, $t$ şimdiki zaman adımının $\mathbf{O}_t$ çıktısını hesaplamak için tam bağlı çıktı katmanına da beslenir.
 
-![An RNN with a hidden state.](../img/rnn.svg)
+![Gizli duruma sahip bir RNN.](../img/rnn.svg)
 :label:`fig_rnn`
 
 Biz sadece gizli durum için $\mathbf{X}_t \mathbf{W}_{xh} + \mathbf{H}_{t-1} \mathbf{W}_{hh}$ hesaplama $\mathbf{X}_t$ ve $\mathbf{H}_{t-1}$ ve $\mathbf{W}_{xh}$ ve $\mathbf{W}_{hh}$ birleştirme matris çarpma eşdeğer olduğunu belirtti. Bu matematikte kanıtlanmış olsa da, aşağıda sadece bunu göstermek için basit bir kod parçacığı kullanıyoruz. Başlangıç olarak, şekilleri (3, 1), (1, 4), (3, 4), (3, 4), (3, 4), `W_xh`, `H` ve `W_hh` matrisleri tanımlarız. `X` ile `W_xh` ve `H` ile sırasıyla `W_hh` çarparak ve daha sonra bu iki çarpımı ekleyerek, bir şekil matrisi elde ederiz (3, 4).
@@ -99,7 +97,7 @@ d2l.matmul(d2l.concat((X, H), 1), d2l.concat((W_xh, W_hh), 0))
 
 ## RNN Tabanlı Karakter Düzeyinde Dil Modelleri
 
-:numref:`sec_language_model`'teki dil modellemesi için, mevcut ve geçmiş belirteçlere dayalı bir sonraki simgeyi tahmin etmeyi amaçladığımızı hatırlayın, böylece orijinal diziyi etiketler olarak bir belirteç ile kaydırıyoruz. Şimdi RNN'lerin bir dil modeli oluşturmak için nasıl kullanılabileceğini gösteriyoruz. Minibatch boyutunun 1 olmasına ve metnin sırasının “makine” olmasına izin verin. Sonraki bölümlerdeki eğitimi basitleştirmek için, metni sözcükler yerine karakterler haline getiririz ve *karakter düzeyinde bir dil modeli* göz önünde bulundururuz. :numref:`fig_rnn_train`, karakter düzeyinde dil modellemesi için bir RNN aracılığıyla geçerli ve önceki karakterlere dayalı bir sonraki karakterin nasıl tahmin edileceğini gösterir.
+:numref:`sec_language_model`'teki dil modellemesi için, şimdiki ve geçmiş belirteçlere dayalı bir sonraki simgeyi tahmin etmeyi amaçladığımızı hatırlayın, böylece orijinal diziyi etiketler olarak bir belirteç ile kaydırıyoruz. Şimdi RNN'lerin bir dil modeli oluşturmak için nasıl kullanılabileceğini gösteriyoruz. Minibatch boyutunun 1 olmasına ve metnin sırasının “makine” olmasına izin verin. Sonraki bölümlerdeki eğitimi basitleştirmek için, metni sözcükler yerine karakterler haline getiririz ve *karakter düzeyinde bir dil modeli* göz önünde bulundururuz. :numref:`fig_rnn_train`, karakter düzeyinde dil modellemesi için bir RNN aracılığıyla geçerli ve önceki karakterlere dayalı bir sonraki karakterin nasıl tahmin edileceğini gösterir.
 
 ![A character-level language model based on the RNN. The input and label sequences are "machin" and "achine", respectively.](../img/rnn-train.svg)
 :label:`fig_rnn_train`
