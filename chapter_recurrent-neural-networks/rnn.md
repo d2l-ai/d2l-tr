@@ -1,35 +1,35 @@
 # Yinelemeli Sinir Ağları
 :label:`sec_rnn`
 
-:numref:`sec_language_model`'te $n$-gramlık modelleri tanıttık; burada $x_t$ kelimesinin $x_t$'in zaman adımındaki koşullu olasılığının sadece $n-1$ önceki kelimelere bağlı olduğu $n$-gramlık modeller. Biz $x_t$ üzerinde $t-(n-1)$ zaman adımından daha erken kelimelerin olası etkisini dahil etmek istiyorsanız, biz $n$ artırmak gerekir. Bununla birlikte, model parametrelerinin sayısı da katlanarak artacaktır, çünkü $|\mathcal{V}|^n$ bir kelime seti için $\mathcal{V}$ numaralarını depolamamız gerekir. Bu nedenle, $P(x_t \mid x_{t-1}, \ldots, x_{t-n+1})$'yı modellemek yerine gizli bir değişken model kullanılması tercih edilir:
+:numref:`sec_language_model`'te $n$-gramlık modelleri tanıttık; $x_t$ kelimesinin $t$ zaman adımındaki koşullu olasılığı sadece önceki $n-1$ kelimeye bağlıdır. Eğer $x_t$ üzerinde $t-(n-1)$ zaman adımından daha önceki kelimelerin olası etkisini dahil etmek istiyorsanız, $n$'yı artırmanız gerekir. Bununla birlikte, model parametrelerinin sayısı da katlanarak artacaktır, çünkü $\mathcal{V}$ kelime dağarcığı kümesi için $|\mathcal{V}|^n$ tane değer depolamamız gerekir. Bu nedenle, $P(x_t \mid x_{t-1}, \ldots, x_{t-n+1})$'yı modellemek yerine bir saklı değişken modeli kullanılmak tercih edilir:
 
 $$P(x_t \mid x_{t-1}, \ldots, x_1) \approx P(x_t \mid h_{t-1}),$$
 
-burada $h_{t-1}$, $t-1$ adıma kadar sıra bilgilerini depolayan bir*gizli durum* (gizli değişken olarak da bilinir) dir. Genel olarak, $t$ adımındaki herhangi bir zamanda gizli durum geçerli giriş $x_{t}$ ve önceki gizli durum $h_{t-1}$ temel alınarak hesaplanabilir:
+burada $h_{t-1}$, $t-1$ adıma kadar dizi bilgisi depolayan bir *gizli durum*dur (gizli değişken olarak da bilinir). Genel olarak, herhangi bir $t$ zaman adımındaki gizli durum, mevcut girdi $x_{t}$ ve önceki gizli durum $h_{t-1}$ temel alınarak hesaplanabilir:
 
 $$h_t = f(x_{t}, h_{t-1}).$$
 :eqlabel:`eq_ht_xt`
 
-:eqref:`eq_ht_xt`'te $f$ yeterince güçlü bir işlev için, latent değişken modeli bir yaklaşım değildir. Sonuçta, $h_t$ şimdiye kadar gözlemlediği tüm verileri saklayabilir. Ancak, potansiyel olarak hem hesaplama hem de depolama pahalı hale getirebilir.
+:eqref:`eq_ht_xt`'teki yeterince güçlü bir $f$ işlevi için, saklı değişken modeli bir yaklaşım değildir. Sonuçta, $h_t$ şimdiye kadar gözlemlediği tüm verileri saklayabilir. Ancak, potansiyel olarak hem hesaplamayı hem de depolamayı pahalı hale getirebilir.
 
-:numref:`chap_perceptrons`'te gizli birimlerle gizli katmanları tartıştığımızı hatırlayın. Gizli katmanların ve gizli durumların iki çok farklı konsepte işaret etmeleri dikkat çekicidir. Gizli katmanlar, açıklandığı gibi, girdiden çıktıya giden yolda görünümden gizlenen katmanlardır. Gizli devletler teknik olarak belirli bir adımda yaptığımız her şeye *girişler* konuşmaktadır ve yalnızca önceki zaman adımlarında verilere bakarak hesaplanabilirler.
+:numref:`chap_perceptrons`'te gizli birimli gizli katmanları tartıştığımızı anımsayın. Gizli katmanların ve gizli durumların iki çok farklı kavramı ifade etmeleri önemlidir. Gizli katmanlar, açıklandığı gibi, girdiden çıktıya giden yolda gözden gizlenen katmanlardır. Gizli durumlar teknik olarak belirli bir adımda yaptığımız işleme *girdiler*dir ve yalnızca önceki zaman adımlarındaki verilere bakarak hesaplanabilirler.
 
-*Tekrarlayan sinir ağları* (RNN) gizli durumlara sahip sinir ağlarıdır. RNN modelini tanıtmadan önce, ilk olarak :numref:`sec_mlp`'te tanıtılan MLP modelini tekrar ziyaret ediyoruz.
+*Yinelemeli sinir ağları* (RNN) gizli durumlara sahip sinir ağlarıdır. RNN modelini tanıtmadan önce, ilk olarak :numref:`sec_mlp`'te tanıtılan MLP modelini anımsayalım.
 
-## Gizli Devletler Olmayan Sinir Ağları
+## Gizli Durumu Olmayan Sinir Ağları
 
-Tek bir gizli katmana sahip bir MLP'ye bir göz atalım. Gizli katmanın etkinleştirme işlevinin $\phi$ olmasına izin verin. $n$ ve $d$ girişleri toplu boyutu ile örnek $\mathbf{X} \in \mathbb{R}^{n \times d}$ bir minibatch göz önüne alındığında, gizli katmanın çıkış $\mathbf{H} \in \mathbb{R}^{n \times h}$ olarak hesaplanır
+Tek bir gizli katmana sahip bir MLP'ye bir göz atalım. Gizli katmanın etkinleştirme işlevinin $\phi$ olduğunu varsayalım. $n$ küme boyutlu ve $d$ girdili bir minigrup örneklemi $\mathbf{X} \in \mathbb{R}^{n \times d}$ göz önüne alındığında, gizli katmanın çıktısı $\mathbf{H} \in \mathbb{R}^{n \times h}$ şöyle hesaplanır:
 
 $$\mathbf{H} = \phi(\mathbf{X} \mathbf{W}_{xh} + \mathbf{b}_h).$$
 :eqlabel:`rnn_h_without_state`
 
-:eqref:`rnn_h_without_state`'te, $\mathbf{W}_{xh} \in \mathbb{R}^{d \times h}$ ağırlık parametresi, $\mathbf{b}_h \in \mathbb{R}^{1 \times h}$ önyargı parametresi ve gizli katman için $h$ numaralı gizli birimlerin sayısına sahibiz. Böylece, yayın (bkz. :numref:`subsec_broadcasting`) toplamı sırasında uygulanır. Ardından, çıkış katmanının girişi olarak $\mathbf{H}$ gizli değişken kullanılır. Çıktı katmanı tarafından verilir
+:eqref:`rnn_h_without_state`'te, $\mathbf{W}_{xh} \in \mathbb{R}^{d \times h}$ ağırlık parametresine, $\mathbf{b}_h \in \mathbb{R}^{1 \times h}$ ek girdi parametresine ve gizli katman için $h$ gizli birim adedine sahibiz. Böylece, toplama esnasında yayımlama (bkz. :numref:`subsec_broadcasting`) uygulanır. Ardından, çıktı katmanının girdisi olarak $\mathbf{H}$ gizli değişkeni kullanılır. Çıktı katmanı şöyle gösterilir,
 
 $$\mathbf{O} = \mathbf{H} \mathbf{W}_{hq} + \mathbf{b}_q,$$
 
-burada $\mathbf{O} \in \mathbb{R}^{n \times q}$ çıktı değişkeni, $\mathbf{W}_{hq} \in \mathbb{R}^{h \times q}$ ağırlık parametresi ve $\mathbf{b}_q \in \mathbb{R}^{1 \times q}$ çıktı katmanının önyargı parametresidir. Eğer bir sınıflandırma problemi ise, çıktı kategorilerinin olasılık dağılımını hesaplamak için $\text{softmax}(\mathbf{O})$'i kullanabiliriz.
+burada $\mathbf{O} \in \mathbb{R}^{n \times q}$ çıktı değişkeni, $\mathbf{W}_{hq} \in \mathbb{R}^{h \times q}$ ağırlık parametresi ve $\mathbf{b}_q \in \mathbb{R}^{1 \times q}$ çıktı katmanının ek girdi parametresidir. Eğer bir sınıflandırma problemi ise, çıktı kategorilerinin olasılık dağılımını hesaplamak için $\text{softmaks}(\mathbf{O})$'i kullanabiliriz.
 
-Bu, :numref:`sec_sequence`'te daha önce çözdüğümüz regresyon problemine tamamen benzer, dolayısıyla ayrıntıları atlıyoruz. Özellik etiketi çiftlerini rastgele seçebileceğimizi ve ağımızın parametrelerini otomatik farklılaşma ve stokastik degrade iniş yoluyla öğrenebileceğimizi söylemek yeterli.
+Bu, :numref:`sec_sequence`'te daha önce çözdüğümüz bağlanım problemine tamamen benzer, dolayısıyla ayrıntıları atlıyoruz. Öznitelik-etiket çiftlerini rastgele seçebileceğimizi ve ağımızın parametrelerini otomatik türev alma ve rasgele eğim inişi yoluyla öğrenebileceğimizi söylemek yeterli.
 
 ## Gizli Devletler ile Tekrarlayan Sinir Ağları
 :label:`subsec_rnn_w_hidden_states`
@@ -147,7 +147,7 @@ Aşağıdaki bölümlerde, karakter düzeyi dil modelleri için RNN'leri uygulay
 * Bir RNN kullanarak karakter düzeyinde dil modelleri oluşturabiliriz.
 * Dil modellerinin kalitesini değerlendirmek için şaşkınlığı kullanabiliriz.
 
-## Egzersizler
+## Alıştırmalar
 
 1. Bir metin dizisindeki bir sonraki karakteri tahmin etmek için bir RNN kullanırsak, herhangi bir çıktı için gerekli boyut nedir?
 1. Neden RNN'ler metin dizisindeki önceki tüm belirteçlere dayalı bir zaman adımında bir belirteç koşullu olasılığını ifade edebilir?
@@ -155,13 +155,13 @@ Aşağıdaki bölümlerde, karakter düzeyi dil modelleri için RNN'leri uygulay
 1. Bu bölümde açıklanan dil modeliyle ilgili bazı sorunlar nelerdir?
 
 :begin_tab:`mxnet`
-[Discussions](https://discuss.d2l.ai/t/337)
+[Tartışmalar](https://discuss.d2l.ai/t/337)
 :end_tab:
 
 :begin_tab:`pytorch`
-[Discussions](https://discuss.d2l.ai/t/1050)
+[Tartışmalar](https://discuss.d2l.ai/t/1050)
 :end_tab:
 
 :begin_tab:`tensorflow`
-[Discussions](https://discuss.d2l.ai/t/1051)
+[Tartışmalar](https://discuss.d2l.ai/t/1051)
 :end_tab:
