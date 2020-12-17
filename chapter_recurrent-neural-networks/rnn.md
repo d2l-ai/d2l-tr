@@ -54,7 +54,7 @@ RNN parametreleri gizli katmanın $\mathbf{W}_{xh} \in \mathbb{R}^{d \times h}, 
 ![Gizli duruma sahip bir RNN.](../img/rnn.svg)
 :label:`fig_rnn`
 
-Biz sadece gizli durum için $\mathbf{X}_t \mathbf{W}_{xh} + \mathbf{H}_{t-1} \mathbf{W}_{hh}$ hesaplama $\mathbf{X}_t$ ve $\mathbf{H}_{t-1}$ ve $\mathbf{W}_{xh}$ ve $\mathbf{W}_{hh}$ birleştirme matris çarpma eşdeğer olduğunu belirtti. Bu matematikte kanıtlanmış olsa da, aşağıda sadece bunu göstermek için basit bir kod parçacığı kullanıyoruz. Başlangıç olarak, şekilleri (3, 1), (1, 4), (3, 4), (3, 4), (3, 4), `W_xh`, `H` ve `W_hh` matrisleri tanımlarız. `X` ile `W_xh` ve `H` ile sırasıyla `W_hh` çarparak ve daha sonra bu iki çarpımı ekleyerek, bir şekil matrisi elde ederiz (3, 4).
+Gizli durum $\mathbf{X}_t \mathbf{W}_{xh} + \mathbf{H}_{t-1} \mathbf{W}_{hh}$ hesaplamasının $\mathbf{X}_t$ ve $\mathbf{H}_{t-1}$ ile $\mathbf{W}_{xh}$ ve $\mathbf{W}_{hh}$ bitişik matrislerinin çarpmasına eşdeğer olduğunu belirttik. Bu matematiksel olarak kanıtlanmış olsa da, aşağıda kısaca bunu göstermek için basit bir kod parçacığı kullanıyoruz. Başlangıç olarak, şekilleri (3, 1), (1, 4), (3, 4) ve (4, 4) olan`X`, `W_xh`, `H` ve `W_hh` matrislerini tanımlıyoruz. Sırasıyla `X` ile `W_xh`'yi ve `H` ile `W_hh`'yi çarpıyoruz ve daha sonra bu iki çarpımı toplayarak (3, 4) şekilli bir matris elde ederiz.
 
 ```{.python .input}
 from d2l import mxnet as d2l
@@ -88,7 +88,7 @@ H, W_hh = d2l.normal((3, 4), 0, 1), d2l.normal((4, 4), 0, 1)
 d2l.matmul(X, W_xh) + d2l.matmul(H, W_hh)
 ```
 
-Şimdi matrisleri `X` ve `H` sütunlar boyunca (eksen 1) ve `W_xh` ve `W_hh` matrisleri satırlar boyunca (eksen 0) birleştiririz. Bu iki birleştirme, sırasıyla şekil matrisleri (3, 5) ve şekil (5, 4) ile sonuçlanır. Bu iki birleştirilmiş matrisi çarparak, yukarıdaki gibi aynı çıkış matrisini (3, 4) elde ederiz.
+Şimdi `X` ve `H` matrislerini sütunlar boyunca (eksen 1) ve `W_xh` ve `W_hh` matrislerini satırlar boyunca (eksen 0) bitiştiririz. Bu iki bitiştirme, sırasıyla (3, 5) ve (5, 4) şekilli matrisler ile sonuçlanır. Bu iki bitiştirilmiş matrisi çarparak, yukarıdaki gibi (3, 4) şekilli aynı çıktı matrisini elde ederiz.
 
 ```{.python .input}
 #@tab all
@@ -97,9 +97,9 @@ d2l.matmul(d2l.concat((X, H), 1), d2l.concat((W_xh, W_hh), 0))
 
 ## RNN Tabanlı Karakter Düzeyinde Dil Modelleri
 
-:numref:`sec_language_model`'teki dil modellemesi için, şimdiki ve geçmiş belirteçlere dayalı bir sonraki simgeyi tahmin etmeyi amaçladığımızı hatırlayın, böylece orijinal diziyi etiketler olarak bir belirteç ile kaydırıyoruz. Şimdi RNN'lerin bir dil modeli oluşturmak için nasıl kullanılabileceğini gösteriyoruz. Minibatch boyutunun 1 olmasına ve metnin sırasının “makine” olmasına izin verin. Sonraki bölümlerdeki eğitimi basitleştirmek için, metni sözcükler yerine karakterler haline getiririz ve *karakter düzeyinde bir dil modeli* göz önünde bulundururuz. :numref:`fig_rnn_train`, karakter düzeyinde dil modellemesi için bir RNN aracılığıyla geçerli ve önceki karakterlere dayalı bir sonraki karakterin nasıl tahmin edileceğini gösterir.
+:numref:`sec_language_model`'teki dil modellemesi için şimdiki ve geçmiş andıçlara dayanarak bir sonraki simgeyi tahmin etmeyi amaçladığımızı hatırlayın, böylece orijinal diziyi etiketler olarak bir andıç kaydırıyoruz. Şimdi RNN'lerin bir dil modeli oluşturmak için nasıl kullanılabileceğini gösteriyoruz. Minigrup boyutunun 1 ve metnin dizisinin “makine” olduğunu düşünün. Sonraki bölümlerdeki eğitimi basitleştirmek için, metni sözcükler yerine karakterler haline getiririz ve *karakter düzeyinde bir dil modeli*ni göz önünde bulundururuz. :numref:`fig_rnn_train`, karakter düzeyinde dil modellemesi için bir RNN aracılığıyla şimdiki ve önceki karakterlere dayanarak bir sonraki karakterin nasıl tahmin edileceğini gösterir.
 
-![A character-level language model based on the RNN. The input and label sequences are "machin" and "achine", respectively.](../img/rnn-train.svg)
+![RNN'ye dayalı karakter düzeyinde bir dil modeli. Girdi ve etiket dizileri sırasıyla "machin" ve "achine" dir.](../img/rnn-train.svg)
 :label:`fig_rnn_train`
 
 Eğitim işlemi sırasında, çıkış katmanından çıktıda her zaman adım için bir softmax işlemi çalıştırır ve daha sonra model çıktısı ile etiket arasındaki hatayı hesaplamak için çapraz entropi kaybını kullanırız. Gizli katmandaki gizli durumun tekrarlayan hesaplanması nedeniyle, :numref:`fig_rnn_train`, $\mathbf{O}_3$'teki zaman adım 3'ün çıkışı, “m”, “a” ve “c” metin dizisi ile belirlenir. Eğitim verilerindeki dizinin bir sonraki karakteri “h” olduğu için, zaman adım 3 kaybı, “m”, “a”, “c” ve bu zaman adımının “h” etiketine göre oluşturulan bir sonraki karakterin olasılık dağılımına bağlı olacaktır.
