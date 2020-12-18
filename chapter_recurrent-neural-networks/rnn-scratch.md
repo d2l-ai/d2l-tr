@@ -1,7 +1,7 @@
 # Yinelemeli Sinir Ağlarının Sıfırdan Uygulanması
 :label:`sec_rnn_scratch`
 
-Bu bölümde, :numref:`sec_rnn`'deki açıklamalarımıza göre, karakter düzeyinde bir dil modeli için sıfırdan bir RNN uygulayacağız. Böyle bir model H. G. Wells*The Time Machine* üzerinde eğitilecektir. Daha önce olduğu gibi, önce :numref:`sec_language_model`'te tanıtılan veri kümesini okuyarak başlıyoruz.
+Bu bölümde, :numref:`sec_rnn`'deki açıklamalarımıza göre, karakter düzeyinde bir dil modeli için sıfırdan bir RNN uygulayacağız. Bu bir model H. G. Wells'in *Zaman Makinesi* ile eğitilecektir. Daha önce olduğu gibi, önce :numref:`sec_language_model`'te tanıtılan veri kümesini okuyarak başlıyoruz.
 
 ```{.python .input}
 %matplotlib inline
@@ -42,11 +42,11 @@ train_random_iter, vocab_random_iter = d2l.load_data_time_machine(
     batch_size, num_steps, use_random_iter=True)
 ```
 
-## Tek Sıcak Kodlama
+## Bire Bir Kodlama
 
-Her belirtecin `train_iter`'te sayısal bir dizin olarak temsil edildiğini hatırlayın. Bu indeksleri doğrudan sinir ağına beslemek öğrenmeyi zorlaştırabilir. Genellikle her belirteci daha etkileyici bir özellik vektörü olarak temsil ediyoruz. En kolay gösterim, :numref:`subsec_classification-problem`'te tanıtılan *tek sıcak kodlama* olarak adlandırılır.
+Her andıcın `train_iter`'te sayısal bir indeks olarak temsil edildiğini hatırlayın. Bu indeksleri doğrudan sinir ağına beslemek öğrenmeyi zorlaştırabilir. Genellikle her andıcı daha açıklayıcı bir öznitelik vektörü olarak temsil ediyoruz. En kolay gösterim, :numref:`subsec_classification-problem`'te tanıtılan *bire bir kodlama*dır (one-hot coding).
 
-Özetle, her bir indeksi farklı bir birim vektörüne eşleriz: kelime dağarcığındaki farklı belirteçlerin sayısının $N$ (`len(vocab)`) ve belirteç indekslerinin 0 ile $N-1$ arasında değiştiğini varsayalım. Bir belirteç indeksi $i$ tamsayı ise, o zaman $N$ uzunluğunda tüm 0'ların bir vektörü oluştururuz ve elemanı $i$ ila 1 konumuna ayarlarız. Bu vektör, orijinal belirtecin tek sıcak vektörüdür. 0 ve 2 endeksleri olan tek sıcak vektörler aşağıda gösterilmiştir.
+Özetle, her bir indeksi farklı bir birim vektörüne eşleriz: Kelime dağarcığındaki farklı andıçların sayısının $N$ (`len(vocab)`) olduğunu ve andıç indekslerinin 0 ile $N-1$ arasında değiştiğini varsayalım. Bir andıç indeksi $i$ tamsayısı ise, o zaman $N$ uzunluğunda tümü 0 olan bir vektör oluştururuz ve $i$ konumundaki elemanı 1'e ayarlarız. Bu vektör, orijinal andıcin bire bir kodlama vektörüdür. İndeksleri 0 ve 2 olan bire bir kodlama vektörleri aşağıda gösterilmiştir.
 
 ```{.python .input}
 npx.one_hot(np.array([0, 2]), len(vocab))
@@ -62,7 +62,7 @@ F.one_hot(torch.tensor([0, 2]), len(vocab))
 tf.one_hot(tf.constant([0, 2]), len(vocab))
 ```
 
-Her seferinde örnek aldığımız minibatch'in şekli (toplu iş boyutu, zaman adımlarının sayısı). `one_hot` işlevi, böyle bir minibatch'i, son boyutun kelime dağarcığı boyutuna eşit olduğu üç boyutlu bir tensöre dönüştürür (`len(vocab)`). Girdiyi sıklıkla transpoze ediyoruz, böylece bir şekil çıkışı elde edeceğiz (zaman adımlarının sayısı, parti boyutu, kelime dağarcığı boyutu). Bu, bir minibatch'in gizli durumlarını, zaman adım adım güncellemek için en dıştaki boyutta daha rahat döngü yapmamızı sağlayacaktır.
+Her seferinde örnek aldığımız minigrubun şekli (grup boyutu, zaman adımlarının sayısı)'dır. `one_hot` işlevi, böyle bir minigrubu, son boyutun kelime dağarcığı uzunluğuna eşit olduğu üç boyutlu bir tensöre dönüştürür (`len(vocab)`). Girdiyi sıklıkla deviriyoruz (transpose), böylece (zaman adımlarının sayısı, grup boyutu, kelime dağarcığı uzunluğu) şeklinde bir çıktı elde edeceğiz. Bu, bir minigrubun gizli durumlarını zaman adımlarıyla güncellerken en dıştaki boyutta daha rahat döngü yapmamızı sağlayacaktır.
 
 ```{.python .input}
 X = d2l.reshape(d2l.arange(10), (2, 5))
@@ -81,9 +81,9 @@ X = d2l.reshape(d2l.arange(10), (2, 5))
 tf.one_hot(tf.transpose(X), 28).shape
 ```
 
-## Model Parametrelerini Başlatma
+## Model Parametrelerini İlkleme
 
-Ardından, RNN modeli için model parametrelerini başlatıyoruz. Gizli birimlerin sayısı `num_hiddens` ayarlanabilir bir hiperparametredir. Dil modellerini eğitirken, girişler ve çıktılar aynı kelime dağarcığındandır. Bu nedenle, kelime dağarcığı boyutuna eşit olan aynı boyuta sahiptirler.
+Ardından, RNN modeli için model parametrelerini ilkliyoruz. Gizli birimlerin sayısı `num_hiddens` ayarlanabilir bir hiperparametredir. Dil modellerini eğitirken, girdiler ve çıktılar aynı kelime dağarcığındandır. Bu nedenle, kelime dağarcığı uzunluğuna eşit olan aynı boyuta sahiptirler.
 
 ```{.python .input}
 def get_params(vocab_size, num_hiddens, device):
@@ -149,7 +149,7 @@ def get_params(vocab_size, num_hiddens):
 
 ## RNN Modeli
 
-Bir RNN modeli tanımlamak için, ilk önce başlatma sırasında gizli durumu döndürmek için bir `init_rnn_state` işlevi gerekir. 0 ile doldurulmuş bir tensör döndürür ve şekli (parti boyutu, gizli birimlerin sayısı). Tuples kullanmak, gizli durumun daha sonraki bölümlerde karşılaşacağımız birden çok değişken içerdiği durumları işlemeyi kolaylaştırır.
+Bir RNN modeli tanımlamak için, ilk olarak ilkleme esnasında gizli durumu döndürmek için bir `init_rnn_state` işlevi gerekir. Şekli (grup boyutu, gizli birimlerin sayısı) olan 0 ile doldurulmuş bir tensör döndürür. Çokuzlu (tuple) kullanmak, daha sonraki bölümlerde karşılaşacağımız gibi gizli durumun birden çok değişken içerdiği halleri işlemeyi kolaylaştırır.
 
 ```{.python .input}
 def init_rnn_state(batch_size, num_hiddens, device):
@@ -168,7 +168,7 @@ def init_rnn_state(batch_size, num_hiddens):
     return (d2l.zeros((batch_size, num_hiddens)), )
 ```
 
-Aşağıdaki `rnn` işlevi, gizli durumu ve çıktıyı bir zaman adımında nasıl hesaplayacağınızı tanımlar. Gizli durumları `H` bir mini batch, zaman adım adım güncelleştirir, böylece RNN modeli `inputs` en dış boyutta döngüler unutmayın. Ayrıca, burada aktivasyon fonksiyonu $\tanh$ işlevini kullanır. :numref:`sec_mlp`'te açıklandığı gibi, $\tanh$ işlevinin ortalama değeri, elemanlar gerçek sayılar üzerinde eşit olarak dağıtıldığında 0'dır.
+Aşağıdaki `rnn` işlevi, gizli durumu ve çıktıyı bir zaman adımında nasıl hesaplayacağınızı tanımlar. RNN modelinin `inputs` değişkeninin en dış boyutunda döngü yaptığını, böylece minigrubun gizli durumları `H`'nin her zaman adımında güncellendiğini unutmayın. Ayrıca, burada etkinleştirme fonksiyonu olarak $\tanh$ işlevi kullanılır. :numref:`sec_mlp`'te açıklandığı gibi, $\tanh$ işlevinin ortalama değeri, elemanlar gerçel sayılar üzerinde eşit olarak dağıtıldığında 0'dır.
 
 ```{.python .input}
 def rnn(inputs, state, params):
@@ -215,7 +215,7 @@ def rnn(inputs, state, params):
     return d2l.concat(outputs, axis=0), (H,)
 ```
 
-Gerekli tüm işlevler tanımlandıktan sonra, bu işlevleri sarmak ve sıfırdan uygulanan bir RNN modeli için parametreleri depolamak için bir sınıf oluşturuyoruz.
+Gerekli tüm işlevler tanımlandıktan sonra, bu işlevleri sarmalamak ve sıfırdan uygulanan bir RNN modelinin parametreleri depolamak için bir sınıf oluşturuyoruz.
 
 ```{.python .input}
 class RNNModelScratch:  #@save
@@ -270,7 +270,7 @@ class RNNModelScratch: #@save
         return self.init_state(batch_size, self.num_hiddens)
 ```
 
-Çıkışların doğru şekillere sahip olup olmadığını kontrol edelim, örn. gizli durumun boyutunun değişmeden kalmasını sağlamak için.
+Çıktıların doğru şekillere sahip olup olmadığını kontrol edelim, örn. gizli durumun boyutunun değişmeden kalmasını sağlamak için.
 
 ```{.python .input}
 #@tab mxnet
@@ -308,7 +308,7 @@ Y, new_state = model(X, state, params)
 Y.shape, len(new_state), new_state[0].shape
 ```
 
-Çıkış şeklinin (zaman sayısı $\times$ toplu iş boyutu, kelime dağarcığı boyutu), gizli durum şekli aynı kalırken, yani (toplu boyut, gizli birimlerin sayısı) olduğunu görebiliriz.
+Çıktı şekli (zaman sayısı $\times$ grup boyutu, kelime dağarcığı uzunluğu) iken, gizli durum şeklinin aynı kaldığını, yani (tgrup boyutu, gizli birimlerin sayısı) olduğunu görebiliriz.
 
 ## Tahmin
 
