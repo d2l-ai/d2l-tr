@@ -676,7 +676,7 @@ Yukarıdaki RNN modelini sıfırdan uygulamak öğretici olsa da, pek de uygun d
 1. Şaşkınlığı iyileştirmek için hiperparametreleri (örn. dönemlerin sayısı, gizli birimlerin sayısı, bir minigruptaki zaman adımlarının sayısı ve öğrenme oranı) ayarlayın.
     * Ne kadar alçağa düşebilirsiniz?
     * Bire bir kodlamayı öğrenilebilir gömmelerle değiştirin. Bu daha iyi bir performansa yol açar mı?
-    * H. G. Wells, örn. [*Dünyalar Savaşı*](http://www.gutenberg.org/ebooks/36) gibi diğer kitaplarıyla ne kadar iyi çalışacaktır?
+    * H. G. Wells'in, örn. [*Dünyalar Savaşı*](http://www.gutenberg.org/ebooks/36) gibi, diğer kitaplarıyla ne kadar iyi çalışacaktır?
 1. En olası sonraki karakteri seçmek yerine örnekleme kullanarak tahmin işlevini değiştirin.
     * Ne olur?
     * Modeli, örneğin $\alpha > 1$ için $q(x_t \mid x_{t-1}, \ldots, x_1) \propto P(x_t \mid x_{t-1}, \ldots, x_1)^\alpha$'ten örnekleme yaparak daha olası çıktılara doğru yanlı yapın.
