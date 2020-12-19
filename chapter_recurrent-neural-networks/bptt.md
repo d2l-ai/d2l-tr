@@ -1,18 +1,11 @@
-# Zamanda Geri Yayılma
+# Zamanda Geri Yayma
 :label:`sec_bptt`
 
-Şimdiye kadar defalarca gibi şeyler ima var
-*patlayan degradeler*,
-*kaybolan degradeler*,
-ve ihtiyaç
-*RNN'ler için degrade* ayırın.
-Örneğin, :numref:`sec_rnn_scratch`'te dizideki `detach` işlevini çağırdık. Bunların hiçbiri gerçekten tam olarak açıklanmadı, hızlı bir model inşa edebilmek ve nasıl çalıştığını görmek için. Bu bölümde, sıralı modeller için geri yayılımın ayrıntılarını ve matematiğin neden (ve nasıl) çalıştığını biraz daha derinlemesine inceleyeceğiz.
+Şimdiye kadar defalarca *patlayan gradyanlar*, *kaybolan gradyanlar*, ve RNN'ler için *gradyan ayırma* ihtiyaç gibi şeyler ima ettik. Örneğin, :numref:`sec_rnn_scratch`'te dizideki `detach` işlevini çağırdık. Hızlı bir model inşa edebilmek ve nasıl çalıştığını görmek amacıyla, bunların hiçbiri gerçekten tam olarak açıklanmadı. Bu bölümde, dizi modelleri için geri yaymanın ayrıntılarını ve matematiğin neden (ve nasıl) çalıştığını biraz daha derinlemesine inceleyeceğiz.
 
-RNN'leri ilk uyguladığımızda degrade patlamanın bazı etkileriyle karşılaştık (:numref:`sec_rnn_scratch`). Özellikle, egzersizleri çözdüyseniz, doğru yakınsamayı sağlamak için degrade kırpmanın hayati önem taşıdığını görürdünüz. Bu sorunun daha iyi anlaşılmasını sağlamak için, bu bölümde degradelerin sıra modelleri için nasıl hesaplandığını inceleyecektir. Nasıl çalıştığına dair kavramsal olarak yeni bir şey olmadığını unutmayın. Sonuçta, biz hala sadece degradeleri hesaplamak için zincir kuralını uyguluyoruz. Bununla birlikte, geri yayılımı (:numref:`sec_backprop`) tekrar incelerken buna değer.
+RNN'leri ilk uyguladığımızda gradyan patlamanın bazı etkileriyle karşılaştık (:numref:`sec_rnn_scratch`). Özellikle, egzersizleri çözdüyseniz, doğru yakınsamayı sağlamak için gradyan kırpmanın hayati önem taşıdığını görürdünüz. Bu sorunun daha iyi anlaşılmasını sağlamak için, bu bölümde gradyanlarin sıra modelleri için nasıl hesaplandığını inceleyecektir. Nasıl çalıştığına dair kavramsal olarak yeni bir şey olmadığını unutmayın. Sonuçta, biz hala sadece gradyanlari hesaplamak için zincir kuralını uyguluyoruz. Bununla birlikte, geri yayılımı (:numref:`sec_backprop`) tekrar incelerken buna değer.
 
-:numref:`sec_backprop`'te MLP'lerde ileri ve geri yayılımlarını ve hesaplama grafiklerini tanımladık. Bir RNN'de ileriye yayılma nispeten basittir.
-*Zamanla Backpropagation aslında belirli bir
-RNN'lerde backpropagasyon uygulaması :cite:`Werbos.1990`. Model değişkenleri ve parametreleri arasındaki bağımlılıkları elde etmek için bir RNN'nin hesaplama grafiğini birer kerede bir adım genişletmemizi gerektirir. Ardından, zincir kuralına bağlı olarak, degradeleri hesaplamak ve depolamak için geri yayılım uygularız. Diziler oldukça uzun olabileceğinden, bağımlılık oldukça uzun olabilir. Örneğin, 1000 karakterlik bir dizi için, ilk belirteç nihai konumdaki belirteç üzerinde potansiyel olarak önemli bir etkiye sahip olabilir. Bu gerçekten hesaplamalı olarak mümkün değildir (çok uzun sürer ve çok fazla bellek gerektirir) ve biz bu çok zor gradyan ulaşmadan önce 1000'den fazla matris ürünü gerektirir. Bu, hesaplamalı ve istatistiksel belirsizliklerle dolu bir süreçtir. Aşağıda neler olduğunu ve bunu pratikte nasıl ele alacağımızı aydınlatacağız.
+:numref:`sec_backprop`'te MLP'lerde ileri ve geri yayılımlarını ve hesaplama grafiklerini tanımladık. Bir RNN'de ileriye yayılma nispeten basittir. *Zamanla Backpropagation aslında belirli bir RNN'lerde backpropagasyon uygulaması :cite:`Werbos.1990`. Model değişkenleri ve parametreleri arasındaki bağımlılıkları elde etmek için bir RNN'nin hesaplama grafiğini birer kerede bir adım genişletmemizi gerektirir. Ardından, zincir kuralına bağlı olarak, gradyanlari hesaplamak ve depolamak için geri yayılım uygularız. Diziler oldukça uzun olabileceğinden, bağımlılık oldukça uzun olabilir. Örneğin, 1000 karakterlik bir dizi için, ilk belirteç nihai konumdaki belirteç üzerinde potansiyel olarak önemli bir etkiye sahip olabilir. Bu gerçekten hesaplamalı olarak mümkün değildir (çok uzun sürer ve çok fazla bellek gerektirir) ve biz bu çok zor gradyan ulaşmadan önce 1000'den fazla matris ürünü gerektirir. Bu, hesaplamalı ve istatistiksel belirsizliklerle dolu bir süreçtir. Aşağıda neler olduğunu ve bunu pratikte nasıl ele alacağımızı aydınlatacağız.
 
 ## RNN'lerde Gradyanların Analizi
 :label:`subsec_bptt_analysis`
@@ -28,7 +21,7 @@ burada $f$ ve $g$, sırasıyla gizli katmanın ve çıkış katmanının dönü�
 
 $$L(x_1, \ldots, x_T, y_1, \ldots, y_T, w_h, w_o) = \frac{1}{T}\sum_{t=1}^T l(y_t, o_t).$$
 
-Geri yayılma için, özellikle $L$ objektif fonksiyonun $w_h$ parametreleri ile ilgili olarak degradeleri hesapladığımızda konular biraz daha zordur. Belirli olmak gerekirse, zincir kuralına göre,
+Geri yayılma için, özellikle $L$ objektif fonksiyonun $w_h$ parametreleri ile ilgili olarak gradyanlari hesapladığımızda konular biraz daha zordur. Belirli olmak gerekirse, zincir kuralına göre,
 
 $$\begin{aligned}\frac{\partial L}{\partial w_h}  & = \frac{1}{T}\sum_{t=1}^T \frac{\partial l(y_t, o_t)}{\partial w_h}  \\& = \frac{1}{T}\sum_{t=1}^T \frac{\partial l(y_t, o_t)}{\partial o_t} \frac{\partial g(h_t, w_h)}{\partial h_t}  \frac{\partial h_t}{\partial w_h}.\end{aligned}$$
 :eqlabel:`eq_bptt_partial_L_wh`
@@ -38,7 +31,7 @@ $$\begin{aligned}\frac{\partial L}{\partial w_h}  & = \frac{1}{T}\sum_{t=1}^T \f
 $$\frac{\partial h_t}{\partial w_h}= \frac{\partial f(x_{t},h_{t-1},w_h)}{\partial w_h} +\frac{\partial f(x_{t},h_{t-1},w_h)}{\partial h_{t-1}} \frac{\partial h_{t-1}}{\partial w_h}.$$
 :eqlabel:`eq_bptt_partial_ht_wh_recur`
 
-Yukarıdaki degrade türetmek için, $t=1, 2,\ldots$ için $a_{0}=0$ ve $a_{t}=b_{t}+c_{t}a_{t-1}$ tatmin edici üç diziye sahip olduğumuzu varsayalım. Sonra $t\geq 1$ için göstermek kolaydır
+Yukarıdaki gradyan türetmek için, $t=1, 2,\ldots$ için $a_{0}=0$ ve $a_{t}=b_{t}+c_{t}a_{t-1}$ tatmin edici üç diziye sahip olduğumuzu varsayalım. Sonra $t\geq 1$ için göstermek kolaydır
 
 $$a_{t}=b_{t}+\sum_{i=1}^{t-1}\left(\prod_{j=i+1}^{t}c_{j}\right)b_{i}.$$
 :eqlabel:`eq_bptt_at`
@@ -49,7 +42,7 @@ $$\begin{aligned}a_t &= \frac{\partial h_t}{\partial w_h},\\
 b_t &= \frac{\partial f(x_{t},h_{t-1},w_h)}{\partial w_h}, \\
 c_t &= \frac{\partial f(x_{t},h_{t-1},w_h)}{\partial h_{t-1}},\end{aligned}$$
 
-:eqref:`eq_bptt_partial_ht_wh_recur`'teki degrade hesaplama $a_{t}=b_{t}+c_{t}a_{t-1}$'yı karşılar. Böylece, :eqref:`eq_bptt_at` başına, :eqref:`eq_bptt_partial_ht_wh_recur`'teki tekrarlayan hesaplamayı kaldırabiliriz.
+:eqref:`eq_bptt_partial_ht_wh_recur`'teki gradyan hesaplama $a_{t}=b_{t}+c_{t}a_{t-1}$'yı karşılar. Böylece, :eqref:`eq_bptt_at` başına, :eqref:`eq_bptt_partial_ht_wh_recur`'teki tekrarlayan hesaplamayı kaldırabiliriz.
 
 $$\frac{\partial h_t}{\partial w_h}=\frac{\partial f(x_{t},h_{t-1},w_h)}{\partial w_h}+\sum_{i=1}^{t-1}\left(\prod_{j=i+1}^{t} \frac{\partial f(x_{j},h_{j-1},w_h)}{\partial h_{j-1}} \right) \frac{\partial f(x_{i},h_{i-1},w_h)}{\partial w_h}.$$
 :eqlabel:`eq_bptt_partial_ht_wh_gen`
@@ -58,11 +51,11 @@ $\partial h_t/\partial w_h$'i yinelemeli olarak hesaplamak için zincir kuralın
 
 ### Tam Hesaplama ###
 
-Açıkçası, :eqref:`eq_bptt_partial_ht_wh_gen`'teki tam toplamı hesaplayabiliriz. Bununla birlikte, bu çok yavaştır ve degradeler patlayabilir, çünkü başlangıç koşullarındaki ince değişiklikler sonucu potansiyel olarak çok etkileyebilir. Yani, ilk koşullardaki minimum değişikliklerin sonuçta orantısız değişikliklere yol açtığı kelebek etkisine benzer şeyleri görebiliriz. Bu aslında tahmin etmek istediğimiz model açısından oldukça istenmeyen bir durumdur. Sonuçta, iyi genelleme sağlam tahminciler arıyoruz. Bu nedenle bu strateji pratikte neredeyse hiç kullanılmaz.
+Açıkçası, :eqref:`eq_bptt_partial_ht_wh_gen`'teki tam toplamı hesaplayabiliriz. Bununla birlikte, bu çok yavaştır ve gradyanlar patlayabilir, çünkü başlangıç koşullarındaki ince değişiklikler sonucu potansiyel olarak çok etkileyebilir. Yani, ilk koşullardaki minimum değişikliklerin sonuçta orantısız değişikliklere yol açtığı kelebek etkisine benzer şeyleri görebiliriz. Bu aslında tahmin etmek istediğimiz model açısından oldukça istenmeyen bir durumdur. Sonuçta, iyi genelleme sağlam tahminciler arıyoruz. Bu nedenle bu strateji pratikte neredeyse hiç kullanılmaz.
 
 ### Zaman Adımları###
 
-Alternatif olarak, $\tau$ adımlardan sonra :eqref:`eq_bptt_partial_ht_wh_gen` toplamı kesebiliriz. Bu şimdiye kadar tartıştığımız şey, örneğin :numref:`sec_rnn_scratch`'teki degradeleri ayırdığımız zaman gibi. Bu, toplamı $\partial h_{t-\tau}/\partial w_h$'de sonlandırarak, gerçek degradenin *yaklaşıklığı* yol açar. Pratikte bu oldukça iyi çalışıyor. Genellikle zaman boyunca kesilmiş backpropgation olarak adlandırılır budur :cite:`Jaeger.2002`. Bunun sonuçlarından biri, modelin uzun vadeli sonuçlardan ziyade kısa vadeli etkilere odaklanması. Bu aslında *arzu edilir*, çünkü tahminleri daha basit ve daha kararlı modellere yöneltir.
+Alternatif olarak, $\tau$ adımlardan sonra :eqref:`eq_bptt_partial_ht_wh_gen` toplamı kesebiliriz. Bu şimdiye kadar tartıştığımız şey, örneğin :numref:`sec_rnn_scratch`'teki gradyanlari ayırdığımız zaman gibi. Bu, toplamı $\partial h_{t-\tau}/\partial w_h$'de sonlandırarak, gerçek gradyannin *yaklaşıklığı* yol açar. Pratikte bu oldukça iyi çalışıyor. Genellikle zaman boyunca kesilmiş backpropgation olarak adlandırılır budur :cite:`Jaeger.2002`. Bunun sonuçlarından biri, modelin uzun vadeli sonuçlardan ziyade kısa vadeli etkilere odaklanması. Bu aslında *arzu edilir*, çünkü tahminleri daha basit ve daha kararlı modellere yöneltir.
 
 ### Rastgele kesme ###
 
@@ -101,7 +94,7 @@ RNN'nin hesaplanması sırasında model değişkenleri ve parametreleri arasınd
 ![Computational graph showing dependencies for an RNN model with three time steps. Boxes represent variables (not shaded) or parameters (shaded) and circles represent operators.](../img/rnn-bptt.svg)
 :label:`fig_rnn_bptt`
 
-Az önce belirtildiği gibi, :numref:`fig_rnn_bptt`'teki model parametreleri $\mathbf{W}_{hx}$, $\mathbf{W}_{hh}$ ve $\mathbf{W}_{qh}$'dır. Genel olarak, bu modelin eğitimi $\partial L/\partial \mathbf{W}_{hx}$, $\partial L/\partial \mathbf{W}_{hh}$ ve $\partial L/\partial \mathbf{W}_{qh}$ parametrelerine göre degrade hesaplama gerektirir. :numref:`fig_rnn_bptt`'teki bağımlılıklara göre, sırayla degradeleri hesaplamak ve depolamak için okların ters yönde geçebiliriz. Zincir kuralında farklı şekillerdeki matrislerin, vektörlerin ve skalaların çarpımını esnek bir şekilde ifade etmek için :numref:`sec_backprop`'te açıklandığı gibi $\text{prod}$ operatörünü kullanmaya devam ediyoruz.
+Az önce belirtildiği gibi, :numref:`fig_rnn_bptt`'teki model parametreleri $\mathbf{W}_{hx}$, $\mathbf{W}_{hh}$ ve $\mathbf{W}_{qh}$'dır. Genel olarak, bu modelin eğitimi $\partial L/\partial \mathbf{W}_{hx}$, $\partial L/\partial \mathbf{W}_{hh}$ ve $\partial L/\partial \mathbf{W}_{qh}$ parametrelerine göre gradyan hesaplama gerektirir. :numref:`fig_rnn_bptt`'teki bağımlılıklara göre, sırayla gradyanlari hesaplamak ve depolamak için okların ters yönde geçebiliriz. Zincir kuralında farklı şekillerdeki matrislerin, vektörlerin ve skalaların çarpımını esnek bir şekilde ifade etmek için :numref:`sec_backprop`'te açıklandığı gibi $\text{prod}$ operatörünü kullanmaya devam ediyoruz.
 
 Her şeyden önce, $t$ adımındaki herhangi bir zamanda model çıktısına göre objektif işlevi ayırt etmek oldukça basittir:
 
@@ -133,9 +126,9 @@ Analiz için, herhangi bir zaman adım $1 \leq t \leq T$ için tekrarlayan hesap
 $$\frac{\partial L}{\partial \mathbf{h}_t}= \sum_{i=t}^T {\left(\mathbf{W}_{hh}^\top\right)}^{T-i} \mathbf{W}_{qh}^\top \frac{\partial L}{\partial \mathbf{o}_{T+t-i}}.$$
 :eqlabel:`eq_bptt_partial_L_ht`
 
-:eqref:`eq_bptt_partial_L_ht`'ten bu basit doğrusal örnek, uzun dizi modellerinin bazı temel problemlerini zaten sergilediğini görebiliyoruz: $\mathbf{W}_{hh}^\top$'nın potansiyel olarak çok büyük güçlerini içeriyor. İçinde, 1'den küçük özdeğerler kaybolur ve 1'den büyük özdeğerler sapar. Bu sayısal olarak kararsızdır, bu da kendini kaybolan ve patlayan degradeler şeklinde gösterir. Bunu ele almanın bir yolu, :numref:`subsec_bptt_analysis`'te ele alındığı gibi, zaman adımlarını hesaplama açısından uygun bir boyutta kesmektir. Pratikte, bu kesme, belirli bir sayıda zaman adımından sonra degradeyi ayırarak gerçekleştirilir. Daha sonra uzun kısa süreli bellek gibi daha sofistike dizi modellerinin bunu daha da hafifletebileceğini göreceğiz.
+:eqref:`eq_bptt_partial_L_ht`'ten bu basit doğrusal örnek, uzun dizi modellerinin bazı temel problemlerini zaten sergilediğini görebiliyoruz: $\mathbf{W}_{hh}^\top$'nın potansiyel olarak çok büyük güçlerini içeriyor. İçinde, 1'den küçük özdeğerler kaybolur ve 1'den büyük özdeğerler sapar. Bu sayısal olarak kararsızdır, bu da kendini kaybolan ve patlayan gradyanlar şeklinde gösterir. Bunu ele almanın bir yolu, :numref:`subsec_bptt_analysis`'te ele alındığı gibi, zaman adımlarını hesaplama açısından uygun bir boyutta kesmektir. Pratikte, bu kesme, belirli bir sayıda zaman adımından sonra gradyanyi ayırarak gerçekleştirilir. Daha sonra uzun kısa süreli bellek gibi daha sofistike dizi modellerinin bunu daha da hafifletebileceğini göreceğiz.
 
-Son olarak, :numref:`fig_rnn_bptt` objektif fonksiyonun $L$ model parametrelerine bağlı olduğunu göstermektedir $\mathbf{W}_{hx}$ ve $\mathbf{W}_{hh}$ gizli katmanda $\mathbf{h}_1, \ldots, \mathbf{h}_T$. Bu tür parametrelere göre degradeleri hesaplamak için $\partial L / \partial \mathbf{W}_{hx} \in \mathbb{R}^{h \times d}$ ve $\partial L / \partial \mathbf{W}_{hh} \in \mathbb{R}^{h \times h}$,
+Son olarak, :numref:`fig_rnn_bptt` objektif fonksiyonun $L$ model parametrelerine bağlı olduğunu göstermektedir $\mathbf{W}_{hx}$ ve $\mathbf{W}_{hh}$ gizli katmanda $\mathbf{h}_1, \ldots, \mathbf{h}_T$. Bu tür parametrelere göre gradyanlari hesaplamak için $\partial L / \partial \mathbf{W}_{hx} \in \mathbb{R}^{h \times d}$ ve $\partial L / \partial \mathbf{W}_{hh} \in \mathbb{R}^{h \times h}$,
 
 $$
 \begin{aligned}
@@ -150,13 +143,13 @@ $$
 
 burada :eqref:`eq_bptt_partial_L_hT_final_step` ve :eqref:`eq_bptt_partial_L_ht_recur` tarafından yeniden hesaplanır $\partial L/\partial \mathbf{h}_t$ sayısal kararlılığı etkileyen anahtar miktardır.
 
-Zaman içinde backpropagation RNN'lerde backpropagation uygulaması olduğundan, Biz açıkladığımız gibi :numref:`sec_backprop`, eğitim RNN zaman içinde geri yayılma ile ileri yayılım dönüşümlü. Ayrıca, zaman içinde geri yayılma hesaplar ve sırayla yukarıdaki degradeler depolar. Özellikle, depolanan ara değerler $\partial L / \partial \mathbf{W}_{hx}$ ve $\partial L / \partial \mathbf{W}_{hh}$ hesaplamalarında kullanılacak $\partial L/\partial \mathbf{h}_t$ depolama gibi yinelenen hesaplamaları önlemek için yeniden kullanılır.
+Zaman içinde backpropagation RNN'lerde backpropagation uygulaması olduğundan, Biz açıkladığımız gibi :numref:`sec_backprop`, eğitim RNN zaman içinde geri yayılma ile ileri yayılım dönüşümlü. Ayrıca, zaman içinde geri yayılma hesaplar ve sırayla yukarıdaki gradyanlar depolar. Özellikle, depolanan ara değerler $\partial L / \partial \mathbf{W}_{hx}$ ve $\partial L / \partial \mathbf{W}_{hh}$ hesaplamalarında kullanılacak $\partial L/\partial \mathbf{h}_t$ depolama gibi yinelenen hesaplamaları önlemek için yeniden kullanılır.
 
 ## Özet
 
 * Zamanda geriye yayılma, yalnızca gizli bir duruma sahip dizi modellerine geri yayılmanın bir uygulamasıdır.
 * Düzenli kesme ve randomize kesme gibi hesaplama kolaylığı ve sayısal kararlılık için kesme gereklidir.
-* Matrislerin yüksek güçleri farklı veya kaybolan özdeğerlere yol açabilir. Bu, patlayan veya kaybolan degradeler şeklinde kendini gösterir.
+* Matrislerin yüksek güçleri farklı veya kaybolan özdeğerlere yol açabilir. Bu, patlayan veya kaybolan gradyanlar şeklinde kendini gösterir.
 * Etkili hesaplama için ara değerler zaman içinde geri yayılım sırasında önbelleğe alınır.
 
 ## Egzersizler
@@ -165,7 +158,7 @@ Zaman içinde backpropagation RNN'lerde backpropagation uygulaması olduğundan,
    1. $\mathbf{M}^k$ özdeğerleri olduğunu göster $\lambda_i^k$.
    1. Rastgele bir vektör için $\mathbf{x} \in \mathbb{R}^n$, yüksek olasılıklı $\mathbf{M}^k \mathbf{x}$ çok fazla özvektör ile hizalanmış olacağını kanıtlayın $\mathbf{v}_1$
 arasında $\mathbf{M}$. Bu ifadeyi resmileştir.
-   1. Yukarıdaki sonuç RNN'lerdeki degradeler için ne anlama geliyor?
-1. Degrade kırpmanın yanı sıra, tekrarlayan sinir ağlarında degrade patlaması ile başa çıkmak için başka yöntemler düşünebiliyor musunuz?
+   1. Yukarıdaki sonuç RNN'lerdeki gradyanlar için ne anlama geliyor?
+1. gradyan kırpmanın yanı sıra, tekrarlayan sinir ağlarında gradyan patlaması ile başa çıkmak için başka yöntemler düşünebiliyor musunuz?
 
 [Discussions](https://discuss.d2l.ai/t/334)
