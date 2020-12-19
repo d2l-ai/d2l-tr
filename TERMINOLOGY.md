@@ -102,6 +102,8 @@ leaky -> sızıntılı
 
 likelihood -> olabilirlik
 
+long short-term memory -> uzun ömürlü kısa-dönem belleği
+
 loss function ->  kayıp veya yitim fonksiyonu
 
 meme -> mizah unsuru

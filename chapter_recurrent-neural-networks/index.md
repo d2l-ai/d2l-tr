@@ -19,4 +19,5 @@ text-preprocessing
 language-models-and-dataset
 rnn
 rnn-scratch
+rnn-concise
 ```
