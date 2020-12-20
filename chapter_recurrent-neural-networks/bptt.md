@@ -21,7 +21,7 @@ burada $f$ ve $g$, sırasıyla gizli katmanın ve çıktı katmanının dönüş
 
 $$L(x_1, \ldots, x_T, y_1, \ldots, y_T, w_h, w_o) = \frac{1}{T}\sum_{t=1}^T l(y_t, o_t).$$
 
-Geri yayılma için, özellikle $L$ objektif fonksiyonun $w_h$ parametreleri ile ilgili olarak gradyanlari hesapladığımızda konular biraz daha zordur. Belirli olmak gerekirse, zincir kuralına göre,
+Geri yayma için, özellikle $L$ amaç fonksiyonun $w_h$ parametreleri ile ilgili olarak gradyanları hesaplarken işler biraz daha zorlaşır. Belirliyici olmak gerekirse, zincir kuralına göre,
 
 $$\begin{aligned}\frac{\partial L}{\partial w_h}  & = \frac{1}{T}\sum_{t=1}^T \frac{\partial l(y_t, o_t)}{\partial w_h}  \\& = \frac{1}{T}\sum_{t=1}^T \frac{\partial l(y_t, o_t)}{\partial o_t} \frac{\partial g(h_t, w_h)}{\partial h_t}  \frac{\partial h_t}{\partial w_h}.\end{aligned}$$
 :eqlabel:`eq_bptt_partial_L_wh`
