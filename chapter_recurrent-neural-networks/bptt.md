@@ -1,11 +1,11 @@
 # Zamanda Geri Yayma
 :label:`sec_bptt`
 
-Şimdiye kadar defalarca *patlayan gradyanlar*, *kaybolan gradyanlar*, ve RNN'ler için *gradyan ayırma* ihtiyaç gibi şeyler ima ettik. Örneğin, :numref:`sec_rnn_scratch`'te dizideki `detach` işlevini çağırdık. Hızlı bir model inşa edebilmek ve nasıl çalıştığını görmek amacıyla, bunların hiçbiri gerçekten tam olarak açıklanmadı. Bu bölümde, dizi modelleri için geri yaymanın ayrıntılarını ve matematiğin neden (ve nasıl) çalıştığını biraz daha derinlemesine inceleyeceğiz.
+Şimdiye kadar defalarca *patlayan gradyanlar*, *kaybolan gradyanlar*, ve RNN'ler için *gradyan ayırma* ihtiyaç gibi şeyler ima ettik. Örneğin, :numref:`sec_rnn_scratch`'te dizi üzerinde `detach` işlevini çağırdık. Hızlı bir model inşa edebilmek ve nasıl çalıştığını görmek amacıyla, bunların hiçbiri gerçekten tam olarak açıklanmadı. Bu bölümde, dizi modelleri için geri yaymanın ayrıntılarını ve matematiğin neden (ve nasıl) çalıştığını biraz daha derinlemesine inceleyeceğiz.
 
-RNN'leri ilk uyguladığımızda gradyan patlamanın bazı etkileriyle karşılaştık (:numref:`sec_rnn_scratch`). Özellikle, egzersizleri çözdüyseniz, doğru yakınsamayı sağlamak için gradyan kırpmanın hayati önem taşıdığını görürdünüz. Bu sorunun daha iyi anlaşılmasını sağlamak için, bu bölümde gradyanlarin sıra modelleri için nasıl hesaplandığını inceleyecektir. Nasıl çalıştığına dair kavramsal olarak yeni bir şey olmadığını unutmayın. Sonuçta, biz hala sadece gradyanlari hesaplamak için zincir kuralını uyguluyoruz. Bununla birlikte, geri yayılımı (:numref:`sec_backprop`) tekrar incelerken buna değer.
+RNN'leri ilk uyguladığımızda gradyan patlamasının bazı etkileriyle karşılaştık (:numref:`sec_rnn_scratch`). Özellikle, alıştırmaları çözdüyseniz, doğru yakınsamayı sağlamak için gradyan kırpmanın hayati önem taşıdığını görürsünüz. Bu sorunun daha iyi anlaşılmasını sağlamak için, bu bölümde gradyanların dizi modellerinde nasıl hesaplandığını incelenecektir. Nasıl çalıştığına dair kavramsal olarak yeni bir şey olmadığını unutmayın. Sonuçta, biz hala sadece gradyanları hesaplamak için zincir kuralını uyguluyoruz. Bununla birlikte, geri yayma (:numref:`sec_backprop`) tekrar gözden geçirmeye değerdir.
 
-:numref:`sec_backprop`'te MLP'lerde ileri ve geri yayılımlarını ve hesaplama grafiklerini tanımladık. Bir RNN'de ileriye yayılma nispeten basittir. *Zamanla Backpropagation aslında belirli bir RNN'lerde backpropagasyon uygulaması :cite:`Werbos.1990`. Model değişkenleri ve parametreleri arasındaki bağımlılıkları elde etmek için bir RNN'nin hesaplama grafiğini birer kerede bir adım genişletmemizi gerektirir. Ardından, zincir kuralına bağlı olarak, gradyanlari hesaplamak ve depolamak için geri yayılım uygularız. Diziler oldukça uzun olabileceğinden, bağımlılık oldukça uzun olabilir. Örneğin, 1000 karakterlik bir dizi için, ilk belirteç nihai konumdaki belirteç üzerinde potansiyel olarak önemli bir etkiye sahip olabilir. Bu gerçekten hesaplamalı olarak mümkün değildir (çok uzun sürer ve çok fazla bellek gerektirir) ve biz bu çok zor gradyan ulaşmadan önce 1000'den fazla matris ürünü gerektirir. Bu, hesaplamalı ve istatistiksel belirsizliklerle dolu bir süreçtir. Aşağıda neler olduğunu ve bunu pratikte nasıl ele alacağımızı aydınlatacağız.
+:numref:`sec_backprop`'te MLP'lerde ileri ve geri yaymayıı ve hesaplama çizgelerini tanımladık. Bir RNN'de ileriye yayma nispeten basittir. *Zamanda geri yayma* aslında RNN'lerde geri yaymanın belirli bir uygulamasıdır :cite:`Werbos.1990`. Model değişkenleri ve parametreleri arasındaki bağımlılıkları elde etmek için bir RNN'nin hesaplama çizgesini bir kerede bir adım genişletmemizi gerektirir. Ardından, zincir kuralına bağlı olarak, gradyanları hesaplamak ve depolamak için geri yayma uygularız. Diziler oldukça uzun olabileceğinden, bağımlılık oldukça uzun olabilir. Örneğin, 1000 karakterlik bir dizi için, ilk andıç nihai konumdaki andıç üzerinde potansiyel olarak önemli bir etkiye sahip olabilir. Bu gerçekten hesaplamalı olarak mümkün değildir (çok uzun sürer ve çok fazla bellek gerektirir) ve bizim bu çok zor gradyana ulaşmadan önce 1000'den fazla matrisi çarpamıza gerek duyar. Bu, hesaplamalı ve istatistiksel belirsizliklerle dolu bir süreçtir. Aşağıda neler olduğunu ve bunu pratikte nasıl ele alacağımızı aydınlatacağız.
 
 ## RNN'lerde Gradyanların Analizi
 :label:`subsec_bptt_analysis`
@@ -152,7 +152,7 @@ Zaman içinde backpropagation RNN'lerde backpropagation uygulaması olduğundan,
 * Matrislerin yüksek güçleri farklı veya kaybolan özdeğerlere yol açabilir. Bu, patlayan veya kaybolan gradyanlar şeklinde kendini gösterir.
 * Etkili hesaplama için ara değerler zaman içinde geri yayılım sırasında önbelleğe alınır.
 
-## Egzersizler
+## Alıştırmalar
 
 1. Biz bir simetrik matris $\mathbf{M} \in \mathbb{R}^{n \times n}$ özdeğerler $\lambda_i$ olan karşılık gelen özvektörler $\mathbf{v}_i$ ($i = 1, \ldots, n$) olan varsayalım. Genellik kaybı olmadan, $|\lambda_i| \geq |\lambda_{i+1}|$ sırayla sipariş edildiklerini varsayalım.
    1. $\mathbf{M}^k$ özdeğerleri olduğunu göster $\lambda_i^k$.
@@ -161,4 +161,4 @@ arasında $\mathbf{M}$. Bu ifadeyi resmileştir.
    1. Yukarıdaki sonuç RNN'lerdeki gradyanlar için ne anlama geliyor?
 1. gradyan kırpmanın yanı sıra, tekrarlayan sinir ağlarında gradyan patlaması ile başa çıkmak için başka yöntemler düşünebiliyor musunuz?
 
-[Discussions](https://discuss.d2l.ai/t/334)
+[Tartışmalar](https://discuss.d2l.ai/t/334)
