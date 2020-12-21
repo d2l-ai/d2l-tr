@@ -26,72 +26,72 @@ Geri yayma için, özellikle $L$ amaç fonksiyonun $w_h$ parametreleri ile ilgil
 $$\begin{aligned}\frac{\partial L}{\partial w_h}  & = \frac{1}{T}\sum_{t=1}^T \frac{\partial l(y_t, o_t)}{\partial w_h}  \\& = \frac{1}{T}\sum_{t=1}^T \frac{\partial l(y_t, o_t)}{\partial o_t} \frac{\partial g(h_t, w_h)}{\partial h_t}  \frac{\partial h_t}{\partial w_h}.\end{aligned}$$
 :eqlabel:`eq_bptt_partial_L_wh`
 
-Ürünün :eqref:`eq_bptt_partial_L_wh`'teki birinci ve ikinci faktörlerinin hesaplanması kolaydır. $\partial h_t/\partial w_h$, $h_t$'da $w_h$ parametresinin etkisini tekrar hesaplamamız gerektiğinden, işlerin zor olduğu üçüncü faktör $\partial h_t/\partial w_h$. :eqref:`eq_bptt_ht_ot`'teki tekrarlayan hesaplamaya göre, $h_t$ $h_{t-1}$ ve $w_h$'ye bağlıdır, burada $h_{t-1}$'in hesaplanması da $w_h$'ye bağlıdır. Böylece, zincir kuralı verim kullanarak
+Çarpımın :eqref:`eq_bptt_partial_L_wh`'teki birinci ve ikinci faktörlerinin hesaplanması kolaydır. $h_t$'da $w_h$ parametresinin etkisini yeniden hesaplamamız gerektiğinden, üçüncü faktör $\partial h_t/\partial w_h$'de işler zorlaşır. :eqref:`eq_bptt_ht_ot`'teki yinelemeli hesaplamaya göre, $h_t$ $h_{t-1}$ ve $w_h$'ye bağlıdır, burada $h_{t-1}$'in hesaplanması da $w_h$'ye bağlıdır. Böylece, zincir kuralı aşağıdaki çıkarsamaya varır:
 
 $$\frac{\partial h_t}{\partial w_h}= \frac{\partial f(x_{t},h_{t-1},w_h)}{\partial w_h} +\frac{\partial f(x_{t},h_{t-1},w_h)}{\partial h_{t-1}} \frac{\partial h_{t-1}}{\partial w_h}.$$
 :eqlabel:`eq_bptt_partial_ht_wh_recur`
 
-Yukarıdaki gradyan türetmek için, $t=1, 2,\ldots$ için $a_{0}=0$ ve $a_{t}=b_{t}+c_{t}a_{t-1}$ tatmin edici üç diziye sahip olduğumuzu varsayalım. Sonra $t\geq 1$ için göstermek kolaydır
+Yukarıdaki gradyanı türetmek için, $t=1, 2,\ldots$ için $a_{0}=0$ ve $a_{t}=b_{t}+c_{t}a_{t-1}$ koşullarını sağlayan $\{a_{t}\},\{b_{t}\},\{c_{t}\}$ üç dizisine sahip olduğumuzu varsayalım. Sonra $t\geq 1$ için, aşağıdaki ifadeyi göstermek kolaydır:
 
 $$a_{t}=b_{t}+\sum_{i=1}^{t-1}\left(\prod_{j=i+1}^{t}c_{j}\right)b_{i}.$$
 :eqlabel:`eq_bptt_at`
 
-$a_t$, $b_t$ ve $c_t$ yerine göre
+$a_t$, $b_t$ ve $c_t$'nin yerlerine aşağıdaki ifadeleri koyarsak
 
 $$\begin{aligned}a_t &= \frac{\partial h_t}{\partial w_h},\\
 b_t &= \frac{\partial f(x_{t},h_{t-1},w_h)}{\partial w_h}, \\
 c_t &= \frac{\partial f(x_{t},h_{t-1},w_h)}{\partial h_{t-1}},\end{aligned}$$
 
-:eqref:`eq_bptt_partial_ht_wh_recur`'teki gradyan hesaplama $a_{t}=b_{t}+c_{t}a_{t-1}$'yı karşılar. Böylece, :eqref:`eq_bptt_at` başına, :eqref:`eq_bptt_partial_ht_wh_recur`'teki tekrarlayan hesaplamayı kaldırabiliriz.
+:eqref:`eq_bptt_partial_ht_wh_recur`'teki gradyan hesaplama $a_{t}=b_{t}+c_{t}a_{t-1}$'yı sağlar. Böylece, :eqref:`eq_bptt_at`'deki, :eqref:`eq_bptt_partial_ht_wh_recur`'teki yinelemeli hesaplamayı kaldırabiliriz.
 
 $$\frac{\partial h_t}{\partial w_h}=\frac{\partial f(x_{t},h_{t-1},w_h)}{\partial w_h}+\sum_{i=1}^{t-1}\left(\prod_{j=i+1}^{t} \frac{\partial f(x_{j},h_{j-1},w_h)}{\partial h_{j-1}} \right) \frac{\partial f(x_{i},h_{i-1},w_h)}{\partial w_h}.$$
 :eqlabel:`eq_bptt_partial_ht_wh_gen`
 
-$\partial h_t/\partial w_h$'i yinelemeli olarak hesaplamak için zincir kuralını kullanabilsek de, $t$ büyük olduğunda bu zincir çok uzun sürebilir. Bize bu sorunla başa çıkmak için stratejiler bir dizi tartışalım.
+$\partial h_t/\partial w_h$'i yinelemeli olarak hesaplamak için zincir kuralını kullanabilsek de, $t$ büyük olduğunda bu zincir çok uzun sürebilir. Bu sorunla başa çıkmak için bazı stratejileri tartışalım.
 
 ### Tam Hesaplama ###
 
-Açıkçası, :eqref:`eq_bptt_partial_ht_wh_gen`'teki tam toplamı hesaplayabiliriz. Bununla birlikte, bu çok yavaştır ve gradyanlar patlayabilir, çünkü başlangıç koşullarındaki ince değişiklikler sonucu potansiyel olarak çok etkileyebilir. Yani, ilk koşullardaki minimum değişikliklerin sonuçta orantısız değişikliklere yol açtığı kelebek etkisine benzer şeyleri görebiliriz. Bu aslında tahmin etmek istediğimiz model açısından oldukça istenmeyen bir durumdur. Sonuçta, iyi genelleme sağlam tahminciler arıyoruz. Bu nedenle bu strateji pratikte neredeyse hiç kullanılmaz.
+Açıkçası, :eqref:`eq_bptt_partial_ht_wh_gen`'teki tam toplamı hesaplayabiliriz. Fakat, bu çok yavaştır ve gradyanlar patlayabilir, çünkü ilkleme koşullarındaki ince değişiklikler sonucu potansiyel olarak çok etkileyebilir. Yani, ilk koşullardaki minimum değişikliklerin sonuçta orantısız değişikliklere yol açtığı kelebek etkisine benzer şeyler görebiliriz. Bu aslında tahmin etmek istediğimiz model açısından oldukça istenmeyen bir durumdur. Sonuçta, iyi genelleyen gürbüz tahminciler arıyoruz. Bu nedenle bu strateji pratikte neredeyse hiç kullanılmaz.
 
-### Zaman Adımları###
+### Zaman Adımlarını Kesme ###
 
-Alternatif olarak, $\tau$ adımlardan sonra :eqref:`eq_bptt_partial_ht_wh_gen` toplamı kesebiliriz. Bu şimdiye kadar tartıştığımız şey, örneğin :numref:`sec_rnn_scratch`'teki gradyanlari ayırdığımız zaman gibi. Bu, toplamı $\partial h_{t-\tau}/\partial w_h$'de sonlandırarak, gerçek gradyannin *yaklaşıklığı* yol açar. Pratikte bu oldukça iyi çalışıyor. Genellikle zaman boyunca kesilmiş backpropgation olarak adlandırılır budur :cite:`Jaeger.2002`. Bunun sonuçlarından biri, modelin uzun vadeli sonuçlardan ziyade kısa vadeli etkilere odaklanması. Bu aslında *arzu edilir*, çünkü tahminleri daha basit ve daha kararlı modellere yöneltir.
+Alternatif olarak, $\tau$ adımdan sonra :eqref:`eq_bptt_partial_ht_wh_gen`'deki toplamı kesebiliriz. Bu aslında şimdiye kadar tartıştığımız şey, örneğin :numref:`sec_rnn_scratch`'teki gradyanları ayırdığımız zaman gibi. Bu, toplamı $\partial h_{t-\tau}/\partial w_h$'de sonlandırarak, gerçek gradyanın *yaklaşık değerine* götürür. Pratikte bu oldukça iyi çalışır. Genellikle zaman boyunca kesilmiş geri yayma olarak adlandırılır :cite:`Jaeger.2002`. Bunun sonuçlarından biri, modelin uzun vadeli sonuçlardan ziyade kısa vadeli etkilere odaklanmasıdır. Bu aslında *arzu edilendir*, çünkü tahminleri daha basit ve daha kararlı modellere yöneltir.
 
-### Rastgele kesme ###
+### Rastgele Kesme ###
 
-Son olarak, biz yerine $\partial h_t/\partial w_h$ beklenti doğru ama dizisini keser rastgele bir değişken ile. Bu, önceden tanımlanmış $0 \leq \pi_t \leq 1$ ile $\xi_t$, burada $P(\xi_t = 0) = 1-\pi_t$ ve $P(\xi_t = \pi_t^{-1}) = \pi_t$, böylece $E[\xi_t] = 1$ bir dizi kullanılarak elde edilir. Bunu :eqref:`eq_bptt_partial_ht_wh_recur`'teki $\partial h_t/\partial w_h$'i değiştirmek için kullanıyoruz.
+Son olarak, $\partial h_t/\partial w_h$ 'yi, beklentiye göre doğru olan ancak diziyi kesen rastgele bir değişkenle değiştirebiliriz. Bu, önceden tanımlanmış $0 \leq \pi_t \leq 1$ olan bir $\xi_t$ dizisi kullanılarak elde edilir, burada $P(\xi_t = 0) = 1-\pi_t$ ve $P(\xi_t = \pi_t^{-1}) = \pi_t$, dolayısıyla $E[\xi_t] = 1$'dir. Bunu :eqref:`eq_bptt_partial_ht_wh_recur`'teki $\partial h_t/\partial w_h$'i değiştirmek için kullanırız.
 
 $$z_t= \frac{\partial f(x_{t},h_{t-1},w_h)}{\partial w_h} +\xi_t \frac{\partial f(x_{t},h_{t-1},w_h)}{\partial h_{t-1}} \frac{\partial h_{t-1}}{\partial w_h}.$$
 
-Bu $\xi_t$ tanımından izler $E[z_t] = \partial h_t/\partial w_h$. Ne zaman $\xi_t = 0$ yinelenen hesaplama o zaman adım $t$ sona erer. Bu, uzun dizilerin nadir olduğu ancak uygun şekilde aşırı kilolu olduğu çeşitli uzunluklarda dizilerin ağırlıklı bir toplamına yol açar. Bu fikir Tallec ve Ollivier :cite:`Tallec.Ollivier.2017` tarafından önerildi.
+Bu $\xi_t$'nin tanımından gelir; $E[z_t] = \partial h_t/\partial w_h$. Ne zaman $\xi_t = 0$ olursa, yinelemeli hesaplama o $t$ zaman adımında sona erer. Bu, uzun dizilerin nadir ancak uygun şekilde fazla ağırlıklandırılmış olduğu çeşitli uzunluklardaki dizilerin ağırlıklı bir toplamına yol açar. Bu fikir Tallec ve Ollivier :cite:`Tallec.Ollivier.2017` tarafından önerilmiştir.
 
 ### Stratejilerin Karşılaştırılması
 
-![Comparing strategies for computing gradients in RNNs. From top to bottom: randomized truncation, regular truncation, and full computation.](../img/truncated-bptt.svg)
+![RNN'lerde gradyanları hesaplama stratejilerinin karşılaştırılması. Yukarıdan aşağıya: Rastgele kesme, düzenli kesme ve tam hesaplama.](../img/truncated-bptt.svg)
 :label:`fig_truncated_bptt`
 
-:numref:`fig_truncated_bptt`, RNN'ler için zaman içinde geri yayılım kullanan *The Time Machine* kitabının ilk birkaç karakterini analiz ederken üç stratejiyi göstermektedir:
+:numref:`fig_truncated_bptt`, RNN'ler için zamanda geri yayma kullanan *Zaman Makinesi* kitabının üç stratejideki ilk birkaç karakterini analiz ederek göstermektedir:
 
-* İlk satır, metni farklı uzunluklarda segmentlere ayıran randomize kesmedir.
-* İkinci satır, metni aynı uzunlukta sonraya kıran düzenli kesimdir. Bu RNN deneylerinde yaptığımız şey.
-* Üçüncü satır, hesaplama olarak mümkün olmayan bir ifadeye yol açan zaman içinde tam geri yayılımdır.
+* İlk satır, metni farklı uzunluklardaki bölümlere ayıran rasgele kesmedir.
+* İkinci satır, metni aynı uzunlukta altdizilere kıran düzenli kesimdir. Bu RNN deneylerinde yaptığımız şeydir.
+* Üçüncü satır, hesaplaması mümkün olmayan bir ifadeye yol açan zamanda tam geri yaymadır.
 
-Ne yazık ki, teoride itiraz ederken, randomize kesme, büyük olasılıkla bir dizi faktöre bağlı olarak düzenli kesmeden çok daha iyi çalışmaz. Birincisi, geçmişe bir dizi geri yayılma adımından sonra bir gözlemin etkisi, pratikte bağımlılıkları yakalamak için oldukça yeterlidir. İkincisi, artan varyans, gradyanın daha fazla adımla daha doğru olduğu gerçeğine karşı koymaktadır. Üçüncüsü, aslında sadece kısa bir etkileşim aralığına sahip modeller istiyoruz. Bu nedenle, zaman içinde düzenli olarak kesilmiş geri yayılım, arzu edilebilecek hafif bir düzenleyici etkiye sahiptir.
+Ne yazık ki, teoride çekici iken, rasgele kesme, büyük olasılıkla bir dizi faktöre bağlı olarak düzenli kesmeden çok daha iyi çalışmaz. Birincisi, bir gözlemin geçmişe birkaç geri yayma adımından sonraki etkisi, pratikteki bağımlılıkları yakalamak için oldukça yeterlidir. İkincisi, artan varyans, gradyanın daha fazla adımla daha doğru olduğu gerçeğine karşı yarışır. Üçüncüsü, aslında sadece kısa bir etkileşim aralığına sahip modeller istiyoruz. Bu nedenle, zamanda düzenli kesilmiş geri yayma, arzu edilebilecek hafif bir düzenlileştirici etkiye sahiptir.
 
 ## Ayrıntılı Zamanda Geri Yayılma
 
-Genel prensibi tartıştıktan sonra, zaman içinde geriye yayılımı ayrıntılı olarak ele alalım. :numref:`subsec_bptt_analysis`'teki analizden farklı olarak, aşağıda, objektif fonksiyonun gradyanlarının tüm ayrıştırılmış model parametrelerine göre nasıl hesaplanacağını göstereceğiz. İşleri basit tutmak için, gizli katmandaki etkinleştirme işlevi kimlik eşlemelerini kullanan önyargı parametreleri olmayan bir RNN'yi göz önünde bulunduruyoruz ($\phi(x)=x$). Zaman adım $t$ için, tek örnek girdi ve etiket sırasıyla $\mathbf{x}_t \in \mathbb{R}^d$ ve $y_t$ olmasına izin verin. Gizli durum $\mathbf{h}_t \in \mathbb{R}^h$ ve çıkış $\mathbf{o}_t \in \mathbb{R}^q$ olarak hesaplanır
+Genel prensibi tartıştıktan sonra, zamanda geriye yaymayı ayrıntılı olarak ele alalım. :numref:`subsec_bptt_analysis`'teki analizden farklı olarak, aşağıda, amaç fonksiyonun gradyanlarının tüm ayrıştırılmış model parametrelerine göre nasıl hesaplanacağını göstereceğiz. İşleri basit tutmak için, gizli katmandaki etkinleştirme işlevi olarak birim eşlemelerini kullanan ek girdi parametresiz bir RNN'yi göz önünde bulunduruyoruz ($\phi(x)=x$). Zaman adımı $t$ için, tek örnek girdinin ve etiketin sırasıyla $\mathbf{x}_t \in \mathbb{R}^d$ ve $y_t$ olduğunu varsayalım. Gizli durum $\mathbf{h}_t \in \mathbb{R}^h$ ve çıktı $\mathbf{o}_t \in \mathbb{R}^q$ aşağıdaki gibi hesaplanır:
 
 $$\begin{aligned}\mathbf{h}_t &= \mathbf{W}_{hx} \mathbf{x}_t + \mathbf{W}_{hh} \mathbf{h}_{t-1},\\
 \mathbf{o}_t &= \mathbf{W}_{qh} \mathbf{h}_{t},\end{aligned}$$
 
-burada $\mathbf{W}_{hx} \in \mathbb{R}^{h \times d}$, $\mathbf{W}_{hh} \in \mathbb{R}^{h \times h}$ ve $\mathbf{W}_{qh} \in \mathbb{R}^{q \times h}$ ağırlık parametreleridir. $l(\mathbf{o}_t, y_t)$ ile belirtin zaman adımındaki kaybı $t$. Bizim objektif fonksiyonu, üzerinde kayıp $T$ zaman adımlar dizinin başından bu nedenle
+burada $\mathbf{W}_{hx} \in \mathbb{R}^{h \times d}$, $\mathbf{W}_{hh} \in \mathbb{R}^{h \times h}$ ve $\mathbf{W}_{qh} \in \mathbb{R}^{q \times h}$ ağırlık parametreleridir. $l(\mathbf{o}_t, y_t)$ ile belirtilen $t$ zaman adımındaki kayıp olsun. Bizim amaç fonksiyonumuz, yani dizinin başından $T$ zaman adımı üzerinden kayıp şöyle hesaplanır:  
 
 $$L = \frac{1}{T} \sum_{t=1}^T l(\mathbf{o}_t, y_t).$$
 
-RNN'nin hesaplanması sırasında model değişkenleri ve parametreleri arasındaki bağımlılıkları görselleştirmek için, model için :numref:`fig_rnn_bptt`'te gösterildiği gibi bir hesaplama grafiği çizebiliriz. Örneğin, zaman adım 3, $\mathbf{h}_3$ gizli durumlarının hesaplanması model parametreleri $\mathbf{W}_{hx}$ ve $\mathbf{W}_{hh}$, son kez adım $\mathbf{h}_2$ gizli durumu ve geçerli zaman adım $\mathbf{x}_3$ giriş bağlıdır.
+RNN'nin hesaplanması sırasında model değişkenleri ve parametreleri arasındaki bağımlılıkları görselleştirmek için, model için :numref:`fig_rnn_bptt`'te gösterildiği gibi bir hesaplama çizgesi çizebiliriz. Örneğin,  3. zaman adımındaki, $\mathbf{h}_3$ gizli durumlarının hesaplanması model parametreleri $\mathbf{W}_{hx}$ ve $\mathbf{W}_{hh}$'ye, son zaman adımındaki gizli durum $\mathbf{h}_2$'ye ve şimdiki zaman adımının girdisi $\mathbf{x}_3$'e bağlıdır.
 
-![Computational graph showing dependencies for an RNN model with three time steps. Boxes represent variables (not shaded) or parameters (shaded) and circles represent operators.](../img/rnn-bptt.svg)
+![Üç zaman adımlı bir RNN modeli için bağımlılıkları gösteren hesaplamalı çizge. Kutular değişkenleri (gölgeli olmayan) veya parametreleri (gölgeli) ve daireler işlemleri temsil eder.](../img/rnn-bptt.svg)
 :label:`fig_rnn_bptt`
 
 Az önce belirtildiği gibi, :numref:`fig_rnn_bptt`'teki model parametreleri $\mathbf{W}_{hx}$, $\mathbf{W}_{hh}$ ve $\mathbf{W}_{qh}$'dır. Genel olarak, bu modelin eğitimi $\partial L/\partial \mathbf{W}_{hx}$, $\partial L/\partial \mathbf{W}_{hh}$ ve $\partial L/\partial \mathbf{W}_{qh}$ parametrelerine göre gradyan hesaplama gerektirir. :numref:`fig_rnn_bptt`'teki bağımlılıklara göre, sırayla gradyanlari hesaplamak ve depolamak için okların ters yönde geçebiliriz. Zincir kuralında farklı şekillerdeki matrislerin, vektörlerin ve skalaların çarpımını esnek bir şekilde ifade etmek için :numref:`sec_backprop`'te açıklandığı gibi $\text{prod}$ operatörünü kullanmaya devam ediyoruz.
