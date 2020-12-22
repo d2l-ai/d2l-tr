@@ -13,8 +13,7 @@ Bu kitap boyunca kullanılan notasyon(gösterim) aşağıda özetlenmiştir.
 * $\mathsf{X}$: Tensör (Gerey)
 * $\mathbf{I}$: Birim dizeyi
 * $x_i$, $[\mathbf{x}]_i$: $\mathbf{x}$ dizeyinin $i$'inci elemanı
-* $x_{ij}$, $[\mathbf{X}]_{ij}$: $\mathbf{X}$ dizeyinin $i$'inci satır $j$'inci sütundeki elemanı
-
+* $x_{ij}$, $x_{i,j}$,$[\mathbf{X}]_{ij}$, $[\mathbf{X}]_{i,j}$: $\mathbf{X}$ dizeyinin $i$'inci satır $j$'inci sütundaki elemanı
 
 
 
@@ -23,9 +22,11 @@ Bu kitap boyunca kullanılan notasyon(gösterim) aşağıda özetlenmiştir.
 
 * $\mathcal{X}$: Küme
 * $\mathbb{Z}$: Tam sayılar kümesi
+* $\mathbb{Z}^+$: Pozitif tam sayılar kümesi
 * $\mathbb{R}$: Gerçel sayılar kümesi
 * $\mathbb{R}^n$: $n$ boyutlu gerçel sayılı yöneyler kümesi
 * $\mathbb{R}^{a\times b}$: $a$ satır ve $b$ sütunlu gerçek sayılı matrisler kümesi
+* $|\mathcal{X}|$: $\mathcal{X}$ kümesinin kardinalitesi (eleman sayısı)
 * $\mathcal{A}\cup\mathcal{B}$: $\mathcal{A}$ ve $\mathcal{B}$ kümelerinin bileşkesi
 * $\mathcal{A}\cap\mathcal{B}$: $\mathcal{A}$ ve $\mathcal{B}$ kümelerinin kesişimi
 * $\mathcal{A}\setminus\mathcal{B}$: $\mathcal{B}$ kümesinin $\mathcal{A}$ kümesinden çıkarılması
@@ -42,13 +43,13 @@ Bu kitap boyunca kullanılan notasyon(gösterim) aşağıda özetlenmiştir.
 * $\mathbf{X}^{-1}$: $\mathbf{X}$ matrisinin tersi
 * $\odot$: Hadamard (eleman-yönlü) çarpımı
 * $[\cdot, \cdot]$: Birbirine bağlama
-* $\lvert \mathcal{X} \rvert$: $\mathcal{X}$ kümesinin eleman sayısı (Kardinalite)
-* $\|\cdot\|_p$: $\ell_p$ Büyüklük (Norm)
-* $\|\cdot\|$: $\ell_2$ Büyüklük (Norm)
+* $\lvert \mathcal{X} \rvert$: $\mathcal{X}$ kümesinin eleman sayısı (kardinalite)
+* $\|\cdot\|_p$: $L_p$ Büyüklük (Norm)
+* $\|\cdot\|$: $L_2$ Büyüklük (Norm)
 * $\langle \mathbf{x}, \mathbf{y} \rangle$: $\mathbf{x}$ ve $\mathbf{y}$ vektörlerinin iç (nokta) çarpımı
 * $\sum$: Dizi (seri) toplamı
 * $\prod$: Dizi (seri) çarpımı
-
+* $\stackrel{\mathrm{def}}{=}$: Tanım
 
 ## Hesaplama (Kalkülüs)
 
