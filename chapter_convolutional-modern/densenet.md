@@ -1,39 +1,39 @@
 # Yoğun Bağlı Ağlar (DenseNet)
 
-ResNet, derin ağlardaki işlevlerin nasıl parametrize edileceği görüşünü önemli ölçüde değiştirdi. *DenseNet* (yoğun kıvrımsal ağ) bir dereceye kadar bu :cite:`Huang.Liu.Van-Der-Maaten.ea.2017`'ün mantıksal uzantısıdır. Nasıl ulaşacağımızı anlamak için, matematiğe küçük bir dolambaçlı yoldan gidelim.
+ResNet, derin ağlardaki işlevlerin nasıl parametrize edileceği görüşünü önemli ölçüde değiştirdi. *DenseNet* (yoğun evrişimli ağ) bir dereceye kadar bunun :cite:`Huang.Liu.Van-Der-Maaten.ea.2017` mantıksal uzantısıdır. Ona nasıl ulaşacağımızı anlamak için, matematiğe küçük bir gezinti yapalım.
 
 ## ResNet'ten DenseNet'e
 
-Fonksiyonlar için Taylor genişlemesini hatırlayın. $x = 0$ noktası için şu şekilde yazılabilir:
+Fonksiyonlar için Taylor açılımını hatırlayın. $x = 0$ noktası için şu şekilde yazılabilir:
 
 $$f(x) = f(0) + f'(0) x + \frac{f''(0)}{2!}  x^2 + \frac{f'''(0)}{3!}  x^3 + \ldots.$$
 
-Önemli nokta, bir işlevi giderek daha yüksek sıralama terimlerine ayırmasıdır. Benzer bir damarda, ResNet fonksiyonları
+Önemli nokta, bir işlevi giderek daha yüksek dereceli terimlerine ayırmasıdır. Benzer bir damarda, ResNet fonksiyonları
 
 $$f(\mathbf{x}) = \mathbf{x} + g(\mathbf{x}).$$
 
-Yani, ResNet $f$'i basit bir doğrusal terime ve daha karmaşık doğrusal olmayan bir terime ayırır. İki terimin ötesinde bilgi yakalamak (zorunlu olarak eklemek değil) istersek ne olur? Bir çözüm DenseNet :cite:`Huang.Liu.Van-Der-Maaten.ea.2017` oldu.
+Yani, ResNet $f$'i basit bir doğrusal terime ve daha karmaşık doğrusal olmayan bir terime ayırır. İki terimin ötesinde bilgi özümsemek (zorunlu olarak eklemek değil) istersek ne olur? Bir çözüm DenseNet :cite:`Huang.Liu.Van-Der-Maaten.ea.2017` oldu.
 
-![The main difference between ResNet (left) and DenseNet (right) in cross-layer connections: use of addition and use of concatenation. ](../img/densenet-block.svg)
+![Katmanlar arası bağlantılarda ResNet (sol) ve DenseNet (sağ) arasındaki temel fark: Toplama ve bitiştirme kullanımı.](../img/densenet-block.svg)
 :label:`fig_densenet_block`
 
-:numref:`fig_densenet_block`'te gösterildiği gibi, ResNet ve DenseNet arasındaki anahtar fark, ikinci durumda çıkışların eklenmeden*bitişik* ($[,]$ ile gösterilir) olmasıdır. Sonuç olarak, giderek daha karmaşık bir işlev dizisini uyguladıktan sonra $\mathbf{x}$'ten değerlerine bir eşleme gerçekleştiriyoruz:
+:numref:`fig_densenet_block`'te gösterildiği gibi, ResNet ve DenseNet arasındaki temel fark, ikinci durumda çıktıların toplanmaktan ziyade *bitiştirilmesidir* ($[,]$ ile gösterilir). Sonuç olarak, giderek daha karmaşık bir işlev dizisini uyguladıktan sonra $\mathbf{x}$'ten değerlerine bir eşleme gerçekleştiriyoruz:
 
 $$\mathbf{x} \to \left[
 \mathbf{x},
 f_1(\mathbf{x}),
 f_2([\mathbf{x}, f_1(\mathbf{x})]), f_3([\mathbf{x}, f_1(\mathbf{x}), f_2([\mathbf{x}, f_1(\mathbf{x})])]), \ldots\right].$$
 
-Sonunda, tüm bu işlevler tekrar özellik sayısını azaltmak için MLP'de birleştirilir. Uygulama açısından bu oldukça basittir: terimler eklemek yerine, bunları birleştiririz. DenseNet adı, değişkenler arasındaki bağımlılık grafiğinin oldukça yoğunlaştığı gerçeğinden kaynaklanmaktadır. Böyle bir zincirin son katmanı, önceki tüm katmanlara yoğun bir şekilde bağlanır. Yoğun bağlantılar :numref:`fig_densenet`'te gösterilmiştir.
+Sonunda, tüm bu işlevler tekrar öznitelik sayısını azaltmak için MLP'de birleştirilir. Uygulama açısından bu oldukça basittir: Terimleri toplamak yerine, bunları bitiştiririz. DenseNet'in adı, değişkenler arasındaki bağımlılık grafiğinin oldukça yoğunlaştığı gerçeğinden kaynaklanmaktadır. Böyle bir zincirin son katmanı, önceki tüm katmanlara yoğun bir şekilde bağlanır. Yoğun bağlantılar :numref:`fig_densenet`'te gösterilmiştir.
 
-![Dense connections in DenseNet.](../img/densenet.svg)
+![DenseNet'teki yoğun bağlantılar.](../img/densenet.svg)
 :label:`fig_densenet`
 
-DenseNet oluşturan ana bileşenler*yoğun bloklar* ve *geçiş katmanları*. Birincisi, girişlerin ve çıkışların nasıl birleştirildiğini tanımlarken, ikincisi kanal sayısını kontrol eder, böylece çok büyük değildir.
+DenseNet oluşturan ana bileşenler *yoğun bloklar* ve *geçiş katmanları*dır. Birincisi, girdilerin ve çıktıların nasıl bitiştirildiğini tanımlarken, ikincisi kanal sayısını kontrol eder, böylece çok büyümezlerdir.
 
 ## Yoğun Bloklar
 
-DenseNet, ResNet'in değiştirilmiş “toplu normalleştirme, aktivasyon ve evrim” yapısını kullanır (bkz. :numref:`sec_resnet` egzersiz). İlk olarak, bu evrişim blok yapısını uyguluyoruz.
+DenseNet, ResNet'in değiştirilmiş “toplu normalleştirme, etkinleştirme ve evrişim” yapısını kullanır (bkz. :numref:`sec_resnet`'teki alıştırma). İlk olarak, bu evrişim blok yapısını uyguluyoruz.
 
 ```{.python .input}
 from d2l import mxnet as d2l
@@ -84,7 +84,7 @@ class ConvBlock(tf.keras.layers.Layer):
         return y
 ```
 
-*Yoğun blok*, her biri aynı sayıda çıkış kanalı kullanan birden fazla evrişim bloğundan oluşur. Bununla birlikte, ileri yayılımda, kanal boyutundaki her evrişim bloğunun giriş ve çıkışını birleştiririz.
+*Yoğun blok*, her biri aynı sayıda çıktı kanalı kullanan birden fazla evrişim bloğundan oluşur. Bununla birlikte, ileri yaymada, kanal boyutundaki her evrişim bloğunun girdi ve çıktısını bitiştiririz.
 
 ```{.python .input}
 class DenseBlock(nn.Block):
@@ -138,7 +138,7 @@ class DenseBlock(tf.keras.layers.Layer):
         return x
 ```
 
-Aşağıdaki örnekte, 10 çıkış kanalından oluşan 2 evrişim bloğu içeren bir `DenseBlock` örneği tanımlıyoruz. 3 kanallı bir giriş kullanırken, $3+2\times 10=23$ kanallı bir çıkış alacağız. Evrişim blok kanallarının sayısı, giriş kanallarının sayısına göre çıkış kanallarının sayısındaki büyümeyi kontrol eder. Bu aynı zamanda *büyüme oranı* olarak da adlandırılır.
+Aşağıdaki örnekte, 10 çıktı kanalından oluşan 2 evrişim bloğu içeren bir `DenseBlock` örneği tanımlıyoruz. 3 kanallı bir girdi kullanırken, $3+2\times 10=23$ kanallı bir çıktı alacağız. Evrişim blok kanallarının sayısı, girdi kanallarının sayısına göre çıktı kanallarının sayısındaki büyümeyi kontrol eder. Bu aynı zamanda *büyüme oranı* olarak da adlandırılır.
 
 ```{.python .input}
 blk = DenseBlock(2, 10)
@@ -166,7 +166,7 @@ Y.shape
 
 ## Geçiş Katmanları
 
-Her yoğun blok kanal sayısını artıracağından, çok fazla eklemek aşırı karmaşık bir modele yol açacaktır. Modelin karmaşıklığını kontrol etmek için bir *geçiş katmanı* kullanılır. $1\times 1$ kıvrımsal katmanı kullanarak kanal sayısını azaltır ve ortalama havuzlama tabakasının yüksekliğini ve genişliğini 2'lik bir adımla yarıya indirir ve modelin karmaşıklığını daha da azaltır.
+Her yoğun blok kanal sayısını artıracağından, çok fazla sayıda eklemek aşırı karmaşık bir modele yol açacaktır. Modelin karmaşıklığını kontrol etmek için bir *geçiş katmanı* kullanılır. $1\times 1$ evrişimli katmanı kullanarak kanal sayısını azaltılır ve ortalama biriktirme tabakasının yüksekliğini ve genişliğini 2'lik bir uzun adımla yarıya indirilir ve modelin karmaşıklığını daha da azaltılır.
 
 ```{.python .input}
 def transition_block(num_channels):
@@ -203,7 +203,7 @@ class TransitionBlock(tf.keras.layers.Layer):
         return self.avg_pool(x)
 ```
 
-Önceki örnekte yoğun bloğun çıktısına 10 kanallı bir geçiş katmanı uygulayın. Bu, çıkış kanallarının sayısını 10'a düşürür ve yüksekliği ve genişliği yarıya indirir.
+Önceki örnekte yoğun bloğun çıktısına 10 kanallı bir geçiş katmanı uygulayın. Bu, çıktı kanallarının sayısını 10'a düşürür ve yüksekliği ve genişliği yarıya indirir.
 
 ```{.python .input}
 blk = transition_block(10)
@@ -225,7 +225,7 @@ blk(Y).shape
 
 ## DenseNet Modeli
 
-Sonra, bir DenseNet modeli inşa edeceğiz. DenseNet, ilk olarak ResNet'te olduğu gibi aynı tek kıvrımsal katmanı ve maksimum havuzlama katmanını kullanır.
+Şimdi, bir DenseNet modeli inşa edeceğiz. DenseNet, ilk olarak ResNet'te olduğu gibi aynı tek evrişimli katmanı ve maksimum biriktirme katmanını kullanır.
 
 ```{.python .input}
 net = nn.Sequential()
@@ -252,9 +252,9 @@ def block_1():
        tf.keras.layers.MaxPool2D(pool_size=3, strides=2, padding='same')])
 ```
 
-Daha sonra, ResNet'in kullandığı artık bloklardan oluşan dört modüle benzer, DenseNet dört yoğun blok kullanır. ResNet'e benzer şekilde, her yoğun blokta kullanılan kıvrımsal katmanların sayısını da ayarlayabiliriz. Burada, :numref:`sec_resnet`'teki ResNet-18 modeliyle uyumlu olarak 4 olarak ayarladık. Ayrıca, yoğun bloktaki kıvrımsal katmanlar için kanal sayısını (yani büyüme hızı) 32'ye ayarladık, böylece her yoğun bloğa 128 kanal eklenecektir.
+Daha sonra, ResNet'in kullandığı artık bloklardan oluşan dört modüle benzer, DenseNet de dört yoğun blok kullanır. ResNet'e benzer şekilde, her yoğun blokta kullanılan evrişimli katmanların sayısını da ayarlayabiliriz. Burada, :numref:`sec_resnet`'teki ResNet-18 modeliyle uyumlu olarak katmanların sayısını 4'e ayarladık. Ayrıca, yoğun bloktaki evrişimli katmanlar için kanal sayısını (yani büyüme hızı) 32'ye ayarladık, böylece her yoğun bloğa 128 kanal eklenecektir.
 
-ResNet'te, her modül arasındaki yükseklik ve genişlik, 2 adımlı bir kalıntı bloğu ile azaltılır. Burada, yükseklik ve genişliği yarıya indirip kanal sayısını yarıya indirerek geçiş katmanını kullanıyoruz.
+ResNet'te, her modül arasındaki yükseklik ve genişlik, 2'lik uzum adımlı bir artık bloğu ile azaltılır. Burada, yükseklik ve genişliği yarıya indirip kanal sayısını yarılayarak geçiş katmanını kullanıyoruz.
 
 ```{.python .input}
 # `num_channels`: the current number of channels
@@ -309,7 +309,7 @@ def block_2():
     return net
 ```
 
-ResNet'e benzer şekilde, çıktıyı üretmek için küresel bir havuzlama katmanı ve tam bağlı bir katman bağlanır.
+ResNet'e benzer şekilde, çıktıyı üretmek için global bir biriktirme katmanı ile tam bağlı bir katman bağlanır.
 
 ```{.python .input}
 net.add(nn.BatchNorm(),
@@ -342,7 +342,7 @@ def net():
 
 ## Eğitim
 
-Burada daha derin bir ağ kullandığımızdan, bu bölümde, hesaplamayı basitleştirmek için giriş yüksekliğini ve genişliğini 224'ten 96'ya düşüreceğiz.
+Burada daha derin bir ağ kullandığımızdan, bu bölümde, hesaplamaları basitleştirmek için girdi yüksekliğini ve genişliğini 224'ten 96'ya düşüreceğiz.
 
 ```{.python .input}
 #@tab all
@@ -353,19 +353,19 @@ d2l.train_ch6(net, train_iter, test_iter, num_epochs, lr)
 
 ## Özet
 
-* DenseNet, giriş ve çıkışların bir araya getirildiği ResNet'in aksine, çapraz katman bağlantıları açısından, kanal boyutundaki giriş ve çıkışları birleştirir.
+* DenseNet, girdi ve çıktıların birlikte toplandığı ResNet'in aksine, çapraz katman bağlantıları bağlanımda, kanal boyutundaki girdi ve çıktıları bitiştirir.
 * DenseNet'i oluşturan ana bileşenler yoğun bloklar ve geçiş katmanlarıdır.
 * Kanal sayısını tekrar küçülten geçiş katmanları ekleyerek ağı oluştururken boyutsallığı kontrol altında tutmamız gerekir.
 
-## Egzersizler
+## Alıştırmalar
 
-1. Neden geçiş katmanında maksimum havuzlama yerine ortalama havuzlama kullanıyoruz?
-1. DenseNet kağıdında belirtilen avantajlardan biri, model parametrelerinin ResNet'ten daha küçük olmasıdır. Neden bu dava?
-1. DenseNet'in eleştirildiği bir sorun, yüksek bellek tüketimi.
-    1. Dava gerçekten bu mu? Gerçek GPU bellek tüketimini görmek için giriş şeklini $224\times 224$ olarak değiştirmeye çalışın.
-    1. Bellek tüketimini azaltmanın alternatif bir yolunu düşünebiliyor musunuz? Çerçeveyi nasıl değiştirmeniz gerekir?
-1. DenseNet kağıt :cite:`Huang.Liu.Van-Der-Maaten.ea.2017` Tablo 1'de sunulan çeşitli DenseNet sürümlerini uygulayın.
-1. DenseNet fikrini uygulayarak MLP tabanlı bir model tasarlar. :numref:`sec_kaggle_house`'teki konut fiyatı tahmini görevine uygulayın.
+1. Neden geçiş katmanında maksimum biriktirme yerine ortalama biriktirme kullanıyoruz?
+1. DenseNet makalesinde belirtilen avantajlardan biri, model parametrelerinin ResNet'ten daha küçük olmasıdır. Bu neden burada geçerlidir?
+1. DenseNet'in eleştirildiği bir sorun, yüksek bellek tüketimidir.
+    1. Bu gerçekten doğru mudur? Gerçek GPU bellek tüketimini görmek için girdi şeklini $224\times 224$ olarak değiştirmeye çalışın.
+    1. Bellek tüketimini azaltmanın alternatif bir yolunu düşünebiliyor musunuz? Çerçeveyi nasıl değiştirmeniz gerekecektir?
+1. DenseNet makalesi :cite:`Huang.Liu.Van-Der-Maaten.ea.2017` Tablo 1'de sunulan çeşitli DenseNet sürümlerini uygulayın.
+1. DenseNet fikrini uygulayarak MLP tabanlı bir model tasarlayın. :numref:`sec_kaggle_house`'teki konut fiyatı tahmini çalışmasına uygulayın.
 
 :begin_tab:`mxnet`
 [Discussions](https://discuss.d2l.ai/t/87)

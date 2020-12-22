@@ -16,15 +16,23 @@ bias -> algoritmalardaki yanlılık
 
 built-in -> yerleşik, gömülü
 
+bus -> veriyolu
+
 co-adaptation -> birlikte-uyarlama
 
 computer vision -> bilgisayarla görme
 
+concatenation -> bitiştirme
+
 confusion-matrix -> hata matrisi
+
+convex -> dışbükey
 
 corpus -> külliyat
 
 covariate -> ortak değişken
+
+crowdsourcing -> kitle kaynak kullanımı
 
 deployment -> konuşlandırma
 
@@ -50,6 +58,8 @@ feature -> öznitelik
 
 floating number -> kayan virgüllü sayılar (gerçel sayı gösterimi)
 
+full rank -> tam kerteli
+
 fully-connected -> tam-bağlı
 
 generative adversarial networks -> çekişmeli üretici ağlar
@@ -66,6 +76,8 @@ hybridization -> melezleştirme
 
 initialization -> ilkleme
 
+internal covariate shift -> dahili eşdeğişken kayması
+
 invariance -> değişmezlik
 
 kernel -> çekirdek
@@ -79,6 +91,8 @@ leaky -> sızıntılı
 likelihood -> olabilirlik
 
 loss function ->  kayıp veya yitim fonksiyonu
+
+meme -> mizah unsuru
 
 minibatch -> minigrup
 
@@ -99,6 +113,10 @@ pipeline -> veri/komut işleme hattı
 pooling -> biriktirme
 
 posterior -> sonsal olasılık
+
+postprocess -> sonradan işlemek
+
+preprocess -> ön işlemek
 
 pretraining -> ön eğitim
 
@@ -165,5 +183,7 @@ uniform -> tekdüze
 validation set -> geçerleme kümesi
 
 variance -> değişinti 
+
+warp -> bükülme
 
 weight decay -> ağırlık sönümü
