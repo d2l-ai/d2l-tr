@@ -94,14 +94,14 @@ RNN'nin hesaplanması sırasında model değişkenleri ve parametreleri arasınd
 ![Üç zaman adımlı bir RNN modeli için bağımlılıkları gösteren hesaplamalı çizge. Kutular değişkenleri (gölgeli olmayan) veya parametreleri (gölgeli) ve daireler işlemleri temsil eder.](../img/rnn-bptt.svg)
 :label:`fig_rnn_bptt`
 
-Az önce belirtildiği gibi, :numref:`fig_rnn_bptt`'teki model parametreleri $\mathbf{W}_{hx}$, $\mathbf{W}_{hh}$ ve $\mathbf{W}_{qh}$'dır. Genel olarak, bu modelin eğitimi $\partial L/\partial \mathbf{W}_{hx}$, $\partial L/\partial \mathbf{W}_{hh}$ ve $\partial L/\partial \mathbf{W}_{qh}$ parametrelerine göre gradyan hesaplama gerektirir. :numref:`fig_rnn_bptt`'teki bağımlılıklara göre, sırayla gradyanlari hesaplamak ve depolamak için okların ters yönde geçebiliriz. Zincir kuralında farklı şekillerdeki matrislerin, vektörlerin ve skalaların çarpımını esnek bir şekilde ifade etmek için :numref:`sec_backprop`'te açıklandığı gibi $\text{prod}$ operatörünü kullanmaya devam ediyoruz.
+Az önce belirtildiği gibi, :numref:`fig_rnn_bptt`'teki model parametreleri $\mathbf{W}_{hx}$, $\mathbf{W}_{hh}$ ve $\mathbf{W}_{qh}$'dır. Genel olarak, bu modelin eğitimi $\partial L/\partial \mathbf{W}_{hx}$, $\partial L/\partial \mathbf{W}_{hh}$ ve $\partial L/\partial \mathbf{W}_{qh}$ parametrelerine göre gradyan hesaplama gerektirir. :numref:`fig_rnn_bptt`'teki bağımlılıklara göre, sırayla gradyanları hesaplamak ve depolamak için okların ters yönünde ilerleyebiliriz. Zincir kuralında farklı şekillerdeki matrislerin, vektörlerin ve skalerlerin çarpımını esnek bir şekilde ifade etmek için :numref:`sec_backprop`'te açıklandığı gibi $\text{prod}$ işlemini kullanmaya devam ediyoruz.
 
-Her şeyden önce, $t$ adımındaki herhangi bir zamanda model çıktısına göre objektif işlevi ayırt etmek oldukça basittir:
+Her şeyden önce, amaç işlevinin türevini herhangi bir $t$ zaman adımındaki model çıktısına göre almak oldukça basittir:
 
 $$\frac{\partial L}{\partial \mathbf{o}_t} =  \frac{\partial l (\mathbf{o}_t, y_t)}{T \cdot \partial \mathbf{o}_t} \in \mathbb{R}^q.$$
 :eqlabel:`eq_bptt_partial_L_ot`
 
-Şimdi, objektif fonksiyonun gradyanını çıktı katmanındaki $\mathbf{W}_{qh}$ parametresine göre hesaplayabiliriz: $\partial L/\partial \mathbf{W}_{qh} \in \mathbb{R}^{q \times h}$. :numref:`fig_rnn_bptt` temel alınarak $L$ $\mathbf{W}_{qh}$'e $\mathbf{o}_1, \ldots, \mathbf{o}_T$ üzerinden $\mathbf{W}_{qh}$'e bağlıdır. Zincir kuralı verimleri kullanma
+Şimdi, amaç fonksiyonun gradyanını çıktı katmanındaki $\mathbf{W}_{qh}$ parametresine göre hesaplayabiliriz: $\partial L/\partial \mathbf{W}_{qh} \in \mathbb{R}^{q \times h}$. :numref:`fig_rnn_bptt` temel alınarak amaç fonksiyonu $L$, $\mathbf{o}_1, \ldots, \mathbf{o}_T$ üzerinden $\mathbf{W}_{qh}$'e bağlıdır. Zincir kuralını kullanırsak şu sonuca ulaşırız,
 
 $$
 \frac{\partial L}{\partial \mathbf{W}_{qh}}
@@ -109,26 +109,26 @@ $$
 = \sum_{t=1}^T \frac{\partial L}{\partial \mathbf{o}_t} \mathbf{h}_t^\top,
 $$
 
-burada $\partial L/\partial \mathbf{o}_t$ :eqref:`eq_bptt_partial_L_ot` tarafından verilir.
+burada $\partial L/\partial \mathbf{o}_t$ :eqref:`eq_bptt_partial_L_ot`'teki gibi hesaplanır.
 
-Daha sonra, :numref:`fig_rnn_bptt`'te gösterildiği gibi, $T$ son zaman adımında $L$ objektif işlev $\mathbf{h}_T$ yalnızca $\mathbf{o}_T$ üzerinden gizli duruma bağlıdır. Bu nedenle, zincir kuralını kullanarak $\partial L/\partial \mathbf{h}_T \in \mathbb{R}^h$'i kolayca bulabiliriz:
+Daha sonra, :numref:`fig_rnn_bptt`'te gösterildiği gibi, $T$ son zaman adımındaki amaç işlevi $L$ gizli durum $\mathbf{h}_T$'ye yalnızca $\mathbf{o}_T$ üzerinden bağlıdır. Bu nedenle, zincir kuralını kullanarak $\partial L/\partial \mathbf{h}_T \in \mathbb{R}^h$'i kolayca bulabiliriz:
 
 $$\frac{\partial L}{\partial \mathbf{h}_T} = \text{prod}\left(\frac{\partial L}{\partial \mathbf{o}_T}, \frac{\partial \mathbf{o}_T}{\partial \mathbf{h}_T} \right) = \mathbf{W}_{qh}^\top \frac{\partial L}{\partial \mathbf{o}_T}.$$
 :eqlabel:`eq_bptt_partial_L_hT_final_step`
 
-$L$ $\mathbf{h}_t$ üzerinden $\mathbf{h}_{t+1}$ ve $\mathbf{o}_t$ numaralı objektif fonksiyonun $\mathbf{h}_t$'ya bağlı olduğu herhangi bir zaman adımı için daha zor olur. Zincir kuralına göre, $t < T$ herhangi bir zamanda $\partial L/\partial \mathbf{h}_t \in \mathbb{R}^h$ gizli durumunun degradyanı olarak yeniden hesaplanabilir:
+$t < T$ adımı için daha karmaşık hale gelir, burada $L$ amaç işlevi $\mathbf{h}_t$'ye $\mathbf{h}_{t+1}$ ve $\mathbf{o}_t$ üzerinden bağlıdır. Zincir kuralına göre, herhangi bir $t < T$ zamanında, gizli durumunun gradyanı, $\partial L/\partial \mathbf{h}_t \in \mathbb{R}^h$, yinelemeli hesaplanabilir:
 
 $$\frac{\partial L}{\partial \mathbf{h}_t} = \text{prod}\left(\frac{\partial L}{\partial \mathbf{h}_{t+1}}, \frac{\partial \mathbf{h}_{t+1}}{\partial \mathbf{h}_t} \right) + \text{prod}\left(\frac{\partial L}{\partial \mathbf{o}_t}, \frac{\partial \mathbf{o}_t}{\partial \mathbf{h}_t} \right) = \mathbf{W}_{hh}^\top \frac{\partial L}{\partial \mathbf{h}_{t+1}} + \mathbf{W}_{qh}^\top \frac{\partial L}{\partial \mathbf{o}_t}.$$
 :eqlabel:`eq_bptt_partial_L_ht_recur`
 
-Analiz için, herhangi bir zaman adım $1 \leq t \leq T$ için tekrarlayan hesaplama genişleyen verir
+Analiz için, herhangi bir zaman adım $1 \leq t \leq T$ için yinelemeli hesaplamayı genişletirsek, şu ifadeye ulaşırız:
 
 $$\frac{\partial L}{\partial \mathbf{h}_t}= \sum_{i=t}^T {\left(\mathbf{W}_{hh}^\top\right)}^{T-i} \mathbf{W}_{qh}^\top \frac{\partial L}{\partial \mathbf{o}_{T+t-i}}.$$
 :eqlabel:`eq_bptt_partial_L_ht`
 
-:eqref:`eq_bptt_partial_L_ht`'ten bu basit doğrusal örnek, uzun dizi modellerinin bazı temel problemlerini zaten sergilediğini görebiliyoruz: $\mathbf{W}_{hh}^\top$'nın potansiyel olarak çok büyük güçlerini içeriyor. İçinde, 1'den küçük özdeğerler kaybolur ve 1'den büyük özdeğerler sapar. Bu sayısal olarak kararsızdır, bu da kendini kaybolan ve patlayan gradyanlar şeklinde gösterir. Bunu ele almanın bir yolu, :numref:`subsec_bptt_analysis`'te ele alındığı gibi, zaman adımlarını hesaplama açısından uygun bir boyutta kesmektir. Pratikte, bu kesme, belirli bir sayıda zaman adımından sonra gradyanyi ayırarak gerçekleştirilir. Daha sonra uzun kısa süreli bellek gibi daha sofistike dizi modellerinin bunu daha da hafifletebileceğini göreceğiz.
+:eqref:`eq_bptt_partial_L_ht`'ten bu basit doğrusal örneğin uzun dizi modellerinin bazı temel problemlerini zaten sergilediğini görebiliyoruz: $\mathbf{W}_{hh}^\top$'nın potansiyel olarak çok büyük kuvvetlerini içerir. İçinde, 1'den küçük özdeğerler kaybolur ve 1'den büyük özdeğerler ıraksar. Bu sayısal olarak kararsızdır, bu da kendini kaybolan ve patlayan gradyanlar şeklinde gösterir. Bunu ele almanın bir yolu, :numref:`subsec_bptt_analysis`'te tartışıldığı gibi, zaman adımlarını hesaplama açısından uygun bir boyutta kesmektir. Pratikte, bu kesme, belirli bir sayıda zaman adımından sonra gradyanyı ayırarak gerçekleştirilir. Daha sonra uzun ömürlü kısa-dönem belleği gibi daha galişmiş dizi modellerinin bunu daha da hafifletebileceğini göreceğiz.
 
-Son olarak, :numref:`fig_rnn_bptt` objektif fonksiyonun $L$ model parametrelerine bağlı olduğunu göstermektedir $\mathbf{W}_{hx}$ ve $\mathbf{W}_{hh}$ gizli katmanda $\mathbf{h}_1, \ldots, \mathbf{h}_T$. Bu tür parametrelere göre gradyanlari hesaplamak için $\partial L / \partial \mathbf{W}_{hx} \in \mathbb{R}^{h \times d}$ ve $\partial L / \partial \mathbf{W}_{hh} \in \mathbb{R}^{h \times h}$,
+Son olarak :numref:`fig_rnn_bptt`, $L$ amaç fonksiyonunun gizli katmandaki $\mathbf{W}_{hx}$ ve $\mathbf{W}_{hh}$ model parametrelerine $\mathbf{h}_1, \ldots, \mathbf{h}_T$ vasıtasıyla bağlı olduğunu gösterir. Bu tür parametrelerin $\partial L / \partial \mathbf{W}_{hx} \in \mathbb{R}^{h \times d}$ ve $\partial L / \partial \mathbf{W}_{hh} \in \mathbb{R}^{h \times h}$'ye göre gradyanları hesaplamak için, zincir kuralını uygularız:
 
 $$
 \begin{aligned}
@@ -141,24 +141,23 @@ $$
 \end{aligned}
 $$
 
-burada :eqref:`eq_bptt_partial_L_hT_final_step` ve :eqref:`eq_bptt_partial_L_ht_recur` tarafından yeniden hesaplanır $\partial L/\partial \mathbf{h}_t$ sayısal kararlılığı etkileyen anahtar miktardır.
+burada :eqref:`eq_bptt_partial_L_hT_final_step` ve :eqref:`eq_bptt_partial_L_ht_recur` ile yinelemeli hesaplanan $\partial L/\partial \mathbf{h}_t$ sayısal kararlılığı etkileyen anahtar değerdir.
 
-Zaman içinde backpropagation RNN'lerde backpropagation uygulaması olduğundan, Biz açıkladığımız gibi :numref:`sec_backprop`, eğitim RNN zaman içinde geri yayılma ile ileri yayılım dönüşümlü. Ayrıca, zaman içinde geri yayılma hesaplar ve sırayla yukarıdaki gradyanlar depolar. Özellikle, depolanan ara değerler $\partial L / \partial \mathbf{W}_{hx}$ ve $\partial L / \partial \mathbf{W}_{hh}$ hesaplamalarında kullanılacak $\partial L/\partial \mathbf{h}_t$ depolama gibi yinelenen hesaplamaları önlemek için yeniden kullanılır.
+Zamanda geri yayma, RNN'lerde geri yayma uygulanması olduğundan, :numref:`sec_backprop`'te açıkladığımız gibi, RNN'leri eğitmek zamanda geri yayma ile ileriye doğru yaymayı değiştirir. Dahası, zamanda geri yayma yukarıdaki gradyanları hesaplar ve sırayla depolar. Özellikle, depolanan ara değerler yinelemeli hesaplamaları önlemek için yeniden kullanılır, örneğin $\partial L / \partial \mathbf{W}_{hx}$ ve $\partial L / \partial \mathbf{W}_{hh}$ hesaplamalarında kullanılacak $\partial L/\partial \mathbf{h}_t$'yi depolamak gibi.
 
 ## Özet
 
-* Zamanda geriye yayılma, yalnızca gizli bir duruma sahip dizi modellerine geri yayılmanın bir uygulamasıdır.
-* Düzenli kesme ve randomize kesme gibi hesaplama kolaylığı ve sayısal kararlılık için kesme gereklidir.
-* Matrislerin yüksek güçleri farklı veya kaybolan özdeğerlere yol açabilir. Bu, patlayan veya kaybolan gradyanlar şeklinde kendini gösterir.
-* Etkili hesaplama için ara değerler zaman içinde geri yayılım sırasında önbelleğe alınır.
+* Zamanda geriye yayma, sadece geri yaymanın gizli bir duruma sahip dizi modellerindeki bir uygulamasıdır.
+* Hesaplama kolaylığı ve sayısal kararlılık için kesme gereklidir, örneğin düzenli kesme ve rasgele kesme gibi.
+* Matrislerin yüksek kuvvetleri ıraksayan veya kaybolan özdeğerlere yol açabilir. Bu, patlayan veya kaybolan gradyanlar şeklinde kendini gösterir.
+* Verimli hesaplama için ara değerler zamanda geri yayma sırasında önbelleğe alınır.
 
 ## Alıştırmalar
 
-1. Biz bir simetrik matris $\mathbf{M} \in \mathbb{R}^{n \times n}$ özdeğerler $\lambda_i$ olan karşılık gelen özvektörler $\mathbf{v}_i$ ($i = 1, \ldots, n$) olan varsayalım. Genellik kaybı olmadan, $|\lambda_i| \geq |\lambda_{i+1}|$ sırayla sipariş edildiklerini varsayalım.
-   1. $\mathbf{M}^k$ özdeğerleri olduğunu göster $\lambda_i^k$.
-   1. Rastgele bir vektör için $\mathbf{x} \in \mathbb{R}^n$, yüksek olasılıklı $\mathbf{M}^k \mathbf{x}$ çok fazla özvektör ile hizalanmış olacağını kanıtlayın $\mathbf{v}_1$
-arasında $\mathbf{M}$. Bu ifadeyi resmileştir.
+1. $\lambda_i$ özdeğerleri $\mathbf{v}_i$ ($i = 1, \ldots, n$) özvektörlerine karşılık gelen bir simetrik matrisimiz $\mathbf{M} \in \mathbb{R}^{n \times n}$ olduğunu varsayalım. Genelleme kaybı olmadan, $|\lambda_i| \geq |\lambda_{i+1}|$ diye sıralanmış olduğunu varsayalım.
+   1. $\lambda_i^k$'nin $\mathbf{M}^k$'nin özdeğerleri olduğunu gösterin.
+   1. Yüksek olasılıkla $\mathbf{x} \in \mathbb{R}^n$ rastgele vektörü için $\mathbf{M}^k \mathbf{x}$ özvektörünün $\mathbf{M}$'deki $\mathbf{v}_1$ özvektörüyle hizalanmış olacağını kanıtlayın. Bu ifadeyi formüle dökün.
    1. Yukarıdaki sonuç RNN'lerdeki gradyanlar için ne anlama geliyor?
-1. gradyan kırpmanın yanı sıra, tekrarlayan sinir ağlarında gradyan patlaması ile başa çıkmak için başka yöntemler düşünebiliyor musunuz?
+1. Gradyan kırpmanın yanı sıra, yinelemeli sinir ağlarında gradyan patlaması ile başa çıkmak için başka yöntemler düşünebiliyor musunuz?
 
 [Tartışmalar](https://discuss.d2l.ai/t/334)
