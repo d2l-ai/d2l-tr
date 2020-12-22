@@ -2,7 +2,11 @@
 
 affine -> afin
 
+anchor -> çapa
+
 array -> dizilim
+
+autoregressive -> özbağlanımlı
 
 backprop -> geriyay
 
@@ -54,9 +58,13 @@ environment -> ortam
 
 epoch -> dönem
 
+extrapolation-> dışdeğerleme
+
 feature -> öznitelik
 
 floating number -> kayan virgüllü sayılar (gerçel sayı gösterimi)
+
+frame -> çerçeve
 
 full rank -> tam kerteli
 
@@ -70,6 +78,8 @@ gradient -> gradyan, eğim
 
 graph -> çizge
 
+hedonic adaptation -> zevksel uyarlama
+
 holdout -> harici tutulan
 
 hybridization -> melezleştirme
@@ -77,6 +87,8 @@ hybridization -> melezleştirme
 initialization -> ilkleme
 
 internal covariate shift -> dahili eşdeğişken kayması
+
+interpolation -> aradeğerleme
 
 invariance -> değişmezlik
 
@@ -90,11 +102,15 @@ leaky -> sızıntılı
 
 likelihood -> olabilirlik
 
+long short-term memory -> uzun ömürlü kısa-dönem belleği
+
 loss function ->  kayıp veya yitim fonksiyonu
 
 meme -> mizah unsuru
 
 minibatch -> minigrup
+
+offset -> bağıl konum
 
 one-hot coding -> bire bir kodlama
 
@@ -105,6 +121,8 @@ padding -> dolgu
 parse -> ayrıştırmak
 
 permutation -> devrişim
+
+perplexity -> şaşkınlık
 
 perturbation -> düzensizlik
 
@@ -158,6 +176,8 @@ serialization -> serileştirme
 
 shell -> kabuk
 
+smoothing -> düzleştirme
+
 softmax -> eşiksiz en büyük işlev veya softmaks
 
 spam -> yaramaz posta
@@ -172,6 +192,8 @@ symmetry -> bakışım
 
 tabular -> çizelge halindeki
 
+token -> andıç
+
 transpose -> devrik
 
 tuple -> çokuzlu
@@ -182,7 +204,9 @@ uniform -> tekdüze
 
 validation set -> geçerleme kümesi
 
-variance -> değişinti 
+variance -> değişinti
+
+vocabulary -> kelime dağarcığı
 
 warp -> bükülme
 

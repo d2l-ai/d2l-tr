@@ -1,59 +1,58 @@
-# Sıra Modelleri
+# Dizi Modelleri
 :label:`sec_sequence`
 
-Netflix'te film izlediğinizi düşünün. İyi bir Netflix kullanıcısı olarak, filmlerin her birini dini olarak değerlendirmeye karar verirsiniz. Sonuçta, iyi bir film iyi bir filmdir, ve sen onlardan daha fazla izlemek istiyorsun, değil mi? Görünüşe göre, işler o kadar basit değil. İnsanların filmler hakkındaki görüşleri zamanla oldukça önemli ölçüde değişebilir. Aslında, psikologların bazı etkileri için isimleri bile vardır:
+Netflix'te film izlediğinizi düşünün. İyi bir Netflix kullanıcısı olarak, filmlerin her birini dürüstçe değerlendirmeye karar veriyorsunuz. Sonuçta, iyi bir film iyi bir filmdir, ve siz onlardan daha fazla izlemek istiyorsunuz, değil mi? Görünüşe göre, bu işler o kadar basit değil. İnsanların filmler hakkındaki görüşleri zamanla oldukça önemli ölçüde değişebilir. Aslında, psikologların bazı etkiler için koydukları isimler bile vardır:
 
-* Başkasının fikrine dayalı olarak “demirleme” var. Örneğin, Oscar ödüllerinden sonra, ilgili filmin reytingleri hala aynı film olmasına rağmen yükselir. Bu etki, ödül unutulana kadar birkaç ay boyunca devam eder. Bu etkisi yarım noktadan fazla puan puan yükseltir olduğu gösterilmiştir
-:cite:`Wu.Ahmed.Beutel.ea.2017`.
-* İnsanların yeni normal olarak geliştirilmiş veya kötüleşmiş bir durumu kabul etmek için hızla adapte olduğu *hedonic adaptation* vardır. Örneğin, birçok iyi film izledikten sonra, bir sonraki filmin eşit derecede iyi veya daha iyi olması beklentileri yüksektir. Bu nedenle, büyük filmler izlendikten sonra ortalama bir film bile kötü sayılabilir.
-* Mevsimsellik var. Çok az izleyici Ağustos ayında Noel Baba filmi izlemek ister.
+* Başkasının fikrine dayalı olarak “çapalama” vardır. Örneğin, Oscar ödüllerinden sonra, ilgili filmin reytingleri hala film aynı olmasına rağmen yükselir. Bu etki, ödül unutulana kadar birkaç ay boyunca devam eder. Bu etkinin yarım puandan fazla reyting yükselttiği gösterilmiştir :cite:`Wu.Ahmed.Beutel.ea.2017`.
+* İnsanların yeni normal olarak geliştirilmiş veya kötüleşmiş bir durumu kabul etmek için hızla adapte olduğu *zevksel uyarlama* vardır. Örneğin, birçok iyi film izledikten sonra, bir sonraki filmin eşit derecede iyi veya daha iyi olması beklentisi yüksektir. Bu nedenle, harika filmler izlendikten sonra ortalama bir film bile kötü sayılabilir.
+* Mevsimsellik vardır. Çok az izleyici Ağustos ayında Noel Baba filmi izlemek ister.
 * Bazı durumlarda, filmler yapımdaki yönetmenlerin veya aktörlerin yanlış davranışlarından dolayı sevilmeyen hale gelir.
-* Bazı filmler kült filmlere dönüşür, çünkü neredeyse komik bir şekilde kötüydüler. *Outer Space* ve Troll 2* bu nedenle yüksek derecede şöhret elde etti.
+* Bazı filmler kült filmlere dönüşmüştür, çünkü neredeyse komik bir şekilde kötüydüler. *Outer Space* ve *Troll 2* bu nedenle yüksek derecede şöhret elde etti.
 
-Kısacası, film reytingleri sabit dışında her şey vardır. Böylece, zamansal dinamikleri kullanarak daha doğru film önerileri :cite:`Koren.2009` yol açtı. Tabii ki, dizi verileri sadece film derecelendirmeleri ile ilgili değildir. Aşağıdakiler daha fazla illüstrasyonlar verir.
+Kısacası, film reytinglerinde sabitlik dışında her şey vardır. Böylece, zamansal dinamikleri kullanmak daha doğru film önerilerine yol açtı :cite:`Koren.2009`. Tabii ki, dizi verileri sadece film derecelendirmeleri ile ilgili değildir. Aşağıda daha fazla örnek görebilirsiniz.
 
-* Birçok kullanıcı, uygulamaları açtıkları zaman geldiğinde son derece özel davranışlara sahiptir. Örneğin, sosyal medya uygulamaları okuldan sonra öğrencilerle çok daha popüler. Borsa alım satım uygulamaları piyasalar açık olduğunda daha yaygın olarak kullanılır.
-* Yarının hisse senedi fiyatlarını tahmin etmek, dün kaçırdığımız bir hisse senedi fiyatının boşluklarını doldurmaktan çok daha zor, her ikisi de bir sayıyı tahmin etme meselesi olsa da. Sonuçta, öngörü, arka görüşten çok daha zordur. İstatistiklerde, eski (bilinen gözlemlerin ötesinde tahmin) *ekstrapolasyon* olarak adlandırılırken, ikincisi (mevcut gözlemler arasındaki tahmin) *enterpolation* olarak adlandırılır.
-* Müzik, konuşma, metin ve videolar doğada sıralı. Eğer onlara izin verseydik çok az anlam ifade ederlerdi. * Köpek ısırığı manşeti, kelimelerin aynı olmasına rağmen, * adam köpeği ısırdığından* çok daha az şaşırtıcıdır.
-* Depremler kuvvetle ilişkilidir, yani büyük bir depremden sonra güçlü deprem olmadan çok daha fazla, çok daha küçük artçı şoklar vardır. Aslında depremler uzamsal olarak ilişkilidir, yani artçı şoklar genellikle kısa bir süre içinde ve yakın bir yerde meydana gelir.
-* Twitter kavgalarında, dans düzenlerinde ve tartışmalarında görülebileceği gibi, insanlar birbirleri ile ardışık bir şekilde etkileşime girerler.
+* Birçok kullanıcı, uygulamaları açtıkları zamana göre son derece özel davranışlara sahiptir. Örneğin, sosyal medya uygulamaları kullanımı öğrencilerde okul zamanından sonra çok daha yaygındır. Borsa alım satım uygulamaları piyasalar açık olduğunda daha yaygın olarak kullanılır.
+* Yarının hisse senedi fiyatlarını tahmin etmek, dün kaçırdığımız bir hisse senedi fiyatının boşluklarını doldurmaktan çok daha zordur, her ne kadar ikisi de bir sayıyı tahmin etme meselesi olsa da. Sonuçta, öngörü, geçmişe görüden çok daha zordur. İstatistiklerde, ilki (bilinen gözlemlerin ötesinde tahmin) *dışdeğerleme (extrapolation)* olarak adlandırılırken, ikincisi (mevcut gözlemler arasındaki tahmin) *aradeğerleme (interpolation)* olarak adlandırılır.
+* Müzik, konuşma, metin ve videolar doğaları gereği dizilidir. Eğer onlarda yer değişimine verseydik, çok az anlam ifade ederlerdi. *Köpek adamı ısırdı* manşeti, kelimelerin aynı olmasına rağmen, *adam köpeği ısırdı* manşetinden çok daha az şaşırtıcıdır.
+* Depremler son derece ilişkilidir, yani büyük bir deprem sonrası güçlü deprem olmayan zamana kıyasla çok daha fazla, çok daha küçük artçı şoklar vardır. Aslında depremler uzamsal olarak ilişkilidir, yani artçı şoklar genellikle kısa bir süre içinde ve yakın bir yerde meydana gelir.
+* Twitter kavgalarında, dans düzenlerinde ve tartışmalarda görülebileceği gibi, insanlar birbirleri ile ardışık bir şekilde etkileşime girerler.
 
 ## İstatistiksel Araçlar
 
-Dizi verileriyle uğraşmak için istatistiksel araçlara ve yeni derin sinir ağı mimarilerine ihtiyacımız var. İşleri basit tutmak için örnek olarak :numref:`fig_ftse100`'te gösterilen hisse senedi fiyatını (FTSE 100 endeksi) kullanırız.
+Dizi verileriyle uğraşmak için istatistiksel araçlara ve yeni derin sinir ağı mimarilerine ihtiyacımız var. İşleri basit tutmak için örnek olarak :numref:`fig_ftse100`'te gösterilen hisse senedi fiyatını (FTSE 100 endeksi) kullanalım.
 
-![FTSE 100 index over about 30 years.](../img/ftse100.png)
+![Yaklaşık 30 yıldan fazla sürenin FTSE 100 endeksi.](../img/ftse100.png)
 :width:`400px`
 :label:`fig_ftse100`
 
-Fiyatları $x_t$ ile gösterelim, yani*zaman adım* $t \in \mathbb{Z}^+$ fiyatını gözlemliyoruz $x_t$. Bu metindeki diziler için $t$'in genellikle ayrık olacağını ve tamsayılara veya alt kümesine göre değişeceğini unutmayın. $t$. günde borsada iyi yapmak isteyen bir tüccarın $x_t$ üzerinden tahmin ettiğini varsayalım
+Fiyatları $x_t$ ile gösterelim, yani *zaman adım* $t \in \mathbb{Z}^+$'de $x_t$ fiyatını gözlemliyoruz. Bu kitapdeki diziler için $t$'in genellikle ayrık olacağını ve tamsayılara veya alt kümesine göre değişeceğini unutmayın. $t$. günde borsada iyi kazanmak isteyen bir borsa simsarının $x_t$ üzerinden tahmin ettiğini varsayalım:
 
 $$x_t \sim P(x_t \mid x_{t-1}, \ldots, x_1).$$
 
-### Otoregresif Modeller
+### Özbağlanımlı Modeller 
 
-Bunu başarmak için, tüccarımız :numref:`sec_linear_concise`'te eğittiğimiz gibi bir regresyon modelini kullanabilir. Sadece bir büyük sorun var: $x_{t-1}, \ldots, x_1$, $t$'e bağlı olarak değişir. Yani, karşılaştığımız veri miktarı ile sayı artar ve bu hesaplamalı olarak izlenebilir hale getirmek için bir yaklaşıma ihtiyacımız olacak. Bu bölümde izleyenlerin çoğu $P(x_t \mid x_{t-1}, \ldots, x_1)$'nin verimli bir şekilde nasıl tahmin edileceği etrafında dönecektir. Kısacası, aşağıdaki gibi iki stratejiye iniyor.
+Bunu başarmak için, simsarımız :numref:`sec_linear_concise`'te eğittiğimiz gibi bir regresyon modelini kullanabilir. Sadece bir büyük sorun var: Girdilerimizin adedi, $x_{t-1}, \ldots, x_1$, $t$'ye bağlı olarak değişir. Yani, karşılaştığımız veri miktarı ile sayı artar ve bunu hesaplamalı olarak işlenebilir hale getirmek için bir yaklaşıma ihtiyacımız vardır. Bu bölümde konuların çoğu $P(x_t \mid x_{t-1}, \ldots, x_1)$'nin verimli bir şekilde nasıl tahmin edileceği etrafında dönecektir. Kısacası, aşağıdaki gibi iki stratejiye indirgeniyor.
 
-İlk olarak, potansiyel olarak oldukça uzun dizinin $x_{t-1}, \ldots, x_1$ gerçekten gerekli olmadığını varsayalım. Bu durumda kendimizi $\tau$ uzunluğunda bir süre ile içerebilir ve sadece $x_{t-1}, \ldots, x_{t-\tau}$ gözlemlerini kullanabiliriz. Acil fayda, şimdi argüman sayısının en azından $t > \tau$ için her zaman aynı olmasıdır. Bu, yukarıda belirtildiği gibi derin bir ağı eğitmemizi sağlar. Bu tür modeller, kelimenin tam anlamıyla kendileri üzerinde gerileme gerçekleştirdikleri için *otoregresif modeller* olarak adlandırılacaktır.
+İlk olarak, potansiyel olarak oldukça uzun dizinin $x_{t-1}, \ldots, x_1$ gerçekten gerekli olmadığını varsayalım. Bu durumda kendimizi $\tau$ uzunluğunda bir süre ile memnun edebilir ve sadece $x_{t-1}, \ldots, x_{t-\tau}$ gözlemlerini kullanabiliriz. İlk faydası, artık argüman sayısının en azından $t > \tau$ için her zaman aynı olmasıdır. Bu, yukarıda belirtildiği gibi derin bir ağı eğitmemizi sağlar. Bu tür modeller, kelimenin tam anlamıyla kendileri üzerinde bağlanım gerçekleştirdikleri için *özbağlanımlı modeller* olarak adlandırılacaktır.
 
-:numref:`fig_sequence-model`'te gösterilen ikinci strateji, geçmiş gözlemlerin $h_t$'sının bir özetini tutmak ve aynı zamanda $\hat{x}_t$'e ek olarak $h_t$'yı güncellemektir. Bu, $\hat{x}_t = P(x_t \mid h_{t})$ ile $x_t$'i ve ayrıca $h_t = g(h_{t-1}, x_{t-1})$ formunun güncellemelerini tahmin eden modellere yol açar. $h_t$ asla gözlenmediğinden, bu modellere *latent otoregresif modeller* de denir.
+:numref:`fig_sequence-model`'te gösterilen ikinci strateji, geçmiş gözlemlerin $h_t$'sının bir özetini tutmak ve aynı zamanda $\hat{x}_t$'in tahmine ek olarak $h_t$'yı güncellemektir. Bu, bize $\hat{x}_t = P(x_t \mid h_{t})$ ile $x_t$'i tahmin eden ve dahası $h_t = g(h_{t-1}, x_{t-1})$ formunu güncelleyen modellere yönlendirir. $h_t$ asla gözlenmediğinden, bu modellere *saklı özbağlanımlı modeller* de denir.
 
-![A latent autoregressive model.](../img/sequence-model.svg)
+![Saklı özbağlanımlı model.](../img/sequence-model.svg)
 :label:`fig_sequence-model`
 
-Her iki durumda da eğitim verilerinin nasıl oluşturulacağına dair açık bir soru ortaya çıkıyor. Biri tipik olarak tarihsel gözlemleri kullanarak, şu ana kadar olan gözlemlere verilen bir sonraki gözlemi tahmin eder. Açıkçası biz hala durmak için zaman beklemiyoruz. Bununla birlikte, ortak bir varsayım, $x_t$'ün spesifik değerlerinin değişebileceği halde, en azından dizinin dinamiklerinin değişmeyeceği yönündedir. Bu makul, çünkü roman dinamikleri sadece bu, roman ve böylece şimdiye kadar sahip olduğumuz verileri kullanarak öngörülebilir değil. İstatistikçiler değişmeyen dinamikleri çağırırlar. Ne olursa olsun ne, biz böylece aracılığıyla tüm dizinin bir tahmin alacak
+Her iki durumda da eğitim verilerinin nasıl oluşturulacağına dair açık bir soru ortaya çıkıyor. Kullanıcı tipik olarak tarihsel gözlemleri kullanarak, şu ana kadar verilen gözlemlere dayanarak bir sonraki gözlemi tahmin eder. Açıkça zamanın hareketsiz kalmasını beklemeyiz. Bununla birlikte, genel varsayım, $x_t$'in özgül değerlerinin değişebileceği halde, en azından dizinin dinamiklerinin değişmeyeceği yönündedir. Bu mantıklı, çünkü yeni dinamikler adı gibi yeni ve bu nedenle şimdiye kadar sahip olduğumuz verileri kullanarak tahmin edilemezler. İstatistikçiler değişmeyen dinamiklere durağan derler. Ne olursa olsun, böylece aşağıdaki ifade aracılığıyla tüm diziyi tahminleyebiliriz:
 
 $$P(x_1, \ldots, x_T) = \prod_{t=1}^T P(x_t \mid x_{t-1}, \ldots, x_1).$$
 
-Sürekli sayılar yerine kelimeler gibi ayrık nesnelerle uğraşırsak yukarıdaki hususların hala geçerli olduğunu unutmayın. Tek fark, böyle bir durumda $P(x_t \mid  x_{t-1}, \ldots, x_1)$'ü tahmin etmek için bir regresyon modeli yerine bir sınıflandırıcı kullanmamız gerektiğidir.
+Sürekli sayılar yerine kelimeler gibi ayrık nesnelerle uğraştığımızda da yukarıdaki hususların hala geçerli olduğunu unutmayın. Tek fark, böyle bir durumda $P(x_t \mid  x_{t-1}, \ldots, x_1)$'ü tahmin etmek için bir regresyon modeli yerine bir sınıflandırıcı kullanmamız gerektiğidir.
 
 ### Markov Modelleri
 
-Otoregresif bir modelde $x_t$'yi tahmin etmek için $x_{t-1}, \ldots, x_1$ yerine sadece $x_{t-1}, \ldots, x_{t-\tau}$ kullandığımız tahminini hatırlayın. Bu yaklaşım doğru olduğunda, dizinin bir *Markov koşulu* karşıladığını söyleriz. Özellikle, eğer $\tau = 1$, biz bir *birinci dereceden Markov modeli* ve $P(x)$
+Özbağlanımlı bir modelde $x_t$'yi tahmin etmek için $x_{t-1}, \ldots, x_1$ yerine sadece $x_{t-1}, \ldots, x_{t-\tau}$ kullandığımız yaklaşımı hatırlayın. Bu yaklaşım doğru olduğunda, dizinin bir *Markov koşulu* karşıladığını söyleriz. Özellikle, eğer $\tau = 1$ ise, bir *birinci dereceden Markov modeli*miz vardır ve $P(x)$ şöyle ifade edilir:
 
 $$P(x_1, \ldots, x_T) = \prod_{t=1}^T P(x_t \mid x_{t-1}) \text{ where } P(x_1 \mid x_0) = P(x_1).$$
 
-Bu tür modeller özellikle $x_t$ yalnızca ayrı bir değer varsayar, çünkü bu durumda dinamik programlama zincir boyunca değerleri tam olarak hesaplamak için kullanılabilir. Örneğin, $P(x_{t+1} \mid x_{t-1})$'in verimli bir şekilde hesaplanmasını sağlayabiliriz:
+Bu tür modeller özellikle $x_t$ yalnızca ayrı bir değer varsayıldığında iyi çalışır, çünkü bu durumda dinamik programlama zincir boyunca değerleri tam olarak hesaplamak için kullanılabilir. Örneğin, $P(x_{t+1} \mid x_{t-1})$'in verimli bir şekilde hesaplanmasını sağlayabiliriz:
 
 $$\begin{aligned}
 P(x_{t+1} \mid x_{t-1})
@@ -63,19 +62,19 @@ P(x_{t+1} \mid x_{t-1})
 \end{aligned}
 $$
 
-Sadece geçmiş gözlemlerin çok kısa bir tarihini hesaba katmamız gerektiği gerçeğini kullanarak: $P(x_{t+1} \mid x_t, x_{t-1}) = P(x_{t+1} \mid x_t)$. Dinamik programlama detaylarına girmek bu bölümün kapsamı dışındadır. Kontrol ve pekiştirme öğrenme algoritmaları bu tür araçları kapsamlı olarak kullanır.
+Sadece geçmiş gözlemlerin çok kısa bir tarihini hesaba katmamız gerektiği gerçeğini kullanabiliriz: $P(x_{t+1} \mid x_t, x_{t-1}) = P(x_{t+1} \mid x_t)$. Dinamik programlama detaylarına girmek bu bölümün kapsamı dışındadır. Kontrol ve pekiştirmeli öğrenme algoritmaları bu tür araçları kapsamlı olarak kullanır.
 
 ### Nedensellik
 
-Prensip olarak, ters sırada $P(x_1, \ldots, x_T)$'ün açılmasında yanlış bir şey yoktur. Sonuçta, koşullandırma ile her zaman üzerinden yazabiliriz
+Prensipte, $P(x_1, \ldots, x_T)$'nin ters sırada açılmasında yanlış bir şey yoktur. Sonuçta, koşullandırma ile her zaman aşağıdaki gibi yazabiliriz:
 
 $$P(x_1, \ldots, x_T) = \prod_{t=T}^1 P(x_t \mid x_{t+1}, \ldots, x_T).$$
 
-Aslında, eğer bir Markov modelimiz varsa, ters koşullu olasılık dağılımı da elde edebiliriz. Bununla birlikte, birçok durumda, veriler için doğal bir yön var, yani zaman içinde ileriye gidiyor. Gelecekteki olayların geçmişi etkilemeyeceği açıktır. Bu nedenle, eğer $x_t$'i değiştirirsek, $x_{t+1}$'un ilerlemesine ne olacağını etkileyebiliriz ama tersi değil. Yani, $x_t$ değiştirirsek, geçmiş olayların üzerindeki dağıtım değişmez. Sonuç olarak, $P(x_t \mid x_{t+1})$'den ziyade $P(x_{t+1} \mid x_t)$'yi açıklamak daha kolay olmalıdır. Örneğin, bazı durumlarda $\epsilon$ bazı katkı maddesi gürültüsü için $x_{t+1} = f(x_t) + \epsilon$'yi bulabildiğimiz gösterilmiştir, oysa tersi doğru değildir :cite:`Hoyer.Janzing.Mooij.ea.2009`. Bu harika bir haber, çünkü tipik olarak tahmin etmekle ilgilendiğimiz ileri yöndür. Peters ve diğerleri tarafından kitap. Bu konuda daha fazla açıkladı :cite:`Peters.Janzing.Scholkopf.2017`. Yüzeyini zar zor çiziyoruz.
+Aslında, eğer bir Markov modelimiz varsa, bir ters koşullu olasılık dağılımı da elde edebiliriz. Bununla birlikte, birçok durumda, veriler için doğal bir yön vardır, yani zaman içinde ileriye giderler. Gelecekteki olayların geçmişi etkilemeyeceği açıktır. Bu nedenle, eğer $x_t$'i değiştirirsek, $x_{t+1}$'nin ilerlemesine ne olacağını etkileyebiliriz ama tersi değil. Yani, $x_t$'i değiştirirsek, geçmiş olayların üzerindeki dağılım değişmez. Sonuç olarak, $P(x_t \mid x_{t+1})$'den ziyade $P(x_{t+1} \mid x_t)$'yi açıklamak daha kolay olmalıdır. Örneğin, bazı durumlarda $\epsilon$ gürültüsü için $x_{t+1} = f(x_t) + \epsilon$'yi bulabildiğimiz gösterilmiştir, oysa tersi doğru değildir :cite:`Hoyer.Janzing.Mooij.ea.2009`. Bu harika bir haber, çünkü tipik olarak tahmin etmekle ilgilendiğimiz ileri yöndür. Peters ve diğerlerinin kitabı bu konuda daha fazla açıklama yapmaktadır :cite:`Peters.Janzing.Scholkopf.2017`. Bizse sadece yüzeyine bakıyoruz.
 
 ## Eğitim
 
-Bu kadar çok istatistiksel aracı inceledikten sonra, bunu pratikte deneyelim. Bazı veriler üreterek başlıyoruz. İşleri basit tutmak için, $1, 2, \ldots, 1000$ adımlar için bazı katkı maddesi gürültülü bir sinüs fonksiyonu kullanarak sıra verilerimizi üretiyoruz.
+Bu kadar çok istatistiksel aracı inceledikten sonra, bunu pratikte de deneyelim. Biraz veri üreterek başlıyoruz. İşleri basit tutmak için, $1, 2, \ldots, 1000$ adımları için biraz gürültülü bir sinüs fonksiyonu kullanarak dizi verimizi üretiyoruz.
 
 ```{.python .input}
 %matplotlib inline
@@ -116,7 +115,7 @@ x = d2l.sin(0.01 * time) + d2l.normal([T], 0, 0.2)
 d2l.plot(time, [x], 'time', 'x', xlim=[1, 1000], figsize=(6, 3))
 ```
 
-Ardından, böyle bir diziyi modelimizin üzerinde eğitebileceği özelliklere ve etiketlere dönüştürmemiz gerekiyor. $\tau$ gömme boyutuna dayanarak, verileri $y_t = x_t$ ve $\mathbf{x}_t = [x_{t-\tau}, \ldots, x_{t-1}]$ çiftleri halinde eşleriz. Zekice okuyucu, bunun bize $\tau$ daha az veri örneği verdiğini fark etmiş olabilir, çünkü bunların ilk $\tau$ için yeterli geçmişe sahip değiliz. Basit bir düzeltme, özellikle dizinin uzunsa, bu birkaç terimi atmaktır. Alternatif olarak diziyi sıfırlarla doldur. Burada eğitim için sadece ilk 600 özellikli etiket çiftini kullanıyoruz.
+Ardından, böyle bir diziyi modelimizin üzerinde eğitebileceği özniteliklere ve etiketlere dönüştürmemiz gerekiyor. $\tau$ gömme boyutuna dayanarak, verileri $y_t = x_t$ ve $\mathbf{x}_t = [x_{t-\tau}, \ldots, x_{t-1}]$ çiftleri halinde eşleriz. Dikkatli okuyucu, bunun bize $\tau$ adet daha az veri örneği verdiğini fark etmiş olabilir, çünkü ilk $\tau$ için yeterli geçmişe sahip değiliz. Basit bir düzeltme, özellikle dizi uzunsa, bu ilk birkaç terimi atmaktır. Alternatif olarak diziye sıfırlarla dolgu yapabiliriz. Burada eğitim için sadece ilk 600 öznitelik-etiket çiftini kullanıyoruz.
 
 ```{.python .input}
 #@tab mxnet, pytorch
@@ -144,7 +143,7 @@ train_iter = d2l.load_array((features[:n_train], labels[:n_train]),
                             batch_size, is_train=True)
 ```
 
-Burada mimariyi oldukça basit tutuyoruz: sadece iki tam bağlı katman ile bir MLP, ReLU aktivasyonu ve kare kaybı.
+Burada mimariyi oldukça basit tutuyoruz: Sadece iki tam bağlı katmanlı bir MLP, ReLU etkinleştirmesi ve kare kaybı.
 
 ```{.python .input}
 # A simple MLP
@@ -193,7 +192,7 @@ def get_net():
 loss = tf.keras.losses.MeanSquaredError()
 ```
 
-Şimdi modeli eğitmeye hazırız. Aşağıdaki kod esas olarak :numref:`sec_linear_concise` gibi önceki bölümlerdeki eğitim döngüsüyle aynıdır. Böylece, çok fazla ayrıntıya girmeyeceğiz.
+Şimdi modeli eğitmeye hazırız. Aşağıdaki kod esas olarak :numref:`sec_linear_concise` gibi, önceki bölümlerdeki eğitim döngüsüyle aynıdır. Bu yüzden, çok fazla ayrıntıya girmeyeceğiz.
 
 ```{.python .input}
 def train(net, train_iter, loss, epochs, lr):
@@ -250,7 +249,7 @@ train(net, train_iter, loss, 5, 0.01)
 
 ## Tahmin
 
-Eğitim kaybı küçük olduğu için modelimizin iyi çalışmasını bekleriz. Bunun pratikte ne anlama geldiğini görelim. Kontrol edilmesi gereken ilk şey, modelin sadece bir sonraki adım adımında, yani *bir adım öngörü* ne kadar iyi tahmin edebildiğidir.
+Eğitim kaybı küçük olduğu için modelimizin iyi çalışmasını bekleriz. Bunun pratikte ne anlama geldiğini görelim. Kontrol edilmesi gereken ilk şey, modelin sadece bir sonraki adımında ne kadar iyi tahmin edebildiğidir, yani *bir adım sonrasını tahmin*.
 
 ```{.python .input}
 #@tab all
@@ -259,7 +258,7 @@ d2l.plot([time, time[tau:]], [d2l.numpy(x), d2l.numpy(onestep_preds)], 'time',
          'x', legend=['data', '1-step preds'], xlim=[1, 1000], figsize=(6, 3))
 ```
 
-Bir adım önündeki tahminler, beklediğimiz gibi güzel görünüyor. 604 (`n_train + tau`) gözlemlerin ötesinde bile tahminler hala güvenilir görünüyor. Bununla birlikte, bunun için küçük bir sorun var: Sıra verilerini yalnızca 604 zaman adımına kadar gözlemlersek, gelecekteki tüm bir adım önde gelen tahminler için girdileri almayı umut edemeyiz. Bunun yerine, her seferinde bir adım ileriye doğru ilerlemeliyiz:
+Bir adım sonrası tahminler, beklediğimiz gibi güzel görünüyor. 604 (`n_train + tau`) gözlemin ötesinde bile tahminler hala güvenilir görünüyor. Bununla birlikte, burada küçük bir sorun var: Sıra verilerini yalnızca 604 zaman adımına kadar gözlemlersek, gelecekteki tüm bir adım önde gelen tahminler için girdileri almayı umut edemeyiz. Bunun yerine, her seferinde bir adım ileriye doğru ilerlemeliyiz:
 
 $$
 \hat{x}_{605} = f(x_{601}, x_{602}, x_{603}, x_{604}), \\
@@ -270,7 +269,7 @@ $$
 \ldots
 $$
 
-Genel olarak, $x_t$'e kadar gözlenen bir dizi için $\hat{x}_{t+k}$ zaman adımında öngörülen çıkış $\hat{x}_{t+k}$*$k$-adım öngörü* olarak adlandırılır. $x_{604}$'ya kadar gözlemlediğimizden, $k$-adım öngörüsü $\hat{x}_{604+k}$'dir. Başka bir deyişle, çok ileride öngörüler yapmak için kendi tahminlerimizi kullanmak zorunda kalacağız. Bakalım ne kadar iyi gidiyor.
+Genel olarak, $x_t$'ye kadar gözlenen bir dizi için $t+k$ zaman adımında tahmin edilen çıktı $\hat{x}_{t+k}$, *$k$-adım tahmin* olarak adlandırılır. $x_{604}$'ya kadar gözlemlediğimizden, $k$-adım tahminimiz $\hat{x}_{604+k}$'dir. Başka bir deyişle, çok ileriki tahminler için kendi tahminlerimizi kullanmak zorunda kalacağız. Bakalım ne kadar iyi gidicek.
 
 ```{.python .input}
 #@tab mxnet, pytorch
@@ -299,9 +298,9 @@ d2l.plot([time, time[tau:], time[n_train + tau:]],
          xlim=[1, 1000], figsize=(6, 3))
 ```
 
-Yukarıdaki örnekte gösterildiği gibi, bu muhteşem bir başarısızlık. Tahminler birkaç tahmin adımından sonra oldukça hızlı bir şekilde bir sabite bozulur. Algoritma neden bu kadar kötü çalışıyordu? Bu sonuçta hataların oluşması gerçeğinden kaynaklanmaktadır. 1. adımdan sonra bazı hata $\epsilon_1 = \bar\epsilon$ olduğunu varsayalım. Şimdi 2. adım için*giriş* $\epsilon_1$ tarafından tedirgürleniyor, bu nedenle $\epsilon_2 = \bar\epsilon + c \epsilon_1$ bazı sabit $c$ ve benzeri için bazı hatalar yaşıyoruz. Hata, gerçek gözlemlerden oldukça hızlı bir şekilde ayrılabilir. Bu yaygın bir fenomendir. Örneğin, önümüzdeki 24 saat için hava tahminleri oldukça doğru olma eğilimindedir ama bunun ötesinde doğruluk hızla azalır. Bu bölümde ve ötesinde bunun iyileştirilmesi için yöntemleri tartışacağız.
+Yukarıdaki örnekte görüldüğü gibi, tam bir felaket. Tahminler birkaç tahminden sonra oldukça hızlı bir şekilde bir sabite sönümlenir. Peki algoritma neden bu kadar kötü çalıştı? Bu sonuç hataların birikmesinden kaynaklanmaktadır. 1. adımdan sonra hatamızın $\epsilon_1 = \bar\epsilon$ olduğunu varsayalım. Şimdi 2. adımda *girdi* $\epsilon_1$ tarafından dürtülüyor ve bazı $c$ sabiti için $\epsilon_2 = \bar\epsilon + c \epsilon_1$ formunda hatalar görüyoruz. Hata, gerçek gözlemlerden oldukça hızlı bir şekilde uzaklaşabilir. Bu yaygın bir olgudur. Örneğin, önümüzdeki 24 saat için hava tahminleri oldukça doğru olma eğilimindedir ama bunun ötesinde doğruluk hızla azalır. Bu bölümde ve sonrasında bunun iyileştirilmesi için olası yöntemleri tartışacağız.
 
-$k = 1, 4, 16, 64$ için tüm dizideki tahminleri hesaplayarak $k$ adım önde gelen tahminlerdeki zorluklara daha yakından bir göz atalım.
+$k = 1, 4, 16, 64$ için tüm dizideki tahminleri hesaplayarak $k$ adım ilerideki tahminlerdeki zorluklara daha yakından bir göz atalım.
 
 ```{.python .input}
 #@tab all
@@ -345,34 +344,34 @@ d2l.plot([time[tau + i - 1: T - max_steps + i] for i in steps],
          figsize=(6, 3))
 ```
 
-Bu, geleceğe daha da ileriye doğru tahmin etmeye çalıştıkça, öngörünün kalitesinin nasıl değiştiğini açıkça göstermektedir. 4 adım önündeki tahminler hala iyi görünse de, bunun ötesinde her şey neredeyse işe yaramaz.
+Bu, gelecekte daha da ileriyi doğru tahmin etmeye çalıştıkça, tahminin kalitesinin nasıl değiştiğini açıkça göstermektedir. 4 adım ilerideki tahminler hala iyi görünse de, bunun ötesinde herhangi birşey neredeyse işe yaramaz.
 
 ## Özet
 
-* İnterpolasyon ve ekstrapolasyon arasında zorluk oldukça fark vardır. Sonuç olarak, bir diziniz varsa, eğitim sırasında verilerin zamansal sırasına daima saygı gösterin, yani gelecekteki verileri asla eğitmeyiniz.
-* Dizi modelleri tahmin için özel istatistiksel araçlar gerektirir. İki popüler seçenek otoregresif modeller ve latent-değişken otoregresif modellerdir.
-* Nedensel modellerde (örn. ileriye giden zaman), ileri yönün tahmin edilmesi genellikle ters yönden çok daha kolaydır.
-* $t$'e kadar gözlenen bir dizi için, $t+k$ zaman adımındaki tahmin edilen çıktı*$k$ adım öngörü* olur. $k$'yı artırarak zaman içinde daha da tahmin ettiğimiz gibi, hatalar birikir ve tahminin kalitesi genellikle dramatik bir şekilde bozulur.
+* Aradeğerleme ve dışdeğerleme arasında zorluk bakımında oldukça fark vardır. Sonuç olarak, bir diziniz varsa, eğitim sırasında verilerin zamansal sırasına daima saygı gösterin, yani gelecekteki veriler ile asla eğitmeyin.
+* Dizi modelleri tahmin için özel istatistiksel araçlar gerektirir. İki popüler seçenek özbağlanımlı modeller ve saklı-değişken özbağlanımlı modellerdir.
+* Nedensel modellerde (örn. ileriye akan zaman), ileri yönün tahmin edilmesi genellikle ters yönden çok daha kolaydır.
+* $t$'ye kadar gözlenen bir dizi için, $t+k$ zaman adımındaki tahmin edilen çıktı *$k$-adım tahmin* olur. $k$'yı artırarak daha da ileriki zaman için tahmin ettiğimizde, hatalar birikir ve tahminin kalitesi genellikle dramatik bir şekilde bozulur.
 
-## Egzersizler
+## Alıştırmalar
 
-1. Bu bölümün deneyinde modeli geliştirin.
-    1. Geçmiş 4 gözlemden daha fazlasını mı dahil ediyorsun? Gerçekten kaç taneye ihtiyacın var?
-    1. Gürültü olmasaydı kaç tane geçmiş gözlemlere ihtiyacınız olurdu? İpucu: diferansiyel denklem olarak $\sin$ ve $\cos$ yazabilirsiniz.
-    1. Toplam özellik sayısını sabit tutarken eski gözlemleri de dahil edebilir misiniz? Bu doğruluğu artırır mı? Neden?
-    1. Sinir ağı mimarisini değiştirebilir ve performansı değerlendirebilir.
-1. Bir yatırımcı satın almak için iyi bir güvenlik bulmak istiyor. Hangisinin iyi olacağına karar vermek için geçmiş dönüşlere bakar. Bu stratejide ne yanlış gidebilir ki?
-1. Nedensellik metin için de geçerli midir? Hangi dereceye kadar?
-1. Verilerin dinamiğini yakalamak için gizli bir otoregresif modelin ne zaman gerekli olabileceğine dair bir örnek verin.
+1. Bu bölümün deneyindeki modeli geliştirin.
+    1. Geçmiş 4 gözlemden daha fazlasını mı dahil ediyor musunuz? Gerçekten kaç taneye ihtiyacınız var?
+    1. Gürültü olmasaydı kaç tane geçmiş gözleme ihtiyacınız olurdu? İpucu: $\sin$ ve $\cos$'u diferansiyel denklem olarak  yazabilirsiniz.
+    1. Toplam öznitelik sayısını sabit tutarken eski gözlemleri de dahil edebilir misiniz? Bu doğruluğu artırır mı? Neden?
+    1. Sinir ağı mimarisini değiştirin ve performansını değerlendirin.
+1. Bir yatırımcı satın almak için iyi bir yatırım bulmak istiyor. Hangisinin iyi olacağına karar vermek için geçmiş dönemlere bakıyor. Bu stratejide ne yanlış gidebilir ki?
+1. Nedensellik metinler için de geçerli midir? Peki ne dereceye kadar?
+1. Verinin dinamiğini yakalamak için gizli bir özbağlanımlı modelin ne zaman gerekli olabileceğine dair bir örnek verin.
 
 :begin_tab:`mxnet`
-[Discussions](https://discuss.d2l.ai/t/113)
+[Tartışmalar](https://discuss.d2l.ai/t/113)
 :end_tab:
 
 :begin_tab:`pytorch`
-[Discussions](https://discuss.d2l.ai/t/114)
+[Tartışmalar](https://discuss.d2l.ai/t/114)
 :end_tab:
 
 :begin_tab:`tensorflow`
-[Discussions](https://discuss.d2l.ai/t/1048)
+[Tartışmalar](https://discuss.d2l.ai/t/1048)
 :end_tab:
