@@ -10,5 +10,5 @@ Aslında, dil modellemesi, dizi öğrenmenin yapabileceklerinin sadece küçük 
 ```toc
 :maxdepth: 2
 
-
+gru
 ```

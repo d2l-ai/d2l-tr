@@ -1,15 +1,15 @@
-# Kapitalı Tekrarlayan Üniteler (GRU)
+# Kapılı Yinelemeli Birimler (GRU)
 :label:`sec_gru`
 
-:numref:`sec_bptt`'te, degradelerin RNN'lerde nasıl hesaplandığını tartıştık. Özellikle matrislerin uzun ürünlerinin kaybolan veya patlayan gradyanlara yol açabileceğini bulduk. Bu tür degrade anomalilerinin pratikte ne anlama geldiğini kısaca düşünelim:
+:numref:`sec_bptt`'te, gradyanların RNN'lerde nasıl hesaplandığını tartıştık. Özellikle matrislerin uzun çarpımlarının kaybolan veya patlayan gradyanlara yol açabileceğini bulduk. Bu tür gradyan sıradışılıklarının pratikte ne anlama geldiğini hakkında kısaca düşünelim:
 
-* Gelecekteki tüm gözlemleri tahmin etmek için erken bir gözlemin son derece önemli olduğu bir durumla karşılaşabiliriz. İlk gözlem bir sağlama toplamı içerir ve hedef sağlama toplamının dizinin sonunda doğru olup olmadığını fark etmektir biraz karmaşık durum düşünün. Bu durumda, ilk belirtecin etkisi hayati önem taşır. Hayati önem taşıyan erken bilgileri bir *bellek hücresinde* depolamak için bazı mekanizmalara sahip olmak istiyoruz. Böyle bir mekanizma olmadan, bu gözlemlere çok büyük bir degrade atamak zorunda kalacağız, çünkü sonraki tüm gözlemleri etkiler.
-* Bazı belirteçlerin uygun gözlem taşımadığı durumlarla karşılaşabiliriz. Örneğin, bir web sayfasını ayrıştırırken, sayfada iletilen yaklaşımın değerlendirilmesi amacıyla alakasız olan yardımcı HTML kodu olabilir. Gizli durum temsilinde bu tür belirteçleri atlama* için bazı mekanizmaya sahip olmak istiyoruz.
-* Bir dizinin parçaları arasında mantıksal bir kırılma olduğu durumlarla karşılaşabiliriz. Örneğin, bir kitaptaki bölümler arasında bir geçiş veya bir ayı ile menkul kıymetler için boğa piyasası arasında bir geçiş olabilir. Bu durumda iç durum temsilimizi sıfırlamak* bir araca sahip olmak güzel olurdu.
+* Gelecekteki tüm gözlemleri tahmin etmek için erken bir gözlemin son derece önemli olduğu bir durumla karşılaşabiliriz. Biraz karmaşık bir durumu düşünün; ilk gözlem bir sağlama toplamı (checksum) içerir ve hedef de sağlama toplamının dizinin sonunda doğru olup olmadığını fark etmektir. Bu durumda, ilk andıcın etkisi hayati önem taşır. Hayati önem taşıyan erken bilgileri bir *bellek hücresinde* depolamak için bazı mekanizmalara sahip olmak isteriz. Böyle bir mekanizma olmadan, bu gözlemlere çok büyük bir gradyan atamak zorunda kalacağız, çünkü sonraki tüm gözlemleri etkilerler.
+* Bazı andıçların uygun gözlem taşımadığı durumlarla karşılaşabiliriz. Örneğin, bir web sayfasını ayrıştırırken, sayfada iletilen duygunun değerlendirilmesi amacıyla alakasız olan yardımcı HTML kodu olabilir. Gizli durum temsilinde bu tür andıçları *atlamak* için birtakım mekanizmaya sahip olmak isteriz.
+* Bir dizinin parçaları arasında mantıksal bir kırılma olduğu durumlarla karşılaşabiliriz. Örneğin, bir kitaptaki bölümler arasında bir geçiş veya menkul kıymetler piyasasında hisse değerleri arasında bir geçiş olabilir. Bu durumda iç durum temsilimizi *sıfırlamak* için bir araca sahip olmak güzel olurdu.
 
-Bunu ele almak için bir dizi yöntem önerilmiştir. En erken biri :numref:`sec_lstm` yılında tartışacağız uzun kısa süreli bellek :cite:`Hochreiter.Schmidhuber.1997` olduğunu. Kapıdaki tekrarlayan ünite (GRU) :cite:`Cho.Van-Merrienboer.Bahdanau.ea.2014`, genellikle benzer performans sunan ve :cite:`Chung.Gulcehre.Cho.ea.2014`'in hesaplanmasının önemli ölçüde daha hızlı olduğu biraz daha aerodinamik bir varyanttır. Sadeliğinden dolayı, GRU ile başlayalım.
+Bunu ele almak için bir dizi yöntem önerilmiştir. İlk öncülerden biri :numref:`sec_lstm`'de tartışacağımız uzun ömürlü kısa-dönem belleğidir :cite:`Hochreiter.Schmidhuber.1997`. Kapılı yinelemeli birim (GRU) :cite:`Cho.Van-Merrienboer.Bahdanau.ea.2014`, genellikle benzer performans sunan ve :cite:`Chung.Gulcehre.Cho.ea.2014` hesaplanmanın önemli ölçüde daha hızlı olduğu biraz daha elverişli bir türdür. Sadeliğinden dolayı, GRU ile başlayalım.
 
-## Gated Gizli Durum
+## Kapılı Gizli Durum
 
 Vanilya RNN ve GRU'lar arasındaki anahtar ayrım, gizli durumun ikinci destek geçit olmasıdır. Bu, gizli bir durumun *güncellenmesi* gerektiği zamanlara ve ayrıca *reset* olması gerektiği zamanlara yönelik özel mekanizmalarımız olduğu anlamına gelir. Bu mekanizmalar öğrenilir ve yukarıda listelenen endişeleri ele alır. Örneğin, ilk belirteç büyük önem taşıyorsa, ilk gözlemden sonra gizli durumu güncellememeyi öğreneceğiz. Aynı şekilde, ilgisiz geçici gözlemleri atlamayı öğreneceğiz. Son olarak, gerektiğinde gizli durumu sıfırlamayı öğreneceğiz. Bunu aşağıda ayrıntılı olarak tartışıyoruz.
 

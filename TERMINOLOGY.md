@@ -1,213 +1,216 @@
 ## Terimler
+:label:`terminology`
 
-affine -> afin
+affine; afin
 
-anchor -> çapa
+anchor; çapa
 
-array -> dizilim
+array; dizilim
 
-autoregressive -> özbağlanımlı
+autoregressive; özbağlanımlı
 
-backprop -> geriyay
+backprop; geriyay
 
-backpropagation -> geri yayma
+backpropagation; geri yayma
 
-batch -> toptan, toplu
+batch; toptan, toplu
 
-bias -> sinir ağlarında ek girdi
+bias; sinir ağlarında ek girdi
 
-bias -> algoritmalardaki yanlılık
+bias; algoritmalardaki yanlılık
 
-built-in -> yerleşik, gömülü
+built-in; yerleşik, gömülü
 
-bus -> veriyolu
+bus; veriyolu
 
-co-adaptation -> birlikte-uyarlama
+checksum; sağlama toplamı
 
-computer vision -> bilgisayarla görme
+co-adaptation; birlikte-uyarlama
 
-concatenation -> bitiştirme
+computer vision; bilgisayarla görme
 
-confusion-matrix -> hata matrisi
+concatenation; bitiştirme
 
-convex -> dışbükey
+confusion-matrix; hata matrisi
 
-corpus -> külliyat
+convex; dışbükey
 
-covariate -> ortak değişken
+corpus; külliyat
 
-crowdsourcing -> kitle kaynak kullanımı
+covariate; ortak değişken
 
-deployment -> konuşlandırma
+crowdsourcing; kitle kaynak kullanımı
 
-descent -> iniş
+deployment; konuşlandırma
 
-discriminator -> ayrımcı
+descent; iniş
 
-domain -> etki alanı
+discriminator; ayrımcı
 
-downsampling -> altörnekleme
+domain; etki alanı
 
-dropout ->  hattan düşme
+downsampling; altörnekleme
 
-early stopping -> erken durdurma
+dropout;  hattan düşme
 
-elementwise -> eleman yönlü
+early stopping; erken durdurma
 
-environment -> ortam
+elementwise; eleman yönlü
 
-epoch -> dönem
+environment; ortam
 
-extrapolation-> dışdeğerleme
+epoch; dönem
 
-feature -> öznitelik
+extrapolation; dışdeğerleme
 
-floating number -> kayan virgüllü sayılar (gerçel sayı gösterimi)
+feature; öznitelik
 
-frame -> çerçeve
+floating number; kayan virgüllü sayılar (gerçel sayı gösterimi)
 
-full rank -> tam kerteli
+frame; çerçeve
 
-fully-connected -> tam-bağlı
+full rank; tam kerteli
 
-generative adversarial networks -> çekişmeli üretici ağlar
+fully-connected; tam-bağlı
 
-gpu -> grafik işleme birimi
+generative adversarial networks; çekişmeli üretici ağlar
 
-gradient -> gradyan, eğim
+gpu; grafik işleme birimi
 
-graph -> çizge
+gradient; gradyan, eğim
 
-hedonic adaptation -> zevksel uyarlama
+graph; çizge
 
-holdout -> harici tutulan
+hedonic adaptation; zevksel uyarlama
 
-hybridization -> melezleştirme
+holdout; harici tutulan
 
-initialization -> ilkleme
+hybridization; melezleştirme
 
-internal covariate shift -> dahili eşdeğişken kayması
+initialization; ilkleme
 
-interpolation -> aradeğerleme
+internal covariate shift; dahili eşdeğişken kayması
 
-invariance -> değişmezlik
+interpolation; aradeğerleme
 
-kernel -> çekirdek
+invariance; değişmezlik
 
-lasso regression -> kement regresyon
+kernel; çekirdek
 
-latent -> saklı
+lasso regression; kement regresyon
 
-leaky -> sızıntılı
+latent; saklı
 
-likelihood -> olabilirlik
+leaky; sızıntılı
 
-long short-term memory -> uzun ömürlü kısa-dönem belleği
+likelihood; olabilirlik
 
-loss function ->  kayıp veya yitim fonksiyonu
+long short-term memory; uzun ömürlü kısa-dönem belleği
 
-meme -> mizah unsuru
+loss function; kayıp veya yitim fonksiyonu
 
-minibatch -> minigrup
+meme; mizah unsuru
 
-offset -> bağıl konum
+minibatch; minigrup
 
-one-hot coding -> bire bir kodlama
+offset; bağıl konum
 
-optimizer - > eniyileyici
+one-hot coding; bire bir kodlama
 
-padding -> dolgu
+optimizer; eniyileyici
 
-parse -> ayrıştırmak
+padding; dolgu
 
-permutation -> devrişim
+parse; ayrıştırmak
 
-perplexity -> şaşkınlık
+permutation; devrişim
 
-perturbation -> düzensizlik
+perplexity; şaşkınlık
 
-pipeline -> veri/komut işleme hattı
+perturbation; düzensizlik
 
-pooling -> biriktirme
+pipeline; veri/komut işleme hattı
 
-posterior -> sonsal olasılık
+pooling; biriktirme
 
-postprocess -> sonradan işlemek
+posterior; sonsal olasılık
 
-preprocess -> ön işlemek
+postprocess; sonradan işlemek
 
-pretraining -> ön eğitim
+preprocess; ön işlemek
 
-prior -> önsel olasılık
+pretraining; ön eğitim
 
-receptive field -> alım alanı
+prior; önsel olasılık
 
-recurrent neural network -> yinelemeli sinir ağı
+receptive field; alım alanı
 
-regression -> bağlanım veya regresyon
+recurrent neural network; yinelemeli sinir ağı
 
-regressor -> bağlanımcı
+regression; bağlanım veya regresyon
 
-regularization -> düzenlileştirme
+regressor; bağlanımcı
 
-reinforcement learning -> pekiştirmeli öğrenme
+regularization; düzenlileştirme
 
-residual networks -> artık ağlar
+reinforcement learning; pekiştirmeli öğrenme
 
-ridge regression -> sırt regresyon
+residual networks; artık ağlar
 
-robust -> gürbüz
+ridge regression; sırt regresyon
 
-quantization -> nicemleme
+robust; gürbüz
 
-sample -> örneklem
+quantization; nicemleme
 
-sanity check -> makulluk kontrolü
+sample; örneklem
 
-scaler -> sayıl, skaler
+sanity check; makulluk kontrolü
 
-script -> betik
+scaler; sayıl, skaler
 
-semantic segmentation -> anlamsal bölünme
+script; betik
 
-sequence -> dizi
+semantic segmentation; anlamsal bölünme
 
-serialization -> serileştirme
+sequence; dizi
 
-shell -> kabuk
+serialization; serileştirme
 
-smoothing -> düzleştirme
+shell; kabuk
 
-softmax -> eşiksiz en büyük işlev veya softmaks
+smoothing; düzleştirme
 
-spam -> yaramaz posta
+softmax; eşiksiz en büyük işlev veya softmaks
 
-stride -> uzun adım
+spam; yaramaz posta
 
-string -> dizgi
+stride; uzun adım
 
-stochastic -> rasgele
+string; dizgi
 
-symmetry -> bakışım
+stochastic; rasgele
 
-tabular -> çizelge halindeki
+symmetry; bakışım
 
-token -> andıç
+tabular; çizelge halindeki
 
-transpose -> devrik
+token; andıç
 
-tuple -> çokuzlu
+transpose; devrik
 
-underflow -> küçümenlik
+tuple; çokuzlu
 
-uniform -> tekdüze
+underflow; küçümenlik
 
-validation set -> geçerleme kümesi
+uniform; tekdüze
 
-variance -> değişinti
+validation set; geçerleme kümesi
 
-vocabulary -> kelime dağarcığı
+variance; değişinti
 
-warp -> bükülme
+vocabulary; kelime dağarcığı
 
-weight decay -> ağırlık sönümü
+warp; bükülme
+
+weight decay; ağırlık sönümü
