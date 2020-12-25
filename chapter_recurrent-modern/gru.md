@@ -1,4 +1,4 @@
-# Kapılı Yinelemeli Birimler (GRU)
+# Geçitli Yinelemeli Birimler (GRU)
 :label:`sec_gru`
 
 :numref:`sec_bptt`'te, gradyanların RNN'lerde nasıl hesaplandığını tartıştık. Özellikle matrislerin uzun çarpımlarının kaybolan veya patlayan gradyanlara yol açabileceğini bulduk. Bu tür gradyan sıradışılıklarının pratikte ne anlama geldiğini hakkında kısaca düşünelim:
@@ -7,15 +7,15 @@
 * Bazı andıçların uygun gözlem taşımadığı durumlarla karşılaşabiliriz. Örneğin, bir web sayfasını ayrıştırırken, sayfada iletilen duygunun değerlendirilmesi amacıyla alakasız olan yardımcı HTML kodu olabilir. Gizli durum temsilinde bu tür andıçları *atlamak* için birtakım mekanizmaya sahip olmak isteriz.
 * Bir dizinin parçaları arasında mantıksal bir kırılma olduğu durumlarla karşılaşabiliriz. Örneğin, bir kitaptaki bölümler arasında bir geçiş veya menkul kıymetler piyasasında hisse değerleri arasında bir geçiş olabilir. Bu durumda iç durum temsilimizi *sıfırlamak* için bir araca sahip olmak güzel olurdu.
 
-Bunu ele almak için bir dizi yöntem önerilmiştir. İlk öncülerden biri :numref:`sec_lstm`'de tartışacağımız uzun ömürlü kısa-dönem belleğidir :cite:`Hochreiter.Schmidhuber.1997`. Kapılı yinelemeli birim (GRU) :cite:`Cho.Van-Merrienboer.Bahdanau.ea.2014`, genellikle benzer performans sunan ve :cite:`Chung.Gulcehre.Cho.ea.2014` hesaplanmanın önemli ölçüde daha hızlı olduğu biraz daha elverişli bir türdür. Sadeliğinden dolayı, GRU ile başlayalım.
+Bunu ele almak için bir dizi yöntem önerilmiştir. İlk öncülerden biri :numref:`sec_lstm`'de tartışacağımız uzun ömürlü kısa-dönem belleğidir :cite:`Hochreiter.Schmidhuber.1997`. Geçitli yinelemeli birim (GRU) :cite:`Cho.Van-Merrienboer.Bahdanau.ea.2014`, genellikle benzer performans sunan ve :cite:`Chung.Gulcehre.Cho.ea.2014` hesaplanmanın önemli ölçüde daha hızlı olduğu biraz daha elverişli bir türdür. Sadeliğinden dolayı, GRU ile başlayalım.
 
-## Kapılı Gizli Durum
+## Geçitli Gizli Durum
 
-Vanilya RNN ve GRU'lar arasındaki anahtar ayrım, gizli durumun ikinci destek geçit olmasıdır. Bu, gizli bir durumun *güncellenmesi* gerektiği zamanlara ve ayrıca *reset* olması gerektiği zamanlara yönelik özel mekanizmalarımız olduğu anlamına gelir. Bu mekanizmalar öğrenilir ve yukarıda listelenen endişeleri ele alır. Örneğin, ilk belirteç büyük önem taşıyorsa, ilk gözlemden sonra gizli durumu güncellememeyi öğreneceğiz. Aynı şekilde, ilgisiz geçici gözlemleri atlamayı öğreneceğiz. Son olarak, gerektiğinde gizli durumu sıfırlamayı öğreneceğiz. Bunu aşağıda ayrıntılı olarak tartışıyoruz.
+Sıradan RNN ve GRU'lar arasındaki anahtar ayrım, ikincisinin gizli durumu geçitlemeyi desteklemesidir. Bu, gizli bir durumun *güncellenmesi* gerektiği zamanlara ve ayrıca *sıfırlanması* gerektiği zamanlara yönelik özel mekanizmalarımız olduğu anlamına gelir. Bu mekanizmalar öğrenilir ve yukarıda listelenen kaygıları ele alır. Örneğin, ilk andıç büyük önem taşıyorsa, ilk gözlemden sonra gizli durumu güncellememeyi öğreneceğiz. Aynı şekilde, ilgisiz geçici gözlemleri atlamayı öğreneceğiz. Son olarak, gerektiğinde gizli durumu sıfırlamayı öğreneceğiz. Bunları aşağıda ayrıntılı olarak tartışıyoruz.
 
-### Kapısı ve Güncelleme Kapısı
+### Sıfırlama Geçidi ve Güncelleme Geçidi
 
-Tanıştırmamız gereken ilk şey, *reset gate* ve *update gate*. Onları $(0, 1)$'te girdileri olan vektörler olacak şekilde tasarlıyoruz, böylece dışbükey kombinasyonlar gerçekleştirebiliriz. Örneğin, bir sıfırlama geçidi, önceki durumun ne kadarını hala hatırlamak isteyebileceğimizi kontrol etmemizi sağlar. Aynı şekilde, bir güncelleme kapısı yeni devletin ne kadarının eski devletin sadece bir kopyası olduğunu kontrol etmemizi sağlayacaktır.
+Tanışmamız gereken ilk kavramlar, *sıfırlama geçidi* ve *güncelleme geçidi*dir. Onları $(0, 1)$'te girdileri olan vektörler olacak şekilde tasarlıyoruz, böylece dışbükey bileşimleri gerçekleştirebiliriz. Örneğin, bir sıfırlama geçidi, önceki durumun ne kadarını hala hatırlamak isteyebileceğimizi kontrol etmemizi sağlar. Aynı şekilde, bir güncelleme geçidi yeni durumun ne kadarının eski durumun bir kopyası olacağını kontrol etmemizi sağlayacaktır.
 
 Bu kapıları mühendisleştirerek başlıyoruz. :numref:`fig_gru_1`, mevcut zaman adımının girişi ve önceki zaman adımının gizli durumu göz önüne alındığında, bir GRU'daki hem sıfırlama hem de güncelleme kapıları için girişleri göstermektedir. İki kapının çıkışları, sigmoid aktivasyon işlevine sahip iki tam bağlı katman tarafından verilir.
 
@@ -235,7 +235,7 @@ d2l.train_ch8(model, train_iter, vocab, lr, num_epochs, device)
 * Güncelleme kapıları dizilerdeki uzun vadeli bağımlılıkları yakalamaya yardımcı olur.
 * GRU'lar, sıfırlama kapısı açıldığında aşırı durum olarak temel RNN'leri içerir. Ayrıca güncelleme kapısını açarak sonradan atlayabilirler.
 
-## Egzersizler
+## Alıştırmalar
 
 1. Zaman adımında $t'$ zaman adım $t > t'$ çıktısını tahmin etmek için girdiyi kullanmak istediğimizi varsayalım. Her zaman adım için sıfırlama ve güncelleme kapıları için en iyi değerler nelerdir?
 1. Hiperparametreleri ayarlayın ve çalışma süresi, şaşkınlık ve çıktı dizisi üzerindeki etkilerini analiz edin.
@@ -243,9 +243,9 @@ d2l.train_ch8(model, train_iter, vocab, lr, num_epochs, device)
 1. Yalnızca bir GRU'nun parçalarını, örneğin yalnızca bir sıfırlama kapısı veya yalnızca bir güncelleme kapısı ile uygularsanız ne olur?
 
 :begin_tab:`mxnet`
-[Discussions](https://discuss.d2l.ai/t/342)
+[Tartışmalar](https://discuss.d2l.ai/t/342)
 :end_tab:
 
 :begin_tab:`pytorch`
-[Discussions](https://discuss.d2l.ai/t/1056)
+[Tartışmalar](https://discuss.d2l.ai/t/1056)
 :end_tab:

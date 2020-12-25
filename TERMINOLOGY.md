@@ -73,6 +73,8 @@ full rank; tam kerteli
 
 fully-connected; tam-bağlı
 
+gate; geçit
+
 generative adversarial networks; çekişmeli üretici ağlar
 
 gpu; grafik işleme birimi
