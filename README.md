@@ -23,7 +23,7 @@ Hedeflerimiz:
 1. Teknik detayların etkileşimli tartışılması ve soruların cevaplanması için bir forum ile tamamlanan
 bir kaynak sunmaktır.
 
-## D2L'yi Kullanan Universiteler
+## D2L'yi Kullanan 	Üniversiteler
 <p align="center">
   <img width="600"  src="static/frontpage/_images/map.png">
 </p>
