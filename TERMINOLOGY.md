@@ -23,6 +23,8 @@ built-in; yerleşik, gömülü
 
 bus; veriyolu
 
+broadcast; yayınlama
+
 checksum; sağlama toplamı
 
 co-adaptation; birlikte-uyarlama

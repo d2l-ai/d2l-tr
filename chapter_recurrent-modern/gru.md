@@ -15,14 +15,14 @@ Sıradan RNN ve GRU'lar arasındaki anahtar ayrım, ikincisinin gizli durumu ge�
 
 ### Sıfırlama Geçidi ve Güncelleme Geçidi
 
-Tanışmamız gereken ilk kavramlar, *sıfırlama geçidi* ve *güncelleme geçidi*dir. Onları $(0, 1)$'te girdileri olan vektörler olacak şekilde tasarlıyoruz, böylece dışbükey bileşimleri gerçekleştirebiliriz. Örneğin, bir sıfırlama geçidi, önceki durumun ne kadarını hala hatırlamak isteyebileceğimizi kontrol etmemizi sağlar. Aynı şekilde, bir güncelleme geçidi yeni durumun ne kadarının eski durumun bir kopyası olacağını kontrol etmemizi sağlayacaktır.
+Tanışmamız gereken ilk kavramlar, *sıfırlama geçidi* ve *güncelleme geçidi*dir. Onları $(0, 1)$'de girdileri olan vektörler olacak şekilde tasarlıyoruz, böylece dışbükey bileşimleri gerçekleştirebiliriz. Örneğin, bir sıfırlama geçidi, önceki durumun ne kadarını hala hatırlamak isteyebileceğimizi kontrol etmemizi sağlar. Aynı şekilde, bir güncelleme geçidi yeni durumun ne kadarının eski durumun bir kopyası olacağını kontrol etmemizi sağlayacaktır.
 
-Bu kapıları mühendisleştirerek başlıyoruz. :numref:`fig_gru_1`, mevcut zaman adımının girişi ve önceki zaman adımının gizli durumu göz önüne alındığında, bir GRU'daki hem sıfırlama hem de güncelleme kapıları için girişleri göstermektedir. İki kapının çıkışları, sigmoid aktivasyon işlevine sahip iki tam bağlı katman tarafından verilir.
+Bu geçitleri işleyerek başlıyoruz. :numref:`fig_gru_1`, mevcut zaman adımının girdiyi ve önceki zaman adımının gizli durumu göz önüne alındığında, bir GRU'daki hem sıfırlama hem de güncelleme geçitleri için girdileri göstermektedir. İki geçidin çıktıları, sigmoid etkinleştirme işlevine sahip iki tam bağlı katman tarafından verilir.
 
-![Computing the reset gate and the update gate in a GRU model.](../img/gru-1.svg)
+![Bir GRU modelinde sıfırlama ve güncelleme geçitlerini hesaplama.](../img/gru-1.svg)
 :label:`fig_gru_1`
 
-Matematiksel olarak, belirli bir zaman adımı $t$ için, girişin bir minibatch $\mathbf{X}_t \in \mathbb{R}^{n \times d}$ (örnek sayısı: $n$, giriş sayısı: $d$) olduğunu varsayalım ve önceki zaman adımının gizli durumu $\mathbf{H}_{t-1} \in \mathbb{R}^{n \times h}$ (gizli birimlerin sayısı: $h$). Daha sonra, sıfırlama kapısı $\mathbf{R}_t \in \mathbb{R}^{n \times h}$ ve güncelleştirme kapısı $\mathbf{Z}_t \in \mathbb{R}^{n \times h}$ aşağıdaki gibi hesaplanır:
+Matematiksel olarak, belirli bir zaman adımı $t$ için, girdinin bir minigrubun $\mathbf{X}_t \in \mathbb{R}^{n \times d}$ (örnek sayısı: $n$, girdi sayısı: $d$) ve önceki zaman adımının gizli durumunun $\mathbf{H}_{t-1} \in \mathbb{R}^{n \times h}$ (gizli birimlerin sayısı: $h$) olduğunu varsayalım . O zaman, sıfırlama geçidi $\mathbf{R}_t \in \mathbb{R}^{n \times h}$ ve güncelleştirme geçidi $\mathbf{Z}_t \in \mathbb{R}^{n \times h}$ aşağıdaki gibi hesaplanır:
 
 $$
 \begin{aligned}
@@ -31,47 +31,45 @@ $$
 \end{aligned}
 $$
 
-burada $\mathbf{W}_{xr}, \mathbf{W}_{xz} \in \mathbb{R}^{d \times h}$ ve $\mathbf{W}_{hr}, \mathbf{W}_{hz} \in \mathbb{R}^{h \times h}$ ağırlık parametreleridir ve $\mathbf{b}_r, \mathbf{b}_z \in \mathbb{R}^{1 \times h}$ önyargılardır. Yayının (bkz. :numref:`subsec_broadcasting`) toplamı sırasında tetiklendiğini unutmayın. Giriş değerlerini $(0, 1)$ aralığına dönüştürmek için sigmoid işlevleri (:numref:`sec_mlp`'te tanıtıldığı gibi) kullanıyoruz.
+burada $\mathbf{W}_{xr}, \mathbf{W}_{xz} \in \mathbb{R}^{d \times h}$ ve $\mathbf{W}_{hr}, \mathbf{W}_{hz} \in \mathbb{R}^{h \times h}$ ağırlık parametreleridir ve $\mathbf{b}_r, \mathbf{b}_z \in \mathbb{R}^{1 \times h}$ ek girdilerdir. Yayınlamanın (bkz. :numref:`subsec_broadcasting`) toplama sırasında tetiklendiğini unutmayın. Girdi değerlerini $(0, 1)$ aralığına dönüştürmek için sigmoid işlevleri (:numref:`sec_mlp`'te tanıtıldığı gibi) kullanırız.
 
-### Aday Gizli Devlet
+### Aday Gizli Durum
 
-Ardından, $\mathbf{R}_t$'i sıfırlama kapısını :eqref:`rnn_h_with_state`'teki normal gizli durum güncelleme mekanizmasıyla entegre edelim. Aşağıdakilere yol açar
-*aday gizli durum*
-$\tilde{\mathbf{H}}_t \in \mathbb{R}^{n \times h}$ zaman adımında $t$:
+Ardından, $\mathbf{R}_t$'i sıfırlama geçidini :eqref:`rnn_h_with_state`'teki normal gizli durum güncelleme mekanizmasıyla tümleştirelim. Bizi $t$ zaman adımında aşağıdaki *aday gizli durum* $\tilde{\mathbf{H}}_t \in \mathbb{R}^{n \times h}$'ye yönlendirir:
 
 $$\tilde{\mathbf{H}}_t = \tanh(\mathbf{X}_t \mathbf{W}_{xh} + \left(\mathbf{R}_t \odot \mathbf{H}_{t-1}\right) \mathbf{W}_{hh} + \mathbf{b}_h),$$
 :eqlabel:`gru_tilde_H`
 
-burada $\mathbf{W}_{xh} \in \mathbb{R}^{d \times h}$ ve $\mathbf{W}_{hh} \in \mathbb{R}^{h \times h}$ ağırlık parametreleridir, $\mathbf{b}_h \in \mathbb{R}^{1 \times h}$ önyargı ve $\odot$ sembolü Hadamard (elementwise) ürün operatörüdür. Burada, aday gizli durumdaki değerlerin $(-1, 1)$ aralığında kalmasını sağlamak için tanh şeklinde bir doğrusal olmayan bir özellik kullanıyoruz.
+burada $\mathbf{W}_{xh} \in \mathbb{R}^{d \times h}$ ve $\mathbf{W}_{hh} \in \mathbb{R}^{h \times h}$ ağırlık parametreleridir, $\mathbf{b}_h \in \mathbb{R}^{1 \times h}$ ek girdi ve $\odot$ sembolü Hadamard (eleman yönlü) çarpım işlemidir. Burada, aday gizli durumdaki değerlerin $(-1, 1)$ aralığında kalmasını sağlamak için tanh şeklinde bir doğrusal olmayan bir işlev kullanıyoruz.
 
-Sonuç, güncelleme kapısının eylemini dahil etmemiz gerektiğinden bir *aday* oldu. :eqref:`rnn_h_with_state` ile karşılaştırıldığında, şimdi önceki durumların etkisi $\mathbf{R}_t$ ve $\mathbf{H}_{t-1}$'nin :eqref:`gru_tilde_H`'te elementsel çarpımı ile azaltılabilir. Sıfırlama kapısı $\mathbf{R}_t$ girişleri 1'e yakın olduğunda, :eqref:`rnn_h_with_state`'te olduğu gibi bir vanilya RNN kurtarırız. Sıfırlama kapısı $\mathbf{R}_t$'nın 0'a yakın olan tüm girişleri için, aday gizli durum, giriş olarak $\mathbf{X}_t$ olan bir MLP'nin sonucudur. Önceden var olan herhangi bir gizli durum böylece*reset* varsayılanlara ayarlanır.
+Sonuç, hala güncelleme geçidinin eylemini dahil etmemiz gerektiğinden bir *adaydır*. :eqref:`rnn_h_with_state` ile karşılaştırıldığında, önceki durumların etkisi $\mathbf{R}_t$ ve $\mathbf{H}_{t-1}$'nin :eqref:`gru_tilde_H`'te eleman yönlü çarpımı ile azaltılabilir. Sıfırlama geçidi $\mathbf{R}_t$ girdileri 1'e yakın olduğunda, :eqref:`rnn_h_with_state`'te olduğu gibi sıradan bir RNN elde ederiz. Sıfırlama geçidi $\mathbf{R}_t$'nın 0'a yakın olan tüm girdileri için, aday gizli durum, girdisi $\mathbf{X}_t$ olan bir MLP'nin sonucudur. Önceden var olan herhangi bir gizli durum böylece *sıfırlanarak* varsayılanlara döner.
 
-:numref:`fig_gru_2`, sıfırlama kapısını uyguladıktan sonra hesaplama akışını gösterir.
+:numref:`fig_gru_2`, sıfırlama geçidini uyguladıktan sonraki hesaplama akışını gösterir.
 
-![Computing the candidate hidden state in a GRU model.](../img/gru-2.svg)
+![GRU'de aday gizli durumu hesaplama.](../img/gru-2.svg)
 :label:`fig_gru_2`
 
-### Gizli Devlet
+### Gizli Durum
 
-Son olarak, güncelleme kapısının etkisini dahil etmemiz gerekiyor $\mathbf{Z}_t$. Bu, yeni gizli devlet $\mathbf{H}_t \in \mathbb{R}^{n \times h}$'in sadece eski devlet $\mathbf{H}_{t-1}$ ve yeni aday devletin $\tilde{\mathbf{H}}_t$'ün ne kadar kullanıldığını belirler. $\mathbf{Z}_t$ güncelleme kapısı bu amaçla kullanılabilir, sadece hem $\mathbf{H}_{t-1}$ hem de $\tilde{\mathbf{H}}_t$ arasındaki elementsel dışbükey kombinasyonları alarak kullanılabilir. Bu, GRU için son güncelleştirme denklemine yol açar:
+Son olarak, güncelleme geçid $\mathbf{Z}_t$'nin etkisini dahil etmemiz gerekiyor. Bu, yeni gizli durum $\mathbf{H}_t \in \mathbb{R}^{n \times h}$'in sadece eski durum $\mathbf{H}_{t-1}$'in ve yeni aday durum $\tilde{\mathbf{H}}_t$'nin ne kadar kullanıldığını belirler. $\mathbf{Z}_t$ güncelleme geçidi bu amaçla kullanılabilir, basitçe hem $\mathbf{H}_{t-1}$ hem de $\tilde{\mathbf{H}}_t$ arasındaki eleman yönlü dışbükey birleşimler alarak kullanılabilir. Bu da, GRU için son güncelleştirme denklemine yol açar:
 
 $$\mathbf{H}_t = \mathbf{Z}_t \odot \mathbf{H}_{t-1}  + (1 - \mathbf{Z}_t) \odot \tilde{\mathbf{H}}_t.$$
 
-Güncelleme kapısı $\mathbf{Z}_t$ 1'e yakın olduğunda, sadece eski durumu koruruz. Bu durumda $\mathbf{X}_t$'den gelen bilgiler esas olarak göz ardı edilir, bağımlılık zincirinde $t$ zaman adımını etkin bir şekilde atlanır. Buna karşılık, $\mathbf{Z}_t$ 0'a yakın olduğunda, yeni gizli durum $\mathbf{H}_t$ aday gizli devlet $\tilde{\mathbf{H}}_t$'ye yaklaşır. Bu tasarımlar, RNN'lerdeki kaybolan degrade problemiyle başa çıkmamıza ve büyük zaman adım mesafeleri olan diziler için daha iyi yakalama bağımlılıklarıyla başa çıkmamıza yardımcı olabilir. Örneğin, güncelleme kapısı, tüm bir alt dizinin tüm zaman adımları için 1'e yakınsa, başlangıç zamanındaki eski gizli durum, alt sıranın uzunluğuna bakılmaksızın kolayca korunur ve sonuna kadar geçirilir.
+Güncelleme geçidi $\mathbf{Z}_t$ 1'e yakın olduğunda, sadece eski durumu koruruz. Bu durumda $\mathbf{X}_t$'den gelen bilgiler esasen göz ardı edilir, bağlılık zincirinde $t$ zaman adımı etkin bir şekilde atlanır. Buna karşılık, $\mathbf{Z}_t$ 0'a yakın olduğunda, yeni gizli durum $\mathbf{H}_t$ aday gizli durum $\tilde{\mathbf{H}}_t$'ye yaklaşır. Bu tasarımlar, RNN'lerdeki kaybolan gradyan sorunuyla başa çıkmamıza ve büyük zaman adım mesafeleri olan diziler için bağlılıkları daha iyi yakalamamıza yardımcı olabilirler. Örneğin, güncelleme geçidi tüm bir alt dizinin tüm zaman adımları için 1'e yakınsa, başlangıç zamanındaki eski gizli durum alt sıranın uzunluğuna bakılmaksızın kolayca korunur ve sonuna kadar geçirilir.
 
-:numref:`fig_gru_3`, güncelleme kapısı harekete geçtikten sonra hesaplama akışını gösterir.
+:numref:`fig_gru_3`, güncelleme geçidi harekete geçtikten sonra hesaplama akışını gösterir.
 
-![Computing the hidden state in a GRU model.](../img/gru-3.svg)
+![GRU modelinde gizli durumu hesaplama.](../img/gru-3.svg)
 :label:`fig_gru_3`
 
 Özetle, GRU'lar aşağıdaki iki ayırt edici özelliğe sahiptir:
 
-* Sıfırlama kapıları dizilerdeki kısa vadeli bağımlılıkları yakalamaya yardımcı olur.
-* Güncelleme kapıları dizilerdeki uzun vadeli bağımlılıkları yakalamaya yardımcı olur.
+* Sıfırlama geçitleri dizilerdeki kısa vadeli bağlılıkları yakalamaya yardımcı olur.
+* Güncelleme geçitleri dizilerdeki uzun vadeli bağlılıkları yakalamaya yardımcı olur.
 
 ## Sıfırdan Uygulama
 
-GRU modelini daha iyi anlamak için, sıfırdan uygulamamıza izin verin. :numref:`sec_rnn_scratch`'te kullandığımız zaman makinesi veri kümesini okuyarak başlıyoruz. Veri kümesini okuma kodu aşağıda verilmiştir.
+GRU modelini daha iyi anlamak için sıfırdan uygulayalım. :numref:`sec_rnn_scratch`'te kullandığımız zaman makinesi veri kümesini okuyarak başlıyoruz. Veri kümesini okuma kodu aşağıda verilmiştir.
 
 ```{.python .input}
 from d2l import mxnet as d2l
@@ -93,9 +91,9 @@ batch_size, num_steps = 32, 35
 train_iter, vocab = d2l.load_data_time_machine(batch_size, num_steps)
 ```
 
-### Model Parametrelerini Başlatma
+### Model Parametrelerini İlkleme
 
-Bir sonraki adım model parametrelerini başlatmaktır. Ağırlıkları standart sapma ile bir Gauss dağılımından 0.01 olarak çiziyoruz ve önyargı 0'a ayarlıyoruz. Hiperparametre `num_hiddens`, gizli birimlerin sayısını tanımlar. Güncelleme kapısı, sıfırlama kapısı, aday gizli durumu ve çıkış katmanı ile ilgili tüm ağırlıkları ve önyargıları başlatacağız.
+Bir sonraki adım model parametrelerini ilklemektir. Ağırlıkları standart sapması 0.01 olan bir Gauss dağılımından çekiyoruz ve ek girdiyi 0'a ayarlıyoruz. Hiperparametre `num_hiddens`, gizli birimlerin sayısını tanımlar. Güncelleme geçidi, sıfırlama geçidi, aday gizli durumu ve çıktı katmanı ile ilgili tüm ağırlıkları ve ek girdileri ilkleyeceğiz.
 
 ```{.python .input}
 def get_params(vocab_size, num_hiddens, device):
@@ -150,7 +148,7 @@ def get_params(vocab_size, num_hiddens, device):
 
 ### Modelin Tanımlanması
 
-Şimdi gizli durum başlatma işlevini tanımlayacağız `init_gru_state`. :numref:`sec_rnn_scratch`'te tanımlanan `init_rnn_state` işlevi gibi, bu işlev, değerleri sıfırlar olan bir şekle (toplu boyut, gizli birim sayısı) sahip bir tensör döndürür.
+Şimdi gizli durum ilkleme işlevini tanımlayacağız `init_gru_state`. :numref:`sec_rnn_scratch`'te tanımlanan `init_rnn_state` işlevi gibi, bu işlev, değerleri sıfırlar olan (toplu boyut, gizli birim sayısı) şekline sahip bir tensör döndürür.
 
 ```{.python .input}
 def init_gru_state(batch_size, num_hiddens, device):
@@ -198,7 +196,7 @@ def gru(inputs, state, params):
 
 ### Eğitim ve Tahmin
 
-Eğitim ve öngörü, :numref:`sec_rnn_scratch`'teki gibi tam olarak aynı şekilde çalışır. Eğitimden sonra, sırasıyla sağlanan “zaman yolcusu” ve “yolcu” ön eklerini takip eden eğitim setindeki şaşkınlığı ve tahmin edilen diziyi yazdırırız.
+Eğitim ve tahmin, tam olarak :numref:`sec_rnn_scratch`'tekiyle aynı şekilde çalışır. Eğitimden sonra, sırasıyla sağlanan “zaman yolcusu” ve “yolcusu” ön eklerini takip eden eğitim kümesindeki şaşkınlığı ve tahmin edilen diziyi yazdırırız.
 
 ```{.python .input}
 #@tab all
@@ -209,9 +207,9 @@ model = d2l.RNNModelScratch(len(vocab), num_hiddens, device, get_params,
 d2l.train_ch8(model, train_iter, vocab, lr, num_epochs, device)
 ```
 
-## Özlü Uygulama
+## Kısa Uygulama
 
-Üst düzey API'lerde, doğrudan bir GPU modelini oluşturabiliriz. Bu, yukarıda açıkça yaptığımız tüm yapılandırma ayrıntılarını kapsüller. Kod, daha önce yazdığımız birçok ayrıntı için Python yerine derlenmiş operatörleri kullandığı için önemli ölçüde daha hızlıdır.
+Üst düzey API'lerde, doğrudan bir GPU modelini oluşturabiliriz. Bu, yukarıda açıkça yaptığımız tüm yapılandırma ayrıntılarını gizler. Kod, daha önce yazdığımız birçok ayrıntı için Python yerine derlenmiş operatörleri kullandığı için önemli ölçüde daha hızlıdır.
 
 ```{.python .input}
 gru_layer = rnn.GRU(num_hiddens)
@@ -230,17 +228,17 @@ d2l.train_ch8(model, train_iter, vocab, lr, num_epochs, device)
 
 ## Özet
 
-* Geçmeli RNN'ler, büyük zaman adım mesafeleri olan diziler için bağımlılıkları daha iyi yakalayabilir.
-* Sıfırlama kapıları dizilerdeki kısa vadeli bağımlılıkları yakalamaya yardımcı olur.
-* Güncelleme kapıları dizilerdeki uzun vadeli bağımlılıkları yakalamaya yardımcı olur.
-* GRU'lar, sıfırlama kapısı açıldığında aşırı durum olarak temel RNN'leri içerir. Ayrıca güncelleme kapısını açarak sonradan atlayabilirler.
+* Geçitli RNN'ler, büyük zaman adım mesafeleri olan diziler için bağlılıkları daha iyi yakalayabilir.
+* Sıfırlama geçitleri dizilerdeki kısa vadeli bağlılıkları yakalamaya yardımcı olur.
+* Güncelleme geçitleri dizilerdeki uzun vadeli bağlılıkları yakalamaya yardımcı olur.
+* GRU'lar, sıfırlama geçidi açıldığında en uç durum olarak temel RNN'leri içerir. Ayrıca güncelleme geçidini açarak alt dizileri atlayabilirler.
 
 ## Alıştırmalar
 
-1. Zaman adımında $t'$ zaman adım $t > t'$ çıktısını tahmin etmek için girdiyi kullanmak istediğimizi varsayalım. Her zaman adım için sıfırlama ve güncelleme kapıları için en iyi değerler nelerdir?
+1. Sadece $t'$ zaman adımını girdi olarak kullanarak $t > t'$ zaman adımlarındaki çıktıyı tahmin etmek için istediğimizi varsayalım. Her zaman adımında sıfırlama ve güncelleme geçitleri için en iyi değerler nelerdir?
 1. Hiperparametreleri ayarlayın ve çalışma süresi, şaşkınlık ve çıktı dizisi üzerindeki etkilerini analiz edin.
-1. `rnn.RNN` ve `rnn.GRU` uygulamaları için çalışma zamanı, şaşkınlık ve çıkış dizelerini birbirleriyle karşılaştırın.
-1. Yalnızca bir GRU'nun parçalarını, örneğin yalnızca bir sıfırlama kapısı veya yalnızca bir güncelleme kapısı ile uygularsanız ne olur?
+1. `rnn.RNN` ve `rnn.GRU` uygulamaları için çalışma zamanı, şaşkınlık ve çıktı dizgilerini birbirleriyle karşılaştırın.
+1. Yalnızca GRU'nun parçalarını, örneğin yalnızca bir sıfırlama geçidi veya yalnızca bir güncelleme geçidi, uygularsanız ne olur?
 
 :begin_tab:`mxnet`
 [Tartışmalar](https://discuss.d2l.ai/t/342)
