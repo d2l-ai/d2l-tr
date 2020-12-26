@@ -11,4 +11,5 @@ Aslında, dil modellemesi, dizi öğrenmenin yapabileceklerinin sadece küçük 
 :maxdepth: 2
 
 gru
+lstm
 ```

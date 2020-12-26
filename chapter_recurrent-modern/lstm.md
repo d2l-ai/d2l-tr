@@ -1,15 +1,15 @@
-# Uzun Kısa Süreli Bellek (LSTM)
+# Uzun Ömürlü Kısa-Dönem Belleği (LSTM)
 :label:`sec_lstm`
 
-Gizli değişken modellerde uzun vadeli bilgi koruma ve kısa vadeli giriş atlama sorununun üstesinden gelinmesi uzun zamandır var olmuştur. Bunu ele almak için en erken yaklaşımlardan biri uzun kısa süreli bellek (LSTM) :cite:`Hochreiter.Schmidhuber.1997` oldu. GRU'nun birçok özelliklerini paylaşıyor. İlginçtir ki, LSTM'ler GRU'lardan biraz daha karmaşık bir tasarıma sahiptir, ancak GRU'lardan neredeyse yirmi yıl önce gelir.
+Gizli değişkenli modellerde uzun vadeli bilgi koruma ve kısa vadeli girdi atlama sorunu uzun zamandır var olmuştur. Bunu ele almak için öncü yaklaşımlardan biri uzun ömürlü kısa-dönem belleği (LSTM) :cite:`Hochreiter.Schmidhuber.1997` oldu. GRU'nun birçok özelliklerini paylaşıyor. İlginçtir ki, LSTM'ler GRU'lardan biraz daha karmaşık bir tasarıma sahiptir, ancak GRU'lardan neredeyse yirmi yıl önce ortaya konmuştur.
 
-## Geçmeli Bellek Hücresi
+## Geçitli Bellek Hücresi
 
 Muhtemelen LSTM'nin tasarımı bir bilgisayarın mantık kapılarından esinlenilmiştir. LSTM, gizli durumla aynı şekle sahip bir *bellek hücresi* (veya kısaca *cell*) tanıtır (bazı literatürler, bellek hücresini gizli durumun özel bir türü olarak görür), ek bilgileri kaydetmek için tasarlanmıştır. Hafıza hücresini kontrol etmek için birkaç kapıya ihtiyacımız var. Hücreden girdileri okumak için bir kapı gerekiyor. Biz olarak bu atıfta bulunacaktır
 *çıkış kapısı*.
 Hücreye veri ne zaman okunacağına karar vermek için ikinci bir kapı gereklidir. Bunu *giriş kapısı* olarak adlandırıyoruz. Son olarak, hücrenin içeriğini sıfırlamak için bir mekanizmaya ihtiyacımız var, *unut kapısı* tarafından yönetiliyor. Böyle bir tasarımın motivasyonu GRU'larla aynıdır, yani özel bir mekanizma aracılığıyla gizli durumdaki girdileri ne zaman hatırlayacağınıza ve ne zaman gözardı edeceğinize karar verebilmek için. Bunun pratikte nasıl çalıştığını görelim.
 
-### Giriş Kapısı, Unut Kapısı ve Çıkış Kapısı
+### Girdi Geçidi, Unutma Geçidi ve Çıktı Geçidi
 
 Tıpkı GRU'larda olduğu gibi, LSTM kapılarına beslenen veriler, :numref:`lstm_0`'te gösterildiği gibi, geçerli zaman adımındaki giriş ve önceki zaman adımının gizli durumudur. Giriş, unutma. ve çıkış kapıları değerlerini hesaplamak için sigmoid aktivasyon fonksiyonuna sahip üç tam bağlı katman tarafından işlenir. Sonuç olarak, üç kapının değerleri $(0, 1)$ aralığındadır.
 
@@ -55,7 +55,7 @@ Böylece :numref:`lstm_2`'teki akış şemasına ulaşırız.
 
 :label:`lstm_2`
 
-### Gizli Devlet
+### Gizli Durum
 
 Son olarak, gizli durumu nasıl hesaplayacağımızı tanımlamamız gerekiyor $\mathbf{H}_t \in \mathbb{R}^{n \times h}$. Çıkış kapısının devreye girdiği yer burası. LSTM'de, bellek hücresinin $\tanh$'in sadece bir kapılı versiyonudur. Bu, $\mathbf{H}_t$ değerlerinin her zaman $(-1, 1)$ aralığında olmasını sağlar.
 
@@ -92,7 +92,7 @@ batch_size, num_steps = 32, 35
 train_iter, vocab = d2l.load_data_time_machine(batch_size, num_steps)
 ```
 
-### Model Parametrelerini Başlatma
+### Model Parametrelerini İlkleme
 
 Daha sonra model parametrelerini tanımlamamız ve başlatmamız gerekiyor. Daha önce olduğu gibi, hiperparametre `num_hiddens` gizli birimlerin sayısını tanımlar. 0.01 standart sapma ile Gauss dağılımını takiben ağırlıkları başlatırız ve önyargıları 0'a ayarlarız.
 
@@ -220,7 +220,7 @@ model = d2l.RNNModelScratch(len(vocab), num_hiddens, device, get_lstm_params,
 d2l.train_ch8(model, train_iter, vocab, lr, num_epochs, device)
 ```
 
-## Özlü Uygulama
+## Kısa Uygulama
 
 Üst düzey API'leri kullanarak doğrudan bir `LSTM` modeli oluşturabiliriz. Bu, yukarıda açıkça yaptığımız tüm yapılandırma ayrıntılarını kapsüller. Daha önce ayrıntılı olarak yazdığımız birçok ayrıntı için Python yerine derlenmiş operatörleri kullandığı için kod önemli ölçüde daha hızlıdır.
 
@@ -247,7 +247,7 @@ LSTM'ler, önemsiz olmayan durum kontrolü ile prototipik latent değişken otor
 * Gizli katman çıktısı LSTM gizli durumu ve bellek hücresini içerir. Çıktı katmanına yalnızca gizli durum iletilir. Hafıza hücresi tamamen içsel.
 * LSTM'ler kaybolan ve patlayan degradeleri hafifletebilir.
 
-## Egzersizler
+## Alıştırmalar
 
 1. Hiperparametreleri ayarlayın ve çalışma süresi, şaşkınlık ve çıktı dizisi üzerindeki etkilerini analiz edin.
 1. Karakter dizileri aksine doğru kelimeleri üretmek için modeli nasıl değiştirmeniz gerekir?
@@ -256,9 +256,9 @@ LSTM'ler, önemsiz olmayan durum kontrolü ile prototipik latent değişken otor
 1. Karakter sırası tahmini yerine zaman serisi tahmini için bir LSTM modeli uygulayın.
 
 :begin_tab:`mxnet`
-[Discussions](https://discuss.d2l.ai/t/343)
+[Tartışmalar](https://discuss.d2l.ai/t/343)
 :end_tab:
 
 :begin_tab:`pytorch`
-[Discussions](https://discuss.d2l.ai/t/1057)
+[Tartışmalar](https://discuss.d2l.ai/t/1057)
 :end_tab:
