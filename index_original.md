@@ -1,4 +1,3 @@
-
 Dive into Deep Learning
 ========================
 
@@ -49,3 +48,4 @@ chapter_appendix-tools-for-deep-learning/index
 
 chapter_references/zreferences
 ```
+
