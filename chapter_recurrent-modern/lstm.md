@@ -5,9 +5,7 @@ Gizli değişkenli modellerde uzun vadeli bilgi koruma ve kısa vadeli girdi atl
 
 ## Geçitli Bellek Hücresi
 
-Muhtemelen LSTM'nin tasarımı bir bilgisayarın mantık kapılarından esinlenilmiştir. LSTM, gizli durumla aynı şekle sahip bir *bellek hücresi* (veya kısaca *cell*) tanıtır (bazı literatürler, bellek hücresini gizli durumun özel bir türü olarak görür), ek bilgileri kaydetmek için tasarlanmıştır. Hafıza hücresini kontrol etmek için birkaç kapıya ihtiyacımız var. Hücreden girdileri okumak için bir kapı gerekiyor. Biz olarak bu atıfta bulunacaktır
-*çıkış kapısı*.
-Hücreye veri ne zaman okunacağına karar vermek için ikinci bir kapı gereklidir. Bunu *giriş kapısı* olarak adlandırıyoruz. Son olarak, hücrenin içeriğini sıfırlamak için bir mekanizmaya ihtiyacımız var, *unut kapısı* tarafından yönetiliyor. Böyle bir tasarımın motivasyonu GRU'larla aynıdır, yani özel bir mekanizma aracılığıyla gizli durumdaki girdileri ne zaman hatırlayacağınıza ve ne zaman gözardı edeceğinize karar verebilmek için. Bunun pratikte nasıl çalıştığını görelim.
+Muhtemelen LSTM'nin tasarımı bir bilgisayarın mantık kapılarından esinlenilmiştir. LSTM, gizli durumla aynı şekle sahip bir *bellek hücresi* (veya kısaca *hücre*) tanıtır (bazı çalışmalar, bellek hücresini gizli durumun özel bir türü olarak görür), ki ek bilgileri kaydetmek için tasarlanmıştır. Hafıza hücresini kontrol etmek için birkaç geçide ihtiyacımız vardır. Hücreden girdileri okumak için bir geçit gerekiyor. Biz buna *çıktı geçidi* olarak atıfta bulunacağız. Hücreye veri ne zaman okunacağına karar vermek için ikinci bir geçit gereklidir. Bunu *girdi geçidi* olarak adlandırıyoruz. Son olarak, *unutma geçidi* tarafından yönetilen hücrenin içeriğini sıfırlamak için bir mekanizmaya ihtiyacımız var. Böyle bir tasarımın motivasyonu GRU'larla aynıdır, yani özel bir mekanizma aracılığıyla gizli durumdaki girdileri ne zaman hatırlayacağınıza ve ne zaman gözardı edeceğinize karar verebilmek. Bunun pratikte nasıl çalıştığını görelim.
 
 ### Girdi Geçidi, Unutma Geçidi ve Çıktı Geçidi
 
