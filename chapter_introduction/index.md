@@ -52,13 +52,13 @@ Bu yüzden MÖ kullanıyoruz.
 ![Bir uyandırma kelimesi tanıma. ](../img/wake-word.svg)
 :label:`fig_wake_word`
 
-Olayın özünü şöyle açıklayabiliriz.
-Çoğu zaman, bir bilgisayara girdilerle çıktıları nasıl eşleştirebileceğini açıklayamayı bilmediğimizde bile, kendimiz bu bilişsel başarıyı gerçekleştirebiliyoruz.
+Olayın özünü şöyle açıklayabiliriz:
+"Çoğu zaman, bir bilgisayara girdilerle çıktıları nasıl eşleştirebileceğini açıklayamayı bilmediğimizde bile, kendimiz bu bilişsel başarıyı gerçekleştirebiliyoruz.
 Diğer bir deyişle, "Alexa" kelimesini tanımak için *bir bilgisayarı nasıl programlayacağınızı* bilmeseniz bile siz *kendiniz* "Alexa" kelimesini tanıyabilirsiniz.
 Bu yetenekle donanmış bizler ses örnekleri içeren büyük bir *veri kümesi* toplayabilir ve uyandırma kelimesi *içerenleri* ve *içermeyenleri* etiketleyebiliriz.
 MÖ yaklaşımında, uyandırma kelimelerini tanımak için *açıktan* bir sistem tasarlamaya çalışmayız.
 Bunun yerine, davranışı bir miktar *parametre* ile belirlenen esnek bir program tanımlarız.
-Ardından, veri kümesini, ilgili görevdeki performans ölçüsüne göre, programımızın performansını artıran en iyi parametre kümesini belirlemek için kullanırız.
+Ardından, veri kümesini, ilgili görevdeki performans ölçüsüne göre, programımızın performansını artıran en iyi parametre kümesini belirlemek için kullanırız."
 
 Parametreleri, çevirerek programın davranışını değiştirebileceğimiz düğmeler olarak düşünebilirsiniz.
 Parametreleri sabitlendiğinde, programa *model* diyoruz.
@@ -68,7 +68,6 @@ Ve parametreleri seçmek için veri kümemizi kullanan * meta(başkalaşım) pro
 Devam etmeden ve öğrenme algoritmasını kullanmadan önce, sorunu kesin olarak tanımlamalı, girdi ve çıktıların kesin doğasını tespit etmeli ve uygun bir model ailesi seçmeliyiz.
 Bu durumda, modelimiz *girdi* olarak bir ses parçasını alır ve *çıktı* olarak ``{evet, hayır}`` arasında bir seçim oluşturur.
 Her şey plana göre giderse, modelin parçanın uyandırma kelimesini içerip içermediğine dair tahminleri genellikle doğru olacaktır.
-
 
 Doğru model ailesini seçersek, o zaman model "Alexa" kelimesini her duyduğunda ``evet``i seçecek düğmelerin bir ayarı olmalıdır.
 Uyandırma kelimesinin kesin seçimi keyfi olduğundan, muhtemelen yeterince zengin bir model ailesine ihtiyacımız olacak, öyle ki düğmelerin başka bir ayarı ile, sadece "Kayısı" kelimesini duyduktan sonra da ``evet`` seçilebilsin.
