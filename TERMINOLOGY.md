@@ -117,6 +117,8 @@ meme; mizah unsuru
 
 minibatch; minigrup
 
+nontrivial; apaçık olmayan
+
 offset; bağıl konum
 
 one-hot coding; bire bir kodlama
@@ -200,6 +202,8 @@ symmetry; bakışım
 tabular; çizelge halindeki
 
 token; andıç
+
+transformer; dönüştürücü
 
 transpose; devrik
 
