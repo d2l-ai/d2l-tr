@@ -113,13 +113,13 @@ Derin öğrenmenin önemli bir avantajı, sadece geleneksel öğrenme üretim ha
 ## Temel Bileşenler: Veri, Modeller ve Algoritmalar
 
 *Uyandırma kelimesi* örneğimizde, ses parçaları ve ikili etiketlerden oluşan bir veri kümesi tanımladık ve parçalardan sınıflandırmalara bir eşlemeyi yaklaşık olarak nasıl eğitebileceğimize dair çok ciddi olmayan bir izlenim verdik.
-Bu tarz problem, etiketlerinin bilindiği örneklerden oluşan bir veri kümesinin verildiği ve bilinen *girdiler* in belirli bir bilinmeyen *etiket* ini öngörmeye çalıştığımız, *gözetimli öğrenme* olarak adlandırılır ve bu birçok *çeşit* makine öğrenme problemlerinden sadece bir tanesidir.
+Bu tarz bir problem, etiketleri bilinen örneklerden oluşan bir veri kümesinin verildiği ve bilinen *girdiler* *etiket* ini öngörmeye çalıştığımız, *gözetimli öğrenme* olarak adlandırılır ve MÖ problemi *çeşitlerinden* sadece bir tanesidir.
 Bir sonraki bölümde, farklı MÖ sorunlarına derinlemesine bakacağız.
-İlk olarak, ne tür bir MÖ problemi olursa olsun, bizi takip edecek bazı temel bileşenlere daha fazla ışık tutmak istiyoruz:
+İlk olarak, ne tür bir MÖ problemi olursa olsun, takip edeceğimiz temel bileşenlere daha fazla ışık tutmak istiyoruz:
 
-1. Öğrenebileceğimiz *veriler*.
-2. Verilerin nasıl dönüştürüleceğine dair bir *model*.
-3. Modelimizin *kötülüğünü* ölçen bir *yitim* işlevi.
+1. Öğrenebileceğimiz *veri*.
+2. Verinin nasıl dönüştürüleceğine dair bir *model*.
+3. Modelimizin *kötülüğünü* ölçen bir *yitim* işlevi(loss function).
 4. Kaybı en aza indirmede modelin parametrelerini ayarlamak için bir *algoritma*.
 
 
@@ -128,143 +128,138 @@ Bir sonraki bölümde, farklı MÖ sorunlarına derinlemesine bakacağız.
 Veri bilimini veri olmadan yapamayacağınızı söylemeye gerek yok.
 Tam olarak veriyi neyin oluşturduğunu düşünerek yüzlerce sayfayı doldurabiliriz, ancak şimdilik pratik tarafta hata yapacağız ve bizi ilgilendiren temel özelliklere odaklanacağız.
 Genellikle *örnekler* (*veri noktaları*, *örneklemler* veya *misaller* olarak da adlandırılır) derlemesiyle ilgileniriz.
-Verilerle yararlı bir şekilde çalışmak için, genellikle uygun bir sayısal temsil (gösterim) bulmamız gerekir.
+Veriyle yararlı bir şekilde çalışmak için, genellikle uygun bir sayısal temsil (gösterim) bulmamız gerekir.
 Her *örnek* tipik olarak *öznitelikler* adı verilen sayısal özelliklerden oluşur.
 Yukarıdaki gözetimli öğrenme problemlerinde özel bir özellik *hedef* tahmini olarak adlandırılır (bazen *etiket* veya *bağımlı değişken* olarak da adlandırılır).
-Modelin tahminlerini yapması gereken verilmiş özellikler daha sonra *öznitelikler* (veya bazen *girdiler*, *öndeğişkenler* veya *bağımsız değişkenler*) olarak adlandırılabilir.
+Modelin tahminlerini yapması için gereken özellikler *öznitelikler* (bazen *girdiler*, *öndeğişkenler* veya *bağımsız değişkenler*) olarak adlandırılır.
 
-Eğer görüntü verileriyle çalışıyorsak, her bir fotoğraf, her bir pikselin parlaklığına karşılık gelen sıralı bir sayısal değerler listesi ile temsil edilen bir *örnek* oluşturabilir.
-$200\times200$ bir renkli fotoğraf, her bir uzamsal konum için kırmızı, yeşil ve mavi kanalların parlaklığına karşılık gelen $200\times200\times3=120000$ sayısal değerden oluşur.
-Daha geleneksel bir görevde, yaş, yaşamsal belirtiler, teşhisler vb. gibi standart bir dizi özellik göz önüne alındığında, bir hastanın hayatta kalıp kalmayacağını tahmin etmeye çalışabiliriz.
+Eğer görüntü verileriyle çalışıyorsak, bir fotoğraf için, her bir pikselin parlaklığına karşılık gelen sıralı bir sayısal değerler listesi ile temsil edilen bir *örnek* oluşturabilir.
+$200\times200$ bir renkli fotoğraf, her bir uzamsal konum için kırmızı, yeşil ve mavi kanalların parlaklığına karşılık gelen $200\times200\times3=120000$ tane sayısal değerden oluşur.
+Daha geleneksel bir görevde ise yaş, yaşamsal belirtiler, teşhisler vb. gibi standart bir dizi özellik göz önüne alındığında, bir hastanın hayatta kalıp kalmayacağını tahmin etmeye çalışabiliriz.
 
-Her örnek aynı sayıda sayısal değerle karakterize edildiğinde, verilerin *sabit uzunluklu* vektörlerden oluştuğunu söylüyoruz ve vektörlerin (sabit) uzunluğunu
-verilerin *boyutluluğu* olarak tanımlıyoruz.
-Tahmin edebileceğiniz gibi, sabit uzunluk uygun bir özellik olabilir.
-Mikroskopi görüntülerinde kanseri tanımak için bir model eğitmek istersek, sabit uzunluktaki girdiler endişelenecek şeylerin sayısının bir tane azaldığı anlamına gelir.
+Her örnek aynı sayıda sayısal değerle karakterize edildiğinde, verinin *sabit uzunluklu* vektörlerden oluştuğunu söylüyoruz ve vektörlerin (sabit) uzunluğunu
+verinin *boyutu* olarak tanımlıyoruz.
+Tahmin edebileceğiniz gibi, sabit uzunluk işleri kolaylaştıracak bir özellik olabilir.
+Mikroskopik görüntülerde kanseri tanımak için bir model eğitmek istersek, sabit uzunluktaki girdilere sahip olmak endişelenecek şeylerin sayısının bir tane azaldığı anlamına gelir.
 
-Ancak, tüm veriler kolayca sabit uzunluklu vektörler olarak gösterilemez.
+Ancak, tüm veri kolayca sabit uzunluklu vektörler olarak gösterilemez.
 Mikroskop görüntülerinin standart ekipmanlardan gelmesini beklesek de, internetten toplanan görüntülerin aynı çözünürlük veya şekil ile ortaya çıkmasını bekleyemeyiz.
 Görüntüler için, hepsini standart bir boyuta kırpmayı düşünebiliriz, ancak bu strateji bizi bir yere kadar götürür.
 Kırpılan bölümlerde bilgi kaybetme riskiyle karşı karşıyayız.
-Ayrıca, metin verileri sabit uzunluklu gösterimlere daha inatçı bir şekilde direnir.
+Ayrıca, metin verisi sabit uzunluklu gösterimlere daha inatçı bir şekilde direnir.
 Amazon, IMDB veya TripAdvisor gibi e-ticaret sitelerine bırakılan müşteri yorumlarını düşünün.
-Bazıları kısadır: "berbat!". Diğerleri sayfalara yayılır.
-Geleneksel yöntemlere göre derin öğrenmenin en büyük avantajlarından biri, modern modellerin *değişen uzunluktaki* verileri işleyebileceği göreceli yetenektir.
+Bazıları kısadır: "berbat!", bazıları da sayfalara yayılır.
+Geleneksel yöntemlere göre derin öğrenmenin en büyük avantajlarından biri *değişken uzunluktaki* veriyi işlemedeki göreceli yeteneğidir.
 
 Genel olarak, ne kadar fazla veriye sahip olursak işimiz o kadar kolay olur.
 Daha fazla veriye sahip olduğumuzda, daha güçlü modeller eğitebilir ve önceden tasarlanmış varsayımlara daha az bel bağlayabiliriz.
-(Nispeten) küçükten büyük verilere rejim (düzen) değişikliği, modern derin öğrenmenin başarısına önemli bir katkıda bulunmaktadır.
-İşin özünden bahsedersek, derin öğrenmedeki en heyecan verici modellerin çoğu büyük veri kümeleri olmadan çalışmaz.
-Bazıları düşük veri düzeninde çalışır, ancak geleneksel yaklaşımlardan daha iyi değildir.
+Büyük veri(big data) modern derin öğrenmenin başarısına önemli bir katkıda bulunmaktadır, derin öğrenmedeki en heyecan verici modellerin çoğu büyük veri kümeleri olmadan çalışmaz.
+Bazıları düşük veri ile de çalışır ancak geleneksel yaklaşımlardan daha iyi değildirler.
 
 Son olarak, çok fazla veriye sahip olmak ve onu akıllıca işlemek yeterli değildir.
-*Doğru* verilere ihtiyacımız vardır. Veriler hatalarla doluysa veya seçilen özellikler hedefteki ilgili miktarı öngörmüyorsa, öğrenme başarısız olacaktır.
-Durum şu klişe ile iyi betimlenebilir: *çöp içeri, çöp dışarı*.
+*Doğru* veriye ihtiyacımız vardır. Veri hatalarla doluysa veya seçilen özellikler hedefle ilgisizse, öğrenme başarısız olacaktır.
+Durum şu klişe ile iyi betimlenebilir: *çöp girerse çöp çıkar*.
 Ayrıca, kötü tahmin performansı tek olası sonuç değildir.
-Tahminli polislik, özgeçmiş taraması ve borç verme için kullanılan risk modelleri gibi makine öğrenmesinin hassas uygulamalarında, özellikle çöp verilerinin sonuçlarına karşı dikkatli olmalıyız.
-Yaygın bir hata modu, bazı insan gruplarının eğitim verilerinde temsil edilmediği veri kümelerinde gerçekleşir.
-Gerçek hayatta, daha önce hiç siyah ten görmemiş bir cilt kanseri tanıma sistemi uyguladığınızı düşünün.
-Başarısızlık ayrıca veriler sadece bazı grupları az temsil etmediğinde değil, aynı zamanda toplumsal önyargıları yansıttığı zaman da meydana gelebilir.
+Tahminli polislik, özgeçmiş taraması ve borç verme için kullanılan risk modelleri gibi makine öğrenmesinin hassas uygulamalarında, özellikle çöp verinin olası sonuçlarına karşı dikkatli olmalıyız.
+Yaygın bir hata durumu bazı insan gruplarının eğitim verilerinde temsil edilmediği veri kümelerinde gerçekleşir.
+Gerçek hayatta, daha önce hiç koyu ten görmemiş bir cilt kanseri tanıma sistemi uyguladığınızı düşünün.
+Ayrıca başarısızlık, veri sadece bazı grupları az temsil ettiğinde değil, aynı zamanda toplumsal önyargıları yansıttığı zaman da  meydana gelebilir.
 Örneğin, özgeçmişleri taramak için kullanılacak bir öngörü modeli eğitmek için geçmiş işe alım kararları kullanılıyorsa, makine öğrenme modelleri yanlışlıkla tarihi adaletsizlikleri yakalayıp onları otomatikleştirebilir.
-Tüm bunların, veri bilimcisi aktif olarak komplo kurmadan ve hatta o farkında olmadan gerçekleşebileceğini unutmayın.
-
+Tüm bunların veri bilimcisi aktif olarak komplo kurmadan ve hatta o farkında olmadan gerçekleşebileceğini unutmayın.
 
 ### Modeller
 
+Çoğu makine öğrenmesi, veriyi bir anlamda *dönüştürmeyi* içerir.
+Fotoğrafları alarak *güleryüzlülük* tahmin eden bir sistem kurmak isteyebiliriz.
+Alternatif olarak, bir dizi sensör okuması alarak *normal* veya *anormal* olup olmadıklarını tahmin etmek isteyebiliriz.
+*Model* ile, bir tipteki veriyi alan ve muhtemel farklı tipteki tahminleri veren hesaplama makinelerini belirtiyoruz.
+Özellikle veriden tahmin yapabilecek istatistiksel modellerle ilgileniyoruz.
+Basit modeller, basitliği uygun problemleri mükemmel bir şekilde çözebilirken, bu kitapta odaklandığımız problemler klasik yöntemlerin sınırlarını aşmaktadır.
+Derin öğrenme, klasik yaklaşımlardanö esas olarak odaklandığı güçlü modeller kümesi ile ayrılır.
+Bu modeller, yukarıdan aşağıya zincirlenmiş verinin art arda dönüşümlerinden oluşur, bu nedenle adları *derin öğrenme*dir.
+Derin sinir ağlarını tartışırken, bazı geleneksel yöntemlere de değineceğiz.
 
-Çoğu makine öğrenmesi, verileri bir anlamda *dönüştürmeyi* içerir.
-Fotoğrafları yiyen ve *güleryüzlülük* tahmin eden bir sistem kurmak isteyebiliriz.
-Alternatif olarak, bir dizi sensör okuması almak ve okumaların *normal* ve *anormal* değerlerini tahmin etmek isteyebiliriz.
-*Model* ile, bir tipteki verileri alana ve muhtemelen farklı tipte tahminler veren hesaplama makinelerini belirtiyoruz.
-Özellikle verilerden tahmin yapabilecek istatistiksel modellerle ilgileniyoruz.
-Basit modeller, uygun şekilde basit problemleri mükemmel bir şekilde çözebilirken, bu kitapta odaklandığımız problemler klasik yöntemlerin sınırlarını aşmaktadır.
-Derin öğrenme, klasik yaklaşımlardan, esas olarak odaklandığı güçlü modeller kümesi ile ayrılır.
-Bu modeller, yukarıdan aşağıya zincirlenmiş verilerin art arda dönüşümlerinden oluşur, bu nedenle adları *derin öğrenme*.
-Derin sinir ağlarını tartışırken, bazı geleneksel yöntemleri de tartışacağız.
-
-### Amaç işlevleri
+### Amaç Fonksiyonları (Objective Functions)
 
 Daha önce, makine öğrenmesini "deneyimden öğrenme" olarak tanıttık.
 Burada *öğrenme* ile zamanla bazı görevlerde *iyileştirme* yi kastediyoruz.
 Peki kim neyin bir iyileştirme oluşturduğunu söyleyecek?
-Modelimizi güncellemeyi önerebileceğimizi düşünebilirsiniz ve bazı insanlar önerilen güncellemenin bir iyileştirme mi yoksa bir düşüş mü oluşturduğuna katılmayabilir.
+Modeli güncellemeyi önerdiğiniz zaman önerilen güncellemenin bir iyileştirme mi yoksa bir düşüş mü oluşturacağı konusunda görüş ayrılıkları olabilir.
 
 Resmi bir matematiksel öğrenme makinesi sistemi geliştirmek için modellerimizin ne kadar iyi (ya da kötü) olduğuna dair kurallı ölçümlere ihtiyacımız var.
-Makine öğrenmesi ve daha genel olarak optimizasyonda (eniyilemede), bunları amaç işlevleri olarak adlandırıyoruz.
-Yaygın kanı olarak, genellikle objektif fonksiyonları tanımlarız, böylece *daha alt* *daha iyi* olur.
-Bu sadece bir yaygın kanı. Daha yüksekken daha iyi olan herhangi bir $f$ işlevini alabilir ve $f'$ işlevini, niteliksel olarak özdeş $f' = -f$ şekilde ayarlayarak daha düşükken daha iyi yeni bir işleve dönüştürebilirsiniz.
-Düşük daha iyi olduğu için, bu işlevlere bazen *yitim işlevleri* veya *maliyet işlevleri* denir.
+Makine öğrenmesinde ve daha genel olarak optimizasyonda (eniyilemede), bunları amaç fonsiyonları olarak adlandırıyoruz.
+Yaygın yaklaşım olarak, genellikle amaç fonksiyonları tanımlarız, böylece *daha düşük* değer *daha iyi* anlamına gelir.
+Bu sadece yaygın bir kanı. Daha yüksekken daha iyi olan herhangi bir $f$ fonksiyonunu alabilir ve $f'$ fonksiyonunu, niteliksel olarak özdeş $f' = -f$ şekilde ayarlayarak daha düşükken daha iyi yeni bir fonksiyona dönüştürebilirsiniz.
+Düşük daha iyi olduğu için, bu fonksiyona bazen *yitim fonksiyonları(loss function)* veya *maliyet fonksiyonları(cost function)* denir.
 
-Sayısal değerleri tahmin etmeye çalışırken, en yaygın amaç fonksiyonu hata karesi $(y-\hat{y})^2$'dır.
-Sınıflandırma için en yaygın amaç fonksiyonu, hata oranını, yani tahminlerimizin gerçeğe değere uymadığı örneklerin oranını, en aza indirmektir.
+Sayısal değerleri tahmin etmeye çalışırken, en yaygın amaç fonksiyonu hata karesi $(y-\hat{y})^2$'dir.
+Sınıflandırma için en yaygın amaç fonksiyonu, hata oranını, yani tahminlerimizin gerçek değere uymadığı örneklerin oranını, en aza indirmektir.
 Bazı hedeflerin (hata karesi gibi) optimize edilmesi kolaydır.
 Diğerlerinin (hata oranı gibi) türevlerinin alınamaması veya diğer başka zorluklar nedeniyle doğrudan optimize edilmesi zordur.
-Bu durumlarda, *vekil amaç* optimize etmek yaygındır.
+Bu durumlarda, *vekil(surrogate) amaç* optimizasyonu yaygındır.
 
 Tipik olarak, yitim fonksiyonu modelin parametrelerine göre tanımlanır ve veri kümesine bağlıdır.
 Modelimizin parametrelerinin en iyi değerleri, eğitim için toplanan *örneklerden* oluşan bir *eğitim kümesinde* meydana gelen kaybı en aza indirerek öğrenilir.
-Bununla birlikte, eğitim verilerinde iyi performans gösterilmesi, (görülmeyen) test verileri üzerinde iyi performans göstereceğimizi garanti etmez.
-Bu nedenle, genellikle mevcut verileri iki parçaya ayırmak isteyeceğiz: Eğitim verileri (model parametrelerini bulmak için) ve test verileri (değerlendirme için tutulan), ayrıca aşağıdaki iki sonucu rapor edeceğiz:
+Bununla birlikte, eğitim verisinde iyi performans göstermemiz, (görülmeyen) test verisi üzerinde iyi performans göstereceğimizi garanti etmez.
+Bu nedenle, genellikle mevcut veriyi iki parçaya ayıracağız: Eğitim verisi (model parametrelerini bulmak için) ve test verisi (değerlendirme için), ayrıca aşağıdaki iki sonucu rapor edeceğiz:
 
 * ** Eğitim Hatası: **
-Modelin eğitildiği verilerdeki hatadır.
+Modelin eğitildiği verideki hatadır.
 Bunu, bir öğrencinin gerçek bir sınava hazırlamak için girdiği uygulama sınavlarındaki puanları gibi düşünebilirsiniz.
 Sonuçlar cesaret verici olsa bile, bu final sınavında başarıyı garanti etmez.
 * ** Test Hatası: **
-Bu, görünmeyen bir test kümesinde oluşan hatadır.
-Bu, eğitim hatasından önemli ölçüde sapabilir.
-Bir model eğitim verileri üzerinde iyi performans gösterdiğinde, ancak bunu görünmeyen verilere genelleştiremediğinde, buna *aşırı öğrenme* diyoruz.
-Gerçek yaşamda, bu, uygulama sınavlarında başarılı olunmasına rağmen gerçek sınavda çakmak gibidir.
+Bu, görünmeyen bir test kümesinde oluşan hatadır ve eğitim hatasından önemli ölçüde sapabilir.
+Bir model eğitim verisi üzerinde iyi performans gösterdiğinde, ancak bunu görünmeyen veriye genelleştiremediğinde, buna *aşırı öğrenme* diyoruz.
+Bu durumu uygulama sınavlarında başarılı olunmasına rağmen gerçek sınavda çakmaya benzetebiliriz.
 
-### Optimizasyon (Eniyileme) algoritmaları
+### Optimizasyon (Eniyileme) Algoritmaları
 
-Bir kez veri kaynağı ve gösterim, bir model ve iyi tanımlanmış bir amaç fonksiyona sahip olduktan sonra, yitim fonksiyonunu en aza indirmek için mümkün olan en iyi parametreleri arayabilen bir algoritmaya ihtiyacımız var.
-Sinir ağları için en popüler optimizasyon algoritmaları, gradyan (eğim) alçaltma olarak adlandırılan bir yaklaşımı izler. Kısacası, her adımda, her bir parametre için, bu parametreyi sadece küçük bir miktar bozarsanız eğitim kümesi kaybının nasıl hareket edeceğini (değişeceğini) kontrol ederler.
+Bir kez veri kaynağı ve gösterim, bir model ve iyi tanımlanmış bir amaç fonksiyonuna sahip olduktan sonra, yitim fonksiyonunu en aza indirmek için mümkün olan en iyi parametreleri arayabilen bir algoritmaya ihtiyacımız var.
+Sinir ağları için en popüler optimizasyon algoritmaları, gradyan (eğim) alçaltma(gradient descent) olarak adlandırılan bir yaklaşımı izler. Kısacası, her adımda, her bir parametre için, bu parametreyi sadece küçük bir miktar bozarsanız eğitim kümesi kaybının nasıl hareket edeceğini (değişeceğini) kontrol ederler.
 Daha sonra parametreyi kaybı azaltan yönde güncellerler.
 
 ## Makine Öğrenmesi Çeşitleri
 
 Aşağıdaki bölümlerde, birkaç *çeşit* makine öğrenmesi problemini daha ayrıntılı olarak tartışacağız.
 *Hedeflerin* bir listesiyle, yani makine öğrenmesinin yapmasını istediğimiz şeylerin bir listesiyle başlıyoruz.
-Hedeflerin, veri türleri, modeller, eğitim teknikleri vb. dahil olmak üzere, *nasıl*  başarılabileceğine dair bir dizi teknik ile tamamlandığını unutmayın.
+Hedeflere ulaşmaya çalışırken, veri türleri/modeller/eğitim bazında bir dizi teknik yöntemin izlendiğini unutmayın.
 Aşağıdaki liste, okuyucuyu motive etmek ve kitap boyunca daha fazla sorun hakkında konuştuğumuzda bize ortak bir dil sağlamak için MÖ'nün uğraşabileceği sorunların sadece bir örneğidir.
 
-### Gözetimli öğrenme
+### Gözetimli Öğrenme
 
 Gözetimli öğrenme *girdiler* verildiğinde *hedefleri* tahmin etme görevini ele alır.
 Sık sık *etiket* adını verdiğimiz hedefler genellikle *y* ile gösterilir.
-*Öznitellikler* veya eş değişkenler olarak da adlandırılan girdi verilerini genellikle $\mathbf{x}$ olarak belirtiriz.
+*Öznitellikler* veya eş değişkenler olarak da adlandırılan girdi verisini genellikle $\mathbf{x}$ olarak belirtiriz.
 Her (girdi, hedef) çiftine *örnek* veya *misal* denir.
-Bazen, bağlam açık olduğunda, bir girdi topluluğuna atıfta bulunmak için örnekler terimini kullanabiliriz,
-karşılık gelen hedefler bilinmese bile.
-Belirli bir örneği, mesela $i$, bir altindis ile gösteririz, örneğin ($\mathbf{x}_i,y_i$).
-Veri kümesi, $n$ taneli örnekli, $\{\mathbf{x}_i, y_i\}_{i=1}^n$, bir topluluktur.
+Bazen, bağlam açık olduğunda, bir girdi topluluğuna atıfta bulunmak için -karşılık gelen hedefler bilinmese bile- örnekler terimini kullanabiliriz.
+Belirli bir örneği, mesela $i$, alt-indis olarak gösteririz, örneğin ($\mathbf{x}_i,y_i$).
+Veri kümesi, $n$ tane örnekli, $\{\mathbf{x}_i, y_i\}_{i=1}^n$, bir topluluktur.
 Hedefimiz, $\mathbf{x}_i$ girdisini $f_{\theta}(\mathbf{x}_i)$ tahminiyle eşleyen bir $f_\theta$ modeli üretmektir.
 
 Bu açıklamayı somut bir örneğe oturtalım; sağlık hizmetlerinde çalışıyorsak, bir hastanın kalp krizi geçirip geçirmeyeceğini tahmin etmek isteyebiliriz.
-Bu gözlem, *kalp krizi* veya *kalp krizi yok*, $y$ etiketimiz olacaktır.
+*Kalp krizi var* veya *kalp krizi yok* gözlemi, $y$ etiketimiz olacaktır.
 $\mathbf{x}$ girdi verileri, kalp atış hızı, diyastolik ve sistolik kan basıncı gibi hayati belirtiler olabilir.
 
 Burada gözetim devreye girer, çünkü $\theta$ parametrelerini seçmek için, biz (gözetimciler) modele *etiketli örnekleri* ($\mathbf{x}_i,y_i$) içeren bir veri kümesi sağlıyoruz, ki bu kümedeki her örnek, $\mathbf{x}_i$, doğru etiketle eşleştirilmiştir.
 
 Olasılıksal terimlerle, tipik olarak koşullu olasılığı, $P(y|x)$, tahmin etmekle ilgileniyoruz.
 Makine öğrenmesi içindeki birçok paradigmadan sadece biri olsa da, gözetimli öğrenme, makine öğrenmesinin endüstrideki başarılı uygulamalarının çoğunu oluşturur.
-Kısmen, bunun nedeni, birçok önemli görevin, belirli bir mevcut veri kümesi göz önüne alındığında bilinmeyen bir şeyin olasılığını tahmin etmek gibi net bir şekilde tanımlanabilmesidir; örneğin:
+Kısmen, bunun nedeni, birçok önemli görevin, belirli bir mevcut veri kümesi göz önüne alındığında bilinmeyen bir şeyin olasılığını tahmin etmek gibi net bir şekilde tanımlanabilmesidir. Örneğin;
 
-* CT görüntüsü verildiğinde kansere karşı kanser olmama tahmini.
-* İngilizce bir cümle verildiğinde Fransızca doğru çevirisinin tahmini.
+* CT(computed tomography) görüntüsü verildiğinde kanserli olma/olmama tahmini.
+* İngilizce bir cümle verildiğinde Fransızca çevirisinin tahmini.
 * Bir  hisse senedinin gelecek aydaki fiyatının bu ayın finansal raporlama verilerine dayalı tahmini.
 
-Basit bir tanımla bile "girdilerden hedefleri tahmin et" diye tanımladığımız gözetimli öğrenme çok çeşitli şekillerde olabilir, (diğer hususların yanı sıra) girdilerin ve çıktıların türüne, boyutuna ve sayısına bağlı olarak çok sayıda modelleme kararı gerektirebilir.
-Örneğin, dizileri işlemek için (metin dizeleri veya zaman serisi verileri gibi) farklı ve sabit uzunluklu vektör temsillerini işlemek için farklı modeller kullanırız.
-Bu kitabın ilk 9 bölümünde bu sorunların birçoğunu derinlemesine ziyaret edeceğiz.
+Temel olarak "girdilerden hedeflerin tahmin edilmesi" diye tanımladığımız gözetimli öğrenme çok çeşitli şekillerde olabilir, diğer hususların yanı sıra girdilerin ve çıktıların türüne, boyutuna ve sayısına bağlı olarak çok sayıda modelleme kararı gerektirebilir.
+Örneğin, dizileri işlemek için (metin veya zaman serisi gibi) farklı ve sabit uzunluklu vektör temsillerini işlemek için farklı modeller kullanırız.
+Bu kitabın ilk 9 bölümünde bu sorunların birçoğunu derinlemesine işleyeceğiz.
 
 Gayri resmi olarak, öğrenme süreci şöyle görünür:
-Ortak değişkenlerin bilindiği büyük bir örnek koleksiyonu alın ve her biri için doğru değer etiketlerini alarak rastgele bir altküme seçin.
-Bazen bu etiketler zaten toplanmış verilerde olabilir (örn. Bir hasta sonraki yıl içinde öldü mü?) ve diğer zamanlarda verileri etiketlemek için insanların yorumlamalarını kullanmamız gerekebilir (örn. Görüntülere kategori atama).
+Ortak değişkenlerin bilindiği büyük bir örnek koleksiyonunu alın ve rastgele bir altküme seçin - eğer yoksa bu altkümedeki her örneğin doğru değer etiketini(ground truth label) oluşturun.
+Bazen bu etiketler zaten toplanmış da olabilir (örn. Bir hasta sonraki yıl içinde öldü mü?) ve diğer zamanlarda veriyi etiketlemek için insanların yorumlarını kullanmamız gerekebilir (örn. Görüntülere kategori atama).
 
 Bu girdiler ve karşılık gelen etiketler birlikte eğitim kümesini oluştururlar.
-Eğitim veri kümesini gözetimli bir öğrenme algoritmasına besleriz; veri kümesini girdi olarak alır ve başka bir işlev, *öğrenilen model*, verir.
+Eğitim veri kümesini gözetimli bir öğrenme algoritmasına besleriz; bu algoritma veri kümesini girdi olarak alır ve başka bir fonksiyon, *öğrenilen model*, verir.
 Son olarak, çıktılarını karşılık gelen etiketin tahminleri olarak kullanarak önceden görülmemiş girdileri öğrenilen modele besleyebiliriz.
 Tüm süreç şöyle çizilebilir :numref:`fig_supervised_learning`.
 
