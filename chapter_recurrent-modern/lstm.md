@@ -1,20 +1,22 @@
-# Uzun Ömürlü Kısa-Dönem Belleği (LSTM)
+# Uzun Kısa Süreli Bellek (LSTM)
 :label:`sec_lstm`
 
-Gizli değişkenli modellerde uzun vadeli bilgi koruma ve kısa vadeli girdi atlama sorunu uzun zamandır var olmuştur. Bunu ele almak için öncü yaklaşımlardan biri uzun ömürlü kısa-dönem belleği (LSTM) :cite:`Hochreiter.Schmidhuber.1997` oldu. GRU'nun birçok özelliklerini paylaşıyor. İlginçtir ki, LSTM'ler GRU'lardan biraz daha karmaşık bir tasarıma sahiptir, ancak GRU'lardan neredeyse yirmi yıl önce ortaya konmuştur.
+Gizli değişken modellerde uzun vadeli bilgi koruma ve kısa vadeli giriş atlama sorununun üstesinden gelinmesi uzun zamandır var olmuştur. Bunu ele almak için en erken yaklaşımlardan biri uzun kısa süreli bellek (LSTM) :cite:`Hochreiter.Schmidhuber.1997` oldu. GRU'nun birçok özelliklerini paylaşıyor. İlginçtir ki, LSTM'ler GRU'lardan biraz daha karmaşık bir tasarıma sahiptir, ancak GRU'lardan neredeyse yirmi yıl önce gelir.
 
-## Geçitli Bellek Hücresi
+## Geçmeli Bellek Hücresi
 
-Muhtemelen LSTM'nin tasarımı bir bilgisayarın mantık kapılarından esinlenilmiştir. LSTM, gizli durumla aynı şekle sahip bir *bellek hücresi* (veya kısaca *hücre*) tanıtır (bazı çalışmalar, bellek hücresini gizli durumun özel bir türü olarak görür), ki ek bilgileri kaydetmek için tasarlanmıştır. Hafıza hücresini kontrol etmek için birkaç geçide ihtiyacımız vardır. Hücreden girdileri okumak için bir geçit gerekiyor. Biz buna *çıktı geçidi* olarak atıfta bulunacağız. Hücreye veri ne zaman okunacağına karar vermek için ikinci bir geçit gereklidir. Bunu *girdi geçidi* olarak adlandırıyoruz. Son olarak, *unutma geçidi* tarafından yönetilen hücrenin içeriğini sıfırlamak için bir mekanizmaya ihtiyacımız var. Böyle bir tasarımın motivasyonu GRU'larla aynıdır, yani özel bir mekanizma aracılığıyla gizli durumdaki girdileri ne zaman hatırlayacağınıza ve ne zaman gözardı edeceğinize karar verebilmek. Bunun pratikte nasıl çalıştığını görelim.
+Muhtemelen LSTM'nin tasarımı bir bilgisayarın mantık kapılarından esinlenilmiştir. LSTM, gizli durumla aynı şekle sahip bir *bellek hücresi* (veya kısaca *cell*) tanıtır (bazı literatürler, bellek hücresini gizli durumun özel bir türü olarak görür), ek bilgileri kaydetmek için tasarlanmıştır. Hafıza hücresini kontrol etmek için birkaç kapıya ihtiyacımız var. Hücreden girdileri okumak için bir kapı gerekiyor. Biz olarak bu atıfta bulunacaktır
+*çıkış kapısı*.
+Hücreye veri ne zaman okunacağına karar vermek için ikinci bir kapı gereklidir. Bunu *giriş kapısı* olarak adlandırıyoruz. Son olarak, hücrenin içeriğini sıfırlamak için bir mekanizmaya ihtiyacımız var, *unut kapısı* tarafından yönetiliyor. Böyle bir tasarımın motivasyonu GRU'larla aynıdır, yani özel bir mekanizma aracılığıyla gizli durumdaki girdileri ne zaman hatırlayacağınıza ve ne zaman gözardı edeceğinize karar verebilmek için. Bunun pratikte nasıl çalıştığını görelim.
 
-### Girdi Geçidi, Unutma Geçidi ve Çıktı Geçidi
+### Giriş Kapısı, Unut Kapısı ve Çıkış Kapısı
 
-Tıpkı GRU'larda olduğu gibi, LSTM geçitlerine beslenen veriler, :numref:`lstm_0`'te gösterildiği gibi, geçerli zaman adımındaki girdi ve önceki zaman adımının gizli durumudur. Girdi, unutma ve çıktı geçitleri değerlerini hesaplamak için sigmoid etkinleştirme fonksiyonuna sahip üç tam bağlı katman tarafından işlenir. Sonuç olarak, üç geçidin değerleri $(0, 1)$ aralığındadır.
+Tıpkı GRU'larda olduğu gibi, LSTM kapılarına beslenen veriler, :numref:`lstm_0`'te gösterildiği gibi, geçerli zaman adımındaki giriş ve önceki zaman adımının gizli durumudur. Giriş, unutma. ve çıkış kapıları değerlerini hesaplamak için sigmoid aktivasyon fonksiyonuna sahip üç tam bağlı katman tarafından işlenir. Sonuç olarak, üç kapının değerleri $(0, 1)$ aralığındadır.
 
-![LSTM modelinin girdi, unutma ve çıktı geçitleri değerlerininin hesaplanması](../img/lstm-0.svg)
+![Computing the input gate, the forget gate, and the output gate in an LSTM model.](../img/lstm-0.svg)
 :label:`lstm_0`
 
-Matematiksel olarak, $h$ tane gizli birim, $n$ tane toplu iş ve $d$ tane girdi olduğunu varsayalım. Böylece, girdi $\mathbf{X}_t \in \mathbb{R}^{n \times d}$ ve önceki zaman adımının gizli durumu $\mathbf{H}_{t-1} \in \mathbb{R}^{n \times h}$'dir. Buna göre, $t$ zaman adımındaki geçitler şu şekilde tanımlanır: Girdi geçidi $\mathbf{I}_t \in \mathbb{R}^{n \times h}$, unutma geçidi $\mathbf{F}_t \in \mathbb{R}^{n \times h}$ ve çıktı geçidi $\mathbf{O}_t \in \mathbb{R}^{n \times h}$'dır. Bunlar aşağıdaki gibi hesaplanır:
+Matematiksel olarak, $h$ gizli birimler olduğunu varsayalım, toplu iş boyutu $n$ ve giriş sayısı $d$. Böylece, giriş $\mathbf{X}_t \in \mathbb{R}^{n \times d}$ ve önceki zaman adımının gizli durumu $\mathbf{H}_{t-1} \in \mathbb{R}^{n \times h}$'dir. Buna göre, $t$ zaman adımındaki kapılar şu şekilde tanımlanır: giriş kapısı $\mathbf{I}_t \in \mathbb{R}^{n \times h}$, unut kapısı $\mathbf{F}_t \in \mathbb{R}^{n \times h}$ ve çıkış kapısı $\mathbf{O}_t \in \mathbb{R}^{n \times h}$'dır. Bunlar aşağıdaki gibi hesaplanır:
 
 $$
 \begin{aligned}
@@ -24,51 +26,51 @@ $$
 \end{aligned}
 $$
 
-burada $\mathbf{W}_{xi}, \mathbf{W}_{xf}, \mathbf{W}_{xo} \in \mathbb{R}^{d \times h}$ ve $\mathbf{W}_{hi}, \mathbf{W}_{hf}, \mathbf{W}_{ho} \in \mathbb{R}^{h \times h}$ ağırlık parametreleridir ve $\mathbf{b}_i, \mathbf{b}_f, \mathbf{b}_o \in \mathbb{R}^{1 \times h}$ ek girdi parametreleridir.
+burada $\mathbf{W}_{xi}, \mathbf{W}_{xf}, \mathbf{W}_{xo} \in \mathbb{R}^{d \times h}$ ve $\mathbf{W}_{hi}, \mathbf{W}_{hf}, \mathbf{W}_{ho} \in \mathbb{R}^{h \times h}$ ağırlık parametreleridir ve $\mathbf{b}_i, \mathbf{b}_f, \mathbf{b}_o \in \mathbb{R}^{1 \times h}$ önyargı parametreleridir.
 
 ### Aday Bellek Hücresi
 
-Sonraki adımda hafıza hücresini tasarlıyoruz. Çeşitli geçitlerin eylemini henüz belirtmediğimizden, öncelikle *aday* bellek hücresi $\tilde{\mathbf{C}}_t \in \mathbb{R}^{n \times h}$'i tanıtıyoruz. Hesaplamalar, yukarıda açıklanan üç geçittekine benzer, ancak etkinleştirme fonksiyonu olarak $(-1, 1)$'de bir değer aralığına sahip bir $\tanh$ işlevini kullanır. Bu, $t$ zaman adımında aşağıdaki denklem yol açar:
+Sonra hafıza hücresini tasarlıyoruz. Çeşitli kapıların eylemini henüz belirtmediğimizden, öncelikle *candidate* bellek hücresini $\tilde{\mathbf{C}}_t \in \mathbb{R}^{n \times h}$'i tanıtıyoruz. Hesaplaması, yukarıda açıklanan üç kapıdakine benzer, ancak aktivasyon fonksiyonu olarak $(-1, 1)$ için bir değer aralığına sahip bir $\tanh$ işlevini kullanarak. Bu, $t$ zaman adımında aşağıdaki denklem yol açar:
 
 $$\tilde{\mathbf{C}}_t = \text{tanh}(\mathbf{X}_t \mathbf{W}_{xc} + \mathbf{H}_{t-1} \mathbf{W}_{hc} + \mathbf{b}_c),$$
 
-burada $\mathbf{W}_{xc} \in \mathbb{R}^{d \times h}$ ve $\mathbf{W}_{hc} \in \mathbb{R}^{h \times h}$ ağırlık parametreleridir ve $\mathbf{b}_c \in \mathbb{R}^{1 \times h}$ bir ek girdi parametresidir.
+burada $\mathbf{W}_{xc} \in \mathbb{R}^{d \times h}$ ve $\mathbf{W}_{hc} \in \mathbb{R}^{h \times h}$ ağırlık parametreleridir ve $\mathbf{b}_c \in \mathbb{R}^{1 \times h}$ bir önyargı parametresidir.
 
-Aday bellek hücresinin hızlı bir gösterimi :numref:`lstm_1`'te verilmiştir.
+Aday bellek hücresinin hızlı bir gösterimi :numref:`lstm_1`'te gösterilmiştir.
 
-![LSTM modelinde aday bellek hücresini hesaplama.](../img/lstm-1.svg)
+![Computing the candidate memory cell in an LSTM model.](../img/lstm-1.svg)
 :label:`lstm_1`
 
 ### Bellek Hücresi
 
-GRU'larda, girdiyi ve unutmayı (veya atlamayı) yönetecek bir mekanizmamız vardır. Benzer şekilde, LSTM'lerde bu tür amaçlar için iki özel geçidimiz var: $\mathbf{I}_t$ girdi geçidi $\tilde{\mathbf{C}}_t$ aracılığıyla yeni verileri ne kadar hesaba kattığımızı ve $\mathbf{F}_t$, eski bellek hücresi içeriğinin $\mathbf{C}_{t-1} \in \mathbb{R}^{n \times h}$'nin ne kadarını tuttuğumuzu kontrol eder. Daha önce olduğu gibi aynı noktasal çarpım hilesini kullanarak, aşağıdaki güncelleme denklemine ulaşırız:
+GRU'larda, girişi ve unutmayı (veya atlamayı) yönetecek bir mekanizmamız vardır. Benzer şekilde, LSTM'lerde bu tür amaçlar için iki özel kapımız var: $\mathbf{I}_t$ giriş kapısı $\tilde{\mathbf{C}}_t$ aracılığıyla yeni verileri ne kadar hesaba kattığımızı ve $\mathbf{F}_t$, eski bellek hücresi içeriğinin $\mathbf{C}_{t-1} \in \mathbb{R}^{n \times h}$'nin ne kadarını tuttuğumuzu kontrol eder. Daha önce olduğu gibi aynı noktasal çarpım hilesini kullanarak, aşağıdaki güncelleme denklemine ulaşırız:
 
 $$\mathbf{C}_t = \mathbf{F}_t \odot \mathbf{C}_{t-1} + \mathbf{I}_t \odot \tilde{\mathbf{C}}_t.$$
 
-Unutma geçidi her zaman yaklaşık 1 ise ve girdi geçidi her zaman yaklaşık 0 ise, geçmiş bellek hücreleri $\mathbf{C}_{t-1}$ zamanla kaydedilir ve geçerli zaman adımına geçirilir. Bu tasarım, kaybolan gradyan sorununu hafifletmek ve diziler içindeki uzun menzilli bağlılıkları daha iyi yakalamak için sunuldu.
+Unut kapısı her zaman yaklaşık 1 ise ve giriş kapısı her zaman yaklaşık 0 ise, geçmiş bellek hücreleri $\mathbf{C}_{t-1}$ zamanla kaydedilir ve geçerli zaman adımına geçirilir. Bu tasarım, kaybolan degrade sorununu hafifletmek ve diziler içindeki uzun menzilli bağımlılıkları daha iyi yakalamak için tanıtıldı.
 
 Böylece :numref:`lstm_2`'teki akış şemasına ulaşırız.
 
-![LSTM modelinde bellek hücresini hesaplama.](../img/lstm-2.svg)
+![Computing the memory cell in an LSTM model.](../img/lstm-2.svg)
 
 :label:`lstm_2`
 
-### Gizli Durum
+### Gizli Devlet
 
-Son olarak, $\mathbf{H}_t \in \mathbb{R}^{n \times h}$ gizli durumunu nasıl hesaplayacağımızı tanımlamamız gerekiyor. Çıktı geçidinin devreye girdiği yer burasıdır. Basitçe LSTM'de, bellek hücresinin $\tanh$'li geçitli versiyonudur. Bu, $\mathbf{H}_t$ değerlerinin her zaman $(-1, 1)$ aralığında olmasını sağlar.
+Son olarak, gizli durumu nasıl hesaplayacağımızı tanımlamamız gerekiyor $\mathbf{H}_t \in \mathbb{R}^{n \times h}$. Çıkış kapısının devreye girdiği yer burası. LSTM'de, bellek hücresinin $\tanh$'in sadece bir kapılı versiyonudur. Bu, $\mathbf{H}_t$ değerlerinin her zaman $(-1, 1)$ aralığında olmasını sağlar.
 
 $$\mathbf{H}_t = \mathbf{O}_t \odot \tanh(\mathbf{C}_t).$$
 
-Çıktı geçidi 1'e yaklaştığında, tüm bellek bilgilerini etkin bir şekilde tahminciye aktarırız, oysa 0'a yakın çıktı geçidi için tüm bilgileri yalnızca bellek hücresinde saklarız ve daha fazla işlem yapmayız.
+Çıkış kapısı 1'e yaklaştığında, tüm bellek bilgilerini etkin bir şekilde öngörüye aktarırız, oysa 0'a yakın çıkış kapısı için tüm bilgileri yalnızca bellek hücresinde saklarız ve daha fazla işlem yapmayız.
 
-:numref:`lstm_3`'te, veri akışının grafiksel bir gösterimi vardır.
+:numref:`lstm_3`, veri akışının grafiksel bir resme sahiptir.
 
 ![Computing the hidden state in an LSTM model.](../img/lstm-3.svg)
 :label:`lstm_3`
 
 ## Sıfırdan Uygulama
 
-Şimdi sıfırdan bir LSTM uygulayalım. :numref:`sec_rnn_scratch`'teki deneylerle aynı şekilde, önce zaman makinesi veri kümesini yükleriz.
+Şimdi sıfırdan bir LSTM uygulayalım. :numref:`sec_rnn_scratch`'teki deneylerle aynı, önce zaman makinesi veri kümesini yükleriz.
 
 ```{.python .input}
 from d2l import mxnet as d2l
@@ -90,9 +92,9 @@ batch_size, num_steps = 32, 35
 train_iter, vocab = d2l.load_data_time_machine(batch_size, num_steps)
 ```
 
-### Model Parametrelerini İlkleme
+### Model Parametrelerini Başlatma
 
-Daha sonra model parametrelerini tanımlamamız ve ilklememiz gerekiyor. Daha önce olduğu gibi, hiperparametre `num_hiddens` gizli birimlerin sayısını tanımlar. 0.01 standart sapmalı Gauss dağılımı ile ağırlıkları ilkleriz ve ek girdileri 0'a ayarlarız.
+Daha sonra model parametrelerini tanımlamamız ve başlatmamız gerekiyor. Daha önce olduğu gibi, hiperparametre `num_hiddens` gizli birimlerin sayısını tanımlar. 0.01 standart sapma ile Gauss dağılımını takiben ağırlıkları başlatırız ve önyargıları 0'a ayarlarız.
 
 ```{.python .input}
 def get_lstm_params(vocab_size, num_hiddens, device):
@@ -149,9 +151,9 @@ def get_lstm_params(vocab_size, num_hiddens, device):
     return params
 ```
 
-### Modeli Tanımlama
+### Modelin Tanımlanması
 
-İlkleme işlevinde, LSTM'nin gizli durumunun değeri 0 ve şekli (toplu iş boyutu, gizli birimlerin sayısı) olan bir *ek* bellek hücresi döndürmesi gerekir. Böylece aşağıdaki durum ilklemeyi elde ederiz.
+Başlatma işlevinde, LSTM'nin gizli durumunun 0 değeri ve şekli (toplu iş boyutu, gizli birimlerin sayısı) olan bir *ekleme* bellek hücresi döndürmesi gerekir. Bu nedenle aşağıdaki devlet başlatma olsun.
 
 ```{.python .input}
 def init_lstm_state(batch_size, num_hiddens, device):
@@ -166,7 +168,7 @@ def init_lstm_state(batch_size, num_hiddens, device):
             torch.zeros((batch_size, num_hiddens), device=device))
 ```
 
-Gerçek model, daha önce tartıştığımız gibi tanımlanmıştır: Üç geçit ve bir yardımcı bellek hücresi sağlar. Çıktı katmanına yalnızca gizli durumun iletildiğini unutmayın. Bellek hücresi $\mathbf{C}_t$ doğrudan çıktı hesaplamasına katılmaz.
+Gerçek model, daha önce tartıştığımız gibi tanımlanmıştır: üç kapı ve bir yardımcı bellek hücresi sağlama. Çıktı katmanına yalnızca gizli durumun iletildiğini unutmayın. Bellek hücresi $\mathbf{C}_t$ doğrudan çıktı hesaplama katılmaz.
 
 ```{.python .input}
 def lstm(inputs, state, params):
@@ -207,7 +209,7 @@ def lstm(inputs, state, params):
 
 ### Eğitim ve Tahmin
 
-:numref:`sec_rnn_scratch`'te tanıtılan `RNNModelScratch` sınıfını başlatarak :numref:`sec_gru`'te yaptığımız gibi bir LSTM'yi eğitmeye başlayalım.
+:numref:`sec_rnn_scratch`'te tanıtılan `RNNModelScratch` sınıfını başlatarak :numref:`sec_gru`'te yaptığımız gibi bir LSTM'yi eğitmemize izin verin.
 
 ```{.python .input}
 #@tab all
@@ -218,9 +220,9 @@ model = d2l.RNNModelScratch(len(vocab), num_hiddens, device, get_lstm_params,
 d2l.train_ch8(model, train_iter, vocab, lr, num_epochs, device)
 ```
 
-## Kısa Uygulama
+## Özlü Uygulama
 
-Üst düzey API'leri kullanarak doğrudan bir `LSTM` modeli oluşturabiliriz. Bu, yukarıda açıkça yaptığımız tüm yapılandırma ayrıntılarını gizler. Daha önce ayrıntılı olarak yazdığımız birçok detay yerine Python'un derlenmiş operatörlerini kullandığından kod önemli ölçüde daha hızlıdır.
+Üst düzey API'leri kullanarak doğrudan bir `LSTM` modeli oluşturabiliriz. Bu, yukarıda açıkça yaptığımız tüm yapılandırma ayrıntılarını kapsüller. Daha önce ayrıntılı olarak yazdığımız birçok ayrıntı için Python yerine derlenmiş operatörleri kullandığı için kod önemli ölçüde daha hızlıdır.
 
 ```{.python .input}
 lstm_layer = rnn.LSTM(num_hiddens)
@@ -237,26 +239,26 @@ model = model.to(device)
 d2l.train_ch8(model, train_iter, vocab, lr, num_epochs, device)
 ```
 
-LSTM'ler, apaçık olmayan durum kontrolü ile ilk örnek saklı değişken özbağlanımlı modeldir. Birçok türevi yıllar içinde önerilmiştir, örn. birden fazla katman, artık bağlantılar, farklı düzenlileştirme türleri. Bununla birlikte, LSTM'leri ve diğer dizi modellerini (GRU'lar gibi) eğitmek dizinin uzun menzilli bağlılığı nedeniyle oldukça maliyetlidir. Daha sonra bazı durumlarda kullanılabilen dönüştürücüler (transformers) gibi diğer seçenek modeller ile karşılaşacağız.
+LSTM'ler, önemsiz olmayan durum kontrolü ile prototipik latent değişken otoregresif modeldir. Birçok türevleri yıllar içinde önerilmiştir, örn. birden fazla katman, artık bağlantılar, farklı düzenlilik türleri. Bununla birlikte, eğitim LSTM'leri ve diğer dizi modelleri (GRU'lar gibi), dizinin uzun menzilli bağımlılığı nedeniyle oldukça maliyetlidir. Daha sonra bazı durumlarda kullanılabilen Transformers gibi alternatif modellerle karşılaşacağız.
 
 ## Özet
 
-* LSTM'lerin üç tip geçit vardır: girdi, unutma ve bilgi akışını kontrol eden çıktı geçitleri.
-* Gizli katman çıktısı LSTM gizli durumu ve bellek hücresini içerir. Çıktı katmanına yalnızca gizli durum iletilir. Hafıza hücresi tamamen içseldir.
-* LSTM'ler kaybolan ve patlayan gradyanları hafifletebilir.
+* LSTM'lerin üç tip kapıları vardır: giriş kapıları, unutma kapıları ve bilgi akışını kontrol eden çıkış kapıları.
+* Gizli katman çıktısı LSTM gizli durumu ve bellek hücresini içerir. Çıktı katmanına yalnızca gizli durum iletilir. Hafıza hücresi tamamen içsel.
+* LSTM'ler kaybolan ve patlayan degradeleri hafifletebilir.
 
-## Alıştırmalar
+## Egzersizler
 
 1. Hiperparametreleri ayarlayın ve çalışma süresi, şaşkınlık ve çıktı dizisi üzerindeki etkilerini analiz edin.
-1. Karakter dizilerinin aksine doğru kelimeler üretmek için modeli nasıl değiştirmeniz gerekir?
-1. Belirli bir gizli boyuttaki GRU'lar, LSTM'ler ve normal RNN'ler için hesaplama maliyetini karşılaştırın. Eğitim ve çıkarsama maliyetine özel dikkat gösterin.
-1. Aday hafıza hücresi, tanh fonksiyonunu kullanarak değer aralığının -1 ile 1 arasında olmasını sağladığından, çıktı değeri aralığının -1 ile 1 arasında olmasını sağlamak için gizli durumun neden tekrar tanh fonksiyonunu kullanması gerekiyor?
+1. Karakter dizileri aksine doğru kelimeleri üretmek için modeli nasıl değiştirmeniz gerekir?
+1. Belirli bir gizli boyut için GRU'lar, LSTM'ler ve normal RNN'ler için hesaplama maliyetini karşılaştırın. Eğitim ve çıkarım maliyetine özel dikkat gösterin.
+1. Aday bellek hücresi $-1$ ve $1$ $\tanh$ işlevini kullanarak değer aralığının $-1$ ve $1$ arasında olduğundan emin olmak için $\tanh$ işlevini yeniden kullanmak neden gizli durum gerekiyor?
 1. Karakter sırası tahmini yerine zaman serisi tahmini için bir LSTM modeli uygulayın.
 
 :begin_tab:`mxnet`
-[Tartışmalar](https://discuss.d2l.ai/t/343)
+[Discussions](https://discuss.d2l.ai/t/343)
 :end_tab:
 
 :begin_tab:`pytorch`
-[Tartışmalar](https://discuss.d2l.ai/t/1057)
+[Discussions](https://discuss.d2l.ai/t/1057)
 :end_tab:
