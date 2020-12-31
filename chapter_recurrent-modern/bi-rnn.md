@@ -1,13 +1,13 @@
 # Çift Yönlü Yinelemeli Sinir Ağları
 :label:`sec_bi_rnn`
 
-Sıralı öğrenmede, şimdiye kadar amacımız, örneğin, bir zaman serisi bağlamında veya bir dil modeli bağlamında, şimdiye kadar gördüğümüz bir sonraki çıktıyı modellemek olduğunu varsaydık. Bu tipik bir senaryo olsa da, karşılaşabileceğimiz tek senaryo değil. Sorunu göstermek için, bir metin dizisinde boş doldurma aşağıdaki üç görevi göz önünde bulundurun:
+Dizi öğrenmede, şu ana kadar amacımızın, şimdiye kadar gördüklerimizle bir sonraki çıktıyı modellemek olduğunu varsaydık; örneğin, bir zaman serisi veya bir dil modeli bağlamında. Bu tipik bir senaryo olsa da, karşılaşabileceğimiz tek senaryo değil. Sorunu göstermek için, bir metin dizisinde boş doldurmada aşağıdaki üç görevi gözünüzde canlandırın:
 
-* Ben `___`'üm.
+* Ben `___`.
 * `___` açım.
-* `___` açım ve yarım domuz yiyebilirim.
+* `___` açım ve yarım kuzu yiyebilirim.
 
-Mevcut bilgi miktarına bağlı olarak boşlukları “mutlu”, “değil” ve “çok” gibi çok farklı kelimelerle doldurabiliriz. Açıkça ifade sonu (varsa) hangi kelimenin alınacağı hakkında önemli bilgiler taşır. Bundan yararlanamayan bir dizi modeli, ilgili görevlerde kötü performans gösterecektir. Örneğin, adlandırılmış varlık tanımada iyi iş yapmak (örneğin, “Yeşil” in “Bay Green” ya da rengi ifade edip etmediğini tanımak) daha uzun menzilli bağlam da aynı derecede hayati önem taşır. Problemi ele almak için biraz ilham almak için olasılıksal grafik modellere bir dolambaçlı yol alalım.
+Mevcut bilgi miktarına bağlı olarak boşlukları “mutluyum”, “yarı” ve “çok” gibi çok farklı kelimelerle doldurabiliriz. Açıkça ifadenin sonu (varsa) hangi kelimenin alınacağı hakkında önemli bilgiler taşır. Bundan yararlanamayan bir dizi modeli, ilgili görevlerde kötü performans gösterecektir. Örneğin, adlandırılmış varlık tanımada iyi iş yapmak için (örneğin, “Yeşil”'in “Bay Yeşil”'i ya da rengi ifade edip etmediğini tanımak) daha uzun menzilli bağlam aynı derecede hayati önem taşır. Problemi ele alırken biraz ilham almak için olasılıksal grafik modellerde biraz dolanalım.
 
 ## Gizli Markov Modellerinde Dinamik Programlama
 
@@ -159,16 +159,16 @@ d2l.train_ch8(model, train_iter, vocab, lr, num_epochs, device)
 * Çift yönlü RNN'ler çoğunlukla sekans kodlaması ve iki yönlü bağlam verilen gözlemlerin tahmini için yararlıdır.
 * Çift yönlü RNN'ler, uzun degrade zincirleri nedeniyle antrenman yapmak için çok maliyetlidir.
 
-## Egzersizler
+## Alıştırmalar
 
 1. Farklı yönler farklı sayıda gizli birim kullanıyorsa, $\mathbf{H}_t$'ün şekli nasıl değişecek?
 1. Birden fazla gizli katmanla çift yönlü bir RNN tasarlayın.
 1. Polysemy doğal dillerde yaygındır. Örneğin, “banka” kelimesinin “nakit yatırmak için bankaya gittim” ve “oturmak için bankaya gittim” bağlamlarında farklı anlamları vardır. Bir bağlam dizisi ve bir kelime verilen bir sinir ağı modelini nasıl tasarlayabiliriz, bağlamda kelimenin vektör temsili döndürülür? Polemiyi işlemek için hangi tür sinir mimarileri tercih edilir?
 
 :begin_tab:`mxnet`
-[Discussions](https://discuss.d2l.ai/t/339)
+[Tartışmalar](https://discuss.d2l.ai/t/339)
 :end_tab:
 
 :begin_tab:`pytorch`
-[Discussions](https://discuss.d2l.ai/t/1059)
+[Tartışmalar](https://discuss.d2l.ai/t/1059)
 :end_tab:

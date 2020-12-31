@@ -13,4 +13,5 @@ Aslında, dil modellemesi, dizi öğrenmenin yapabileceklerinin sadece küçük 
 gru
 lstm
 deep-rnn
+bi-rnn
 ```
