@@ -7,15 +7,15 @@ Dizi öğrenmede, şu ana kadar amacımızın, şimdiye kadar gördüklerimizle 
 * `___` açım.
 * `___` açım ve yarım kuzu yiyebilirim.
 
-Mevcut bilgi miktarına bağlı olarak boşlukları “mutluyum”, “yarı” ve “çok” gibi çok farklı kelimelerle doldurabiliriz. Açıkça ifadenin sonu (varsa) hangi kelimenin alınacağı hakkında önemli bilgiler taşır. Bundan yararlanamayan bir dizi modeli, ilgili görevlerde kötü performans gösterecektir. Örneğin, adlandırılmış varlık tanımada iyi iş yapmak için (örneğin, “Yeşil”'in “Bay Yeşil”'i ya da rengi ifade edip etmediğini tanımak) daha uzun menzilli bağlam aynı derecede hayati önem taşır. Problemi ele alırken biraz ilham almak için olasılıksal grafik modellerde biraz dolanalım.
+Mevcut bilgi miktarına bağlı olarak boşlukları “mutluyum”, “yarı” ve “çok” gibi çok farklı kelimelerle doldurabiliriz. Açıkça ifadenin sonu (varsa) hangi kelimenin alınacağı hakkında önemli bilgiler taşır. Bundan yararlanamayan bir dizi modeli, ilgili görevlerde kötü performans gösterecektir. Örneğin, adlandırılmış varlık tanımada iyi iş yapmak için (örneğin, “Yeşil”'in “Bay Yeşil”'i ya da rengi ifade edip etmediğini tanımak) daha uzun menzilli bağlam aynı derecede hayati önem taşır. Problemi ele alırken biraz ilham almak için olasılıksal çizge modellerde biraz dolanalım.
 
 ## Gizli Markov Modellerinde Dinamik Programlama
 
-Bu alt bölüm, dinamik programlama problemini göstermeye yarar. Belirli teknik detaylar derin öğrenme modellerini anlamak için önemli değildir, ancak neden derin öğrenmeyi kullanabileceğini ve neden belirli mimarileri seçebileceğini motive etmeye yardımcı olurlar.
+Bu alt bölüm, dinamik programlama problemini göstermeyi amaçlar. Belirli teknik detaylar derin öğrenme modellerini anlamak için önemli değildir, ancak neden derin öğrenmeyi kullanabileceğimizi ve neden belirli mimarileri seçebileceğimizi anlamaya yardımcı olurlar.
 
-Problemi olasılıksal grafik modelleri kullanarak çözmek istiyorsak, örneğin gizli bir değişken modeli aşağıdaki gibi tasarlayabiliriz. Herhangi bir zamanda adım $t$, biz $x_t$ aracılığıyla gözlenen emisyonumuzu yöneten bazı gizli değişken $h_t$ olduğunu varsayalım $P(x_t \mid h_t)$. Dahası, herhangi bir geçiş $h_t \to h_{t+1}$, bazı devlet geçiş olasılığı $P(h_{t+1} \mid h_{t})$ ile verilir. Bu olasılıksal grafik modeli daha sonra :numref:`fig_hmm`'te olduğu gibi bir *gizli Markov modeli*.
+Problemi olasılıksal çizge modelleri kullanarak çözmek istiyorsak, mesela aşağıdaki gibi gizli bir değişken modeli tasarlayabiliriz. Herhangi bir $t$ zamanda adımında, $P(x_t \mid h_t)$ olasılığında $x_t$ aracılığıyla gözlenen salımını yöneten bazı gizli $h_t$ değişkenimiz olduğunu varsayalım. Dahası, herhangi bir $h_t \to h_{t+1}$ geçişi, bir durum geçiş olasılığı $P(h_{t+1} \mid h_{t})$ ile verilir. Bu olasılıksal çizge modeli :numref:`fig_hmm`'te olduğu gibi bir *saklı Markov modeli*dir.
 
-![A hidden Markov model.](../img/hmm.svg)
+![Saklı Markov Modeli.](../img/hmm.svg)
 :label:`fig_hmm`
 
 Böylece, $T$ gözlemlerinin bir dizisi için gözlemlenen ve gizli durumlar üzerinde aşağıdaki ortak olasılık dağılımına sahibiz:
