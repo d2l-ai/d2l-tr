@@ -14,4 +14,5 @@ gru
 lstm
 deep-rnn
 bi-rnn
+machine-translation-and-dataset
 ```

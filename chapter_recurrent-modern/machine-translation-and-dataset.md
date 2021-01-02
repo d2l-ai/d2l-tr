@@ -1,4 +1,4 @@
-# Makine Çevirisi ve Dataset
+# Makine Çevirisi ve Veri Kümesi
 :label:`sec_machine_translation`
 
 Doğal dil işlemenin anahtarı olan dil modellerini tasarlamak için RNN kullandık. Diğer bir amiral gemisi kıyaslaması, giriş dizilerini çıktı dizilerine dönüştüren *sıra dönüşüm* modelleri için merkezi bir sorun alanı olan *makine çevirisi*. Çeşitli modern yapay zeka uygulamalarında önemli bir rol oynayan dizi iletim modelleri, bu bölümün geri kalanının ve :numref:`chap_attention`'ün odağını oluşturacaktır. Bu amaçla, bu bölüm makine çevirisi sorununu ve daha sonra kullanılacak veri kümesini tanıtır.
@@ -201,15 +201,15 @@ for X, X_valid_len, Y, Y_valid_len in train_iter:
 * Kelime düzeyinde tokenization kullanarak, kelime dağarcığı boyutu, karakter düzeyinde belirteç kullanarak bundan önemli ölçüde daha büyük olacaktır. Bunu hafifletmek için, seyrek belirteçleri aynı bilinmeyen belirteç olarak ele alabiliriz.
 * Metin dizilerini kesebilir ve doldırabiliriz, böylece hepsi mini batchlerde yüklenecek aynı uzunluğa sahip olur.
 
-## Egzersizler
+## Alıştırmalar
 
 1. `load_data_nmt` işlevindeki `num_examples` bağımsız değişkeni farklı değerlerini deneyin. Bu, kaynak dilin ve hedef dilin kelime dağarcığı boyutlarını nasıl etkiler?
 1. Çince ve Japonca gibi bazı dillerde metin, kelime sınır göstergelerine (örn., boşluk) sahip değildir. Sözcük düzeyinde tokenizasyon bu gibi durumlar için hala iyi bir fikir mi? Neden ya da neden olmasın?
 
 :begin_tab:`mxnet`
-[Discussions](https://discuss.d2l.ai/t/344)
+[Tartışmalar](https://discuss.d2l.ai/t/344)
 :end_tab:
 
 :begin_tab:`pytorch`
-[Discussions](https://discuss.d2l.ai/t/1060)
+[Tartışmalar](https://discuss.d2l.ai/t/1060)
 :end_tab:
