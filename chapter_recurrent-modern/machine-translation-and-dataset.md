@@ -30,7 +30,7 @@ import os
 
 ## Veri Kümesini İndirme ve Önişleme
 
-Başlangıç olarak, [bilingual sentence pairs from the Tatoeba Project](http://www.manythings.org/anki/)'ten oluşan bir İngiliz-Fransız veri kümesini indiriyoruz. Veri kümedeki her satır, İngilizce metin dizisinin sekmeyle ayrılmış bir çifti ve çevrilmiş Fransızca metin dizisidir. Her metin dizisinin sadece bir cümle veya birden çok cümleden oluşan bir paragraf olabileceğini unutmayın. İngilizce'nin Fransızca'ya çevrildiği bu makine çevirisi probleminde, İngilizce*kaynak dil*, Fransızca ise *hedef dil*.
+Başlangıç olarak, [Tatoeba Projesi'nden iki dilli cümle çiftleri](http://www.manythings.org/anki/)'nden oluşan bir İngiliz-Fransız veri kümesini indiriyoruz. Veri kümedeki her satır, bir sekmeyle ayrılmış İngilizce metin dizisi ve çevrilmiş Fransızca metin dizisi çiftidir. Her metin dizisinin sadece bir cümle veya birden çok cümleden oluşan bir paragraf olabileceğini unutmayın. İngilizce'nin Fransızca'ya çevrildiği bu makine çevirisi probleminde, İngilizce *kaynak dil*, Fransızca ise *hedef dil*dir.
 
 ```{.python .input}
 #@tab all
@@ -49,7 +49,7 @@ raw_text = read_data_nmt()
 print(raw_text[:75])
 ```
 
-Veri kümesini indirdikten sonra, ham metin verileri için birkaç önişleme adımına devam ediyoruz. Örneğin, kırılmayan alanı boşlukla değiştirir, büyük harfleri küçük harflere dönüştürür ve sözcüklerle noktalama işaretleri arasına boşluk ekleriz.
+Veri kümesini indirdikten sonra, ham metin verileri için birkaç önişleme adımı ile devam ediyoruz. Örneğin, kırılmayan alanı boşlukla değiştirir, büyük harfleri küçük harflere dönüştürür ve sözcüklerle noktalama işaretleri arasına boşluk ekleriz.
 
 ```{.python .input}
 #@tab all
@@ -71,7 +71,7 @@ text = preprocess_nmt(raw_text)
 print(text[:80])
 ```
 
-## Tokenization
+## Andıçlama
 
 :numref:`sec_language_model`'teki karakter düzeyinde tokenizasyondan farklı olarak, makine çevirisi için burada kelime düzeyinde tokenizasyonu tercih ediyoruz (son teknoloji modelleri daha gelişmiş tokenizasyon teknikleri kullanabilir). Aşağıdaki `tokenize_nmt` işlevi, her belirteç bir sözcük veya noktalama işareti olduğu ilk `num_examples` metin sırası çiftlerini belirteçler. Bu işlev, belirteç listelerinin iki listesini döndürür: `source` ve `target`. Özellikle, `source[i]` kaynak dilde (İngilizce burada) $i^\mathrm{th}$ metin dizisinden belirteçlerin bir listesidir ve `target[i]` hedef dilde (Fransızca burada).
 
@@ -107,7 +107,7 @@ for patch in patches[1].patches:
 d2l.plt.legend(loc='upper right');
 ```
 
-## Kelime hazinesi
+## Kelime Dağarcığı
 
 Makine çeviri veri kümesi dil çiftlerinden oluştuğundan, hem kaynak dil hem de hedef dil için ayrı ayrı iki kelime hazinesi oluşturabiliriz. Kelime düzeyinde tokenization ile, kelime dağarcığı boyutu, karakter düzeyinde belirteç kullanarak bundan önemli ölçüde daha büyük olacaktır. Bunu hafifletmek için, burada aynı bilinmeyen (” <unk> “) belirteci ile 2 defadan az görünen seyrek belirteçleri tedavi ediyoruz. Bunun yanı sıra, <pad> mini batchlerde aynı uzunlukta dolgu (” “) dizileri ve dizilerin başlangıcını (” <bos> “) veya sonunu (” <eos> “) işaretlemek için gibi ek özel belirteçleri belirtiyoruz. Bu tür özel belirteçler, doğal dil işleme görevlerinde yaygın olarak kullanılır.
 
@@ -118,7 +118,7 @@ src_vocab = d2l.Vocab(source, min_freq=2,
 len(src_vocab)
 ```
 
-## Veri kümesini yükleme
+## Veri Kümesini Yükleme
 :label:`subsec_mt_data_loading`
 
 Dil modellemesinde, her dizi örneğinin, bir cümlenin bir kesimi veya birden fazla cümle üzerindeki bir yayılma, sabit bir uzunluğa sahip olduğunu hatırlayın. Bu `num_steps` (zaman adımları veya belirteçleri sayısı) bağımsız değişken :numref:`sec_language_model` tarafından belirtilmiştir. Makine çevirisinde, her örnek, her metin dizisinin farklı uzunluklara sahip olabileceği bir kaynak ve hedef metin dizisi çiftidir.
@@ -155,7 +155,7 @@ def build_array_nmt(lines, vocab, num_steps):
     return array, valid_len
 ```
 
-## Her şeyini bir araya koymak
+## Her Şeyi Bir Araya Koyma
 
 Son olarak, veri yineleyiciyi hem kaynak dil hem de hedef dil için kelime hazineleri ile birlikte döndürmek için `load_data_nmt` işlevini tanımlıyoruz.
 
