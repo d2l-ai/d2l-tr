@@ -115,6 +115,8 @@ loss function; kayıp veya yitim fonksiyonu
 
 meme; mizah unsuru
 
+message passing; mesaj geçişi
+
 minibatch; minigrup
 
 nontrivial; apaçık olmayan
@@ -152,6 +154,8 @@ prior; önsel olasılık
 receptive field; alım alanı
 
 recurrent neural network; yinelemeli sinir ağı
+
+recursion; özyineleme
 
 regression; bağlanım veya regresyon
 
