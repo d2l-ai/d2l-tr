@@ -207,6 +207,8 @@ tabular; çizelge halindeki
 
 token; andıç
 
+transduction; dönüştürme
+
 transformer; dönüştürücü
 
 transpose; devrik

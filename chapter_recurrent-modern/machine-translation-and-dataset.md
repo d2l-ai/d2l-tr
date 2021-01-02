@@ -1,16 +1,11 @@
 # Makine Çevirisi ve Veri Kümesi
 :label:`sec_machine_translation`
 
-Doğal dil işlemenin anahtarı olan dil modellerini tasarlamak için RNN kullandık. Diğer bir amiral gemisi kıyaslaması, giriş dizilerini çıktı dizilerine dönüştüren *sıra dönüşüm* modelleri için merkezi bir sorun alanı olan *makine çevirisi*. Çeşitli modern yapay zeka uygulamalarında önemli bir rol oynayan dizi iletim modelleri, bu bölümün geri kalanının ve :numref:`chap_attention`'ün odağını oluşturacaktır. Bu amaçla, bu bölüm makine çevirisi sorununu ve daha sonra kullanılacak veri kümesini tanıtır.
+Doğal dil işlemenin anahtarı olan dil modellerini tasarlamak için RNN kullandık. Diğer bir amiral gemisi kıyaslaması, girdi dizilerini çıktı dizilerine dönüştüren *sıra dönüştürme* modelleri için merkezi bir problem düzlemi olan *makine çevirisi*dir. Çeşitli modern yapay zeka uygulamalarında önemli bir rol oynayan dizi dönüştürme modelleri, bu bölümün geri kalanının ve :numref:`chap_attention`'ün odağını oluşturacaktır. Bu amaçla, bu bölüm makine çevirisi sorununu ve daha sonra kullanılacak veri kümesini anlatır.
 
-*Makine çevirisi*
-bir dizinin bir dilden diğerine otomatik çevirisi. Aslında, bu alan, özellikle II. Dünya Savaşı'nda dil kodlarını kırmak için bilgisayarların kullanılması göz önüne alınarak, dijital bilgisayarlar icat edildikten kısa bir süre sonra 1940'lara kadar uzanabilir. Onlarca yıldır, bu alanda istatistiksel yaklaşımlar :cite:`Brown.Cocke.Della-Pietra.ea.1988,Brown.Cocke.Della-Pietra.ea.1990`, sinir ağlarını kullanarak uçtan uca öğrenmenin yükselmesinden önce baskın olmuştur. İkincisi genellikle denir
-*Sinir makinesi çevirisi*
-kendini ayırt etmek
-*İstatistiksel makine çevirisi*
-çeviri modeli ve dil modeli gibi bileşenlerde istatistiksel analiz içerir.
+*Makine çevirisi* bir dizinin bir dilden diğerine otomatik çevirisidir. Aslında, bu alan, özellikle II. Dünya Savaşı'nda dil kodlarını kırmak için bilgisayarların kullanılması göz önüne alınarak, sayısal bilgisayarların icat edilmesinin kısa bir süre sonrasından 1940'lara kadar uzanabilir. Onlarca yıldır, bu alanda, istatistiksel yaklaşımlar, :cite:`Brown.Cocke.Della-Pietra.ea.1988,Brown.Cocke.Della-Pietra.ea.1990`, sinir ağlarını kullanarak uçtan uca öğrenmenin yükselmesinin öncesine kadar baskın olmuştur. İkincisine genellikle *sinirsel makinesi çevirisi* denerek çeviri modeli ve dil modeli gibi bileşenlerde istatistiksel analiz içeren *istatistiksel makine çevirisi* ayırt edilir.
 
-Uçtan uca öğrenmeyi vurgulayan bu kitap, sinirsel makine çeviri yöntemlerine odaklanacaktır. Dersleri tek bir dilde olan :numref:`sec_language_model`'teki dil modeli problemimizden farklı olarak, makine çevirisi veri kümeleri sırasıyla kaynak dilde ve hedef dilde bulunan metin dizileri çiftlerinden oluşmaktadır. Bu nedenle, dil modelleme için önişleme rutinini yeniden kullanmak yerine, makine çevirisi veri kümelerini önişlemek için farklı bir yol gerekir. Aşağıda, önceden işlenmiş verilerin eğitim için minibatch'lere nasıl yükleneceğini gösteriyoruz.
+Uçtan uca öğrenmeyi vurgulayan bu kitap, sinirsel makine çevirisi yöntemlerine odaklanacaktır. Külliyatı tek bir dil olan :numref:`sec_language_model`'teki dil modeli problemimizden farklı olarak, makine çevirisi veri kümeleri sırasıyla kaynak dilde ve hedef dilde bulunan metin dizileri çiftlerinden oluşmaktadır. Bu nedenle, dil modelleme için önişleme rutinini yeniden kullanmak yerine, makine çevirisi veri kümelerini önişlemek için farklı bir yol gerekir. Aşağıda, önceden işlenmiş verilerin eğitim için minigruplara nasıl yükleneceğini gösteriyoruz.
 
 ```{.python .input}
 from d2l import mxnet as d2l
