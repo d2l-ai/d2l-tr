@@ -99,7 +99,7 @@ $$\mathbf{O}_t = \mathbf{H}_t \mathbf{W}_{hq} + \mathbf{b}_q.$$
 
 Burada, $\mathbf{W}_{hq} \in \mathbb{R}^{2h \times q}$ ağırlık matrisi ve $\mathbf{b}_q \in \mathbb{R}^{1 \times q}$ ek girdisi, çıktı katmanının model parametreleridir. Aslında, iki yön farklı sayıda gizli birime sahip olabilir.
 
-### Hesaplamalı Maliyet ve Uygulamalar
+### Hesaplama Maliyeti ve Uygulamalar
 
 Çift yönlü RNN'nin temel özelliklerinden biri, dizinin her iki ucundan gelen bilgilerin çıktıyı tahmin etmek için kullanıldığıdır. Yani, mevcut olanı tahmin etmek için hem gelecekteki hem de geçmişteki gözlemlerden gelen bilgileri kullanırız. Bir sonraki andıç tahmininde bu istediğimiz şey değildir. Sonuçta, sonraki andıcı tahmin ederken bir sonraki andıcı bilme lüksüne sahip değiliz. Dolayısıyla, çift yönlü bir RNN kullansaydık, çok iyi bir doğruluk elde edemezdik: Eğitim sırasında şimdiki zamanı tahmin etmek için geçmişteki ve gelecekteki verilere sahibiz. Test süresi boyunca ise elimizde sadece geçmişteki veri var ve dolayısıyla düşük doğruluğumuz olur. Bunu aşağıda bir deneyde göstereceğiz.
 

@@ -213,6 +213,8 @@ transformer; dönüştürücü
 
 transpose; devrik
 
+truncation; kırkma 
+
 tuple; çokuzlu
 
 underflow; küçümenlik
