@@ -131,7 +131,7 @@ state.shape
 ## Kodçözücü
 :label:`sec_seq2seq_decoder`
 
-Az önce de belirttiğimiz gibi, kodlayıcının çıkışının $\mathbf{c}$ bağlam değişkeni $x_1, \ldots, x_T$ tüm giriş sırasını kodlar. Eğitim veri setinden $y_1, y_2, \ldots, y_{T'}$ çıkış sırası göz önüne alındığında, her zaman adım $t'$ için (sembol, giriş dizilerinin veya kodlayıcıların $t$ zaman adımından farklıdır), kodçözücü çıkışının olasılığı $y_{t'}$ önceki çıkış alt sırası $y_1, \ldots, y_{t'-1}$ ve bağlam değişkeni üzerinde koşulludur $\mathbf{c}$, yani, $P(y_{t'} \mid y_1, \ldots, y_{t'-1}, \mathbf{c})$.
+Az önce de belirttiğimiz gibi, kodlayıcının çıktısının $\mathbf{c}$ bağlam değişkeni $x_1, \ldots, x_T$ tüm girdi dizisini kodlar. Eğitim veri kümesinden $y_1, y_2, \ldots, y_{T'}$ çıktı dizisi göz önüne alındığında, her zaman adım $t'$ için (sembol, girdi dizilerinin veya kodlayıcıların $t$ zaman adımından farklıdır), kodçözücü çıktısının olasılığı $y_{t'}$ önceki çıktı altdizisi $y_1, \ldots, y_{t'-1}$ ve $\mathbf{c}$ bağlam değişkeni üzerinde koşulludur, yani, $P(y_{t'} \mid y_1, \ldots, y_{t'-1}, \mathbf{c})$.
 
 Bu koşullu olasılığı diziler üzerinde modellemek için, kodçözücü olarak başka bir RNN kullanabiliriz. Herhangi bir zamanda adım $t^\prime$ çıktı sırası, RNN $y_{t^\prime-1}$ önceki zaman adımından ve $\mathbf{c}$ bağlam değişkeni giriş olarak alır, sonra onları ve önceki gizli durum $\mathbf{s}_{t^\prime-1}$ gizli duruma dönüştürür $\mathbf{s}_{t^\prime}$ geçerli zaman adımında. Sonuç olarak, kodçözücünün gizli katmanının dönüşümünü ifade etmek için $g$ işlevi kullanabiliriz:
 
