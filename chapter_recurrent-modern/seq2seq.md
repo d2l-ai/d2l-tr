@@ -1,16 +1,16 @@
-#  Sıra Öğrenme Sırası
+# Diziden Diziye Öğrenme
 :label:`sec_seq2seq`
 
-:numref:`sec_machine_translation`'te gördüğümüz gibi, makine çevirisinde hem giriş hem de çıkış değişken uzunlukta bir dizidir. Bu tür bir sorunu çözmek için :numref:`sec_encoder-decoder`'te genel bir kodlayıcı-kod çözücü mimarisi tasarladık. Bu bölümde, bu mimarinin kodlayıcısını ve kod çözücüsünü tasarlamak için iki RNN kullanacağız ve makine çevirisi :cite:`Sutskever.Vinyals.Le.2014,Cho.Van-Merrienboer.Gulcehre.ea.2014` için *sequence to sequence* öğrenmeye uygulayacağız.
+:numref:`sec_machine_translation`'te gördüğümüz gibi, makine çevirisinde hem girdi hem de çıktı değişken uzunlukta dizilerdir. Bu tür problemleri çözmek için :numref:`sec_encoder-decoder`'te genel bir kodlayıcı-kodçözücü mimarisi tasarladık. Bu bölümde, bu mimarinin kodlayıcısını ve kodçözücüsünü tasarlamak için iki RNN kullanacağız ve makine çevirisi :cite:`Sutskever.Vinyals.Le.2014,Cho.Van-Merrienboer.Gulcehre.ea.2014` için *diziden diziye* öğrenmeyi uygulayacağız.
 
-Kodlayıcı-kod çözücü mimarisinin tasarım ilkesini takiben, RNN kodlayıcı girdi olarak değişken uzunlukta bir diziyi alabilir ve sabit şekilli gizli bir duruma dönüştürebilir. Başka bir deyişle, giriş dizisinin bilgileri RNN kodlayıcısının gizli durumunda *kodlandı* olur. Çıkış sırası belirteci ile belirteç oluşturmak için, ayrı bir RNN kod çözücü, hangi belirteçlerin görüldüğünü (dil modellemesinde olduğu gibi) veya oluşturulan giriş dizisinin kodlanmış bilgileriyle birlikte bir sonraki belirteci tahmin edebilir. :numref:`fig_seq2seq`, diziden diziye iki RNN'nin nasıl kullanılacağını gösterir Makine çevirisinde öğrenme.
+Kodlayıcı-kodçözücü mimarisinin tasarım ilkesini takiben, RNN kodlayıcı girdi olarak değişken uzunlukta bir diziyi alabilir ve bir sabit şekilli gizli duruma dönüştürebilir. Başka bir deyişle, girdi dizisinin bilgileri RNN kodlayıcısının gizli durumunda *kodlanmış* olur. Çıktı dizisi andıç andıç oluşturmak için, ayrı bir RNN kodçözücü, girdi dizisinin kodlanmış bilgileriyle birlikte, hangi andıçların görüldüğünü (dil modellemesinde olduğu gibi) veya oluşturulduğuna bağlı olarak bir sonraki andıcı tahmin edebilir. :numref:`fig_seq2seq`, makine çevirisinde diziden diziye öğrenme için iki RNN'nin nasıl kullanılacağını gösterir.
 
-![Sequence to sequence learning with an RNN encoder and an RNN decoder.](../img/seq2seq.svg)
+![Bir RNN kodlayıcı ve bir RNN kodçözücü ile diziden diziye öğrenme.](../img/seq2seq.svg)
 :label:`fig_seq2seq`
 
-:numref:`fig_seq2seq`'te, özel "<eos>" belirteci dizinin sonunu işaretler. Model, bu belirteç oluşturulduktan sonra tahminlerde bulunmayı durdurabilir. RNN kod çözücünün ilk zaman adımında, iki özel tasarım kararı vardır. İlk olarak, özel başlangıç dizisi "<bos>" belirteci bir girdidir. İkincisi, RNN kodlayıcısının son gizli durumu, kod çözücünün gizli durumunu başlatmak için kullanılır. :cite:`Sutskever.Vinyals.Le.2014` gibi tasarımlarda, kodlanmış giriş sırası bilgilerinin çıkış sırasını oluşturmak için kod çözücüsüne nasıl beslendiği tam olarak budur. :cite:`Cho.Van-Merrienboer.Gulcehre.ea.2014` gibi diğer bazı tasarımlarda, kodlayıcının son gizli durumu, :numref:`fig_seq2seq`'te gösterildiği gibi her adımda girişlerin bir parçası olarak kod çözücüye beslenir. :numref:`sec_language_model`'deki dil modellerinin eğitimine benzer şekilde, etiketlerin bir belirteç ile kaydırılmış orijinal çıktı dizisi olmasına izin verebiliriz: "<bos> “, “Ils”, “saygın”, “.” $\rightarrow$ “Ils”, “saygın”,”.“," <eos>”.
+:numref:`fig_seq2seq`'te, özel "<eos>" andıcı dizinin sonunu işaretler. Model, bu andıç oluşturulduktan sonra tahminlerde bulunmayı durdurabilir. RNN kodçözücüsünün ilk zaman adımında, iki özel tasarım kararı vardır. İlk olarak, özel dizi başlangıç andıcı, "<bos>", bir girdidir. İkincisi, RNN kodlayıcısının son gizli durumu, kodçözücünün gizli durumunu ilklemek için kullanılır. :cite:`Sutskever.Vinyals.Le.2014`'teki gibi tasarımlarda, kodlanmış girdi dizisi bilgilerinin çıktı dizisini oluşturmak için kodçözücüsüne beslenmesi tam olarak da budur. :cite:`Cho.Van-Merrienboer.Gulcehre.ea.2014` gibi diğer bazı tasarımlarda, kodlayıcının son gizli durumu, :numref:`fig_seq2seq`'te gösterildiği gibi her adımda girdilerin bir parçası olarak kodçözücüye beslenir. :numref:`sec_language_model`'deki dil modellerinin eğitimine benzer şekilde, etiketlerin bir andıç ile kaydırılmış orijinal çıktı dizisi olmasına izin verebiliriz: "<bos>“, “Ils”, “regardent”, “.” $\rightarrow$ “Ils”, “regardent”,”.“,"<eos>”.
 
-Aşağıda, :numref:`fig_seq2seq`'ün tasarımını daha ayrıntılı olarak açıklayacağız. Bu modeli :numref:`sec_machine_translation`'te tanıtılan İngilizce-Fransız veri setinde makine çevirisi için eğiteceğiz.
+Aşağıda, :numref:`fig_seq2seq`'ün tasarımını daha ayrıntılı olarak açıklayacağız. Bu modeli :numref:`sec_machine_translation`'te tanıtılan İngilizce-Fransız veri kümesinde makine çevirisi için eğiteceğiz.
 
 ```{.python .input}
 import collections
@@ -128,18 +128,18 @@ len(state), state[0].shape
 state.shape
 ```
 
-## Kod çözücü
+## kodçözücü
 :label:`sec_seq2seq_decoder`
 
-Az önce de belirttiğimiz gibi, kodlayıcının çıkışının $\mathbf{c}$ bağlam değişkeni $x_1, \ldots, x_T$ tüm giriş sırasını kodlar. Eğitim veri setinden $y_1, y_2, \ldots, y_{T'}$ çıkış sırası göz önüne alındığında, her zaman adım $t'$ için (sembol, giriş dizilerinin veya kodlayıcıların $t$ zaman adımından farklıdır), kod çözücü çıkışının olasılığı $y_{t'}$ önceki çıkış alt sırası $y_1, \ldots, y_{t'-1}$ ve bağlam değişkeni üzerinde koşulludur $\mathbf{c}$, yani, $P(y_{t'} \mid y_1, \ldots, y_{t'-1}, \mathbf{c})$.
+Az önce de belirttiğimiz gibi, kodlayıcının çıkışının $\mathbf{c}$ bağlam değişkeni $x_1, \ldots, x_T$ tüm giriş sırasını kodlar. Eğitim veri setinden $y_1, y_2, \ldots, y_{T'}$ çıkış sırası göz önüne alındığında, her zaman adım $t'$ için (sembol, giriş dizilerinin veya kodlayıcıların $t$ zaman adımından farklıdır), kodçözücü çıkışının olasılığı $y_{t'}$ önceki çıkış alt sırası $y_1, \ldots, y_{t'-1}$ ve bağlam değişkeni üzerinde koşulludur $\mathbf{c}$, yani, $P(y_{t'} \mid y_1, \ldots, y_{t'-1}, \mathbf{c})$.
 
-Bu koşullu olasılığı diziler üzerinde modellemek için, kod çözücü olarak başka bir RNN kullanabiliriz. Herhangi bir zamanda adım $t^\prime$ çıktı sırası, RNN $y_{t^\prime-1}$ önceki zaman adımından ve $\mathbf{c}$ bağlam değişkeni giriş olarak alır, sonra onları ve önceki gizli durum $\mathbf{s}_{t^\prime-1}$ gizli duruma dönüştürür $\mathbf{s}_{t^\prime}$ geçerli zaman adımında. Sonuç olarak, kod çözücünün gizli katmanının dönüşümünü ifade etmek için $g$ işlevi kullanabiliriz:
+Bu koşullu olasılığı diziler üzerinde modellemek için, kodçözücü olarak başka bir RNN kullanabiliriz. Herhangi bir zamanda adım $t^\prime$ çıktı sırası, RNN $y_{t^\prime-1}$ önceki zaman adımından ve $\mathbf{c}$ bağlam değişkeni giriş olarak alır, sonra onları ve önceki gizli durum $\mathbf{s}_{t^\prime-1}$ gizli duruma dönüştürür $\mathbf{s}_{t^\prime}$ geçerli zaman adımında. Sonuç olarak, kodçözücünün gizli katmanının dönüşümünü ifade etmek için $g$ işlevi kullanabiliriz:
 
 $$\mathbf{s}_{t^\prime} = g(y_{t^\prime-1}, \mathbf{c}, \mathbf{s}_{t^\prime-1}).$$
 
-Kod çözücünün gizli durumunu elde ettikten sonra, $t^\prime$ adımındaki çıkış için koşullu olasılık dağılımını $P(y_{t^\prime} \mid y_1, \ldots, y_{t^\prime-1}, \mathbf{c})$'i hesaplamak için bir çıkış katmanı ve softmax işlemini kullanabiliriz.
+kodçözücünün gizli durumunu elde ettikten sonra, $t^\prime$ adımındaki çıkış için koşullu olasılık dağılımını $P(y_{t^\prime} \mid y_1, \ldots, y_{t^\prime-1}, \mathbf{c})$'i hesaplamak için bir çıkış katmanı ve softmax işlemini kullanabiliriz.
 
-:numref:`fig_seq2seq`'ü takiben, kod çözücüyü aşağıdaki gibi uygularken, kod çözücünün gizli durumunu başlatmak için kodlayıcının son zaman adımındaki gizli durumu doğrudan kullanırız. Bu, RNN kodlayıcı ve RNN kod çözücüsünün aynı sayıda katman ve gizli birimlere sahip olmasını gerektirir. Kodlanmış giriş sırası bilgilerini daha da dahil etmek için, bağlam değişkeni kod çözücü girişiyle her zaman adımda birleştirilir. Çıktı belirtecinin olasılık dağılımını tahmin etmek için, RNN kod çözücünün son katmanındaki gizli durumu dönüştürmek için tam bağlı bir katman kullanılır.
+:numref:`fig_seq2seq`'ü takiben, kodçözücüyü aşağıdaki gibi uygularken, kodçözücünün gizli durumunu başlatmak için kodlayıcının son zaman adımındaki gizli durumu doğrudan kullanırız. Bu, RNN kodlayıcı ve RNN kodçözücüsünün aynı sayıda katman ve gizli birimlere sahip olmasını gerektirir. Kodlanmış giriş sırası bilgilerini daha da dahil etmek için, bağlam değişkeni kodçözücü girişiyle her zaman adımda birleştirilir. Çıktı belirtecinin olasılık dağılımını tahmin etmek için, RNN kodçözücünün son katmanındaki gizli durumu dönüştürmek için tam bağlı bir katman kullanılır.
 
 ```{.python .input}
 class Seq2SeqDecoder(d2l.Decoder):
@@ -198,7 +198,7 @@ class Seq2SeqDecoder(d2l.Decoder):
         return output, state
 ```
 
-Uygulanan kod çözücüyü göstermek için, aşağıda belirtilen kodlayıcıdan aynı hiperparametrelerle başlatıyoruz. Gördüğümüz gibi, kod çözücünün çıkış şekli olur (parti boyutu, zaman adımlarının sayısı, kelime dağarcığı boyutu), burada tensörün son boyutu tahmin edilen belirteç dağılımını depolar.
+Uygulanan kodçözücüyü göstermek için, aşağıda belirtilen kodlayıcıdan aynı hiperparametrelerle başlatıyoruz. Gördüğümüz gibi, kodçözücünün çıkış şekli olur (parti boyutu, zaman adımlarının sayısı, kelime dağarcığı boyutu), burada tensörün son boyutu tahmin edilen belirteç dağılımını depolar.
 
 ```{.python .input}
 decoder = Seq2SeqDecoder(vocab_size=10, embed_size=8, num_hiddens=16,
@@ -219,14 +219,14 @@ output, state = decoder(X, state)
 output.shape, state.shape
 ```
 
-Özetlemek gerekirse, yukarıdaki RNN kodlayıcı-kod çözücü modelindeki katmanlar :numref:`fig_seq2seq_details`'te gösterilmektedir.
+Özetlemek gerekirse, yukarıdaki RNN kodlayıcı-kodçözücü modelindeki katmanlar :numref:`fig_seq2seq_details`'te gösterilmektedir.
 
 ![Layers in an RNN encoder-decoder model.](../img/seq2seq-details.svg)
 :label:`fig_seq2seq_details`
 
 ## Kayıp Fonksiyonu
 
-Her adımda, kod çözücü çıktı belirteçleri için bir olasılık dağılımı öngörür. Dil modellemesine benzer şekilde, dağıtımı elde etmek ve optimizasyon için çapraz entropi kaybını hesaplamak için softmax uygulayabiliriz. Özel dolgu belirteçlerinin dizilerin sonuna eklendiğini hatırlayın :numref:`sec_machine_translation`, böylece değişen uzunluklardaki dizilerin aynı şeklin minibatch'lerine verimli bir şekilde yüklenebilmesini sağlayın. Bununla birlikte, dolgu belirteçlerinin tahmini kayıp hesaplamalarından hariç tutulmalıdır.
+Her adımda, kodçözücü çıktı belirteçleri için bir olasılık dağılımı öngörür. Dil modellemesine benzer şekilde, dağıtımı elde etmek ve optimizasyon için çapraz entropi kaybını hesaplamak için softmax uygulayabiliriz. Özel dolgu belirteçlerinin dizilerin sonuna eklendiğini hatırlayın :numref:`sec_machine_translation`, böylece değişen uzunluklardaki dizilerin aynı şeklin minibatch'lerine verimli bir şekilde yüklenebilmesini sağlayın. Bununla birlikte, dolgu belirteçlerinin tahmini kayıp hesaplamalarından hariç tutulmalıdır.
 
 Bu amaçla, sıfır değerleriyle alakasız girişleri maskelemek için aşağıdaki `sequence_mask` işlevini kullanabiliriz, böylece daha sonra sıfır eşittir ile alakasız tahminlerin çarpımı sıfıra eşittir. Örneğin, dolgu belirteçleri hariç iki dizinin geçerli uzunluğu sırasıyla bir ve iki ise, ilk ve ilk iki girişten sonra kalan girişler sıfırlara temizlenir.
 
@@ -314,7 +314,7 @@ loss(d2l.ones(3, 4, 10), d2l.ones((3, 4), dtype=torch.long),
 ## Eğitim
 :label:`sec_seq2seq_training`
 
-Aşağıdaki eğitim döngüsünde, :numref:`fig_seq2seq`'te gösterildiği gibi, kod çözücüye giriş olarak son belirteci hariç özel başlangıç dizisini ve orijinal çıkış sırasını birleştiririz. Buna *öğretmen zorlama* denir çünkü orijinal çıktı dizisi (belirteç etiketleri) kod çözücüye beslenir. Alternatif olarak, önceki zaman adımından*öngörülen* belirteci kod çözücüye geçerli giriş olarak da besleyebiliriz.
+Aşağıdaki eğitim döngüsünde, :numref:`fig_seq2seq`'te gösterildiği gibi, kodçözücüye giriş olarak son belirteci hariç özel başlangıç dizisini ve orijinal çıkış sırasını birleştiririz. Buna *öğretmen zorlama* denir çünkü orijinal çıktı dizisi (belirteç etiketleri) kodçözücüye beslenir. Alternatif olarak, önceki zaman adımından*öngörülen* belirteci kodçözücüye geçerli giriş olarak da besleyebiliriz.
 
 ```{.python .input}
 #@save
@@ -390,7 +390,7 @@ def train_s2s_ch9(model, data_iter, lr, num_epochs, tgt_vocab, device):
           f'tokens/sec on {str(device)}')
 ```
 
-Artık makine çevirisi veri kümesinde diziye öğrenme için bir RNN kodlayıcı-kod çözücü modeli oluşturabilir ve eğitebiliriz.
+Artık makine çevirisi veri kümesinde diziye öğrenme için bir RNN kodlayıcı-kodçözücü modeli oluşturabilir ve eğitebiliriz.
 
 ```{.python .input}
 #@tab all
@@ -409,7 +409,7 @@ train_s2s_ch9(model, train_iter, lr, num_epochs, tgt_vocab, device)
 
 ## Tahmin
 
-Çıkış sırası belirtecini belirteç ile tahmin etmek için, her kod çözücü zaman adımında önceki zaman adımından tahmin edilen belirteç kod çözücüye girdi olarak beslenir. Eğitime benzer şekilde, başlangıç adımında dizinin başlangıcı (” <bos> “) belirteci kod çözücüye beslenir. Bu tahmin süreci :numref:`fig_seq2seq_predict`'te gösterilmektedir. Sıra sonu (” <eos> “) belirteci tahmin edildiğinde, çıktı sırasının tahmini tamamlanır.
+Çıkış sırası belirtecini belirteç ile tahmin etmek için, her kodçözücü zaman adımında önceki zaman adımından tahmin edilen belirteç kodçözücüye girdi olarak beslenir. Eğitime benzer şekilde, başlangıç adımında dizinin başlangıcı (” <bos> “) belirteci kodçözücüye beslenir. Bu tahmin süreci :numref:`fig_seq2seq_predict`'te gösterilmektedir. Sıra sonu (” <eos> “) belirteci tahmin edildiğinde, çıktı sırasının tahmini tamamlanır.
 
 ![Predicting the output sequence token by token using an RNN encoder-decoder.](../img/seq2seq-predict.svg)
 :label:`fig_seq2seq_predict`
@@ -515,7 +515,7 @@ def bleu(pred_seq, label_seq, k):  #@save
     return score
 ```
 
-Sonunda, birkaç İngilizce cümleyi Fransızca'ya çevirmek ve sonuçların BLEU'sını hesaplamak için eğitilmiş RNN kodlayıcı-kod çözücüsünü kullanıyoruz.
+Sonunda, birkaç İngilizce cümleyi Fransızca'ya çevirmek ve sonuçların BLEU'sını hesaplamak için eğitilmiş RNN kodlayıcı-kodçözücüsünü kullanıyoruz.
 
 ```{.python .input}
 #@tab all
@@ -535,25 +535,25 @@ translate(engs, fras, model, src_vocab, tgt_vocab, num_steps, device)
 
 ## Özet
 
-* Kodlayıcı-kod çözücü mimarisinin tasarımını takiben, dizi-dizi öğrenimi için bir model tasarlamak için iki RNN kullanabiliriz.
-* Kodlayıcıyı ve kod çözücüyü uygularken, çok katmanlı RNN'leri kullanabiliriz.
+* Kodlayıcı-kodçözücü mimarisinin tasarımını takiben, dizi-dizi öğrenimi için bir model tasarlamak için iki RNN kullanabiliriz.
+* Kodlayıcıyı ve kodçözücüyü uygularken, çok katmanlı RNN'leri kullanabiliriz.
 * Kayıp hesaplanırken olduğu gibi alakasız hesaplamaları filtrelemek için maskeler kullanabiliriz.
-* Kodlayıcı-kod çözücü eğitiminde, öğretmen zorlama yaklaşımı orijinal çıktı dizilerini (tahminlerin aksine) kod çözücüye besler.
+* Kodlayıcı-kodçözücü eğitiminde, öğretmen zorlama yaklaşımı orijinal çıktı dizilerini (tahminlerin aksine) kodçözücüye besler.
 * BLEU, tahmin edilen dizi ve etiket dizisi arasında $n$-gram eşleştirerek çıktı dizilerini değerlendirmek için popüler bir ölçüdür.
 
-## Egzersizler
+## Alıştırmalar
 
 1. Çeviri sonuçlarını iyileştirmek için hiperparametreleri ayarlayabilir misiniz?
 1. Kayıp hesaplamasında maskeler kullanmadan deneyi yeniden çalıştırın. Hangi sonuçları gözlemliyorsunuz? Neden?
-1. Kodlayıcı ve kod çözücü katman sayısı veya gizli birimlerin sayısı bakımından farklıysa, kod çözücünün gizli durumunu nasıl başlatabiliriz?
-1. Eğitimde, önceki zamanda öngörü besleyerek zorlayan öğretmeni kod çözücüye adım atın. Bu performansı nasıl etkiler?
+1. Kodlayıcı ve kodçözücü katman sayısı veya gizli birimlerin sayısı bakımından farklıysa, kodçözücünün gizli durumunu nasıl başlatabiliriz?
+1. Eğitimde, önceki zamanda öngörü besleyerek zorlayan öğretmeni kodçözücüye adım atın. Bu performansı nasıl etkiler?
 1. GRU'yu LSTM ile değiştirerek deneyi yeniden çalıştırın.
-1. Kod çözücünün çıkış katmanını tasarlamanın başka yolları var mı?
+1. kodçözücünün çıkış katmanını tasarlamanın başka yolları var mı?
 
 :begin_tab:`mxnet`
-[Discussions](https://discuss.d2l.ai/t/345)
+[Tartışmalar](https://discuss.d2l.ai/t/345)
 :end_tab:
 
 :begin_tab:`pytorch`
-[Discussions](https://discuss.d2l.ai/t/1062)
+[Tartışmalar](https://discuss.d2l.ai/t/1062)
 :end_tab:
