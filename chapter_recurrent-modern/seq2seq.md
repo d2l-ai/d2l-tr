@@ -32,21 +32,21 @@ from torch import nn
 
 ## Kodlayıcı
 
-Teknik olarak konuşursak, kodlayıcı değişken uzunluktaki bir giriş dizisini sabit şekilli*bağlam değişkeni* $\mathbf{c}$'e dönüştürür ve bu bağlam değişkenindeki giriş sırası bilgilerini kodlar. :numref:`fig_seq2seq`'te gösterildiği gibi, kodlayıcıyı tasarlamak için bir RNN kullanabiliriz.
+Teknik olarak konuşursak, kodlayıcı değişken uzunluktaki bir girdi dizisini sabit şekilli *bağlam değişkeni* $\mathbf{c}$'ye dönüştürür ve bu bağlam değişkende girdi dizisinin bilgilerini kodlar. :numref:`fig_seq2seq`'te gösterildiği gibi, kodlayıcıyı tasarlamak için bir RNN kullanabiliriz.
 
-Bize bir dizi örneği düşünelim (toplu boyutu: 1). Giriş sırasının $x_1, \ldots, x_T$ olduğunu varsayalım, böylece $x_t$ girdi metin sırasındaki $t^{\mathrm{th}}$ belirteci. Zaman adımında $t$, RNN $x_t$ için giriş özellik vektörü $\mathbf{x}_t$ ve gizli durum $\mathbf{h} _{t-1}$ önceki zaman adımından geçerli gizli duruma $\mathbf{h}_t$ dönüştürür. RNN'nin tekrarlayan tabakasının dönüşümünü ifade etmek için $f$ işlevini kullanabiliriz:
+Bir dizi örneği düşünelim (toplu küme boyutu: 1). Girdi dizimizin $x_1, \ldots, x_T$ olduğunu varsayalım, öyle ki $x_t$ girdi metin dizisindeki $t.$ andıç olsun. $t$ zaman adımında, RNN $x_t$ için girdi öznitelik vektörü $\mathbf{x}_t$'yi ve önceki zaman adımından gizli durum $\mathbf{h}_{t-1}$'yi şu anki gizli durum $\mathbf{h}_t$'ye dönüştürür. RNN'nin yinelemeli tabakasının dönüşümünü ifade etmek için $f$ işlevini kullanabiliriz:
 
 $$\mathbf{h}_t = f(\mathbf{x}_t, \mathbf{h}_{t-1}). $$
 
-Genel olarak, kodlayıcı, gizli durumları her zaman özelleştirilmiş bir işlev $q$ aracılığıyla bağlam değişkenine dönüştürür:
+Genel olarak, kodlayıcı, gizli durumları her zaman adamında özelleştirilmiş bir $q$ işlevi aracılığıyla bağlam değişkenine dönüştürür:
 
 $$\mathbf{c} =  q(\mathbf{h}_1, \ldots, \mathbf{h}_T).$$
 
-Örneğin, :numref:`fig_seq2seq`'te olduğu gibi $q(\mathbf{h}_1, \ldots, \mathbf{h}_T) = \mathbf{h}_T$'i seçerken, bağlam değişkeni yalnızca son zaman adımındaki giriş sırasının gizli durumudur $\mathbf{h}_T$'dır.
+Örneğin, :numref:`fig_seq2seq`'te olduğu gibi $q(\mathbf{h}_1, \ldots, \mathbf{h}_T) = \mathbf{h}_T$'yi seçerken, bağlam değişkeni yalnızca son zaman adımındaki girdi dizisinin gizli durumu $\mathbf{h}_T$'dir.
 
-Şimdiye kadar kodlayıcıyı tasarlamak için tek yönlü bir RNN kullandık, burada gizli bir durum yalnızca gizli durumun zaman adımındaki giriş alt sırasına bağlıdır. Ayrıca çift yönlü RNN'leri kullanarak kodlayıcılar da oluşturabiliriz. Bu durumda, gizli bir durum, tüm dizinin bilgilerini kodlayan zaman adımından önceki ve sonraki alt sıraya (geçerli zaman adımındaki giriş dahil) bağlıdır.
+Şimdiye kadar kodlayıcıyı tasarlamak için tek yönlü bir RNN kullandık, burada gizli bir durum yalnızca gizli durumun önceki ve o anki zaman adımındaki girdi altdizisine bağlıdır. Ayrıca çift yönlü RNN'leri kullanarak kodlayıcılar da oluşturabiliriz. Bu durumda, tüm dizinin bilgilerini kodlayan gizli durum, zaman adımından önceki ve sonraki altdiziye (geçerli zaman adımındaki girdi dahil) bağlıdır.
 
-Şimdi RNN kodlayıcısını uygulamamıza izin verin. Giriş sırasındaki her belirteç için özellik vektörünü elde etmek için bir *gömme katmanı* kullandığımıza dikkat edin. Bir gömme katmanın ağırlığı, satır sayısı girdi kelime dağarcığının boyutuna (`vocab_size`) ve sütun sayısı özellik vektörünün boyutuna eşit olan bir matristir (`embed_size`). Herhangi bir giriş belirteci dizini $i$ için gömme katman, özellik vektörünü döndürmek üzere ağırlık matrisinin $i^{\mathrm{th}}$ satırını (0'dan başlayarak) getirir. Ayrıca, burada kodlayıcıyı uygulamak için çok katmanlı bir GRU seçiyoruz.
+Şimdi RNN kodlayıcısını uygulamaya başlayalım. Girdi dizisindeki her andıç için öznitelik vektörünü elde ederken bir *gömme katmanı* kullandığımıza dikkat edin. Bir gömme katmanın ağırlığı, satır sayısı girdi kelime dağarcığının boyutuna (`vocab_size`) ve sütun sayısı öznitelik vektörünün boyutuna eşit olan bir matristir (`embed_size`). Herhangi bir girdi andıcı dizini $i$ için gömme katmanı, öznitelik vektörünü döndürmek üzere ağırlık matrisinin $i.$ satırını (0'dan başlayarak) getirir. Ayrıca, burada kodlayıcıyı uygulamak için çok katmanlı bir GRU seçiyoruz.
 
 ```{.python .input}
 #@save
@@ -96,7 +96,7 @@ class Seq2SeqEncoder(d2l.Encoder):
         return output, state
 ```
 
-Tekrarlayan katmanların döndürülen değişkenleri :numref:`sec_rnn-concise`'te açıklanmıştır. Yukarıdaki kodlayıcı uygulamasını göstermek için somut bir örnek kullanalım. Aşağıda, gizli birimlerin sayısı 16 olan iki katmanlı bir GRU kodlayıcı oluşturuyoruz. `X` dizi girişlerinin bir minibatch göz önüne alındığında (toplu iş boyutu: 4, zaman adım sayısı: 7), son katmanın gizli durumları (kodlayıcının tekrarlayan katmanları tarafından `output` dönüş) bir şekil tensörüdür (zaman adımlarının sayısı, toplu iş boyutu, gizli birimlerin sayısı).
+Yinelemeli katmanların döndürülen değişkenleri :numref:`sec_rnn-concise`'te açıklanmıştı. Yukarıdaki kodlayıcı uygulamasını göstermek için somut bir örnek kullanalım. Aşağıda, gizli birimlerin sayısı 16 olan iki katmanlı bir GRU kodlayıcısı oluşturuyoruz. `X` dizi girdilerinin bir minigrubu göz önüne alındığında (grup boyutu: 4, zaman adımı sayısı: 7), son katmanın gizli durumları (kodlayıcının yinelemeli katmanları tarafından döndürülen `output`) şekli (zaman adımlarının sayısı, grup boyutu, gizli birimlerin sayısı) olan tensörlerdir.
 
 ```{.python .input}
 encoder = Seq2SeqEncoder(vocab_size=10, embed_size=8, num_hiddens=16,
@@ -117,7 +117,7 @@ output, state = encoder(X)
 output.shape
 ```
 
-Burada bir GRU kullanıldığından, son adımdaki çok katmanlı gizli durumların şekli (gizli katmanların sayısı, toplu iş boyutu, gizli birim sayısı) şeklindedir. Bir LSTM kullanılıyorsa, bellek hücresi bilgileri de `state`'te yer alır.
+Burada bir GRU kullanıldığından, son zaman adımındaki çok katmanlı gizli durumlar (gizli katmanların sayısı, grup boyutu, gizli birim sayısı) şeklindedir. Bir LSTM kullanılıyorsa, bellek hücresi bilgileri de `state`'te yer alır.
 
 ```{.python .input}
 len(state), state[0].shape
@@ -128,7 +128,7 @@ len(state), state[0].shape
 state.shape
 ```
 
-## kodçözücü
+## Kodçözücü
 :label:`sec_seq2seq_decoder`
 
 Az önce de belirttiğimiz gibi, kodlayıcının çıkışının $\mathbf{c}$ bağlam değişkeni $x_1, \ldots, x_T$ tüm giriş sırasını kodlar. Eğitim veri setinden $y_1, y_2, \ldots, y_{T'}$ çıkış sırası göz önüne alındığında, her zaman adım $t'$ için (sembol, giriş dizilerinin veya kodlayıcıların $t$ zaman adımından farklıdır), kodçözücü çıkışının olasılığı $y_{t'}$ önceki çıkış alt sırası $y_1, \ldots, y_{t'-1}$ ve bağlam değişkeni üzerinde koşulludur $\mathbf{c}$, yani, $P(y_{t'} \mid y_1, \ldots, y_{t'-1}, \mathbf{c})$.
