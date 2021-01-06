@@ -28,7 +28,7 @@ bir kaynak sunmaktır.
   <img width="600"  src="static/frontpage/_images/map.png">
 </p>
 
-## D2L Kullanan Harika Kağıtlar
+## D2L Kullanan Harika Makaleler
 
 1. [**Universal Average-Case Optimality of Polyak Momentum**](https://arxiv.org/pdf/2002.04664.pdf). D. Scieur, F. Pedregosan. *International Conference on Machine Learning, 2020*
 

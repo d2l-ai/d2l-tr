@@ -43,6 +43,8 @@ covariate; ortak değişken
 
 crowdsourcing; kitle kaynak kullanımı
 
+decoder; kodçözücü
+
 deployment; konuşlandırma
 
 descent; iniş
@@ -58,6 +60,8 @@ dropout;  hattan düşme
 early stopping; erken durdurma
 
 elementwise; eleman yönlü
+
+encoder; kodlayıcı
 
 environment; ortam
 
