@@ -1,16 +1,16 @@
-# Kodlayıcı-Kod Çözücü Mimarisi
+# Kodlayıcı-Kodçözücü Mimarisi
 :label:`sec_encoder-decoder`
 
-:numref:`sec_machine_translation`'te tartıştığımız gibi, makine çevirisi, giriş ve çıkışı hem değişken uzunlukta diziler olan dizi iletim modelleri için önemli bir sorun alanıdır. Bu tür giriş ve çıkışları işlemek için iki ana bileşenle bir mimari tasarlayabiliriz. İlk bileşen bir *kodlayıcı*: girdi olarak değişken uzunlukta bir diziyi alır ve sabit bir şekle sahip bir duruma dönüştürür. İkinci bileşen bir *kod çözücü*: sabit bir şeklin kodlanmış durumunu değişken uzunlukta bir diziye eşler. Bu, :numref:`fig_encoder_decoder`'te tasvir edilen bir *kodlayıcı-kod çözücüsü* mimarisi olarak adlandırılır.
+:numref:`sec_machine_translation`'te tartıştığımız gibi, makine çevirisi, girdinin ve çıktının ikisinin de değişken uzunlukta diziler olduğu dizi dönüştürme modelleri için önemli bir problem sahasıdır. Bu tür girdi ve çıktıları işlemek için iki ana bileşenli bir mimari tasarlayabiliriz. İlk bileşen bir *kodlayıcı*dır (encoder): Girdi olarak değişken uzunlukta bir diziyi alır ve sabit bir şekle sahip bir duruma dönüştürür. İkinci bileşen bir *kodçözücü*dür (decoder): Sabit şekilli bir kodlanmış durumu değişken uzunlukta bir diziye eşler. Bu, :numref:`fig_encoder_decoder`'te tasvir edildiği gibi *kodlayıcı-kodçözücüsü* mimarisi olarak adlandırılır.
 
-![The encoder-decoder architecture.](../img/encoder-decoder.svg)
+![Kodlayıcı-kodçözücü mimarisi.](../img/encoder-decoder.svg)
 :label:`fig_encoder_decoder`
 
-Örnek olarak İngilizce'den Fransızca'ya makine çevirisini ele alalım. İngilizce bir giriş dizisi göz önüne alındığında: “Onlar”, “are”, “izlemek”,”.“, bu kodlayıcı-kod çözücü mimarisi önce değişken uzunluklu girdiyi bir duruma kodlar, sonra da çevirilmiş sekans belirteci tarafından çıktı olarak oluşturmak için durumu deşifre eder: “Ils”, “regardent”, “.”. Kodlayıcı-kod çözücü mimarisi, sonraki bölümlerde farklı dizi iletim modellerinin temelini oluşturduğundan, bu bölüm bu mimariyi daha sonra uygulanacak bir arayüze dönüştürecektir.
+Örnek olarak İngilizce'den Fransızca'ya makine çevirisini ele alalım. İngilizce bir girdi dizisi göz önüne alındığımızda, örneğin “They”, “are”, “watching”,”.“, (Onlar izliyorlar.) gibi, kodlayıcı-kodçözücü mimarisi önce değişken uzunluklu girdiyi bir duruma kodlar, sonra da durumu her seferinde bir andıç işleyerek çevrilmiş dizi çıktısını oluşturmak üzere çözer: “Ils”, “regardent”, “.”. Kodlayıcı-kodçözücü mimarisi, sonraki bölümlerdeki farklı dizi dönüştürme modellerinin temelini oluşturduğundan, bu bölüm bu mimariyi daha sonra uygulanacak bir arayüze dönüştürecektir.
 
 ## Kodlayıcı
 
-Kodlayıcı arayüzünde, kodlayıcının `X` giriş olarak değişken uzunlukta dizileri aldığını belirtiyoruz. Uygulama, bu temel `Encoder` sınıfını miras alan herhangi bir model tarafından sağlanacaktır.
+Kodlayıcı arayüzünde, kodlayıcının `X` girdisi olarak değişken uzunlukta dizileri aldığını belirtiyoruz. Uygulaması, bu temel `Encoder` sınıfından kalıtımla türetilmiş model tarafından sağlanacaktır.
 
 ```{.python .input}
 from mxnet.gluon import nn
@@ -39,9 +39,9 @@ class Encoder(nn.Module):
         raise NotImplementedError
 ```
 
-## Kod çözücü
+## Kodçözücü
 
-Aşağıdaki kod çözücü arayüzünde, kodlayıcı çıkışını (`enc_outputs`) kodlanmış duruma dönüştürmek için ek bir `init_state` işlevi ekliyoruz. Bu adımın :numref:`subsec_mt_data_loading`'te açıklanan girdinin geçerli uzunluğu gibi ek girdilerin gerekebileceğini unutmayın. Belirteç ile değişken uzunlukta bir dizi belirteci oluşturmak için, kod çözücü bir girdi eşleyebilir (örneğin, önceki zaman adımında oluşturulan belirteç) ve kodlanmış durumu geçerli zaman adımında bir çıkış belirteci içine her zaman.
+Aşağıdaki kodçözücü arayüzünde, kodlayıcı çıktısını (`enc_outputs`) kodlanmış duruma dönüştürmek için ek bir `init_state` işlevi ekliyoruz. Bu adımın :numref:`subsec_mt_data_loading`'te açıklanan girdinin geçerli uzunluğu gibi ek girdiler gerektirebileceğini unutmayın. Her seferinde bir andıç yaratarak değişken uzunlukta bir dizi oluşturmak için, her zaman kodçözücü bir girdiyi (örneğin, önceki zaman adımında oluşturulan andıç) ve kodlanmış durumu şu anki zaman adımındaki bir çıktı andıcına eşler.
 
 ```{.python .input}
 #@save
@@ -72,9 +72,9 @@ class Decoder(nn.Module):
         raise NotImplementedError
 ```
 
-## Encoder ve Decoder'ı bir araya koymak
+## Kodlayıcıyı ve Kodçözücüyü Bir Araya Koyma
 
-Sonunda, kodlayıcı-kod çözücü mimarisi, isteğe bağlı olarak ekstra argümanlarla hem bir kodlayıcı hem de bir kod çözücü içerir. İleri yayılımda, kodlayıcının çıkışı kodlanmış durumu üretmek için kullanılır ve bu durum kod çözücü tarafından girdilerinden biri olarak daha da kullanılacaktır.
+Sonunda, kodlayıcı-kodçözücü mimarisi, isteğe bağlı olarak ekstra argümanlarla beraber, hem bir kodlayıcı hem de bir kodçözücü içeriyor. İleri yaymada, kodlayıcının çıktısı kodlanmış durumu üretmek için kullanılır ve bu durum daha sonrasında kodçözücü tarafından girdilerinden biri olarak kullanılacaktır.
 
 ```{.python .input}
 #@save
@@ -107,23 +107,23 @@ class EncoderDecoder(nn.Module):
         return self.decoder(dec_X, dec_state)
 ```
 
-Kodlayıcı-kod çözücü mimarisinde “durum” terimi, muhtemelen devletlerle olan sinir ağlarını kullanarak bu mimariyi uygulamak için size ilham vermiştir. Bir sonraki bölümde, bu kodlayıcı-kod çözücü mimarisine dayanan dizi iletim modellerini tasarlamak için RNN'lerin nasıl uygulanacağını göreceğiz.
+Kodlayıcı-kodçözücü mimarisindeki “durum” terimi, muhtemelen durumlara sahip sinir ağlarını kullanarak bu mimariyi uygulamak için size ilham vermiştir. Bir sonraki bölümde, bu kodlayıcı-kodçözücü mimarisine dayanan dizi dönüştürme modellerini tasarlamak için RNN'lerin nasıl uygulanacağını göreceğiz.
 
 ## Özet
 
-* Kodlayıcı-kod çözücü mimarisi, hem değişken uzunlukta diziler olan giriş ve çıkışları işleyebilir, bu nedenle makine çevirisi gibi dizi iletim problemleri için uygundur.
-* Kodlayıcı, giriş olarak değişken uzunlukta bir diziyi alır ve sabit bir şekle sahip bir duruma dönüştürür.
-* Kod çözücü, sabit bir şeklin kodlanmış durumunu değişken uzunlukta bir diziye eşler.
+* Kodlayıcı-kodçözücü mimarisi, hem değişken uzunlukta diziler olan girdi ve çıktıları işleyebilir, bu nedenle makine çevirisi gibi dizi dönüştürme problemleri için uygundur.
+* Kodlayıcı, girdi olarak değişken uzunlukta bir diziyi alır ve sabit bir şekle sahip bir duruma dönüştürür.
+* Kodçözücü, sabit şekilli bir kodlanmış durumu değişken uzunlukta bir diziye eşler.
 
-## Egzersizler
+## Alıştırmalar
 
-1. Kodlayıcı-kod çözücü mimarisini uygulamak için sinir ağları kullandığımızı varsayalım. Kodlayıcı ve kod çözücü aynı tür sinir ağı olmak zorunda mı?
-1. Makine çevirisinin yanı sıra, kodlayıcı-kod çözücü mimarisinin uygulanabileceği başka bir uygulama düşünebiliyor musunuz?
+1. Kodlayıcı-kodçözücü mimarisini uygulamak için sinir ağları kullandığımızı varsayalım. Kodlayıcı ve kodçözücü aynı tür sinir ağı olmak zorunda mıdır?
+1. Makine çevirisinin yanı sıra, kodlayıcı-kodçözücü mimarisinin uygulanabileceği başka bir uygulama düşünebiliyor musunuz?
 
 :begin_tab:`mxnet`
-[Discussions](https://discuss.d2l.ai/t/341)
+[Tartışmalar](https://discuss.d2l.ai/t/341)
 :end_tab:
 
 :begin_tab:`pytorch`
-[Discussions](https://discuss.d2l.ai/t/1061)
+[Tartışmalar](https://discuss.d2l.ai/t/1061)
 :end_tab:

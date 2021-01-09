@@ -1,16 +1,16 @@
-#  Sıra Öğrenme Sırası
+# Diziden Diziye Öğrenme
 :label:`sec_seq2seq`
 
-:numref:`sec_machine_translation`'te gördüğümüz gibi, makine çevirisinde hem giriş hem de çıkış değişken uzunlukta bir dizidir. Bu tür bir sorunu çözmek için :numref:`sec_encoder-decoder`'te genel bir kodlayıcı-kod çözücü mimarisi tasarladık. Bu bölümde, bu mimarinin kodlayıcısını ve kod çözücüsünü tasarlamak için iki RNN kullanacağız ve makine çevirisi :cite:`Sutskever.Vinyals.Le.2014,Cho.Van-Merrienboer.Gulcehre.ea.2014` için *sequence to sequence* öğrenmeye uygulayacağız.
+:numref:`sec_machine_translation`'te gördüğümüz gibi, makine çevirisinde hem girdi hem de çıktı değişken uzunlukta dizilerdir. Bu tür problemleri çözmek için :numref:`sec_encoder-decoder`'te genel bir kodlayıcı-kodçözücü mimarisi tasarladık. Bu bölümde, bu mimarinin kodlayıcısını ve kodçözücüsünü tasarlamak için iki RNN kullanacağız ve makine çevirisi :cite:`Sutskever.Vinyals.Le.2014,Cho.Van-Merrienboer.Gulcehre.ea.2014` için *diziden diziye* öğrenmeyi uygulayacağız.
 
-Kodlayıcı-kod çözücü mimarisinin tasarım ilkesini takiben, RNN kodlayıcı girdi olarak değişken uzunlukta bir diziyi alabilir ve sabit şekilli gizli bir duruma dönüştürebilir. Başka bir deyişle, giriş dizisinin bilgileri RNN kodlayıcısının gizli durumunda *kodlandı* olur. Çıkış sırası belirteci ile belirteç oluşturmak için, ayrı bir RNN kod çözücü, hangi belirteçlerin görüldüğünü (dil modellemesinde olduğu gibi) veya oluşturulan giriş dizisinin kodlanmış bilgileriyle birlikte bir sonraki belirteci tahmin edebilir. :numref:`fig_seq2seq`, diziden diziye iki RNN'nin nasıl kullanılacağını gösterir Makine çevirisinde öğrenme.
+Kodlayıcı-kodçözücü mimarisinin tasarım ilkesini takiben, RNN kodlayıcı girdi olarak değişken uzunlukta bir diziyi alabilir ve bir sabit şekilli gizli duruma dönüştürebilir. Başka bir deyişle, girdi dizisinin bilgileri RNN kodlayıcısının gizli durumunda *kodlanmış* olur. Çıktı dizisi andıç andıç oluşturmak için, ayrı bir RNN kodçözücü, girdi dizisinin kodlanmış bilgileriyle birlikte, hangi andıçların görüldüğünü (dil modellemesinde olduğu gibi) veya oluşturulduğuna bağlı olarak bir sonraki andıcı tahmin edebilir. :numref:`fig_seq2seq`, makine çevirisinde diziden diziye öğrenme için iki RNN'nin nasıl kullanılacağını gösterir.
 
-![Sequence to sequence learning with an RNN encoder and an RNN decoder.](../img/seq2seq.svg)
+![Bir RNN kodlayıcı ve bir RNN kodçözücü ile diziden diziye öğrenme.](../img/seq2seq.svg)
 :label:`fig_seq2seq`
 
-:numref:`fig_seq2seq`'te, özel "<eos>" belirteci dizinin sonunu işaretler. Model, bu belirteç oluşturulduktan sonra tahminlerde bulunmayı durdurabilir. RNN kod çözücünün ilk zaman adımında, iki özel tasarım kararı vardır. İlk olarak, özel başlangıç dizisi "<bos>" belirteci bir girdidir. İkincisi, RNN kodlayıcısının son gizli durumu, kod çözücünün gizli durumunu başlatmak için kullanılır. :cite:`Sutskever.Vinyals.Le.2014` gibi tasarımlarda, kodlanmış giriş sırası bilgilerinin çıkış sırasını oluşturmak için kod çözücüsüne nasıl beslendiği tam olarak budur. :cite:`Cho.Van-Merrienboer.Gulcehre.ea.2014` gibi diğer bazı tasarımlarda, kodlayıcının son gizli durumu, :numref:`fig_seq2seq`'te gösterildiği gibi her adımda girişlerin bir parçası olarak kod çözücüye beslenir. :numref:`sec_language_model`'deki dil modellerinin eğitimine benzer şekilde, etiketlerin bir belirteç ile kaydırılmış orijinal çıktı dizisi olmasına izin verebiliriz: "<bos> “, “Ils”, “saygın”, “.” $\rightarrow$ “Ils”, “saygın”,”.“," <eos>”.
+:numref:`fig_seq2seq`'te, özel "<eos>" andıcı dizinin sonunu işaretler. Model, bu andıç oluşturulduktan sonra tahminlerde bulunmayı durdurabilir. RNN kodçözücüsünün ilk zaman adımında, iki özel tasarım kararı vardır. İlk olarak, özel dizi başlangıç andıcı, "<bos>", bir girdidir. İkincisi, RNN kodlayıcısının son gizli durumu, kodçözücünün gizli durumunu ilklemek için kullanılır. :cite:`Sutskever.Vinyals.Le.2014`'teki gibi tasarımlarda, kodlanmış girdi dizisi bilgilerinin çıktı dizisini oluşturmak için kodçözücüsüne beslenmesi tam olarak da budur. :cite:`Cho.Van-Merrienboer.Gulcehre.ea.2014` gibi diğer bazı tasarımlarda, kodlayıcının son gizli durumu, :numref:`fig_seq2seq`'te gösterildiği gibi her adımda girdilerin bir parçası olarak kodçözücüye beslenir. :numref:`sec_language_model`'deki dil modellerinin eğitimine benzer şekilde, etiketlerin bir andıç ile kaydırılmış orijinal çıktı dizisi olmasına izin verebiliriz: "<bos>“, “Ils”, “regardent”, “.” $\rightarrow$ “Ils”, “regardent”,”.“,"<eos>”.
 
-Aşağıda, :numref:`fig_seq2seq`'ün tasarımını daha ayrıntılı olarak açıklayacağız. Bu modeli :numref:`sec_machine_translation`'te tanıtılan İngilizce-Fransız veri setinde makine çevirisi için eğiteceğiz.
+Aşağıda, :numref:`fig_seq2seq`'ün tasarımını daha ayrıntılı olarak açıklayacağız. Bu modeli :numref:`sec_machine_translation`'te tanıtılan İngilizce-Fransız veri kümesinde makine çevirisi için eğiteceğiz.
 
 ```{.python .input}
 import collections
@@ -32,21 +32,21 @@ from torch import nn
 
 ## Kodlayıcı
 
-Teknik olarak konuşursak, kodlayıcı değişken uzunluktaki bir giriş dizisini sabit şekilli*bağlam değişkeni* $\mathbf{c}$'e dönüştürür ve bu bağlam değişkenindeki giriş sırası bilgilerini kodlar. :numref:`fig_seq2seq`'te gösterildiği gibi, kodlayıcıyı tasarlamak için bir RNN kullanabiliriz.
+Teknik olarak konuşursak, kodlayıcı değişken uzunluktaki bir girdi dizisini sabit şekilli *bağlam değişkeni* $\mathbf{c}$'ye dönüştürür ve bu bağlam değişkende girdi dizisinin bilgilerini kodlar. :numref:`fig_seq2seq`'te gösterildiği gibi, kodlayıcıyı tasarlamak için bir RNN kullanabiliriz.
 
-Bize bir dizi örneği düşünelim (toplu boyutu: 1). Giriş sırasının $x_1, \ldots, x_T$ olduğunu varsayalım, böylece $x_t$ girdi metin sırasındaki $t^{\mathrm{th}}$ belirteci. Zaman adımında $t$, RNN $x_t$ için giriş özellik vektörü $\mathbf{x}_t$ ve gizli durum $\mathbf{h} _{t-1}$ önceki zaman adımından geçerli gizli duruma $\mathbf{h}_t$ dönüştürür. RNN'nin tekrarlayan tabakasının dönüşümünü ifade etmek için $f$ işlevini kullanabiliriz:
+Bir dizi örneği düşünelim (toplu küme boyutu: 1). Girdi dizimizin $x_1, \ldots, x_T$ olduğunu varsayalım, öyle ki $x_t$ girdi metin dizisindeki $t.$ andıç olsun. $t$ zaman adımında, RNN $x_t$ için girdi öznitelik vektörü $\mathbf{x}_t$'yi ve önceki zaman adımından gizli durum $\mathbf{h}_{t-1}$'yi şu anki gizli durum $\mathbf{h}_t$'ye dönüştürür. RNN'nin yinelemeli tabakasının dönüşümünü ifade etmek için $f$ işlevini kullanabiliriz:
 
 $$\mathbf{h}_t = f(\mathbf{x}_t, \mathbf{h}_{t-1}). $$
 
-Genel olarak, kodlayıcı, gizli durumları her zaman özelleştirilmiş bir işlev $q$ aracılığıyla bağlam değişkenine dönüştürür:
+Genel olarak, kodlayıcı, gizli durumları her zaman adamında özelleştirilmiş bir $q$ işlevi aracılığıyla bağlam değişkenine dönüştürür:
 
 $$\mathbf{c} =  q(\mathbf{h}_1, \ldots, \mathbf{h}_T).$$
 
-Örneğin, :numref:`fig_seq2seq`'te olduğu gibi $q(\mathbf{h}_1, \ldots, \mathbf{h}_T) = \mathbf{h}_T$'i seçerken, bağlam değişkeni yalnızca son zaman adımındaki giriş sırasının gizli durumudur $\mathbf{h}_T$'dır.
+Örneğin, :numref:`fig_seq2seq`'te olduğu gibi $q(\mathbf{h}_1, \ldots, \mathbf{h}_T) = \mathbf{h}_T$'yi seçerken, bağlam değişkeni yalnızca son zaman adımındaki girdi dizisinin gizli durumu $\mathbf{h}_T$'dir.
 
-Şimdiye kadar kodlayıcıyı tasarlamak için tek yönlü bir RNN kullandık, burada gizli bir durum yalnızca gizli durumun zaman adımındaki giriş alt sırasına bağlıdır. Ayrıca çift yönlü RNN'leri kullanarak kodlayıcılar da oluşturabiliriz. Bu durumda, gizli bir durum, tüm dizinin bilgilerini kodlayan zaman adımından önceki ve sonraki alt sıraya (geçerli zaman adımındaki giriş dahil) bağlıdır.
+Şimdiye kadar kodlayıcıyı tasarlamak için tek yönlü bir RNN kullandık, burada gizli bir durum yalnızca gizli durumun önceki ve o anki zaman adımındaki girdi altdizisine bağlıdır. Ayrıca çift yönlü RNN'leri kullanarak kodlayıcılar da oluşturabiliriz. Bu durumda, tüm dizinin bilgilerini kodlayan gizli durum, zaman adımından önceki ve sonraki altdiziye (geçerli zaman adımındaki girdi dahil) bağlıdır.
 
-Şimdi RNN kodlayıcısını uygulamamıza izin verin. Giriş sırasındaki her belirteç için özellik vektörünü elde etmek için bir *gömme katmanı* kullandığımıza dikkat edin. Bir gömme katmanın ağırlığı, satır sayısı girdi kelime dağarcığının boyutuna (`vocab_size`) ve sütun sayısı özellik vektörünün boyutuna eşit olan bir matristir (`embed_size`). Herhangi bir giriş belirteci dizini $i$ için gömme katman, özellik vektörünü döndürmek üzere ağırlık matrisinin $i^{\mathrm{th}}$ satırını (0'dan başlayarak) getirir. Ayrıca, burada kodlayıcıyı uygulamak için çok katmanlı bir GRU seçiyoruz.
+Şimdi RNN kodlayıcısını uygulamaya başlayalım. Girdi dizisindeki her andıç için öznitelik vektörünü elde ederken bir *gömme katmanı* kullandığımıza dikkat edin. Bir gömme katmanın ağırlığı, satır sayısı girdi kelime dağarcığının boyutuna (`vocab_size`) ve sütun sayısı öznitelik vektörünün boyutuna eşit olan bir matristir (`embed_size`). Herhangi bir girdi andıcı dizini $i$ için gömme katmanı, öznitelik vektörünü döndürmek üzere ağırlık matrisinin $i.$ satırını (0'dan başlayarak) getirir. Ayrıca, burada kodlayıcıyı uygulamak için çok katmanlı bir GRU seçiyoruz.
 
 ```{.python .input}
 #@save
@@ -96,7 +96,7 @@ class Seq2SeqEncoder(d2l.Encoder):
         return output, state
 ```
 
-Tekrarlayan katmanların döndürülen değişkenleri :numref:`sec_rnn-concise`'te açıklanmıştır. Yukarıdaki kodlayıcı uygulamasını göstermek için somut bir örnek kullanalım. Aşağıda, gizli birimlerin sayısı 16 olan iki katmanlı bir GRU kodlayıcı oluşturuyoruz. `X` dizi girişlerinin bir minibatch göz önüne alındığında (toplu iş boyutu: 4, zaman adım sayısı: 7), son katmanın gizli durumları (kodlayıcının tekrarlayan katmanları tarafından `output` dönüş) bir şekil tensörüdür (zaman adımlarının sayısı, toplu iş boyutu, gizli birimlerin sayısı).
+Yinelemeli katmanların döndürülen değişkenleri :numref:`sec_rnn-concise`'te açıklanmıştı. Yukarıdaki kodlayıcı uygulamasını göstermek için somut bir örnek kullanalım. Aşağıda, gizli birimlerin sayısı 16 olan iki katmanlı bir GRU kodlayıcısı oluşturuyoruz. `X` dizi girdilerinin bir minigrubu göz önüne alındığında (grup boyutu: 4, zaman adımı sayısı: 7), son katmanın gizli durumları (kodlayıcının yinelemeli katmanları tarafından döndürülen `output`) şekli (zaman adımlarının sayısı, grup boyutu, gizli birimlerin sayısı) olan tensörlerdir.
 
 ```{.python .input}
 encoder = Seq2SeqEncoder(vocab_size=10, embed_size=8, num_hiddens=16,
@@ -117,7 +117,7 @@ output, state = encoder(X)
 output.shape
 ```
 
-Burada bir GRU kullanıldığından, son adımdaki çok katmanlı gizli durumların şekli (gizli katmanların sayısı, toplu iş boyutu, gizli birim sayısı) şeklindedir. Bir LSTM kullanılıyorsa, bellek hücresi bilgileri de `state`'te yer alır.
+Burada bir GRU kullanıldığından, son zaman adımındaki çok katmanlı gizli durumlar (gizli katmanların sayısı, grup boyutu, gizli birim sayısı) şeklindedir. Bir LSTM kullanılıyorsa, bellek hücresi bilgileri de `state`'te yer alır.
 
 ```{.python .input}
 len(state), state[0].shape
@@ -128,18 +128,18 @@ len(state), state[0].shape
 state.shape
 ```
 
-## Kod çözücü
+## Kodçözücü
 :label:`sec_seq2seq_decoder`
 
-Az önce de belirttiğimiz gibi, kodlayıcının çıkışının $\mathbf{c}$ bağlam değişkeni $x_1, \ldots, x_T$ tüm giriş sırasını kodlar. Eğitim veri setinden $y_1, y_2, \ldots, y_{T'}$ çıkış sırası göz önüne alındığında, her zaman adım $t'$ için (sembol, giriş dizilerinin veya kodlayıcıların $t$ zaman adımından farklıdır), kod çözücü çıkışının olasılığı $y_{t'}$ önceki çıkış alt sırası $y_1, \ldots, y_{t'-1}$ ve bağlam değişkeni üzerinde koşulludur $\mathbf{c}$, yani, $P(y_{t'} \mid y_1, \ldots, y_{t'-1}, \mathbf{c})$.
+Az önce de belirttiğimiz gibi, kodlayıcının çıktısının $\mathbf{c}$ bağlam değişkeni $x_1, \ldots, x_T$ tüm girdi dizisini kodlar. Eğitim veri kümesinden $y_1, y_2, \ldots, y_{T'}$ çıktı dizisi göz önüne alındığında, her zaman adım $t'$ için (sembol, girdi dizilerinin veya kodlayıcıların $t$ zaman adımından farklıdır), kodçözücü çıktısının olasılığı $y_{t'}$, önceki çıktı altdizisi $y_1, \ldots, y_{t'-1}$ ve $\mathbf{c}$ bağlam değişkeni üzerinde koşulludur, yani, $P(y_{t'} \mid y_1, \ldots, y_{t'-1}, \mathbf{c})$.
 
-Bu koşullu olasılığı diziler üzerinde modellemek için, kod çözücü olarak başka bir RNN kullanabiliriz. Herhangi bir zamanda adım $t^\prime$ çıktı sırası, RNN $y_{t^\prime-1}$ önceki zaman adımından ve $\mathbf{c}$ bağlam değişkeni giriş olarak alır, sonra onları ve önceki gizli durum $\mathbf{s}_{t^\prime-1}$ gizli duruma dönüştürür $\mathbf{s}_{t^\prime}$ geçerli zaman adımında. Sonuç olarak, kod çözücünün gizli katmanının dönüşümünü ifade etmek için $g$ işlevi kullanabiliriz:
+Bu koşullu olasılığı diziler üzerinde modellemek için, kodçözücü olarak başka bir RNN kullanabiliriz. Herhangi bir $t^\prime$ zaman adımındaki çıktı dizisinde, RNN önceki zaman adımından $y_{t^\prime-1}$ çıktı dizisini ve $\mathbf{c}$ bağlam değişkenini girdi olarak alır, sonra onları ve önceki gizli durumu $\mathbf{s}_{t^\prime-1}$ ile beraber şu aki zaman adımındaki gizli durum $\mathbf{s}_{t^\prime}$'ye dönüştürür. Sonuç olarak, kodçözücünün gizli katmanının dönüşümünü ifade etmek için $g$ işlevini kullanabiliriz:
 
 $$\mathbf{s}_{t^\prime} = g(y_{t^\prime-1}, \mathbf{c}, \mathbf{s}_{t^\prime-1}).$$
 
-Kod çözücünün gizli durumunu elde ettikten sonra, $t^\prime$ adımındaki çıkış için koşullu olasılık dağılımını $P(y_{t^\prime} \mid y_1, \ldots, y_{t^\prime-1}, \mathbf{c})$'i hesaplamak için bir çıkış katmanı ve softmax işlemini kullanabiliriz.
+Kodçözücünün gizli durumunu elde ettikten sonra, $t^\prime$ adımındaki çıktı için koşullu olasılık dağılımını, $P(y_{t^\prime} \mid y_1, \ldots, y_{t^\prime-1}, \mathbf{c})$'yi hesaplamak için bir çıktı katmanını ve softmaks işlemini kullanabiliriz.
 
-:numref:`fig_seq2seq`'ü takiben, kod çözücüyü aşağıdaki gibi uygularken, kod çözücünün gizli durumunu başlatmak için kodlayıcının son zaman adımındaki gizli durumu doğrudan kullanırız. Bu, RNN kodlayıcı ve RNN kod çözücüsünün aynı sayıda katman ve gizli birimlere sahip olmasını gerektirir. Kodlanmış giriş sırası bilgilerini daha da dahil etmek için, bağlam değişkeni kod çözücü girişiyle her zaman adımda birleştirilir. Çıktı belirtecinin olasılık dağılımını tahmin etmek için, RNN kod çözücünün son katmanındaki gizli durumu dönüştürmek için tam bağlı bir katman kullanılır.
+:numref:`fig_seq2seq`'ü takiben, kodçözücüyü aşağıdaki gibi uygularken, kodçözücünün gizli durumunu ilklemek için kodlayıcının son zaman adımındaki gizli durumu doğrudan kullanırız. Bu, RNN kodlayıcı ve RNN kodçözücüsünün aynı sayıda katman ve gizli birimlere sahip olmasını gerektirir. Kodlanmış girdi dizisi bilgilerini daha da dahil etmek için, bağlam değişkeni kodçözücü girdisiyle her zaman adımda bitiştirilir. Çıktı andıcının olasılık dağılımını tahmin etmek için, RNN kodçözücüsünün son katmanındaki gizli durumunu dönüştüren tam bağlı bir katman kullanılır.
 
 ```{.python .input}
 class Seq2SeqDecoder(d2l.Decoder):
@@ -198,7 +198,7 @@ class Seq2SeqDecoder(d2l.Decoder):
         return output, state
 ```
 
-Uygulanan kod çözücüyü göstermek için, aşağıda belirtilen kodlayıcıdan aynı hiperparametrelerle başlatıyoruz. Gördüğümüz gibi, kod çözücünün çıkış şekli olur (parti boyutu, zaman adımlarının sayısı, kelime dağarcığı boyutu), burada tensörün son boyutu tahmin edilen belirteç dağılımını depolar.
+Uygulanan kodçözücüyü göstermek için, aşağıda belirtilen kodlayıcıdan aynı hiperparametrelerle ilkliyoruz. Gördüğümüz gibi, kodçözücünün çıktı şekli (küme boyutu, zaman adımlarının sayısı, kelime dağarcığı boyutu) olur, burada tensörün son boyutu tahmin edilen andıç dağılımını tutar.
 
 ```{.python .input}
 decoder = Seq2SeqDecoder(vocab_size=10, embed_size=8, num_hiddens=16,
@@ -219,16 +219,16 @@ output, state = decoder(X, state)
 output.shape, state.shape
 ```
 
-Özetlemek gerekirse, yukarıdaki RNN kodlayıcı-kod çözücü modelindeki katmanlar :numref:`fig_seq2seq_details`'te gösterilmektedir.
+Özetlemek gerekirse, yukarıdaki RNN kodlayıcı-kodçözücü modelindeki katmanlar :numref:`fig_seq2seq_details`'te gösterilmektedir.
 
-![Layers in an RNN encoder-decoder model.](../img/seq2seq-details.svg)
+![Bir RNN kodlayıcı-kodçözücü modelindeki katmanlar.](../img/seq2seq-details.svg)
 :label:`fig_seq2seq_details`
 
 ## Kayıp Fonksiyonu
 
-Her adımda, kod çözücü çıktı belirteçleri için bir olasılık dağılımı öngörür. Dil modellemesine benzer şekilde, dağıtımı elde etmek ve optimizasyon için çapraz entropi kaybını hesaplamak için softmax uygulayabiliriz. Özel dolgu belirteçlerinin dizilerin sonuna eklendiğini hatırlayın :numref:`sec_machine_translation`, böylece değişen uzunluklardaki dizilerin aynı şeklin minibatch'lerine verimli bir şekilde yüklenebilmesini sağlayın. Bununla birlikte, dolgu belirteçlerinin tahmini kayıp hesaplamalarından hariç tutulmalıdır.
+Her adımda, kodçözücü çıktı andıçları için bir olasılık dağılımı öngörür. Dil modellemesine benzer şekilde, dağılımı elde etmek ve eniyilemek için çapraz entropi kaybını hesaplarken softmaks uygulayabiliriz. :numref:`sec_machine_translation`'tan özel dolgu andıçlarının dizilerin sonuna eklendiğini hatırlayın, böylece değişen uzunluklardaki dizilerin aynı şekildeki minigruplara verimli bir şekilde yüklenebilmesini sağlanır. Bununla birlikte, dolgu andıçlarının tahminlenmesi kayıp hesaplamalarında harici tutulmalıdır.
 
-Bu amaçla, sıfır değerleriyle alakasız girişleri maskelemek için aşağıdaki `sequence_mask` işlevini kullanabiliriz, böylece daha sonra sıfır eşittir ile alakasız tahminlerin çarpımı sıfıra eşittir. Örneğin, dolgu belirteçleri hariç iki dizinin geçerli uzunluğu sırasıyla bir ve iki ise, ilk ve ilk iki girişten sonra kalan girişler sıfırlara temizlenir.
+Bu amaçla, alakasız girdileri sıfır değerleriyle maskelemek için aşağıdaki `sequence_mask` işlevini kullanabiliriz, böylece daha sonra alakasız tahminlerin sıfır ile çarpımı sıfıra eşit olur. Örneğin, dolgu andıçları hariç iki dizinin geçerli uzunluğu sırasıyla bir ve iki ise, ilk bir ve ilk iki girdiden sonra kalan girdiler sıfırlara çekilmiş olur.
 
 ```{.python .input}
 X = np.array([[1, 2, 3], [4, 5, 6]])
@@ -250,7 +250,7 @@ X = torch.tensor([[1, 2, 3], [4, 5, 6]])
 sequence_mask(X, torch.tensor([1, 2]))
 ```
 
-Son birkaç eksendeki tüm girişleri de maskeleyebiliriz. İsterseniz, bu tür girişleri sıfır olmayan bir değerle değiştirmeyi bile belirtebilirsiniz.
+Son birkaç eksendeki tüm girdileri de maskeleyebiliriz. İsterseniz, bu tür girdileri sıfır olmayan bir değerle değiştirmeyi bile belirtebilirsiniz.
 
 ```{.python .input}
 X = d2l.ones((2, 3, 4))
@@ -263,7 +263,7 @@ X = d2l.ones(2, 3, 4)
 sequence_mask(X, torch.tensor([1, 2]), value=-1)
 ```
 
-Artık alakasız tahminlerin maskelenmesine izin vermek için softmax çapraz entropi kaybını genişletebiliriz. Başlangıçta, tahmin edilen tüm belirteçler için maskeler bir olarak ayarlanır. Geçerli uzunluk verildikten sonra, herhangi bir dolgu belirtecine karşılık gelen maske sıfır olarak temizlenir. Sonunda, tüm belirteçlerin kaybı, kayıptaki dolgu belirteçlerinin ilgisiz tahminlerini filtrelemek için maske ile çarpılacaktır.
+Artık alakasız tahminlerin maskelenmesine izin vermek için softmaks çapraz entropi kaybını genişletebiliriz. Başlangıçta, tahmin edilen tüm andıçlar için maskeler bir olarak ayarlanır. Geçerli uzunluk verildikten sonra, herhangi bir dolgu andıcına karşılık gelen maske sıfır olarak ayarlanır. Sonunda, tüm andıçların kaybı, kayıptaki dolgu andıçlarının ilgisiz tahminlerini filtrelemek için maske ile çarpılacaktır.
 
 ```{.python .input}
 #@save
@@ -297,7 +297,7 @@ class MaskedSoftmaxCELoss(nn.CrossEntropyLoss):
         return weighted_loss
 ```
 
-Akıl sağlığı kontrolü için üç özdeş sekansları oluşturabiliriz. Ardından, bu dizilerin geçerli uzunluklarının sırasıyla 4, 2 ve 0 olduğunu belirtebiliriz. Sonuç olarak, birinci dizinin kaybı ikinci dizinin iki katı kadar büyük olmalı, üçüncü dizinin sıfır kaybına sahip olmalıdır.
+Makulluk kontrolü için üç özdeş dizi oluşturabiliriz. Ardından, bu dizilerin geçerli uzunluklarının sırasıyla 4, 2 ve 0 olduğunu belirtebiliriz. Sonuç olarak, birinci dizinin kaybı ikinci dizininkinden iki kat kadar büyük olmalı, üçüncü dizi sıfır kaybına sahip olmalıdır.
 
 ```{.python .input}
 loss = MaskedSoftmaxCELoss()
@@ -314,7 +314,7 @@ loss(d2l.ones(3, 4, 10), d2l.ones((3, 4), dtype=torch.long),
 ## Eğitim
 :label:`sec_seq2seq_training`
 
-Aşağıdaki eğitim döngüsünde, :numref:`fig_seq2seq`'te gösterildiği gibi, kod çözücüye giriş olarak son belirteci hariç özel başlangıç dizisini ve orijinal çıkış sırasını birleştiririz. Buna *öğretmen zorlama* denir çünkü orijinal çıktı dizisi (belirteç etiketleri) kod çözücüye beslenir. Alternatif olarak, önceki zaman adımından*öngörülen* belirteci kod çözücüye geçerli giriş olarak da besleyebiliriz.
+Aşağıdaki eğitim döngüsünde, :numref:`fig_seq2seq`'te gösterildiği gibi, kodçözücüye girdi olarak son andıç hariç özel dizi-başlangıç andıcını ve orijinal çıktı dizisini bitiştiririz. Buna *öğretici zorlama* denir çünkü orijinal çıktı dizisi (andıç etiketleri) kodçözücüye beslenir. Alternatif olarak, önceki zaman adımından *öngörülen* andıcı kodçözücüye geçerli girdi olarak da besleyebiliriz.
 
 ```{.python .input}
 #@save
@@ -390,7 +390,7 @@ def train_s2s_ch9(model, data_iter, lr, num_epochs, tgt_vocab, device):
           f'tokens/sec on {str(device)}')
 ```
 
-Artık makine çevirisi veri kümesinde diziye öğrenme için bir RNN kodlayıcı-kod çözücü modeli oluşturabilir ve eğitebiliriz.
+Artık makine çevirisi veri kümesinde diziden-diziye öğrenme için bir RNN kodlayıcı-kodçözücü modeli oluşturabilir ve eğitebiliriz.
 
 ```{.python .input}
 #@tab all
@@ -409,9 +409,9 @@ train_s2s_ch9(model, train_iter, lr, num_epochs, tgt_vocab, device)
 
 ## Tahmin
 
-Çıkış sırası belirtecini belirteç ile tahmin etmek için, her kod çözücü zaman adımında önceki zaman adımından tahmin edilen belirteç kod çözücüye girdi olarak beslenir. Eğitime benzer şekilde, başlangıç adımında dizinin başlangıcı (” <bos> “) belirteci kod çözücüye beslenir. Bu tahmin süreci :numref:`fig_seq2seq_predict`'te gösterilmektedir. Sıra sonu (” <eos> “) belirteci tahmin edildiğinde, çıktı sırasının tahmini tamamlanır.
+Çıktı dizisi andıç andıç ile tahmin etmek için, her kodçözücü zaman adımında önceki zaman adımından tahmin edilen andıç kodçözücüye girdi olarak beslenir. Eğitime benzer şekilde, ilk zaman adımında dizi-başlangıç andıcı (”<bos>“) kodçözücüye beslenir. Bu tahmin süreci :numref:`fig_seq2seq_predict`'te gösterilmektedir. Dizi-sonu andıcı (”<eos> “) tahmin edildiğinde, çıktı dizisinin tahmini tamamlanmış olur.
 
-![Predicting the output sequence token by token using an RNN encoder-decoder.](../img/seq2seq-predict.svg)
+![Bir RNN kodlayıcı-kodçözücüsü kullanarak andıç andıç çıktı dizisini tahmin etme.](../img/seq2seq-predict.svg)
 :label:`fig_seq2seq_predict`
 
 :numref:`sec_beam-search`'te dizi üretimi için farklı stratejiler sunacağız.
@@ -481,18 +481,18 @@ def predict_s2s_ch9(model, src_sentence, src_vocab, tgt_vocab, num_steps,
     return ' '.join(tgt_vocab.to_tokens(output_seq))
 ```
 
-## Tahmin edilen Dizilerin Değerlendirilmesi
+## Tahmin Edilen Dizilerin Değerlendirilmesi
 
-Tahmin edilen bir diziyi etiket dizisi (zemin gerçeği) ile karşılaştırarak değerlendirebiliriz. BLEU (İki Dilli Değerlendirme Understudy), başlangıçta makine çevirisi sonuçlarını değerlendirmek için önerilen olsa da, farklı uygulamalar için çıktı dizilerinin kalitesini ölçmede yaygın olarak kullanılmaktadır. Prensip olarak, tahmin edilen dizideki herhangi bir $n$ gram için, BLEU bu $n$-gramın etiket dizisinde görüp görünmediğini değerlendirir.
+Tahmin edilen bir diziyi etiket dizisi (ground truth - gerçek referans değer) ile karşılaştırarak değerlendirebiliriz. BLEU (Bilingual Evaluation Understudy - İki Dilli Değerlendirme Dublörü), başlangıçta makine çevirisi sonuçlarını değerlendirmek için önerilmiş olsa da, farklı uygulamalar için çıktı dizilerinin kalitesini ölçmede yaygın olarak kullanılmaktadır. Prensip olarak, tahmin edilen dizideki herhangi bir $n$ gram için, BLEU bu $n$-gramın etiket dizisinde görüp görünmediğini değerlendirir.
 
-$p_n$ ile $n$-gram hassasiyetini belirtin; bu, öngörülen ve etiket dizilerindeki eşleşen $n$-gramlık sayısının tahmin edilen sıradaki $n$-gram sayısına oranıdır. $A$, $B$, $C$, $D$, $D$, $E$, $F$ ve öngörülen bir dizi $A$, $B$, $B$, $C$, $D$. Elimizde $p_1 = 4/5$, $p_2 = 3/4$, $p_3 = 1/3$ ve $p_4 = 0$ var. Ayrıca, $\mathrm{len}_{\text{label}}$ ve $\mathrm{len}_{\text{pred}}$'ün sırasıyla etiket dizisindeki belirteçlerin sayıları ve tahmin edilen dizide olmasına izin verin. Daha sonra, BLEU olarak tanımlanır
+$p_n$ ile $n$-gram hassasiyetini belirtelim; bu, öngörülen ve etiket dizilerindeki eşleşen $n$-gram adedinin tahmin edilen sıradaki $n$-gram adedine oranıdır. Açıklamak gerekirse $A$, $B$, $C$, $D$, $D$, $E$, $F$ etiket dizimiz ve $A$, $B$, $B$, $C$, $D$ öngörülen bir dizi olursa, elimizde $p_1 = 4/5$, $p_2 = 3/4$, $p_3 = 1/3$ ve $p_4 = 0$ olur. Ayrıca, $\mathrm{len}_{\text{label}}$ ve $\mathrm{len}_{\text{pred}}$'ün sırasıyla etiket dizisindeki ve tahmin edilen dizideki andıçların sayıları olmasına izin verin. Böylece, BLEU şöyle tanımlanır:
 
 $$ \exp\left(\min\left(0, 1 - \frac{\mathrm{len}_{\text{label}}}{\mathrm{len}_{\text{pred}}}\right)\right) \prod_{n=1}^k p_n^{1/2^n},$$
 :eqlabel:`eq_bleu`
 
-burada $k$ eşleşmesi için en uzun $n$-gramdır.
+burada $k$ eşleşme için en uzun $n$-gramdır.
 
-:eqref:`eq_bleu`'teki BLEU tanımına dayanarak, tahmin edilen sıra etiket dizisi ile aynı olduğunda, BLEU 1'dir. Dahası, daha uzun $n$-gram eşleştirme daha zor olduğundan, BLEU daha uzun $n$-gram hassasiyetine daha büyük bir ağırlık atar. Özellikle $p_n$ sabit olduğunda $p_n^{1/2^n}$ büyüdükçe $p_n^{1/2^n}$ artar. Ayrıca, daha kısa dizileri tahmin etmek daha yüksek bir $p_n$ değeri elde etme eğiliminde olduğundan, :eqref:`eq_bleu`'teki çarpım teriminden önceki katsayı daha kısa öngörülen dizileri cezalandırır. Örneğin, $k=2$, $A$, $B$, $C$, $D$, $E$, $F$ ve öngörülen dizi $A$, $B$, ancak $p_1 = p_2 = 1$, ceza faktörü $\exp(1-6/2) \approx 0.14$ BLEU'yu düşürür.
+:eqref:`eq_bleu`'teki BLEU tanımına dayanarak, tahmin edilen dizi etiket dizisi ile aynı olduğunda, BLEU değeri 1 olur. Dahası, daha uzun $n$-gramları eşleştirmek daha zor olduğundan, BLEU daha uzun $n$-gram hassasiyetine daha büyük bir ağırlık atar. Özellikle $p_n$ sabit olduğunda $n$ büyüdükçe $p_n^{1/2^n}$ artar. Ayrıca, daha kısa dizileri tahmin etmek daha yüksek bir $p_n$ değeri elde etme eğiliminde olduğundan, :eqref:`eq_bleu`'teki çarpım teriminin öncesindeki katsayı daha kısa tahmin edilmiş dizileri cezalandırır. Örneğin, $k=2$, $A$, $B$, $C$, $D$, $E$, $F$ etiket dizisi ve $A$, $B$ tahminlenen dizi ise, $p_1 = p_2 = 1$ olmasına rağmen, ceza çarpanı, $\exp(1-6/2) \approx 0.14$, BLEU değerini düşürür.
 
 BLEU ölçüsünü aşağıdaki gibi uyguluyoruz.
 
@@ -515,7 +515,7 @@ def bleu(pred_seq, label_seq, k):  #@save
     return score
 ```
 
-Sonunda, birkaç İngilizce cümleyi Fransızca'ya çevirmek ve sonuçların BLEU'sını hesaplamak için eğitilmiş RNN kodlayıcı-kod çözücüsünü kullanıyoruz.
+Sonunda, birkaç İngilizce cümleyi Fransızca'ya çevirmek ve sonuçların BLEU değerini hesaplamak için eğitilmiş RNN kodlayıcı-kodçözücüsünü kullanıyoruz.
 
 ```{.python .input}
 #@tab all
@@ -535,25 +535,25 @@ translate(engs, fras, model, src_vocab, tgt_vocab, num_steps, device)
 
 ## Özet
 
-* Kodlayıcı-kod çözücü mimarisinin tasarımını takiben, dizi-dizi öğrenimi için bir model tasarlamak için iki RNN kullanabiliriz.
-* Kodlayıcıyı ve kod çözücüyü uygularken, çok katmanlı RNN'leri kullanabiliriz.
-* Kayıp hesaplanırken olduğu gibi alakasız hesaplamaları filtrelemek için maskeler kullanabiliriz.
-* Kodlayıcı-kod çözücü eğitiminde, öğretmen zorlama yaklaşımı orijinal çıktı dizilerini (tahminlerin aksine) kod çözücüye besler.
+* Kodlayıcı-kodçözücü mimarisinin tasarımını takiben, diziden-diziye öğrenme için bir model tasarlarken iki RNN kullanabiliriz.
+* Kodlayıcıyı ve kodçözücüyü uygularken, çok katmanlı RNN'leri kullanabiliriz.
+* Kayıp hesaplanırken olduğu gibi ilgisiz hesaplamaları filtrelemek için maskeler kullanabiliriz.
+* Kodlayıcı-kodçözücü eğitiminde, öğretici zorlama yaklaşımı (tahminlerin aksine) orijinal çıktı dizilerini kodçözücüye besler.
 * BLEU, tahmin edilen dizi ve etiket dizisi arasında $n$-gram eşleştirerek çıktı dizilerini değerlendirmek için popüler bir ölçüdür.
 
-## Egzersizler
+## Alıştırmalar
 
 1. Çeviri sonuçlarını iyileştirmek için hiperparametreleri ayarlayabilir misiniz?
-1. Kayıp hesaplamasında maskeler kullanmadan deneyi yeniden çalıştırın. Hangi sonuçları gözlemliyorsunuz? Neden?
-1. Kodlayıcı ve kod çözücü katman sayısı veya gizli birimlerin sayısı bakımından farklıysa, kod çözücünün gizli durumunu nasıl başlatabiliriz?
-1. Eğitimde, önceki zamanda öngörü besleyerek zorlayan öğretmeni kod çözücüye adım atın. Bu performansı nasıl etkiler?
+1. Kayıp hesaplamasında maskeler kullanmadan deneyi yeniden çalıştırın. Ne sonuçlar gözlemliyorsunuz? Neden?
+1. Kodlayıcı ve kodçözücü katman sayısı veya gizli birimlerin sayısı bakımından farklıysa, kodçözücünün gizli durumunu nasıl ilkleyebiliriz?
+1. Eğitimde, eğitici zorlamayı kodçözücüye önceki zamanın tahminini besleme ile değiştirin. Bu performansı nasıl etkiler?
 1. GRU'yu LSTM ile değiştirerek deneyi yeniden çalıştırın.
-1. Kod çözücünün çıkış katmanını tasarlamanın başka yolları var mı?
+1. Kodçözücünün çıktı katmanını tasarlamanın başka yolları var mıdır?
 
 :begin_tab:`mxnet`
-[Discussions](https://discuss.d2l.ai/t/345)
+[Tartışmalar](https://discuss.d2l.ai/t/345)
 :end_tab:
 
 :begin_tab:`pytorch`
-[Discussions](https://discuss.d2l.ai/t/1062)
+[Tartışmalar](https://discuss.d2l.ai/t/1062)
 :end_tab:

@@ -1,16 +1,11 @@
-# Makine Çevirisi ve Dataset
+# Makine Çevirisi ve Veri Kümesi
 :label:`sec_machine_translation`
 
-Doğal dil işlemenin anahtarı olan dil modellerini tasarlamak için RNN kullandık. Diğer bir amiral gemisi kıyaslaması, giriş dizilerini çıktı dizilerine dönüştüren *sıra dönüşüm* modelleri için merkezi bir sorun alanı olan *makine çevirisi*. Çeşitli modern yapay zeka uygulamalarında önemli bir rol oynayan dizi iletim modelleri, bu bölümün geri kalanının ve :numref:`chap_attention`'ün odağını oluşturacaktır. Bu amaçla, bu bölüm makine çevirisi sorununu ve daha sonra kullanılacak veri kümesini tanıtır.
+Doğal dil işlemenin anahtarı olan dil modellerini tasarlamak için RNN kullandık. Diğer bir amiral gemisi kıyaslaması, girdi dizilerini çıktı dizilerine dönüştüren *sıra dönüştürme* modelleri için merkezi bir problem düzlemi olan *makine çevirisi*dir. Çeşitli modern yapay zeka uygulamalarında önemli bir rol oynayan dizi dönüştürme modelleri, bu bölümün geri kalanının ve :numref:`chap_attention`'ün odağını oluşturacaktır. Bu amaçla, bu bölüm makine çevirisi sorununu ve daha sonra kullanılacak veri kümesini anlatır.
 
-*Makine çevirisi*
-bir dizinin bir dilden diğerine otomatik çevirisi. Aslında, bu alan, özellikle II. Dünya Savaşı'nda dil kodlarını kırmak için bilgisayarların kullanılması göz önüne alınarak, dijital bilgisayarlar icat edildikten kısa bir süre sonra 1940'lara kadar uzanabilir. Onlarca yıldır, bu alanda istatistiksel yaklaşımlar :cite:`Brown.Cocke.Della-Pietra.ea.1988,Brown.Cocke.Della-Pietra.ea.1990`, sinir ağlarını kullanarak uçtan uca öğrenmenin yükselmesinden önce baskın olmuştur. İkincisi genellikle denir
-*Sinir makinesi çevirisi*
-kendini ayırt etmek
-*İstatistiksel makine çevirisi*
-çeviri modeli ve dil modeli gibi bileşenlerde istatistiksel analiz içerir.
+*Makine çevirisi* bir dizinin bir dilden diğerine otomatik çevirisidir. Aslında, bu alan, özellikle II. Dünya Savaşı'nda dil kodlarını kırmak için bilgisayarların kullanılması göz önüne alınarak, sayısal bilgisayarların icat edilmesinin kısa bir süre sonrasından 1940'lara kadar uzanabilir. Onlarca yıldır, bu alanda, istatistiksel yaklaşımlar, :cite:`Brown.Cocke.Della-Pietra.ea.1988,Brown.Cocke.Della-Pietra.ea.1990`, sinir ağlarını kullanarak uçtan uca öğrenmenin yükselmesinin öncesine kadar baskın olmuştur. İkincisine genellikle *sinirsel makinesi çevirisi* denerek çeviri modeli ve dil modeli gibi bileşenlerde istatistiksel analiz içeren *istatistiksel makine çevirisi* ayırt edilir.
 
-Uçtan uca öğrenmeyi vurgulayan bu kitap, sinirsel makine çeviri yöntemlerine odaklanacaktır. Dersleri tek bir dilde olan :numref:`sec_language_model`'teki dil modeli problemimizden farklı olarak, makine çevirisi veri kümeleri sırasıyla kaynak dilde ve hedef dilde bulunan metin dizileri çiftlerinden oluşmaktadır. Bu nedenle, dil modelleme için önişleme rutinini yeniden kullanmak yerine, makine çevirisi veri kümelerini önişlemek için farklı bir yol gerekir. Aşağıda, önceden işlenmiş verilerin eğitim için minibatch'lere nasıl yükleneceğini gösteriyoruz.
+Uçtan uca öğrenmeyi vurgulayan bu kitap, sinirsel makine çevirisi yöntemlerine odaklanacaktır. Külliyatı tek bir dil olan :numref:`sec_language_model`'teki dil modeli problemimizden farklı olarak, makine çevirisi veri kümeleri sırasıyla kaynak dilde ve hedef dilde bulunan metin dizileri çiftlerinden oluşmaktadır. Bu nedenle, dil modelleme için önişleme rutinini yeniden kullanmak yerine, makine çevirisi veri kümelerini önişlemek için farklı bir yol gerekir. Aşağıda, önceden işlenmiş verilerin eğitim için minigruplara nasıl yükleneceğini gösteriyoruz.
 
 ```{.python .input}
 from d2l import mxnet as d2l
@@ -35,7 +30,7 @@ import os
 
 ## Veri Kümesini İndirme ve Önişleme
 
-Başlangıç olarak, [bilingual sentence pairs from the Tatoeba Project](http://www.manythings.org/anki/)'ten oluşan bir İngiliz-Fransız veri kümesini indiriyoruz. Veri kümedeki her satır, İngilizce metin dizisinin sekmeyle ayrılmış bir çifti ve çevrilmiş Fransızca metin dizisidir. Her metin dizisinin sadece bir cümle veya birden çok cümleden oluşan bir paragraf olabileceğini unutmayın. İngilizce'nin Fransızca'ya çevrildiği bu makine çevirisi probleminde, İngilizce*kaynak dil*, Fransızca ise *hedef dil*.
+Başlangıç olarak, [Tatoeba Projesi'nden iki dilli cümle çiftleri](http://www.manythings.org/anki/)'nden oluşan bir İngiliz-Fransız veri kümesini indiriyoruz. Veri kümedeki her satır, bir sekmeyle ayrılmış İngilizce metin dizisi ve çevrilmiş Fransızca metin dizisi çiftidir. Her metin dizisinin sadece bir cümle veya birden çok cümleden oluşan bir paragraf olabileceğini unutmayın. İngilizce'nin Fransızca'ya çevrildiği bu makine çevirisi probleminde, İngilizce *kaynak dil*, Fransızca ise *hedef dil*dir.
 
 ```{.python .input}
 #@tab all
@@ -54,7 +49,7 @@ raw_text = read_data_nmt()
 print(raw_text[:75])
 ```
 
-Veri kümesini indirdikten sonra, ham metin verileri için birkaç önişleme adımına devam ediyoruz. Örneğin, kırılmayan alanı boşlukla değiştirir, büyük harfleri küçük harflere dönüştürür ve sözcüklerle noktalama işaretleri arasına boşluk ekleriz.
+Veri kümesini indirdikten sonra, ham metin verileri için birkaç önişleme adımı ile devam ediyoruz. Örneğin, kırılmayan alanı boşlukla değiştirir, büyük harfleri küçük harflere dönüştürür ve sözcüklerle noktalama işaretleri arasına boşluk ekleriz.
 
 ```{.python .input}
 #@tab all
@@ -76,9 +71,9 @@ text = preprocess_nmt(raw_text)
 print(text[:80])
 ```
 
-## Tokenization
+## Andıçlama
 
-:numref:`sec_language_model`'teki karakter düzeyinde tokenizasyondan farklı olarak, makine çevirisi için burada kelime düzeyinde tokenizasyonu tercih ediyoruz (son teknoloji modelleri daha gelişmiş tokenizasyon teknikleri kullanabilir). Aşağıdaki `tokenize_nmt` işlevi, her belirteç bir sözcük veya noktalama işareti olduğu ilk `num_examples` metin sırası çiftlerini belirteçler. Bu işlev, belirteç listelerinin iki listesini döndürür: `source` ve `target`. Özellikle, `source[i]` kaynak dilde (İngilizce burada) $i^\mathrm{th}$ metin dizisinden belirteçlerin bir listesidir ve `target[i]` hedef dilde (Fransızca burada).
+:numref:`sec_language_model`'teki karakter düzeyinde andıçlara ayırmaktan farklı olarak, makine çevirisi için burada kelime düzeyinde andıçlamayı tercih ediyoruz (son teknoloji modeller daha gelişmiş andıçlama teknikleri kullanabilir). Aşağıdaki `tokenize_nmt` işlevi, her andıç bir sözcük veya noktalama işareti olduğu ilk `num_examples` tane metin dizisi çiftini andıçlar. Bu işlev, andıç listelerinden oluşan iki liste döndürür: `source` (kaynak) ve `target` (hedef). Özellikle, `source[i]` kaynak dilde (İngilizce burada) $i$. metin dizisinden andıçların bir listesidir ve `target[i]` hedef dildekileri (Fransızca burada) içerir.
 
 ```{.python .input}
 #@tab all
@@ -99,7 +94,7 @@ source, target = tokenize_nmt(text)
 source[:6], target[:6]
 ```
 
-Metin dizisi başına belirteç sayısının histogramını çizelim. Bu basit İngilizce-Fransız veri kümesinde, metin dizilerinin çoğunun 20'den az belirteci vardır.
+Metin dizisi başına andıç sayısının histogramını çizelim. Bu basit İngilizce-Fransız veri kümesinde, metin dizilerinin çoğunun 20'den az andıcı vardır.
 
 ```{.python .input}
 #@tab all
@@ -112,9 +107,9 @@ for patch in patches[1].patches:
 d2l.plt.legend(loc='upper right');
 ```
 
-## Kelime hazinesi
+## Kelime Dağarcığı
 
-Makine çeviri veri kümesi dil çiftlerinden oluştuğundan, hem kaynak dil hem de hedef dil için ayrı ayrı iki kelime hazinesi oluşturabiliriz. Kelime düzeyinde tokenization ile, kelime dağarcığı boyutu, karakter düzeyinde belirteç kullanarak bundan önemli ölçüde daha büyük olacaktır. Bunu hafifletmek için, burada aynı bilinmeyen (” <unk> “) belirteci ile 2 defadan az görünen seyrek belirteçleri tedavi ediyoruz. Bunun yanı sıra, <pad> mini batchlerde aynı uzunlukta dolgu (” “) dizileri ve dizilerin başlangıcını (” <bos> “) veya sonunu (” <eos> “) işaretlemek için gibi ek özel belirteçleri belirtiyoruz. Bu tür özel belirteçler, doğal dil işleme görevlerinde yaygın olarak kullanılır.
+Makine çeviri veri kümesi dil çiftlerinden oluştuğundan, hem kaynak dil hem de hedef dil için ayrı ayrı iki kelime hazinesi oluşturabiliriz. Kelime düzeyinde andıçlamada, kelime dağarcığı boyutu, karakter düzeyinde andıç kullanandan önemli ölçüde daha büyük olacaktır. Bunu hafifletmek için, burada 2 defadan az görünen seyrek andıçları aynı bilinmeyen (”<unk>“) andıcı ile ifade ediyoruz. Bunun yanı sıra, minigruplarda dizileri aynı uzunlukta dolgulamak için (”<pad>“)  ve dizilerin başlangıcını işaretlemek için (”<bos>“) veya sonunu işaretlemek için (”<eos>“) gibi ek özel andıçlar belirtiyoruz. Bu tür özel andıçlar, doğal dil işleme görevlerinde yaygın olarak kullanılır.
 
 ```{.python .input}
 #@tab all
@@ -123,14 +118,14 @@ src_vocab = d2l.Vocab(source, min_freq=2,
 len(src_vocab)
 ```
 
-## Veri kümesini yükleme
+## Veri Kümesini Yükleme
 :label:`subsec_mt_data_loading`
 
-Dil modellemesinde, her dizi örneğinin, bir cümlenin bir kesimi veya birden fazla cümle üzerindeki bir yayılma, sabit bir uzunluğa sahip olduğunu hatırlayın. Bu `num_steps` (zaman adımları veya belirteçleri sayısı) bağımsız değişken :numref:`sec_language_model` tarafından belirtilmiştir. Makine çevirisinde, her örnek, her metin dizisinin farklı uzunluklara sahip olabileceği bir kaynak ve hedef metin dizisi çiftidir.
+Dil modellemesinde, her dizi örneğinin, bir cümlenin bir kesimine veya birden fazla cümle üzerine bir yayılan sabit bir uzunluğa sahip olduğunu hatırlayın. Bu :numref:`sec_language_model`'teki `num_steps` (zaman adımları veya andıç sayısı) bağımsız değişkeni tarafından belirtilmiştir. Makine çevirisinde, her örnek, her metin dizisinin farklı uzunluklara sahip olabileceği bir kaynak ve hedef metin dizisi çiftidir.
 
-Hesaplamalı verimlilik için, yine de bir mini toplu metin dizilerini *kestirme* ve *padding* ile işleyebiliriz. Aynı minibatch'deki her dizinin aynı uzunlukta olması gerektiğini varsayalım `num_steps`. Bir metin dizisi `num_steps` jetonundan daha azsa, <pad> uzunluğu `num_steps`'e ulaşana kadar özel "" belirteci sonuna eklemeye devam edeceğiz. Aksi takdirde, metin sırasını yalnızca ilk `num_steps` jetonlarını alıp geri kalanını atarak keseceğiz. Bu şekilde, her metin dizisi aynı şekle sahip mini batches olarak yüklenecek aynı uzunluğa sahip olacaktır.
+Hesaplamada verimlilik için, yine de bir minigrup metin dizisini *kırkma (truncation)* ve *dolgu* ile işleyebiliriz. Aynı minigruptaki her dizinin aynı `num_steps` uzunluğunda olması gerektiğini varsayalım. Bir metin dizisi `num_steps` andıçtan daha azsa, uzunluğu `num_steps`'e ulaşana kadar özel "<pad>" andıcını sonuna eklemeye devam edeceğiz. Aksi takdirde, metin sırasını yalnızca ilk `num_steps` andıcını alıp geri kalanını atarak keseceğiz. Bu şekilde, her metin dizisi aynı şekle sahip minigruplar olarak yüklenebileceği aynı uzunluğa sahip olacaktır.
 
-Aşağıdaki `truncate_pad` işlevi metin dizilerini daha önce açıklandığı gibi keser veya pedler.
+Aşağıdaki `truncate_pad` işlevi metin dizilerini daha önce açıklandığı gibi keser veya dolgular.
 
 ```{.python .input}
 #@tab all
@@ -144,7 +139,7 @@ def truncate_pad(line, num_steps, padding_token):
 truncate_pad(src_vocab[source[0]], 10, src_vocab['<pad>'])
 ```
 
-Şimdi, metin dizilerini eğitim için mini batchlere dönüştürmek için bir işlev tanımlıyoruz. Dizinin sonunu <eos> belirtmek için her dizinin sonuna özel “” belirteci ekliyoruz. Bir model belirteç sonra bir dizi belirteci oluşturarak tahmin edildiğinde, “<eos>” belirteci oluşturma çıktı sırası tamamlandığını önerebilir. Ayrıca, dolgu belirteçleri hariç her metin dizisinin uzunluğunu da kaydediyoruz. Bu bilgi, daha sonra ele alacağımız bazı modeller tarafından gerekli olacaktır.
+Şimdi, metin dizilerini eğitimde minigruplara dönüştürmek için bir işlev tanımlıyoruz. Dizinin sonunu belirtmek için her dizinin sonuna özel "<eos>" andıcını ekliyoruz. Bir model bir diziyi her andıç sonrası bir andıç oluşturarak tahmin ettiğinde, modelin “<eos>” andıcını oluşturması çıktı dizisini tamamlandığını ifade edebilir. Ayrıca, dolgu andıçlarını hariç tutarak her metin dizisinin uzunluğunu da kaydediyoruz. Bu bilgi, daha sonra ele alacağımız bazı modellerde gerekli olacaktır.
 
 ```{.python .input}
 #@tab all
@@ -160,9 +155,9 @@ def build_array_nmt(lines, vocab, num_steps):
     return array, valid_len
 ```
 
-## Her şeyini bir araya koymak
+## Her Şeyi Bir Araya Koyma
 
-Son olarak, veri yineleyiciyi hem kaynak dil hem de hedef dil için kelime hazineleri ile birlikte döndürmek için `load_data_nmt` işlevini tanımlıyoruz.
+Son olarak, veri yineleyiciyi hem kaynak dil hem de hedef dil için kelime dağarcıkları ile birlikte döndüren `load_data_nmt` işlevini tanımlıyoruz.
 
 ```{.python .input}
 #@tab all
@@ -198,18 +193,18 @@ for X, X_valid_len, Y, Y_valid_len in train_iter:
 ## Özet
 
 * Makine çevirisi, bir dizinin bir dilden diğerine otomatik çevirisini ifade eder.
-* Kelime düzeyinde tokenization kullanarak, kelime dağarcığı boyutu, karakter düzeyinde belirteç kullanarak bundan önemli ölçüde daha büyük olacaktır. Bunu hafifletmek için, seyrek belirteçleri aynı bilinmeyen belirteç olarak ele alabiliriz.
-* Metin dizilerini kesebilir ve doldırabiliriz, böylece hepsi mini batchlerde yüklenecek aynı uzunluğa sahip olur.
+* Kelime düzeyinde andıçlama kullanarsak, kelime dağarcığının boyutu, karakter düzeyinde andıçlama kullanmaya göre önemli ölçüde daha büyük olacaktır. Bunu hafifletmek için, seyrek kullanılan andıçları aynı bilinmeyen andıç olarak ifade alabiliriz.
+* Metin dizilerini kesebilir ve dolgulayabiliriz, böylece hepsi minigruplarda yüklenirken aynı uzunluğa sahip olurlar.
 
-## Egzersizler
+## Alıştırmalar
 
-1. `load_data_nmt` işlevindeki `num_examples` bağımsız değişkeni farklı değerlerini deneyin. Bu, kaynak dilin ve hedef dilin kelime dağarcığı boyutlarını nasıl etkiler?
-1. Çince ve Japonca gibi bazı dillerde metin, kelime sınır göstergelerine (örn., boşluk) sahip değildir. Sözcük düzeyinde tokenizasyon bu gibi durumlar için hala iyi bir fikir mi? Neden ya da neden olmasın?
+1. `load_data_nmt` işlevindeki `num_examples` değişkeninin farklı değerlerini deneyin. Bu, kaynak ve hedef dillerin kelime dağarcığı boyutlarını nasıl etkiler?
+1. Çince ve Japonca gibi bazı dillerde metin, kelime sınır göstergelerine (örn., boşluk) sahip değildir. Sözcük düzeyinde andıçlama bu gibi durumlar için hala iyi bir fikir midir? Neden?
 
 :begin_tab:`mxnet`
-[Discussions](https://discuss.d2l.ai/t/344)
+[Tartışmalar](https://discuss.d2l.ai/t/344)
 :end_tab:
 
 :begin_tab:`pytorch`
-[Discussions](https://discuss.d2l.ai/t/1060)
+[Tartışmalar](https://discuss.d2l.ai/t/1060)
 :end_tab:
