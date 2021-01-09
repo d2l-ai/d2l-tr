@@ -15,6 +15,8 @@ backpropagation; geri yayma
 
 batch; toptan, toplu
 
+beam search; ışın arama
+
 bias; sinir ağlarında ek girdi
 
 bias; algoritmalardaki yanlılık
@@ -67,6 +69,8 @@ environment; ortam
 
 epoch; dönem
 
+exhaustive search; kapsamlı arama
+
 extrapolation; dışdeğerleme
 
 feature; öznitelik
@@ -88,6 +92,8 @@ gpu; grafik işleme birimi
 gradient; gradyan, eğim
 
 graph; çizge
+
+greedy search; açgözlü arama
 
 ground truth; gerçek referans değer
 
