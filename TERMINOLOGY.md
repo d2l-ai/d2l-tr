@@ -89,6 +89,8 @@ gradient; gradyan, eğim
 
 graph; çizge
 
+ground truth; gerçek referans değer
+
 hedonic adaptation; zevksel uyarlama
 
 holdout; harici tutulan
@@ -208,6 +210,8 @@ stochastic; rasgele
 symmetry; bakışım
 
 tabular; çizelge halindeki
+
+teacher forcing; öğretici zorlama
 
 token; andıç
 
