@@ -5,6 +5,8 @@ affine; afin
 
 anchor; çapa
 
+api (application programming interface); uygulama programlama arayüzü
+
 array; dizilim
 
 autoregressive; özbağlanımlı
