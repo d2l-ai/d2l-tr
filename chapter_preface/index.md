@@ -45,13 +45,13 @@ Birçok ders kitabı, ayrıntılı bir dizi konuyu öğretir. Örneğin, Chris B
 
 Bu kitapta, çoğu kavramı *tam zamanında* öğreteceğiz. Başka bir deyişle, bazı pratik sonlara ulaşmak için gerekli oldukları anda kavramları öğreneceksiniz. Başlangıçta doğrusal cebir ve olasılık gibi temelleri öğretmek için biraz zamanınızı alırken, daha özel olasılık dağılımlarına girmeden önce ilk modelinizi eğitmenin memnuniyetini tatmanızı istiyoruz.
 
-Temel matematiksel altyapıya hızlı giriş yapmanızı sağlayan baştaki birkaç bölüm dışında, sonraki her bölüm hem makul sayıda yeni kavramı tanıtır hem de bağımsız veri kümeleri kullanarak tek başına çalışan örnekler görmenizi sağlar. Bu durum organizasyonel bir zorluğa da yol açıyor çünkü bazı modeller mantıksal olarak tek bir not defterinde gruplandırılabilirken bazı fikirler en iyi şekilde birkaç model arka arkaya uygulanarak öğretilebiliyor. Öte yandan, *1 çalışma örneği, 1 not defteri* yaklaşımını benimsememizin büyük bir avantajı var: kodumuzu kullanarak kendi araştırma projelerinizi hızlıca başlatabilirsiniz. Sadece bir Jupyter not defterini kopyalayın ve değiştirmeye başlayın.
+Temel matematiksel altyapıya hızlı giriş yapmanızı sağlayan baştaki birkaç bölüm dışında, sonraki her bölüm hem makul sayıda yeni kavramı tanıtır hem de bağımsız veri kümeleri kullanarak tek başına çalışan örnekler görmenizi sağlar. Bu durum organizasyonel bir zorluğa da yol açıyor çünkü bazı modeller mantıksal olarak tek bir not defterinde gruplandırılabilirken bazı fikirler en iyi şekilde birkaç model arka arkaya uygulanarak öğretilebiliyor. Öte yandan, *bir çalışma örneği, bir not defteri* yaklaşımını benimsememizin büyük bir avantajı var: kodumuzu kullanarak kendi araştırma projelerinizi hızlıca başlatabilirsiniz. Sadece bir Jupyter not defterini kopyalayın ve değiştirmeye başlayın.
 
 Çalıştırılabilir kodu gerektiğinde arka plan materyalleri ile zenginleştireceğiz. Genel olarak, araçları bütün detaylarıyla açıklamadan önce nasıl kullanıldığını göstermeyi tercih edeceğiz. Örneğin, neden yararlı olduğunu veya neden işe yaradığını tam olarak açıklamadan önce *rastgele eğim inişini(stochastic gradient descent-SGD)* doğrudan kullanacağız. Bu, okuyucunun bazı kararlarda bize güvenmesi pahasına, sorunları hızlı bir şekilde çözmek için gerekli ekipmana hızlıca ulaşmasına yardımcı olur.
 
 Bu kitap derin öğrenme kavramlarını sıfırdan öğretecek. Bazen, derin öğrenme çerçevelerinin gelişmiş soyutlamaları ile tipik olarak kullanıcıdan gizlenen modeller hakkındaki ince detayları irdelemek istiyoruz.
 
-Özellikle temel eğitimlerde, belirli bir katmanda veya eniyileyicide(optimizer) gerçekleşen her şeyi anlamanızı istediğimizde örneğin iki versiyonunu sunacağız: Bir tanesi her şeyi sıfırdan uyguladığımız, sadece NumPy arayüzüne ve otomatik türev almaya dayananı ve diğeri ise Gluon kullanarak kısaca kodunu yazdığımız daha pratik bir örneği. Size bazı bileşenlerin nasıl çalıştığını öğrettikten sonra, Gluon sürümünü sonraki derslerde kullanacağız.
+Özellikle temel eğitimlerde, belirli bir katmanda veya eniyileyicide(optimizer) gerçekleşen her şeyi anlamanızı istediğimizde örneğin iki versiyonunu sunacağız: Bir tanesi her şeyi sıfırdan uyguladığımız, sadece NumPy arayüzüne ve otomatik türev almaya dayananı ve diğeri ise derin öğrenme çerçevelerinin üst-düzey API'lerini (uygulama programlama arayüzleri) kullanarak kısaca kodunu yazdığımız daha pratik bir örneği. Size bazı bileşenlerin nasıl çalıştığını öğrettikten sonra, üst-düzey API'leri sonraki derslerde kullanacağız.
 
 ### İçerik ve Yapı
 
@@ -73,7 +73,7 @@ Bu kitabın çoğu bölümünde derin öğrenmede interaktif bir öğrenme deney
 
 Bazen gereksiz tekrarlardan kaçınmak için bu kitapta sıkça içe aktarılan (import) ve  atıfta bulunulan işlevler, sınıflar, vb. 'd2l' paketinde bulunmaktadır. İşlev, sınıf veya çoklu içe aktarma gibi herhangi bir blok bir pakete kaydedilecekse, bunu `#@save` ile işaretleriz. Bu işlevler ve sınıflar hakkında ayrıntılı bir genel bakışı :numref:`sec_d2l`'da' sunuyoruz . `d2l` paketi yükte hafiftir ve sadece bağımlı olarak aşağıdaki paketleri ve modülleri gerektirir:
 
-```{.python .input  n=1}
+```{.python .input}
 #@tab all
 #@save
 import collections
@@ -96,34 +96,31 @@ d2l = sys.modules[__name__]
 ```
 
 :begin_tab:`mxnet`
-
 Bu kitaptaki kodun çoğu Apache MXNet'e dayanmaktadır. MXNet, derin öğrenme ve AWS'in (Amazon Web Services) yanı sıra birçok yüksekokul ve şirketin tercih ettiği açık kaynaklı bir çerçevedir. Bu kitaptaki tüm kodlar en yeni MXNet sürümü altında testlerden geçmiştir. Ancak, derin öğrenmenin hızla gelişmesi nedeniyle, *basılı sürümündeki* bazı kodlar MXNet'in gelecekteki sürümlerinde düzgün çalışmayabilir. Ancak, çevrimiçi sürümü güncel tutmayı planlıyoruz. Böyle bir sorunla karşılaşırsanız, kodunuzu ve çalışma zamanı ortamınızı güncellemek için lütfen şuraya danışın :ref:`chap_installation`.
 
 Modülleri MXNet'ten şu şekilde içe aktarıyoruz.
 :end_tab:
 
 :begin_tab:`pytorch`
-
 Bu kitaptaki kodun çoğu PyTorch'a dayanmaktadır. PyTorch, araştırma topluluğunda son derece popüler olan açık kaynaklı derin öğrenme çerçevesidir. Bu kitaptaki tüm kodlar en yeni PyTorch kapsamında testlerden geçmiştir. Ancak, derin öğrenmenin hızla gelişmesi nedeniyle, *basılı sürümündeki* bazı kodlar PyTorch'un gelecekteki sürümlerinde düzgün çalışmayabilir. Ancak, çevrimiçi sürümü güncel tutmayı planlıyoruz. Böyle bir sorunla karşılaşırsanız, kodunuzu ve çalışma zamanı ortamınızı güncellemek için lütfen şuraya danışın :ref:`chap_installation`.
 
 Modülleri PyTorch'tan şu şekilde içe aktarıyoruz.
 :end_tab:
 
 :begin_tab:`tensorflow`
-
-Bu kitaptaki kodun çoğu TensorFlow'a dayanmaktadır. PyTorch, araştırma topluluğunda son derece popüler olan açık kaynaklı derin öğrenme çerçevesidir. Bu kitaptaki tüm kodlar en yeni TensorFlow kapsamında testlerden geçmiştir. Ancak, derin öğrenmenin hızla gelişmesi nedeniyle, *basılı sürümündeki* bazı kodlar TensorFlow'un gelecekteki sürümlerinde düzgün çalışmayabilir. Ancak, çevrimiçi sürümü güncel tutmayı planlıyoruz. Böyle bir sorunla karşılaşırsanız, kodunuzu ve çalışma zamanı ortamınızı güncellemek için lütfen şuraya danışın :ref:`chap_installation`.
+Bu kitaptaki kodun çoğu TensorFlow'a dayanmaktadır. TEnsorFlow, araştırma topluluğunda ve endüstride son derece popüler olan açık kaynaklı derin öğrenme çerçevesidir. Bu kitaptaki tüm kodlar en yeni TensorFlow kapsamında testlerden geçmiştir. Ancak, derin öğrenmenin hızla gelişmesi nedeniyle, *basılı sürümündeki* bazı kodlar TensorFlow'un gelecekteki sürümlerinde düzgün çalışmayabilir. Ancak, çevrimiçi sürümü güncel tutmayı planlıyoruz. Böyle bir sorunla karşılaşırsanız, kodunuzu ve çalışma zamanı ortamınızı güncellemek için lütfen şuraya danışın :ref:`chap_installation`.
 
 
 Modülleri TensorFlow'dan şu şekilde içe aktarıyoruz.
 :end_tab:
 
-```{.python .input  n=1}
+```{.python .input}
 #@save
 from mxnet import autograd, context, gluon, image, init, np, npx
 from mxnet.gluon import nn, rnn
 ```
 
-```{.python .input  n=1}
+```{.python .input}
 #@tab pytorch
 #@save
 import numpy as np
@@ -133,9 +130,10 @@ from torch import nn
 from torch.nn import functional as F
 from torch.utils import data
 from torchvision import transforms
+from PIL import Image
 ```
 
-```{.python .input  n=1}
+```{.python .input}
 #@tab tensorflow
 #@save
 import numpy as np
@@ -181,7 +179,8 @@ StevenJokes, Tomer Kaftan, liweiwp, netyster, ypandya, NishantTharani, heiligerl
 Hoa Nguyen, manuel-arno-korfmann-webentwicklung, aterzis-personal, nxby, Xiaoting He, Josiah Yoder,
 mathresearch, mzz2017, jroberayalas, iluu, ghejc, BSharmi, vkramdev, simonwardjones, LakshKD,
 TalNeoran, djliden, Nikhil95, Oren Barkan, guoweis, haozhu233, pratikhack, 315930399, tayfununal,
-steinsag, charleybeller.
+steinsag, charleybeller, Andrew Lumsdaine, Jiekui Zhang, Deepak Pathak, Florian Donhauser, Tim Gates,
+Adriaan Tijsseling, Ron Medina, Gaurav Saha, Murat Semerci, Lei Mao.
 
 Türkçe çevirisindeki katkılarından dolayı Murat Semerci ve Barış Yaşin'e teşekkür ediyoruz.
 

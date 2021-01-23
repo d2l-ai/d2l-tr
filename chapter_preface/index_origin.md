@@ -155,7 +155,7 @@ This presents an organizational challenge.
 Some models might logically be grouped together in a single notebook.
 And some ideas might be best taught by executing several models in succession.
 On the other hand, there is a big advantage to adhering
-to a policy of *1 working example, 1 notebook*:
+to a policy of *one working example, one notebook*:
 This makes it as easy as possible for you to
 start your own research projects by leveraging our code.
 Just copy a notebook and start modifying it.
@@ -182,9 +182,9 @@ In these cases, we will often present two versions of the example:
 one where we implement everything from scratch,
 relying only on the NumPy interface and automatic differentiation,
 and another, more practical example,
-where we write succinct code using Gluon.
+where we write succinct code using high-level APIs of deep learning frameworks.
 Once we have taught you how some component works,
-we can just use the Gluon version in subsequent tutorials.
+we can just use the high-level APIs in subsequent tutorials.
 
 
 ### Content and Structure
@@ -265,7 +265,7 @@ to be saved in the package, we will mark it with
 The `d2l` package is light-weight and only requires
 the following packages and modules as dependencies:
 
-```{.python .input  n=1}
+```{.python .input}
 #@tab all
 #@save
 import collections
@@ -288,7 +288,6 @@ d2l = sys.modules[__name__]
 ```
 
 :begin_tab:`mxnet`
-
 Most of the code in this book is based on Apache MXNet.
 MXNet is an open-source framework for deep learning
 and the preferred choice of AWS (Amazon Web Services),
@@ -305,7 +304,6 @@ Here is how we import modules from MXNet.
 :end_tab:
 
 :begin_tab:`pytorch`
-
 Most of the code in this book is based on PyTorch.
 PyTorch is an open-source framework for deep learning, which is extremely
 popular in the research community.
@@ -321,10 +319,9 @@ Here is how we import modules from PyTorch.
 :end_tab:
 
 :begin_tab:`tensorflow`
-
 Most of the code in this book is based on TensorFlow.
 TensorFlow is an open-source framework for deep learning, which is extremely
-popular in both the research community and industrial.
+popular in both the research community and industry.
 All of the code in this book has passed tests under the newest TensorFlow.
 However, due to the rapid development of deep learning, some code
 *in the print edition* may not work properly in future versions of TensorFlow.
@@ -336,13 +333,13 @@ to update your code and runtime environment.
 Here is how we import modules from TensorFlow.
 :end_tab:
 
-```{.python .input  n=1}
+```{.python .input}
 #@save
 from mxnet import autograd, context, gluon, image, init, np, npx
 from mxnet.gluon import nn, rnn
 ```
 
-```{.python .input  n=1}
+```{.python .input}
 #@tab pytorch
 #@save
 import numpy as np
@@ -352,9 +349,10 @@ from torch import nn
 from torch.nn import functional as F
 from torch.utils import data
 from torchvision import transforms
+from PIL import Image
 ```
 
-```{.python .input  n=1}
+```{.python .input}
 #@tab tensorflow
 #@save
 import numpy as np
@@ -417,16 +415,18 @@ Steve Sedlmeyer, Ruslan Baratov, Rafael Schlatter, liusy182, Giannis Pappas,
 ati-ozgur, qbaza, dchoi77, Adam Gerson, Phuc Le, Mark Atwood, christabella, vn09,
 Haibin Lin, jjangga0214, RichyChen, noelo, hansent, Giel Dops, dvincent1337, WhiteD3vil,
 Peter Kulits, codypenta, joseppinilla, ahmaurya, karolszk, heytitle, Peter Goetz, rigtorp,
-tiepvupsu, sfilip, mlxd, Kale-ab Tessera, Sanjar Adilov, MatteoFerrara, hsneto,
-Katarzyna Biesialska, Gregory Bruss, duythanhvn, paulaurel, graytowne, minhduc0711,
+Tiep Vu, sfilip, mlxd, Kale-ab Tessera, Sanjar Adilov, MatteoFerrara, hsneto,
+Katarzyna Biesialska, Gregory Bruss, Duy–Thanh Doan, paulaurel, graytowne, Duc Pham,
 sl7423, Jaedong Hwang, Yida Wang, cys4, clhm, Jean Kaddour, austinmw, trebeljahr, tbaums,
-cuongvng, pavelkomarov, vzlamal, NotAnotherSystem, J-Arun-Mani, jancio, eldarkurtic,
+Cuong V. Nguyen, pavelkomarov, vzlamal, NotAnotherSystem, J-Arun-Mani, jancio, eldarkurtic,
 the-great-shazbot, doctorcolossus, gducharme, cclauss, Daniel-Mietchen, hoonose, biagiom,
 abhinavsp0730, jonathanhrandall, ysraell, Nodar Okroshiashvili, UgurKap, Jiyang Kang,
 StevenJokes, Tomer Kaftan, liweiwp, netyster, ypandya, NishantTharani, heiligerl, SportsTHU,
-nguyenhoa93, manuel-arno-korfmann-webentwicklung, aterzis-personal, nxby, Xiaoting He, Josiah Yoder,
+Hoa Nguyen, manuel-arno-korfmann-webentwicklung, aterzis-personal, nxby, Xiaoting He, Josiah Yoder,
 mathresearch, mzz2017, jroberayalas, iluu, ghejc, BSharmi, vkramdev, simonwardjones, LakshKD,
-TalNeoran, djliden, Nikhil95, Oren Barkan, guoweis, haozhu233.
+TalNeoran, djliden, Nikhil95, Oren Barkan, guoweis, haozhu233, pratikhack, 315930399, tayfununal,
+steinsag, charleybeller, Andrew Lumsdaine, Jiekui Zhang, Deepak Pathak, Florian Donhauser, Tim Gates,
+Adriaan Tijsseling, Ron Medina, Gaurav Saha, Murat Semerci, Lei Mao.
 
 We thank Amazon Web Services, especially Swami Sivasubramanian,
 Raju Gulabani, Charlie Bell, and Andrew Jassy for their generous support in writing this book. Without the available time, resources, discussions with colleagues, and continuous encouragement this book would not have happened.
