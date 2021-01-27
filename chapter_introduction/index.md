@@ -209,39 +209,35 @@ Motive edici örneğimizdeki uyanma kelimesi problemi, makine öğrenmesinin üs
 
 ### Gözetimli Öğrenme
 
-Gözetimli öğrenme *girdiler* verildiğinde *hedefleri* tahmin etme görevini ele alır.
-Sık sık *etiket* adını verdiğimiz hedefler genellikle *y* ile gösterilir.
-*Öznitellikler* veya eş değişkenler olarak da adlandırılan girdi verisini genellikle $\mathbf{x}$ olarak belirtiriz.
-Her (girdi, hedef) çiftine *örnek* veya *misal* denir.
-Bazen, bağlam açık olduğunda, bir girdi topluluğuna atıfta bulunmak için -karşılık gelen hedefler bilinmese bile- örnekler terimini kullanabiliriz.
-Belirli bir örneği, mesela $i$, alt-indis olarak gösteririz, örneğin ($\mathbf{x}_i,y_i$).
-Veri kümesi, $n$ tane örnekli, $\{\mathbf{x}_i, y_i\}_{i=1}^n$, bir topluluktur.
-Hedefimiz, $\mathbf{x}_i$ girdisini $f_{\theta}(\mathbf{x}_i)$ tahminiyle eşleyen bir $f_\theta$ modeli üretmektir.
+Gözetimli öğrenme girdi öznitelikleri verildiğinde etiketleri tahmin etme görevini ele alır.
+Her öznitelik--etiket çiftine örnek denir.
+Bazen, bağlam açık olduğunda, bir girdi topluluğuna atıfta bulunmak için -karşılık gelen etiketler bilinmese bile- *örnekler* terimini kullanabiliriz.
+Hedefimiz, herhangi bir girdiyi bir etiket tahminiyle eşleyen bir model üretmektir.
 
 Bu açıklamayı somut bir örneğe oturtalım; sağlık hizmetlerinde çalışıyorsak, bir hastanın kalp krizi geçirip geçirmeyeceğini tahmin etmek isteyebiliriz.
-*Kalp krizi var* veya *kalp krizi yok* gözlemi, $y$ etiketimiz olacaktır.
-$\mathbf{x}$ girdi verileri, kalp atış hızı, diyastolik ve sistolik kan basıncı gibi hayati belirtiler olabilir.
+"Kalp krizi var" veya "kalp krizi yok" gözlemi, bizim etiketimiz olacaktır.
+Girdi öznitelikleri, kalp atış hızı, diyastolik ve sistolik kan basıncı gibi hayati belirtiler olabilir.
 
-Burada gözetim devreye girer, çünkü $\theta$ parametrelerini seçmek için, biz (gözetimciler) modele *etiketli örnekleri* ($\mathbf{x}_i,y_i$) içeren bir veri kümesi sağlıyoruz, ki bu kümedeki her örnek, $\mathbf{x}_i$, doğru etiketle eşleştirilmiştir.
+Burada gözetim devreye girer, çünkü parametreleri seçmek için, biz (gözetimciler) modele *etiketli örnekleri* içeren bir veri kümesi sağlıyoruz, ki bu kümedeki her örnek, gerçek referans değeri etiketle eşleştirilmiştir.
 
-Olasılıksal terimlerle, tipik olarak koşullu olasılığı, $P(y|x)$, tahmin etmekle ilgileniyoruz.
+Olasılıksal terimlerle, tipik olarak öznitelikler verildiğinde bir etiketinin koşullu olasılığını tahmin etmekle ilgileniyoruz.
 Makine öğrenmesi içindeki birçok paradigmadan sadece biri olsa da, gözetimli öğrenme, makine öğrenmesinin endüstrideki başarılı uygulamalarının çoğunu oluşturur.
 Kısmen, bunun nedeni, birçok önemli görevin, belirli bir mevcut veri kümesi göz önüne alındığında bilinmeyen bir şeyin olasılığını tahmin etmek gibi net bir şekilde tanımlanabilmesidir. Örneğin;
 
-* CT(computed tomography) görüntüsü verildiğinde kanserli olma/olmama tahmini.
+* CT (computed tomography) görüntüsü verildiğinde kanserli olma/olmama tahmini.
 * İngilizce bir cümle verildiğinde Fransızca çevirisinin tahmini.
 * Bir  hisse senedinin gelecek aydaki fiyatının bu ayın finansal raporlama verilerine dayalı tahmini.
 
-Temel olarak "girdilerden hedeflerin tahmin edilmesi" diye tanımladığımız gözetimli öğrenme çok çeşitli şekillerde olabilir, diğer hususların yanı sıra girdilerin ve çıktıların türüne, boyutuna ve sayısına bağlı olarak çok sayıda modelleme kararı gerektirebilir.
-Örneğin, dizileri işlemek için (metin veya zaman serisi gibi) farklı ve sabit uzunluklu vektör temsillerini işlemek için farklı modeller kullanırız.
-Bu kitabın ilk 9 bölümünde bu sorunların birçoğunu derinlemesine işleyeceğiz.
+Temel olarak "girdi öznitelikleri verildiğinde etiketlerin tahmin edilmesi" diye tanımladığımız gözetimli öğrenme çok çeşitli şekillerde olabilir, diğer hususların yanı sıra girdilerin ve çıktıların türüne, boyutuna ve sayısına bağlı olarak çok sayıda modelleme kararı gerektirebilir.
+Örneğin, keyfi uzunluktaki dizileri işlemek için farklı ve sabit uzunluklu vektör temsillerini işlemek için farklı modeller kullanırız.
+Bu kitapta bu sorunların birçoğunu derinlemesine işleyeceğiz.
 
 Gayri resmi olarak, öğrenme süreci şöyle görünür:
-Ortak değişkenlerin bilindiği büyük bir örnek koleksiyonunu alın ve rastgele bir altküme seçin - eğer yoksa bu altkümedeki her örneğin doğru değer etiketini(ground truth label) oluşturun.
+İlk olarak özniteliklerin bilindiği büyük bir örnek koleksiyonunu alın ve rastgele bir altküme seçin - eğer yoksa bu altkümedeki her örneğin doğru değer etiketini (ground truth label) oluşturun.
 Bazen bu etiketler zaten toplanmış da olabilir (örn. Bir hasta sonraki yıl içinde öldü mü?) ve diğer zamanlarda veriyi etiketlemek için insanların yorumlarını kullanmamız gerekebilir (örn. Görüntülere kategori atama).
 
 Bu girdiler ve karşılık gelen etiketler birlikte eğitim kümesini oluştururlar.
-Eğitim veri kümesini gözetimli bir öğrenme algoritmasına besleriz; bu algoritma veri kümesini girdi olarak alır ve başka bir fonksiyon, *öğrenilen model*, verir.
+Eğitim veri kümesini gözetimli bir öğrenme algoritmasına besleriz; bu algoritma veri kümesini girdi olarak alır ve başka bir fonksiyon verir: Öğrenilen model.
 Son olarak, çıktılarını karşılık gelen etiketin tahminleri olarak kullanarak önceden görülmemiş girdileri öğrenilen modele besleyebiliriz.
 Tüm süreç şöyle çizilebilir :numref:`fig_supervised_learning`.
 
@@ -253,73 +249,55 @@ Tüm süreç şöyle çizilebilir :numref:`fig_supervised_learning`.
 Belki de kafanıza sokmak için en basit gözetimli öğrenme görevi *bağlanım*'dır.
 Örneğin, ev satışları veritabanından toplanan bir veri kümesini düşünün.
 Her sıranın farklı bir eve karşılık geldiği bir tablo oluşturabiliriz ve her sütun, bir evin alanı, yatak odası sayısı, banyo sayısı ve şehir merkezine (yürüyüş) dakika sayısı  gibi ilgili bazı özelliklere karşılık gelir.
-Bu veri kümesinde, her *örnek* belirli bir ev olacaktır ve karşılık gelen *öznitelik vektörü* tabloda bir satır olacaktır.
+Bu veri kümesinde, her örnek belirli bir ev olacaktır ve karşılık gelen öznitelik vektörü tabloda bir satır olacaktır.
 
-New York veya San Francisco'da yaşıyorsanız ve Amazon, Google, Microsoft veya Facebook'un CEO'su değilseniz, (metrekare bilgileri, yatak odası sayısı, banyo sayısı, yürüme mesafesi) eviniz için vektör özelliği şuna benzeyebilir: $[100, 0, .5, 60]$.
+New York veya San Francisco'da yaşıyorsanız ve Amazon, Google, Microsoft veya Facebook'un CEO'su değilseniz, (metrekare bilgileri, yatak odası sayısı, banyo sayısı, yürüme mesafesi) eviniz için vektör özelliği şuna benzeyebilir: $[600, 1, 1, 60]$.
 Ancak, Pittsburgh'da yaşıyorsanız, daha çok $[3000, 4, 3, 10]$ gibi görünebilir.
 Bunun gibi öznitelik vektörleri, çoğu klasik makine öğrenmesi algoritması için gereklidir.
-$i$ örneğine karşılık gelen özellik vektörünü $\mathbf{x}_i$ olarak göstermeye devam edeceğiz ve tüm özellik vektörlerini içeren tam tabloya $X$ olarak kastedeceğiz.
 
 Bir problemi *bağlanım* yapan aslında çıktılardır.
 Yeni bir ev için pazarda olduğunuzu varsayalım.
-Bunun gibi bazı öznitelikler göz önüne alındığında, bir evin adil piyasa değerini tahmin etmek isteyebilirsiniz.
-Hedef değer, satış fiyatı, bir *gerçel sayıdır*.
-Gerçel sayıların resmi tanımını hatırlarsanız, şimdi başınızı kaşıyor olabilirsiniz.
-Fiyatların irrasyonel sayılar olarak ifade edilmesini birakin, evler muhtemelen asla bir cent'in kesirine satmazlar.
-Bu gibi durumlarda, hedefin aslında ayrık olduğunda, ancak yuvarlamanın yeterince iyi bir ölçekte gerçekleştiği durumlarda, dili biraz kötüye kullanacağız ve çıktılarımızı ve hedeflerimizi gerçel-değerli sayılar olarak tanımlamaya devam edeceğiz.
+Yukarıdaki gibi bazı öznitelikler göz önüne alındığında, bir evin adil piyasa değerini tahmin etmek isteyebilirsiniz.
+Etiket değeri, satış fiyatı, bir sayısal değerdir.
 
-Tek hedefi $y_i$ (mesela $\mathbf{x}_i $ örneğine karşılık gelir) ve tüm hedefler kümesini $\mathbf{y}$ ($X$ tüm örneklerine karşılık gelir) olarak belirtiriz.
-Hedeflerimiz belirli bir aralıkta keyfi değerler aldığında buna bir bağlanım problenim diyoruz.
-Hedefimiz, tahminleri gerçek hedef değerlerine çok yakın olan bir model üretmektir.
-Bir örnekler için öngörülen hedefi $\hat{y}_i$ diye belirtiriz.
-Gösterim sizi rahatsız ediyorsa endişelenmeyin.
-Sonraki bölümlerde daha ayrıntılı olarak açacağız.
-
-A good rule of thumb is that any *How much?* or *How many?* problem
-should suggest regression.
+Etiketler keyfi sayısal değerler aldığında buna bir *bağlanım* problemi diyoruz.
+Hedefimiz, tahminleri gerçek etiket değerlerine çok yakın olan bir model üretmektir.
 
 Birçok pratik problem iyi tanımlanmış bağlanım problemleridir.
 Bir kullanıcının bir filme atayacağı puanı tahmin etmek bir bağlanım sorunu olarak düşünülebilir ve 2009'da bu özelliği gerçekleştirmek için harika bir algoritma tasarlasaydınız, [1 milyon dolarlık Netflix ödülünü](https: //en.wikipedia.org/wiki/Netflix_Prize) kazanmış olabilirsiniz .
 Hastanedeki hastalar için kalış süresinin öngörülmesi de bir bağlanım sorunudur.
-Pratik bir kural; herhangi bir *Ne kadar?* veya *Kaç tane?* problemi bağlanım içerir.
+Pratik bir kural; aşağıdaki gibi, herhangi bir *ne kadar?* veya *kaç tane?* problemi bağlanım içerir.
 
-* "Bu ameliyat kaç saat sürecek?": *Bağlanım*
-* "Bu fotoğrafta kaç köpek var?": *Bağlanım*.
+* Bu ameliyat kaç saat sürecek?
+* Önümüzdeki altı saatte bu kasabaya ne kadar yağmur düşecek?
 
-Ancak, sorununuzu "Bu bir _ mi?" olarak kolayca ortaya koyabiliyorsanız, muhtemelen, daha sonra ele alacağımız, farklı bir tür gözetimli problem olabilir.
 Daha önce hiç makine öğrenmesi ile çalışmamış olsanız bile, muhtemelen gayri ihtiyari olarak bir bağlanım problemi ile çalışmışsınızdır.
-Örneğin, giderlerinizin onarıldığını ve personelin kanalizasyon borularınızdan pisliği temizlemek için $x_1=3$ saat harcadığını düşünün.
-Sonra size $y_1=350\$$ tutarında bir fatura gönderdi.
-Şimdi arkadaşınızın aynı personelini $x_2=2$ saat kiraladığını ve $y_2=250\$$ fatura aldığını düşünün.
+Örneğin, giderlerinizin onarıldığını ve personelin kanalizasyon borularınızdan pisliği temizlemek için 3 saat harcadığını düşünün.
+Sonra size $350\$$ tutarında bir fatura gönderdi.
+Şimdi arkadaşınızın aynı personelini 2 saat kiraladığını ve $250\$$ fatura aldığını düşünün.
 Birisi size yaklaşan pislik temizleme faturasında ne kadar bekleyeceğinizi sorarsa, bazı makul varsayımlar yapabilirsiniz,
 daha fazla çalışma saati daha fazla dolar maliyeti gibi.
 Ayrıca bir baz ücretin olduğunu ve personelin saatlik ücret aldığını varsayabilirsiniz.
-Bu varsayımlar geçerliyse, bu iki veri noktası göz önüne alındığında, personelin fiyatlandırma yapısını zaten tanımlayabilirsiniz: Saat başı 100\$ artı evinizde görünmesi için 50\$.
-Eğer buraya kadar izleyebildiyseniz, doğrusal bağlanım arkasındaki üst-kademe fikri zaten anlıyorsunuz (ve dolaylı olarak bir ekdeğer (bias) terimli doğrusal bir model tasarladınız).
+Bu varsayımlar geçerliyse, bu iki veri örneği göz önüne alındığında, personelin fiyatlandırma yapısını zaten tanımlayabilirsiniz: Saat başı 100\$ artı evinizde görünmesi için 50\$.
+Eğer buraya kadar izleyebildiyseniz, doğrusal bağlanım arkasındaki üst-kademe fikri zaten anlıyorsunuz  .
 
 Bu durumda, personelin fiyatlarına tam olarak uyan parametreleri üretebiliriz.
-Bazen bu mümkün olmayabilir; örneğin, varyansın bir kısmı iki özniteliğinizin yanı sıra bazı diğer faktörlere borçluysa.
+Bazen bu mümkün olmayabilir; örneğin, varyansın bir kısmı iki özniteliğinizin yanı sıra birkaç diğer faktöre borçluysa.
 Bu durumlarda, tahminlerimiz ile gözlenen değerler arasındaki mesafeyi en aza indiren modelleri öğrenmeye çalışacağız.
-Bölümlerimizin çoğunda, iki yaygın kayıptan birine, L1 kaybına
-
-$$l(y, y') = \sum_i |y_i-y_i'|$$
-
-ve en küçük ortalama kareler kaybı veya L2 kaybına
-
-$$l(y, y') = \sum_i (y_i - y_i')^2.$$
-
+Bölümlerimizin çoğunda
+kare hata kayıp fonksiyonunu en aza indirmeye
 odaklanacağız.
 
-Daha sonra göreceğimiz gibi, $L_2$ kaybı (yitimi), verilerimizin Gauss gürültüsü tarafından bozulduğu varsayımına karşılık gelirken, $L_1$ kaybı, Laplace dağılımından kaynaklanan bir gürültü varsayımına karşılık gelir.
+Daha sonra göreceğimiz gibi, bu kayıp fonksiyonu, verilerimizin Gauss gürültüsü ile bozulduğu varsayımına karşılık gelir.
 
 #### Sınıflandırma
 
 Bağlanım modelleri *kaç tane?* sorusunu ele almak için mükemmel olsa da, birçok sorun bu şablona rahatça uymaz.
 Örneğin, bir banka mobil uygulamasına çek taraması eklemek istiyor.
-Bu, müşterinin akıllı telefonunun kamerasıyla bir çekin fotoğrafını çekmesini içerir ve makine öğrenmesi modelinin görüntüde görülen metni otomatik olarak anlaması gerektirir.
-Daha dirençli olması için elle yazılmış metni de anlaması gerekir.
-Bu tür sisteme optik karakter tanıma (OKT) denir ve ele aldığı sorunun türüne *sınıflandırma* denir.
-Bağlanım için kullanılanlardan farklı bir algoritma seti ile işlenir (birçok teknik buraya taşınacak olsa da).
+Bu, müşterinin akıllı telefonunun kamerasıyla bir çekin fotoğrafını çekmesini içerir ve uygulamanın görüntüde görülen metni otomatik olarak anlaması gerektirir.
+Daha dirençli olması için elle yazılmış metni de anlaması gerekir, örneğin el yazması bir karakteri bilindik bir karaktere eşleştirmek gibi.
+Bu tür *hangisi?* sorununa *sınıflandırma* denir.
+Bağlanım için kullanılanlardan farklı bir algoritma seti ile işlenir, ki birçok teknik buraya taşınacak olsa da.
 
 Sınıflandırmada, modelimizin bir öznitelik vektörüne, örneğin bir görüntüdeki piksel değerlerine bakmasını ve ardından bazı (ayrık) seçenekler kümesi arasından hangi kategoriye (aslen *sınıflar* olarak adlandırılırlar) ait olduğunu tahmin etmesini istiyoruz.
 Elle yazılmış rakamlar için, 0 ile 9 arasındaki rakamlara karşılık gelen 10 sınıfımız olabilir.
