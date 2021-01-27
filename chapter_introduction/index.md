@@ -326,9 +326,6 @@ Güzel bir mantarı arka bahçenizde :numref:`fig_death_cap`de gösterildiği gi
 
 
 Şimdi, bir sınıflandırıcı oluşturduğunuzu ve bir mantarın bir fotoğrafa göre zehirli olup olmadığını tahmin etmek için eğittiğinizi varsayın.
-Say our poison-detection classifier outputs
-that the probability that
-:numref:`fig_death_cap` contains a death cap is 0.2.
 
 Zehir tespit sınıflandırıcısının :numref:`fig_death_cap`'nin zehirli olma olasılığında 0.2 sonucunu verdiğini varsayalım.
 Başka bir deyişle, sınıflandırıcı, mantarımızın ölüm sınırında *olmadığından* $\%80$ emindir.
@@ -361,7 +358,7 @@ Bununla birlikte, modelimiz ne kadar doğru olursa olsun, sınıflandırıcı *B
 :width:`300px`
 :label:`fig_stackedanimals`
 
-Gördüğünüz gibi, :label:`fig_stackedanimals`'de bir kedi ve bir horoz, bir köpek ve bir eşek ile arka planda bazı ağaçlar var.
+Gördüğünüz gibi, :numref:`fig_stackedanimals` 'de bir kedi ve bir horoz, bir köpek ve bir eşek ile arka planda bazı ağaçlar var.
 Nihayetinde modelimizle ne yapmak istediğimize bağlı olarak, bunu ikili bir sınıflandırma problemi olarak ele almak pek anlamlı olmayabilir.
 Bunun yerine, modele görüntünün bir kediyi, bir köpeği, bir eşeği *ve* bir horozu tasvir ettiğini söyleme seçeneği vermek isteyebiliriz.
 
@@ -397,22 +394,22 @@ Sadece bu konuyla ilgili akademik konferanslar vardır.
 Tavsiye sistemleri, arama ve sıralama ile ilgili başka bir problem ailesidir.
 Amaç, kullanıcıya ilgili bir dizi öğeyi görüntülemek olduğu sürece benzer problemlerdir.
 Temel fark, tavsiye sistemleri bağlamında, belirli kullanıcılara *kişiselleştirme* vurgusu yapılmasıdır.
-Mesela, film önerilerinde, bir SciFi hayranı için sonuçlar sayfası ile Peter Sellers komedileri uzmanı için sonuçlar sayfası önemli ölçüde farklılıklar gösterebilir.
-Perakende satış ürünleri, müzik veya haber önerileri gibi diğer öneri gruplarında da benzer sorunlar ortaya çıkar.
+Mesela, film önerilerinde, bir bilim kurgu hayranı için sonuç sayfası ile Peter Sellers komedileri uzmanı için sonuç sayfası önemli ölçüde farklılıklar gösterebilir.
+Perakende satış ürünleri, müzik ve haber önerileri gibi diğer öneri gruplarında da benzer sorunlar ortaya çıkar.
 
 Bazı durumlarda, müşteriler belirli bir ürünü ne kadar sevdiklerini bildiren açık geri bildirimler sağlar (ör. Amazon, IMDB, GoodReads, vb. Üzerindeki ürün puanları ve incelemeleri).
 Diğer bazı durumlarda, örneğin bir müzik çalma listesindeki başlıkları atlama, memnuniyetsizliği de, şarkının o anki bağlamında uygunsuz olduğunu da gösterebilecek (gizli) örtük geri bildirim sağlarlar.
-En basit formülasyonlarda, bu sistemler $u_i$ kullanıcısı ve $p_j$ ürünü göz önüne alındığında tahmini bir derecelendirme veya satın alma olasılığını, $y_ {ij}$, tahmin etmek üzere eğitilir.
+En basit formülasyonlarda, bu sistemler bir kullanıcı ve bir ürün göz önüne alındığında tahmini bir derecelendirme veya satın alma olasılığını gibi bir skoru tahmin etmek üzere eğitilir.
 
-Böyle bir model göz önüne alındığında, herhangi bir kullanıcı için, en yüksek puanları $y_ {ij}$ olan ve daha sonra müşteriye önerilebilecek nesneler kümesini bulabiliriz.
+Böyle bir model göz önüne alındığında, herhangi bir müşteri için, en yüksek puanları olan ve daha sonra müşteriye önerilebilecek nesneler kümesini bulabiliriz.
 Üretim sistemleri oldukça ileri düzeydedir ve bu puanları hesaplarken ayrıntılı kullanıcı etkinliği ve öğenin özelliklerini dikkate alır. :numref:`fig_deeplearning_amazon` imgesi, yazarın tercihlerini yakalamak için ayarlanan kişiselleştirme algoritmalarına dayanarak Amazon tarafından önerilen derin öğrenme kitaplarına bir örnektir.
 
-![Amazon tarafından önerilen derin öğrenme kitapları.](../img/deeplearning_amazon.png)
+![Amazon tarafından önerilen derin öğrenme kitapları.](../img/deeplearning-amazon.jpg)
 :label:`fig_deeplearning_amazon`
 
 Muazzam ekonomik değerlerine rağmen, tahminci modeller üzerine saf olarak inşa edilmiş tavsiye sistemleri bazı ciddi kavramsal kusurlara maruz kalmaktadırlar.
 Öncelikle sadece *sansürlü geri bildirim* gözlemliyoruz.
-Kullanıcılar tercih ettikleri filmleri özellikle güçlü bir şekilde hissettiklerine göre derecelendirir: Öğelerin çok sayıda 5 ve 1 yıldız derecelendirmesi aldığını, ancak dikkat çekici derecede az 3 yıldızlı derecelendirme olduğunu fark edebilirsiniz.
+Kullanıcılar tercih ettikleri filmleri özellikle güçlü bir şekilde hissettiklerine göre derecelendirir. Örneğin beş puan üzerinden derecelendirmede, öğelerin çok sayıda beş ve bir yıldız derecelendirmesi aldığını, ancak dikkat çekici derecede az üç yıldızlı derecelendirme olduğunu fark edebilirsiniz.
 Ayrıca, mevcut satın alma alışkanlıkları genellikle şu anda mevcut olan tavsiye algoritmasının bir sonucudur, ancak öğrenme algoritmaları bu ayrıntıyı her zaman dikkate almazlar.
 Bu nedenle, bir geri bildirim döngüsünün oluşması mümkündür: Bir tavsiye sistemi, daha sonra daha iyi olması için (daha büyük satın alımlar nedeniyle), alınan bir öğeyi tercihli olarak yukarı iter ve daha da sık tavsiye edilmesine neden olur.
 Sansür, teşvikler ve geri bildirim döngüleri ile nasıl başa çıkılacağı gibi ilgili bu tarz sorunların birçoğu önemli açık araştırma konularıdır.
@@ -420,7 +417,7 @@ Sansür, teşvikler ve geri bildirim döngüleri ile nasıl başa çıkılacağ�
 #### Dizi Öğrenimi
 
 Şimdiye kadar, sabit sayıda girdimiz olan ve sabit sayıda çıktı üreten sorunlara baktık.
-Öncesinde ev fiyatlarını sabit bir dizi özellikten tahmin ettik: Metrekare alanları, yatak odası sayısı, banyo sayısı, şehir merkezine yürüme süresi.
+Örneğin ev fiyatlarını sabit bir dizi öznitelikten tahmin ettik: Metrekare alanları, yatak odası sayısı, banyo sayısı, şehir merkezine yürüme süresi.
 Ayrıca, bir görüntüyü (sabit boyutlu), sabit sayıda sınıfın hangi birine ait olduğu tahmin eden olasılıklarla eşlemeyi veya bir kullanıcı kimliği ve ürün kimliği alarak bir yıldız derecelendirmesi tahmin etmeyi tartıştık. Bu durumlarda, sabit uzunluklu girdimizi bir çıktı üretmek için modele beslediğimizde, model hemen gördüklerini hemen unutur.
 
 Girdilerimizin hepsi aynı boyutlara sahipse ve birbirini takip eden girdilerin birbirleriyle hiçbir ilgisi yoksa, bu iyi olabilir.
@@ -433,10 +430,9 @@ Yoğun bakım ünitesindeki hastaları izlemek ve önümüzdeki 24 saat içinde 
 Bu modelin her saatteki hasta geçmişi hakkında bildiği her şeyi atmasını ve sadece en son ölçümlere dayanarak tahminlerini yapmasını kesinlikle istemeyiz.
 
 Bu problemler makine öğrenmesinin en heyecan verici uygulamaları arasındadır ve *dizi öğrenmenin* örnekleridir.
-Girdilerin dizilerini almak veya çıkış dizilerini (veya her ikisini!) saçmak için bir modele ihtiyaç duyarlar.
-Bu ikinci tip problemlere bazen ``seq2seq`` problemleri denir. Dil çevirisi bir ``seq2seq`` problemidir.
-Sözlü konuşmadan metine kopyalama da bir ``seq2seq`` problemidir.
-Her türlü dizi dönüşümünü anlatmak mümkün olmasa da, bir dizi özel durumdan bahsetmeye değer:
+Girdilerin dizilerini almak veya çıktı dizilerini (veya her ikisini) saçmak için bir modele ihtiyaç duyarlar.
+Özellikle, *diziden diziye öğrenme*, girdinin ve çıktının ikisinin de değişken uzunluklu olduğu, makine çevirisi ve sözlü hitaptan metine dökme benzeri problemleri içerir.
+Bütün dizi dönüştürme türlerini burada düşünmek imkansız olsa da, aşağıdaki özel durumlardan bahsetmeye değerdir.
 
 **Etiketleme ve Ayrıştırma**. Bu, nitelikleri olan bir metin dizisine açıklama eklemeyi içerir.
 Başka bir deyişle, girdi ve çıktıların sayısı aslında aynıdır.
@@ -444,44 +440,44 @@ Başka bir deyişle, girdi ve çıktıların sayısı aslında aynıdır.
 Alternatif olarak, hangi kelimelerin adlandırılmış varlıklar olduğunu bilmek isteyebiliriz.
 Genel olarak amaç, bir açıklama almak için yapısal ve dilbilgisel varsayımlara dayalı olarak metni ayrıştırmak ve açıklama eklemektir.
 Bu aslında olduğundan daha karmaşıkmış gibi geliyor.
-Aşağıdaki çok basit bir örnek, hangi kelimelerin adlandırılmış varlıkları ifade ettiğini belirten etiketleri bir cümleye açıklama olarak eklemeyi gösterir.
+Aşağıdaki çok basit bir örnek, hangi kelimelerin adlandırılmış varlıkları ifade ettiğini belirten etiketleri, bir cümleye açıklama olarak eklemeyi gösterir.
 
 ```text
 Tom'un Washington'da Sally ile akşam yemeği var.
 Var      Var          Var  -    -     -      -
 ```
 
-**Otomatik Konuşma Tanıma**. Konuşma tanımada, $x$ girdi dizisi bir hoparlörün ses kaydıdır (:numref:`fig_speech`da gösterilen) ve $y$ çıktısı konuşmacının söylediklerinin metne dökümüdür.
-Buradaki zorluk, metinden çok daha fazla ses karesi çerçevesi olması (ses genellikle 8kHz veya 16kHz'de örneklenmiştir), yani ses ve metin arasında 1:1 karşılık olmamasıdır, çünkü binlerce sesli örnek tek bir sözlü kelimeye karşılık gelir.
-Bunlar, çıktının girdiden çok daha kısa olduğu ``seq2seq`` problemleridir.
+**Otomatik Konuşma Tanıma**. Konuşma tanımada, girdi dizisi bir hoparlörün ses kaydıdır (:numref:`fig_speech`da gösterilen) ve çıktı konuşmacının söylediklerinin metne dökümüdür.
+Buradaki zorluk, metinden çok daha fazla ses karesi çerçevesi olması (ses genellikle 8kHz veya 16kHz'de örneklenmiştir), yani ses ve metin arasında 1:1 karşılık olmamasıdır, çünkü binlerce sesli örnek tek bir sözlü kelimeye karşılık gelebilir.
+Bunlar, çıktının girdiden çok daha kısa olduğu diziden diziye öğrenme problemleridir.
 
-![`-D-e-e-p- L-ea-r-ni-ng-`](../img/speech.png)
+![Bir ses kaydından `-D-e-e-p- L-ea-r-ni-ng-`](../img/speech.png)
 :width:`700px`
 :label:`fig_speech`
 
-**Metinden Konuşmaya**. Metinden-Konuşmaya, konuşma tanımanın tersidir.
-Başka bir deyişle, $x$ girdisi metindir ve $y$ çıktısı bir ses dosyasıdır.
+**Metinden Konuşmaya**. Bu, otomatik konuşma tanımanın tersidir.
+Başka bir deyişle, girdi metindir ve çıktı bir ses dosyasıdır.
 Bu durumda, çıktı girdiden *çok daha uzun* olur.
 *İnsanların* kötü bir ses dosyasını tanıması kolay olsa da, bu bilgisayarlar için o kadar da bariz değildir.
 
 **Makine Çevirisi**. Karşılık gelen girdi ve çıktıların aynı sırada (hizalamadan sonra) gerçekleştiği konuşma tanıma durumundan farklı olarak, makine çevirisinde, sırayı ters çevirme hayati önem taşıyabilir.
-Başka bir deyişle, bir diziyi diğerine dönüştürürken, ne girdi ve çıktıların sayısı ne de karşılık gelen veri noktalarının sırası aynı kabul edilmektedir.
+Başka bir deyişle, bir diziyi diğerine dönüştürürken, ne girdi ve çıktıların sayısı ne de karşılık gelen veri örneklerinin sırası aynı kabul edilmektedir.
 Almanların fiilleri cümle sonuna yerleştirme eğiliminin aşağıdaki açıklayıcı örneğini düşünün.
 
 ```text
 Almanca:          Haben Sie sich schon dieses grossartige Lehrwerk angeschaut?
 İngilizce:        Did you already check out this excellent tutorial?
-Wrong alignment:  Did you yourself already this excellent tutorial looked-at?
+Yanlış Hizalama:  Did you yourself already this excellent tutorial looked-at?
 ```
 İlgili birçok sorun diğer öğrenme görevlerinde ortaya çıkar.
 Örneğin, bir kullanıcının bir Web sayfasını okuma sırasını belirlemek iki boyutlu bir düzen analizi sorunudur.
-Diyalog sorunları her türlü ek komplikasyon ortaya çıkarır: Bir sonrasında ne söyleneceğini belirlemede, gerçek dünya bilgisini ve uzun zamansal mesafelerde konuşmanın önceki durumunu dikkate almayı gerektirmek gibi. Bu aktif bir araştırma alanıdır.
+Diyalog sorunları her türlü ek komplikasyon ortaya çıkarır: Bir sonrasında ne söyleneceğini belirlemede, gerçek dünya bilgisini ve uzun zamansal mesafelerde konuşmanın önceki durumunu dikkate almayı gerektirmek gibi. Bunlar aktif bir araştırma alanlarıdır.
 
 
 ### Gözetimsiz öğrenme
 
-Şimdiye kadarki tüm örnekler *Gözetimli Öğrenme*, yani, modeli hem öznitelikleri hem de karşılık gelen hedef değerleri içeren dev bir veri kümesi ile beslediğimiz durumlarla ilgilidir.
-Gözetimli öğreniciyi son derece uzmanlaşmış bir işe ve son derece konuşkan bir patrona sahip olmak gibi düşünebilirsiniz.
+Şimdiye kadarki tüm örnekler gözetimli öğrenme, yani, modeli hem öznitelikleri hem de karşılık gelen etiket değerleri içeren dev bir veri kümesi ile beslediğimiz durumlarla ilgilidir.
+Gözetimli öğreniciyi son derece uzmanlaşmış bir işe ve son derece sıkıcı bir patrona sahip olmak gibi düşünebilirsiniz.
 Patron omzunuzun üzerinden bakar ve siz durumlardan eylemlere eşlemeyi öğrenene kadar her durumda tam olarak ne yapacağınızı söyler.
 Böyle bir patron için çalışmak oldukça tatsızdır.
 Öte yandan, bu patronu memnun etmek kolaydır.
@@ -491,25 +487,24 @@ Tamamen zıt bir şekilde, ne yapmanızı istediğini bilmeyen bir patron için 
 Ancak, bir veri bilimcisi olmayı planlıyorsanız, buna alışsanız iyi olur.
 Patron size sadece dev bir veri dökümü verebilir ve *onunla veri bilimi yapmanızı söyleyebilir!* Bu kulağa belirsiz geliyor çünkü öyle.
 Bu sorun sınıfına *gözetimsiz öğrenme* diyoruz ve sorabileceğimiz soruların türü ve sayısı yalnızca yaratıcılığımızla sınırlıdır.
-Daha sonraki bölümlerde bir dizi denetimsiz öğrenme tekniğini ele alacağız. Şimdilik iştahınızı hafifletmek için sormak isteyebileceğiniz birkaç sorudan bahsediyoruz:
+Daha sonraki bölümlerde denetimsiz öğrenme tekniğini ele alacağız. Şimdilik iştahınızı hafifletmek için sormak isteyebileceğiniz birkaç sorudan aşağıda bahsediyoruz:
 
 * Verileri doğru bir şekilde özetleyen az sayıda ilk örnek (prototip) bulabilir miyiz?
-Bir dizi fotoğraf verildiğinde, onları manzara fotoğrafları, köpek resimleri, bebekler, kediler, dağ zirveleri vb. olarak gruplandırabilir miyiz?
-Benzer şekilde, kullanıcıların göz atma etkinliği koleksiyonu göz önüne alındığında, onları benzer davranışa sahip kullanıcılara ayırabilir miyiz?
+Bir dizi fotoğraf verildiğinde, onları manzara fotoğrafları, köpek resimleri, bebekler, kediler ve dağ zirveleri olarak gruplandırabilir miyiz?
+Benzer şekilde, kullanıcıların göz atma etkinlikleri koleksiyonu göz önüne alındığında, onları benzer davranışa sahip kullanıcılara ayırabilir miyiz?
 Bu sorun genellikle *kümeleme* olarak bilinir.
 * Verilerin ilgili özelliklerini doğru bir şekilde yakalayan az sayıda parametre bulabilir miyiz?
 Bir topun yörüngeleri, topun hızı, çapı ve kütlesi ile oldukça iyi tanımlanmıştır.
 Terziler, kıyafetlerin uyması amacıyla insan vücudunun şeklini oldukça doğru bir şekilde tanımlayan az sayıda parametre geliştirmiştir.
-Bu problemlere *altuzay tahmini* problemleri denir.
+Bu problemlere *altuzay tahmini* denir.
 Bağımlılık doğrusal ise, buna *ana bileşen analizi* denir.
-* (Keyfi olarak yapılandırılmış) Nesnelerin Öklid uzayında (yani, $\mathbb{R}^n$ vektör uzayında) sembolik özelliklerinin iyi eşleştirilebileceği bir temsili var mı?
-Buna *temsil öğrenme* denir ve varlıkları ve onların ilişkilerini, Roma $-$ İtalya $+$ Fransa $=$ Paris gibi, tanımlamak için kullanılır.
+* (Keyfi olarak yapılandırılmış) Nesnelerin Öklid uzayında sembolik özelliklerinin iyi eşleştirilebileceği bir temsili var mı?
+Bu varlıkları ve onların ilişkilerini, "Roma" $-$ "İtalya" $+$ "Fransa" $=$ "Paris" gibi, tanımlamak için kullanılabilir.
 * Gözlemlediğimiz verilerin çoğunun temel nedenlerinin bir açıklaması var mı?
-Örneğin, konut fiyatları, kirlilik, suç, yer, eğitim, maaşlar vb. ile ilgili demografik verilerimiz varsa, bunların deneysel verilerine dayanarak nasıl ilişkili olduğunu bulabilir miyiz? *Nedensellik* ve *olasılıksal grafik modeller* ile ilgili alanlar bu sorunu ele almaktadır.
-* Gözetimsiz öğrenmedeki bir diğer önemli ve heyecan verici gelişme, *üretici çekişmeli ağların* (GAN'lar) ortaya çıkmasıdır.
+Örneğin, konut fiyatları, kirlilik, suç, yer, eğitim ve maaşlar ile ilgili demografik verilerimiz varsa, bunların deneysel verilerine dayanarak nasıl ilişkili olduğunu bulabilir miyiz? *Nedensellik* ve *olasılıksal grafik modeller* ile ilgili alanlar bu sorunu ele almaktadır.
+* Gözetimsiz öğrenmedeki bir diğer önemli ve heyecan verici gelişme, *çekişmeli üretici ağların* ortaya çıkmasıdır.
 Bunlar bize verileri, görüntüler ve ses gibi karmaşık yapılandırılmış verileri bile, sentezlemek için yöntemsel bir yol sunar.
 Temel istatistiksel mekanizmalar, gerçek ve sahte verilerin aynı olup olmadığını kontrol etmek için kullanılan testlerdir.
-Onlara birkaç not defteri ayıracağız.
 
 ### Bir Ortamla Etkileşim
 
