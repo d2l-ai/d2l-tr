@@ -299,47 +299,46 @@ Daha dirençli olması için elle yazılmış metni de anlaması gerekir, örne�
 Bu tür *hangisi?* sorununa *sınıflandırma* denir.
 Bağlanım için kullanılanlardan farklı bir algoritma seti ile işlenir, ki birçok teknik buraya taşınacak olsa da.
 
-Sınıflandırmada, modelimizin bir öznitelik vektörüne, örneğin bir görüntüdeki piksel değerlerine bakmasını ve ardından bazı (ayrık) seçenekler kümesi arasından hangi kategoriye (aslen *sınıflar* olarak adlandırılırlar) ait olduğunu tahmin etmesini istiyoruz.
-Elle yazılmış rakamlar için, 0 ile 9 arasındaki rakamlara karşılık gelen 10 sınıfımız olabilir.
-Sınıflandırmanın en basit şekli, sadece iki sınıf olduğunda, ikili sınıflandırma dediğimiz bir problemdir.
-Örneğin, $X$ veri kümemiz hayvanların görüntülerinden oluşabilir ve *etiketlerimiz*, $Y$, $\mathrm{\{kedi, köpek\}}$ sınıfları olabilir.
-Bağlanımdayken, gerçel bir değer, $\hat{y}$, çıkarmak için bir *bağlanımcı* aradık, sınıflandırmada, $\hat{y}$ çıkışı öngörülen sınıf ataması olan bir *sınıflandırıcı* arıyoruz.
+*Sınıflandırma*da, modelimizin özniteliklere, örneğin bir görüntüdeki piksel değerlerine bakmasını ve ardından bazı (ayrık) seçenekler kümesi arasından hangi *kategori*ye (aslen *sınıf* olarak adlandırılırlar) ait olduğunu tahmin etmesini istiyoruz.
+Elle yazılmış rakamlar için, 0 ile 9 arasındaki rakamlara karşılık gelen on sınıfımız olabilir.
+Sınıflandırmanın en basit şekli, sadece iki sınıf olduğunda, *ikili sınıflandırma* dediğimiz bir problemdir.
+Örneğin, veri kümemiz hayvanların görüntülerinden oluşabilir ve *etiketlerimiz* $\mathrm{\{kedi, köpek\}}$ sınıfları olabilir.
+Bağlanımdayken, sayısal bir değer, çıkarmak için bir *bağlanımcı* aradık, sınıflandırmada çıktısı öngörülen sınıf ataması olan bir *sınıflandırıcı* arıyoruz.
 
-Kitap daha teknik hale geldikçe gireceğimiz nedenlerden ötürü, yalnızca kategorik bir atama, örneğin *kedi* veya *köpek* çıktısı, alabilen bir modeli optimize etmek zor olabilir.
+Kitap daha teknik hale geldikçe gireceğimiz nedenlerden ötürü, yalnızca kategorik bir atama, örneğin "kedi" veya "köpek" çıktısı, alabilen bir modeli optimize etmek zor olabilir.
 Bu tür durumlarda, modelimizi olasılıklar dilinde ifade etmek genellikle daha kolaydır.
-Bir örnek, $x$, verildiğinde, modelimiz her bir $k$ etiketine $\hat{y}_k$ olasılığı atar. Bunlar olasılıklar olduğundan, pozitif sayılar olmalı ve $1$'e toplanabilmeliler ve bu nedenle $K$ kategorinin olasılıklarını atamak için sadece $K-1$ tane değere ihtiyacımız var.
-Bunu ikili sınıflandırma için görmek kolaydır.
-Eğer hileli bir madalyonun $0.6$ ($\%60$) tura çıkma olasılığı varsa, o zaman yazı ortaya çıkma olasılığı $0.4$ ($\%40 $) olabilir.
-Hayvan sınıflandırma örneğimize dönersek, bir sınıflandırıcı bir görüntü görebilir ve görüntünün bir kedi olma olasılığını $P(y=\text{kedi} \mid x) = 0.9$ çıkarabilir.
+Bir örneğin öznitelikleri verildiğinde, modelimiz her olası sınıfa bir olasılık atar.
+Hayvan sınıflandırma örneğimize dönersek, ki burada sınıflar $\mathrm{\{kedi, köpek\}}$'tir, bir sınıflandırıcı bir görüntü görebilir ve görüntünün bir kedi olma olasılığını 0.9 çıkarabilir.
 Bu sayıyı, sınıflandırıcının görüntünün bir kediyi gösterdiğinden $\%90$ emin olduğunu söyleyerek yorumlayabiliriz.
 Öngörülen sınıf için olasılığın büyüklüğü bir çeşit belirsizlik taşır.
 Bu tek mevcut belirsizlik kavramı değildir ve diğerlerini de daha ileri bölümlerde tartışacağız.
 
 İkiden fazla olası sınıfımız olduğunda, soruna *çok sınıflı sınıflandırma* diyoruz.
-Yaygın örnekler arasında elle yazılmış karakter tanıma, `[0, 1, 2, 3 ... 9, a, b, c, ...]`, yer alır.
-Bağlanım sorunlarına saldırırken L1 veya L2 yitim işlevlerini en aza indirmeye çalışırız; sınıflandırma sorunları için genel olan kayıp işlevine de çapraz düzensizlik (entropi) deriz.
+Yaygın örnekler arasında elle yazılmış karakteri, $\mathrm{\{0, 1, 2, ... 9, a, b, c, ...\}}$, tanıma yer alır.
+Bağlanım problemleriyle uğraşırken kare hata kayıp fonksiyonunu en aza indirmeye çalışırız; sınıflandırma problemleri için ortak kayıp fonksiyonu, sonraki bölümlerdeki bilgi teorisine giriş ile adı açıklığa kavuşturacağımız *çapraz düzensizlik* (entropi) diye adlandırılır.
 
 En olası sınıfın kararınız için kullanacağınız esas sınıf olmak zorunda olmadığını unutmayın.
-Bu güzel mantarı arka bahçenizde :numref:`fig_death_cap`de gösterildiği gibi bulduğunuzu varsayın .
+Güzel bir mantarı arka bahçenizde :numref:`fig_death_cap`de gösterildiği gibi bulduğunuzu varsayın .
 
-![Ölüm tehlikesi --- yemeyin!](../img/death_cap.jpg)
+![Ölüm tehlikesi --- yemeyin!](../img/death-cap.jpg)
 :width:`200px`
 :label:`fig_death_cap`
 
 
 Şimdi, bir sınıflandırıcı oluşturduğunuzu ve bir mantarın bir fotoğrafa göre zehirli olup olmadığını tahmin etmek için eğittiğinizi varsayın.
-Zehir tespit sınıflandırıcısının $P(y=\mathrm{ölüm tehlikesi}|\mathrm{image}) = 0.2$ sonucunu verdiğini varsayalım.
+Say our poison-detection classifier outputs
+that the probability that
+:numref:`fig_death_cap` contains a death cap is 0.2.
+
+Zehir tespit sınıflandırıcısının :numref:`fig_death_cap`'nin zehirli olma olasılığında 0.2 sonucunu verdiğini varsayalım.
 Başka bir deyişle, sınıflandırıcı, mantarımızın ölüm sınırında *olmadığından* $\%80$ emindir.
 Yine de, yemek için aptal olmalısın.
 Çünkü lezzetli bir akşam yemeğinin belirli bir yararı, ondan ölme riski olan $\%20$ değerine değmez.
-Başka bir deyişle, *belirsiz riskin* etkisi faydadan çok daha fazladır. Buna daha kurallı bakabiliriz.
-Temel olarak, maruz kaldığımız beklenen riski hesaplamamız gerekir, yani sonucun olasılığını, bununla ilişkili fayda (veya zarar) ile çarpmamız gerekir:
+Başka bir deyişle, belirsiz riskin etkisi faydadan çok daha fazladır. Buna daha kurallı bakabiliriz.
+Temel olarak, maruz kaldığımız beklenen riski kayıp fonksiyonu olarak hesaplamamız gerekir, yani sonucun olasılığını, bununla ilişkili fayda (veya zarar) ile çarpmamız gerekir.
 
-$$L(\mathrm{action}| x) = E_{y \sim p(y| x)}[\mathrm{loss}(\mathrm{action},y)].$$
+Bu durumda, mantarı yemekten kaynaklanan kayıp $0.2  \times \infty + 0.8 \times 0 = \infty$ olurken, onu çöpe atmanın kaybı $0.2 \times 0 + 0.8 \times 1 = 0.8$ olacaktır. Dikkatimiz haklıydı: Herhangi bir mantarbilimcinin bize söyleyeceği gibi, :numref:`fig_death_cap`'deki mantar aslında zehirlidir.
 
-Bu nedenle, mantar yiyerek meydana gelen $L$ kaybı $L(a=\mathrm{ye}| x) = 0.2 * \infty + 0.8 * 0 = \infty$, oysa atılma maliyeti $L(a=\mathrm{at}| x) = 0.2 * 0 + 0.8 * 1 = 0.8$.
-
-Dikkatimiz haklıydı: herhangi bir mantarbilimcinin bize söyleyeceği gibi, yukarıdaki mantar aslında *ölümcüldür*.
 Sınıflandırma sadece ikili sınıflandırmadan çok daha karmaşık hale gelebilir; çok sınıflı ve hatta çoklu etiketli.
 Örneğin, hiyerarşilere yönelik bazı değişik sınıflandırmalar vardır.
 Hiyerarşiler birçok sınıf arasında bazı ilişkilerin olduğunu varsayar.
@@ -353,36 +352,37 @@ Hangi hiyerarşinin alakalı olduğu, modeli nasıl kullanmayı planladığını
 
 #### Etiketleme (Tagging)
 
-Bazı sınıflandırma sorunları, ikili veya çok sınıflı sınıflandırma ayarlarına tam olarak uymaz.
+Bazı sınıflandırma sorunları, ikili veya çok sınıflı sınıflandırma ayarlarına uyar.
 Örneğin, kedileri köpeklerden ayırmak için normal bir ikili sınıflandırıcı eğitebiliriz.
 Bilgisayarlı görmenin mevcut durumu göz önüne alındığında, bunu hali-hazırda araçlarla kolayca yapabiliriz.
-Bununla birlikte, modelimiz ne kadar doğru olursa olsun, sınıflandırıcı Bremen Mızıkacılarının bir görüntüsüyle karşılaştığında kendimizi ufak bir belada bulabiliriz.
+Bununla birlikte, modelimiz ne kadar doğru olursa olsun, sınıflandırıcı *Bremen Mızıkacıları*nın, :numref:`fig_stackedanimals`'deki meşhur bir Alman masalındaki dört hayvan, bir görüntüsüyle karşılaştığında kendimizi ufak bir belada bulabiliriz.
 
-![Bir kedi, bir horoz, bir köpek ve bir eşek](../img/stackedanimals.jpg)
+![Bir eşek, bir köpek, bir kedi ve bir horoz.](../img/stackedanimals.png)
 :width:`300px`
+:label:`fig_stackedanimals`
 
-Gördüğünüz gibi, resimde bir kedi ve bir horoz, bir köpek, bir eşek ve bir kuş, arka planda bazı ağaçlar var.
+Gördüğünüz gibi, :label:`fig_stackedanimals`'de bir kedi ve bir horoz, bir köpek ve bir eşek ile arka planda bazı ağaçlar var.
 Nihayetinde modelimizle ne yapmak istediğimize bağlı olarak, bunu ikili bir sınıflandırma problemi olarak ele almak pek anlamlı olmayabilir.
-Bunun yerine, modele görüntünün bir kediyi *ve* bir köpeği *ve* bir eşeği *ve* bir horozu *ve* bir kuşu tasvir ettiğini söyleme seçeneği vermek isteyebiliriz.
+Bunun yerine, modele görüntünün bir kediyi, bir köpeği, bir eşeği *ve* bir horozu tasvir ettiğini söyleme seçeneği vermek isteyebiliriz.
 
-*Karşılıklı olarak münhasır olmayan* sınıfları tahmin etmeyi öğrenme problemine çoklu etiket sınıflandırması denir.
+Karşılıklı olarak münhasır olmayan sınıfları tahmin etmeyi öğrenme problemine *çoklu etiket sınıflandırması* denir.
 Otomatik etiketleme sorunları genellikle en iyi çoklu etiket sınıflandırma sorunları olarak tanımlanır.
-Kullanıcıların bir teknoloji blogundaki yayınlara uygulayabilecekleri etiketleri, örneğin "makine öğrenmesi", "teknoloji", "araçlar", "programlama dilleri", "linux", "bulut bilişim", "AWS" gibi, düşünün.
-Tipik bir makalede 5-10 etiket uygulanabilir, çünkü bu kavramlar birbiriyle ilişkilidir.
+Kullanıcıların bir teknoloji blogundaki yayınlara uygulayabilecekleri etiketleri, örneğin "makine öğrenmesi", "teknoloji", "araçlar", "programlama dilleri", "Linux", "bulut bilişim", "AWS" gibi, düşünün.
+Tipik bir makalede 5--10 etiket uygulanabilir, çünkü bu kavramlar birbiriyle ilişkilidir.
 "Bulut bilişim" hakkındaki gönderilerin "AWS"den bahsetmesi muhtemeldir ve "makine öğrenmesi" ile ilgili gönderiler de "programlama dilleri" ile ilgili olabilir.
 
 Ayrıca, makalelerin doğru etiketlenmesinin önemli olduğu biyomedikal literatürle uğraşırken bu tür bir sorunla uğraşmak zorundayız, çünkü bu araştırmacıların literatürde kapsamlı incelemeler yapmasına izin veriyor.
-(Amerikan) Ulusal Tıp Kütüphanesi'nde, bir dizi profesyonel yorumlayıcı, PubMed'de endekslenen her makaleyi, kabaca 28 bin etiketlik bir koleksiyon olan MeSH'den ilgili terimlerle ilişkilendirmek için gözden geçiriyor.
+(Amerikan) Ulusal Tıp Kütüphanesi'nde, bir dizi profesyonel yorumlayıcı, PubMed'de endekslenen her makaleyi, kabaca 28000 etiketlik bir koleksiyon olan MeSH'den ilgili terimlerle ilişkilendirmek için gözden geçiriyor.
 Bu zaman alıcı bir süreçtir ve yorumlayıcıların genellikle arşivleme ve etiketleme arasında bir yıllık bir gecikmesi vardır.
 Makine öğrenimi burada, her makaleye uygun bir manuel (elle) incelemeye sahip oluncaya kadar geçici etiketler sağlamak için kullanılabilir.
-Gerçekten de, birkaç yıl boyunca, BioASQ organizasyonu tam olarak bunu yapmak için [bir yarışma düzenledi](http://bioasq.org/).
+Gerçekten de, birkaç yıl boyunca, BioASQ organizasyonu tam olarak bunu yapmak için [yarışmalar düzenledi](http://bioasq.org/).
 
-#### Arama ve sıralama
+#### Arama
 
 Bazen her örneği bir kovaya veya gerçek bir değere atamak istemiyoruz. Bilgi geri çağırma alanında, bir dizi maddeye bir sıralama uygulamak istiyoruz.
-Örneğin, web aramasını ele alalım, hedef belirli bir sayfanın bir sorgu için alakalı olup olmadığını belirlemekten daha ziyade, birçok arama sonuçlarından hangisinin belirli bir kullanıcı için *en alakalı* olduğunu belirlemektir.
+Örneğin, web aramasını ele alalım. Hedef belirli bir sayfanın bir sorgu için alakalı olup olmadığını belirlemekten daha ziyade, birçok arama sonuçlarından hangisinin belirli bir kullanıcı için en alakalı olduğunu belirlemektir.
 Alakalı arama sonuçlarının sırasına gerçekten önem veriyoruz ve öğrenme algoritmamızın daha geniş bir gruptan sıralanmış alt kümeleri üretmesi gerekiyor.
-Başka bir deyişle, alfabeden ilk 5 harfi üretmemiz istenirse, `` A B C D E`` ve `` C A B E D`` döndürme arasında bir fark vardır.
+Başka bir deyişle, alfabeden ilk 5 harfi üretmemiz istenirse, "A B C D E" ve "C A B E D" döndürme arasında bir fark vardır.
 Sonuç kümesi aynı olsa bile, küme içindeki sıralama önemlidir.
 
 Bu soruna olası bir çözüm, önce kümedeki her bir öğeye, ona karşılık gelen bir uygunluk puanı atamak ve daha sonra en yüksek dereceli öğeleri almaktır.
@@ -391,7 +391,7 @@ Burada, ilgili öğelerin kümesini tanımlamak için basit bir alaka filtresine
 Günümüzde arama motorları, sorguya bağlı alaka düzeyi puanlarını belirlemek için makine öğrenmesi ve davranışsal modeller kullanmaktadır.
 Sadece bu konuyla ilgili akademik konferanslar vardır.
 
-#### Tavsiye sistemleri
+#### Tavsiye Sistemleri
 :label:`subsec_recommender_systems`
 
 Tavsiye sistemleri, arama ve sıralama ile ilgili başka bir problem ailesidir.
