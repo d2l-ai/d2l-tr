@@ -1,6 +1,6 @@
 # Derin Öğrenmeye Dalış (D2L.ai)
 
-[![İnşa Durumu](http://ci.d2l.ai/job/d2l-tr/job/master/badge/icon)](http://ci.d2l.ai/job/d2l-tr/job/master/) | Güncel sürüm: v0.16.1
+[![İnşa Durumu](http://ci.d2l.ai/job/d2l-tr/job/master/badge/icon)](http://ci.d2l.ai/job/d2l-tr/job/master/) | Güncel sürüm: v0.16.2
 
 [Kitap web sitesi](https://d2l.ai/) | [STAT 157 Dersi UC Berkeley, Bahar 2019](http://courses.d2l.ai/berkeley-stat-157/index.html) | [Çeviri Rehberi](https://docs.google.com/document/d/1jjDTVH_GsHImBb_RoE1siKXdmXN8I1Bd5QN--eSG8is)
 
