@@ -508,81 +508,81 @@ Temel istatistiksel mekanizmalar, gerçek ve sahte verilerin aynı olup olmadı�
 
 ### Bir Ortamla Etkileşim
 
-Şimdiye kadar, verilerin gerçekte nereden geldiğini veya bir makine öğrenmesi modeli bir çıktı oluşturduğunda gerçekte *ne olduğunu* tartışmadık.
+Şimdiye kadar, verilerin gerçekte nereden geldiğini veya bir makine öğrenmesi modeli bir çıktı oluşturduğunda gerçekte ne olduğunu tartışmadık.
 Çünkü gözetimli öğrenme ve gözetimsiz öğrenme bu konuları çok karmaşık bir şekilde ele almaz.
 Her iki durumda da, büyük bir veri yığınını önceden alıyoruz, ardından bir daha çevre ile etkileşime girmeden desen tanıma makinelerimizi harekete geçiriyoruz.
 Tüm öğrenme, algoritma ortamdan ayrıldıktan sonra gerçekleştiği için, buna bazen *çevrimdışı öğrenme* denir.
-Gözetimli öğrenme için süreç şuna benzer :numref:`fig_data_collection`.
+Gözetimli öğrenme için bir ortamdan veri toplamayı düşünürsek süreç şuna benzer :numref:`fig_data_collection`.
 
 ![Bir ortamdan gözetimli öğrenme için veri toplama.](../img/data-collection.svg)
 :label:`fig_data_collection`
 
 Çevrimdışı öğrenmenin bu basitliğinin cazibesi vardır.
-Bunun olumu kısmı, bu diğer sorunlardan herhangi bir dikkat dağılmadan, sadece örüntü tanıma konusu ile tek başına ilgilenebiliriz.
+Bunun olumlu tarafı, bu diğer sorunlardan herhangi bir dikkat dağılmadan, sadece örüntü tanıma konusu ile tek başına ilgilenebiliriz.
 Ancak olumsuz tarafı, formülasyonun oldukça kısıtlayıcı olmasıdır.
 Daha hırslıysanız ya da Asimov'un Robot Serisi'ni okuyarak büyüdüyseniz, sadece tahminler yapmakla kalmayıp, dünyada hareket edebilecek yapay zeka botları hayal edebilirsiniz.
-Sadece *modelleri* değil, akıllı *etmenleri (ajanları)* de düşünmek istiyoruz.
-Bu, sadece *tahminler* yapmakla kalmayıp, *eylemleri* seçmeyi düşünmemiz gerektiği anlamına gelir. Dahası, öngörülerin aksine, eylemler aslında çevreyi etkiler.
+Sadece modelleri değil, akıllı *etmenleri (ajanları)* de düşünmek istiyoruz.
+Bu, sadece tahminler yapmakla kalmayıp, *eylemleri* seçmeyi de düşünmemiz gerektiği anlamına gelir. Dahası, öngörülerin aksine, eylemler aslında ortamı etkiler.
 Akıllı bir ajanı eğitmek istiyorsak, eylemlerinin ajanın gelecekteki gözlemlerini nasıl etkileyebileceğini hesaba katmalıyız.
 
-Bir çevre ile etkileşimi dikkate almak, bir dizi yeni modelleme sorusu açar.
-Çevre:
+Bir ortam ile etkileşimi dikkate almak, bir dizi yeni modelleme sorusunu açar.
+Aşağıda birkaç örnek görebiliriz.
 
-* Daha önceden ne yaptığımızı hatırlıyor mu?
-* Bize bir konuşma tanıyıcıya metin okuyan bir kullanıcı gibi yardım etmek ister mi?
-* Bizi yenmek mi istiyor, yani spam filtreleme (spam göndericilere karşı) veya oyun oynama (rakiplere karşı) gibi rakip bir ortam mı?
-* Umursumuyor mu (birçok durumda olduğu gibi)?
-* Değişen dinamiklere sahip mi (gelecekteki veriler her zaman geçmişe benziyor mu doğal olarak veya otomatik araçlarımıza yanıt olarak zaman içinde değişiyor mu)?
+* Ortam önceden ne yaptığımızı hatırlıyor mu?
+* Ortam bize bir konuşma tanıyıcıya metin okuyan bir kullanıcı gibi yardım etmek istiyor mu?
+* Ortam bizi yenmek mi istiyor, yani spam filtreleme (spam göndericilere karşı) veya oyun oynama (rakiplere karşı) gibi rakip bir ortam mı?
+* Ortam bizi umursumuyor mu?
+* Ortam değişen dinamiklere sahip mi? Örneğin, gelecekteki veriler her zaman geçmiştekäne benziyor mu, ya da doğal olarak veya otomatik araçlarımıza yanıt olarak zaman içinde değişiyor mu?
 
-Bu son soru *dağılım kayması* sorununu gündeme getirmektedir (eğitim ve test verileri farklı olduğunda).
-Bu bir öğretim üyesi tarafından hazırlanan yazılıya girerken yaşadığımız bir problemdir, çünkü ödevler asistanlar tarafından oluşturulmuştur.
-Bir çevreyle etkileşimi açıkça dikkate alan iki ortam olan pekiştirmeli öğrenmeyi ve çekişmeli öğrenmeyi kısaca anlatacağız.
+Eğitim ve test verileri farklı olduğunda, bu son soru *dağılım kayması* sorununu gündeme getirmektedir.
+Bu bir öğretim üyesi tarafından hazırlanan yazılı sınava girerken yaşadığımız bir problemdir, çünkü ödevler asistanlar tarafından oluşturulmuştur.
+Sonrasında, bir çevreyle etkileşimi açıkça dikkate alan bir düzen olan pekiştirmeli öğrenmeyi kısaca anlatacağız.
 
-### Pekiştirmeli öğrenme
+### Pekiştirmeli Öğrenme
 
-Bir ortamla etkileşime giren ve eylemler yapan bir ajan geliştirmek için makine öğrenmesini kullanmakla ilgileniyorsanız, muhtemelen *pekiştirmeli öğrenimi* (PÖ) konusuna odaklanacaksınız.
-Bu, robotik, diyalog sistemleri ve hatta video oyunları için YZ geliştirme uygulamalarını içerebilir.
-Derin sinir ağlarını PÖ problemlerine uygulayan *derin pekiştirmel öğrenme* (DPÖ) popülerlik kazanmıştır.
-Bu atılımda [yalnızca görsel girdileri kullanarak Atari oyunlarında insanları yenen derin Q-ağ](https://www.wired.com/2015/02/google-ai-plays-atari-like-pros/) ve [Go oyunu dünya şampiyonunu tahtından indiren AlphaGo programı](https://www.wired.com/2017/05/googles-alphago-trounces-humans-also-gives-boost/) iki önemli örnektir.
+Bir ortamla etkileşime giren ve eylemler yapan bir etmen geliştirmek için makine öğrenmesini kullanmakla ilgileniyorsanız, muhtemelen *pekiştirmeli öğrenme* konusuna odaklanacaksınız.
+Bu, robotik, diyalog sistemleri ve hatta video oyunları için yapay zeka (YZ) geliştirme uygulamalarını içerebilir.
+Derin öğrenme ağlarını pekiştirmeli öğrenme problemlerine uygulayan *derin pekiştirmeli öğrenme* popülerlik kazanmıştır.
+Bu atılımda yalnızca görsel girdileri kullanarak Atari oyunlarında insanları yenen derin Q-ağ (Q-network) ve Go oyunu dünya şampiyonunu tahtından indiren AlphaGo programı iki önemli örnektir.
 
-Pekiştirmeli öğrenmede, bir ajanın bir dizi *zaman adımı* üzerinde bir çevre ile etkileşime girdiği çok genel bir sorun ifade edilir.
-$T$ her bir zaman adımında, etmen ortamdan $o_t$ gözlemini alır ve daha sonra bir mekanizma (bazen çalıştırıcı (aktüatör) olarak da adlandırılır) aracılığıyla çevreye geri iletilecek bir $a_t$ eylemi seçmelidir.
-Son olarak, temsilci ortamdan bir ödül, $r_t$, alır.
+Pekiştirmeli öğrenmede, bir etmenin bir dizi zaman adımı üzerinden bir ortam ile etkileşime girdiği çok genel bir sorun ifade edilir.
+Her bir zaman adımında, etmen ortamdan birtakım *gözlem* alır ve daha sonra bir mekanizma (bazen çalıştırıcı -aktüatör- olarak da adlandırılır) aracılığıyla çevreye geri iletilecek bir eylemi seçmelidir.
+Son olarak, etmen ortamdan bir ödül alır.
+Bu süreç :numref:`fig_rl-environment` şeklinde gösterilmektedir.
 Etmen daha sonra bir gözlem alır ve bir sonraki eylemi seçer, vb.
-Bir PÖ etmenin davranışı bir *politika* tarafından yönetilir.
+Bir pekiştirmeli öğrenme etmeninin davranışı bir politika tarafından yönetilir.
 Kısacası, bir *politika*, sadece, gözlemlerden (çevrenin) eylemlere eşlenen bir fonksiyondur.
 Pekiştirmeli öğrenmenin amacı iyi bir politika üretmektir.
 
 ![Pekiştirmeli öğrenme ve çevre arasındaki etkileşim.](../img/rl-environment.svg)
+:label:`fig_rl-environment`
 
-PÖ çerçevesinin genelliğini abartmak zordur.
-Örneğin, herhangi bir gözetimli öğrenme problemini bir PÖ problemine dönüştürebiliriz.
+Pekiştirmeli öğrenme çerçevesinin genelliğini abartmak zordur.
+Örneğin, herhangi bir gözetimli öğrenme problemini bir pekiştirmeli öğrenme problemine dönüştürebiliriz.
 Diyelim ki bir sınıflandırma problemimiz var.
-Her sınıfa karşılık gelen bir *eylem* ile bir PÖ etmeni oluşturabiliriz.
-Daha sonra, orijinal gözetimli problemin yitim fonksiyonuna tam olarak eşit olan bir ödül veren bir ortam yaratabiliriz.
+Her sınıfa karşılık gelen bir eylem ile bir pekiştirmeli öğrenme etmeni oluşturabiliriz.
+Daha sonra, orijinal gözetimli öğrenme problemin yitim fonksiyonuna tamamen eşit bir ödül veren bir ortam yaratabiliriz.
 
-Bununla birlikte, PÖ, gözetimli öğrenmenin yapamadığı birçok sorunu da ele alabilir.
+Bununla birlikte, pekiştirmeli öğrenme, gözetimli öğrenmenin yapamadığı birçok sorunu da ele alabilir.
 Örneğin, gözetimli öğrenmede her zaman eğitim girdisinin doğru etiketle ilişkilendirilmesini bekleriz.
-Ancak PÖ'de, her gözlem için çevrenin bize en uygun eylemi söylediğini varsaymıyoruz.
+Ancak pekiştirmeli öğrenmede, her gözlem için çevrenin bize en uygun eylemi söylediğini varsaymıyoruz.
 Genel olarak, sadece bir ödül alırız.
-Dahası, çevre bize hangi eylemlerin ödüle yol açtığını bile söylemeyebilir.
+Dahası, ortam bize hangi eylemlerin ödüle yol açtığını bile söylemeyebilir.
 
 Örneğin satranç oyununu düşünün.
 Tek gerçek ödül sinyali, oyunun sonunda ya kazandığımızda 1, ya da kaybettiğimizde -1 diye gelir.
-Bu yüzden pekiştirmeli öğreniciler *kredi atama problemi* ile ilgilenmelidir: Bir sonuç için hangi eylemlerin beğeni toplayacağını veya suçlanacağını belirleme.
+Bu yüzden pekiştirmeli öğreniciler kredi atama problemi ile ilgilenmelidir: Bir sonuç için hangi eylemlerin beğeni toplayacağını veya suçlanacağını belirleme.
 Aynı şey 11 Ekim'de terfi alan bir çalışan için de geçerli.
 Bu terfi büyük olasılıkla bir önceki yılda itibaren çok sayıda iyi seçilmiş eylemi yansıtmaktadır.
 Gelecekte daha fazla terfi almak için zaman boyunca hangi eylemlerin terfiye yol açtığını bulmak gerekir.
 
-Pekiştirmeli öğreniciler de kısmi gözlenebilirlik sorunuyla uğraşmak zorunda kalabilirler.
+Pekiştirmeli öğreniciler kısmi gözlenebilirlik sorunuyla da uğraşmak zorunda kalabilirler.
 Yani, mevcut gözlem size mevcut durumunuz hakkında her şeyi söylemeyebilir.
 Diyelim ki bir temizlik robotu kendini bir evdeki birçok aynı dolaptan birinde sıkışmış buldu.
 Robotun kesin yerini (ve dolayısıyla durumunu) bulmak, dolaba girmeden önce önceki gözlemlerini dikkate almayı gerektirebilir.
 
-Son olarak, herhangi bir noktada, pekiştirmeli öğreniciler iyi bir politika biliyor olabilir, ancak etmenin hiç denemediği daha iyi politikalar olabilir.
-Pekiştirmeli öğrenici ya sürekli olarak politika olarak şu anda bilinen en iyi stratejiyi *sömürmeyi* veya stratejiler alanını *keşfetmeyi*, yani potansiyel olarak bilgi karşılığında kısa vadede ödül vermeyi, seçmelidir.
-
-#### MKS'ler, haydutlar ve arkadaşlar
+Son olarak, herhangi bir noktada, pekiştirmeli öğreniciler iyi bir politika biliyor olabilir, ancak etmenin hiç denemediği daha iyi birçok politika olabilir.
+Pekiştirmeli öğrenici ya sürekli olarak politika olarak şu anda bilinen en iyi stratejiyi *sömürmeyi* veya stratejiler alanını *keşfetmeyi*, yani potansiyel bilgi karşılığında kısa vadede ödülden vazgeçmeyi, seçmelidir.
 
 Genel pekiştirme öğrenme sorunu çok genel bir ortamdır.
 Eylemler sonraki gözlemleri etkiler.
