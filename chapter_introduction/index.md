@@ -584,83 +584,85 @@ Robotun kesin yerini (ve dolayısıyla durumunu) bulmak, dolaba girmeden önce �
 Son olarak, herhangi bir noktada, pekiştirmeli öğreniciler iyi bir politika biliyor olabilir, ancak etmenin hiç denemediği daha iyi birçok politika olabilir.
 Pekiştirmeli öğrenici ya sürekli olarak politika olarak şu anda bilinen en iyi stratejiyi *sömürmeyi* veya stratejiler alanını *keşfetmeyi*, yani potansiyel bilgi karşılığında kısa vadede ödülden vazgeçmeyi, seçmelidir.
 
-Genel pekiştirme öğrenme sorunu çok genel bir ortamdır.
+Genel pekiştirmeli öğrenme sorunu çok genel bir düzenlemedir.
 Eylemler sonraki gözlemleri etkiler.
-Ödüller yalnızca seçilen eylemlere karşılık gelir.
-Ortam tamamen veya kısmen gözlenebilir.
-Tüm bu karmaşıklığı bir kerede hesaplamak çok fazla araştırmacı isteyebilir.
-Dahası, her pratik sorun tüm bu karmaşıklığı sergilemez.
+Yalnızca seçilen eylemlere denk gelen ödüller gözlemlenir.
+Ortam tamamen veya kısmen gözlemlenebilir.
+Tüm bu karmaşıklığı bir kerede hesaplamak araştırmacılardan çok fazla beklemek olabilir.
+Dahası, her pratik sorun bu karmaşıklığın tamamını sergilemez.
 Sonuç olarak, araştırmacılar pekiştirmeli öğrenme sorunlarının bir dizi *özel vakasını* incelemişlerdir.
 
-Ortam tam olarak gözlemlendiğinde, PÖ sorununa *Markov Karar Süreci* (MKS) diyoruz.
-Durum önceki eylemlere bağlı olmadığında, soruna *bağlamsal bir kollu kumar makinesi sorunu* diyoruz.
-Durum yoksa, sadece başlangıçta bilinmeyen ödülleri olan bir dizi kullanılabilir eylem, bu sorun klasik *çok kollu kumar makinesi problemidir*.
+Ortam tam olarak gözlemlendiğinde, pekiştirmeli öğrenme sorununa *Markov Karar Süreci* (MKS) diyoruz.
+Durum önceki eylemlere bağlı olmadığında, probleme *bağlamsal bir kollu kumar makinesi sorunu* diyoruz.
+Durum yoksa, sadece başlangıçta ödülleri bilinmeyen bir dizi kullanılabilir eylem varsa, bu problem klasik *çok kollu kumar makinesi problemidir*.
 
 ## Kökenler
 
-Birçok derin öğrenme yöntemi yeni icatlar olmasına rağmen, yüzyıllar boyunca insanlar verileri analiz etme ve gelecekteki sonuçları tahmin etme arzusundaydılar.
-Aslında, doğa bilimlerinin çoğunun kökenleri budur.
-Örneğin, Bernoulli dağılımı [Jacob Bernoulli (1655-1705)](https://en.wikipedia.org/wiki/Jacob_Bernoulli) ve Gaussian dağılımı [Carl Friedrich Gauss (1777-1855)](https://en.wikipedia.org/wiki/Carl_Friedrich_Gauss) tarafından keşfedildi.
+Şu ana dek makine öğrenmesinin çözebileceği sorunların küçük bir alt grubunu inceledik.
+Çok çeşitli makine öğrenmesi sorunları için derin öğrenme, bunları çözmede güçlü araçlar sunar.
+Birçok derin öğrenme yöntemi yeni buluşlar olmasına rağmen, veri ve sinir ağları (birçok derin öğrenme modelinin adı) ile programlamanın temel fikri yüzyıllardır çalışılmıştır.
+Aslında, insanlar uzun süredir verileri analiz etme ve gelecekteki sonuçları tahmin etme arzusunu taşıyorlar ve doğa bilimlerinin çoğunun kökleri buna dayanıyor.
+Örneğin, Bernoulli dağılımı [Jacob Bernoulli (1655--1705)](https://en.wikipedia.org/wiki/Jacob_Bernoulli) ile isimlendirildi ve Gaussian dağılımı [Carl Friedrich Gauss (1777--1855)](https://en.wikipedia.org/wiki/Carl_Friedrich_Gauss) tarafından keşfedildi.
 Örneğin, bugün hala sigorta hesaplamalarından tıbbi teşhislere kadar sayısız problem için kullanılan en düşük kareler ortalaması algoritmasını icat etti.
-Bu araçlar doğa bilimlerinde deneysel bir yaklaşıma yol açmıştır - örneğin, Ohm'un bir dirençteki akım ve voltajla ilgili yasası doğrusal bir modelle mükemmel bir şekilde tanımlanmıştır.
+Bu araçlar doğa bilimlerinde deneysel bir yaklaşıma yol açmıştır --- örneğin, Ohm'un bir dirençteki akım ve voltajla ilgili yasası doğrusal bir modelle mükemmel bir şekilde tanımlanır.
 
 Orta çağlarda bile, matematikçilerin tahminlerde keskin bir sezgileri vardı.
-Örneğin, [Jacob Köbel (1460-1533)](https://www.maa.org/press/periodicals/convergence/mathematical-treasures-jacob-kobels-geometry)'ün geometri kitabı ortalama ayak uzunluğunu elde etmek 16 erkek yetişkinin ayak uzunluğunu ortalamayı göstermektedir.
+Örneğin, [Jacob Köbel (1460--1533)](https://www.maa.org/press/periodicals/convergence/mathematical-treasures-jacob-kobels-geometry)'ün geometri kitabı ortalama ayak uzunluğunu elde etmek için 16 erkek yetişkinin ayak uzunluğunu ortalamayı göstermektedir.
 
 ![Ayak uzunluğunu tahmin etme.](../img/koebel.jpg)
 :width:`500px`
 :label:`fig_koebel`
 
 :numref:`fig_koebel` bu tahmincinin nasıl çalıştığını gösterir.
-16 yetişkin erkekten kiliseden ayrılırken üst üste dizilmeleri istendi.
+16 yetişkin erkekten kiliseden ayrılırken bir hizada dizilmeleri istendi.
 Daha sonra toplam uzunlukları günümüzdeki 1 ayak (foot) birimine ilişkin bir tahmin elde etmek için 16'ya bölündü.
 Bu "algoritma" daha sonra biçimsiz ayaklarla başa çıkmak için de düzenlendi - sırasıyla en kısa ve en uzun ayakları olan 2 adam gönderildi, sadece geri kalanların ortalaması alındı.
-Bu, kırpılmış ortalama tahminin en eski örneklerinden biridir.
+Bu, kırpılmış ortalama tahmininin en eski örneklerinden biridir.
 
-İstatistikler gerçekten verilerin toplanması ve kullanılabilirliği ile başladı.
-Dev isimlerden biri [Ronald Fisher (1890-1962)](https://en.wikipedia.org/wiki/Ronald_Fisher), istatistik teorisine ve aynı zamanda genetikteki uygulamalarına önemli katkıda bulundu.
-Algoritmalarının çoğu (Doğrusal Ayırtaç Analizi gibi) ve formülü (Fisher Information Matrix gibi) günümüzde hala sık kullanılmaktadır (1936'da piyasaya sürdüğü İris veri kümesi bile, bazen makine öğrenme algoritmalarını göstermek için hala kullanılıyor).
-Fisher aynı zamanda, veri biliminin ahlaki olarak şüpheli kullanımının, endüstride ve doğa bilimlerinde verimli kullanımı kadar uzun ve kalıcı bir geçmişi olduğunu hatırlatan bir öjeni (doğum ile kalıtımsal olarak istenen özelliklere sahip bireylerin üremesine çalışan bilim dalı) savunucusuydu.
+İstatistik gerçekte verilerin toplanması ve kullanılabilirliği ile başladı.
+Dev isimlerden biri [Ronald Fisher (1890--1962)](https://en.wikipedia.org/wiki/Ronald_Fisher), istatistik teorisine ve aynı zamanda onun genetikteki uygulamalarına önemli katkıda bulundu.
+Algoritmalarının çoğu (doğrusal ayırtaç analizi gibi) ve formülü (Fisher information matrix gibi) günümüzde hala sık kullanılmaktadır. Aslında 1936'da kullanıma açtığı İris veri kümesi bile, bazen makine öğrenmesi algoritmalarını göstermek için hala kullanılıyor.
+O aynı zamanda, veri biliminin ahlaki olarak şüpheli kullanımının, endüstride ve doğa bilimlerinde verimli kullanımı kadar uzun ve kalıcı bir geçmişi olduğunu hatırlatan bir öjeni (doğum ile kalıtımsal olarak istenen özelliklere sahip bireylerin üremesine çalışan bilim dalı) savunucusuydu.
 
-Makine öğrenmesi için ikinci bir etki, [(Claude Shannon, 1916-2001)](https://en.wikipedia.org/wiki/Claude_Shannon) aracılığıyla Bilgi Teorisi ve [Alan Turing (1912-1954)](https://en.wikipedia.org/wiki/Alan_Turing) aracılığıyla Hesaplama Teorisi'nden geldi. .
-Turing, ünlü makalesinde "makineler düşünebilir mi?" diye sordu [Computing machinery and intelligence](https://en.wikipedia.org/wiki/Computing_Machinery_and_Intelligence) (Mind, Ekim 1950).
-Turing testi olarak tanımladığı şeyde, bir insan değerlendiricinin metin etkileşimlerine dayanarak cevapların bir makineden mi ve bir insan mı geldiğini arasında ayırt etmesinin zor olması durumunda, bir makine akıllı kabul edilebilir.
+Makine öğrenmesi için ikinci bir etki, [Claude Shannon, (1916--2001)](https://en.wikipedia.org/wiki/Claude_Shannon) aracılığıyla bilgi teorisi ve [Alan Turing (1912--1954)](https://en.wikipedia.org/wiki/Alan_Turing) aracılığıyla hesaplama teorisinden geldi.
+Turing, ünlü makalesinde, *Computing Machinery and Intelligence* :cite:`Turing.1950`, "Makineler düşünebilir mi?" diye sordu.
+Turing testi olarak tanımladığı testte, bir insan değerlendiricinin metin etkileşimlerine dayanarak cevapların bir makineden mi ve bir insan mı geldiğini arasında ayırt etmesinin zor olması durumunda, bir makine *akıllı* kabul edilebilir.
 
 Nörobilim ve psikolojide de başka bir etki bulunabilir.
 Sonuçta, insanlar açıkça akıllı davranış sergilerler.
-Bu nedenle, sadece bu beceriyi açıklayıp tersine mühendislik yapıp yapamayacağını sormak mantıklıdır.
-Bu şekilde esinlenen en eski algoritmalardan biri [Donald Hebb (1904-1985)](https://en.wikipedia.org/wiki/Donald_O._Hebb) tarafından formüle edildi.
-Çığır Açan "Davranış Örgütlenmesi :cite:`Hebb.Hebb.1949` adlı kitabında, nöronların pozitif pekiştirme ile öğrendiklerini ileri sürdü.
-Bu Hebbian öğrenme kuralı olarak biliniyordu.
-Rosenblatt'ın algılayıcı öğrenme algoritmasının ilk örneğidir ve bugün derin öğrenmeyi destekleyen birçok rassal eğim inişi (stochastic gradient descent) algoritmasının temellerini atmıştır: sinir ağındaki parametrelerin iyi ayarlarını elde etmek için arzu edilen davranışı güçlendirmek ve istenmeyen davranışı zayıflatmak.
+Bu nedenle, birinin sadece bu beceriyi açıklayıp tersine mühendislik yapıp yapamayacağını sormak mantıklıdır.
+Bu şekilde esinlenen en eski algoritmalardan biri [Donald Hebb (1904--1985)](https://en.wikipedia.org/wiki/Donald_O._Hebb) tarafından formüle edildi.
+Çığır açan *Davranış Örgütlenmesi* :cite:`Hebb.Hebb.1949` adlı kitabında, nöronların pozitif pekiştirme ile öğrendiklerini ileri sürdü.
+Bu Hebbian öğrenme kuralı olarak bilindi.
+Bu Rosenblatt'ın algılayıcı öğrenme algoritmasının ilk örneğidir ve bugün derin öğrenmeyi destekleyen birçok rassal eğim inişi (stochastic gradient descent) algoritmasının temellerini atmıştır: Sinir ağındaki parametrelerin iyi ayarlarını elde etmek için arzu edilen davranışı güçlendirmek ve istenmeyen davranışı zayıflatmak.
 
-*Sinir ağlarına* adını veren şey biyolojik ilhamdir.
-Yüzyılı aşkın bir süredir (Alexander Bain, 1873 ve James Sherrington, 1890 modellerine kadar geri gider) araştırmacılar, etkileşen nöron ağlarına benzeyen hesaplama devreleri oluşturmaya çalıştılar.
+*Sinir ağlarına* adını veren şey biyolojik ilhamdır.
+Yüzyılı aşkın bir süre (Alexander Bain, 1873 ve James Sherrington, 1890 modellerine kadar geri gider) araştırmacılar, etkileşen nöron ağlarına benzeyen hesaplama devreleri oluşturmaya çalıştılar.
 Zamanla, biyolojinin yorumu daha az gerçek hale geldi, ancak isim yapıştı. Özünde, bugün çoğu ağda bulunabilecek birkaç temel ilke yatmaktadır:
 
 * Genellikle *katmanlar* olarak adlandırılan doğrusal ve doğrusal olmayan işlem birimlerinin değişimi.
 * Tüm ağdaki parametreleri bir kerede ayarlamak için zincir kuralının (*geri yayma (backpropagation)* olarak da bilinir) kullanımı.
 
 İlk hızlı ilerlemeden sonra, sinir ağlarındaki araştırmalar 1995'ten 2005'e kadar yavaşladı.
-Bunun birkaç nedeni vardır.
-Bir ağın eğitimi hesaplamaya göre çok pahalıdır.
-RAM (Rasgele Erişim Belleği) geçen yüzyılın sonunda bol miktarda bulunurken, hesaplama gücü azdı.
+Bunun temel iki nedeni vardır.
+İlk olarak bir ağın eğitiminin hesaplama maliyeti çok pahalıdır.
+Rasgele erişim belleği (RAM) geçen yüzyılın sonunda bol miktarda bulunurken, hesaplama gücü azdı.
 İkincisi, veri kümeleri nispeten küçüktü.
-Aslında, Fisher'in 1932'deki Iris veri kümesi algoritmaların etkinliğini test etmek için popüler bir araçtır.
-MNIST, 60.000 el yazısı rakam ile devasa sayılırdı.
+Aslında, Fisher'in 1932'deki Iris veri kümesi algoritmaların etkinliğini test etmek için popüler bir araçtı.
+MNIST veri kümesi, 60000 el yazısı rakam ile devasa sayılırdı.
 
-Veri ve hesaplama kıtlığı göz önüne alındığında, Çekirdek (Kernel) Yöntemleri, Karar Ağaçları ve Grafik Modeller gibi güçlü istatistiksel araçlar deneysel olarak daha üstün oldu.
+Veri ve hesaplama kıtlığı göz önüne alındığında, çekirdek (kernel) yöntemleri, karar ağaçları ve grafik modeller gibi güçlü istatistiksel araçlar deneysel olarak daha üstün oldu.
 Sinir ağlarından farklı olarak, eğitim için haftalar gerektirmediler ve güçlü teorik garantilerle öngörülebilir sonuçlar verdiler.
 
 ## Derin Öğrenmeye Giden Yol
 
-Bunların çoğu, yüz milyonlarca kullanıcıya çevrimiçi hizmet veren şirketlerin gelişi, ucuz ve yüksek kaliteli sensörlerin yayılması, ucuz veri depolama (Kryder yasası) ve özellikle bilgisayar oyunları için tasarlanan GPU'ları kullanan ucuz hesaplama (Moore yasası) maliyeti ile değişti.
-Aniden, hesaplamaya elverişli görünmeyen algoritmalar ve modeller bariz hale geldi (ve tersi).
-Bu en iyi şekilde :numref:`tab_intro_decade`de gösterilmiştir .
+Bunların çoğu, yüz milyonlarca kullanıcıya çevrimiçi hizmet veren şirketlerin gelişi, ucuz ve yüksek kaliteli sensörlerin yayılması, ucuz veri depolama (Kryder yasası) ve ucuz hesaplama (Moore yasası) maliyeti ve özellikle bilgisayar oyunları için tasarlanan GPU'ların kullanımı ile değişti.
+Aniden, hesaplamaya elverişli görünmeyen algoritmalar ve modeller bariz hale geldi (veya tam tersi).
+Bu en iyi şekilde :numref:`tab_intro_decade`de gösterilmektedir.
 
-: Veri kümesi ve bilgisayar belleği ve hesaplama gücü
+:Veri kümesi ve bilgisayar belleği ve hesaplama gücü
 
-|On Yıl|Veri Kümesi|Bellek|Saniyede Yüzer (Floating) Sayı Hesaplaması|
+|On Yıl|Veri Kümesi|Bellek|Saniyede yüzer (Floating) sayı hesaplaması|
 |:--|:-|:-|:-|
 | 1970 | 100 (İris) | 1 KB | 100 KF (Intel 8080) |
 1980 | 1 K (Boston'daki ev fiyatları) | 100 KB | 1 MF (Intel 80186) |
@@ -670,21 +672,20 @@ Bu en iyi şekilde :numref:`tab_intro_decade`de gösterilmiştir .
 | 2020 | 1 T (sosyal ağ) | 100 GB | 1 PF (Nvidia DGX-2) |
 :label:`tab_intro_decade`
 
-RAM'in veri büyümesine ayak uyduramadığı açıktır.
+Rasgele erişim belleğinin veri büyümesine ayak uyduramadığı açıktır.
 Aynı zamanda, hesaplama gücündeki artış mevcut verilerinkinden daha fazladır.
-Bu, istatistiksel işlemlerin bellekte daha verimli hale gelmesi (bu genellikle doğrusal olmayan özellikler ekleyerek elde edilir) ve aynı zamanda, artan bir hesaplama bütçesi nedeniyle bu parametreleri optimize etmek için daha fazla zaman harcanması gerektiği anlamına gelir.
-Sonuç olarak, makine öğrenmesi ve istatistikteki tatlı nokta (genelleştirilmiş) doğrusal modellerden ve çekirdek yöntemlerinden derin ağlara taşındı.
-Bu aynı zamanda derin öğrenmenin dayanak noktalarının, çok katmanlı algılayıcılar :cite:`McCulloch.Pitts.1943`, evrişimli sinir ağları :cite:`LeCun.Bottou.Bengio.ea.1998`, Uzun Kısa Süreli Bellek :cite:`Hochreiter.Schmidhuber.1997` ve Q-Öğrenme :cite:` Watkins.Dayan.1992` gibi, oldukça uzun bir süre nispeten uykuda kaldıktan sonra, esasen "yeniden keşfedilme"sindeki birçok nedenden biridir.
+Bu, istatistiksel işlemlerin bellekte daha verimli hale dönüşmesi (bu genellikle doğrusal olmayan özellikler ekleyerek elde edilir) ve aynı zamanda, artan bir hesaplama bütçesi nedeniyle bu parametreleri optimize etmek için daha fazla zaman harcanması gerektiği anlamına gelir.
+Sonuç olarak, makine öğrenmesi ve istatistikteki ilgi noktası (genelleştirilmiş) doğrusal modellerden ve çekirdek yöntemlerinden derin ağlara taşındı.
+Bu aynı zamanda derin öğrenmenin dayanak noktalarının, çok katmanlı algılayıcılar :cite:`McCulloch.Pitts.1943`, evrişimli sinir ağları :cite:`LeCun.Bottou.Bengio.ea.1998`, uzun-ömürlü kısa dönem bellek :cite:`Hochreiter.Schmidhuber.1997` ve Q-Öğrenme :cite:` Watkins.Dayan.1992` gibi, oldukça uzun bir süre nispeten uykuda kaldıktan sonra, esasen "yeniden keşfedilme"sindeki birçok nedenden biridir.
 
-İstatistiksel modeller, uygulamalar ve algoritmalardaki son gelişmeler bazen Kambriyen (Cambrian) Patlaması'na benzetildi: Türlerin evriminde hızlı bir ilerleme anı.
+İstatistiksel modeller, uygulamalar ve algoritmalardaki son gelişmeler bazen Kambriyen (Cambrian) patlamasına benzetildi: Türlerin evriminde hızlı bir ilerleme anı.
 Gerçekten de, en son teknoloji, sadece, onlarca yıllık algoritmaların mevcut kaynaklara uygulanmasının bir sonucu değildir.
-Aşağıdaki listen, araştırmacıların son on yılda muazzam bir ilerleme kaydetmesine yardımcı olan fikirlerin sadece yüzeyine ışık tutmaktadir.
+Aşağıdaki liste, araştırmacıların son on yılda muazzam bir ilerleme kaydetmesine yardımcı olan fikirlerin sadece yüzeyine ışık tutmaktadir.
 
-* Bırakma (dropout) gibi kapasite kontrolüne yönelik yeni yöntemler :cite:`Srivastava.Hinton.Krizhevsky.ea.2014`, aşırı öğrenme tehlikesini azaltmaya yardımcı oldu.
-  Bu, ağ boyunca gürültü zerk edilerek (enjeksiyon) sağlandı, :cite:`Bishop.1995`, eğitim amaçlı ağırlıkları rastgele değişkenlerle değiştirdi.
-* Dikkat mekanizmaları, yüzyılı aşkın bir süredir istatistikleri rahatsız eden ikinci bir sorunu çözdü: Öğrenilebilir parametre sayısını artırmadan bir sistemin belleğini ve karmaşıklığını nasıl artırabiliriz. :cite:`Bahdanau.Cho.Bengio.2014` sadece öğrenilebilir bir işaretçi yapısı olarak görülebilecek zarif bir çözüm buldu.
-  Bir cümlenin tamamını hatırlamak yerine, örneğin, sabit boyutlu bir gösterimdeki makine çevirisi için, depolanması gereken tek şey, çeviri işleminin ara durumunu gösteren bir işaretçiydi. Bu, modelin artık yeni bir cümle oluşturulmadan önce tüm cümleyi hatırlaması gerekmediğinden, uzun cümleler için önemli ölçüde artırılmış doğruluğa izin verdi.
-* Çok aşamalı tasarımlar, örneğin, Bellek Ağları (MemNets) aracılığıyla :cite:`Sukhbaatar.Weston.Fergus.ea.2015` ve Sinir Programcısı-Tercüman (Neural Programmer-Interpreter) :cite:`Reed.De-Freitas.2015`  istatistiksel modelcilerin yinelemeli yaklaşımlar ile akıl yürütme tanımlamasına izin verdi. Bu araçlar, derin ağın dahili bir durumunun tekrar tekrar değiştirilmesine izin verir; bir işlemcinin bir hesaplama için belleği değiştirmesine benzer şekilde, böylece bir akıl yürütme zincirinde sonraki adımlar gerçekleştirilebilir.
+* Hattan düşürme (dropout) gibi kapasite kontrolüne yönelik yeni yöntemler :cite:`Srivastava.Hinton.Krizhevsky.ea.2014`, aşırı öğrenme tehlikesini azaltmaya yardımcı oldu. Bu, ağ boyunca gürültü zerk edilerek (enjeksiyon) sağlandı, :cite:`Bishop.1995`, eğitim amaçlı ağırlıkları rastgele değişkenlerle değiştirdi.
+* Dikkat mekanizmaları, yüzyılı aşkın bir süredir istatistiği rahatsız eden ikinci bir sorunu çözdü: Öğrenilebilir parametre sayısını artırmadan bir sistemin belleğini ve karmaşıklığını nasıl artırabiliriz. Araştırmacılar sadece öğrenilebilir bir işaretçi yapısı olarak görülebilecek zarif bir çözüm buldu :cite:`Bahdanau.Cho.Bengio.2014`.
+Bir cümlenin tamamını hatırlamak yerine, örneğin, sabit boyutlu bir gösterimdeki makine çevirisi için, depolanması gereken tek şey, çeviri işleminin ara durumunu gösteren bir işaretçiydi. Bu, modelin artık yeni bir dizi oluşturulmadan önce tüm diziyi hatırlamasını gerektirmediğinden, uzun diziler için önemli ölçüde artırılmış doğruluğa izin verdi.
+* Çok aşamalı tasarımlar, örneğin, bellek ağları (MemNets)  :cite:`Sukhbaatar.Weston.Fergus.ea.2015` ve sinir programcısı-tercüman (Neural Programmer-Interpreter) :cite:`Reed.De-Freitas.2015` aracılığıyla, istatistiksel modelcilerin yinelemeli yaklaşımlar ile akıl yürütme tanımlamasına izin verdi. Bu araçlar, bir işlemcinin bir hesaplama için belleği değiştirmesine benzer şekilde derin ağın dahili bir durumunun tekrar tekrar değiştirilmesine izin verir; böylece bir akıl yürütme zincirinde sonraki adımlar gerçekleştirilebilir.
 * Bir başka önemli gelişme de (GAN) ÜÇA'ların icadıdır :cite:`Goodfellow.Pouget-Abadie.Mirza.ea.2014`. Geleneksel olarak, yoğunluk tahmini için istatistiksel yöntemler ve üretici modeller, uygun olasılık dağılımlarını ve bunlardan örnekleme için (genellikle yaklaşık) algoritmaları bulmaya odaklanmıştır. Sonuç olarak, bu algoritmalar büyük ölçüde istatistiksel modellerin doğasında var olan esneklik eksikliği ile sınırlıydı. ÜÇA'lardaki en önemli yenilik, örnekleyiciyi türevlenebilir parametrelere sahip rastgele bir algoritma ile değiştirmekti. Bunlar daha sonra, ayırıcın (aslen ikili-örneklem testi) sahte verileri gerçek verilerden ayırt edemeyeceği şekilde ayarlanır. Veri üretmek için rasgele algoritmalar kullanma yeteneği sayesinde yoğunluk tahminini çok çeşitli tekniklere açmıştır. Dörtnala Zebralar :cite:`Zhu.Park.Isola.ea.2017` ve sahte ünlü yüzler :cite:`Karras.Aila.Laine.ea.2017` örnekleri bu ilerlemenin kanıtıdır. Amatör karalamacılar bile, bir sahnenin düzeninin nasıl göründüğünü açıklayan eskizlere dayanan fotogerçekçi görüntüler üretebilir :cite:`Park.Liu.Wang.ea.2019`.
 * Çoğu durumda, tek bir GPU eğitim için mevcut olan büyük miktarda veriyi işlemek için yetersizdir. Son on yılda, paralel dağıtılmış eğitim algoritmaları oluşturma yeteneği önemli ölçüde gelişmiştir. Ölçeklenebilir algoritmaların tasarlanmasındaki temel zorluklardan biri, derin öğrenme optimizasyonunun ana öğesinin, rassal eğim inişinin, işlenecek verilerin nispeten küçük mini-grup'larına (minibatch) dayanmasıdır. Aynı zamanda, küçük gruplar GPU'ların verimliliğini sınırlar. Bu nedenle, 1024 GPU'nun eğitimindeki mini-grup büyüklüğü, örneğin toplu iş başına 32 resim diyelim, toplam 32 bin resim anlamına gelir. Son çalışmalarda, önce Li :cite:`Li.2017` ve ardından :cite:`You.Gitman.Ginsburg.2017` ve :cite:`Jia.Song.He.ea.2018` boyutu 64 bin gözleme yükselterek, ImageNet'teki ResNet50 için eğitim süresini 7 dakikadan daha az bir sürede azalttılar. Karşılaştırma için - başlangıçta eğitim süreleri günlere göre ölçülmüştü.
 * Hesaplamayı paralel hale getirme yeteneği, en azından simülasyon (benzetim) bir seçenek olduğunda, pekiştirmeli öğrenmedeki ilerlemeye oldukça önemli bir katkıda bulunmuştur. Bu önemli ilerlemelerle Go, Atari oyunları, Starcraft ve fizik simülasyonlarında (örn. MuJoCo kullanarak) insanüstü performans elde eden bilgisayarlara yol açtı. AlphaGo'da bunun nasıl yapılacağına ilişkin açıklama için bakınız :cite:`Silver.Huang.Maddison.ea.2016`. Özetle, pek çok (durum, eylem, ödül) üçlük mevcutsa, yani birbirleriyle nasıl ilişkilendiklerini öğrenmek için birçok şeyi denemek mümkün olduğunda pekiştirmeli öğrenme en iyi sonucu verir. Benzetim böyle bir yol sağlar.
