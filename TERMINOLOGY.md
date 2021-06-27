@@ -53,6 +53,8 @@ deployment; konuşlandırma
 
 descent; iniş
 
+deterministic; gerekirci
+
 discriminator; ayrımcı
 
 domain; etki alanı
@@ -130,6 +132,8 @@ loss function; kayıp veya yitim fonksiyonu
 meme; mizah unsuru
 
 message passing; mesaj geçişi
+
+meta; başkalaşım
 
 minibatch; minigrup
 
