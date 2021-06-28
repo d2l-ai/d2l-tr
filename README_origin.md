@@ -1,8 +1,12 @@
-# Dive into Deep Learning (D2L.ai)
+<div align="left">
+  <img src="https://raw.githubusercontent.com/d2l-ai/d2l-en/master/static/logo-with-text.png" width="350">
+</div>
+
+# D2L.ai: Interactive Deep Learning Book with Multi-Framework Code, Math, and Discussions
 
 [![Build Status](http://ci.d2l.ai/job/d2l-en/job/master/badge/icon)](http://ci.d2l.ai/job/d2l-en/job/master/)
 
-[Book website](https://d2l.ai/) | [STAT 157 Course at UC Berkeley, Spring 2019](http://courses.d2l.ai/berkeley-stat-157/index.html) | Latest version: v0.16.0
+[Book website](https://d2l.ai/) | [STAT 157 Course at UC Berkeley, Spring 2019](http://courses.d2l.ai/berkeley-stat-157/index.html) | Latest version: v0.16.6
 
 <h5 align="center"><i>The best way to understand deep learning is learning by doing.</i></h5>
 
@@ -32,7 +36,7 @@ Our goal is to offer a resource that could
 
 1. [**Universal Average-Case Optimality of Polyak Momentum**](https://arxiv.org/pdf/2002.04664.pdf). D. Scieur, F. Pedregosan. *International Conference on Machine Learning, 2020*
 
-1. [**2D Digital Image Correlation and Region-Based Convolutional Neural Network in Monitoring and Evaluation of Surface Cracks in Concrete Structural Elements**](https://www.mdpi.com/1996-1944/13/16/3527/pdf). M. Słoński, M. Tekieli. *Materials, 2020*
+1. [**2D Digital Image Correlation and Region-Based Convolutional Neural Network in Monitoring and Evaluation of Surface Cracks in Concrete Structural Elements**](https://www.mdpi.com/1996-1944/13/16/3527/pdf). M. S≈Ço≈Ñski, M. Tekieli. *Materials, 2020*
 
 1. [**GluonCV and GluonNLP: Deep Learning in Computer Vision and Natural Language Processing**](https://www.jmlr.org/papers/volume21/19-429/19-429.pdf). J. Guo, H. He, T. He, L. Lausen, M. Li, H. Lin, X. Shi, C. Wang, J. Xie, S. Zha, A. Zhang, H. Zhang, Z. Zhang, Z. Zhang, S. Zheng, and Y. Zhu. *Journal of Machine Learning Research, 2020*
 
@@ -48,21 +52,21 @@ Our goal is to offer a resource that could
 
 1. [**ControlVAE: Tuning, Analytical Properties, and Performance Analysis**](https://arxiv.org/pdf/2011.01754.pdf). H. Shao, Z. Xiao, S. Yao, D. Sun, A. Zhang, S. Liu, T. Abdelzaher.
 
-1. [**Potential, challenges and future directions for deep learning in prognostics and health management applications**](https://reader.elsevier.com/reader/sd/pii/S0952197620301184?token=7261E56B97513C5D621B9B5F43CAABEC2860AE3036278C3E5264707C32DCB658077B2AFA6ED6D5CD0FB7B16770828080). O. Fink, Q. Wang, M. Svensén, P. Dersin, W-J. Lee, M. Ducoffe. *Engineering Applications of Artificial Intelligence, 2020*
+1. [**Potential, challenges and future directions for deep learning in prognostics and health management applications**](https://reader.elsevier.com/reader/sd/pii/S0952197620301184?token=7261E56B97513C5D621B9B5F43CAABEC2860AE3036278C3E5264707C32DCB658077B2AFA6ED6D5CD0FB7B16770828080). O. Fink, Q. Wang, M. Svens√©n, P. Dersin, W-J. Lee, M. Ducoffe. *Engineering Applications of Artificial Intelligence, 2020*
 
 1. [**Learning User Representations with Hypercuboids for Recommender Systems**](https://arxiv.org/pdf/2011.05742.pdf). S. Zhang, H. Liu, A. Zhang, Y. Hu, C. Zhang, Y. Li, T. Zhu, S. He, W. Ou. *ACM International Conference on Web Search and Data Mining, 2021*
 
 </details>
 
 
-If you find this book useful, please star (★) this repository or cite this book using the following bibtex entry:
+If you find this book useful, please star (‚òÖ) this repository or cite this book using the following bibtex entry:
 
 ```
-@book{zhang2020dive,
+@article{zhang2021dive,
     title={Dive into Deep Learning},
-    author={Aston Zhang and Zachary C. Lipton and Mu Li and Alexander J. Smola},
-    note={\url{https://d2l.ai}},
-    year={2020}
+    author={Zhang, Aston and Lipton, Zachary C. and Li, Mu and Smola, Alexander J.},
+    journal={arXiv preprint arXiv:2106.11342},
+    year={2021}
 }
 ```
 
@@ -76,7 +80,7 @@ If you find this book useful, please star (★) this repository or cite this boo
 > <b>&mdash; Jiawei Han, Michael Aiken Chair Professor, University of Illinois at Urbana-Champaign</b>
 
 > <p>"This is a highly welcome addition to the machine learning literature, with a focus on hands-on experience implemented via the integration of Jupyter notebooks. Students of deep learning should find this invaluable to become proficient in this field."</p>
-> <b>&mdash; Bernhard Schölkopf, Director, Max Planck Institute for Intelligent Systems</b>
+> <b>&mdash; Bernhard Sch√∂lkopf, Director, Max Planck Institute for Intelligent Systems</b>
 
 
 ## Contributing ([Learn How](https://d2l.ai/chapter_appendix-tools-for-deep-learning/contributing.html))
