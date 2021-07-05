@@ -1,6 +1,10 @@
-# Derin Öğrenmeye Dalış (D2L.ai)
+<div align="left">
+  <img src="https://raw.githubusercontent.com/d2l-ai/d2l-tr/master/static/logo-with-text.png" width="350">
+</div>
 
-[![İnşa Durumu](http://ci.d2l.ai/job/d2l-tr/job/master/badge/icon)](http://ci.d2l.ai/job/d2l-tr/job/master/) | Güncel sürüm: v0.16.3
+# D2L.ai: Çoklu-Çerçeveli Kod, Matematik ve Tartışmalar İçeren Etkileşimli Derin Öğrenmeye Dalış Kitabı
+
+[![İnşa Durumu](http://ci.d2l.ai/job/d2l-tr/job/master/badge/icon)](http://ci.d2l.ai/job/d2l-tr/job/master/) | Güncel sürüm: v0.16.6
 
 [Kitap web sitesi](https://d2l.ai/) | [STAT 157 Dersi UC Berkeley, Bahar 2019](http://courses.d2l.ai/berkeley-stat-157/index.html) | [Çeviri Rehberi](https://docs.google.com/document/d/1jjDTVH_GsHImBb_RoE1siKXdmXN8I1Bd5QN--eSG8is)
 
@@ -57,11 +61,11 @@ bir kaynak sunmaktır.
 Bu kitabı yararlı buluyorsanız, lütfen bu depoya yıldız ekleyin (★) veya aşağıdaki bibtex girdisini kullanarak kitabı alıntılayın:
 
 ```
-@book{zhang2020dive,
+@article{zhang2021dive,
     title={Dive into Deep Learning},
-    author={Aston Zhang and Zachary C. Lipton and Mu Li and Alexander J. Smola},
-    note={\url{https://d2l.ai}},
-    year={2020}
+    author={Zhang, Aston and Lipton, Zachary C. and Li, Mu and Smola, Alexander J.},
+    journal={arXiv preprint arXiv:2106.11342},
+    year={2021}
 }
 ```
 
