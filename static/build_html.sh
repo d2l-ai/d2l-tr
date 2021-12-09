@@ -17,3 +17,9 @@ for fn in `find _build/html/_images/ -iname '*.svg' `; do
     rsvg-convert -z 1 -f svg -o tmp.svg $fn
     mv tmp.svg $fn
 done
+
+# Add SageMaker Studio Lab buttons
+for f in _build/html/chapter*/*.html; do
+    sed -i s/Defteri\ Colab\ ile\ aç\<\\\/div\>\<\\\/div\>\<\\\/div\>\<\\\/h1\>/Defteri\ Colab\ ile\ aç\<\\\/div\>\<\\\/div\>\<\\\/div\>\<a\ href=\"https:\\\/\\\/studiolab.sagemaker.aws\\\/import\\\/github\\\/d2l-ai\\\/d2l-pytorch-sagemaker-studio-lab\\\/blob\\\/main\\\/GettingStarted-D2L.ipynb\"\ onclick=\"captureOutboundLink\\\(\'https\:\\\/\\\/studiolab.sagemaker.aws\\\/import\\\/github\\\/d2l-ai\\\/d2l-pytorch-sagemaker-studio-lab\\\/blob\\\/main\\\/GettingStarted-D2L.ipynb\'\\\)\;\ return\ false\;\"\>\ \<button\ style=\"float\:right\",\ id=\"SageMaker\_Studio\_Lab\"\ class=\"mdl-button\ mdl-js-button\ mdl-button--primary\ mdl-js-ripple-effect\"\>\ \<i\ class=\"\ fas\ fa-external-link-alt\"\>\<\\\/i\>\ SageMaker\ Studio\ Lab\ \<\\\/button\>\<\\\/a\>\<div\ class=\"mdl-tooltip\"\ data-mdl-for=\"SageMaker\_Studio\_Lab\"\>\ Defteri\ SageMaker\ Studio\ Lab\ ile\ aç\<\\\/div\>\<\\\/h1\>/g $f
+done
+
