@@ -129,6 +129,8 @@ long short-term memory; uzun ömürlü kısa-dönem belleği
 
 loss function; kayıp veya yitim fonksiyonu
 
+machine learning; makine öğrenmesi veya yapay öğrenme
+
 meme; mizah unsuru
 
 message passing; mesaj geçişi
