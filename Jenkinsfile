@@ -12,13 +12,12 @@ stage("Build and Publish") {
       checkout scm
       // conda environment
       def ENV_NAME = "${TASK}-${EXECUTOR_NUMBER}";
-      // assign two GPUs to each build
-      def EID = EXECUTOR_NUMBER.toInteger()
-      def CUDA_VISIBLE_DEVICES=(EID*2).toString() + ',' + (EID*2+1).toString();
 
       sh label: "Build Environment", script: """set -ex
       conda env update -n ${ENV_NAME} -f static/build.yml
       conda activate ${ENV_NAME}
+      pip uninstall -y d2lbook
+      pip install git+https://github.com/d2l-ai/d2l-book
       pip list
       nvidia-smi
       """
@@ -30,7 +29,6 @@ stage("Build and Publish") {
 
       sh label: "Execute Notebooks", script: """set -ex
       conda activate ${ENV_NAME}
-      export CUDA_VISIBLE_DEVICES=${CUDA_VISIBLE_DEVICES}
       ./static/cache.sh restore _build/eval/data
       d2lbook build eval
       ./static/cache.sh store _build/eval/data
@@ -38,17 +36,17 @@ stage("Build and Publish") {
 
       sh label: "Execute Notebooks [PyTorch]", script: """set -ex
       conda activate ${ENV_NAME}
-      export CUDA_VISIBLE_DEVICES=${CUDA_VISIBLE_DEVICES}
       ./static/cache.sh restore _build/eval_pytorch/data
       d2lbook build eval --tab pytorch
+      d2lbook build slides --tab pytorch
       ./static/cache.sh store _build/eval_pytorch/data
       """
 
       sh label: "Execute Notebooks [TensorFlow]", script: """set -ex
       conda activate ${ENV_NAME}
-      export CUDA_VISIBLE_DEVICES=${CUDA_VISIBLE_DEVICES}
       ./static/cache.sh restore _build/eval_tensorflow/data
       export TF_CPP_MIN_LOG_LEVEL=3
+      export TF_FORCE_GPU_ALLOW_GROWTH=true
       d2lbook build eval --tab tensorflow
       ./static/cache.sh store _build/eval_tensorflow/data
       """
@@ -60,20 +58,31 @@ stage("Build and Publish") {
 
       sh label:"Build PDF", script:"""set -ex
       conda activate ${ENV_NAME}
-      # d2lbook build pdf
+      d2lbook build pdf
       """
 
+      sh label:"Build Pytorch PDF", script:"""set -ex
+      conda activate ${ENV_NAME}
+      d2lbook build pdf --tab pytorch
+      """
+      
       if (env.BRANCH_NAME == 'release') {
         sh label:"Release", script:"""set -ex
         conda activate ${ENV_NAME}
-        # d2lbook build pkg
-        # d2lbook deploy html pdf pkg colab sagemaker --s3 s3://preview.d2l.ai/${JOB_NAME}/
+        d2lbook build pkg
+        d2lbook deploy html pdf pkg colab sagemaker slides --s3 s3://${LANG}.d2l.ai/
         """
-        
+
+        sh label:"Release d2l", script:"""set -ex
+        conda activate ${ENV_NAME}
+        pip install setuptools wheel twine
+        python setup.py bdist_wheel
+        # twine upload dist/*
+        """
       } else {
         sh label:"Publish", script:"""set -ex
         conda activate ${ENV_NAME}
-        d2lbook deploy html --s3 s3://preview.d2l.ai/${JOB_NAME}/
+        d2lbook deploy html pdf slides --s3 s3://preview.d2l.ai/${JOB_NAME}/
         """
         if (env.BRANCH_NAME.startsWith("PR-")) {
             pullRequest.comment("Job ${JOB_NAME}/${BUILD_NUMBER} is complete. \nCheck the results at http://preview.d2l.ai/${JOB_NAME}/")
