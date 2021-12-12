@@ -17,7 +17,7 @@ $$P(x_1, x_2, \ldots, x_T) = \prod_{t=1}^T P(x_t  \mid  x_1, \ldots, x_{t-1}).$$
 
 Örneğin, dört kelime içeren bir metin dizisinin olasılığı şu şekilde verilecektir:
 
-$$P(\text{derin}, \text{öğrenme}, \text{çok}, \text{eğlencelidir}) =  P(\text{derin}) P(\text{öğrenme}  \mid  \text{derin}) P(\text{çok}}  \mid  \text{derin}, \text{öğrenme}) P(\text{eğlencelidir}  \mid  \text{derin}, \text{öğrenme}, \text{çok}}).$$
+$$P(\text{derin}, \text{öğrenme}, \text{çok}, \text{eğlencelidir}) =  P(\text{derin}) P(\text{öğrenme}  \mid  \text{derin}) P(\text{çok})  \mid  \text{derin}, \text{öğrenme}) P(\text{eğlencelidir}  \mid  \text{derin}, \text{öğrenme}, \text{çok}).$$
 
 Dil modelini hesaplamak için, kelimelerin olasılığını ve bir kelimenin önceki birkaç kelimeye koşullu olasılığını hesaplamamız gerekir. Bu olasılıklar esasen dil modeli parametreleridir.
 

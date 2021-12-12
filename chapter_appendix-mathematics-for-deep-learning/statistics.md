@@ -285,7 +285,7 @@ $$P_{\theta} (C_n \ni \theta) \geq 1 - \alpha, \forall \theta.$$
 
 Burada $\alpha \in (0, 1)$ ve $1 - \alpha$, aralığın *güven düzeyi* veya *kapsamı* olarak adlandırılır. Bu, yukarıda tartıştığımız anlam düzeyiyle aynı $\alpha$'dır.
 
-Unutmayın :eqref:`eq_confidence`  $C_n$ değişkeni hakkındadır, sabit $\theta$ ile ilgili değildir. Bunu vurgulamak için, $P_{\theta} (\theta \C_n)$ yerine $P_{\theta} (C_n \ni \theta)$ yazıyoruz.
+Unutmayın :eqref:`eq_confidence`  $C_n$ değişkeni hakkındadır, sabit $\theta$ ile ilgili değildir. Bunu vurgulamak için, $P_{\theta} (\theta C_n)$ yerine $P_{\theta} (C_n \ni \theta)$ yazıyoruz.
 
 ### Yorumlama
 
