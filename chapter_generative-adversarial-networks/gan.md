@@ -19,7 +19,7 @@ Ayrımcı, $x$ girdisinin gerçek mi (gerçek veriden) yoksa sahte mi (üreticid
 
 $$ \min_D \{ - y \log D(\mathbf x) - (1-y)\log(1-D(\mathbf x)) \},$$
 
-Üretici için, önce bir rasgelelik kaynağından bir $\mathbf z\in \mathbb R^d$ parametresi çekeriz, *örneğin*, normal bir dağılım, $\mathbf z \sim \mathcal{N} (0, 1)$, kullanabiliriz. Gizli değişkeni genellikle $\mathbf z$ ile gösteriyoruz. Daha sonra $\mathbf x'=G(\mathbf z)$ oluşturmak için bir işlev uygularız. Üreticinin amacı, ayrımcıyı $\mathbf x'= G(\mathbfz)$'yı gerçek veri olarak *yani*, $D( G(\mathbf z)) \approx 1$ diye, sınıflandırması için kandırmaktır. Başka bir deyişle, belirli bir $D$ ayrımcısı için, $y = 0$, olduğunda çapraz entropi kaybını maksimize etmek için $G$ üreticisinin parametrelerini güncelleriz, *yani* 
+Üretici için, önce bir rasgelelik kaynağından bir $\mathbf z\in \mathbb R^d$ parametresi çekeriz, *örneğin*, normal bir dağılım, $\mathbf z \sim \mathcal{N} (0, 1)$, kullanabiliriz. Gizli değişkeni genellikle $\mathbf z$ ile gösteriyoruz. Daha sonra $\mathbf x'=G(\mathbf z)$ oluşturmak için bir işlev uygularız. Üreticinin amacı, ayrımcıyı $\mathbf x'= G(\mathbf z)$'yı gerçek veri olarak *yani*, $D( G(\mathbf z)) \approx 1$ diye, sınıflandırması için kandırmaktır. Başka bir deyişle, belirli bir $D$ ayrımcısı için, $y = 0$, olduğunda çapraz entropi kaybını maksimize etmek için $G$ üreticisinin parametrelerini güncelleriz, *yani* 
 
 $$ \max_G \{ - (1-y) \log(1-D(G(\mathbf z))) \} = \max_G \{ - \log(1-D(G(\mathbf z))) \}.$$
 

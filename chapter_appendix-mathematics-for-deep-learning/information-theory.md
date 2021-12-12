@@ -524,7 +524,7 @@ $$
 Öte yandan, soruna maksimum olabilirlik tahminiyle de yaklaşabiliriz. Başlangıç ​​olarak, hızlı bir şekilde $k$-sınıflı bir multinoulli dağılımını sunalım. Bu, Bernoulli dağılımının ikili sınıftan çoklu sınıfa doğru bir uzantısıdır. 
 
 Rastgele bir değişken $\mathbf{z} = (z_{1}, \ldots, z_{k})$, $k$-sınıf *multinoulli dağılımını*, $\mathbf{p} =$ ($p_{1}, \ldots, p_{k}$), izliyor, yani $$p(\mathbf{z}) = p(z_1, \ldots, z_k) = \mathrm{Multi} (p_1, \ldots, p_k), \text{ öyle ki } \sum_{i=1}^k p_i = 1,$$  o zaman $\mathbf{z}$ bileşik olasılık kütle fonksiyonu (o.k.f.):
-$$ \ mathbf {p} ^ \ mathbf {z} = \ prod_ {j = 1} ^ k p_ {j} ^ {z_ {j}}. $$
+$$ \mathbf{p} ^ \mathbf {z} = \prod_{j = 1} ^ k p_{j} ^ {z_{j}}. $$
 
 Görülebileceği gibi, her veri noktası, $\mathbf{y}_i$, $k$-sınıflı $\boldsymbol{\pi} =$ ($\pi_{1}, \ldots, \pi_{k}$) olasılıklı bir multinoulli dağılımını takip ediyor. Bu nedenle, her veri noktası $\mathbf{y}_i$ için bileşik o.k.f  $\mathbf{\pi}^{\mathbf{y}_i} = \prod_{j=1}^k \pi_{j}^{y_{ij}}$'dir.
 Bu nedenle, log-olabilirlik işlevi şöyle olacaktır:
