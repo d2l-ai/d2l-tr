@@ -42,37 +42,37 @@ Bu hedefler genellikle çatışıyordu. Denklemler, teoremler ve alıntılar LaT
 
 ### Yaparak Öğrenmek
 
-Birçok ders kitabı, ayrıntılı bir dizi konuyu öğretir. Örneğin, Chris Bishop'un mükemmel ders kitabı :cite:`Bishop.2006`, her konuyu o kadar titizlikle öğretir ki, doğrusal regresyon konusunda bile hatırı sayılır bir çalışma gerektirir. Uzmanlar bu kitabı tam olarak bu titizliğinden dolayı severler ancak, detay seviyesinin fazlalığından ötürü kitabın kullanışlılığı yeni başlayanlar için azdır.
+Pek çok ders kitabı, her birini ayrıntılı bir şekilde kapsayarak kavramları art arda sunar. Örneğin, Chris Bishop'un mükemmel ders kitabı :cite:`Bishop.2006`, her konuyu o kadar titizlikle öğretir ki, doğrusal regresyon konusunda bile hatırı sayılır bir çalışma gerektirir. Uzmanlar bu kitabı tam olarak bu titizliğinden dolayı severler ancak, detay seviyesinin fazlalığından ötürü kitabın kullanışlılığı yeni başlayanlar için azdır.
 
-Bu kitapta, çoğu kavramı *tam zamanında* öğreteceğiz. Başka bir deyişle, bazı pratik sonlara ulaşmak için gerekli oldukları anda kavramları öğreneceksiniz. Başlangıçta doğrusal cebir ve olasılık gibi temelleri öğretmek için biraz zamanınızı alırken, daha özel olasılık dağılımlarına girmeden önce ilk modelinizi eğitmenin memnuniyetini tatmanızı istiyoruz.
+Bu kitapta, çoğu kavramı *tam zamanında* öğreteceğiz. Başka bir deyişle, bazı pratik sonlara ulaşmak için gerekli oldukları anda kavramları öğreneceksiniz. Başlangıçta doğrusal cebir ve olasılık gibi temelleri öğretmek için biraz zamanınızı alırken, daha özel olasılık dağılımlarına girmeden önce ilk modelinizi eğitmenin zevkini tatmanızı istiyoruz.
 
-Temel matematiksel altyapıya hızlı giriş yapmanızı sağlayan baştaki birkaç bölüm dışında, sonraki her bölüm hem makul sayıda yeni kavramı tanıtır hem de bağımsız veri kümeleri kullanarak tek başına çalışan örnekler görmenizi sağlar. Bu durum organizasyonel bir zorluğa da yol açıyor çünkü bazı modeller mantıksal olarak tek bir not defterinde gruplandırılabilirken bazı fikirler en iyi şekilde birkaç model arka arkaya uygulanarak öğretilebiliyor. Öte yandan, *bir çalışma örneği, bir not defteri* yaklaşımını benimsememizin büyük bir avantajı var: kodumuzu kullanarak kendi araştırma projelerinizi hızlıca başlatabilirsiniz. Sadece bir Jupyter not defterini kopyalayın ve değiştirmeye başlayın.
+Temel matematiksel altyapıya hızlı giriş yapmanızı sağlayan baştaki birkaç bölüm dışında, sonraki her bölüm hem makul sayıda yeni kavramı tanıtır hem de bağımsız veri kümeleri kullanarak tek başına çalışan örnekler görmenizi sağlar. Bu durum organizasyonel bir zorluğa da yol açıyor çünkü bazı modeller mantıksal olarak tek bir not defterinde gruplandırılabilirken bazı fikirler en iyi şekilde birkaç model arka arkaya uygulanarak öğretilebiliyor. Öte yandan, *bir çalışan örnek, bir not defteri* yaklaşımını benimsememizin büyük bir avantajı var: Kodumuzu kullanarak kendi araştırma projelerinizi hızlıca başlatabilirsiniz. Sadece bir Jupyter not defterini kopyalayın ve değiştirmeye başlayın.
 
-Çalıştırılabilir kodu gerektiğinde arka plan materyalleri ile zenginleştireceğiz. Genel olarak, araçları bütün detaylarıyla açıklamadan önce nasıl kullanıldığını göstermeyi tercih edeceğiz. Örneğin, neden yararlı olduğunu veya neden işe yaradığını tam olarak açıklamadan önce *rastgele eğim inişini(stochastic gradient descent-SGD)* doğrudan kullanacağız. Bu, okuyucunun bazı kararlarda bize güvenmesi pahasına, sorunları hızlı bir şekilde çözmek için gerekli ekipmana hızlıca ulaşmasına yardımcı olur.
+Çalıştırılabilir kodu gerektiğinde arka plan materyalleri ile zenginleştireceğiz. Genel olarak, araçları bütün detaylarıyla açıklamadan önce nasıl kullanıldığını göstermeyi tercih edeceğiz. Örneğin, neden yararlı olduğunu veya neden işe yaradığını tam olarak açıklamadan önce *rastgele eğim inişini (stochastic gradient descent-SGD)* doğrudan kullanacağız. Bu, okuyucunun bazı kararlarda bize güvenmesi pahasına, sorunları hızlı bir şekilde çözmek için gerekli ekipmana hızlıca ulaşmasına yardımcı olur.
 
-Bu kitap derin öğrenme kavramlarını sıfırdan öğretecek. Bazen, derin öğrenme çerçevelerinin gelişmiş soyutlamaları ile tipik olarak kullanıcıdan gizlenen modeller hakkındaki ince detayları irdelemek istiyoruz.
-
-Özellikle temel eğitimlerde, belirli bir katmanda veya eniyileyicide(optimizer) gerçekleşen her şeyi anlamanızı istediğimizde örneğin iki versiyonunu sunacağız: Bir tanesi her şeyi sıfırdan uyguladığımız, sadece NumPy arayüzüne ve otomatik türev almaya dayananı ve diğeri ise derin öğrenme çerçevelerinin üst-düzey API'lerini (uygulama programlama arayüzleri) kullanarak kısaca kodunu yazdığımız daha pratik bir örneği. Size bazı bileşenlerin nasıl çalıştığını öğrettikten sonra, üst-düzey API'leri sonraki derslerde kullanacağız.
+Bu kitap derin öğrenme kavramlarını sıfırdan öğretecek. Bazen, derin öğrenme çerçevelerinin gelişmiş soyutlamaları ile tipik olarak kullanıcıdan gizlenen modeller hakkındaki ince detayları irdelemek istiyoruz. Özellikle temel eğitimlerde, belirli bir katmanda veya eniyileyicide (optimizer) gerçekleşen her şeyi anlamanızı istediğimizde örneğin iki versiyonunu sunacağız: Bir tanesi her şeyi sıfırdan uyguladığımız, sadece NumPy arayüzüne ve otomatik türev almaya dayananı ve diğeri ise derin öğrenme çerçevelerinin üst-düzey API'lerini (uygulama programlama arayüzleri) kullanarak kısa kodunu yazdığımız daha pratik bir örneği. Size bazı bileşenlerin nasıl çalıştığını öğrettikten sonra, üst-düzey API'leri sonraki derslerde kullanacağız.
 
 ### İçerik ve Yapı
 
-Kitap kabaca farklı renklerde sunduğumuz üç bölüme ayrılabilir :numref:`fig_book_org`:
+Kitap kabaca, ön hazırlıklara, derin öğrenme tekniklerine ve gerçek sistemlere ve uygulamalara odaklı ileri düzey konulara odaklanan üç bölüme ayrılabilir (:numref:`fig_book_org`).
 
 ![Kitabın yapısı](../img/book-org.svg)
 :label:`fig_book_org`
 
-* İlk bölüm temelleri ve ön bilgileri içerir. :numref:`chap_introduction` derin öğrenmeye girişi içerir. Daha sonra, :numref:`chap_preliminaries`'da hızlı bir şekilde verilerin nasıl saklanacağı ve işleneceği ve temel kavramlara dayalı çeşitli sayısal işlemlerin nasıl uygulanacağı gibi derin öğrenme için gereken cebir, matematik ve olasılık önkoşullarını size sunuyoruz. :numref:`chap_linear` ve :numref:`chap_perceptrons`, doğrusal bağlanım(linear regression), çok katmanlı algılayıcılar(multilayer perceptrons) ve düzenlileştirme(regularization) gibi derin öğrenmenin en temel kavram ve tekniklerini kapsar.
+* İlk bölüm temelleri ve ön bilgileri içerir. :numref:`chap_introduction` derin öğrenmeye girişi içerir. Daha sonra, :numref:`chap_preliminaries`'da hızlı bir şekilde verilerin nasıl saklanacağı ve işleneceği ve temel kavramlara dayalı çeşitli sayısal işlemlerin nasıl uygulanacağı gibi derin öğrenmede gereken cebir, matematik ve olasılık önkoşullarını size sunuyoruz. :numref:`chap_linear` ve :numref:`chap_perceptrons`, bağlanım (regresyon) ve sınıflandırma, doğrusal modeller ve çok katmanlı algılayıcılar (multilayer perceptrons), aşırı öğrenme (overfitting) ve düzenlileştirme (regularization) dahil olmak üzere derin öğrenmedeki en temel kavram ve teknikleri kapsar.
 
-* Sonraki beş bölüm modern derin öğrenme tekniklerine odaklanmaktadır. :numref:`chap_computation` derin öğrenme hesaplamalarının çeşitli temel bileşenlerini açıklar ve daha sonra daha karmaşık modeller uygulamamız için gereken zemini hazırlar. Daha sonra, :numref:`chap_cnn` ve :numref:`chap_modern_cnn`'de, çoğu modern bilgisayarlı görme sisteminin omurgasını oluşturan güçlü araçlar olan evrişimli sinir ağlarını (CNN'ler) sunuyoruz. Sonrasında :numref:`chap_rnn` ve :numref:`chap_modern_rnn`'da, tekrarlayan sinir ağlarını (RNN - verilerdeki zamansal veya sıralı yapılardan yararlanan, doğal dil işleme ve zaman serisi tahmini için yaygın olarak kullanılan modeller), sunuyoruz. :numref:`chap_attention` içinde, dikkat mekanizmaları adı verilen bir teknik kullanan ve yakın zamanda doğal dil işlemede RNN'lerin yerini almaya başlamış yeni bir model sınıfı sunuyoruz. Bu bölümler, derin öğrenmenin en modern uygulamalarının arkasındaki temel araçlarda hızlanmanızı sağlayacaktır.
+* Sonraki beş bölüm modern derin öğrenme tekniklerine odaklanmaktadır. :numref:`chap_computation` derin öğrenme hesaplamalarının çeşitli temel bileşenlerini açıklar ve daha sonra daha karmaşık modeller uygulamamız için gereken zemini hazırlar. Daha sonra, :numref:`chap_cnn` ve :numref:`chap_modern_cnn`'de, çoğu modern bilgisayarlı görme sisteminin omurgasını oluşturan güçlü araçlar olan evrişimli sinir ağlarını (CNN'ler) sunuyoruz. Benzer şekilde, :numref:`chap_rnn` ve :numref:`chap_modern_rnn`, verilerde sıralı (örneğin, zamansal) yapıdan yararlanan ve doğal dil işleme ve zaman serisi tahmini için yaygın olarak kullanılan modeller olan yinelemeli sinir ağlarını (RNN'ler) tanıtır. :numref:`chap_attention`da, çoğu doğal dil işleme görevi için baskın mimari olarak RNN'lerin yerini alan, dikkat (attention) mekanizmalarına dayanan nispeten yeni bir model sınıfını tanıtıyoruz. Bu bölümler, derin öğrenme uygulayıcıları tarafından yaygın olarak kullanılan en güçlü ve genel araçlar hakkında sizi bilgilendirecektir.
 
-* Üçüncü bölüm ölçeklenebilirlik, verimlilik ve uygulamaları tartışmaktadır. İlk olarak :numref:`chap_optimization`'da, derin öğrenme modellerini eğitmek için kullanılan birkaç yaygın eniyileme algoritmasını tartışıyoruz. Bir sonraki bölüm :numref:`chap_performance`, derin öğrenme kodunuzun hesaplama performansını etkileyen birkaç anahtar faktörü inceler. :numref:`chap_cv`'da, bilgisayarlı görmede derin öğrenmenin başlıca uygulamalarını göstereceğiz. :numref:`chap_nlp_pretrain` ve :numref:`chap_nlp_app` içinde de dil gösterimi modellerinin nasıl önceden eğitileciğini ve doğal dil işleme görevlerine nasıl uygulanacağını bulabilirsiniz.
+* Üçüncü bölüm ölçeklenebilirliği, verimliliği ve uygulamaları tartışmaktadır. İlk olarak :numref:`chap_optimization`'da, derin öğrenme modellerini eğitmek için kullanılan birkaç yaygın eniyileme algoritmasını tartışıyoruz. Bir sonraki bölüm :numref:`chap_performance`, derin öğrenme kodunuzun hesaplama performansını etkileyen birkaç anahtar faktörü inceler. :numref:`chap_cv`'da, bilgisayarlı görmede derin öğrenmenin başlıca uygulamalarını göstereceğiz. :numref:`chap_nlp_pretrain` ve :numref:`chap_nlp_app` içinde de dil gösterimi modellerinin nasıl önceden eğitileceğini ve doğal dil işleme görevlerine nasıl uygulanacağını bulabilirsiniz.
 
 ### Kod
 :label:`sec_code`
 
-Bu kitabın çoğu bölümünde derin öğrenmede interaktif bir öğrenme deneyiminin önemine olan inancımız nedeniyle çalıştırılabilir kod bulunmaktadır. Şu anda, bazı sezgiler ancak deneme yanılma yoluyla, kodu küçük yollarla değiştirerek ve sonuçları gözlemleyerek geliştirilebilir. İdeal olarak, zarif bir matematik teorisi, istenen bir sonuca ulaşmak için kodumuzu nasıl değiştireceğimizi tam olarak söyleyebilir. Ne yazık ki, şu anda, bu zarif teoriler bizden uzak duruyor. En iyi girişimlerimize rağmen, çeşitli teknikler için resmi açıklamalar hala eksik, çünkü hem bu modelleri açıklamaya gerekli matematik zor olabilir hem de bu konular hakkındaki ciddi araştırmalar sadece son zamanlarda ivmelendi. Derin öğrenme teorisi ilerledikçe, bu kitabın gelecekteki baskılarının, mevcut baskının sağlayamayacağı yerlerde içgörü sağlayabileceğini umut ediyoruz.
+Bu kitabın çoğu bölümünde yürütülebilir kod bulunur. Bazı sezgilerin en iyi şekilde deneme yanılma yoluyla, kodu küçük şekillerde değiştirerek ve sonuçları gözlemleyerek geliştirildiğine inanıyoruz. İdeal olarak, zarif bir matematiksel teorisi, istenen sonucu elde etmek için kodumuzu tam olarak nasıl değiştireceğimizi söyleyebilir. Bununla birlikte, bugün derin öğrenme uygulayıcıları, çoğu zaman, hiçbir inandırıcı teorinin kesin rehberlik sağlayamayacağı yerlere gitmek zorundadır. En iyi çabalarımıza rağmen, hem bu modelleri karakterize etmek için matematik çok zor olabileceğinden hem de bu konularda ciddi araştırmaların henüz yeni yeni hızlanmaya başlamasından dolayı, çeşitli tekniklerin etkinliği için biçimsel açıklamalar hala eksiktir. Derin öğrenme teorisi ilerledikçe, bu kitabın gelecekteki baskılarının, şu anda mevcut olanları gölgede bırakan içgörüler sağlayabileceğini umuyoruz.
 
 Bazen gereksiz tekrarlardan kaçınmak için bu kitapta sıkça içe aktarılan (import) ve  atıfta bulunulan işlevler, sınıflar, vb. 'd2l' paketinde bulunmaktadır. İşlev, sınıf veya çoklu içe aktarma gibi herhangi bir blok bir pakete kaydedilecekse, bunu `#@save` ile işaretleriz. Bu işlevler ve sınıflar hakkında ayrıntılı bir genel bakışı :numref:`sec_d2l`'da' sunuyoruz . `d2l` paketi yükte hafiftir ve sadece bağımlı olarak aşağıdaki paketleri ve modülleri gerektirir:
+
+Gereksiz tekrarlardan kaçınmak için, en sık içe aktarılan (import) ve atıfta bulunulan işlev ve sınıflarımızdan bazılarını `d2l` paketine yerleştirdik. Daha sonra `d2l` paketi aracılığıyla erişilecek olan bir işlev, sınıf veya içe aktarım ifadeleri koleksiyonu gibi bir kod bloğunu belirtmek için, onu `#@save` ile işaretleyeceğiz. Bu işlevlere ve sınıflara ayrıntılı bir genel bakışı :numref:`sec_d2l` içinde sunuyoruz. `d2l` paketi hafiftir ve yalnızca aşağıdaki bağımlılıkları gerektirir:
 
 ```{.python .input}
 #@tab all
@@ -97,19 +97,19 @@ d2l = sys.modules[__name__]
 ```
 
 :begin_tab:`mxnet`
-Bu kitaptaki kodun çoğu Apache MXNet'e dayanmaktadır. MXNet, derin öğrenme ve AWS'in (Amazon Web Services) yanı sıra birçok yüksekokul ve şirketin tercih ettiği açık kaynaklı bir çerçevedir. Bu kitaptaki tüm kodlar en yeni MXNet sürümü altında testlerden geçmiştir. Ancak, derin öğrenmenin hızla gelişmesi nedeniyle, *basılı sürümündeki* bazı kodlar MXNet'in gelecekteki sürümlerinde düzgün çalışmayabilir. Ancak, çevrimiçi sürümü güncel tutmayı planlıyoruz. Böyle bir sorunla karşılaşırsanız, kodunuzu ve çalışma zamanı ortamınızı güncellemek için lütfen şuraya danışın :ref:`chap_installation`.
+Bu kitaptaki kodun çoğu derin öğrenme ve AWS'in (Amazon Web Services) yanı sıra birçok yüksekokul ve şirketin tercih ettiği açık kaynaklı bir çerçeve olan Apache MXNet'e dayanmaktadır. Bu kitaptaki tüm kodlar en yeni MXNet sürümünün altında testlerden geçmiştir. Ancak, derin öğrenmenin hızla gelişmesi nedeniyle, *basılı sürümündeki* bazı kodlar MXNet'in gelecekteki sürümlerinde düzgün çalışmayabilir. Ancak, çevrimiçi sürümü güncel tutmayı planlıyoruz. Böyle bir sorunla karşılaşırsanız, kodunuzu ve çalışma zamanı ortamınızı güncellemek için lütfen şuraya başvurun: :ref:`chap_installation`.
 
 Modülleri MXNet'ten şu şekilde içe aktarıyoruz.
 :end_tab:
 
 :begin_tab:`pytorch`
-Bu kitaptaki kodun çoğu PyTorch'a dayanmaktadır. PyTorch, araştırma topluluğunda son derece popüler olan açık kaynaklı derin öğrenme çerçevesidir. Bu kitaptaki tüm kodlar en yeni PyTorch kapsamında testlerden geçmiştir. Ancak, derin öğrenmenin hızla gelişmesi nedeniyle, *basılı sürümündeki* bazı kodlar PyTorch'un gelecekteki sürümlerinde düzgün çalışmayabilir. Ancak, çevrimiçi sürümü güncel tutmayı planlıyoruz. Böyle bir sorunla karşılaşırsanız, kodunuzu ve çalışma zamanı ortamınızı güncellemek için lütfen şuraya danışın :ref:`chap_installation`.
+Bu kitaptaki kodun çoğu derin öğrenme araştırma topluluğu tarafından çoşkunca benimsenmiş son derece popüler bir açık kaynaklı çerçeve olan PyTorch'a dayanmaktadır. Bu kitaptaki tüm kodlar en yeni kararlı PyTorch sürümünün altında testlerden geçmiştir. Ancak, derin öğrenmenin hızla gelişmesi nedeniyle, *basılı sürümündeki* bazı kodlar PyTorch'un gelecekteki sürümlerinde düzgün çalışmayabilir. Ancak, çevrimiçi sürümü güncel tutmayı planlıyoruz. Böyle bir sorunla karşılaşırsanız, kodunuzu ve çalışma zamanı ortamınızı güncellemek için lütfen şuraya başvurun :ref:`chap_installation`.
 
 Modülleri PyTorch'tan şu şekilde içe aktarıyoruz.
 :end_tab:
 
 :begin_tab:`tensorflow`
-Bu kitaptaki kodun çoğu TensorFlow'a dayanmaktadır. TEnsorFlow, araştırma topluluğunda ve endüstride son derece popüler olan açık kaynaklı derin öğrenme çerçevesidir. Bu kitaptaki tüm kodlar en yeni TensorFlow kapsamında testlerden geçmiştir. Ancak, derin öğrenmenin hızla gelişmesi nedeniyle, *basılı sürümündeki* bazı kodlar TensorFlow'un gelecekteki sürümlerinde düzgün çalışmayabilir. Ancak, çevrimiçi sürümü güncel tutmayı planlıyoruz. Böyle bir sorunla karşılaşırsanız, kodunuzu ve çalışma zamanı ortamınızı güncellemek için lütfen şuraya danışın :ref:`chap_installation`.
+Bu kitaptaki kodun çoğu araştırma topluluğunda ve endüstride son derece popüler olan açık kaynaklı derin öğrenme çerçevesi olan TensorFlow'a dayanmaktadır.. Bu kitaptaki tüm kodlar en yeni TensorFlow kapsamında testlerden geçmiştir. Ancak, derin öğrenmenin hızla gelişmesi nedeniyle, *basılı sürümündeki* bazı kodlar TensorFlow'un gelecekteki sürümlerinde düzgün çalışmayabilir. Ancak, çevrimiçi sürümü güncel tutmayı planlıyoruz. Böyle bir sorunla karşılaşırsanız, kodunuzu ve çalışma zamanı ortamınızı güncellemek için lütfen şuraya danışın :ref:`chap_installation`.
 
 
 Modülleri TensorFlow'dan şu şekilde içe aktarıyoruz.
@@ -143,12 +143,14 @@ import tensorflow as tf
 
 ### Hedef Kitle
 
-Bu kitap derin öğrenme pratik tekniklerini sağlam bir şekilde kavramak isteyen öğrenciler (lisans veya lisansüstü), mühendisler ve araştırmacılar içindir. Her kavramı sıfırdan açıkladığımız için, derin öğrenme veya makine öğreniminde geçmis bir birikim gerekmez. Derin öğrenme yöntemlerini tam olarak açıklamak biraz matematik ve programlama gerektirir, ancak doğrusal cebir, matematik, olasılık ve Python programlama dahil bazı temel bilgilerle geldiğinizi varsayacağız. Ayrıca, Ek'te (Apendiks), bu kitapta yer alan matematiğin çoğu hakkında bir bilgi tazeleyici sağlıyoruz. Çoğu zaman, matematiksel titizlik yerine sezgiye ve fikirlere öncelik vereceğiz. İlgilenen okuyucuyu daha da ileri götürebilecek müthiş kitaplar vardır. Örneğin, Bela Bollobas'ın Doğrusal Analizi :cite:`Bollobas.1999`, doğrusal cebiri ve fonksiyonel analizi çok derinlemesine inceler. İstatistiğin Tamamı :cite:`Wasserman.2013` istatistik için müthiş bir rehberdir. Python'u daha önce kullanmadıysanız, bu [Python eğitimi'ni](http://learnpython.org/) incelemek isteyebilirsiniz.
+Bu kitap derin öğrenme pratik tekniklerini sağlam bir şekilde kavramak isteyen öğrenciler (lisans veya lisansüstü), mühendisler ve araştırmacılar içindir. Her kavramı sıfırdan açıkladığımız için, derin öğrenme veya makine öğrenmesinde geçmis bir birikim gerekmez. Derin öğrenme yöntemlerini tam olarak açıklamak biraz matematik ve programlama gerektirir, ancak yeter miktarda doğrusal cebir, matematik, olasılık ve Python programlama dahil bazı temel bilgilerle geldiğinizi varsayacağız. Eğer temelleri unuttuysanız, Ek'te (Apendiks), bu kitapta yer alan matematiğin çoğu hakkında bir bilgi tazeleyici sağlıyoruz. Çoğu zaman, matematiksel titizlik yerine sezgiye ve fikirlere öncelik vereceğiz. 
+
+Eğer bu temelleri bu kitabı anlamada gerekli öngereksinimlerden öteye genişletmek isterseniz, sizlere müthiş kitaplar önerebiliriz: Bela Bollobas'ın Doğrusal Analizi :cite:`Bollobas.1999`, doğrusal cebiri ve fonksiyonel analizi çok derinlemesine inceler. İstatistiğin Tamamı, :cite:`Wasserman.2013`, istatistiğe harika bir giriş sağlar. Joe Blitzstein'ın [kitapları](https://www.amazon.com/Introduction-Probability-Chapman-Statistical-Science/dp/1138369918) ve [dersleri](https://projects.iq.harvard.edu/stat110/home) olasılık ve çıkarsama üzerine pedagojik cevherlerdir. Python'u daha önce kullanmadıysanız, bu [Python eğitimi'ni](http://learnpython.org/) incelemek isteyebilirsiniz.
 
 
 ### Forum
 
-Bu kitapla ilgili olarak bir tartışma forumu başlattık, [discuss.d2l.ai](https://discuss.d2l.ai/) adresinden ulaşabilirsiniz. Kitabın herhangi bir bölümü hakkında sorularınız olduğunda, ilgili bölüm sayfası bağlantısını her bölümün sonunda bulabilirsiniz.
+Bu kitapla ilgili olarak bir tartışma forumu başlattık, [discuss.d2l.ai](https://discuss.d2l.ai/) adresinden ulaşabilirsiniz. Kitabın herhangi bir bölümü hakkında sorularınız olduğunda, ilgili tartışma sayfasına ait bağlantıyı her defter dosyasının sonunda bulabilirsiniz.
 
 
 ## Teşekkürler
@@ -179,13 +181,17 @@ abhinavsp0730, jonathanhrandall, ysraell, Nodar Okroshiashvili, UgurKap, Jiyang 
 StevenJokes, Tomer Kaftan, liweiwp, netyster, ypandya, NishantTharani, heiligerl, SportsTHU,
 Hoa Nguyen, manuel-arno-korfmann-webentwicklung, aterzis-personal, nxby, Xiaoting He, Josiah Yoder,
 mathresearch, mzz2017, jroberayalas, iluu, ghejc, BSharmi, vkramdev, simonwardjones, LakshKD,
-TalNeoran, djliden, Nikhil95, Oren Barkan, guoweis, haozhu233, pratikhack, 315930399, tayfununal,
+TalNeoran, djliden, Nikhil95, Oren Barkan, guoweis, haozhu233, pratikhack, Yue Ying, tayfununal,
 steinsag, charleybeller, Andrew Lumsdaine, Jiekui Zhang, Deepak Pathak, Florian Donhauser, Tim Gates,
-Adriaan Tijsseling, Ron Medina, Gaurav Saha, Murat Semerci, Lei Mao.
+Adriaan Tijsseling, Ron Medina, Gaurav Saha, Murat Semerci, Lei Mao, Levi McClenny, Joshua Broyde,
+jake221, jonbally, zyhazwraith, Brian Pulfer, Nick Tomasino, Lefan Zhang, Hongshen Yang, Vinney Cavallo,
+yuntai, Yuanxiang Zhu, amarazov, pasricha, Ben Greenawald, Shivam Upadhyay, Quanshangze Du, Biswajit Sahoo,
+Parthe Pandit, Ishan Kumar, HomunculusK, Lane Schwartz, varadgunjal, Jason Wiener, Armin Gholampoor,
+Shreshtha13, eigen-arnav, Hyeonggyu Kim, EmilyOng, Bálint Mucsányi, Chase DuBois.
 
 Türkçe çevirisindeki katkılarından dolayı Murat Semerci ve Barış Yaşin'e teşekkür ediyoruz.
 
-Amazon Web Services'e, özellikle Swami Sivasubramanian, Raju Gulabani, Charlie Bell ve Andrew Jassy'ye bu kitabı yazma konusundaki cömert desteklerinden dolayı teşekkür ediyoruz. Yeterli zaman, kaynaklar, meslektaşlarla tartışmalar ve sürekli teşvik olmasaydı bu kitap olmazdı.
+Amazon Web Services'e, özellikle Swami Sivasubramanian, Peter DeSantis, Adam Selipsky ve Andrew Jassy'ye bu kitabı yazma konusundaki cömert desteklerinden dolayı teşekkür ediyoruz. Yeterli zaman, kaynaklar, meslektaşlarla tartışmalar ve sürekli teşvik olmasaydı bu kitap olmazdı.
 
 
 ## Özet
