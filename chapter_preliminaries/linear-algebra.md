@@ -321,7 +321,7 @@ A, A + B
 ```
 
 Özellikle, iki matrisin eleman-yönlü çarpımına *Hadamard çarpımı* (matematik gösterimi $\odot$) denir.
-$i.$ satır ve $j.$ sütununun öğesi $b_{ij} $ olan $\mathbf{B} \in \matrix{R}^{m\times n}$ matrisini düşünün. $\mathbf{A}$ (:eqref:`eq_matrix_def`da tanımlanmıştır) ve $\mathbf{B}$ matrislerinin Hadamard çarpımı:
+$i.$ satır ve $j.$ sütununun öğesi $b_{ij} $ olan $\mathbf{B} \in \mathbb{R}^{m\times n}$ matrisini düşünün. $\mathbf{A}$ (:eqref:`eq_matrix_def`da tanımlanmıştır) ve $\mathbf{B}$ matrislerinin Hadamard çarpımı:
 
 $$
 \mathbf{A} \odot \mathbf{B} =
@@ -835,7 +835,6 @@ torch.norm(torch.ones((4, 9)))
 #@tab tensorflow
 tf.norm(tf.ones((4, 9)))
 ```
-
 
 ### Normlar ve Hedef (Amaç) Fonksiyonları
 :label:`subsec_norms_and_objectives`
