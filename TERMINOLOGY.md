@@ -147,6 +147,8 @@ one-hot coding; bire bir kodlama
 
 optimizer; eniyileyici
 
+overfitting; aşırı öğrenme
+
 padding; dolgu
 
 parse; ayrıştırmak
