@@ -9,10 +9,6 @@ Sizi uygulamalı öğrenme deneyimine hazır hale getirmek için Python'u, Jupyt
 Python 3.x sürümü gereklidir. Eğer makinenizde conda önceden kurulmuş ise, aşağıdaki adımları
 atlayabilirsiniz. 
 
-Sisteminize karşılık gelen Miniconda sh dosyasını web
-sitesinden indirin ve ardından komut satırından
-`sh <FILENAME> -b` komutunu kullanarak yükleme işlemini başlatın. MacOS kullanıcıları için:
-
 Miniconda'nın web sitesini ziyaret edin ve Python 3.x sürümünüze ve makine mimarinize göre sisteminiz için uygun sürümü belirleyin. Örneğin, macOS ve Python 3.x kullanıyorsanız, adı "Miniconda3" ve "MacOSX" dizelerini içeren bash betiğini indirin, indirme konumuna gidin ve kurulumu aşağıdaki gibi yürütün:
 
 ```bash
@@ -62,13 +58,7 @@ conda activate d2l
 
 ## Çerçeveyi ve `d2l` Paketini Yükleme
 
-Herhangi bir derin öğrenme çerçevesini kurmadan önce, lütfen önce makinenizde uygun GPU'ların
-olup olmadığını kontrol edin (standart bir dizüstü bilgisayarda ekranı
-destekleyen GPU'lar bizim amacımıza uygun sayılmaz). GPU'lu bir sunucuda çalışıyorsanız, ilgili kütüphanelerin GPU-dostu sürümlerinin kurulum talimatları için şu adrese ilerleyin :ref:`subsec_gpu`.
-
-GPU'lu bir bilgisayarınız/sunucunuz yoksa, CPU sürümünü aşağıdaki gibi yükleyebilirsiniz.
-Bu, ilk birkaç bölümü geçmeniz için yeterli beygir gücünü sağlayacak ancak daha
-büyük modelleri çalıştırmak için GPU'lara ihtiyacınız olacak.
+Herhangi bir derin öğrenme çerçevesini kurmadan önce, lütfen önce makinenizde uygun GPU'ların olup olmadığını kontrol edin (standart bir dizüstü bilgisayarda ekranı destekleyen GPU'lar bizim amacımıza uygun sayılmaz). GPU'lu bir sunucuda çalışıyorsanız, ilgili kütüphanelerin GPU-dostu sürümlerinin kurulum talimatları için şu adrese ilerleyin :ref:`subsec_gpu`.
 
 Makinenizde herhangi bir GPU yoksa, henüz endişelenmenize gerek yok. CPU'nuz, ilk birkaç bölümü tamamlamanız için fazlasıyla yeterli beygir gücü sağlar. Daha büyük modelleri koşmadan önce GPU'lara erişmek isteyeceğinizi unutmayın. CPU sürümünü kurmak için aşağıdaki komutu yürütün.
 
