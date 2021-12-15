@@ -1,17 +1,18 @@
 # Notasyon
 :label:`chap_notation`
 
-Bu kitap boyunca kullanılan notasyon(gösterim) aşağıda özetlenmiştir.
+Bu kitap boyunca, aşağıdaki gösterim kurallarına bağlı kalacağız. Bu sembollerden bazılarının göstermelik değişken olduğunu, bazılarının ise belirli nesnelere atıfta bulunduğunu unutmayın. Genel bir kural olarak, belirsiz "a" nesnesi, sembolün bir göstermelik değişken olduğunu ve benzer şekilde biçimlendirilmiş sembollerin aynı tipteki diğer nesneleri gösterebileceğini belirtir. Örneğin, "$x$: bir sayıl", küçük harflerin genellikle sayıl değerleri temsil ettiği anlamına gelir.
 
 
-## Sayılar
+
+## Sayısal Nesneler
 
 
-* $x$: Skalar (Sayıl)
-* $\mathbf{x}$: Vektör (Yöney)
-* $\mathbf{X}$: Matris (Dizey)
-* $\mathsf{X}$: Tensör (Gerey)
-* $\mathbf{I}$: Birim dizeyi
+* $x$: skalar (sayıl)
+* $\mathbf{x}$: vektör (Yöney)
+* $\mathbf{X}$: matris (Dizey)
+* $\mathsf{X}$: bir genel tensör (Gerey)
+* $\mathbf{I}$: birim dizeyi -- köşegen girdileri $1$ köşegen-olmayan girdileri $0$ olan kare dizey
 * $x_i$, $[\mathbf{x}]_i$: $\mathbf{x}$ dizeyinin $i$'inci elemanı
 * $x_{ij}$, $x_{i,j}$,$[\mathbf{X}]_{ij}$, $[\mathbf{X}]_{i,j}$: $\mathbf{X}$ dizeyinin $i$'inci satır $j$'inci sütundaki elemanı
 
@@ -20,36 +21,37 @@ Bu kitap boyunca kullanılan notasyon(gösterim) aşağıda özetlenmiştir.
 ## Küme Kuramı
 
 
-* $\mathcal{X}$: Küme
-* $\mathbb{Z}$: Tam sayılar kümesi
-* $\mathbb{Z}^+$: Pozitif tam sayılar kümesi
-* $\mathbb{R}$: Gerçel sayılar kümesi
+* $\mathcal{X}$: küme
+* $\mathbb{Z}$: tam sayılar kümesi
+* $\mathbb{Z}^+$: pozitif tam sayılar kümesi
+* $\mathbb{R}$: gerçel sayılar kümesi
 * $\mathbb{R}^n$: $n$ boyutlu gerçel sayılı yöneyler kümesi
 * $\mathbb{R}^{a\times b}$: $a$ satır ve $b$ sütunlu gerçek sayılı matrisler kümesi
 * $|\mathcal{X}|$: $\mathcal{X}$ kümesinin kardinalitesi (eleman sayısı)
 * $\mathcal{A}\cup\mathcal{B}$: $\mathcal{A}$ ve $\mathcal{B}$ kümelerinin bileşkesi
 * $\mathcal{A}\cap\mathcal{B}$: $\mathcal{A}$ ve $\mathcal{B}$ kümelerinin kesişimi
-* $\mathcal{A}\setminus\mathcal{B}$: $\mathcal{B}$ kümesinin $\mathcal{A}$ kümesinden çıkarılması
+* $\mathcal{A}\setminus\mathcal{B}$: $\mathcal{B}$ kümesinin $\mathcal{A}$ kümesinden çıkarılması (sadece $\mathcal{A}$ kümesinde olup $\mathcal{B}$ kümesinde olmayan elemanları içerir)
 
 
 ## Fonksiyonlar ve Operatörler
 
 
-* $f(\cdot)$: İşlev (Fonksiyon)
-* $\log(\cdot)$: Doğal logaritma
-* $\exp(\cdot)$: Üstel fonksiyon
-* $\mathbf{1}_\mathcal{X}$: Gösterge fonksiyonu
-* $\mathbf{(\cdot)}^\top$: Bir vektörün veya matrisin devriği
+* $f(\cdot)$: işlev (fonksiyon)
+* $\log(\cdot)$: doğal logaritma
+* $\log_2(\cdot)$: $2$lik tabanda logaritma
+* $\exp(\cdot)$: üstel fonksiyon
+* $\mathbf{1}(\cdot)$: gösterge fonksiyonu, mantık argümanı doğru ise $1$ ve değil ise $0$
+* $\mathbf{1}_{\mathcal{X}}(z)$: küme-üyeliği gösterge işlevi, eğer $z$ elemanı $\mathcal{X}$ kümesine ait ise $1$ ve değil ise $0$
+* $\mathbf{(\cdot)}^\top$: bir vektörün veya matrisin devriği
 * $\mathbf{X}^{-1}$: $\mathbf{X}$ matrisinin tersi
-* $\odot$: Hadamard (eleman-yönlü) çarpımı
-* $[\cdot, \cdot]$: Birbirine bağlama
-* $\lvert \mathcal{X} \rvert$: $\mathcal{X}$ kümesinin eleman sayısı (kardinalite)
-* $\|\cdot\|_p$: $L_p$ Büyüklük (Norm)
-* $\|\cdot\|$: $L_2$ Büyüklük (Norm)
+* $\odot$: hadamard (eleman-yönlü) çarpımı
+* $[\cdot, \cdot]$: birbirine bağlama
+* $\|\cdot\|_p$: $L_p$ büyüklük (Norm)
+* $\|\cdot\|$: $L_2$ büyüklük (Norm)
 * $\langle \mathbf{x}, \mathbf{y} \rangle$: $\mathbf{x}$ ve $\mathbf{y}$ vektörlerinin iç (nokta) çarpımı
-* $\sum$: Dizi (seri) toplamı
-* $\prod$: Dizi (seri) çarpımı
-* $\stackrel{\mathrm{def}}{=}$: Tanım
+* $\sum$: bir elemanlar topluluğu üzerinde toplam
+* $\prod$: bir elemanlar topluluğu üzerinde toplam çarpımı
+* $\stackrel{\mathrm{def}}{=}$: sol tarafta bir sembol tanımlarken kullanılan eşitlik 
 
 ## Hesaplama (Kalkülüs)
 
@@ -61,25 +63,21 @@ Bu kitap boyunca kullanılan notasyon(gösterim) aşağıda özetlenmiştir.
 
 ## Olasılık ve Bilgi Kuramı
 
-* $P(\cdot)$: Olasılık dağılımı
-* $z \sim P$: $z$ rastgele değişkeni $P$ olasılık dağılımına sahip
-* $P(X \mid Y)$: Koşullu olasılık $X \mid Y$
-* $p(x)$: Olasılık yoğunluk fonksiyonu
-* ${E}_{x} [f(x)]$: $f$'in $x$ ile ilgili beklentisi
-* $X \perp Y$: $X$ ve $Y$ rastgele değişkenleri bağımsızdır
-* $X \perp Y \mid Z$: $X$ ve $Y$ rasgele değişkenleri, $Z$ rasgele değişkeni göz önüne alındığında (verildiğinde) koşullu olarak bağımsızdır
-* $\mathrm{Var}(X)$: $X$ rastgele değişkeninin değişintisi (varyansı)
-* $\sigma_X$: $X$ rastgele değişkeninin standart sapması
+* $X$: rasgele değişken
+* $P$: olasılık dağılımı
+* $X \sim P$: $X$ rasgele değişkeni $P$ olasılık dağılımına sahiptir
+* $P(X=x)$: $X$ rasgele değişkeninin $x$ değerini alma olayının olasılığı
+* $P(X \mid Y)$: $Y$ bilindiğinde $X$'in koşullu olasılık dağılımı
+* $p(\cdot)$: P dağılımına ilişkili koşullu olasılık yoğunluk fonksiyonu
+* ${E}[X]$: $X$ rasgele değişkeninin beklentisi
+* $X \perp Y$: $X$ ve $Y$ rasgele değişkenleri bağımsızdır
+* $X \perp Y \mid Z$: $X$ ve $Y$ rasgele değişkenleri, $Z$ göz önüne alındığında (verildiğinde) koşullu olarak bağımsızdır
+* $\sigma_X$: $X$ rasgele değişkeninin standart sapması
+* $\mathrm{Var}(X)$: $X$ rasgele değişkeninin değişintisi (varyansı), $\sigma^2_X$'ze eşittir
 * $\mathrm{Cov}(X, Y)$: $X$ ve $Y$ rasgele değişkenlerinin eşdeğişintisi (kovaryansı)
-* $\rho(X, Y)$: $X$ ve $Y$ rasgele değişkenlerinin ilintisi (korrelasyonu)
-* $H(X)$: $X$ rastgele değişkeninin düzensizliği (entropisi)
-* $D_{\mathrm{KL}}(P\|Q)$: $P$ ve $Q$ dağılımlarının KL-Iraksaması
-
-
-
-## Karmaşıklık
-
-* $\mathcal{O}$: Büyük O gösterimi
+* $\rho(X, Y)$: $X$ ve $Y$ rasgele değişkenleri arasındaki Pearson ilinti katsayısı (korrelasyonu), $\frac{\mathrm{Cov}(X, Y)}{\sigma_X \sigma_Y}$'ye eşittir
+* $H(X)$: $X$ rasgele değişkeninin düzensizliği (entropisi)
+* $D_{\mathrm{KL}}(P\|Q)$: $Q$ dağılımından $P$ dağılımına KL-Iraksaması (veya göreceli düzensizlik)
 
 
 [Tartışmalar](https://discuss.d2l.ai/t/25)

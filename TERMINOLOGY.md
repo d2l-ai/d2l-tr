@@ -107,6 +107,8 @@ holdout; harici tutulan
 
 hybridization; melezleştirme
 
+indicator; gösterge, belirteç
+
 initialization; ilkleme
 
 internal covariate shift; dahili eşdeğişken kayması
@@ -147,6 +149,8 @@ one-hot coding; bire bir kodlama
 
 optimizer; eniyileyici
 
+overfitting; aşırı öğrenme
+
 padding; dolgu
 
 parse; ayrıştırmak
@@ -158,6 +162,8 @@ perplexity; şaşkınlık
 perturbation; düzensizlik
 
 pipeline; veri/komut işleme hattı
+
+placeholder; göstermelik değişken
 
 pooling; biriktirme
 
