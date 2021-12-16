@@ -143,6 +143,8 @@ minibatch; minigrup
 
 nontrivial; apaçık olmayan
 
+objective functions; amaç fonksiyonları
+
 offset; bağıl konum
 
 one-hot coding; bire bir kodlama
@@ -226,6 +228,8 @@ stride; uzun adım
 string; dizgi
 
 stochastic; rasgele
+
+surrogate; vekil
 
 symmetry; bakışım
 

@@ -5,14 +5,14 @@
 Yakın zamana kadar, günlük etkileşimde bulunduğumuz hemen hemen her bilgisayar programı basit prensiplerle yazılım geliştiricileri tarafından kodlandı.
 Bir e-ticaret uygulaması yazmak istediğimizi varsayalım. Soruna bir beyaz tahta üzerinde birkaç saat kafa yorduktan sonra muhtemelen aşağıdaki gibi bir çözüme ulaşırız:
 (i) Kullanıcılar bir web tarayıcısında veya mobil uygulamada çalışan bir arabirim aracılığıyla uygulama ile etkileşimde bulunurlar,
-(ii) Uygulamamız, her kullanıcının durumunu takip etmek ve geçmiş işlemlerin kayıtlarını tutmak için ticari düzeyde bir veritabanı motoruyla etkileşime girer ve 
-(iii) Uygulamamızın merkezindeki iş mantığı(uygulamanın beyni), farklı senaryolarda uygulamanın nasıl davranacağını belirler.
+(ii) uygulamamız, her kullanıcının durumunu takip etmek ve geçmiş işlemlerin kayıtlarını tutmak için ticari düzeyde bir veritabanı motoruyla etkileşime girer ve 
+(iii) uygulamamızın merkezindeki *iş mantığı* (uygulamanın beyni diyebiliriz), farklı senaryolarda uygulamanın nasıl davranacağını belirler.
 
 
 Uygulamamızın *beynini* oluşturmak için karşılaşacağımızı tahmin ettiğimiz her senaryoyu değerlendirerek uygun kuralları belirlememiz gerekir.
-Bir müşteri alışveriş sepetine bir ürün eklemek için her tıkladığında, alışveriş sepeti veritabanı tablosuna bu müşterinin (kullanıcının) kimliğini istenen ürünün kimliği ile ilişkilendirerek bir kayıt ekleriz. Böyle bir programı basit prensiplerle yazabilir ve güvenle başlatabiliriz (çok az sayıda geliştirici *ilk seferde* tamamen doğru çalışan bir uygulama yazabilir, çoğunlukla hataları tespit etmek ve çözmek için de çalışmak gerekir). 
-Genellikle yeni durumlarda, işlevsel ürün ve sistemleri yöneten/yönlendiren uygulamaları tasarlama yeteneğimiz, dikkate değer bir bilişsel başarıdır.
-Ayrıca $\%100$ oranında işe yarayan çözümler tasarlayabildiğinizde, makine öğrenmesi kullanmamalısınız.
+Bir müşteri alışveriş sepetine bir ürün eklemek için her tıkladığında, alışveriş sepeti veritabanı tablosuna bu müşterinin kimliğini istenen ürünün kimliği ile ilişkilendirerek bir kayıt ekleriz. Böyle bir programı basit prensiplerle yazabilir ve güvenle başlatabiliriz. Çok az geliştirici ilk seferde tamamen doğru yapabilse de (sorunları çözmek için birkaç deneme çalışması gerekebilir), çoğunlukla böyle bir programı basit prensiplerden yazabilir ve gerçek bir müşteri görmeden *önceden* programı güvenle başlatabiliriz.
+Genellikle yeni durumlarda, işlevsel ürün ve sistemleri yöneten uygulamaları tasarlama yeteneğimiz, dikkate değer bir bilişsel başarıdır.
+Ayrıca $\%100$'lük oranda işe yarayan çözümler tasarlayabildiğinizde, makine öğrenmesi kullanmamalısınız.
 
 Giderek artan sayıdaki makine öğrenmesi uzmanı için ne mutlu ki, otomatikleştirmek istediğimiz birçok görev insan yaratıcılığına bu kadar kolay boyun eğmiyor.
 Beyaz tahta etrafında bildiğiniz en akıllı zihinlerle toplandığınızı hayal edin, ancak bu sefer aşağıdaki sorunlardan birini ele alıyorsunuz:
@@ -24,22 +24,22 @@ Beyaz tahta etrafında bildiğiniz en akıllı zihinlerle toplandığınızı ha
 
 
 Bu durumların her birinde, seçkin programcılar bile çözümleri sıfırdan kodlayamazlar.
-Bunun farklı nedenleri olabilir. Bazen aradığımız program zaman içinde değişen bir kalıp takip eder ve programlarımızın adapte olması gerekir.
-Diğer durumlarda, ilişki (pikseller ve soyut kategoriler arasında) çok karmaşık olabilir ve bilinçli anlayışımızın ötesinde binlerce veya milyonlarca hesaplama gerekebilir (ki gözlerimiz bu görevi halihâzırda zahmetsizce yönetse bile). *Makine öğrenmesi (MÖ)* deneyimlerden öğrenebilen güçlü tekniklerin incelenmesidir.
-Bir makine öğrenmesi algoritmasının performansı, tipik gözlemsel veri veya bir çevre ile etkileşim şeklinde daha fazla deneyim biriktirdikçe artar.
-Bunu, ne kadar deneyim kazanırsa kazansın, aynı iş mantığına göre çalışmaya devam eden (geliştiricilerin kendileri öğrenip yazılımın güncellenme zamanının geldiğine karar verene kadar) deterministik (gerekirci) e-ticaret platformumuzla karşılaştırın.
-Bu kitapta size makine öğrenmesinin temellerini öğreteceğiz ve özellikle de bilgisayarlı görme, doğal dil işleme, sağlık ve genomik gibi farklı alanlarda yenilikleri yönlendiren güçlü bir teknik altyapıya, yani *derin öğrenme*ye odaklanacağız.
+Bunun farklı nedenleri olabilir. Bazen aradığımız program zaman içinde değişen bir deseni takip eder ve programlarımızın adapte olması gerekir.
+Diğer durumlarda, ilişki (pikseller ve soyut kategoriler arasında) çok karmaşık olabilir ve bilinçli anlayışımızın ötesinde binlerce veya milyonlarca hesaplama gerekebilir, ki gözlerimiz bu görevi halihâzırda zahmetsizce yönetir. *Makine öğrenmesi (MÖ)* deneyimlerden öğrenebilen güçlü tekniklerin incelenmesidir.
+Bir makine öğrenmesi algoritmasının performansı, tipik gözlemsel veri veya bir çevre ile etkileşim şeklinde olur, daha fazla deneyim biriktirdikçe artar.
+Bunu, ne kadar deneyim kazanırsa kazansın, aynı iş mantığına göre çalışmaya devam eden geliştiricilerin kendileri öğrenip yazılımın güncellenme zamanının geldiğine karar verene kadar deterministik (gerekirci) e-ticaret platformumuzla karşılaştırın.
+Bu kitapta size makine öğrenmesinin temellerini öğreteceğiz ve özellikle de bilgisayarla görme, doğal dil işleme, sağlık ve genomik gibi farklı alanlarda yenilikleri yönlendiren güçlü bir teknik altyapıya, yani *derin öğrenme*ye odaklanacağız.
 
 
 ## Motive Edici Bir Örnek
 
-Bu kitabı yazmaya başlayabilmek için, birçok çalışan gibi, bol miktarda kahve tüketmemiz gerekiyordu. Arabaya bindik ve sürmeye başladık. Alex "Hey Siri" diye seslenerek iPhone'unun sesli asistan sistemini uyandırdı ve "Blue Bottle kafesine yol tarifi" komutunu verdi. Telefon komutun metnini (transkripsiyonunu) hızlı bir şekilde gösterdi. Ayrıca yol tarifini istediğimizi fark etti ve talebimizi yerine getirmek için Maps uygulamasını (app) başlattı.
-Maps uygulaması bir dizi rota belirledi, her rotanın yanında tahmini bir varış süresi de gösterdi. Bu hikaye, bir akıllı telefondaki günlük etkileşimlerimizin saniyeler içinde birkaç makine öğrenmesi modeliyle işbirligi yaptığını gösteriyor.
+Bu kitabı yazmaya başlayabilmek için, birçok çalışan gibi, bol miktarda kahve tüketmemiz gerekiyordu. Arabaya bindik ve sürmeye başladık. Alex "Hey Siri" diye seslenerek iPhone'unun sesli asistan sistemini uyandırdı. Sonra Mu "Blue Bottle kafesine yol tarifi" komutunu verdi. Telefon komutun metnini (transkripsiyonunu) hızlı bir şekilde gösterdi. Ayrıca yol tarifini istediğimizi fark etti ve talebimizi yerine getirmek için Maps uygulamasını (app) başlattı.
+Başlatılınca Maps uygulaması bir dizi rota belirledi, her rotanın yanında tahmini bir varış süresi de gösterdi. Eğitim amaçlı tasarlandığımız bu hikaye, bir akıllı telefondaki günlük etkileşimlerimizin saniyeler içinde birkaç makine öğrenmesi modeliyle işbirligi yaptığını gösteriyor.
 
 
 "Alexa", "OK, Google" veya "Hey Siri" gibi bir *uyandırma kelimesine* yanıt vermek için bir program yazdığınızı düşünün.
-Bir odada kendiniz bir bilgisayar ve kod editöründen başka bir şey olmadan kodlamayı deneyin :numref:`fig_wake_word`.
-Böyle bir programı basit ilkelerle (prensiplerle) nasıl yazarsınız?
+Bir odadayken kendiniz bir bilgisayar ve kod editöründen başka bir şey olmadan kodlamayı deneyin :numref:`fig_wake_word`.
+Böyle bir programı basit prensiplerle nasıl yazarsınız?
 Bir düşünün ... problem zor.
 Mikrofon her saniye yaklaşık 44000 örnek toplayacaktır.
 Her örnek, ses dalgasının genliğinin bir ölçümüdür.
@@ -53,17 +53,17 @@ Bu yüzden makine öğrenmesi kullanıyoruz.
 :label:`fig_wake_word`
 
 Olayın özünü şöyle açıklayabiliriz:
-"Çoğu zaman, bir bilgisayara girdilerle çıktıları nasıl eşleştirebileceğini açıklayamayı bilmediğimizde bile, kendimiz bu bilişsel başarıyı gerçekleştirebiliyoruz.
+Çoğu zaman, bir bilgisayara girdilerle çıktıları nasıl eşleştirebileceğini açıklayamayı bilmediğimizde bile, kendimiz bu bilişsel işi gerçekleştirebiliyoruz.
 Diğer bir deyişle, "Alexa" kelimesini tanımak için bir bilgisayarı nasıl programlayacağınızı bilmeseniz bile siz kendiniz "Alexa" kelimesini tanıyabilirsiniz.
 Bu yetenekle donanmış bizler ses örnekleri içeren büyük bir *veri kümesi* toplayabilir ve uyandırma kelimesi *içerenleri* ve *içermeyenleri* etiketleyebiliriz.
 Makine öğrenmesi yaklaşımında, uyandırma kelimelerini tanımak için *açıktan* bir sistem tasarlamaya çalışmayız.
-Bunun yerine, davranışı bir miktar *parametre* ile belirlenen esnek bir program tanımlarız.
-Ardından, veri kümesini, ilgili görevdeki performans ölçüsüne göre, programımızın performansını artıran en iyi parametre kümesini belirlemek için kullanırız."
+Bunun yerine, davranışı bir takım *parametre* ile belirlenen esnek bir program tanımlarız.
+Ardından, veri kümesini, ilgili görevdeki performans ölçüsüne göre, programımızın performansını artıran en iyi parametre kümesini belirlemek için kullanırız.
 
 Parametreleri, çevirerek programın davranışını değiştirebileceğimiz düğmeler olarak düşünebilirsiniz.
 Parametreleri sabitlendiğinde, programa *model* diyoruz.
 Sadece parametreleri manipüle ederek üretebileceğimiz tüm farklı programlara (girdi-çıktı eşlemeleri) *model ailesi* denir.
-Ve parametreleri seçmek için veri kümemizi kullanan meta (başkalaşım) programa *öğrenme algoritması* denir.
+Ayrıca parametreleri seçmek için veri kümemizi kullanan meta (başkalaşım) programa *öğrenme algoritması* denir.
 
 Devam etmeden ve öğrenme algoritmasını kullanmadan önce, sorunu kesin olarak tanımlamalı, girdi ve çıktıların kesin doğasını tespit etmeli ve uygun bir model ailesi seçmeliyiz.
 Bu durumda, modelimiz *girdi* olarak bir ses parçasını alır ve *çıktı* olarak $\{\text{evet}, \text{hayır}\}$ arasında bir seçim oluşturur.
@@ -75,11 +75,10 @@ Aynı model ailesinin "Alexa"yı tanıma ve "Kayısı"yı tanıma için uygun ol
 Bununla birlikte, temel olarak farklı girdiler veya çıktılarla uğraşmak istiyorsak, resimlerden altyazılara veya İngilizce cümlelerden Çince cümlelere eşlemek istiyorsak mesela, tamamen farklı bir model ailesine ihtiyacımız olabilir.
 
 Tahmin edebileceğiniz gibi, tüm düğmeleri rastgele bir şekilde ayarlarsak, modelimizin "Alexa", "Kayısı" veya başka bir kelimeyi tanıması muhtemel değildir.
-Derin öğrenmede, *öğrenme*, modelimizi istenen davranışa zorlayan düğmelerin doğru ayarını keşfettiğimiz süreçtir.
+Makine öğrenmesinde, *öğrenme*, modelimizi istenen davranışa zorlayan düğmelerin doğru ayarını keşfettiğimiz süreçtir.
 Başka bir deyişle,
 modelimizi veri ile *eğitiyoruz*.
-
-Gösterildiği gibi :numref:`fig_ml_loop`, eğitim süreci genellikle şöyle görünür:
+:numref:`fig_ml_loop`'de gösterildiği gibi, eğitim süreci genellikle şöyle görünür:
 
 1. Yararlı bir şey yapamayan rastgele başlatılan bir model ile başlayın.
 1. Verilerinizin bir kısmını alın (örneğin, ses parçaları ve onlara karşılık gelen $\{\text{evet}, \text{hayır}\}$ etiketleri).
@@ -93,24 +92,20 @@ Gösterildiği gibi :numref:`fig_ml_loop`, eğitim süreci genellikle şöyle g�
 Özetlemek gerekirse, bir uyandırma kelimesi tanıyıcısını kodlamak yerine, büyük bir etiketli veri kümesi sunarsak uyandırma sözcüklerini tanımayı *öğrenebilen* bir program kodlarız.
 Bu eylemi bir programın davranışını ona bir veri kümesi sunup *veri ile programlayarak* belirleme gibi düşünebilirsiniz.
 Söylemek istediğimiz MÖ sistemimize birçok kedi ve köpek örneği sağlayarak bir kedi dedektörü "programlayabiliriz".
-
-
 Bu şekilde dedektör, sonunda, bir kedi ise çok büyük bir pozitif sayı, bir köpekse çok büyük bir negatif sayı ve emin değilse sıfıra daha yakın bir şey yaymayı öğrenir ve bu, makine öğrenmesinin neler yapabileceğinin ancak yüzeyini kazır.
-
 Derin öğrenme (DÖ), ki daha sonra çok detaylı açıklayacağız, makine öğrenmesi problemlerini çözmek için mevcut birçok popüler yöntemden sadece biridir.
 
-## Temel Bileşenler: Veri, Modeller ve Algoritmalar
+## Temel Bileşenler
 
 Uyandırma kelimesi örneğimizde, ses parçaları ve ikili etiketlerden oluşan bir veri kümesi tanımladık ve parçalardan sınıflandırmalara bir eşlemeyi yaklaşık olarak nasıl eğitebileceğimize dair çok ciddi olmayan bir izlenim verdik.
-Bu tarz bir problem, etiketleri bilinen örneklerden oluşan bir veri kümesinin verildiği ve bilinen girdilerin etiketini öngörmeye çalıştığımız, *gözetimli öğrenme* olarak adlandırılır ve MÖ problemi çeşitlerinden sadece bir tanesidir.
+Bu tarz bir problem, etiketleri bilinen örneklerden oluşan bir veri kümesinin verildiği ve bilinen girdilerin etiketini öngörmeye çalıştığımız, *gözetimli öğrenme* olarak adlandırılır. Bu MÖ problemi çeşitlerinden sadece bir tanesidir.
 Daha sonra, farklı MÖ sorunlarına derinlemesine bakacağız.
-İlk olarak, ne tür bir MÖ problemi olursa olsun, takip edeceğimiz temel bileşenlere daha fazla ışık tutmak istiyoruz:
+İlk olarak, ne tür bir MÖ problemi olursa olsun, bizi takip edecek temel bileşenlere daha fazla ışık tutmak istiyoruz:
 
 1. Öğrenebileceğimiz *veri*.
 2. Verinin nasıl dönüştürüleceğine dair bir *model*.
-3. Modelimizin ne kadar iyi veya kötü iş çıkardığını ölçümleyen bir *amaç* işlevi (objective function).
+3. Modelin ne kadar iyi veya kötü iş çıkardığını ölçümleyen bir *amaç* işlevi (objective function).
 4. Kaybı en aza indirmede modelin parametrelerini ayarlamak için bir *algoritma*.
-
 
 ### Veri
 
@@ -125,8 +120,7 @@ Eğer görüntü verileriyle çalışıyorsak, bir fotoğraf için, her bir piks
 $200\times200$ bir renkli fotoğraf, her bir uzamsal konum için kırmızı, yeşil ve mavi kanalların parlaklığına karşılık gelen $200\times200\times3=120000$ tane sayısal değerden oluşur.
 Başka bir geleneksel görevde ise yaş, yaşamsal belirtiler ve teşhisler gibi standart bir dizi özellik göz önüne alındığında, bir hastanın hayatta kalıp kalmayacağını tahmin etmeye çalışabiliriz.
 
-Her örnek aynı sayıda sayısal değerle karakterize edildiğinde, verinin sabit uzunluklu vektörlerden oluştuğunu söylüyoruz ve vektörlerin sabit uzunluğunu
-verinin *boyutu* olarak tanımlıyoruz.
+Her örnek aynı sayıda sayısal değerle karakterize edildiğinde, verinin sabit uzunluklu vektörlerden oluştuğunu söylüyoruz ve vektörlerin sabit uzunluğunu verinin *boyutu* olarak tanımlıyoruz.
 Tahmin edebileceğiniz gibi, sabit uzunluk işleri kolaylaştıracak bir özellik olabilir.
 Mikroskopik görüntülerde kanseri tanımak için bir model eğitmek istersek, sabit uzunluktaki girdilere sahip olmak endişelenecek şeylerin sayısının bir tane azaldığı anlamına gelir.
 
@@ -136,22 +130,21 @@ Görüntüler için, hepsini standart bir boyuta kırpmayı düşünebiliriz, an
 Kırpılan bölümlerde bilgi kaybetme riskiyle karşı karşıyayız.
 Ayrıca, metin verisi sabit uzunluklu gösterimlere daha inatçı bir şekilde direnir.
 Amazon, IMDB veya TripAdvisor gibi e-ticaret sitelerine bırakılan müşteri yorumlarını düşünün.
-Bazıları kısadır: "berbat!", bazıları da sayfalara yayılır.
+Bazıları kısadır: "Berbat!", bazıları da sayfalara yayılır.
 Geleneksel yöntemlere göre derin öğrenmenin en büyük avantajlarından biri *değişken uzunluktaki* veriyi işlemedeki göreceli yeteneğidir.
 
 Genel olarak, ne kadar fazla veriye sahip olursak işimiz o kadar kolay olur.
 Daha fazla veriye sahip olduğumuzda, daha güçlü modeller eğitebilir ve önceden tasarlanmış varsayımlara daha az bel bağlayabiliriz.
-Büyük veri(big data) modern derin öğrenmenin başarısına önemli bir katkıda bulunmaktadır, derin öğrenmedeki en heyecan verici modellerin çoğu büyük veri kümeleri olmadan çalışmaz.
-Bazıları küçük veri ile de çalışır ancak geleneksel yaklaşımlardan daha iyi değildirler.
+(Nispeten) küçük veriden büyük veriye düzen değişikliği, modern derin öğrenmenin başarısına önemli bir katkıda bulunur. İşin özü, derin öğrenmedeki en heyecan verici modellerin çoğu, büyük veri kümeleri olmadan çalışmaz. Bazıları küçük veri rejiminde çalışır, ancak geleneksel yaklaşımlardan daha iyi değildir.
 
 Son olarak, çok fazla veriye sahip olmak ve onu akıllıca işlemek yeterli değildir.
-*Doğru* veriye ihtiyacımız vardır. Veri hatalarla doluysa veya seçilen özellikler hedefle ilgisizse, öğrenme başarısız olacaktır.
-Durum şu klişe ile iyi betimlenebilir: *çöp girerse çöp çıkar*.
+*Doğru* veriye ihtiyacımız vardır. Veri hatalarla doluysa veya seçilen öznitelikler hedefle ilgisizse, öğrenme başarısız olacaktır.
+Durum şu klişe ile iyi betimlenebilir: *Çöp girerse çöp çıkar*.
 Ayrıca, kötü tahmin performansı tek olası sonuç değildir.
 Tahminli polislik, özgeçmiş taraması ve borç verme için kullanılan risk modelleri gibi makine öğrenmesinin hassas uygulamalarında, özellikle çöp verinin olası sonuçlarına karşı dikkatli olmalıyız.
 Yaygın bir hata durumu bazı insan gruplarının eğitim verilerinde temsil edilmediği veri kümelerinde gerçekleşir.
 Gerçek hayatta, daha önce hiç koyu ten görmemiş bir cilt kanseri tanıma sistemi uyguladığınızı düşünün.
-Ayrıca başarısızlık, veri sadece bazı grupları az temsil ettiğinde değil, aynı zamanda toplumsal önyargıları yansıttığı zaman da  meydana gelebilir.
+Ayrıca başarısızlık, veri sadece bazı grupları az temsil ettiğinde değil, aynı zamanda toplumsal önyargıları yansıttığı zaman da meydana gelebilir.
 Örneğin, özgeçmişleri taramak için kullanılacak bir öngörü modeli eğitmek için geçmiş işe alım kararları kullanılıyorsa, makine öğrenme modelleri yanlışlıkla tarihi adaletsizlikleri yakalayıp onları otomatikleştirebilir.
 Tüm bunların veri bilimcisi aktif olarak komplo kurmadan ve hatta o farkında olmadan gerçekleşebileceğini unutmayın.
 
@@ -163,21 +156,21 @@ Alternatif olarak, bir dizi sensör okuması alarak normal veya anormal olup olm
 *Model* ile, bir tipteki veriyi alan ve muhtemel farklı tipteki tahminleri veren hesaplama makinelerini belirtiyoruz.
 Özellikle veriden tahmin yapabilecek istatistiksel modellerle ilgileniyoruz.
 Basit modeller, basitliği uygun problemleri mükemmel bir şekilde çözebilirken, bu kitapta odaklandığımız problemler klasik yöntemlerin sınırlarını aşmaktadır.
-Derin öğrenme, klasik yaklaşımlardanö esas olarak odaklandığı güçlü modeller kümesi ile ayrılır.
+Derin öğrenme, klasik yaklaşımlardan esas olarak odaklandığı güçlü modeller kümesi ile ayrılır.
 Bu modeller, yukarıdan aşağıya zincirlenmiş verinin art arda dönüşümlerinden oluşur, bu nedenle adları *derin öğrenme*dir.
 Derin modelleri tartışırken, bazı geleneksel yöntemlere de değineceğiz.
 
-### Amaç Fonksiyonları (Objective Functions)
+### Amaç Fonksiyonları
 
 Daha önce, makine öğrenmesini deneyimden öğrenme olarak tanıttık.
 Burada *öğrenme* ile zamanla bazı görevlerde iyileştirmeyi kastediyoruz.
 Peki kim neyin bir iyileştirme oluşturduğunu söyleyecek?
-Modeli güncellemeyi önerdiğiniz zaman önerilen güncellemenin bir iyileştirme mi yoksa bir düşüş mü oluşturacağı konusunda görüş ayrılıkları olabilir.
+Modeli güncellemeyi önerdiğiniz zaman önerilen güncellemenin bir iyileştirme mi yoksa bir düşüş mü oluşturacağı konusunda görüş ayrılıkları olabileceğini tahmin edebilirsiniz.
 
-Resmi bir matematiksel öğrenme makinesi sistemi geliştirmek için modellerimizin ne kadar iyi (ya da kötü) olduğuna dair kurallı ölçümlere ihtiyacımız var.
+Biçimsel bir matematiksel öğrenen makineler sistemi geliştirmek için modellerimizin ne kadar iyi (ya da kötü) olduğuna dair kurallı ölçümlere ihtiyacımız var.
 Makine öğrenmesinde ve daha genel olarak optimizasyonda (eniyilemede), bunları amaç fonsiyonları olarak adlandırıyoruz.
 Yaygın yaklaşım olarak, genellikle amaç fonksiyonları tanımlarız, böylece daha düşük değer daha iyi anlamına gelir.
-Bu sadece yaygın bir kanı. Daha yüksekken daha iyi olan herhangi bir fonksiyonu alabilir ve onu, işaretini değiştirerek niteliksel olarak özdeş ama daha düşükken daha iyi yeni bir fonksiyona dönüştürebilirsiniz.
+Bu sadece yaygın bir kanıdır. Daha yüksekken daha iyi olan herhangi bir fonksiyonu alabilir ve onu, işaretini değiştirerek niteliksel olarak özdeş ama daha düşükken daha iyi yeni bir fonksiyona dönüştürebilirsiniz.
 Düşük daha iyi olduğu için, bu fonksiyona bazen *yitim fonksiyonları (loss function)*  denir.
 
 Sayısal değerleri tahmin etmeye çalışırken, en yaygın amaç fonksiyonu hata karesidir, yani gerçek referans değeri ile tahmin değeri arasındaki farkın karesi. 
@@ -189,17 +182,16 @@ Bu durumlarda, *vekil (surrogate) amaç* optimizasyonu yaygındır.
 Tipik olarak, yitim fonksiyonu modelin parametrelerine göre tanımlanır ve veri kümesine bağlıdır.
 Modelimizin parametrelerinin en iyi değerlerini, eğitim için toplanan örneklerden oluşan bir kümede meydana gelen kaybı en aza indirerek öğreniriz.
 Bununla birlikte, eğitim verisinde iyi performans göstermemiz, görülmemiş veri üzerinde iyi performans göstereceğimizi garanti etmez.
-Bu nedenle, genellikle mevcut veriyi iki parçaya ayıracağız: Modelimizin ikisinin de üzerindeki performanslarını raporladığımız eğitim veri kümesi (model parametrelerini bulmak için) ve test veri kümesi (değerlendirme için).
+Bu nedenle, genellikle mevcut veriyi iki parçaya ayıracağız: Modelimizin ikisinin de üzerindeki performanslarını raporladığımız eğitim veri kümesi (veya eğitim kümesi, model parametrelerini bulmak için) ve test veri kümesi (veya test kümesi, değerlendirme için dışarıda tutulur).
 Eğitim hatasını, bir öğrencinin gerçek bir final sınava hazırlanmak için girdiği uygulama sınavlarındaki puanları gibi düşünebilirsiniz.
 Sonuçlar cesaret verici olsa bile, bu final sınavında başarıyı garanti etmez.
-Baska bir deyisle,
-test performansı eğitim performansından ciddi derecede sapabilir.
+Başka bir deyişle, test performansı eğitim performansından ciddi derecede sapabilir.
 Bir model eğitim kümesi üzerinde iyi performans gösterdiğinde, ancak bunu görünmeyen veriye genelleştiremediğinde, buna *aşırı öğrenme (overfitting)* diyoruz.
 Bu durumu uygulama sınavlarında başarılı olunmasına rağmen gerçek sınavda çakmaya benzetebiliriz.
 
 ### Optimizasyon (Eniyileme) Algoritmaları
 
-Bir kez veri kaynağı ve gösterim, bir model ve iyi tanımlanmış bir amaç fonksiyonuna sahip olduktan sonra, yitim fonksiyonunu en aza indirmek için mümkün olan en iyi parametreleri arayabilen bir algoritmaya ihtiyacımız var.
+Bir kez biraz veri kaynağı ve gösterime, bir modele ve iyi tanımlanmış bir amaç fonksiyonuna sahip olduktan sonra, yitim fonksiyonunu en aza indirmek için mümkün olan en iyi parametreleri arayabilme becerisine sahip bir algoritmaya ihtiyacımız var.
 Derin öğrenme için popüler optimizasyon algoritmaları, gradyan (eğim) alçaltma (gradient descent) olarak adlandırılan bir yaklaşıma bağlıdır. Kısacası, her adımda, her bir parametre için, bu parametreyi sadece küçük bir miktar bozarsanız eğitim kümesi kaybının nasıl hareket edeceğini (değişeceğini) kontrol ederler.
 Daha sonra parametreyi kaybı azaltabilecek yönde güncellerler.
 
@@ -222,10 +214,10 @@ Burada gözetim devreye girer, çünkü parametreleri seçmek için, biz (gözet
 
 Olasılıksal terimlerle, tipik olarak öznitelikler verildiğinde bir etiketinin koşullu olasılığını tahmin etmekle ilgileniyoruz.
 Makine öğrenmesi içindeki birçok paradigmadan sadece biri olsa da, gözetimli öğrenme, makine öğrenmesinin endüstrideki başarılı uygulamalarının çoğunu oluşturur.
-Kısmen, bunun nedeni, birçok önemli görevin, belirli bir mevcut veri kümesi göz önüne alındığında bilinmeyen bir şeyin olasılığını tahmin etmek gibi net bir şekilde tanımlanabilmesidir. Örneğin;
+Kısmen, bunun nedeni, birçok önemli görevin, belirli bir mevcut veri kümesi göz önüne alındığında bilinmeyen bir şeyin olasılığını tahmin etmek gibi net bir şekilde tanımlanabilmesidir. Örneğin:
 
-* CT (computed tomography) görüntüsü verildiğinde kanserli olma/olmama tahmini.
-* İngilizce bir cümle verildiğinde Fransızca çevirisinin tahmini.
+* CT (hesaplamalı tomografi - computed tomography) görüntüsü verildiğinde kanserli olma/olmama tahmini.
+* İngilizce bir cümle verildiğinde doğru Fransızca çevirisinin tahmini.
 * Bir  hisse senedinin gelecek aydaki fiyatının bu ayın finansal raporlama verilerine dayalı tahmini.
 
 Temel olarak "girdi öznitelikleri verildiğinde etiketlerin tahmin edilmesi" diye tanımladığımız gözetimli öğrenme çok çeşitli şekillerde olabilir, diğer hususların yanı sıra girdilerin ve çıktıların türüne, boyutuna ve sayısına bağlı olarak çok sayıda modelleme kararı gerektirebilir.
@@ -233,12 +225,11 @@ Temel olarak "girdi öznitelikleri verildiğinde etiketlerin tahmin edilmesi" di
 Bu kitapta bu sorunların birçoğunu derinlemesine işleyeceğiz.
 
 Gayri resmi olarak, öğrenme süreci şöyle görünür:
-İlk olarak özniteliklerin bilindiği büyük bir örnek koleksiyonunu alın ve rastgele bir altküme seçin - eğer yoksa bu altkümedeki her örneğin doğru değer etiketini (ground truth label) oluşturun.
+İlk olarak özniteliklerin bilindiği büyük bir örnek koleksiyonunu alın ve rastgele bir altküme seçin - eğer yoksa bu altkümedeki her örneğin doğru değer etiketini oluşturun.
 Bazen bu etiketler zaten toplanmış da olabilir (örn. Bir hasta sonraki yıl içinde öldü mü?) ve diğer zamanlarda veriyi etiketlemek için insanların yorumlarını kullanmamız gerekebilir (örn. Görüntülere kategori atama).
-
 Bu girdiler ve karşılık gelen etiketler birlikte eğitim kümesini oluştururlar.
-Eğitim veri kümesini gözetimli bir öğrenme algoritmasına besleriz; bu algoritma veri kümesini girdi olarak alır ve başka bir fonksiyon verir: Öğrenilen model.
-Son olarak, çıktılarını karşılık gelen etiketin tahminleri olarak kullanarak önceden görülmemiş girdileri öğrenilen modele besleyebiliriz.
+Eğitim veri kümesini gözetimli bir öğrenme algoritmasına besleriz; bu algoritma veri kümesini girdi olarak alır ve başka bir fonksiyon verir: Öğrenmiş model.
+Son olarak, çıktılarını karşılık gelen etiketin tahminleri olarak kullanarak önceden görülmemiş girdileri öğrenmiş modele besleyebiliriz.
 Tüm süreç şöyle çizilebilir :numref:`fig_supervised_learning`.
 
 ![Gözetimli öğrenme.](../img/supervised-learning.svg)
@@ -246,7 +237,7 @@ Tüm süreç şöyle çizilebilir :numref:`fig_supervised_learning`.
 
 #### Bağlanım
 
-Belki de kafanıza sokmak için en basit gözetimli öğrenme görevi *bağlanım*'dır.
+Belki de kafanıza sokmak için en basit gözetimli öğrenme görevi *bağlanım*dır.
 Örneğin, ev satışları veritabanından toplanan bir veri kümesini düşünün.
 Her sıranın farklı bir eve karşılık geldiği bir tablo oluşturabiliriz ve her sütun, bir evin alanı, yatak odası sayısı, banyo sayısı ve şehir merkezine (yürüyüş) dakika sayısı  gibi ilgili bazı özelliklere karşılık gelir.
 Bu veri kümesinde, her örnek belirli bir ev olacaktır ve karşılık gelen öznitelik vektörü tabloda bir satır olacaktır.
