@@ -235,6 +235,8 @@ symmetry; bakışım
 
 tabular; çizelge halindeki
 
+tagging; etiketleme
+
 teacher forcing; öğretici zorlama
 
 token; andıç

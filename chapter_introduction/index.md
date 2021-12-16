@@ -239,9 +239,8 @@ Tüm süreç şöyle çizilebilir :numref:`fig_supervised_learning`.
 
 Belki de kafanıza sokmak için en basit gözetimli öğrenme görevi *bağlanım*dır.
 Örneğin, ev satışları veritabanından toplanan bir veri kümesini düşünün.
-Her sıranın farklı bir eve karşılık geldiği bir tablo oluşturabiliriz ve her sütun, bir evin alanı, yatak odası sayısı, banyo sayısı ve şehir merkezine (yürüyüş) dakika sayısı  gibi ilgili bazı özelliklere karşılık gelir.
+Her sıranın farklı bir eve karşılık geldiği bir tablo oluşturabiliriz ve her sütun, bir evin alanı, yatak odası sayısı, banyo sayısı ve şehir merkezine (yürüyüş) dakika uzaklığı gibi ilgili bazı özelliklere karşılık gelir.
 Bu veri kümesinde, her örnek belirli bir ev olacaktır ve karşılık gelen öznitelik vektörü tabloda bir satır olacaktır.
-
 New York veya San Francisco'da yaşıyorsanız ve Amazon, Google, Microsoft veya Facebook'un CEO'su değilseniz, (metrekare bilgileri, yatak odası sayısı, banyo sayısı, yürüme mesafesi) eviniz için vektör özelliği şuna benzeyebilir: $[600, 1, 1, 60]$.
 Ancak, Pittsburgh'da yaşıyorsanız, daha çok $[3000, 4, 3, 10]$ gibi görünebilir.
 Bunun gibi öznitelik vektörleri, çoğu klasik makine öğrenmesi algoritması için gereklidir.
@@ -249,54 +248,50 @@ Bunun gibi öznitelik vektörleri, çoğu klasik makine öğrenmesi algoritması
 Bir problemi *bağlanım* yapan aslında çıktılardır.
 Yeni bir ev için pazarda olduğunuzu varsayalım.
 Yukarıdaki gibi bazı öznitelikler göz önüne alındığında, bir evin adil piyasa değerini tahmin etmek isteyebilirsiniz.
-Etiket değeri, satış fiyatı, bir sayısal değerdir.
-
+Etiket değeri, ki satış fiyatıdır, bir sayısal değerdir.
 Etiketler keyfi sayısal değerler aldığında buna bir *bağlanım* problemi diyoruz.
 Hedefimiz, tahminleri gerçek etiket değerlerine çok yakın olan bir model üretmektir.
 
 Birçok pratik problem iyi tanımlanmış bağlanım problemleridir.
-Bir kullanıcının bir filme atayacağı puanı tahmin etmek bir bağlanım sorunu olarak düşünülebilir ve 2009'da bu özelliği gerçekleştirmek için harika bir algoritma tasarlasaydınız, [1 milyon dolarlık Netflix ödülünü](https: //en.wikipedia.org/wiki/Netflix_Prize) kazanmış olabilirsiniz .
+Bir kullanıcının bir filme atayacağı puanı tahmin etmek bir bağlanım sorunu olarak düşünülebilir ve 2009'da bu özelliği gerçekleştirmek için harika bir algoritma tasarlasaydınız, [1 milyon dolarlık Netflix ödülünü](https://en.wikipedia.org/wiki/Netflix_Prize) kazanmış olabilirdiniz.
 Hastanedeki hastalar için kalış süresinin öngörülmesi de bir bağlanım sorunudur.
-Pratik bir kural; aşağıdaki gibi, herhangi bir *ne kadar?* veya *kaç tane?* problemi bağlanım içerir.
+Pratik bir kural; aşağıdaki gibi, herhangi bir *ne kadar?* veya *kaç tane?* problemi bağlanım içerir:
 
 * Bu ameliyat kaç saat sürecek?
 * Önümüzdeki altı saatte bu kasabaya ne kadar yağmur düşecek?
 
 Daha önce hiç makine öğrenmesi ile çalışmamış olsanız bile, muhtemelen gayri ihtiyari olarak bir bağlanım problemi ile çalışmışsınızdır.
-Örneğin, giderlerinizin onarıldığını ve personelin kanalizasyon borularınızdan pisliği temizlemek için 3 saat harcadığını düşünün.
-Sonra size $350\$$ tutarında bir fatura gönderdi.
+Örneğin, atık su giderlerinizin onarıldığını ve personelin kanalizasyon borularınızdan pisliği temizlemek için 3 saat harcadığını düşünün.
+Sonra size $350\$$ tutarında bir fatura gönderildi.
 Şimdi arkadaşınızın aynı personelini 2 saat kiraladığını ve $250\$$ fatura aldığını düşünün.
-Birisi size yaklaşan pislik temizleme faturasında ne kadar bekleyeceğinizi sorarsa, bazı makul varsayımlar yapabilirsiniz,
-daha fazla çalışma saati daha fazla dolar maliyeti gibi.
-Ayrıca bir baz ücretin olduğunu ve personelin saatlik ücret aldığını varsayabilirsiniz.
-Bu varsayımlar geçerliyse, bu iki veri örneği göz önüne alındığında, personelin fiyatlandırma yapısını zaten tanımlayabilirsiniz: Saat başı 100\$ artı evinizde görünmesi için 50\$.
-Eğer buraya kadar izleyebildiyseniz, doğrusal bağlanım arkasındaki üst-kademe fikri zaten anlıyorsunuz  .
+Birisi size yaklaşan pislik temizleme faturasında ne kadar beklediğinizi sorarsa, bazı makul varsayımlar yapabilirsiniz;
+daha fazla çalışma saati daha fazla ücret maliyeti gibi.
+Ayrıca bir sabit ücretin olduğunu ve personelin saatlik ücret aldığını varsayabilirsiniz.
+Bu varsayımlar geçerliyse, bu iki veri örneği göz önüne alındığında, personelin fiyatlandırma yapısını zaten tanımlayabilirsiniz: Saat başı $100\$$ artı evinizde görünmesi için $50\$$.
+Eğer buraya kadar takip edebildiyseniz, doğrusal bağlanımın arkasındaki üst-sevize fikri zaten anlıyorsunuz.
 
-Bu durumda, personelin fiyatlarına tam olarak uyan parametreleri üretebiliriz.
-Bazen bu mümkün olmayabilir; örneğin, varyansın bir kısmı iki özniteliğinizin yanı sıra birkaç diğer faktöre borçluysa.
+Bu durumda, personelin fiyatına tam olarak uyan parametreleri üretebiliriz.
+Bazen bu mümkün olmayabilir; örneğin, varyansın bir kısmı iki özniteliğinizin yanı sıra birkaç diğer faktöre bağlıysa.
 Bu durumlarda, tahminlerimiz ile gözlenen değerler arasındaki mesafeyi en aza indiren modelleri öğrenmeye çalışacağız.
-Bölümlerimizin çoğunda
-kare hata kayıp fonksiyonunu en aza indirmeye
-odaklanacağız.
-
+Bölümlerimizin çoğunda kare hata kayıp fonksiyonunu en aza indirmeye odaklanacağız.
 Daha sonra göreceğimiz gibi, bu kayıp fonksiyonu, verilerimizin Gauss gürültüsü ile bozulduğu varsayımına karşılık gelir.
 
 #### Sınıflandırma
 
 Bağlanım modelleri *kaç tane?* sorusunu ele almak için mükemmel olsa da, birçok sorun bu şablona rahatça uymaz.
-Örneğin, bir banka mobil uygulamasına çek taraması eklemek istiyor.
+Örneğin, bir banka mobil uygulamasına çek taraması eklemek istesin.
 Bu, müşterinin akıllı telefonunun kamerasıyla bir çekin fotoğrafını çekmesini içerir ve uygulamanın görüntüde görülen metni otomatik olarak anlaması gerektirir.
-Daha dirençli olması için elle yazılmış metni de anlaması gerekir, örneğin el yazması bir karakteri bilindik bir karaktere eşleştirmek gibi.
+Daha dirençli olması için elle yazılmış metni de anlaması gerekir, örneğin el yazması bir karakteri bilindik bir karaktere eşlemek gibi.
 Bu tür *hangisi?* sorununa *sınıflandırma* denir.
-Bağlanım için kullanılanlardan farklı bir algoritma seti ile işlenir, ki birçok teknik buraya taşınacak olsa da.
+Birçok teknik buraya da taşınacak olsa, bağlanım için kullanılanlardan farklı bir algoritma kümesi ile işlem görür.
 
-*Sınıflandırma*da, modelimizin özniteliklere, örneğin bir görüntüdeki piksel değerlerine bakmasını ve ardından bazı (ayrık) seçenekler kümesi arasından hangi *kategori*ye (aslen *sınıf* olarak adlandırılırlar) ait olduğunu tahmin etmesini istiyoruz.
+*Sınıflandırma*da, modelimizin özniteliklere, mesela bir görüntüdeki piksel değerlerine, bakmasını ve ardından örneğimizin bazı ayrık seçenekler kümesi arasından hangi *kategori*ye (aslen *sınıf* olarak adlandırılırlar) ait olduğunu tahmin etmesini istiyoruz.
 Elle yazılmış rakamlar için, 0 ile 9 arasındaki rakamlara karşılık gelen on sınıfımız olabilir.
 Sınıflandırmanın en basit şekli, sadece iki sınıf olduğunda, *ikili sınıflandırma* dediğimiz bir problemdir.
 Örneğin, veri kümemiz hayvanların görüntülerinden oluşabilir ve *etiketlerimiz* $\mathrm{\{kedi, köpek\}}$ sınıfları olabilir.
-Bağlanımdayken, sayısal bir değer, çıkarmak için bir *bağlanımcı* aradık, sınıflandırmada çıktısı öngörülen sınıf ataması olan bir *sınıflandırıcı* arıyoruz.
+Bağlanımdayken, sayısal bir değer çıkarmak için bir *bağlanımcı* aradık, sınıflandırmada çıktısı tahminlenen sınıf ataması olan bir *sınıflandırıcı* arıyoruz.
 
-Kitap daha teknik hale geldikçe gireceğimiz nedenlerden ötürü, yalnızca kategorik bir atama, örneğin "kedi" veya "köpek" çıktısı, alabilen bir modeli optimize etmek zor olabilir.
+Kitap daha teknik hale geldikçe gireceğimiz nedenlerden ötürü, yalnızca kategorik bir atama yapabilen, örneğin "kedi" veya "köpek" çıktısı, bir modeli optimize etmek zor olabilir.
 Bu tür durumlarda, modelimizi olasılıklar dilinde ifade etmek genellikle daha kolaydır.
 Bir örneğin öznitelikleri verildiğinde, modelimiz her olası sınıfa bir olasılık atar.
 Hayvan sınıflandırma örneğimize dönersek, ki burada sınıflar $\mathrm{\{kedi, köpek\}}$'tir, bir sınıflandırıcı bir görüntü görebilir ve görüntünün bir kedi olma olasılığını 0.9 çıkarabilir.
@@ -306,26 +301,24 @@ Bu tek mevcut belirsizlik kavramı değildir ve diğerlerini de daha ileri böl�
 
 İkiden fazla olası sınıfımız olduğunda, soruna *çok sınıflı sınıflandırma* diyoruz.
 Yaygın örnekler arasında elle yazılmış karakteri, $\mathrm{\{0, 1, 2, ... 9, a, b, c, ...\}}$, tanıma yer alır.
-Bağlanım problemleriyle uğraşırken kare hata kayıp fonksiyonunu en aza indirmeye çalışırız; sınıflandırma problemleri için ortak kayıp fonksiyonu, sonraki bölümlerdeki bilgi teorisine giriş ile adı açıklığa kavuşturacağımız *çapraz düzensizlik* (entropi) diye adlandırılır.
+Bağlanım problemleriyle uğraşırken kare hata kayıp fonksiyonunu en aza indirmeye çalışırız; sınıflandırma problemleri için ortak kayıp fonksiyonu, sonraki bölümlerdeki bilgi teorisine giriş ile adını açıklığa kavuşturacağımız *çapraz düzensizlik* (entropi) diye adlandırılır.
 
 En olası sınıfın kararınız için kullanacağınız esas sınıf olmak zorunda olmadığını unutmayın.
-Güzel bir mantarı arka bahçenizde :numref:`fig_death_cap`de gösterildiği gibi bulduğunuzu varsayın .
+Arka bahçenizde :numref:`fig_death_cap`de gösterildiği gibi güzel bir mantar bulduğunuzu varsayın.
 
 ![Ölüm tehlikesi --- yemeyin!](../img/death-cap.jpg)
 :width:`200px`
 :label:`fig_death_cap`
 
-
-Şimdi, bir sınıflandırıcı oluşturduğunuzu ve bir mantarın bir fotoğrafa göre zehirli olup olmadığını tahmin etmek için eğittiğinizi varsayın.
-
+Şimdi, bir sınıflandırıcı oluşturduğunuzu ve bir mantarın bir fotoğrafına göre zehirli olup olmadığını tahmin etmek için eğittiğinizi varsayın.
 Zehir tespit sınıflandırıcısının :numref:`fig_death_cap`'nin zehirli olma olasılığında 0.2 sonucunu verdiğini varsayalım.
-Başka bir deyişle, sınıflandırıcı, mantarımızın ölüm sınırında *olmadığından* $\%80$ emindir.
-Yine de, yemek için aptal olmalısın.
+Başka bir deyişle, sınıflandırıcı, mantarımızın zehirli *olmadığından* $\%80$ emindir.
+Yine de, yemek için ahmak olmalısın.
 Çünkü lezzetli bir akşam yemeğinin belirli bir yararı, ondan ölme riski olan $\%20$ değerine değmez.
-Başka bir deyişle, belirsiz riskin etkisi faydadan çok daha fazladır. Buna daha kurallı bakabiliriz.
+Başka bir deyişle, belirsiz riskin etkisi faydadan çok daha fazladır. 
+Bu nedenle, zarar fonksiyonu olarak maruz kaldığımız beklenen riski hesaplamamız gerekir, yani sonucun olasılığını onunla ilişkili fayda (veya zarar) ile çarpmamız gerekir.
 Temel olarak, maruz kaldığımız beklenen riski kayıp fonksiyonu olarak hesaplamamız gerekir, yani sonucun olasılığını, bununla ilişkili fayda (veya zarar) ile çarpmamız gerekir.
-
-Bu durumda, mantarı yemekten kaynaklanan kayıp $0.2  \times \infty + 0.8 \times 0 = \infty$ olurken, onu çöpe atmanın kaybı $0.2 \times 0 + 0.8 \times 1 = 0.8$ olacaktır. Dikkatimiz haklıydı: Herhangi bir mantarbilimcinin bize söyleyeceği gibi, :numref:`fig_death_cap`'deki mantar aslında zehirlidir.
+Bu durumda, mantarı yemekten kaynaklanan kayıp $0.2 \times \infty + 0.8 \times 0 = \infty$ olurken, onu çöpe atmanın kaybı $0.2 \times 0 + 0.8 \times 1 = 0.8$ olacaktır. Dikkatimiz haklıydı: Herhangi bir mantarbilimcinin bize söyleyeceği gibi, :numref:`fig_death_cap`'deki mantar aslında zehirlidir.
 
 Sınıflandırma sadece ikili sınıflandırmadan çok daha karmaşık hale gelebilir; çok sınıflı ve hatta çoklu etiketli.
 Örneğin, hiyerarşilere yönelik bazı değişik sınıflandırmalar vardır.
@@ -342,28 +335,27 @@ Hangi hiyerarşinin alakalı olduğu, modeli nasıl kullanmayı planladığını
 
 Bazı sınıflandırma sorunları, ikili veya çok sınıflı sınıflandırma ayarlarına uyar.
 Örneğin, kedileri köpeklerden ayırmak için normal bir ikili sınıflandırıcı eğitebiliriz.
-Bilgisayarlı görmenin mevcut durumu göz önüne alındığında, bunu hali-hazırda araçlarla kolayca yapabiliriz.
+Bilgisayarla görmenin mevcut durumu göz önüne alındığında, bunu hali-hazırda araçlarla kolayca yapabiliriz.
 Bununla birlikte, modelimiz ne kadar doğru olursa olsun, sınıflandırıcı *Bremen Mızıkacıları*nın, :numref:`fig_stackedanimals`'deki meşhur bir Alman masalındaki dört hayvan, bir görüntüsüyle karşılaştığında kendimizi ufak bir belada bulabiliriz.
 
 ![Bir eşek, bir köpek, bir kedi ve bir horoz.](../img/stackedanimals.png)
 :width:`300px`
 :label:`fig_stackedanimals`
 
-Gördüğünüz gibi, :numref:`fig_stackedanimals` 'de bir kedi ve bir horoz, bir köpek ve bir eşek ile arka planda bazı ağaçlar var.
+Gördüğünüz gibi, :numref:`fig_stackedanimals`'de bir kedi ve bir horoz, bir köpek ve bir eşek ile arka planda bazı ağaçlar var.
 Nihayetinde modelimizle ne yapmak istediğimize bağlı olarak, bunu ikili bir sınıflandırma problemi olarak ele almak pek anlamlı olmayabilir.
 Bunun yerine, modele görüntünün bir kediyi, bir köpeği, bir eşeği *ve* bir horozu tasvir ettiğini söyleme seçeneği vermek isteyebiliriz.
 
 Karşılıklı olarak münhasır olmayan sınıfları tahmin etmeyi öğrenme problemine *çoklu etiket sınıflandırması* denir.
-Otomatik etiketleme sorunları genellikle en iyi çoklu etiket sınıflandırma sorunları olarak tanımlanır.
+Otomatik etiketleme sorunları genellikle en iyi çoklu etiket sınıflandırma sorunları olarak tanımlanabilir.
 Kullanıcıların bir teknoloji blogundaki yayınlara uygulayabilecekleri etiketleri, örneğin "makine öğrenmesi", "teknoloji", "araçlar", "programlama dilleri", "Linux", "bulut bilişim", "AWS" gibi, düşünün.
 Tipik bir makalede 5--10 etiket uygulanabilir, çünkü bu kavramlar birbiriyle ilişkilidir.
 "Bulut bilişim" hakkındaki gönderilerin "AWS"den bahsetmesi muhtemeldir ve "makine öğrenmesi" ile ilgili gönderiler de "programlama dilleri" ile ilgili olabilir.
 
 Ayrıca, makalelerin doğru etiketlenmesinin önemli olduğu biyomedikal literatürle uğraşırken bu tür bir sorunla uğraşmak zorundayız, çünkü bu araştırmacıların literatürde kapsamlı incelemeler yapmasına izin veriyor.
 (Amerikan) Ulusal Tıp Kütüphanesi'nde, bir dizi profesyonel yorumlayıcı, PubMed'de endekslenen her makaleyi, kabaca 28000 etiketlik bir koleksiyon olan MeSH'den ilgili terimlerle ilişkilendirmek için gözden geçiriyor.
-Bu zaman alıcı bir süreçtir ve yorumlayıcıların genellikle arşivleme ve etiketleme arasında bir yıllık bir gecikmesi vardır.
-Makine öğrenimi burada, her makaleye uygun bir manuel (elle) incelemeye sahip oluncaya kadar geçici etiketler sağlamak için kullanılabilir.
-Gerçekten de, birkaç yıl boyunca, BioASQ organizasyonu tam olarak bunu yapmak için [yarışmalar düzenledi](http://bioasq.org/).
+Bu zaman alıcı bir süreçtir ve yorumlayıcıların genellikle arşivlemesi ve etiketlemesi arasında bir yıllık bir gecikme vardır.
+Makine öğrenimi burada, her makaleye uygun bir manuel (elle) incelemeye sahip oluncaya kadar geçici etiketler sağlamak için kullanılabilir. Gerçekten de, birkaç yıl boyunca, BioASQ organizasyonu tam olarak bunu yapmak için [yarışmalar düzenledi](http://bioasq.org/).
 
 #### Arama
 
