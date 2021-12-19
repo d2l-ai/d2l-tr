@@ -3,6 +3,8 @@
 
 affine; afin
 
+agent; etmen
+
 anchor; çapa
 
 api (application programming interface); uygulama programlama arayüzü
@@ -57,6 +59,8 @@ deterministic; gerekirci
 
 discriminator; ayrımcı
 
+distribution shift; dağılım kayması
+
 domain; etki alanı
 
 downsampling; altörnekleme
@@ -108,6 +112,8 @@ holdout; harici tutulan
 hybridization; melezleştirme
 
 indicator; gösterge, belirteç
+
+information retrieval; bilgi getirimi
 
 initialization; ilkleme
 

@@ -92,7 +92,7 @@ modelimizi veri ile *eğitiyoruz*.
 Özetlemek gerekirse, bir uyandırma kelimesi tanıyıcısını kodlamak yerine, büyük bir etiketli veri kümesi sunarsak uyandırma sözcüklerini tanımayı *öğrenebilen* bir program kodlarız.
 Bu eylemi bir programın davranışını ona bir veri kümesi sunup *veri ile programlayarak* belirleme gibi düşünebilirsiniz.
 Söylemek istediğimiz MÖ sistemimize birçok kedi ve köpek örneği sağlayarak bir kedi dedektörü "programlayabiliriz".
-Bu şekilde dedektör, sonunda, bir kedi ise çok büyük bir pozitif sayı, bir köpekse çok büyük bir negatif sayı ve emin değilse sıfıra daha yakın bir şey yaymayı öğrenir ve bu, makine öğrenmesinin neler yapabileceğinin ancak yüzeyini kazır.
+Bu şekilde dedektör, sonunda, bir kedi ise çok büyük bir pozitif sayı, bir köpekse çok büyük bir negatif sayı ve emin değilse sıfıra daha yakın bir şey yaymayı öğrenir ve bu, makine öğrenmesinin neler yapabileceğinin ancak yüzeyine ışık tutar.
 Derin öğrenme (DÖ), ki daha sonra çok detaylı açıklayacağız, makine öğrenmesi problemlerini çözmek için mevcut birçok popüler yöntemden sadece biridir.
 
 ## Temel Bileşenler
@@ -359,13 +359,13 @@ Makine öğrenimi burada, her makaleye uygun bir manuel (elle) incelemeye sahip 
 
 #### Arama
 
-Bazen her örneği bir kovaya veya gerçek bir değere atamak istemiyoruz. Bilgi geri çağırma alanında, bir dizi maddeye bir sıralama uygulamak istiyoruz.
-Örneğin, web aramasını ele alalım. Hedef belirli bir sayfanın bir sorgu için alakalı olup olmadığını belirlemekten daha ziyade, birçok arama sonuçlarından hangisinin belirli bir kullanıcı için en alakalı olduğunu belirlemektir.
+Bazen her örneği bir kovaya veya gerçek bir değere atamak istemiyoruz. Bilgi getirimi alanında, bir dizi maddeye bir sıralama uygulamak istiyoruz.
+Örneğin, web aramasını ele alalım. Hedef belirli bir sayfanın bir sorgu için alakalı olup olmadığını belirlemekten daha ziyade, birçok arama sonucundan hangisinin belirli bir kullanıcı için en alakalı olduğunu belirlemektir.
 Alakalı arama sonuçlarının sırasına gerçekten önem veriyoruz ve öğrenme algoritmamızın daha geniş bir gruptan sıralanmış alt kümeleri üretmesi gerekiyor.
 Başka bir deyişle, alfabeden ilk 5 harfi üretmemiz istenirse, "A B C D E" ve "C A B E D" döndürme arasında bir fark vardır.
 Sonuç kümesi aynı olsa bile, küme içindeki sıralama önemlidir.
 
-Bu soruna olası bir çözüm, önce kümedeki her bir öğeye, ona karşılık gelen bir uygunluk puanı atamak ve daha sonra en yüksek dereceli öğeleri almaktır.
+Bu soruna olası bir çözüm, önce kümedeki her bir öğeye, ona karşılık gelen bir alaka puanı atamak ve daha sonra en yüksek dereceli öğeleri almaktır.
 [PageRank](https://en.wikipedia.org/wiki/PageRank), Google arama motorunun arkasındaki esas gizli bileşen, böyle bir puanlama sisteminin erken bir örneğiydi, fakat tuhaf tarafı gerçek sorguya bağlı değildi.
 Burada, ilgili öğelerin kümesini tanımlamak için basit bir alaka filtresine ve ardından sorgu terimini içeren sonuçları sıralamak için PageRank'e güveniyorlardı.
 Günümüzde arama motorları, sorguya bağlı alaka düzeyi puanlarını belirlemek için makine öğrenmesi ve davranışsal modeller kullanmaktadır.
@@ -376,37 +376,37 @@ Sadece bu konuyla ilgili akademik konferanslar vardır.
 
 Tavsiye sistemleri, arama ve sıralama ile ilgili başka bir problem ailesidir.
 Amaç, kullanıcıya ilgili bir dizi öğeyi görüntülemek olduğu sürece benzer problemlerdir.
-Temel fark, tavsiye sistemleri bağlamında, belirli kullanıcılara *kişiselleştirme* vurgusu yapılmasıdır.
-Mesela, film önerilerinde, bir bilim kurgu hayranı için sonuç sayfası ile Peter Sellers komedileri uzmanı için sonuç sayfası önemli ölçüde farklılıklar gösterebilir.
+Temel fark, tavsiye sistemleri bağlamında, sözkonusu kullanıcılara *kişiselleştirme* vurgusu yapılmasıdır.
+Mesela, film önerilerinde, bir bilim kurgu hayranı için sonuç sayfası ile Peter Sellers komedileri uzmanının sonuç sayfası önemli ölçüde farklılıklar gösterebilir.
 Perakende satış ürünleri, müzik ve haber önerileri gibi diğer öneri gruplarında da benzer sorunlar ortaya çıkar.
 
-Bazı durumlarda, müşteriler belirli bir ürünü ne kadar sevdiklerini bildiren açık geri bildirimler sağlar (ör. Amazon, IMDB, GoodReads, vb. Üzerindeki ürün puanları ve incelemeleri).
-Diğer bazı durumlarda, örneğin bir müzik çalma listesindeki başlıkları atlama, memnuniyetsizliği de, şarkının o anki bağlamında uygunsuz olduğunu da gösterebilecek (gizli) örtük geri bildirim sağlarlar.
-En basit formülasyonlarda, bu sistemler bir kullanıcı ve bir ürün göz önüne alındığında tahmini bir derecelendirme veya satın alma olasılığını gibi bir skoru tahmin etmek üzere eğitilir.
+Bazı durumlarda, müşteriler belirli bir ürünü ne kadar sevdiklerini bildiren açık geri bildirimler sağlar (Ör. Amazon, IMDB, Goodreads, vb. üzerindeki ürün puanları ve incelemeleri).
+Diğer bazı durumlarda, örneğin bir müzik çalma listesindeki parçaları atlarken, kullanıcılar memnuniyetsizliği de, şarkının o anki bağlamında uygunsuz olduğunu da gösterebilecek (gizli) örtük geri bildirim sağlarlar.
+En basit formülasyonlarda, bu sistemler bir kullanıcı ve bir ürün göz önüne alındığında tahmini bir derecelendirme veya satın alma olasılığı gibi bir skoru tahmin etmek üzere eğitilir.
 
 Böyle bir model göz önüne alındığında, herhangi bir müşteri için, en yüksek puanları olan ve daha sonra müşteriye önerilebilecek nesneler kümesini bulabiliriz.
-Üretim sistemleri oldukça ileri düzeydedir ve bu puanları hesaplarken ayrıntılı kullanıcı etkinliği ve öğenin özelliklerini dikkate alır. :numref:`fig_deeplearning_amazon` imgesi, yazarın tercihlerini yakalamak için ayarlanan kişiselleştirme algoritmalarına dayanarak Amazon tarafından önerilen derin öğrenme kitaplarına bir örnektir.
+Üretimdeki sistemler oldukça ileri düzeydedir ve bu puanları hesaplarken ayrıntılı kullanıcı etkinliği ve öğenin özelliklerini dikkate alır. :numref:`fig_deeplearning_amazon` imgesi, yazarın tercihlerini yakalamak için ayarlanan kişiselleştirme algoritmalarına dayanarak Amazon tarafından önerilen derin öğrenme kitaplarına bir örnektir.
 
 ![Amazon tarafından önerilen derin öğrenme kitapları.](../img/deeplearning-amazon.jpg)
 :label:`fig_deeplearning_amazon`
 
 Muazzam ekonomik değerlerine rağmen, tahminci modeller üzerine saf olarak inşa edilmiş tavsiye sistemleri bazı ciddi kavramsal kusurlara maruz kalmaktadırlar.
 Öncelikle sadece *sansürlü geri bildirim* gözlemliyoruz.
-Kullanıcılar tercih ettikleri filmleri özellikle güçlü bir şekilde hissettiklerine göre derecelendirir. Örneğin beş puan üzerinden derecelendirmede, öğelerin çok sayıda beş ve bir yıldız derecelendirmesi aldığını, ancak dikkat çekici derecede az üç yıldızlı derecelendirme olduğunu fark edebilirsiniz.
+Kullanıcılar, özellikle, güçlü bir şekilde hissettikleri filmleri derecelendirir. Örneğin beş puanlı ölçeklerde, öğelerin çok sayıda beş ve bir yıldız derecelendirmesi aldığını, ancak dikkat çekici derecede az üç yıldızlı derecelendirme olduğunu fark edebilirsiniz.
 Ayrıca, mevcut satın alma alışkanlıkları genellikle şu anda mevcut olan tavsiye algoritmasının bir sonucudur, ancak öğrenme algoritmaları bu ayrıntıyı her zaman dikkate almazlar.
-Bu nedenle, bir geri bildirim döngüsünün oluşması mümkündür: Bir tavsiye sistemi, daha sonra daha iyi olması için (daha büyük satın alımlar nedeniyle), alınan bir öğeyi tercihli olarak yukarı iter ve daha da sık tavsiye edilmesine neden olur.
-Sansür, teşvikler ve geri bildirim döngüleri ile nasıl başa çıkılacağı gibi ilgili bu tarz sorunların birçoğu önemli açık araştırma konularıdır.
+Bu nedeni, bir geri bildirim döngüsünün oluşmasının mümkün olmasıdır: Bir tavsiye sistemi, daha sonra daha iyi olması için (daha büyük miktarda satın alımlar nedeniyle), alınan bir öğeyi tercihli olarak yukarı iter ve daha da sık tavsiye edilmesine neden olur.
+Sansür, teşvikler ve geri bildirim döngüleri ile nasıl başa çıkılacağı gibi bu tarz ilgili sorunların birçoğu önemli açık araştırma konularıdır.
 
 #### Dizi Öğrenimi
 
 Şimdiye kadar, sabit sayıda girdimiz olan ve sabit sayıda çıktı üreten sorunlara baktık.
 Örneğin ev fiyatlarını sabit bir dizi öznitelikten tahmin ettik: Metrekare alanları, yatak odası sayısı, banyo sayısı, şehir merkezine yürüme süresi.
-Ayrıca, bir görüntüyü (sabit boyutlu), sabit sayıda sınıfın hangi birine ait olduğu tahmin eden olasılıklarla eşlemeyi veya bir kullanıcı kimliği ve ürün kimliği alarak bir yıldız derecelendirmesi tahmin etmeyi tartıştık. Bu durumlarda, sabit uzunluklu girdimizi bir çıktı üretmek için modele beslediğimizde, model hemen gördüklerini hemen unutur.
+Ayrıca, bir görüntüyü (sabit boyutlu), sabit sayıda sınıfın hangi birine ait olduğu tahmin eden olasılıklarla eşlemeyi veya bir kullanıcı kimliği ve ürün kimliği alarak bir yıldız derecelendirmesi tahmin etmeyi tartıştık. Bu durumlarda, sabit uzunluklu girdimizi bir çıktı üretmek için modele beslediğimizde, model gördüklerini hemen unutur.
 
 Girdilerimizin hepsi aynı boyutlara sahipse ve birbirini takip eden girdilerin birbirleriyle hiçbir ilgisi yoksa, bu iyi olabilir.
-Ancak video parçalarıyla nasıl başa çıkardık?
+Ancak video parçalarıyla nasıl başa çıkabiliriz?
 Bu durumda, her parça farklı sayıda çerçeveden oluşabilir.
-Ayrıca önceki veya sonraki kareleri dikkate alırsak, her karede neler olup bittiğine dair tahminimiz çok daha güçlü olabilir. Aynı şey dil için de geçerli. Popüler bir derin öğrenme sorunu, makine çevirisidir: Bazı kaynak dilde cümleleri alma ve başka bir dilde çevirilerini tahmin etme görevidir.
+Ayrıca önceki veya sonraki çerçeveleri dikkate alırsak, her çerçevede neler olup bittiğine dair tahminimiz çok daha güçlü olabilir. Aynı şey dil için de geçerli. Popüler bir derin öğrenme sorunu, makine çevirisidir: Bazı kaynak dilde cümleleri alma ve başka bir dilde çevirilerini tahmin etme görevidir.
 
 Bu problemler tıpta da görülür.
 Yoğun bakım ünitesindeki hastaları izlemek ve önümüzdeki 24 saat içinde ölüm riskleri belli bir eşiği aşarsa, uyarıcıları tetiklemek için bir model isteyebiliriz.
@@ -440,8 +440,8 @@ Bunlar, çıktının girdiden çok daha kısa olduğu diziden diziye öğrenme p
 
 **Metinden Konuşmaya**. Bu, otomatik konuşma tanımanın tersidir.
 Başka bir deyişle, girdi metindir ve çıktı bir ses dosyasıdır.
-Bu durumda, çıktı girdiden *çok daha uzun* olur.
-*İnsanların* kötü bir ses dosyasını tanıması kolay olsa da, bu bilgisayarlar için o kadar da bariz değildir.
+Bu durumda, çıktı girdiden çok daha uzun olur.
+İnsanların kötü bir ses dosyasını tanıması kolay olsa da, bu bilgisayarlar için o kadar da bariz değildir.
 
 **Makine Çevirisi**. Karşılık gelen girdi ve çıktıların aynı sırada (hizalamadan sonra) gerçekleştiği konuşma tanıma durumundan farklı olarak, makine çevirisinde, sırayı ters çevirme hayati önem taşıyabilir.
 Başka bir deyişle, bir diziyi diğerine dönüştürürken, ne girdi ve çıktıların sayısı ne de karşılık gelen veri örneklerinin sırası aynı kabul edilmektedir.
@@ -452,15 +452,16 @@ Almanca:          Haben Sie sich schon dieses grossartige Lehrwerk angeschaut?
 İngilizce:        Did you already check out this excellent tutorial?
 Yanlış Hizalama:  Did you yourself already this excellent tutorial looked-at?
 ```
+
 İlgili birçok sorun diğer öğrenme görevlerinde ortaya çıkar.
 Örneğin, bir kullanıcının bir Web sayfasını okuma sırasını belirlemek iki boyutlu bir düzen analizi sorunudur.
-Diyalog sorunları her türlü ek komplikasyon ortaya çıkarır: Bir sonrasında ne söyleneceğini belirlemede, gerçek dünya bilgisini ve uzun zamansal mesafelerde konuşmanın önceki durumunu dikkate almayı gerektirmek gibi. Bunlar aktif bir araştırma alanlarıdır.
+Diyalog sorunları her türlü ek komplikasyon ortaya çıkarır, bir sonrasında ne söyleneceğini belirlemede, gerçek dünya bilgisini ve uzun zamansal mesafelerde konuşmanın önceki durumunu dikkate almayı gerektirmek gibi. Bunlar aktif bir araştırma alanlarıdır.
 
 
-### Gözetimsiz öğrenme
+### Gözetimsiz ve Kendi Kendine Gözetimli Öğrenme
 
 Şimdiye kadarki tüm örnekler gözetimli öğrenme, yani, modeli hem öznitelikleri hem de karşılık gelen etiket değerleri içeren dev bir veri kümesi ile beslediğimiz durumlarla ilgilidir.
-Gözetimli öğreniciyi son derece uzmanlaşmış bir işe ve son derece sıkıcı bir patrona sahip olmak gibi düşünebilirsiniz.
+Gözetimli öğreniciyi son derece uzmanlaşmış bir işe ve son derece bunaltıcı bir patrona sahip olmak gibi düşünebilirsiniz.
 Patron omzunuzun üzerinden bakar ve siz durumlardan eylemlere eşlemeyi öğrenene kadar her durumda tam olarak ne yapacağınızı söyler.
 Böyle bir patron için çalışmak oldukça tatsızdır.
 Öte yandan, bu patronu memnun etmek kolaydır.
@@ -468,7 +469,7 @@ Deseni mümkün olduğunca çabuk tanır ve eylemlerini taklit edersiniz.
 
 Tamamen zıt bir şekilde, ne yapmanızı istediğini bilmeyen bir patron için çalışmak sinir bozucu olabilir.
 Ancak, bir veri bilimcisi olmayı planlıyorsanız, buna alışsanız iyi olur.
-Patron size sadece dev bir veri dökümü verebilir ve *onunla veri bilimi yapmanızı söyleyebilir!* Bu kulağa belirsiz geliyor çünkü öyle.
+Patron size sadece dev bir veri dökümü verebilir ve *onunla veri bilimi yapmanızı söyleyebilir!* Bu kulağa belirsiz geliyor, çünkü öyle.
 Bu sorun sınıfına *gözetimsiz öğrenme* diyoruz ve sorabileceğimiz soruların türü ve sayısı yalnızca yaratıcılığımızla sınırlıdır.
 Daha sonraki bölümlerde denetimsiz öğrenme tekniğini ele alacağız. Şimdilik iştahınızı hafifletmek için sormak isteyebileceğiniz birkaç sorudan aşağıda bahsediyoruz:
 
@@ -489,24 +490,27 @@ Bu varlıkları ve onların ilişkilerini, "Roma" $-$ "İtalya" $+$ "Fransa" $=$
 Bunlar bize verileri, görüntüler ve ses gibi karmaşık yapılandırılmış verileri bile, sentezlemek için yöntemsel bir yol sunar.
 Temel istatistiksel mekanizmalar, gerçek ve sahte verilerin aynı olup olmadığını kontrol etmek için kullanılan testlerdir.
 
+Denetimsiz öğrenmenin bir biçimi olarak *kendi kendine gözetimli öğrenme*, eğitimde gözetim sağlamak için etiketlenmemiş verilerden yararlanır; örneğin, verilerin saklanan bir kısmının diğer bölümleri kullanarak tahmin edilmesi gibi. Metinler için, herhangi bir etiketleme çabası olmadan büyük dökümdeki etrafındaki kelimeleri (bağlamları) kullanarak rastgele maskelenmiş kelimeleri tahmin ederek "boşlukları doldurmak" için modeller eğitebiliriz :cite:`Devlin.Chang.Lee.ea.2018`!
+İmgeler için, aynı imgenin iki kırpılmış bölgesi arasındaki göreli konumu söylemek için modelleri eğitebiliriz :cite:`Doersch.Gupta.Efros.2015`. Bu iki kendi kendine gözetimli öğrenme örneğinde, olası sözcükleri ve göreli konumları tahmin etmeye yönelik eğitim modellerinin her ikisi de (gözetimli öğrenme) sınıflandırma görevleridir.
+
 ### Bir Ortamla Etkileşim
 
 Şimdiye kadar, verilerin gerçekte nereden geldiğini veya bir makine öğrenmesi modeli bir çıktı oluşturduğunda gerçekte ne olduğunu tartışmadık.
 Çünkü gözetimli öğrenme ve gözetimsiz öğrenme bu konuları çok karmaşık bir şekilde ele almaz.
 Her iki durumda da, büyük bir veri yığınını önceden alıyoruz, ardından bir daha çevre ile etkileşime girmeden desen tanıma makinelerimizi harekete geçiriyoruz.
-Tüm öğrenme, algoritma ortamdan ayrıldıktan sonra gerçekleştiği için, buna bazen *çevrimdışı öğrenme* denir.
+Tüm öğrenme, algoritma ortamdan koparıldıktan sonra gerçekleştiği için, buna bazen *çevrimdışı öğrenme* denir.
 Gözetimli öğrenme için bir ortamdan veri toplamayı düşünürsek süreç şuna benzer :numref:`fig_data_collection`.
 
 ![Bir ortamdan gözetimli öğrenme için veri toplama.](../img/data-collection.svg)
 :label:`fig_data_collection`
 
 Çevrimdışı öğrenmenin bu basitliğinin cazibesi vardır.
-Bunun olumlu tarafı, bu diğer sorunlardan herhangi bir dikkat dağılmadan, sadece örüntü tanıma konusu ile tek başına ilgilenebiliriz.
+Bunun olumlu tarafı, diğer sorunlardan herhangi bir dikkat dağılımı olmadan sadece örüntü tanıma konusu ile tek başına ilgilenebiliriz.
 Ancak olumsuz tarafı, formülasyonun oldukça kısıtlayıcı olmasıdır.
 Daha hırslıysanız ya da Asimov'un Robot Serisi'ni okuyarak büyüdüyseniz, sadece tahminler yapmakla kalmayıp, dünyada hareket edebilecek yapay zeka botları hayal edebilirsiniz.
 Sadece modelleri değil, akıllı *etmenleri (ajanları)* de düşünmek istiyoruz.
 Bu, sadece tahminler yapmakla kalmayıp, *eylemleri* seçmeyi de düşünmemiz gerektiği anlamına gelir. Dahası, öngörülerin aksine, eylemler aslında ortamı etkiler.
-Akıllı bir ajanı eğitmek istiyorsak, eylemlerinin ajanın gelecekteki gözlemlerini nasıl etkileyebileceğini hesaba katmalıyız.
+Akıllı bir etmen eğitmek istiyorsak, eylemlerinin etmenin gelecekteki gözlemlerini nasıl etkileyebileceğini hesaba katmalıyız.
 
 Bir ortam ile etkileşimi dikkate almak, bir dizi yeni modelleme sorusunu açar.
 Aşağıda birkaç örnek görebiliriz.
@@ -515,7 +519,7 @@ Aşağıda birkaç örnek görebiliriz.
 * Ortam bize bir konuşma tanıyıcıya metin okuyan bir kullanıcı gibi yardım etmek istiyor mu?
 * Ortam bizi yenmek mi istiyor, yani spam filtreleme (spam göndericilere karşı) veya oyun oynama (rakiplere karşı) gibi rakip bir ortam mı?
 * Ortam bizi umursumuyor mu?
-* Ortam değişen dinamiklere sahip mi? Örneğin, gelecekteki veriler her zaman geçmiştekäne benziyor mu, ya da doğal olarak veya otomatik araçlarımıza yanıt olarak zaman içinde değişiyor mu?
+* Ortam değişen dinamiklere sahip mi? Örneğin, gelecekteki veriler her zaman geçmiştekine benziyor mu, ya da doğal olarak veya otomatik araçlarımıza yanıt olarak zaman içinde değişiyor mu?
 
 Eğitim ve test verileri farklı olduğunda, bu son soru *dağılım kayması* sorununu gündeme getirmektedir.
 Bu bir öğretim üyesi tarafından hazırlanan yazılı sınava girerken yaşadığımız bir problemdir, çünkü ödevler asistanlar tarafından oluşturulmuştur.
@@ -528,13 +532,13 @@ Bu, robotik, diyalog sistemleri ve hatta video oyunları için yapay zeka (YZ) g
 Derin öğrenme ağlarını pekiştirmeli öğrenme problemlerine uygulayan *derin pekiştirmeli öğrenme* popülerlik kazanmıştır.
 Bu atılımda yalnızca görsel girdileri kullanarak Atari oyunlarında insanları yenen derin Q-ağ (Q-network) ve Go oyunu dünya şampiyonunu tahtından indiren AlphaGo programı iki önemli örnektir.
 
-Pekiştirmeli öğrenmede, bir etmenin bir dizi zaman adımı üzerinden bir ortam ile etkileşime girdiği çok genel bir sorun ifade edilir.
+Pekiştirmeli öğrenmede, bir etmenin bir dizi zaman adımı üzerinden bir ortam ile etkileşime girdiği, çok genel bir sorun ifade edilir.
 Her bir zaman adımında, etmen ortamdan birtakım *gözlem* alır ve daha sonra bir mekanizma (bazen çalıştırıcı -aktüatör- olarak da adlandırılır) aracılığıyla çevreye geri iletilecek bir eylemi seçmelidir.
 Son olarak, etmen ortamdan bir ödül alır.
 Bu süreç :numref:`fig_rl-environment` şeklinde gösterilmektedir.
 Etmen daha sonra bir gözlem alır ve bir sonraki eylemi seçer, vb.
 Bir pekiştirmeli öğrenme etmeninin davranışı bir politika tarafından yönetilir.
-Kısacası, bir *politika*, sadece, gözlemlerden (çevrenin) eylemlere eşlenen bir fonksiyondur.
+Kısacası, bir *politika*, sadece, çevrenin gözlemlerinden eylemlere eşlenen bir fonksiyondur.
 Pekiştirmeli öğrenmenin amacı iyi bir politika üretmektir.
 
 ![Pekiştirmeli öğrenme ve çevre arasındaki etkileşim.](../img/rl-environment.svg)
@@ -544,7 +548,7 @@ Pekiştirmeli öğrenme çerçevesinin genelliğini abartmak zordur.
 Örneğin, herhangi bir gözetimli öğrenme problemini bir pekiştirmeli öğrenme problemine dönüştürebiliriz.
 Diyelim ki bir sınıflandırma problemimiz var.
 Her sınıfa karşılık gelen bir eylem ile bir pekiştirmeli öğrenme etmeni oluşturabiliriz.
-Daha sonra, orijinal gözetimli öğrenme problemin yitim fonksiyonuna tamamen eşit bir ödül veren bir ortam yaratabiliriz.
+Daha sonra, orijinal gözetimli öğrenme probleminin yitim fonksiyonuna tamamen eşit bir ödül veren bir ortam yaratabiliriz.
 
 Bununla birlikte, pekiştirmeli öğrenme, gözetimli öğrenmenin yapamadığı birçok sorunu da ele alabilir.
 Örneğin, gözetimli öğrenmede her zaman eğitim girdisinin doğru etiketle ilişkilendirilmesini bekleriz.
@@ -573,7 +577,7 @@ Yalnızca seçilen eylemlere denk gelen ödüller gözlemlenir.
 Ortam tamamen veya kısmen gözlemlenebilir.
 Tüm bu karmaşıklığı bir kerede hesaplamak araştırmacılardan çok fazla beklemek olabilir.
 Dahası, her pratik sorun bu karmaşıklığın tamamını sergilemez.
-Sonuç olarak, araştırmacılar pekiştirmeli öğrenme sorunlarının bir dizi *özel vakasını* incelemişlerdir.
+Sonuç olarak, araştırmacılar pekiştirmeli öğrenme sorunlarının bir dizi özel vakasını incelemişlerdir.
 
 Ortam tam olarak gözlemlendiğinde, pekiştirmeli öğrenme sorununa *Markov Karar Süreci* (MKS) diyoruz.
 Durum önceki eylemlere bağlı olmadığında, probleme *bağlamsal bir kollu kumar makinesi sorunu* diyoruz.
@@ -604,7 +608,7 @@ Bu, kırpılmış ortalama tahmininin en eski örneklerinden biridir.
 
 İstatistik gerçekte verilerin toplanması ve kullanılabilirliği ile başladı.
 Dev isimlerden biri [Ronald Fisher (1890--1962)](https://en.wikipedia.org/wiki/Ronald_Fisher), istatistik teorisine ve aynı zamanda onun genetikteki uygulamalarına önemli katkıda bulundu.
-Algoritmalarının çoğu (doğrusal ayırtaç analizi gibi) ve formülü (Fisher information matrix gibi) günümüzde hala sık kullanılmaktadır. Aslında 1936'da kullanıma açtığı İris veri kümesi bile, bazen makine öğrenmesi algoritmalarını göstermek için hala kullanılıyor.
+Algoritmalarının çoğu (doğrusal ayırtaç analizi gibi) ve formülü (Fisher bilgi matrisi gibi) günümüzde hala sık kullanılmaktadır. Aslında 1936'da kullanıma açtığı İris veri kümesi bile, bazen makine öğrenmesi algoritmalarını göstermek için hala kullanılıyor.
 O aynı zamanda, veri biliminin ahlaki olarak şüpheli kullanımının, endüstride ve doğa bilimlerinde verimli kullanımı kadar uzun ve kalıcı bir geçmişi olduğunu hatırlatan bir öjeni (doğum ile kalıtımsal olarak istenen özelliklere sahip bireylerin üremesine çalışan bilim dalı) savunucusuydu.
 
 Makine öğrenmesi için ikinci bir etki, [Claude Shannon, (1916--2001)](https://en.wikipedia.org/wiki/Claude_Shannon) aracılığıyla bilgi teorisi ve [Alan Turing (1912--1954)](https://en.wikipedia.org/wiki/Alan_Turing) aracılığıyla hesaplama teorisinden geldi.
@@ -617,7 +621,7 @@ Bu nedenle, birinin sadece bu beceriyi açıklayıp tersine mühendislik yapıp 
 Bu şekilde esinlenen en eski algoritmalardan biri [Donald Hebb (1904--1985)](https://en.wikipedia.org/wiki/Donald_O._Hebb) tarafından formüle edildi.
 Çığır açan *Davranış Örgütlenmesi* :cite:`Hebb.Hebb.1949` adlı kitabında, nöronların pozitif pekiştirme ile öğrendiklerini ileri sürdü.
 Bu Hebbian öğrenme kuralı olarak bilindi.
-Bu Rosenblatt'ın algılayıcı öğrenme algoritmasının ilk örneğidir ve bugün derin öğrenmeyi destekleyen birçok rassal eğim inişi (stochastic gradient descent) algoritmasının temellerini atmıştır: Sinir ağındaki parametrelerin iyi ayarlarını elde etmek için arzu edilen davranışı güçlendirmek ve istenmeyen davranışı zayıflatmak.
+Bu Rosenblatt'ın algılayıcı öğrenme algoritmasının ilk örneğidir ve bugün derin öğrenmeyi destekleyen birçok rassal eğim inişi (stochastic gradient descent) algoritmasının temellerini atmıştır: Sinir ağındaki parametrelerin iyi ayarlarını elde etmek için arzu edilen davranışı güçlendir ve istenmeyen davranışı zayıflat.
 
 *Sinir ağlarına* adını veren şey biyolojik ilhamdır.
 Yüzyılı aşkın bir süre (Alexander Bain, 1873 ve James Sherrington, 1890 modellerine kadar geri gider) araştırmacılar, etkileşen nöron ağlarına benzeyen hesaplama devreleri oluşturmaya çalıştılar.
@@ -645,7 +649,7 @@ Bu en iyi şekilde :numref:`tab_intro_decade`de gösterilmektedir.
 
 :Veri kümesi ve bilgisayar belleği ve hesaplama gücü
 
-|On Yıl|Veri Kümesi|Bellek|Saniyede yüzer (Floating) sayı hesaplaması|
+|On Yıl|Veri Kümesi|Bellek|Saniyede kayan virgüllü (Floating) sayı hesaplaması|
 |:--|:-|:-|:-|
 | 1970 | 100 (İris) | 1 KB | 100 KF (Intel 8080) |
 1980 | 1 K (Boston'daki ev fiyatları) | 100 KB | 1 MF (Intel 80186) |
