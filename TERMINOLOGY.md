@@ -3,6 +3,8 @@
 
 affine; afin
 
+agent; etmen
+
 anchor; çapa
 
 api (application programming interface); uygulama programlama arayüzü
@@ -57,6 +59,8 @@ deterministic; gerekirci
 
 discriminator; ayrımcı
 
+distribution shift; dağılım kayması
+
 domain; etki alanı
 
 downsampling; altörnekleme
@@ -109,6 +113,8 @@ hybridization; melezleştirme
 
 indicator; gösterge, belirteç
 
+information retrieval; bilgi getirimi
+
 initialization; ilkleme
 
 internal covariate shift; dahili eşdeğişken kayması
@@ -142,6 +148,8 @@ meta; başkalaşım
 minibatch; minigrup
 
 nontrivial; apaçık olmayan
+
+objective functions; amaç fonksiyonları
 
 offset; bağıl konum
 
@@ -227,9 +235,13 @@ string; dizgi
 
 stochastic; rasgele
 
+surrogate; vekil
+
 symmetry; bakışım
 
 tabular; çizelge halindeki
+
+tagging; etiketleme
 
 teacher forcing; öğretici zorlama
 
