@@ -41,6 +41,8 @@ concatenation; bitiştirme
 
 confusion-matrix; hata matrisi
 
+container; kapsayıcı
+
 convex; dışbükey
 
 corpus; külliyat
@@ -244,6 +246,8 @@ tabular; çizelge halindeki
 tagging; etiketleme
 
 teacher forcing; öğretici zorlama
+
+tensor; gerey
 
 token; andıç
 

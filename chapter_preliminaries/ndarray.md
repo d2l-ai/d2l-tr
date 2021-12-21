@@ -2,11 +2,11 @@
 :label:`sec_ndarray`
 
 Bir şeylerin yapılabilmesi için, verileri depolamak ve oynama yapmak (manipule etmek) için bazı yollar bulmamız gerekir.
-Genellikle verilerle ilgili iki önemli şey vardır: (i) bunları elde etmek; ve (ii) bilgisayar içine girdikten sonra bunları işlemek. Veri depolamanın bir yolu olmadan onu elde etmenin bir anlamı yok, bu yüzden önce sentetik (yapay) verilerle oynayarak ellerimizi kirletelim. Başlamak için, *gerey (tensör)* olarak da adlandırılan $n$ boyutlu diziyi tanıtalım.
+Genellikle verilerle ilgili iki önemli şey vardır: (i) Bunları elde etmek; ve (ii) bilgisayar içine girdikten sonra bunları işlemek. Veri depolamanın bir yolu olmadan onu elde etmenin bir anlamı yok, bu yüzden önce sentetik (yapay) verilerle oynayarak ellerimizi kirletelim. Başlamak için, *gerey (tensör)* olarak da adlandırılan $n$ boyutlu diziyi tanıtalım.
 
 Python'da en çok kullanılan bilimsel hesaplama paketi olan NumPy ile çalıştıysanız, bu bölümü tanıdık bulacaksınız.
-Hangi çerçeveyi kullanırsanız kullanın, *tensör sınıfı* (MXNet'teki `ndarray`, hem PyTorch hem de TensorFlow'daki `Tensor`), fazladan birkaç öldürücü özellik ile NumPy'nin ndarray'ına benzer.
-İlk olarak, GPU hesaplamayı hızlandırmak için iyi desteklenirken, NumPy sadece CPU hesaplamasını destekler.
+Hangi çerçeveyi kullanırsanız kullanın, *tensör sınıfı* (MXNet'teki `ndarray`, hem PyTorch hem de TensorFlow'daki `Tensor`), fazladan birkaç öldürücü özellik ile NumPy'nin `ndarray`'ına benzer.
+İlk olarak, GPU hesaplama hızlandırmayı iyi desteklerken, NumPy sadece CPU hesaplamasını destekler.
 İkincisi, tensör sınıfı otomatik türev almayı destekler.
 Bu özellikler, tensör sınıfını derin öğrenme için uygun hale getirir.
 Kitap boyunca, tensörler dediğimizde, aksi belirtilmedikçe tensör sınıfının örneklerinden bahsediyoruz.
@@ -15,17 +15,17 @@ Kitap boyunca, tensörler dediğimizde, aksi belirtilmedikçe tensör sınıfın
 
 Bu bölümde, sizi ayaklandırıp koşturmayı, kitapta ilerledikçe üstüne koyarak geliştireceğiniz temel matematik ve sayısal hesaplama araçlarıyla donatılmayı amaçlıyoruz.
 Bazı matematiksel kavramları veya kütüphane işlevlerini içselleştirme de zorlanıyorsanız, endişelenmeyin.
-Aşağıdaki bölümlerde bu konular pratik örnekler bağlamında tekrar ele alınacak ve oturacaktır.
-Öte yandan, zaten biraz bilgi birikiminiz varsa ve matematiksel içeriğin daha derinlerine inmek istiyorsanız, bu bölümü atlamanız yeterlidir.
+Aşağıdaki bölümlerde bu konular pratik örnekler bağlamında tekrar ele alınacak ve yerine oturacaktır.
+Öte yandan, zaten biraz bilgi birikiminiz varsa ve matematiksel içeriğin daha derinlerine inmek istiyorsanız, bu bölümü atlayabilirsiniz.
 
 :begin_tab:`mxnet`
 Başlarken, MXNet'ten `np` (`numpy`) ve `npx` (`numpy_extension`) modüllerini içe aktarıyoruz (import).
-Burada, np modülü, NumPy tarafından desteklenen işlevleri içerirken, npx modülü, NumPy benzeri bir ortamda derin öğrenmeyi güçlendirmek için geliştirilmiş bir dizi uzantı içerir.
-Tensörleri kullanırken neredeyse her zaman `set_np` işlevini çağırırız: bu, tensör işlemenin MXNet'in diğer bileşenleri tarafından uyumluluğu içindir.
+Burada, np modülü, NumPy tarafından desteklenen işlevleri içerirken, npx modülü, NumPy benzeri bir ortamda derin öğrenmeyi güçlendirmek için geliştirilmiş bir dizi uzantıyı içerir.
+Tensörleri kullanırken neredeyse her zaman `set_np` işlevini çağırırız: Bu, tensör işlemenin MXNet'in diğer bileşenlerine uyumluluğu içindir.
 :end_tab:
 
 :begin_tab:`pytorch`
-Başlamak için `torch`u içe aktarıyoruz. PyTorch olarak adlandırılsa da, `pytorch` yerine `torch`u  içe aktarmamız gerektiğini unutmayın.
+(**Başlamak için `torch`u içe aktarıyoruz. PyTorch olarak adlandırılsa da, `pytorch` yerine `torch`u  içe aktarmamız gerektiğini unutmayın.**)
 :end_tab:
 
 :begin_tab:`tensorflow`
@@ -47,12 +47,12 @@ import torch
 import tensorflow as tf
 ```
 
-Bir tensör, (muhtemelen çok boyutlu) bir sayısal değerler dizisini temsil eder.
+[**Bir tensör, (muhtemelen çok boyutlu) bir sayısal değerler dizisini temsil eder.**]
 Bir eksende, bir tensör (matematikte) bir *vektöre* karşılık gelir.
 İki eksende, bir tensör *matrise* karşılık gelir.
 İkiden fazla ekseni olan tensörlerin özel matematik isimleri yoktur.
 
-Başlamak için, varsayılan olarak yüzer sayı (float) olarak oluşturulmuş olmalarına rağmen, 0 ile başlayan ilk 12 tamsayıyı içeren bir satır vektörü, `x`, oluşturmak için `arange` i kullanabiliriz.
+Başlamak için, varsayılan olarak kayan virgüllü sayı (float) olarak oluşturulmuş olmalarına rağmen, 0 ile başlayan ilk 12 tamsayıyı içeren bir satır vektörü, `x`, oluşturmak için `arange` i kullanabiliriz.
 Bir tensördeki değerlerin her birine tensörün *eleman*ı denir.
 Örneğin, tensör `x`'de 12 eleman vardır.
 Aksi belirtilmedikçe, yeni bir tensör ana bellekte saklanacak ve CPU tabanlı hesaplama için kullanılacaktır.
@@ -74,7 +74,7 @@ x = tf.range(12)
 x
 ```
 
-Bir tensörün *şekli*ne (her eksen boyunca uzunluk) `shape` özelliğini inceleyerek erişebiliriz.
+(**Bir tensörün *şekli*ne**) (~~ve toplam eleman sayısına~~) (her eksen boyunca uzunluk) `shape` özelliğini inceleyerek erişebiliriz.
 
 ```{.python .input}
 #@tab all
@@ -98,34 +98,34 @@ x.numel()
 tf.size(x)
 ```
 
-Eleman sayısını veya değerlerini değiştirmeden bir tensörün şeklini değiştirmek için `reshape` işlevini çağırabiliriz.
+[**Eleman sayısını veya değerlerini değiştirmeden bir tensörün şeklini değiştirmek**] için `reshape` işlevini çağırabiliriz.
 Örneğin, `x` tensörümüzü, (12,) şekilli bir satır vektöründen (3, 4) şekilli bir matrise dönüştürebiliriz .
 Bu yeni tensör tam olarak aynı değerleri içerir, ancak onları 3 satır ve 4 sütun olarak düzenlenmiş bir matris olarak görür.
-Yinelemek gerekirse, şekil değişmiş olsa da, `x`'deki elemanlar değişmemiştir.
+Yinelemek gerekirse, şekil değişmiş olsa da, elemanlar değişmemiştir.
 Boyutun yeniden şekillendirilerek değiştirilmediğine dikkat edin.
 
 ```{.python .input}
 #@tab mxnet, pytorch
-x = x.reshape(3, 4)
-x
+X = x.reshape(3, 4)
+X
 ```
 
 ```{.python .input}
 #@tab tensorflow
-x = tf.reshape(x, (3, 4))
-x
+X = tf.reshape(x, (3, 4))
+X
 ```
 
 Her boyutu manuel olarak belirterek yeniden şekillendirmeye gerek yoktur.
-Hedef şeklimiz (yükseklik, genişlik) şekline sahip bir matrisse, o zaman genişliği öğrendiysek sonra, yükseklik üstü kapalı olarak verilmiştir.
-Neden bölünmeyi kendimiz yapmak zorunda olalım ki?
+Hedef şeklimiz (yükseklik, genişlik) şekilli bir matrisse, o zaman genişliği bilirsek, yükseklik üstü kapalı olarak verilmiş olur.
+Neden bölmeyi kendimiz yapmak zorunda olalım ki?
 Yukarıdaki örnekte, 3 satırlı bir matris elde etmek için, hem 3 satır hem de 4 sütun olması gerektiğini belirttik.
 Neyse ki, tensörler, bir boyut eksik geri kalanlar verildiğinde, kalan bir boyutu otomatik olarak çıkarabilir.
 Bu özelliği, tensörlerin otomatik olarak çıkarımını istediğimiz boyuta `-1` yerleştirerek çağırıyoruz.
 Bizim durumumuzda, `x.reshape(3, 4)` olarak çağırmak yerine, eşit biçimde `x.reshape(-1, 4)` veya `x.reshape(3, -1)` olarak çağırabilirdik.
 
 Tipik olarak, matrislerimizin sıfırlar, birler, diğer bazı sabitler veya belirli bir dağılımdan rastgele örneklenmiş sayılarla başlatılmasını isteriz.
-Tüm elemanları 0 olarak ayarlanmış ve (2, 3, 4) şeklindeki bir tensörü temsil eden bir tensörü aşağıdaki şekilde oluşturabiliriz:
+[**Tüm elemanları 0 (~~veya 1~~) olarak ayarlanmış**] ve (2, 3, 4) şeklindeki bir tensörü temsil eden bir tensörü aşağıdaki şekilde oluşturabiliriz:
 
 ```{.python .input}
 np.zeros((2, 3, 4))
@@ -133,7 +133,7 @@ np.zeros((2, 3, 4))
 
 ```{.python .input}
 #@tab pytorch
-torch.zeros(2, 3, 4)
+torch.zeros((2, 3, 4))
 ```
 
 ```{.python .input}
@@ -157,8 +157,8 @@ torch.ones((2, 3, 4))
 tf.ones((2, 3, 4))
 ```
 
-Genellikle, bir tensördeki her eleman için değerleri bir olasılık dağılımından rastgele örneklemek isteriz.
-Örneğin, bir sinir ağında parametre görevi görecek dizileri oluşturduğumuzda, değerlerini genellikle rastgele başlatırız.
+Genellikle, [**bir tensördeki her eleman için değerleri bir olasılık dağılımından rastgele örneklemek**] isteriz.
+Örneğin, bir sinir ağında parametre görevi görecek dizileri oluşturduğumuzda, değerlerini genellikle rastgele ilkletiriz.
 Aşağıdaki kod parçası (3, 4) şekilli bir tensör oluşturur .
 Elemanlarının her biri ortalaması 0 ve standart sapması 1 olan standart Gauss (normal) dağılımından rastgele örneklenir.
 
@@ -176,7 +176,7 @@ torch.randn(3, 4)
 tf.random.normal(shape=[3, 4])
 ```
 
-Sayısal değerleri içeren bir Python listesi (veya liste listesi) sağlayarak istenen tensördeki her eleman için kesin değerleri de belirleyebiliriz.
+Sayısal değerleri içeren bir Python listesi (veya liste listesi) sağlayarak istenen tensördeki [**her eleman için kesin değerleri de belirleyebiliriz.**]
 Burada, en dıştaki liste 0. eksene, içteki liste ise 1. eksene karşılık gelir.
 
 ```{.python .input}
@@ -198,42 +198,48 @@ tf.constant([[2, 1, 4, 3], [1, 2, 3, 4], [4, 3, 2, 1]])
 Bu kitap yazılım mühendisliği ile ilgili değildir.
 İlgi alanlarımız basitçe dizilerden/dizilere veri okumak ve yazmakla sınırlı değildir.
 Bu diziler üzerinde matematiksel işlemler yapmak istiyoruz.
-En basit ve en kullanışlı işlemlerden bazıları *eleman-yönlü (elementwise)* işlemlerdir.
-Bunlar bir dizinin her elemanına standart bir sayıl (skaler) operasyon uygular.
-İki diziyi girdi olarak alan işlevler için, eleman-yönlü işlemler iki diziden karşılık gelen her bir elaman çiftine standart bir ikili operatör uygular.
-Sayıldan sayıla (skalerden skalere) eşleşen herhangi bir fonksiyondan eleman-yönlü bir fonksiyon oluşturabiliriz.
+En basit ve en kullanışlı işlemlerden bazıları *eleman yönlü (elementwise)* işlemlerdir.
+Bunlar bir dizinin her elemanına standart bir sayıl işlem uygular.
+İki diziyi girdi olarak alan işlevler için, eleman yönlü işlemler iki diziden karşılık gelen her bir eleman çiftine standart bir ikili operatör uygular.
+Sayıldan sayıla eşleşen herhangi bir fonksiyondan eleman yönlü bir fonksiyon oluşturabiliriz.
 
 Matematiksel gösterimde, böyle bir *tekli* skaler işlemi (bir girdi alarak) $f: \mathbb{R} \rightarrow \mathbb{R}$ imzasıyla ifade ederiz.
 Bu, işlevin herhangi bir gerçel sayıdan ($\mathbb{R}$) diğerine eşlendiği anlamına gelir.
 Benzer şekilde, $f: \mathbb{R}, \mathbb{R} \rightarrow \mathbb{R}$ imzası ile bir *ikili* skaler operatörü (iki gerçel girdi alarak ve bir çıktı verir) belirtiriz.
 *Aynı şekilli* iki  $\mathbf{u}$ ve $\mathbf{v}$ vektörü ve $f$ ikili operatörü verildiğinde, tüm $i$ler için $c_i \gets f(u_i, v_i)$ ayarlayarak $\mathbf{c} = F(\mathbf{u},\mathbf{v})$ vektörünü üretebiliriz; burada $c_i, u_i$ ve $v_i$, $\mathbf{c}, \mathbf{u} $ ve $\mathbf{v}$ vektörlerinin $i.$ elemanlarıdır.
-Burada, skaler fonksiyonu eleman-yönlü bir vektör işlemini *yükselterek* vektör değerli $F: \mathbb{R}^d, \mathbb{R}^d \rightarrow \mathbb{R}^d$ ürettik.
+Burada, skaler fonksiyonu eleman yönlü bir vektör işlemini *yükselterek* vektör değerli $F: \mathbb{R}^d, \mathbb{R}^d \rightarrow \mathbb{R}^d$ ürettik.
 
-Ortak standart aritmetik operatörler (`+`, `-`,` * `,`/` ve `**`), rastgele şekile sahip herhangi bir benzer şekilli tansörler için eleman-yönlü işlemlere *yükseltilmiştir*.
-Aynı şekle sahip herhangi iki tansör üzerinde eleman-yönlü işlemleri çağırabiliriz.
-Aşağıdaki örnekte, 5 öğeli bir grubu formüle etmek için virgül kullanıyoruz, her öğe eleman-yönlü bir işlemin sonucudur.
+Ortak standart aritmetik operatörler (`+`, `-`,` * `,`/` ve `**`), rastgele şekile sahip herhangi bir benzer şekilli tensörler için eleman yönlü işlemlere *yükseltilmiştir*.
+Aynı şekle sahip herhangi iki tansör üzerinde eleman yönlü işlemleri çağırabiliriz.
+Aşağıdaki örnekte, 5 öğeli bir grubu formüle etmek için virgül kullanıyoruz, her öğe eleman yönlü bir işlemin sonucudur.
+
+### İşlemler
+
+[**Genel standart aritmatik işlemler
+(`+`, `-`, `*`, `/`, ve `**`)
+eleman yönlü işlemlere *yükseltilmiştir*.**]
 
 ```{.python .input}
 x = np.array([1, 2, 4, 8])
 y = np.array([2, 2, 2, 2])
-x + y, x - y, x * y, x / y, x ** y  # The ** operator is exponentiation
+x + y, x - y, x * y, x / y, x ** y  # ** işlemi kuvvet almadır.
 ```
 
 ```{.python .input}
 #@tab pytorch
 x = torch.tensor([1.0, 2, 4, 8])
 y = torch.tensor([2, 2, 2, 2])
-x + y, x - y, x * y, x / y, x ** y  # The ** operator is exponentiation
+x + y, x - y, x * y, x / y, x ** y  # ** işlemi kuvvet almadır.
 ```
 
 ```{.python .input}
 #@tab tensorflow
 x = tf.constant([1.0, 2, 4, 8])
 y = tf.constant([2.0, 2, 2, 2])
-x + y, x - y, x * y, x / y, x ** y  # The ** operator is exponentiation
+x + y, x - y, x * y, x / y, x ** y  # ** işlemi kuvvet almadır.
 ```
 
-Üs alma gibi tekli operatörler de dahil olmak üzere, çok daha fazla işlem eleman-yönlü olarak uygulanabilir.
+Kuvvet alma gibi tekli operatörler de dahil olmak üzere, (**çok daha fazla işlem eleman yönlü olarak uygulanabilir.**)
 
 ```{.python .input}
 np.exp(x)
@@ -249,7 +255,7 @@ torch.exp(x)
 tf.exp(x)
 ```
 
-Eleman-yönlü hesaplamalara ek olarak, vektör iç çarpımı ve matris çarpımı dahil olmak üzere doğrusal cebir işlemleri de gerçekleştirebiliriz.
+Eleman yönlü hesaplamalara ek olarak, vektör iç çarpımı ve matris çarpımı dahil olmak üzere doğrusal cebir işlemleri de gerçekleştirebiliriz.
 Doğrusal cebirin önemli parçalarını (varsayılmış hiçbir ön bilgi olmadan) şu şekilde açıklayacağız :numref:`sec_linear-algebra`.
 
 Ayrıca birden fazla tensörü bir araya getirip daha büyük bir tensör oluşturmak için uçtan uca *istifleyebiliriz*.
@@ -258,52 +264,52 @@ Aşağıdaki örnek, satırlar (eksen 0, şeklin ilk öğesi) ile sütunlar (eks
 İlk çıktı tensörünün eksen-0 uzunluğunun ($6$) iki girdi tensörünün eksen-0 uzunluklarının ($3 + 3$) toplamı olduğunu görebiliriz; ikinci çıktı tensörünün eksen-1 uzunluğu ($8$) iki girdi tensörünün eksen-1 uzunluklarının ($4 + 4$) toplamıdır.
 
 ```{.python .input}
-x = np.arange(12).reshape(3, 4)
-y = np.array([[2, 1, 4, 3], [1, 2, 3, 4], [4, 3, 2, 1]])
-np.concatenate([x, y], axis=0), np.concatenate([x, y], axis=1)
+X = np.arange(12).reshape(3, 4)
+Y = np.array([[2, 1, 4, 3], [1, 2, 3, 4], [4, 3, 2, 1]])
+np.concatenate([X, Y], axis=0), np.concatenate([X, Y], axis=1)
 ```
 
 ```{.python .input}
 #@tab pytorch
-x = torch.arange(12, dtype=torch.float32).reshape((3,4))
-y = torch.tensor([[2.0, 1, 4, 3], [1, 2, 3, 4], [4, 3, 2, 1]])
-torch.cat((x, y), dim=0), torch.cat((x, y), dim=1)
+X = torch.arange(12, dtype=torch.float32).reshape((3,4))
+Y = torch.tensor([[2.0, 1, 4, 3], [1, 2, 3, 4], [4, 3, 2, 1]])
+torch.cat((X, Y), dim=0), torch.cat((X, Y), dim=1)
 ```
 
 ```{.python .input}
 #@tab tensorflow
-x = tf.reshape(tf.range(12, dtype=tf.float32), (3, 4))
-y = tf.constant([[2.0, 1, 4, 3], [1, 2, 3, 4], [4, 3, 2, 1]])
-tf.concat([x, y], axis=0), tf.concat([x, y], axis=1)
+X = tf.reshape(tf.range(12, dtype=tf.float32), (3, 4))
+Y = tf.constant([[2.0, 1, 4, 3], [1, 2, 3, 4], [4, 3, 2, 1]])
+tf.concat([x, Y], axis=0), tf.concat([X, Y], axis=1)
 ```
 
 Bazen, *mantıksal ifadeler* aracılığıyla bir ikili tensör oluşturmak isteriz.
-Örnek olarak `x == y`yi ele alalım.
-Her konum için, eğer `x` ve `y` bu konumda eşitse, yeni tensördeki karşılık gelen girdi 1 değerini alır, yani mantıksal ifade `x == y` o konumda doğrudur; aksi halde bu pozisyon 0 değerini alır.
+Örnek olarak `X == Y`yi ele alalım.
+Her konum için, eğer `X` ve `Y` bu konumda eşitse, yeni tensördeki karşılık gelen girdi 1 değerini alır, yani mantıksal ifade `X == Y` o konumda doğrudur; aksi halde bu pozisyon 0 değerini alır.
 
 ```{.python .input}
 #@tab all
-x == y
+X == Y
 ```
 
-Tensördeki tüm elemanların toplanması, sadece bir elemanlı bir tensör verir.
+[**Tensördeki tüm elemanların toplanması**], sadece bir elemanlı bir tensör verir.
 
 ```{.python .input}
 #@tab mxnet, pytorch
-x.sum()
+X.sum()
 ```
 
 ```{.python .input}
 #@tab tensorflow
-tf.reduce_sum(x)
+tf.reduce_sum(X)
 ```
 
 ## Yayma Mekanizması
 :label:`subsec_broadcasting`
 
-Yukarıdaki bölümde, aynı şekle sahip iki tensör üzerinde eleman-yönlü işlemlerin nasıl yapıldığını gördük. Belli koşullar altında, şekiller farklı olsa bile, *yayma mekanizmasını* çağırarak yine de eleman-yönlü işlemler gerçekleştirebiliriz.
+Yukarıdaki bölümde, aynı şekle sahip iki tensör üzerinde eleman yönlü işlemlerin nasıl yapıldığını gördük. Belli koşullar altında, şekiller farklı olsa bile,[** *yayma mekanizmasını* çağırarak yine de eleman yönlü işlemler gerçekleştirebiliriz.**]
 Bu mekanizma şu şekilde çalışır: İlk olarak, bir veya her iki diziyi elemanları uygun şekilde kopyalayarak genişletin, böylece bu dönüşümden sonra iki tensör aynı şekle sahip olur.
-İkincisi, sonuç dizileri üzerinde eleman-yönlü işlemleri gerçekleştirin.
+İkincisi, sonuç dizileri üzerinde eleman yönlü işlemleri gerçekleştirin.
 
 Çoğu durumda, bir dizinin başlangıçta yalnızca 1 uzunluğuna sahip olduğu bir eksen boyunca yayın yaparız, aşağıdaki gibi:
 
@@ -328,7 +334,7 @@ a, b
 ```
 
 `a` ve `b` sırasıyla $3\times1$ ve $1\times2$ matrisler olduğundan, onları toplamak istiyorsak şekilleri uyuşmaz.
-Her iki matrisin girdilerini aşağıdaki gibi daha büyük bir $3\times2$ matrisine *yayınlıyoruz*: Her ikisini de eleman-yönlü eklemeden önce `a` matrisi için sütunlar çoğaltılır ve `b` matrisi için satırlar çoğaltılır.
+Her iki matrisin girdilerini aşağıdaki gibi daha büyük bir $3\times2$ matrisine *yayınlıyoruz*: Her ikisini de eleman yönlü eklemeden önce `a` matrisi için sütunlar çoğaltılır ve `b` matrisi için satırlar çoğaltılır.
 
 ```{.python .input}
 #@tab all
@@ -341,25 +347,35 @@ Diğer tüm Python dizilerinde olduğu gibi, bir tensördeki öğelere indeksle 
 Herhangi bir Python dizisinde olduğu gibi, ilk öğenin dizini 0'dır ve aralıklar ilk öğeyi içerecek ancak son öğeden *öncesi* eklenecek şekilde belirtilir.
 Standart Python listelerinde olduğu gibi, öğelere, negatif endeksler kullanarak listenin sonuna göreceli konumlarına göre erişebiliriz.
 
-Böylece, `[-1]` son elemanı seçer ve `[1:3]` ikinci ve üçüncü elemanları aşağıdaki gibi seçer:
+Böylece, [** `[-1]` son elemanı ve `[1:3]` ikinci ve üçüncü elemanları**] aşağıdaki gibi seçer:
 
 ```{.python .input}
 #@tab all
-x[-1], x[1:3]
+X[-1], X[1:3]
 ```
 
-Okumanın ötesinde, indisleri belirterek bir matrisin elemanlarını da yazabiliriz.
+:begin_tab:`mxnet, pytorch`
+Okumanın ötesinde, (**indeksleri belirterek matrisin elemanlarını da yazabiliriz.**)
+:end_tab:
+
+:begin_tab:`tensorflow`
+TensorFlow'daki `tensörler` değişmezdir, ve atanamazlar.
+TensorFlow'daki `değişkenler` atanmayı destekleyen durumların değiştirilebilir kapsayıcılardır. TensorFlow'daki gradyanların `değişken` atamaları aracılığıyla geriye doğru akmadığını unutmayın.
+
+Tüm `değişkenler`e bir değer atamanın ötesinde, bir `değişken`in öğelerini indeksler belirterek yazabiliriz.
+:end_tab:
 
 ```{.python .input}
 #@tab mxnet, pytorch
-x[1, 2] = 9
-x
+X[1, 2] = 9
+X
 ```
 
 ```{.python .input}
 #@tab tensorflow
-x = tf.convert_to_tensor(tf.Variable(x)[1, 2].assign(9))
-x
+X_var = tf.Variable(X)
+X_var[1, 2].assign(9)
+X_var
 ```
 
 Birden fazla öğeye aynı değeri atamak istiyorsak, hepsini indeksleriz ve sonra da değer atarız.
@@ -368,31 +384,30 @@ Biz burada matrisler için indekslemeyi tartışırken, anlatılanlar açıkça 
 
 ```{.python .input}
 #@tab mxnet, pytorch
-x[0:2, :] = 12
-x
+X[0:2, :] = 12
+X
 ```
 
 ```{.python .input}
 #@tab tensorflow
-x_var = tf.Variable(x)
-x_var[1:2,:].assign(tf.ones(x_var[1:2,:].shape, dtype = tf.float32)*12)
-x = tf.convert_to_tensor(x_var)
-x
+X_var = tf.Variable(X)
+X_var[0:2, :].assign(tf.ones(X_var[0:2,:].shape, dtype = tf.float32) * 12)
+X_var
 ```
 
 ## Belleği Kaydetme
 
-Koşturma işlemleri, ana makine sonuçlarına yeni bellek ayrılmasına neden olabilir.
-Örneğin, `y = x + y` yazarsak, `y`yi göstermek için kullanılan tensörden vazgeçer ve bunun yerine yeni verilen bellekteki `y`yi işaret ederiz.
+[**Koşulan işlemler, sonuçların tutulması için yeni bellek ayrılmasına neden olabilir.**]
+Örneğin, `Y = X + Y` yazarsak, `Y`yi göstermek için kullanılan tensörden vazgeçer ve bunun yerine yeni ayrılan bellekteki `Y`yi işaret ederiz.
 Aşağıdaki örnekte, bunu, bize bellekteki referans edilen nesnenin tam adresini veren Python'un `id()` fonksiyonu ile gösteriyoruz.
-`y = y + x` komutunu çalıştırdıktan sonra, `id(y)` ifadesinin farklı bir yeri gösterdiğini göreceğiz.
-Bunun nedeni, Python'un önce sonuç için yeni bellek ayırarak `y + x` değerini hesaplayıp ardından `y`'yi bellekteki bu yeni konuma işaret etmesidir.
+`Y = Y + X` komutunu çalıştırdıktan sonra, `id(Y)` ifadesinin farklı bir yeri gösterdiğini göreceğiz.
+Bunun nedeni, Python'un önce `Y + X` değerini hesaplayarak sonuç için yeni bellek ayırması ve ardından `Y`yi bellekteki bu yeni konuma işaret etmesidir.
 
 ```{.python .input}
 #@tab all
-before = id(y)
-y = y + x
-id(y) == before
+before = id(Y)
+Y = Y + X
+id(Y) == before
 ```
 
 Bu iki nedenden dolayı istenmez olabilir.
@@ -400,78 +415,114 @@ Birincisi, her zaman gereksiz yere bellek ayırmaya çalışmak istemiyoruz.
 Makine öğrenmesinde yüzlerce megabayt parametreye sahip olabilir ve hepsini saniyede birkaç kez güncelleyebiliriz.
 Genellikle, bu güncellemeleri *yerinde* yapmak isteyeceğiz.
 İkinci olarak, birden çok değişkenden aynı parametrelere işaret edebiliriz.
-Yerinde güncelleme yapmazsak, diğer referanslar hala eski bellek konumuna işaret eder ve bu da kodumuzun bazı bölümlerinin yanlışlıkla eski parametrelere başvurmasını olası kılar.
+Yerinde güncelleme yapmazsak, diğer referanslar hala eski bellek konumuna işaret eder ve bu da kodumuzun bazı bölümlerinin yanlışlıkla eski parametrelere atıfta bulunmasını olası kılar.
 
-Neyse ki, MXNet'te yerinde işlemler yapmak kolaydır.
-Bir işlemin sonucunu daha önce ayrılmış bir diziye dilim gösterimi ile atayabiliriz, örneğin, `y[:] = <ifade>`.
-Bu kavramı göstermek için, önce başka bir `y` ile aynı şekle sahip yeni bir `z` matrisi yaratıyoruz ve bir blok $0$ girdisi tahsis etmek üzere `zeros_like`yi kullanıyoruz.
+:begin_tab:`mxnet, pytorch`
+Neyse ki, (**yerinde işlemler yapmak**) kolaydır.
+Bir işlemin sonucunu daha önce ayrılmış bir diziye dilim gösterimi ile atayabiliriz, örneğin, `Y[:] = <ifade>`.
+Bu kavramı göstermek için, önce başka bir `Y` ile aynı şekle sahip yeni bir `Z` matrisi yaratıyoruz ve bir blok $0$ girdisi tahsis etmek üzere `zeros_like`i kullanıyoruz.
+:end_tab:
+
+:begin_tab:`tensorflow`
+`Variables` are mutable containers of state in TensorFlow. They provide
+a way to store your model parameters.
+We can assign the result of an operation
+to a `Variable` with `assign`.
+To illustrate this concept, we create a `Variable` `Z`
+with the same shape as another tensor `Y`,
+using `zeros_like` to allocate a block of $0$ entries.
+
+`Değişkenler`, TensorFlow'daki değişken durum kapsayıcılarıdır. Model parametrelerinizi saklamanın bir yolunu sağlarlar. Bir işlemin sonucunu `atama` ile bir `değişken`e atayabiliriz. Bu kavramı göstermek için, $0$ girdilerinden oluşan bir blok ayırmak için `zeros_like` kullanarak, başka bir `Y` tensörü ile aynı şekle sahip bir `değişken` `Z` oluşturuyoruz.
+:end_tab:
 
 ```{.python .input}
-z = np.zeros_like(y)
-print('id(z):', id(z))
-z[:] = x + y
-print('id(z):', id(z))
+Z = np.zeros_like(Y)
+print('id(Z):', id(Z))
+Z[:] = X + Y
+print('id(Z):', id(Z))
 ```
 
 ```{.python .input}
 #@tab pytorch
-z = torch.zeros_like(y)
-print('id(z):', id(z))
-z[:] = x + y
-print('id(z):', id(z))
+Z = torch.zeros_like(Y)
+print('id(Z):', id(Z))
+Z[:] = X + Y
+print('id(Z):', id(Z))
 ```
 
 ```{.python .input}
 #@tab tensorflow
-z = tf.Variable(tf.zeros_like(y))
-print('id(z):', id(z))
-z[:].assign(x + y)
-print('id(z):', id(z))
+Z = tf.Variable(tf.zeros_like(Y))
+print('id(z):', id(Z))
+Z[:].assign(X + Y)
+print('id(Z):', id(Z))
 ```
 
-Sonraki hesaplamalarda `x` değeri yeniden kullanılmazsa, işlemin bellek yükünü azaltmak için `x[:] = x + y` veya `x += y` kullanabiliriz.
+:begin_tab:`mxnet, pytorch`
+[**`X` değeri sonraki hesaplamalarda yeniden kullanılmazsa, işlemin bellek yükünü azaltmak için `X[:] = X + Y` veya `X += Y` kullanabiliriz.**]
+:end_tab:
+
+:begin_tab:`tensorflow`
+Durumu bir `değişken`de kalıcı olarak sakladığınızda bile, model parametreleriniz olmayan tensörler için aşırı bellek tahsislerden kaçınarak bellek kullanımınızı daha da azaltmak isteyebilirsiniz.
+
+TensorFlow `Tensör`leri değişmez olduğundan ve gradyanlar `değişken` atamalarından akmadığından, TensorFlow, yerinde tek bir işlemi yürütmek için açıktan bir yol sağlamaz.
+
+Ancak TensorFlow, hesaplamayı çalıştırmadan önce derlenen ve optimize edilen bir TensorFlow çizgesinin içine sarmak için `tf.function` dekoratörü sağlar. Bu, TensorFlow'un kullanılmayan değerleri budamasına ve artık gerekmeyen önceki tahsisleri yeniden kullanmasına olanak tanır. Bu, TensorFlow hesaplamalarının bellek yükünü en aza indirir.
+:end_tab:
 
 ```{.python .input}
 #@tab mxnet, pytorch
-before = id(x)
-x += y
-id(x) == before
+before = id(X)
+X += Y
+id(X) == before
 ```
 
 ```{.python .input}
 #@tab tensorflow
-before = id(x)
-tf.Variable(x).assign(x + y)
-id(x) == before
+@tf.function
+def computation(X, Y):
+    Z = tf.zeros_like(Y)  # Bu kullanılmayan değer budanacaktır
+    A = X + Y  # Daha fazla gerekmediğinde tahsisler yeniden kullanılacaktır 
+    B = A + Y
+    C = B + Y
+    return C + Y
+
+computation(X, Y)
 ```
 
 ## Diğer Python Nesnelerine Dönüştürme
-
-NumPy tensörüne dönüştürmek veya tam tersi kolaydır.
+:begin_tab:`mxnet, tensorflow`
+[**NumPy tensörüne (`ndarray`) dönüştürmek**] veya tam tersi kolaydır.
 Dönüştürülen sonuç belleği paylaşmaz.
 Bu küçük sıkıntı aslında oldukça önemlidir: CPU veya GPU'larda işlem yaparken, Python'un NumPy paketinin aynı bellek yığınıyla başka bir şey yapmak isteyip istemediğini görmek için hesaplamayı durdurmak istemezsiniz.
+:end_tab:
+
+:begin_tab:`pytorch`
+[**NumPy tensörüne (`ndarray`) dönüştürmek**] veya tam tersi kolaydır.
+Torch Tensörü ve numpy dizisi, temeldeki bellek konumlarını paylaşacak ve yerinde bir işlemle birini değiştirmek diğerini de değiştirecektir.
+:end_tab:
 
 ```{.python .input}
-a = x.asnumpy()
-b = np.array(a)
-type(a), type(b)
+A = X.asnumpy()
+B = np.array(A)
+type(A), type(B)
 ```
 
 ```{.python .input}
 #@tab pytorch
-a = x.numpy()
-b = torch.tensor(a)
-type(a), type(b)
+A = X.numpy()
+B = torch.from_numpy(A)
+type(A), type(B)
 ```
 
 ```{.python .input}
 #@tab tensorflow
-a = x.numpy()
-b = tf.constant(a)
-type(a), type(b)
+A = X.numpy()
+B = tf.constant(A)
+type(A), type(B)
 ```
 
-1-boyutlu tensörünü bir Python skalerine (sayılına) dönüştürmek için `item` işlevini veya Python'un yerleşik işlevlerini çağırabiliriz.
+(**1-boyutlu tensörünü bir Python skalerine (sayılına) dönüştürmek için**) `item` işlevini veya Python'un yerleşik işlevlerini çağırabiliriz.
 
 ```{.python .input}
 a = np.array([3.5])
@@ -490,53 +541,13 @@ a = tf.constant([3.5]).numpy()
 a, a.item(), float(a), int(a)
 ```
 
-## `d2l` Paketi
-
-Bu kitabın çevrimiçi sürümü boyunca, birden çok çerçevenin uygulanmasını sağlayacağız.
-Bununla birlikte, farklı çerçevelerin API adlarında veya kullanımlarında farklı olabilir.
-Aynı kod bloğunu birden çok çerçevede daha iyi kullanmak için, `d2l` paketinde yaygın olarak kullanılan birkaç işlevi birleştiriyoruz.
-`#@save` yorumu (comment), takip eden işlevin, sınıfın veya ifadelerin `d2l` paketine kaydedildiği özel bir işarettir.
-Örneğin, daha sonra, desteklenen herhangi bir çerçevede tanımlanabilen bir tensör `a`'yı bir NumPy tensörüne dönüştürmesi için doğrudan `d2l.numpy(a)`yi çağırabiliriz.
-
-```{.python .input}
-#@save
-numpy = lambda a: a.asnumpy()
-size = lambda a: a.size
-reshape = lambda a, *args: a.reshape(*args)
-ones = np.ones
-zeros = np.zeros
-```
-
-```{.python .input}
-#@tab pytorch
-#@save
-numpy = lambda a: a.detach().numpy()
-size = lambda a: a.numel()
-reshape = lambda a, *args: a.reshape(*args)
-ones = torch.ones
-zeros = torch.zeros
-```
-
-```{.python .input}
-#@tab tensorflow
-#@save
-numpy = lambda a: a.numpy()
-size = lambda a: tf.size(a).numpy()
-reshape = tf.reshape
-ones = tf.ones
-zeros = tf.zeros
-```
-
-Kitabın geri kalanında genellikle daha karmaşık fonksiyonlar veya sınıflar tanımlarız.
-Daha sonra kullanılabilecekleri `d2l` paketine kaydedeceğiz, böylece daha sonra yeniden tanımlanmadan doğrudan çağrılabilirler.
-
 ## Özet
 
 * Derin öğrenme için veri depolamada ve oynama yapmada ana arayüz tensördür ($n$-boyutlu dizi). Temel matematik işlemleri, yayınlama, indeksleme, dilimleme, bellek tasarrufu ve diğer Python nesnelerine dönüştürme gibi çeşitli işlevler sağlar.
 
 ## Alıştırmalar
 
-1. Bu bölümdeki kodu çalıştırın. Bu bölümdeki `x == y` koşullu ifadesini, `x < y` veya `x > y` olarak değiştirin ve sonra ne tür bir tensör alabileceğinizi görün.
+1. Bu bölümdeki kodu çalıştırın. Bu bölümdeki `X == Y` koşullu ifadesini, `X < Y` veya `X > Y` olarak değiştirin ve sonra ne tür bir tensör alabileceğinizi görün.
 1. Yayın mekanizmasındaki öğeye göre çalışan iki tensörü, diğer şekillerle, örneğin 3 boyutlu tensörler ile değiştirin. Sonuç beklendiği gibi mi?
 
 :begin_tab:`mxnet`
