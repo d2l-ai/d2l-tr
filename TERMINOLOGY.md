@@ -113,6 +113,8 @@ holdout; harici tutulan
 
 hybridization; melezleştirme
 
+imputation; itham
+
 indicator; gösterge, belirteç
 
 information retrieval; bilgi getirimi
