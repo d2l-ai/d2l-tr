@@ -206,7 +206,7 @@ Sayıldan sayıla eşleşen herhangi bir fonksiyondan eleman yönlü bir fonksiy
 Matematiksel gösterimde, böyle bir *tekli* skaler işlemi (bir girdi alarak) $f: \mathbb{R} \rightarrow \mathbb{R}$ imzasıyla ifade ederiz.
 Bu, işlevin herhangi bir gerçel sayıdan ($\mathbb{R}$) diğerine eşlendiği anlamına gelir.
 Benzer şekilde, $f: \mathbb{R}, \mathbb{R} \rightarrow \mathbb{R}$ imzası ile bir *ikili* skaler operatörü (iki gerçel girdi alarak ve bir çıktı verir) belirtiriz.
-*Aynı şekilli* iki  $\mathbf{u}$ ve $\mathbf{v}$ vektörü ve $f$ ikili operatörü verildiğinde, tüm $i$ler için $c_i \gets f(u_i, v_i)$ ayarlayarak $\mathbf{c} = F(\mathbf{u},\mathbf{v})$ vektörünü üretebiliriz; burada $c_i, u_i$ ve $v_i$, $\mathbf{c}, \mathbf{u} $ ve $\mathbf{v}$ vektörlerinin $i.$ elemanlarıdır.
+*Aynı şekilli* iki  $\mathbf{u}$ ve $\mathbf{v}$ vektörü ve $f$ ikili operatörü verildiğinde, tüm $i$ler için $c_i \gets f(u_i, v_i)$ ayarlayarak $\mathbf{c} = F(\mathbf{u},\mathbf{v})$ vektörünü üretebiliriz; burada $c_i, u_i$ ve $v_i$, $\mathbf{c}, \mathbf{u}$ ve $\mathbf{v}$ vektörlerinin $i.$ elemanlarıdır.
 Burada, skaler fonksiyonu eleman yönlü bir vektör işlemini *yükselterek* vektör değerli $F: \mathbb{R}^d, \mathbb{R}^d \rightarrow \mathbb{R}^d$ ürettik.
 
 Ortak standart aritmetik operatörler (`+`, `-`,` * `,`/` ve `**`), rastgele şekile sahip herhangi bir benzer şekilli tensörler için eleman yönlü işlemlere *yükseltilmiştir*.
@@ -284,7 +284,7 @@ tf.concat([X, Y], axis=0), tf.concat([X, Y], axis=1)
 ```
 
 Bazen, *mantıksal ifadeler* aracılığıyla bir ikili tensör oluşturmak isteriz.
-Örnek olarak `X == Y`yi ele alalım.
+Örnek olarak `X == Y`'yi ele alalım.
 Her konum için, eğer `X` ve `Y` bu konumda eşitse, yeni tensördeki karşılık gelen girdi 1 değerini alır, yani mantıksal ifade `X == Y` o konumda doğrudur; aksi halde bu pozisyon 0 değerini alır.
 
 ```{.python .input}
