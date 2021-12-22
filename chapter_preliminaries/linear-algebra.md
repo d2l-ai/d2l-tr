@@ -167,7 +167,7 @@ Görsel olarak, herhangi bir $\mathbf{A} \in \mathbb{R}^{m \times n}$ matrisini 
 $$\mathbf{A}=\begin{bmatrix} a_{11} & a_{12} & \cdots & a_{1n} \\ a_{21} & a_{22} & \cdots & a_{2n} \\ \vdots & \vdots & \ddots & \vdots \\ a_{m1} & a_{m2} & \cdots & a_{mn} \\ \end{bmatrix}.$$
 :eqlabel:`eq_matrix_def`
 
-Herhangi bir $\mathbf{A} \in \mathbb{R}^{m \times n} için, $\mathbf{A}$ ($m$, $n$) veya $m \times n$ şeklindedir.
+Herhangi bir $\mathbf{A} \in \mathbb{R}^{m \times n}$ için, $\mathbf{A}$ ($m$, $n$) veya $m \times n$ şeklindedir.
 Özellikle, bir matris aynı sayıda satır ve sütuna sahip olduğunda, şekli bir kareye dönüşür; dolayısıyla buna *kare matris* denir.
 
 Bir tensörü örneği yaratırken, en sevdiğimiz işlevlerden herhangi birini çağırıp $m$ ve $n$ iki bileşeninden oluşan bir şekil belirterek [**$m \times n$ matrisi oluşturabiliriz.**]
@@ -197,7 +197,7 @@ Gösterimi basit tutarken indeksleri ayırmak için virgüller yalnızca gerekli
 Bazen eksenleri ters çevirmek isteriz.
 Bir matrisin satırlarını ve sütunlarını değiştirdiğimizde çıkan sonuç matrisine *devrik (transpose)* adı verilir.
 Usul olarak, bir $\mathbf{A}$'nin devriğini $\mathbf{A}^\top$ ile gösteririz ve eğer $\mathbf{B} = \mathbf{A}^\top$ ise herhangi bir $i$ and $j$ için $b_{ij} = a_{ji}$'dir.
-Bu nedenle, :eqref:`eq_matrix_def`deki $\mathbf{A}$'in devriği bir $n\times m$ matristir:
+Bu nedenle, :eqref:`eq_matrix_def`deki $\mathbf{A}$'nin devriği bir $n\times m$ matristir:
 
 $$
 \mathbf{A}^\top =
@@ -322,7 +322,7 @@ A, A + B
 ```
 
 Özellikle, [**iki matrisin eleman yönlü çarpımına *Hadamard çarpımı***] (matematik gösterimi $\odot$) denir.
-$i.$ satır ve $j.$ sütununun öğesi $b_{ij} $ olan $\mathbf{B} \in \mathbb{R}^{m\times n}$ matrisini düşünün. $\mathbf{A}$ (:eqref:`eq_matrix_def`da tanımlanmıştır) ve $\mathbf{B}$ matrislerinin Hadamard çarpımı:
+$i.$ satır ve $j.$ sütununun öğesi $b_{ij}$ olan $\mathbf{B} \in \mathbb{R}^{m\times n}$ matrisini düşünün. $\mathbf{A}$ (:eqref:`eq_matrix_def`da tanımlanmıştır) ve $\mathbf{B}$ matrislerinin Hadamard çarpımı:
 
 $$
 \mathbf{A} \odot \mathbf{B} =
@@ -375,7 +375,7 @@ a + X, (a * X).shape
 
 Keyfi tensörlerle gerçekleştirebileceğimiz faydalı işlemlerden biri [**elemanlarının toplamını**] hesaplamaktır.
 Matematiksel gösterimde, $\sum$ sembolünü kullanarak toplamları ifade ederiz.
-$d$ uzunluğa sahip $\mathbf{x}$ vektöründeki öğelerin toplamını ifade etmek için $\sum_{i=1}^d x_i $ yazarız.
+$d$ uzunluğa sahip $\mathbf{x}$ vektöründeki öğelerin toplamını ifade etmek için $\sum_{i=1}^d x_i$ yazarız.
 Kodda, toplamı hesaplamak için sadece ilgili işlevi çağırabiliriz.
 
 ```{.python .input}
@@ -527,7 +527,7 @@ sum_A = tf.reduce_sum(A, axis=1, keepdims=True)
 sum_A
 ```
 
-Örneğin, `sum_A` her satırı topladıktan sonra hala iki eksenini koruduğundan,(**`A`yı yayınlayarak `sum_A` ile bölebiliriz.**)
+Örneğin, `sum_A` her satırı topladıktan sonra hala iki eksenini koruduğundan,(**`A`'yı yayınlayarak `sum_A` ile bölebiliriz.**)
 
 ```{.python .input}
 A / sum_A
@@ -543,7 +543,7 @@ A / sum_A
 A / sum_A
 ```
 
-[**Bir eksen boyunca `A`nın öğelerinin biriktirilmiş (kümülatif) toplamını hesaplamak**] istiyorsak, `axis=0` diyelim (satır satır),`cumsum` işlevini çağırabiliriz. Bu işlev girdi tensörünü herhangi bir eksen boyunca indirgemez.
+[**Bir eksen boyunca `A`'nın öğelerinin biriktirilmiş (kümülatif) toplamını hesaplamak**] istiyorsak, `axis=0` diyelim (satır satır),`cumsum` işlevini çağırabiliriz. Bu işlev girdi tensörünü herhangi bir eksen boyunca indirgemez.
 
 ```{.python .input}
 A.cumsum(axis=0)
@@ -607,7 +607,7 @@ Ağırlıklar negatif olmadığında ve bire (i.e., $\left(\sum_{i=1}^{d} {w_i} 
 ## Matris-Vektör Çarpımları
 
 Artık nokta çarpımlarını nasıl hesaplayacağımızı bildiğimize göre, *matris-vektör çarpımları* anlamaya başlayabiliriz.
-$\mathbf{A} \in \mathbb{R}^{m \times n}$ matrisini ve $\mathbf{x} \in \mathbb{R}^n$ vektörünü sırasıyla tanımladık ve görselleştirdik :eqref: `eq_matrix_def` ve :eqref:`eq_vec_def` .
+$\mathbf{A} \in \mathbb{R}^{m \times n}$ matrisini ve $\mathbf{x} \in \mathbb{R}^n$ vektörünü sırasıyla tanımladık ve görselleştirdik :eqref:`eq_matrix_def` ve :eqref:`eq_vec_def` .
 $\mathbf{A}$ matrisini satır vektörleriyle görselleştirerek başlayalım.
 
 $$\mathbf{A}=
@@ -637,7 +637,7 @@ $$
 \end{bmatrix}.
 $$
 
-$\mathbf{A}\in \mathbb{R}^{m \times n}$ matrisi ile çarpmayı vektörleri $\mathbb{R}^{n}$'den $\mathbb{R}^{m} $'e yansıtan bir dönüşüm olarak düşünebiliriz.
+$\mathbf{A}\in \mathbb{R}^{m \times n}$ matrisi ile çarpmayı vektörleri $\mathbb{R}^{n}$'den $\mathbb{R}^{m}$'e yansıtan bir dönüşüm olarak düşünebiliriz.
 Bu dönüşümler oldukça faydalı oldu.
 Örneğin, döndürmeleri bir kare matrisle çarpma olarak gösterebiliriz.
 Sonraki bölümlerde göreceğimiz gibi, bir önceki katmanın değerleri göz önüne alındığında, bir sinir ağındaki her bir katman hesaplanırken gereken en yoğun hesaplamaları tanımlamak için matris-vektör çarpımlarını da kullanabiliriz.
@@ -811,8 +811,8 @@ Ayrıca, vektör öğelerinin mutlak değerlerinin toplamı olarak ifade edilen 
 
 (**$$\|\mathbf{x}\|_1 = \sum_{i=1}^n \left|x_i \right|.$$**)
 
-$L_2 $ normuna kıyasla, sıradışı (aykırı) değerlerden daha az etkilenir.
-$L_1 $ normunu hesaplamak için, elemanların toplamı üzerinde mutlak değer fonksiyonunu oluştururuz.
+$L_2$ normuna kıyasla, sıradışı (aykırı) değerlerden daha az etkilenir.
+$L_1$ normunu hesaplamak için, elemanların toplamı üzerinde mutlak değer fonksiyonunu oluştururuz.
 
 ```{.python .input}
 np.abs(u).sum()
