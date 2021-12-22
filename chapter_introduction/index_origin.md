@@ -57,7 +57,7 @@ that are beyond our conscious understanding
 even if our eyes manage the task effortlessly.
 *Machine learning* is the study of powerful
 techniques that can learn from experience.
-As an machine learning algorithm accumulates more experience,
+As a machine learning algorithm accumulates more experience,
 typically in the form of observational data or
 interactions with an environment, its performance improves.
 Contrast this with our deterministic e-commerce platform,
@@ -806,7 +806,7 @@ e.g., for retail products, music, and news recommendation.
 
 In some cases, customers provide explicit feedback communicating
 how much they liked a particular product
-(e.g., the product ratings and reviews on Amazon, IMDb, and GoodReads).
+(e.g., the product ratings and reviews on Amazon, IMDb, and Goodreads).
 In some other cases, they provide implicit feedback,
 e.g., by skipping titles on a playlist,
 which might indicate dissatisfaction but might just indicate
@@ -870,7 +870,7 @@ But how would we deal with video snippets?
 In this case, each snippet might consist of a different number of frames.
 And our guess of what is going on in each frame might be much stronger
 if we take into account the previous or succeeding frames.
-Same goes for language. One popular deep learning problem
+Same goes for language. One popular deep learning problem	
 is machine translation: the task of ingesting sentences
 in some source language and predicting their translation in another language.
 
@@ -956,8 +956,7 @@ real-world knowledge and the prior state of the conversation
 across long temporal distances.
 These are active areas of research.
 
-
-### Unsupervised learning
+### Unsupervised and Self-Supervised Learning
 
 All the examples so far were related to supervised learning,
 i.e., situations where we feed the model a giant dataset
@@ -1011,14 +1010,39 @@ For instance, if we have demographic data
 about house prices, pollution, crime, location,
 education, and salaries, can we discover
 how they are related simply based on empirical data?
-The fields concerned with *causality* and
-*probabilistic graphical models* address this problem.
+The fields concerned with *causality* and *probabilistic graphical models* address this problem.
 * Another important and exciting recent development in unsupervised learning
 is the advent of *generative adversarial networks*.
 These give us a procedural way to synthesize data,
 even complicated structured data like images and audio.
 The underlying statistical mechanisms are tests
 to check whether real and fake data are the same.
+
+As a form of unsupervised learning,
+*self-supervised learning*
+leverages unlabeled data 
+to provide supervision in training,
+such as by
+predicting some withheld part of the data
+using other parts.
+For text,
+we can train models 
+to "fill in the blanks"
+by predicting randomly masked words
+using their surrounding words (contexts)
+in big corpora without any labeling effort :cite:`Devlin.Chang.Lee.ea.2018`!
+For images,
+we may train models
+to tell the relative position
+between two cropped regions
+of the same image :cite:`Doersch.Gupta.Efros.2015`.
+In these two examples of self-supervised learning,
+training models to predict
+possible words and relative positions
+are both classification tasks
+(from supervised learning).
+
+
 
 ### Interacting with an Environment
 
@@ -1608,7 +1632,7 @@ we are experiencing a transition from parametric statistical descriptions to ful
 
 Another difference to previous work is the acceptance of suboptimal solutions, dealing with nonconvex nonlinear optimization problems, and the willingness to try things before proving them. This newfound empiricism in dealing with statistical problems, combined with a rapid influx of talent has led to rapid progress of practical algorithms, albeit in many cases at the expense of modifying and re-inventing tools that existed for decades.
 
-In the end, the deep learning community prides itself of sharing tools across academic and corporate boundaries, releasing many excellent libraries, statistical models, and trained networks as open source.
+In the end, the deep learning community prides itself on sharing tools across academic and corporate boundaries, releasing many excellent libraries, statistical models, and trained networks as open source.
 It is in this spirit that the notebooks forming this book are freely available for distribution and use. We have worked hard to lower the barriers of access for everyone to learn about deep learning and we hope that our readers will benefit from this.
 
 
