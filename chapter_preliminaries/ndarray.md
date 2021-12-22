@@ -280,7 +280,7 @@ torch.cat((X, Y), dim=0), torch.cat((X, Y), dim=1)
 #@tab tensorflow
 X = tf.reshape(tf.range(12, dtype=tf.float32), (3, 4))
 Y = tf.constant([[2.0, 1, 4, 3], [1, 2, 3, 4], [4, 3, 2, 1]])
-tf.concat([x, Y], axis=0), tf.concat([X, Y], axis=1)
+tf.concat([X, Y], axis=0), tf.concat([X, Y], axis=1)
 ```
 
 Bazen, *mantıksal ifadeler* aracılığıyla bir ikili tensör oluşturmak isteriz.

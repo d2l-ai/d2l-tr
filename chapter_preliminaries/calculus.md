@@ -5,7 +5,7 @@ Bir çokgenin alanını bulmak, eski Yunanlıların bir çokgeni üçgenlere bö
 Bir daire gibi kavisli şekillerin alanını bulmak için, eski Yunanlılar bu şekillerin içine çokgenler yerleştirdiler.
 :numref:`fig_circle_area`'da gösterildiği gibi, eşit uzunlukta daha fazla kenarı olan çizili bir çokgen daireye daha iyi yaklaşır. Bu işlem *tükenme yöntemi* olarak da bilinir.
 
-![Tükenme yöntemiyle bir dairenin alanını bulun.](../img/polygon_circle.svg)
+![Tükenme yöntemiyle bir dairenin alanını bulun.](../img/polygon-circle.svg)
 :label:`fig_circle_area`
 
 Aslında, tükenme yöntemi *integral hesabının* (şurada açıklanacaktır :numref:`sec_integral_calculus`) kaynaklandığı yerdir.
