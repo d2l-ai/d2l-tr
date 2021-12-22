@@ -16,27 +16,27 @@ Herhangi bir bilgi işlem teknolojisinin tam etkinliğine ulaşması için, iyi 
 
 Derin öğrenmenin potansiyelini test ederken, çeşitli disiplinler bir araya geldiği için zorluklarla karşılaşabilirsiniz.
 Derin öğrenmeyi uygulamak aynı anda
-+ (i) belirli bir problemi belirli bir şekilde çözme motivasyonlarını
-+ (ii) belli bir modelin matematiksel formu
-+ (iii) modellerin verilere uyumu (fitting) için kullanılan optimizasyon algoritmalarını
-+ (iv) modellerimizin görünmeyen verilere genellenmesini ne zaman beklememiz gerektiğini bize söyleyen istatistiksel ilkelerini ve aslında genelleştirilmiş olduklarını doğrulamak için pratik yöntemlerini
-+ (v) modelleri verimli bir şekilde eğitmek için gerekli mühendisliği, sayısal hesaplamanın gizli tuzaklarında gezinme ve mevcut donanımdan en iyi şekilde yararlanma yöntemlerini anlamayı gerektirir.
+(i) belirli bir problemi belirli bir şekilde çözme motivasyonlarını
+(ii) belli bir modelin matematiksel formu
+(iii) modellerin verilere uyumu (fitting) için kullanılan optimizasyon algoritmalarını
+(iv) modellerimizin görünmeyen verilere genellenmesini ne zaman beklememiz gerektiğini bize söyleyen istatistiksel ilkelerini ve aslında genelleştirilmiş olduklarını doğrulamak için pratik yöntemlerini
+(v) modelleri verimli bir şekilde eğitmek için gerekli mühendisliği, sayısal hesaplamanın gizli tuzaklarında gezinme ve mevcut donanımdan en iyi şekilde yararlanma yöntemlerini anlamayı gerektirir.
 
 Sorunları formüle etmek için gerekli eleştirel düşünme becerilerini, onları çözmek için gereken matematiği ve bu çözümleri uygulamak için kullanılan yazılım araçlarını tek bir yerde öğretebilmek oldukça zor. Bu kitaptaki amacımız istekli uygulayıcılara hız kazandıran bütünleşik bir kaynak sunmaktır.
 
 Bu kitap projesine başladığımızda, aşağıdaki özelliklerin hepsini bir arada barındıran hiçbir kaynak yoktu:
-+ (i) güncel 
-+ (ii) modern makine öğrenmesiinin tamamını geniş bir teknik derinlikle kapsayan
-+ (iii) ilgi çekici bir ders kitabından beklenen kaliteyi uygulamalı derslerde bulmayı beklediğiniz temiz çalıştırılabilir kod ile içiçe serpiştirilmiş olarak sunan 
+(i) Güncel 
+(ii) modern makine öğrenmesiinin tamamını geniş bir teknik derinlikle kapsayan
+(iii) ilgi çekici bir ders kitabından beklenen kaliteyi uygulamalı derslerde bulmayı beklediğiniz temiz çalıştırılabilir kod ile içiçe serpiştirilmiş olarak sunan 
 
 Belirli bir derin öğrenme çerçevesinin nasıl kullanıldığını (örneğin, TensorFlow'daki matrislerle temel sayısal hesaplama) veya belirli tekniklerin nasıl uygulandığını (ör. LeNet, AlexNet, ResNets, vb. için kod parçaları) gösteren çeşitli blog yayınlarına ve GitHub depolarına dağılmış birçok kod örneği bulduk. Bu örnekler genellikle belirli bir yaklaşımı *nasıl* uygulayacağına odaklanmakta, ancak bazı algoritmik kararların *neden* verildiği tartışmasını dışlamaktaydı. Ara sıra bazı etkileşimli kaynaklar yalnızca derin öğrenmedeki belirli bir konuyu ele almak için ortaya çıkmış olsa da, örneğin [Distill](http://distill.pub) web sitesinde veya kişisel bloglarda yayınlanan ilgi çekici blog yayınları, genellikle ilişkili koddan yoksundu. Öte yandan, derin öğrenmenin temelleri hakkında kapsamlı bir inceleme sunan :cite:`Goodfellow.Bengio.Courville.2016` gibi birkaç derin öğrenme ders kitabı ortaya çıkmış olsa da, bu kaynaklar, kavramların kodda gerçekleştirilmesine ait açıklamalar ile okuyucuların bunları nasıl uygulayabileceğini ilişkilendirmesi konusunda bazen bilgisiz bırakıyor. Ayrıca, birçok kaynak ticari kurs sağlayıcılarının ödeme duvarlarının arkasında gizlenmiştir.
 
 Biz yola çıkarken
-+ (i) herkesin erişimine açık olan,
-+ (ii) hakiki bir uygulamalı makine öğrenmesi bilim insanı olma yolunda başlangıç noktası sağlamak için yeterli teknik derinliği sunan,
-+ (iii) okuyuculara problemleri pratikte *nasıl* çözecebileceklerini gösteren çalıştırılabilir kodu içeren,
-+ (iv) hem topluluk hem de bizim tarafımızdan hızlı güncellemelere izin veren,
-+ (v) teknik detayların etkileşimli tartışılması ve soruların cevaplanması için bir [forum](http://discuss.d2l.ai) ile tamamlanan bir kaynak oluşturmayı hedefledik.
+(i) herkesin erişimine açık olan,
+(ii) hakiki bir uygulamalı makine öğrenmesi bilim insanı olma yolunda başlangıç noktası sağlamak için yeterli teknik derinliği sunan,
+(iii) okuyuculara problemleri pratikte *nasıl* çözecebileceklerini gösteren çalıştırılabilir kodu içeren,
+(iv) hem topluluk hem de bizim tarafımızdan hızlı güncellemelere izin veren,
+(v) teknik detayların etkileşimli tartışılması ve soruların cevaplanması için bir [forum](http://discuss.d2l.ai) ile tamamlanan bir kaynak oluşturmayı hedefledik.
 
 Bu hedefler genellikle çatışıyordu. Denklemler, teoremler ve alıntılar LaTeX'te en iyi şekilde düzenlenebilir ve yönetilebilir. Kod en iyi Python'da açıklanır. Web sayfaları için HTML ve JavaScript idealdir. Ayrıca içeriğin hem çalıştırılabilir kod, hem fiziksel bir kitap, hem indirilebilir bir PDF, hem de internette bir web sitesi olarak erişilebilir olmasını istiyoruz. Şu anda bu taleplere tam uygun hiçbir alet ve iş akışı yok, bu yüzden kendimiz bir araya getirmek zorunda kaldık. Yaklaşımımızı ayrıntılı olarak şurada açıklıyoruz :numref:`sec_how_to_contribute`. Kaynağı paylaşmak ve düzenlemelere izin vermek için GitHub'a, kod, denklemler ve metin karıştırmak için Jupyter not defterlerine, çoklu çıktılar oluşturmak için bir oluşturma motoru olan Sphinx'e ve forum için Discourse'a karar verdik. Sistemimiz henüz mükemmel olmasa da, bu seçenekler farklı hedefler arasında iyi bir uzlaşma sağlamaktadır. Bunun böyle bir tümleşik iş akışı kullanılarak yayınlanan ilk kitap olabileceğine inanıyoruz.
 
