@@ -31,16 +31,15 @@ is producing a model that performs well on data
 that we have never seen before.
 But we can only fit the model to data that we can actually see.
 Thus we can decompose the task of fitting models into two key concerns:
-i) *optimization*: the process of fitting our models to observed data;
-ii) *generalization*: the mathematical principles and practitioners' wisdom
+(i) *optimization*: the process of fitting our models to observed data;
+(ii) *generalization*: the mathematical principles and practitioners' wisdom
 that guide as to how to produce models whose validity extends
-beyond the exact set of data instances used to train them.
+beyond the exact set of data examples used to train them.
 
 To help you understand
 optimization problems and methods in later chapters,
 here we give a very brief primer on differential calculus
 that is commonly used in deep learning.
-
 
 ## Derivatives and Differentiation
 
@@ -55,9 +54,10 @@ by an infinitesimally small amount.
 
 Suppose that we have a function $f: \mathbb{R} \rightarrow \mathbb{R}$,
 whose input and output are both scalars.
-The *derivative* of $f$ is defined as
+[**The *derivative* of $f$ is defined as**]
 
-$$f'(x) = \lim_{h \rightarrow 0} \frac{f(x+h) - f(x)}{h},$$
+
+(**$$f'(x) = \lim_{h \rightarrow 0} \frac{f(x+h) - f(x)}{h},$$**)
 :eqlabel:`eq_derivative`
 
 if this limit exists.
@@ -73,7 +73,7 @@ the variation $h$ in $x$, which approaches $0$.
 
 To illustrate derivatives,
 let us experiment with an example.
-Define $u = f(x) = 3x^2-4x$.
+(**Define $u = f(x) = 3x^2-4x$.**)
 
 ```{.python .input}
 %matplotlib inline
@@ -108,9 +108,10 @@ def f(x):
     return 3 * x ** 2 - 4 * x
 ```
 
-By setting $x=1$ and letting $h$ approach $0$,
-the numerical result of $\frac{f(x+h) - f(x)}{h}$
-in :eqref:`eq_derivative` approaches $2$.
+[**By setting $x=1$ and letting $h$ approach $0$,
+the numerical result of $\frac{f(x+h) - f(x)}{h}$**]
+in :eqref:`eq_derivative`
+(**approaches $2$.**)
 Though this experiment is not a mathematical proof,
 we will see later that the derivative $u'$ is $2$ when $x=1$.
 
@@ -165,13 +166,15 @@ where the numerical result approaches $2$.
 This derivative is also the slope of the tangent line
 to the curve $u = f(x)$ when $x = 1$.
 
-To visualize such an interpretation of derivatives,
-we will use `matplotlib`,
-a popular plotting library in Python.
+[**To visualize such an interpretation of derivatives,
+we will use `matplotlib`,**] a popular plotting library in Python.
 To configure properties of the figures produced by `matplotlib`,
 we need to define a few functions.
 In the following,
 the `use_svg_display` function specifies the `matplotlib` package to output the svg figures for sharper images.
+Note that the comment `#@save` is a special mark where the following function,
+class, or statements are saved in the `d2l` package
+so later they can be directly invoked (e.g., `d2l.use_svg_display()`) without being redefined.
 
 ```{.python .input}
 #@tab all
@@ -219,7 +222,7 @@ since we will need to visualize many curves throughout the book.
 def plot(X, Y=None, xlabel=None, ylabel=None, legend=None, xlim=None,
          ylim=None, xscale='linear', yscale='linear',
          fmts=('-', 'm--', 'g-.', 'r:'), figsize=(3.5, 2.5), axes=None):
-    """Plot data instances."""
+    """Plot data points."""
     if legend is None:
         legend = []
 
@@ -248,7 +251,7 @@ def plot(X, Y=None, xlabel=None, ylabel=None, legend=None, xlim=None,
     set_axes(axes, xlabel, ylabel, xlim, ylim, xscale, yscale, legend)
 ```
 
-Now we can plot the function $u = f(x)$ and its tangent line $y = 2x - 3$ at $x=1$, where the coefficient $2$ is the slope of the tangent line.
+Now we can [**plot the function $u = f(x)$ and its tangent line $y = 2x - 3$ at $x=1$**], where the coefficient $2$ is the slope of the tangent line.
 
 ```{.python .input}
 #@tab all
@@ -275,6 +278,7 @@ $$\frac{\partial y}{\partial x_i} = \frac{\partial f}{\partial x_i} = f_{x_i} = 
 
 
 ## Gradients
+:label:`subsec_calculus-grad`
 
 We can concatenate partial derivatives of a multivariate function with respect to all its variables to obtain the *gradient* vector of the function.
 Suppose that the input of function $f: \mathbb{R}^n \rightarrow \mathbb{R}$ is an $n$-dimensional vector $\mathbf{x} = [x_1, x_2, \ldots, x_n]^\top$ and the output is a scalar. The gradient of the function $f(\mathbf{x})$ with respect to $\mathbf{x}$ is a vector of $n$ partial derivatives:
