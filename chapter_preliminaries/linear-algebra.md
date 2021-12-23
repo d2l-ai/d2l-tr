@@ -164,10 +164,10 @@ Genellikle kalın, büyük harflerle (örn., $\mathbf{X}$, $\mathbf{Y}$, and $\m
 Matematiksel gösterimde, $\mathbf{A}$ matrisinin gerçel değerli skaler $m$ satır ve $n$ sütundan oluştuğunu ifade etmek için $\mathbf{A} \in \mathbb{R}^{m \times n}$i kullanırız .
 Görsel olarak, herhangi bir $\mathbf{A} \in \mathbb{R}^{m \times n}$ matrisini $a_{ij}$ öğesinin $i.$ satıra ve $j.$ sütuna ait olduğu bir tablo olarak gösterebiliriz:
 
-$$\mathbf{A}=\begin{bmatrix} a_{11} & a_{12} & \cdots & a_{1n} \\ a_{21} & a_{22} & \cdots & a_{2n} \\ \vdots & \vdots & \ddots & \vdots \\ a_{m1} & a_{m2} & \cdots & a_{mn} \\ \end{bmatrix}.$$
+$$\mathbf{A}=\begin{bmatrix} a_{11} & a_{12} & \cdots & a_{1n} \\ a_{21} & a_{22} & \cdots & a_{2n} \\ \vdots & \vdots & \ddots & \vdots \\ a_{m1} & a_{m2} & \cdots & a_{mn} \\ \end{bmatrix}$$
 :eqlabel:`eq_matrix_def`
 
-Herhangi bir $\mathbf{A} \in \mathbb{R}^{m \times n}$ için, $\mathbf{A}$ ($m$, $n$) veya $m \times n$ şeklindedir.
+Herhangi bir $\mathbf{A}\in \mathbb{R}^{m\times n}$ için, $\mathbf{A}$ ($m$, $n$) veya $m\times n$ şeklindedir.
 Özellikle, bir matris aynı sayıda satır ve sütuna sahip olduğunda, şekli bir kareye dönüşür; dolayısıyla buna *kare matris* denir.
 
 Bir tensörü örneği yaratırken, en sevdiğimiz işlevlerden herhangi birini çağırıp $m$ ve $n$ iki bileşeninden oluşan bir şekil belirterek [**$m \times n$ matrisi oluşturabiliriz.**]
@@ -322,7 +322,7 @@ A, A + B
 ```
 
 Özellikle, [**iki matrisin eleman yönlü çarpımına *Hadamard çarpımı***] (matematik gösterimi $\odot$) denir.
-$i.$ satır ve $j.$ sütununun öğesi $b_{ij}$ olan $\mathbf{B} \in \mathbb{R}^{m\times n}$ matrisini düşünün. $\mathbf{A}$ (:eqref:`eq_matrix_def`da tanımlanmıştır) ve $\mathbf{B}$ matrislerinin Hadamard çarpımı:
+$i.$ satır ve $j.$ sütununun öğesi $b_{ij}$ olan $\mathbf{B}\in\mathbb{R}^{m\times n}$ matrisini düşünün. $\mathbf{A}$ (:eqref:`eq_matrix_def`da tanımlanmıştır) ve $\mathbf{B}$ matrislerinin Hadamard çarpımı:
 
 $$
 \mathbf{A} \odot \mathbf{B} =
