@@ -105,7 +105,7 @@ x_grad = t.gradient(y, x)
 x_grad
 ```
 
-(**$y = 2\mathbf{x}^{\top}\mathbf{x}$ fonksiyonunun $\mathbf{x}$'e göre gradyanı $4\mathbf{x}$ olmalıdır.**]
+(**$y = 2\mathbf{x}^{\top}\mathbf{x}$ fonksiyonunun $\mathbf{x}$'e göre gradyanı $4\mathbf{x}$ olmalıdır.**)
 İstenilen gradyanın doğru hesaplandığını hızlıca doğrulayalım.
 
 ```{.python .input}
