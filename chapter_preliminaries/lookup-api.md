@@ -1,10 +1,19 @@
 # Belgeler (Dökümantasyon)
-
+:begin_tab:`mxnet`
 Bu kitabın uzunluğundaki kısıtlamalar nedeniyle, her bir MXNet işlevini ve sınıfını tanıtamayız (ve muhtemelen bizim yapmamızı siz de istemezsiniz). API (Application Programming Interface - Uygulama Programlama Arayüzü) belgeleri ve ek öğreticiler (tutorial) ve örnekler kitabın ötesinde pek çok belge sağlar. Bu bölümde size MXNet API'sini keşfetmeniz için biraz rehberlik sunuyoruz.
+:end_tab:
+
+:begin_tab:`pytorch`
+Bu kitabın uzunluğundaki kısıtlamalar nedeniyle, her bir PyTorch işlevini ve sınıfını tanıtamayız (ve muhtemelen bizim yapmamızı siz de istemezsiniz). API (Application Programming Interface - Uygulama Programlama Arayüzü) belgeleri ve ek öğreticiler (tutorial) ve örnekler kitabın ötesinde pek çok belge sağlar. Bu bölümde size PyTorch API'sini keşfetmeniz için biraz rehberlik sunuyoruz.
+:end_tab:
+
+:begin_tab:`tensorflow`
+Bu kitabın uzunluğundaki kısıtlamalar nedeniyle, her bir TensorFlow işlevini ve sınıfını tanıtamayız (ve muhtemelen bizim yapmamızı siz de istemezsiniz). API (Application Programming Interface - Uygulama Programlama Arayüzü) belgeleri ve ek öğreticiler (tutorial) ve örnekler kitabın ötesinde pek çok belge sağlar. Bu bölümde size TensorFlow API'sini keşfetmeniz için biraz rehberlik sunuyoruz.
+:end_tab:
 
 ## Bir Modüldeki Tüm İşlevleri ve Sınıfları Bulma
 
-Bir modülde hangi fonksiyonların ve sınıfların çağrılabileceğini bilmek için `dir` fonksiyonunu çağırırız. Örneğin, rastgele sayılar oluşturmak için modüldeki tüm özellikleri sorgulayabiliriz:
+Bir modülde hangi fonksiyonların ve sınıfların çağrılabileceğini bilmek için `dir` fonksiyonunu çağırırız. Örneğin, (**rastgele sayılar oluşturmak için modüldeki tüm özellikleri sorgulayabiliriz**):
 
 ```{.python .input  n=1}
 from mxnet import np
@@ -23,11 +32,11 @@ import tensorflow as tf
 print(dir(tf.random))
 ```
 
-Genel olarak, "__" (Python'daki özel nesneler) ile başlayan ve biten işlevleri veya tek bir "_" ile başlayan işlevleri (genellikle dahili işlevler) yok sayabiliriz. Kalan işlev veya öznitelik adlarına bağlı olarak, bu modülün tekdüze dağılım (`uniform`), normal dağılım (`normal`) ve çok terimli dağılımdan (`multinomial`) örnekleme dahil, bu modülün rastgele sayılar oluşturmak için çeşitli yöntemler sunduğunu tahmin etme riskine girebiliriz.
+Genel olarak, "__" (Python'daki özel nesneler) ile başlayan ve biten işlevleri veya tek bir "_" ile başlayan işlevleri (genellikle dahili işlevler) yok sayabiliriz. Kalan işlev veya özellik adlarına bağlı olarak bu modülün tekdüze dağılım (`uniform`), normal dağılım (`normal`) ve çok terimli dağılımdan (`multinomial`) örnekleme dahil, bu modülün rastgele sayılar oluşturmak için çeşitli yöntemler sunduğunu tahmin edebiliriz.
 
-## Finding the Usage of Specific Functions and Classes
+## Belli İşlevlerin ve Sınıfların Kullanımını Bulma
 
-For more specific instructions on how to use a given function or class, we can invoke the  `help` function. As an example, let us explore the usage instructions for tensors' `ones` function.
+Belirli bir işlevin veya sınıfın nasıl kullanılacağına ilişkin daha özel talimatlar için `help` (yardım) işlevini çağırabiliriz. Örnek olarak, [**tensörlerin `ones` işlevi için kullanım talimatlarını**] inceleyelim. 
 
 ```{.python .input}
 help(np.ones)
@@ -43,7 +52,7 @@ help(torch.ones)
 help(tf.ones)
 ```
 
-Dokümantasyondan, `ones` işlevinin belirtilen şekle sahip yeni bir tensör oluşturduğunu ve tüm öğeleri 1 değerine ayarladığını görebiliriz. Mümkün oldukça, yorumunuzu onaylamak için hızlı bir test yapmalısınız:
+Dokümantasyondan, `ones` işlevinin belirtilen şekle sahip yeni bir tensör oluşturduğunu ve tüm öğeleri 1 değerine ayarladığını görebiliriz. Mümkün oldukça, yorumunuzu onaylamak için (**hızlı bir test**) yapmalısınız:
 
 ```{.python .input}
 np.ones(4)
@@ -59,7 +68,7 @@ torch.ones(4)
 tf.ones(4)
 ```
 
-Jupyter not defterinde, belgeyi başka bir pencerede görüntülemek için `?` kullanabiliriz. Örneğin, `list?`, `help(list)` ile neredeyse aynı olan içerik üretecek ve onu yeni bir tarayıcı penceresinde görüntüleyecek. Ek olarak, `list??` gibi iki soru işareti kullanırsak, işlevi uygulayan Python kodu da görüntülenecektir.
+Jupyter not defterinde, belgeyi başka bir pencerede görüntülemek için `?` kullanabiliriz. Örneğin, `list?`, `help(list)` ile neredeyse aynı olan içerik üretecek ve onu yeni bir tarayıcı penceresinde görüntüleyecektir. Ek olarak, `list??` gibi iki soru işareti kullanırsak, işlevi uygulayan Python kodu da görüntülenecektir.
 
 
 ## Özet

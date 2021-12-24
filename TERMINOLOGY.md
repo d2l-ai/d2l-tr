@@ -41,6 +41,8 @@ concatenation; bitiştirme
 
 confusion-matrix; hata matrisi
 
+container; kapsayıcı
+
 convex; dışbükey
 
 corpus; külliyat
@@ -111,6 +113,8 @@ holdout; harici tutulan
 
 hybridization; melezleştirme
 
+imputation; itham
+
 indicator; gösterge, belirteç
 
 information retrieval; bilgi getirimi
@@ -122,6 +126,8 @@ internal covariate shift; dahili eşdeğişken kayması
 interpolation; aradeğerleme
 
 invariance; değişmezlik
+
+joint probability; bileşik olasılık
 
 kernel; çekirdek
 
@@ -244,6 +250,10 @@ tabular; çizelge halindeki
 tagging; etiketleme
 
 teacher forcing; öğretici zorlama
+
+tensor; gerey
+
+tutorial; öğreticiler
 
 token; andıç
 

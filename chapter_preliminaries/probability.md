@@ -3,22 +3,22 @@
 
 Bir şekilde, makine öğrenmesi tamamen tahminlerde bulunmakla ilgilidir.
 Klinik geçmişi göz önüne alındığında, bir hastanın önümüzdeki yıl kalp krizi geçirme *olasılığını* tahmin etmek isteyebiliriz. Anormallik tespitinde, bir uçağın jet motorundan bir dizi okumanın uçak normal çalışıyor olsaydı ne kadar *muhtemel* olacağını değerlendirmek isteyebiliriz. Pekiştirmeli öğrenmede, bir etmenin bir ortamda akıllıca hareket etmesini istiyoruz. Bu, mevcut eylemlerin her birinin altında yüksek bir ödül alma olasılığını düşünmemiz gerektiği anlamına gelir. Ayrıca tavsiye sistemleri oluşturduğumuzda, olasılık hakkında da düşünmemiz gerekir. Örneğin, *varsayımsal olarak* büyük bir çevrimiçi kitapçı için çalıştığımızı söyleyelim. Belirli bir kullanıcının belirli bir kitabı satın alma olasılığını tahmin etmek isteyebiliriz. Bunun için olasılık dilini kullanmamız gerekiyor.
-Birçok ders, anadal, tez, kariyer ve hatta bölüm olasılığa ayrılmıştır. Doğal olarak, bu bölümdeki amacımız konunun tamamını öğretmek değildir. Bunun yerine sizi yerden ayağa kaldırmayı, ilk derin öğrenme modellerinizi oluşturmaya başlayabileceğiniz kadarını öğretmeyi ve dilerseniz konuyu kendi başınıza keşfetmeye başlayabilmeniz bir tadımlık vermeyi umuyoruz.
+Birçok ders, anadal, tez, kariyer ve hatta bölüm olasılığa ayrılmıştır. Doğal olarak, bu bölümdeki amacımız konunun tamamını öğretmek değildir. Bunun yerine sizi ayaklarınızın üzerine kaldırmayı, ilk derin öğrenme modellerinizi oluşturmaya başlayabileceğiniz kadarını öğretmeyi ve dilerseniz konuyu kendi başınıza keşfetmeye başlayabilmeniz için bir tutam bilgi vermeyi umuyoruz.
 
 Daha önceki bölümlerde, tam olarak ne olduklarını açıklamadan veya somut bir örnek vermeden olasılıkları zaten çağırmıştık. Şimdi ilk vakayı ele alarak daha ciddileşelim: Fotoğraflardan kedi ve köpekleri ayırmak. Bu basit gelebilir ama aslında zorlu bir görevdir. Başlangıç ​​olarak, sorunun zorluğu görüntünün çözünürlüğüne bağlı olabilir.
 
-![Farklı çözünürlükteki görüntüler ($10 \times 10$, $20 \times 20$, $40 \times 40$, $80 \times 80$, and $160 \times 160$ piksel).](../img/cat_dog_pixels.png)
+![Farklı çözünürlükteki görüntüler ($10 \times 10$, $20 \times 20$, $40 \times 40$, $80 \times 80$, and $160 \times 160$ piksel).](../img/cat-dog-pixels.png)
 :width:`300px`
 :label:`fig_cat_dog`
 
-Gösterildiği gibi :numref:`fig_cat_dog`, insanlar için kedileri ve köpekleri $160 \times 16 $ piksel çözünürlükte tanımak kolayken, $40 \times 40$ pikselde zorlayıcı ve $10 \times 10$ piksel'de imkansıza yakın hale geliyor . Başka bir deyişle, kedi ve köpekleri büyük bir mesafeden (ve dolayısıyla düşük çözünürlükten) ayırma yeteneğimiz bilgisiz (cahilce) tahminlere yaklaşabilir. Olasılık, bize kesinlik seviyemiz hakkında resmi (kurallı) bir mantık yürütme yöntemi verir.
+Gösterildiği gibi :numref:`fig_cat_dog`, insanlar için kedileri ve köpekleri $160 \times 16 $ piksel çözünürlükte tanımak kolayken, $40 \times 40$ pikselde zorlayıcı ve $10 \times 10$ piksel'de imkansıza yakın hale geliyor. Başka bir deyişle, kedi ve köpekleri büyük bir mesafeden (ve dolayısıyla düşük çözünürlükten) ayırma yeteneğimiz bilgisiz (cahilce) tahminlere yaklaşabilir. Olasılık, bize kesinlik seviyemiz hakkında resmi (kurallı) bir mantık yürütme yöntemi verir.
 Görüntünün bir kediyi gösterdiğinden tamamen eminsek, karşılık gelen $y$ etiketinin "kedi" olma *olasılığının*, $P(y= $"kedi"$)$, $1$'e eşit olduğunu söyleriz.
 $y =$ "kedi" veya $y =$ "köpek" olduğunu önerecek hiçbir kanıtımız yoksa, iki olasılığın eşit derecede *muhtemelen* olduğunu $P(y=$ "kedi"$) = P(y=$ "köpek"$) = 0.5$ diye ifade ederek söyleyebiliriz. Makul derecede emin olsaydık, ancak görüntünün bir kediyi gösterdiğinden kesin emin olamasaydık, $0.5  < P(y=$ "kedi"$) < 1$ bir olasılık atayabilirdik.
 
 Şimdi ikinci bir durumu düşünün: Bazı hava durumu izleme verilerini göz önüne alarak yarın Taipei'de yağmur yağma olasılığını tahmin etmek istiyoruz. Yaz mevsimindeyse, yağmur 0.5 olasılıkla gelebilir.
 
 Her iki durumda da, bir miktar ilgi değerimiz var. Her iki durumda da sonuç hakkında emin değiliz.
-Ancak iki durum arasında temel bir fark var. Bu ilk durumda, görüntü aslında ya bir köpektir ya da bir kedidir ve sadece hangisi olduğunu bilmiyoruz. İkinci durumda, eğer bu tür şeylere inanıyorsanız (ve çoğu fizikçi bunu yapıyor), sonuç aslında rastgele bir olay olabilir. Dolayısıyla olasılık, kesinlik seviyemiz hakkında akıl yürütmek için esnek bir dildir ve geniş bir bağlam kümesinde etkili bir şekilde uygulanabilir.
+Ancak iki durum arasında temel bir fark var. Bu ilk durumda, görüntü aslında ya bir köpektir ya da bir kedidir ve  hangisi olduğunu bilmiyoruz. İkinci durumda, eğer bu tür şeylere inanıyorsanız (ve çoğu fizikçi bunu yapıyor), sonuç aslında rastgele bir olay olabilir. Dolayısıyla olasılık, kesinlik seviyemiz hakkında akıl yürütmek için esnek bir dildir ve geniş bir bağlam kümesinde etkili bir şekilde uygulanabilir.
 
 ## Temel Olasılık Kuramı
 
@@ -105,7 +105,7 @@ counts / 1000
 
 ```{.python .input}
 #@tab pytorch
-# Store the results as 32-bit floats for division
+# Bölme için sonuçları 32-bitlik virgüllü kazan sayı olarak depolarız
 counts = multinomial.Multinomial(1000, fair_probs).sample()
 counts / 1000  # Relative frequency as the estimate
 ```
@@ -131,8 +131,8 @@ for i in range(6):
     d2l.plt.plot(estimates[:, i].asnumpy(),
                  label=("P(die=" + str(i + 1) + ")"))
 d2l.plt.axhline(y=0.167, color='black', linestyle='dashed')
-d2l.plt.gca().set_xlabel('Groups of experiments')
-d2l.plt.gca().set_ylabel('Estimated probability')
+d2l.plt.gca().set_xlabel('Deney Gruplari')
+d2l.plt.gca().set_ylabel('Tahmini Olasilik')
 d2l.plt.legend();
 ```
 
@@ -147,8 +147,8 @@ for i in range(6):
     d2l.plt.plot(estimates[:, i].numpy(),
                  label=("P(die=" + str(i + 1) + ")"))
 d2l.plt.axhline(y=0.167, color='black', linestyle='dashed')
-d2l.plt.gca().set_xlabel('Groups of experiments')
-d2l.plt.gca().set_ylabel('Estimated probability')
+d2l.plt.gca().set_xlabel('Deney Gruplari')
+d2l.plt.gca().set_ylabel('Tahmini Olasilik')
 d2l.plt.legend();
 ```
 
@@ -163,19 +163,19 @@ for i in range(6):
     d2l.plt.plot(estimates[:, i].numpy(),
                  label=("P(die=" + str(i + 1) + ")"))
 d2l.plt.axhline(y=0.167, color='black', linestyle='dashed')
-d2l.plt.gca().set_xlabel('Groups of experiments')
-d2l.plt.gca().set_ylabel('Estimated probability')
+d2l.plt.gca().set_xlabel('Deney Gruplari')
+d2l.plt.gca().set_ylabel('Tahmini Olasilik')
 d2l.plt.legend();
 ```
 
-Her katı eğri, zarın altı değerinden birine karşılık gelir ve her deney grubundan sonra değerlendirildiğinde zarın bu değerleri göstermesinde tahmin ettiimiz olasılığı verir.
+Her katı eğri, zarın altı değerinden birine karşılık gelir ve her deney grubundan sonra değerlendirildiğinde zarın bu değerleri göstermesinde tahmin ettiğimiz olasılığı verir.
 Kesikli siyah çizgi, gerçek temel olasılığı verir.
 Daha fazla deney yaparak daha fazla veri elde ettikçe, $6$ katı eğri gerçek olasılığa doğru yaklaşıyor.
 
 ### Olasılık Teorisinin Aksiyomları
 
 Bir zarın atışları ile uğraşırken, $\mathcal{S} = \{1, 2, 3, 4, 5, 6\}$ kümesine *örnek uzay* veya *sonuç uzayı* diyoruz, burada her eleman bir *sonuçtur*.
-Bir * olay *, belirli bir örnek uzaydan alınan bir dizi sonuçtur.
+Bir *olay*, belirli bir örnek uzaydan alınan bir dizi sonuçtur.
 Örneğin, "$5$ görmek" ($\{5\}$) ve "tek sayı görmek" ($\{1, 3, 5\}$) zar atmanın geçerli olaylarıdır.
 Rastgele bir denemenin sonucu $\mathcal{A}$ olayındaysa, $\mathcal{A}$ olayının gerçekleştiğine dikkat edin.
 Yani, bir zar atıldıktan sonra $3$ nokta üstte gelirse, $3 \in \{1, 3, 5 \}$ olduğundan, "tek bir sayı görme" olayı gerçekleşti diyebiliriz.
@@ -200,7 +200,7 @@ Bununla birlikte, bu tür bilgiçlik, hantal bir gösterimle sonuçlanır.
 Kısa bir gösterim için, bir yandan, $P(X)$'ı, $X$ rasgele değişkeni üzerindeki *dağılım* olarak gösterebiliriz: Dağılım bize $X$'ın herhangi bir değeri alma olasılığını söyler.
 Öte yandan, rastgele bir değişkenin $a$ değerini alma olasılığını belirtmek için $P(a)$ yazabiliriz.
 Olasılık teorisindeki bir olay, örnek uzaydan bir küme sonuç olduğu için, rastgele bir değişkenin alması için bir dizi değer belirleyebiliriz.
-Örneğin, $P(1 \leq X \leq 3)$ $\{1 \leq X \leq 3\}$ olayının olasılığını belirtir, yani $\{X = 1, 2, \text{veya}, 3\} $ anlamına gelir. Aynı şekilde, $P(1 \leq X \leq 3)$, $X$ rasgele değişkeninin $\{1, 2, 3\}$'dan bir değer alabilme olasılığını temsil eder.
+Örneğin, $P(1 \leq X \leq 3)$, $\{1 \leq X \leq 3\}$ olayının olasılığını belirtir, yani $\{X = 1, 2, \text{veya}, 3\}$ anlamına gelir. Aynı şekilde, $P(1 \leq X \leq 3)$, $X$ rasgele değişkeninin $\{1, 2, 3\}$'ten bir değer alabilme olasılığını temsil eder.
 
 Bir zarın yüzleri gibi *kesikli* rastgele değişkenler ile bir kişinin ağırlığı ve boyu gibi *sürekli* olanlar arasında ince bir fark olduğunu unutmayın. İki kişinin tam olarak aynı boyda olup olmadığını sormanın pek bir anlamı yok. Yeterince hassas ölçümler alırsak, gezegendeki hiçbir insanın aynı boyda olmadığını göreceksiniz. Aslında, yeterince ince bir ölçüm yaparsak, uyandığınızda ve uyuduğunuzda da boyunuz aynı olmayacaktır. Dolayısıyla, birinin 1,80139278291028719210196740527486202 metre boyunda olma olasılığını sormanın hiçbir amacı yoktur. Dünya insan nüfusu göz önüne alındığında, olasılık neredeyse 0'dır. Bu durumda, birinin boyunun belirli bir aralıkta, örneğin 1,79 ile 1,81 metre arasında olup olmadığını sormak daha mantıklıdır. Bu durumlarda, bir değeri *yoğunluk* olarak görme olasılığımızı ölçüyoruz. Tam olarak 1.80 metrelik boyun olasılığı yoktur, ancak yoğunluğu sıfır değildir. Herhangi iki farklı boy arasındaki aralıkta sıfır olmayan bir olasılığa sahibiz.
 Bu bölümün geri kalanında, olasılığı ayrık uzayda ele alıyoruz.
@@ -209,20 +209,20 @@ Sürekli rastgele değişkenler üzerindeki olasılık için, şunlara başvurab
 ## Çoklu Rastgele Değişkenlerle Başa Çıkma
 
 Çok sık olarak, bir seferde birden fazla rastgele değişkeni dikkate almak isteyeceğiz.
-Örneğin, hastalıklar ve belirtiler arasındaki ilişkiyi modellemek isteyebiliriz. Bir hastalık ve bir belirti verildiğinde, örneğin "grip" ve "öksürük", bir olasılıkla bir hastada ortaya çıkabilirler veya çıkmayabilirler. Her ikisinin de olasılığının sıfıra yakın olacağını umarken, bu olasılıkları ve bunların birbirleriyle olan ilişkilerini tahmin etmek isteyebiliriz, böylece daha iyi tıbbi bakım sağlamak için çıkarımlarımızı uygulayabiliriz.
+Örneğin, hastalıklar ile belirtiler arasındaki ilişkiyi modellemek isteyebiliriz. Bir hastalık ve bir belirti verildiğinde, örneğin "grip" ve "öksürük", bir olasılıkla bir hastada ortaya çıkabilirler veya çıkmayabilirler. Her ikisinin de olasılığının sıfıra yakın olacağını umarken, bu olasılıkları ve bunların birbirleriyle olan ilişkilerini tahmin etmek isteyebiliriz, böylece daha iyi tıbbi bakım sağlamak için çıkarımlarımızı uygulayabiliriz.
 
 Daha karmaşık bir örnek olarak, görüntüler milyonlarca piksel, dolayısıyla milyonlarca rastgele değişken içerir. Ve çoğu durumda resimler, resimdeki nesneleri tanımlayan bir etiketle birlikte gelir. Etiketi rastgele bir değişken olarak da düşünebiliriz. Tüm meta (üst) verileri konum, zaman, diyafram, odak uzaklığı, ISO, odak mesafesi ve kamera türü gibi, rastgele değişkenler olarak bile düşünebiliriz.
 Bunların hepsi birlikte oluşan rastgele değişkenlerdir. Birden çok rastgele değişkenle uğraştığımızda, ilgilendiğimiz birkaç miktar vardır.
 
-### Birleşik olasılık
+### Bileşik olasılık
 
-İlki, *birleşik olasılık* $P(A = a, B = b)$ olarak adlandırılır. Herhangi $a$ ve $b$ değerleri verildiğinde, birleşik olasılık şu cevabı vermemizi sağlar: $A = a$ ve $B = b$ aynı anda olma olasılığı nedir?
+İlki, *bileşik olasılık* $P(A = a, B = b)$ olarak adlandırılır. Herhangi $a$ ve $b$ değerleri verildiğinde, bileşik olasılık şu cevabı vermemizi sağlar: $A = a$ ve $B = b$ aynı anda olma olasılığı nedir?
 Tüm $a$ ve $b$ değerleri için, $P(A = a, B = b) \leq P (A=a)$ olduğuna dikkat edin.
 Durum böyle olmalıdır, çünkü $A=a$ ve $B=b$ olması için $A=a$ olması gerekir *ve* $B=b$ de gerçekleşmelidir (ve bunun tersi de geçerlidir). Bu nedenle, $A=a$ ve $B=b$, tek tek $A=a$ veya $B=b$ değerinden daha büyük olamaz.
 
 ### Koşullu olasılık
 
-Bu bizi ilginç bir orana getiriyor: $0 \leq \frac{P(A=a, B=b)}{P(A=a)} \leq 1$. Bu oranı bir *koşullu olasılık* olarak adlandırıyoruz ve bunu $P(B=b \mid A=a) $ ile gösteriyoruz: $A=a$ olması koşuluyla, $B=b$ olasılığıdır.
+Bu bizi ilginç bir orana getiriyor: $0 \leq \frac{P(A=a, B=b)}{P(A=a)} \leq 1$. Bu oranı bir *koşullu olasılık* olarak adlandırıyoruz ve bunu $P(B=b \mid A=a)$ ile gösteriyoruz: $A=a$ olması koşuluyla, $B=b$ olasılığıdır.
 
 ### Bayes Kuramı (Teoremi)
 
@@ -232,13 +232,13 @@ Yapısı gereği, $P(A, B) = P(B \mid A) P(A)$ şeklindeki *çarpma kuralına* s
 
 $$P(A \mid B) = \frac{P(B \mid A) P(A)}{P(B)}.$$
 
-Burada, $P(A, B)$'nın *birleşik dağılım* ve $P(A \mid B)$'nin *koşullu dağılım* olduğu, daha sıkı gösterimi kullandığımıza dikkat edin. Bu tür dağılımlar belirli $A = a, B = b$ değerleri için hesaplanabilir.
+Burada, $P(A, B)$'nin *bileşik dağılım* ve $P(A \mid B)$'nin *koşullu dağılım* olduğu, daha sıkı gösterimi kullandığımıza dikkat edin. Bu tür dağılımlar belirli $A = a, B = b$ değerleri için hesaplanabilir.
 
 
-### Tümleştirme
+### Marjinalleştirme
 
-Bayes teoremi, bir şeyi diğerinden çıkarmak istiyorsak, neden ve sonuç mesela, çok kullanışlıdır, ancak bu bölümde daha sonra göreceğimiz gibi, yalnızca özellikleri ters yönde biliyoruz. Bunun işe yaraması için ihtiyacımız olan önemli bir işlem, *tümleştirme*dir.
-$P (A, B)$'den $P(B)$ belirleme işlemidir. $B$ olasılığının, tüm olası $A$ seçeneklerini hesaba katma ve bunların hepsinde birleşik olasılıkları bir araya toplama olduğunu görebiliriz:
+Bayes teoremi, bir şeyi diğerinden çıkarmak istiyorsak, neden ve sonuç mesela, çok kullanışlıdır, ancak bu bölümde daha sonra göreceğimiz gibi, yalnızca özellikleri ters yönde biliyoruz. Bunun işe yaraması için ihtiyacımız olan önemli bir işlem, *marjinalleştirme*dir.
+$P(A, B)$'den $P(B)$ belirleme işlemidir. $B$ olasılığının, tüm olası $A$ seçeneklerini hesaba katma ve bunların hepsinde bileşik olasılıkları bir araya toplama olduğunu görebiliriz:
 
 $$P(B) = \sum_{A} P(A, B),$$
 
@@ -247,17 +247,17 @@ bu aynı zamanda *toplam kuralı* olarak da bilinir. Tümleştirmenin bir sonucu
 ### Bağımsızlık
 
 Kontrol edilmesi gereken diğer bir yararlı özellik, *bağımlılık* ve *bağımsızlık*'tır.
-İki rastgele değişken olan $A$ ve $B$nin birbirinden bağımsızlığı, $A$ olayının ortaya çıkmasının, $B$ olayının oluşumu hakkında herhangi bir bilgi vermediği anlamına gelir.
-Bu durumda $P(B \mid A) = P (B)$dir. İstatistikçiler bunu genellikle $A \perp B$ olarak ifade ederler. Bayes teoreminden, bunu aynı zamanda $P(A \mid B) = P(A)$ olduğunu da izler.
+İki rastgele değişken olan $A$ ve $B$'nin birbirinden bağımsızlığı, $A$ olayının ortaya çıkmasının, $B$ olayının oluşumu hakkında herhangi bir bilgi vermediği anlamına gelir.
+Bu durumda $P(B \mid A) = P(B)$'dir. İstatistikçiler bunu genellikle $A \perp B$ olarak ifade ederler. Bayes teoreminden, bunu aynı zamanda $P(A \mid B) = P(A)$ olduğunu da izler.
 Diğer tüm durumlarda $A$ ve $B$'ye bağımlı diyoruz. Örneğin, bir zarın iki ardışık atışı bağımsızdır. Aksine, bir ışık anahtarının konumu ve odadaki parlaklık değildir (her zaman kırılmış bir ampulümüz, elektrik kesintisi veya kırık bir anahtarımız olabileceğinden, tam olarak gerekirci (deterministik) değildirler).
 
-$P(A \mid B) = \frac{P(A, B)}{P(B)} = P(A)$ ve $P(A, B) = P(A)P(B)$ eşit olduğundan, iki rastgele değişken ancak ve ancak birleşik dağılımları kendi bireysel dağılımlarının çarpımına eşit ise bağımsızdır.
+$P(A \mid B) = \frac{P(A, B)}{P(B)} = P(A)$ ve $P(A, B) = P(A)P(B)$ eşit olduğundan, iki rastgele değişken ancak ve ancak bileşik dağılımları kendi bireysel dağılımlarının çarpımına eşit ise bağımsızdır.
 Benzer şekilde, iki rastgele değişken $A$ ve $B$ başka bir rasgele değişken $C$ verildiğinde, ancak ve ancak $P(A, B \mid C) = P(A \mid C)P(B \mid C)$ ise *koşullu olarak bağımsızdır*. Bu, $A \perp B \mid C$ olarak ifade edilir.
 
 ### Uygulama
 :label:`subsec_probability_hiv_app`
 
-Becerilerimizi test edelim. Bir doktorun bir hastaya AIDS testi uyguladığını varsayalım. Bu test oldukça doğrudur ve yalnızca %1 olasılıkla hasta sağlıklı olduğu halde hasta olarak bildirme hatası yapar. Dahası, eğer hastada gerçekten varsa HIV'i asla tespit etmemezlik yapmaz. Teşhisi belirtmek için $D_1$ (pozitifse $1$ ve negatifse $0$) ve HIV durumunu belirtmek için $H$ (pozitifse $1$ ve negatifse $0$) kullanırız.
+Becerilerimizi test edelim. Bir doktorun bir hastaya HIV testi uyguladığını varsayalım. Bu test oldukça doğrudur ve yalnızca %1 olasılıkla hasta sağlıklı olduğu halde hasta olarak bildirme hatası yapar. Dahası, eğer hastada gerçekten varsa HIV'i asla tespit etmemezlik yapmaz. Teşhisi belirtmek için $D_1$ (pozitifse $1$ ve negatifse $0$) ve HIV durumunu belirtmek için $H$ (pozitifse $1$ ve negatifse $0$) kullanırız.
 :numref:`conditional_prob_D1` bu tür koşullu olasılıkları listeler.
 
 :$P(D_1 \mid H)$ koşullu olasılığı:
@@ -268,7 +268,7 @@ Becerilerimizi test edelim. Bir doktorun bir hastaya AIDS testi uyguladığını
 |$P(D_1 = 0 \mid H)$|            0 |         0.99 |
 :label:`conditional_prob_D1`
 
-Koşullu olasılığın, olasılık gibi 1'e toplanması gerektiğinden, sütun toplamlarının hepsinin 1 olduğuna dikkat edin (ancak satır toplamları değildir). Test pozitif çıkarsa hastanın AIDS olma olasılığını hesaplayalım, yani $P(H = 1 \mid D_1 = 1)$. Açıkçası bu, yanlış alarmların sayısını etkilediği için hastalığın ne kadar yaygın olduğuna bağlı olacaktır. Nüfusun oldukça sağlıklı olduğunu varsayalım, örneğin $P(H = 1) = 0.0015$. Bayes teoremini uygulamak için, tümleştirme ve çarpım kuralını uygulamalıyız.
+Koşullu olasılığın, olasılık gibi 1'e toplanması gerektiğinden, sütun toplamlarının hepsinin 1 olduğuna dikkat edin (ancak satır toplamları değildir). Test pozitif çıkarsa hastanın HIV'li olma olasılığını hesaplayalım, yani $P(H = 1 \mid D_1 = 1)$. Açıkçası bu, yanlış alarmların sayısını etkilediği için hastalığın ne kadar yaygın olduğuna bağlı olacaktır. Nüfusun oldukça sağlıklı olduğunu varsayalım, örneğin $P(H = 1) = 0.0015$. Bayes teoremini uygulamak için, marjinalleştirmeyi ve çarpım kuralını uygulamalıyız.
 
 $$\begin{aligned}
 &P(D_1 = 1) \\
@@ -283,7 +283,7 @@ Böylece bunu elde ederiz,
 $$\begin{aligned}
 &P(H = 1 \mid D_1 = 1)\\ =& \frac{P(D_1=1 \mid H=1) P(H=1)}{P(D_1=1)} \\ =& 0.1306 \end{aligned}.$$
 
-Diğer bir deyişle, çok doğru bir test kullanmasına rağmen, hastanın gerçekten AIDS sahibi olma şansı yalnızca %13.06'dır.
+Diğer bir deyişle, çok doğru bir test kullanmasına rağmen, hastanın gerçekten HIVli olma şansı yalnızca %13.06'dır.
 Gördüğümüz gibi, olasılık sezgilere ters olabilir.
 
 Böylesine korkunç bir haber alan hasta ne yapmalıdır? Muhtemelen hasta, netlik elde etmek için hekimden başka bir test yapmasını isteyecektir. İkinci testin farklı özellikleri vardır ve şu şekilde gösterildiği gibi birincisi kadar iyi değildir :numref:`conditional_prob_D2`.
@@ -313,7 +313,7 @@ $$\begin{aligned}
 \end{aligned}
 $$
 
-Şimdi tümleştirme ve çarpım kuralını uygulayabiliriz
+Şimdi marjinalleştirme ve çarpım kuralını uygulayabiliriz
 
 $$\begin{aligned}
 &P(D_1 = 1, D_2 = 1) \\
@@ -323,7 +323,7 @@ $$\begin{aligned}
 \end{aligned}
 $$
 
-En sonunda, her iki pozitif testin de verildiği hastanın AIDS olma olasılığı
+En sonunda, her iki pozitif testin de verildiği hastanın HIVli olma olasılığı
 
 $$\begin{aligned}
 &P(H = 1 \mid D_1 = 1, D_2 = 1)\\
@@ -362,15 +362,15 @@ $$\mathrm{Var}[f(x)] = E\left[\left(f(x) - E[f(x)]\right)^2\right].$$
 ## Özet
 
 * Olasılık dağılımlarından örnekleme yapabiliriz.
-* Birleşik dağılım, koşullu dağılım, Bayes teoremi, marjinalleştirme ve bağımsızlık varsayımlarını kullanarak birden çok rastgele değişkeni analiz edebiliriz.
+* Bileşik dağılım, koşullu dağılım, Bayes teoremi, marjinalleştirme ve bağımsızlık varsayımlarını kullanarak birden çok rastgele değişkeni analiz edebiliriz.
 * Beklenti ve varyans, olasılık dağılımlarının temel özelliklerini özetlemek için yararlı ölçüler sunar.
 
 ## Alıştırmalar
 
 1. Her grubun $n = 10$ örnek çektiği $m = 500$ deney grubu yürüttük. $m$ ve $n$ değerlerini değiştirin. Deneysel sonuçları gözlemleyin ve analiz edin.
-1. $P(\mathcal{A})$ ve $P(\mathcal{B})$ olasılığına sahip iki olay verildiğinde, $P(\mathcal{A} \cup \mathcal{B}$ ve $P(\mathcal{A} \cap \mathcal{B})$ için üst ve alt sınırları hesaplayın (İpucu: Durumu bir [Venn Şeması](https://en.wikipedia.org/wiki/Venn_diagram) kullanarak görüntüleyin.)
-1. $A$, $B$ ve $C$ gibi rastgele değişkenlerden oluşan bir dizimiz olduğunu varsayalım, burada $B$ yalnızca $A$'ya bağlıdır ve $C$ yalnızca $B$'ye bağlıdır, $P(A, B, C)$ birleşik olasılığı basitleştirebilir misiniz? (İpucu: Bu bir [Markov Zinciri](https://en.wikipedia.org/wiki/Markov_chain)'dir .)
-1. :numref:`subsec_probability_hiv_app`'da, ilk test daha doğrudur. Neden ilk testi ikinci kez çalıştırmıyoruz?
+1. $P(\mathcal{A})$ ve $P(\mathcal{B})$ olasılığına sahip iki olay verildiğinde, $P(\mathcal{A} \cup \mathcal{B})$ ve $P(\mathcal{A} \cap \mathcal{B})$ için üst ve alt sınırları hesaplayın (İpucu: Durumu bir [Venn Şeması](https://en.wikipedia.org/wiki/Venn_diagram) kullanarak görüntüleyin.)
+1. $A$, $B$ ve $C$ gibi rastgele değişkenlerden oluşan bir dizimiz olduğunu varsayalım, burada $B$ yalnızca $A$'ya bağlıdır ve $C$ yalnızca $B$'ye bağlıdır, $P(A, B, C)$ birleşik olasılığı basitleştirebilir misiniz? (İpucu: Bu bir [Markov Zinciri](https://en.wikipedia.org/wiki/Markov_chain)'dir.)
+1. :numref:`subsec_probability_hiv_app`'da, ilk test daha doğrudur. Hem birinci hem de ikinci testleri yapmak yerine neden ilk testi iki kez yapmıyorsunuz? 
 
 
 :begin_tab:`mxnet`
