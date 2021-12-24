@@ -127,6 +127,8 @@ interpolation; aradeğerleme
 
 invariance; değişmezlik
 
+joint probability; bileşik olasılık
+
 kernel; çekirdek
 
 lasso regression; kement regresyon
