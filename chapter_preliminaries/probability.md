@@ -222,7 +222,7 @@ Durum böyle olmalıdır, çünkü $A=a$ ve $B=b$ olması için $A=a$ olması ge
 
 ### Koşullu olasılık
 
-Bu bizi ilginç bir orana getiriyor: $0 \leq \frac{P(A=a, B=b)}{P(A=a)} \leq 1$. Bu oranı bir *koşullu olasılık* olarak adlandırıyoruz ve bunu $P(B=b \mid A=a) $ ile gösteriyoruz: $A=a$ olması koşuluyla, $B=b$ olasılığıdır.
+Bu bizi ilginç bir orana getiriyor: $0 \leq \frac{P(A=a, B=b)}{P(A=a)} \leq 1$. Bu oranı bir *koşullu olasılık* olarak adlandırıyoruz ve bunu $P(B=b \mid A=a)$ ile gösteriyoruz: $A=a$ olması koşuluyla, $B=b$ olasılığıdır.
 
 ### Bayes Kuramı (Teoremi)
 
@@ -260,7 +260,7 @@ Benzer şekilde, iki rastgele değişken $A$ ve $B$ başka bir rasgele değişke
 Becerilerimizi test edelim. Bir doktorun bir hastaya HIV testi uyguladığını varsayalım. Bu test oldukça doğrudur ve yalnızca %1 olasılıkla hasta sağlıklı olduğu halde hasta olarak bildirme hatası yapar. Dahası, eğer hastada gerçekten varsa HIV'i asla tespit etmemezlik yapmaz. Teşhisi belirtmek için $D_1$ (pozitifse $1$ ve negatifse $0$) ve HIV durumunu belirtmek için $H$ (pozitifse $1$ ve negatifse $0$) kullanırız.
 :numref:`conditional_prob_D1` bu tür koşullu olasılıkları listeler.
 
-$P(D_1 \mid H)$ koşullu olasılığı:
+:$P(D_1 \mid H)$ koşullu olasılığı:
 
 | Koşullu olasılık | $H=1$ | $H=0$ |
 |---|---|---|
@@ -288,7 +288,7 @@ Gördüğümüz gibi, olasılık sezgilere ters olabilir.
 
 Böylesine korkunç bir haber alan hasta ne yapmalıdır? Muhtemelen hasta, netlik elde etmek için hekimden başka bir test yapmasını isteyecektir. İkinci testin farklı özellikleri vardır ve şu şekilde gösterildiği gibi birincisi kadar iyi değildir :numref:`conditional_prob_D2`.
 
-$P(D_2 \mid H)$ koşullu olasılığı:
+:$P(D_2 \mid H)$ koşullu olasılığı:
 
 | Koşullu olasılık | $H=1$ | $H=0$ |
 |---|---|---|
