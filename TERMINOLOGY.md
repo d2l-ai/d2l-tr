@@ -253,6 +253,8 @@ teacher forcing; öğretici zorlama
 
 tensor; gerey
 
+tutorial; öğreticiler
+
 token; andıç
 
 transduction; dönüştürme
