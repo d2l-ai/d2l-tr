@@ -255,7 +255,7 @@ tensor; gerey
 
 tutorial; öğreticiler
 
-token; andıç
+token; andıç, belirteç
 
 transduction; dönüştürme
 
