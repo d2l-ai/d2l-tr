@@ -1,7 +1,8 @@
 # Sıfırdan Softmaks Regresyon Uygulaması Yaratma
 :label:`sec_softmax_scratch`
 
-Doğrusal regresyonu sıfırdan uyguladığımız gibi, softmaks regresyonunun da benzer şekilde temel olduğuna ve onu nasıl uygulayacağınızın kanlı ayrıntılarını bilmeniz gerektiğine inanıyoruz.
+(**Doğrusal regresyonu sıfırdan uyguladığımız gibi**), (~~softmaks regresyonunun~~) da benzer şekilde temel olduğuna ve onu nasıl uygulayacağınızın detaylı ayrıntılarını bilmeniz gerektiğine inanıyoruz.
+:numref:`sec_fashion_mnist`'de yeni eklenen Fashion-MNIST veri kümesiyle çalışacağız, grup boyutu 256 olan bir veri yineleyicisi kuracağız.
 
 ```{.python .input}
 from d2l import mxnet as d2l
@@ -24,8 +25,6 @@ import tensorflow as tf
 from IPython import display
 ```
 
-:numref:`sec_fashion_mnist`'de yeni eklenen Fashion-MNIST veri kümesiyle çalışacağız, grup boyutu 256 olan bir veri yineleyicisi kuracağız.
-
 ```{.python .input}
 #@tab all
 batch_size = 256
@@ -34,9 +33,9 @@ train_iter, test_iter = d2l.load_data_fashion_mnist(batch_size)
 
 ## Model Parametrelerini İlkletme
 
-Doğrusal regresyon örneğimizde olduğu gibi, buradaki her örnek sabit uzunlukta bir vektörle temsil edilecektir. Ham veri kümesindeki her örnek $28 \times 28$'lik görüntüdür. Bu bölümde, her bir görüntüyü 784 uzunluğundaki vektörler olarak ele alarak düzleştireceğiz. Gelecekte, görüntülerdeki uzamsal yapıyı kullanmak için daha karmaşık stratejilerden bahsedeceğiz, ancak şimdilik her piksel konumunu yalnızca başka bir öznitelik olarak ele alıyoruz.
+Doğrusal regresyon örneğimizde olduğu gibi, buradaki her örnek sabit uzunlukta bir vektörle temsil edilecektir. Ham veri kümesindeki her örnek $28 \times 28$'lik görseldir. Bu bölümde, [**her bir görseli 784 uzunluğundaki vektörler olarak ele alarak düzleştireceğiz**]. Gelecekte, görsellerdeki uzamsal yapıyı kullanmak için daha karmaşık stratejilerden bahsedeceğiz, ancak şimdilik her piksel konumunu yalnızca başka bir öznitelik olarak ele alıyoruz.
 
-Softmaks regresyonunda, sınıflar kadar çıktıya sahip olduğumuzu hatırlayın. Veri kümemiz 10 sınıf içerdiğinden, ağımızın çıktı boyutu 10 olacaktır. Sonuç olarak, ağırlıklarımız $784  \times 10$ matrisi oluşturacak ve ek girdiler $1 \times 10$ satır vektörü oluşturacaktır. Doğrusal regresyonda olduğu gibi, ağırlıklarımızı `W` Gauss gürültüsüyle ve ek girdilerimizi ilk değerini 0 alacak şekilde başlatacağız.
+Softmaks regresyonunda, sınıflar kadar çıktıya sahip olduğumuzu hatırlayın. (**Veri kümemiz 10 sınıf içerdiğinden, ağımızın çıktı boyutu 10 olacaktır**). Sonuç olarak, ağırlıklarımız $784 \times 10$ matrisi ve ek girdiler $1 \times 10$ satır vektörü oluşturacaktır. Doğrusal regresyonda olduğu gibi, `W` ağırlıklarımızı Gauss gürültüsüyle ve ek girdilerimizi ilk değerini 0 alacak şekilde başlatacağız.
 
 ```{.python .input}
 num_inputs = 784
@@ -69,99 +68,70 @@ b = tf.Variable(tf.zeros(num_outputs))
 
 ## Softmaks İşlemini Tanımlama
 
-Softmaks regresyon modelini uygulamadan önce, toplam operatörünün bir tensörde belirli boyutlar boyunca nasıl çalıştığını :numref:`subseq_lin-alg-reduction` ve :numref:`subseq_lin-alg-non-reduction`'da anlatıldığı gibi kısaca gözden geçirelim. Bir `X` matrisi verildiğinde, tüm öğeleri (varsayılan olarak) veya yalnızca aynı eksendeki öğeleri toplayabiliriz, örneğin aynı sütun (eksen 0) veya aynı satır (eksen 1) üzerinden. `X` (2, 3) şeklinde bir tensör ise ve sütunları toplarsak, sonucun (3,) şeklinde bir vektör olacağını unutmayın. Toplam operatörünü çağırırken, üzerinde topladığımız boyutu daraltmak yerine esas tensördeki eksen sayısını korumayı belirtebiliriz. Bu, (1, 3) şeklinde iki boyutlu bir tensörle sonuçlanacaktır.
-
-```{.python .input}
-X = np.array([[1, 2, 3], [4, 5, 6]])
-X.sum(axis=0, keepdims=True), '\n', X.sum(axis=1, keepdims=True)
-```
+Softmaks regresyon modelini uygulamadan önce, toplam operatörünün bir tensörde belirli boyutlar boyunca nasıl çalıştığını :numref:`subseq_lin-alg-reduction` ve :numref:`subseq_lin-alg-non-reduction`'da anlatıldığı gibi kısaca gözden geçirelim. [**Bir `X` matrisi verildiğinde, tüm öğeleri (varsayılan olarak) veya yalnızca aynı eksendeki öğeleri toplayabiliriz**], örneğin aynı sütun (eksen 0) veya aynı satır (eksen 1) üzerinden. `X` (2, 3) şeklinde bir tensör ise ve sütunları toplarsak, sonucun (3,) şeklinde bir vektör olacağını unutmayın. Toplam operatörünü çağırırken, üzerinde topladığımız boyutu daraltmak yerine esas tensördeki eksen sayısını korumayı belirtebiliriz. Bu, (1, 3) şeklinde iki boyutlu bir tensörle sonuçlanacaktır.
 
 ```{.python .input}
 #@tab pytorch
-X = torch.tensor([[1., 2., 3.], [4., 5., 6.]])
-torch.sum(X, dim=0, keepdim=True), torch.sum(X, dim=1, keepdim=True)
+X = d2l.tensor([[1.0, 2.0, 3.0], [4.0, 5.0, 6.0]])
+d2l.reduce_sum(X, 0, keepdim=True), d2l.reduce_sum(X, 1, keepdim=True)
 ```
 
 ```{.python .input}
-#@tab tensorflow
-X = tf.constant([[1., 2., 3.], [4., 5., 6.]])
-[tf.reduce_sum(X, axis=i, keepdims=True) for i in range(0, 1)]
+#@tab mxnet, tensorflow
+X = d2l.tensor([[1.0, 2.0, 3.0], [4.0, 5.0, 6.0]])
+d2l.reduce_sum(X, 0, keepdims=True), d2l.reduce_sum(X, 1, keepdims=True)
 ```
 
-Artık softmaks işlemini uygulamaya hazırız. Softmaks'in üç adımdan oluştuğunu hatırlayın: i) Her terimi üslüyoruz (`exp` kullanarak); ii) her bir örnek için normalleştirme sabitini elde etmek için her satırı topluyoruz (toplu işte (batch) örnek başına bir satırımız vardır); iii) her satırı normalleştirme sabitine bölerek sonucun toplamının 1 olmasını sağlıyoruz. Koda bakmadan önce, bunun bir denklem olarak nasıl ifade edildiğini hatırlayalım:
+(**Artık softmaks işlemini uygulamaya**) hazırız. Softmaks'in üç adımdan oluştuğunu hatırlayın: (i) Her terimin üssünü alıyoruz (`exp` kullanarak); (ii) her bir örnek için normalleştirme sabitini elde etmek için her satırı topluyoruz (toplu işte (batch) örnek başına bir satırımız vardır); (iii) her satırı normalleştirme sabitine bölerek sonucun toplamının 1 olmasını sağlıyoruz. Koda bakmadan önce, bunun bir denklem olarak nasıl ifade edildiğini hatırlayalım:
 
-$$
-\mathrm{softmax}(\mathbf{X})_{ij} = \frac{\exp(\mathbf{X}_{ij})}{\sum_k \exp(\mathbf{X}_{ik})}.
-$$
+(**
+$$\mathrm{softmax}(\mathbf{X})_{ij} = \frac{\exp(\mathbf{X}_{ij})}{\sum_k \exp(\mathbf{X}_{ik})}.$$
+**)
 
 Payda veya normalleştirme sabiti bazen *bölmeleme fonksiyonu* olarak da adlandırılır (ve logaritmasına log-bölmeleme fonksiyonu denir). Bu ismin kökenleri, ilgili bir denklemin bir parçacıklar topluluğu üzerindeki dağılımı modellediği [istatistiksel fizik](https://en.wikipedia.org/wiki/Partition_function_(statistical_mechanics))'tedir.
 
 ```{.python .input}
+#@tab mxnet, tensorflow
 def softmax(X):
-    X_exp = np.exp(X)
-    partition = X_exp.sum(axis=1, keepdims=True)
-    return X_exp / partition  # The broadcasting mechanism is applied here
+    X_exp = d2l.exp(X)
+    partition = d2l.reduce_sum(X_exp, 1, keepdims=True)
+    return X_exp / partition  # Burada yayin mekanizmasi uygulanir
 ```
 
 ```{.python .input}
 #@tab pytorch
 def softmax(X):
-    X_exp = torch.exp(X)
-    partition = torch.sum(X_exp, dim=1, keepdim=True)
-    return X_exp / partition  # The broadcasting mechanism is applied here
+    X_exp = d2l.exp(X)
+    partition = d2l.reduce_sum(X_exp, 1, keepdim=True)
+    return X_exp / partition  # Burada yayin mekanizmasi uygulanir
+```
+
+Gördüğünüz gibi, herhangi bir rastgele girdi için, [**her bir öğeyi negatif olmayan bir sayıya dönüştürüyoruz**]. Ayrıca, olasılık belirtmek için gerektiği gibi, her satırın toplamı 1'dir.
+
+```{.python .input}
+#@tab mxnet, pytorch
+X = d2l.normal(0, 1, (2, 5))
+X_prob = softmax(X)
+X_prob, d2l.reduce_sum(X_prob, 1)
 ```
 
 ```{.python .input}
 #@tab tensorflow
-def softmax(X):
-    X_exp = tf.exp(X)
-    partition = tf.reduce_sum(X_exp, -1, keepdims=True)
-    return X_exp / partition  # The broadcasting mechanism is applied here
-```
-
-Gördüğünüz gibi, herhangi bir rastgele girdi için, her bir öğeyi negatif olmayan bir sayıya dönüştürüyoruz. Ayrıca, olasılık belirtmek için gerektiği gibi, her satırın toplamı 1'dir.
-
-```{.python .input}
-X = np.random.normal(size=(2, 5))
+X = tf.random.normal((2, 5), 0, 1)
 X_prob = softmax(X)
-X_prob, X_prob.sum(axis=1)
-```
-
-```{.python .input}
-#@tab pytorch
-X = torch.normal(0, 1, size=(2, 5))
-X_prob = softmax(X)
-X_prob, torch.sum(X_prob, dim=1)
-```
-
-```{.python .input}
-#@tab tensorflow
-X = tf.random.normal(shape=(2, 5))
-X_prob = softmax(X)
-X_prob, tf.reduce_sum(X_prob, axis=1)
+X_prob, tf.reduce_sum(X_prob, 1)
 ```
 
 Bu matematiksel olarak doğru görünse de, uygulamamızda biraz özensiz davrandık çünkü matrisin büyük veya çok küçük öğeleri nedeniyle sayısal taşma (overflow) veya küçümenliğe (underflow) karşı önlem alamadık.
 
 ## Modeli Tanımlama
 
-Artık softmaks işlemini tanımladığımıza göre, softmaks regresyon modelini uygulayabiliriz. Aşağıdaki kod, girdinin ağ üzerinden çıktıya nasıl eşlendiğini tanımlar. Verileri modelimizden geçirmeden önce, `reshape` işlevini kullanarak toplu işteki (batch) her esas görüntüyü bir vektör halinde düzleştirdiğimize dikkat edin.
+Artık softmaks işlemini tanımladığımıza göre, [**softmaks regresyon modelini uygulayabiliriz**]. Aşağıdaki kod, girdinin ağ üzerinden çıktıya nasıl eşlendiğini tanımlar. Verileri modelimizden geçirmeden önce, `reshape` işlevini kullanarak toplu işteki (batch) her esas görseli bir vektör halinde düzleştirdiğimize dikkat edin.
 
 ```{.python .input}
+#@tab all
 def net(X):
-    return softmax(np.dot(X.reshape(-1, W.shape[0]), W) + b)
-```
-
-```{.python .input}
-#@tab pytorch
-def net(X):
-    return softmax(torch.matmul(X.reshape(-1, W.shape[0]), W) + b)
-```
-
-```{.python .input}
-#@tab tensorflow
-def net(X):
-    return softmax(tf.matmul(tf.reshape(X, shape=(-1, W.shape[0])), W) + b)
+    return softmax(d2l.matmul(d2l.reshape(X, (-1, W.shape[0])), W) + b)
 ```
 
 ## Kayıp Fonksiyonunu Tanımlama

@@ -1,10 +1,12 @@
 # Implementation of Softmax Regression from Scratch
 :label:`sec_softmax_scratch`
 
-Just as we implemented linear regression from scratch,
-we believe that softmax regression
-is similarly fundamental and you ought to know
-the gory details of how to implement it yourself.
+(**Just as we implemented linear regression from scratch, we believe that**)
+softmax regression
+is similarly fundamental and
+(**you ought to know the gory details of**) (~~softmax regression~~) and how to implement it yourself.
+We will work with the Fashion-MNIST dataset, just introduced in :numref:`sec_fashion_mnist`,
+setting up a data iterator with batch size 256.
 
 ```{.python .input}
 from d2l import mxnet as d2l
@@ -27,9 +29,6 @@ import tensorflow as tf
 from IPython import display
 ```
 
-We will work with the Fashion-MNIST dataset, just introduced in :numref:`sec_fashion_mnist`,
-setting up a data iterator with batch size 256.
-
 ```{.python .input}
 #@tab all
 batch_size = 256
@@ -41,16 +40,16 @@ train_iter, test_iter = d2l.load_data_fashion_mnist(batch_size)
 As in our linear regression example,
 each example here will be represented by a fixed-length vector.
 Each example in the raw dataset is a $28 \times 28$ image.
-In this section, we will flatten each image,
-treating them as vectors of length 784.
+In this section, [**we will flatten each image,
+treating them as vectors of length 784.**]
 In the future, we will talk about more sophisticated strategies
 for exploiting the spatial structure in images,
 but for now we treat each pixel location as just another feature.
 
 Recall that in softmax regression,
 we have as many outputs as there are classes.
-Because our dataset has 10 classes,
-our network will have an output dimension of 10.
+(**Because our dataset has 10 classes,
+our network will have an output dimension of 10.**)
 Consequently, our weights will constitute a $784 \times 10$ matrix
 and the biases will constitute a $1 \times 10$ row vector.
 As with linear regression, we will initialize our weights `W`
@@ -88,13 +87,13 @@ b = tf.Variable(tf.zeros(num_outputs))
 ## Defining the Softmax Operation
 
 Before implementing the softmax regression model,
-let us briefly review how the sum operator work
+let us briefly review how the sum operator works
 along specific dimensions in a tensor,
 as discussed in :numref:`subseq_lin-alg-reduction` and :numref:`subseq_lin-alg-non-reduction`.
-Given a matrix `X` we can sum over all elements (by default) or only
-over elements in the same axis, 
+[**Given a matrix `X` we can sum over all elements (by default) or only
+over elements in the same axis,**]
 i.e., the same column (axis 0) or the same row (axis 1).
-Note that if `X` is an tensor with shape (2, 3)
+Note that if `X` is a tensor with shape (2, 3)
 and we sum over the columns,
 the result will be a vector with shape (3,).
 When invoking the sum operator,
@@ -103,35 +102,30 @@ rather than collapsing out the dimension that we summed over.
 This will result in a two-dimensional tensor with shape (1, 3).
 
 ```{.python .input}
-X = np.array([[1, 2, 3], [4, 5, 6]])
-X.sum(axis=0, keepdims=True), '\n', X.sum(axis=1, keepdims=True)
-```
-
-```{.python .input}
 #@tab pytorch
-X = torch.tensor([[1., 2., 3.], [4., 5., 6.]])
-torch.sum(X, dim=0, keepdim=True), torch.sum(X, dim=1, keepdim=True)
+X = d2l.tensor([[1.0, 2.0, 3.0], [4.0, 5.0, 6.0]])
+d2l.reduce_sum(X, 0, keepdim=True), d2l.reduce_sum(X, 1, keepdim=True)
 ```
 
 ```{.python .input}
-#@tab tensorflow
-X = tf.constant([[1., 2., 3.], [4., 5., 6.]])
-[tf.reduce_sum(X, axis=i, keepdims=True) for i in range(0, 1)]
+#@tab mxnet, tensorflow
+X = d2l.tensor([[1.0, 2.0, 3.0], [4.0, 5.0, 6.0]])
+d2l.reduce_sum(X, 0, keepdims=True), d2l.reduce_sum(X, 1, keepdims=True)
 ```
 
-We are now ready to implement the softmax operation.
+We are now ready to (**implement the softmax operation**).
 Recall that softmax consists of three steps:
-i) we exponentiate each term (using `exp`);
-ii) we sum over each row (we have one row per example in the batch)
+(i) we exponentiate each term (using `exp`);
+(ii) we sum over each row (we have one row per example in the batch)
 to get the normalization constant for each example;
-iii) we divide each row by its normalization constant,
+(iii) we divide each row by its normalization constant,
 ensuring that the result sums to 1.
 Before looking at the code, let us recall
 how this looks expressed as an equation:
 
-$$
-\mathrm{softmax}(\mathbf{X})_{ij} = \frac{\exp(\mathbf{X}_{ij})}{\sum_k \exp(\mathbf{X}_{ik})}.
-$$
+(**
+$$\mathrm{softmax}(\mathbf{X})_{ij} = \frac{\exp(\mathbf{X}_{ij})}{\sum_k \exp(\mathbf{X}_{ik})}.$$
+**)
 
 The denominator, or normalization constant,
 is also sometimes called the *partition function*
@@ -141,51 +135,38 @@ where a related equation models the distribution
 over an ensemble of particles.
 
 ```{.python .input}
+#@tab mxnet, tensorflow
 def softmax(X):
-    X_exp = np.exp(X)
-    partition = X_exp.sum(axis=1, keepdims=True)
+    X_exp = d2l.exp(X)
+    partition = d2l.reduce_sum(X_exp, 1, keepdims=True)
     return X_exp / partition  # The broadcasting mechanism is applied here
 ```
 
 ```{.python .input}
 #@tab pytorch
 def softmax(X):
-    X_exp = torch.exp(X)
-    partition = torch.sum(X_exp, dim=1, keepdim=True)
-    return X_exp / partition  # The broadcasting mechanism is applied here
-```
-
-```{.python .input}
-#@tab tensorflow
-def softmax(X):
-    X_exp = tf.exp(X)
-    partition = tf.reduce_sum(X_exp, -1, keepdims=True)
+    X_exp = d2l.exp(X)
+    partition = d2l.reduce_sum(X_exp, 1, keepdim=True)
     return X_exp / partition  # The broadcasting mechanism is applied here
 ```
 
 As you can see, for any random input,
-we turn each element into a non-negative number.
-Moreover, each row sums up to 1,
+[**we turn each element into a non-negative number.
+Moreover, each row sums up to 1,**]
 as is required for a probability.
 
 ```{.python .input}
-X = np.random.normal(size=(2, 5))
+#@tab mxnet, pytorch
+X = d2l.normal(0, 1, (2, 5))
 X_prob = softmax(X)
-X_prob, X_prob.sum(axis=1)
-```
-
-```{.python .input}
-#@tab pytorch
-X = torch.normal(0, 1, size=(2, 5))
-X_prob = softmax(X)
-X_prob, torch.sum(X_prob, dim=1)
+X_prob, d2l.reduce_sum(X_prob, 1)
 ```
 
 ```{.python .input}
 #@tab tensorflow
-X = tf.random.normal(shape=(2, 5))
+X = tf.random.normal((2, 5), 0, 1)
 X_prob = softmax(X)
-X_prob, tf.reduce_sum(X_prob, axis=1)
+X_prob, tf.reduce_sum(X_prob, 1)
 ```
 
 Note that while this looks correct mathematically,
@@ -196,27 +177,16 @@ due to large or very small elements of the matrix.
 ## Defining the Model
 
 Now that we have defined the softmax operation,
-we can implement the softmax regression model.
+we can [**implement the softmax regression model.**]
 The below code defines how the input is mapped to the output through the network.
 Note that we flatten each original image in the batch
 into a vector using the `reshape` function
 before passing the data through our model.
 
 ```{.python .input}
+#@tab all
 def net(X):
-    return softmax(np.dot(X.reshape(-1, W.shape[0]), W) + b)
-```
-
-```{.python .input}
-#@tab pytorch
-def net(X):
-    return softmax(torch.matmul(X.reshape(-1, W.shape[0]), W) + b)
-```
-
-```{.python .input}
-#@tab tensorflow
-def net(X):
-    return softmax(tf.matmul(tf.reshape(X, shape=(-1, W.shape[0])), W) + b)
+    return softmax(d2l.matmul(d2l.reshape(X, (-1, W.shape[0])), W) + b)
 ```
 
 ## Defining the Loss Function
