@@ -280,3 +280,5 @@ vocabulary; kelime dağarcığı
 warp; bükülme
 
 weight decay; ağırlık sönümü
+
+wrapper: sarmalayıcı

@@ -138,18 +138,16 @@ def net(X):
 
 Daha sonra, :numref:`sec_softmax`da tanıtıldığı gibi, çapraz entropi kaybı işlevini uygulamamız gerekir. Bu, tüm derin öğrenmede en yaygın kayıp işlevi olabilir, çünkü şu anda sınıflandırma sorunları regresyon sorunlarından çok daha fazladır.
 
-Çapraz entropinin, gerçek etikete atanan tahmin edilen olasılığın negatif log-olabilirliğini aldığını hatırlayın. Bir Python for-döngüsü (verimsiz olma eğilimindedir) ile tahminler üzerinde yinelemek yerine, tüm öğeleri tek bir operatörle seçebiliriz. Aşağıda, 3 sınıf üzerinden tahmin edilen olasılıkların 2 örneğini içeren bir oyuncak verisi `y_hat`'i oluşturuyoruz. Ardından birinci örnekte birinci sınıfın olasılığını ve ikinci örnekte üçüncü sınıfın olasılığını seçiyoruz.
+Çapraz entropinin, gerçek etikete atanan tahmin edilen olasılığın negatif log-olabilirliğini aldığını hatırlayın. Bir Python for-döngüsü (verimsiz olma eğilimindedir) ile tahminler üzerinde yinelemek yerine, tüm öğeleri tek bir operatörle seçebiliriz. 
+
+Aşağıda, [**3 sınıf üzerinde tahmin edilen olasılıkların 2 örneğini ve bunlara karşılık gelen `y` etiketleriyle `y_hat` örnek verilerini oluşturuyoruz.**] "y" ile, ilk örnekte birinci sınıfın doğru tahmin olduğunu biliyoruz. ve ikinci örnekte üçüncü sınıf temel gerçektir. [**`y`'yi `y_hat` içindeki olasılıkların indeksleri olarak kullanarak,**] ilk örnekte birinci sınıfın olasılığını ve ikinci örnekte üçüncü sınıfın olasılığını seçiyoruz.
+
+Aşağıda, 3 sınıf üzerinden tahmin edilen olasılıkların 2 örneğini içeren bir oyuncak verisi `y_hat`'i oluşturuyoruz. Ardından birinci örnekte birinci sınıfın olasılığını ve ikinci örnekte üçüncü sınıfın olasılığını seçiyoruz.
 
 ```{.python .input}
-y_hat = np.array([[0.1, 0.3, 0.6], [0.3, 0.2, 0.5]])
-y = np.array([0, 2])
-y_hat[[0, 1], y]
-```
-
-```{.python .input}
-#@tab pytorch
-y = torch.tensor([0, 2])
-y_hat = torch.tensor([[0.1, 0.3, 0.6], [0.3, 0.2, 0.5]])
+#@tab mxnet, pytorch
+y = d2l.tensor([0, 2])
+y_hat = d2l.tensor([[0.1, 0.3, 0.6], [0.3, 0.2, 0.5]])
 y_hat[[0, 1], y]
 ```
 
@@ -160,19 +158,12 @@ y = tf.constant([0, 2])
 tf.boolean_mask(y_hat, tf.one_hot(y, depth=y_hat.shape[-1]))
 ```
 
-Artık, çapraz entropi kaybı işlevini tek bir kod satırı ile verimli bir şekilde uygulayabiliriz.
+Artık, (**çapraz entropi kaybı işlevini**) tek bir kod satırı ile verimli bir şekilde uygulayabiliriz.
 
 ```{.python .input}
+#@tab mxnet, pytorch
 def cross_entropy(y_hat, y):
-    return - np.log(y_hat[range(len(y_hat)), y])
-
-cross_entropy(y_hat, y)
-```
-
-```{.python .input}
-#@tab pytorch
-def cross_entropy(y_hat, y):
-    return - torch.log(y_hat[range(len(y_hat)), y])
+    return - d2l.log(y_hat[range(len(y_hat)), y])
 
 cross_entropy(y_hat, y)
 ```
@@ -188,36 +179,20 @@ cross_entropy(y_hat, y)
 
 ## Sınıflandırma Doğruluğu
 
-Tahmin edilen olasılık dağılımı `y_hat` göz önüne alındığında, genellikle kesin bir tahmin vermemiz gerektiğinde tahmin edilen en yüksek olasılığı olan sınıfı seçeriz. Aslında, birçok uygulama bir seçim yapmamızı gerektirir. Gmail, bir e-postayı "Birincil", "Sosyal", "Güncellemeler" veya "Forumlar" olarak sınıflandırmalıdır. Olasılıkları dahili olarak tahmin edebilir, ancak günün sonunda sınıflar arasından birini seçmesi gerekir.
+Tahmin edilen olasılık dağılımı `y_hat` göz önüne alındığında, genellikle kesin bir tahmin vermemiz gerektiğinde tahmin edilen en yüksek olasılığa sahip sınıfı seçeriz. Aslında, birçok uygulama bir seçim yapmamızı gerektirir. Gmail, bir e-postayı "Birincil", "Sosyal", "Güncellemeler" veya "Forumlar" olarak sınıflandırmalıdır. Olasılıkları dahili olarak tahmin edebilir, ancak günün sonunda sınıflar arasından birini seçmesi gerekir.
 
 Tahminler `y` etiket sınıfıyla tutarlı olduğunda doğrudur. Sınıflandırma doğruluğu, doğru olan tüm tahminlerin oranıdır. Doğruluğu doğrudan optimize etmek zor olabilse de (türevleri alınamaz), genellikle en çok önemsediğimiz performans ölçütüdür ve sınıflandırıcıları eğitirken neredeyse her zaman onu rapor edeceğiz.
 
-Doğruluğu hesaplamak için aşağıdakileri yapıyoruz. İlk olarak, `y_hat` bir matris ise, ikinci boyutun her sınıf için tahmin puanlarını sakladığını varsayıyoruz. Her satırdaki en büyük giriş için dizine göre tahmin edilen sınıfı elde ederken `argmax` kullanırız. Ardından, tahmin edilen sınıfı kesin-doğru `y` ile karşılaştırırız. Eşitlik operatörü `==` veri türlerine duyarlı olduğundan, `y_hat` veri türünü `y` ile eşleşecek şekilde dönüştürürüz. Sonuç, 0 (yanlış) ve 1 (doğru) girdilerini içeren bir tensördür. Toplamlarını almak doğru tahminlerin sayısını verir.
+Doğruluğu hesaplamak için aşağıdakileri yapıyoruz. İlk olarak, `y_hat` bir matris ise, ikinci boyutun her sınıf için tahmin puanlarını sakladığını varsayıyoruz. Her satırdaki en büyük giriş için dizine göre tahmin edilen sınıfı elde ederken `argmax` kullanırız. Ardından, [**tahmin edilen sınıfı kesin-doğru `y` ile karşılaştırırız**]. Eşitlik operatörü `==` veri türlerine duyarlı olduğundan, `y_hat` veri türünü `y` ile eşleşecek şekilde dönüştürürüz. Sonuç, 0 (yanlış) ve 1 (doğru) girişlerini içeren bir tensördür. Toplamlarını almak doğru tahminlerin sayısını verir.
 
 ```{.python .input}
+#@tab all
 def accuracy(y_hat, y):  #@save
-    """Compute the number of correct predictions."""
+    """Dogru tahminlerin sayisini hesaplayin."""
     if len(y_hat.shape) > 1 and y_hat.shape[1] > 1:
-        y_hat = y_hat.argmax(axis=1)
-    return float((y_hat.astype(y.dtype) == y).sum())
-```
-
-```{.python .input}
-#@tab pytorch
-def accuracy(y_hat, y):  #@save
-    """Compute the number of correct predictions."""
-    if len(y_hat.shape) > 1 and y_hat.shape[1] > 1:
-        y_hat = y_hat.argmax(axis=1)
-    return float((y_hat.type(y.dtype) == y).sum())
-```
-
-```{.python .input}
-#@tab tensorflow
-def accuracy(y_hat, y):  #@save
-    """Compute the number of correct predictions."""
-    if len(y_hat.shape) > 1 and y_hat.shape[1] > 1:
-        y_hat = tf.argmax(y_hat, axis=1)
-    return float((tf.cast(y_hat, dtype=y.dtype) == y).numpy().sum())
+        y_hat = d2l.argmax(y_hat, axis=1)
+    cmp = d2l.astype(y_hat, y.dtype) == y
+    return float(d2l.reduce_sum(d2l.astype(cmp, y.dtype)))
 ```
 
 Önceden tanımlanan `y_hat` ve `y` değişkenlerini sırasıyla tahmin edilen olasılık dağılımları ve etiketler olarak kullanmaya devam edeceğiz. İlk örneğin tahmin sınıfının 2 olduğunu görebiliriz (satırın en büyük öğesi dizin 2 ile 0.6'dır), bu gerçek etiket, 0 ile tutarsızdır. İkinci örneğin tahmin sınıfı 2'dir (satırın en büyük öğesi 2 endeksi ile 0.5'tir) ve bu gerçek etiket 2 ile tutarlıdır. Bu nedenle, bu iki örnek için sınıflandırma doğruluk oranı 0.5'tir.
@@ -227,15 +202,29 @@ def accuracy(y_hat, y):  #@save
 accuracy(y_hat, y) / len(y)
 ```
 
-Benzer şekilde, veri yineleyici `data_iter` aracılığıyla erişilen bir veri kümesindeki herhangi bir `net` modelinin doğruluğunu değerlendirebiliriz.
+Benzer şekilde, veri yineleyici `data_iter` aracılığıyla erişilen [**bir veri kümesindeki herhangi bir `net` modelinin doğruluğunu hesaplayabiliriz**].
 
 ```{.python .input}
-#@tab all
+#@tab mxnet, tensorflow
 def evaluate_accuracy(net, data_iter):  #@save
-    """Compute the accuracy for a model on a dataset."""
-    metric = Accumulator(2)  # No. of correct predictions, no. of predictions
-    for _, (X, y) in enumerate(data_iter):
-        metric.add(accuracy(net(X), y), sum(y.shape))
+    """Bir veri kümesindeki bir modelin doğruluğunu hesaplayın."""
+    metric = Accumulator(2)  # Dogru tahmin sayisi, tahmin sayisi
+    for X, y in data_iter:
+        metric.add(accuracy(net(X), y), d2l.size(y))
+    return metric[0] / metric[1]
+```
+
+```{.python .input}
+#@tab pytorch
+def evaluate_accuracy(net, data_iter):  #@save
+    """Bir veri kumesindeki bir modelin dogrulugunu hesaplayin."""
+    if isinstance(net, torch.nn.Module):
+        net.eval()  # Modeli degerlendirme moduna kurun
+    metric = Accumulator(2)  # Dogru tahmin sayisi, tahmin sayisi
+
+    with torch.no_grad():
+        for X, y in data_iter:
+            metric.add(accuracy(net(X), y), d2l.size(y))
     return metric[0] / metric[1]
 ```
 
@@ -244,7 +233,7 @@ Burada, `Accumulator`, birden çok değişken üzerindeki toplamları biriktirme
 ```{.python .input}
 #@tab all
 class Accumulator:  #@save
-    """For accumulating sums over `n` variables."""
+    """`n` degisken uzerinden toplamlari biriktirmek için"""
     def __init__(self, n):
         self.data = [0.0] * n
 
@@ -258,7 +247,7 @@ class Accumulator:  #@save
         return self.data[idx]
 ```
 
-`net` modelini rastgele ağırlıklarla başlattığımız için, bu modelin doğruluğu rastgele tahmin etmeye yakın olmalıdır, yani 10 sınıf için 0.1 gibi.
+[**`net` modelini rastgele ağırlıklarla başlattığımız için, bu modelin doğruluğu rastgele tahmin etmeye yakın olmalıdır**], yani 10 sınıf için 0.1 gibi.
 
 ```{.python .input}
 #@tab all
@@ -267,63 +256,67 @@ evaluate_accuracy(net, test_iter)
 
 ## Eğitim
 
-Softmaks regresyonu için eğitim döngüsü, :numref:`sec_linear_scratch` içindeki doğrusal regresyon uygulamamızı okursanız çarpıcı bir şekilde tanıdık gelmelidir. Burada uygulamayı yeniden kullanılabilir hale getirmek için yeniden düzenliyoruz. İlk olarak, bir dönem (epoch) için eğitilecek bir işlev tanımlıyoruz. `updater`'in, grup boyutunu bağımsız değişken olarak kabul eden, model parametrelerini güncellemek için genel bir işlev olduğuna dikkat edin. `d2l.sgd` işlevinin bir sarmalayıcısı (wrapper) veya bir çerçevenin yerleşik optimizasyon işlevi olabilir.
+Softmaks regresyonu için [**eğitim döngüsü**], :numref:`sec_linear_scratch` içindeki doğrusal regresyon uygulamamızı okursanız, çarpıcı bir şekilde tanıdık gelebilir. Burada uygulamayı yeniden kullanılabilir hale getirmek için yeniden düzenliyoruz. İlk olarak, bir dönemi (epoch) eğitmek için bir işlev tanımlıyoruz. `updater`'in, grup boyutunu bağımsız değişken olarak kabul eden, model parametrelerini güncellemek için genel bir işlev olduğuna dikkat edin. `d2l.sgd` işlevinin bir sarmalayıcısı (wrapper) veya bir çerçevenin yerleşik optimizasyon işlevi olabilir.
 
 ```{.python .input}
 def train_epoch_ch3(net, train_iter, loss, updater):  #@save
-    """Train a model within one epoch (defined in Chapter 3)."""
-    # Sum of training loss, sum of training accuracy, no. of examples
+    """Bir modeli bir donem icinde egitme (Bolum 3'te tanimlanmistir)."""
+    # Egitim kaybi toplami, egitim dogrulugu toplami, ornek sayisi
     metric = Accumulator(3)
     if isinstance(updater, gluon.Trainer):
         updater = updater.step
     for X, y in train_iter:
-        # Compute gradients and update parameters
+        # Gradyanlari hesaplayin ve parametreleri guncelleyin
         with autograd.record():
             y_hat = net(X)
             l = loss(y_hat, y)
         l.backward()
         updater(X.shape[0])
         metric.add(float(l.sum()), accuracy(y_hat, y), y.size)
-    # Return training loss and training accuracy
+    # Egitim kaybini ve dogrulugunu dondur
     return metric[0] / metric[2], metric[1] / metric[2]
 ```
 
 ```{.python .input}
 #@tab pytorch
 def train_epoch_ch3(net, train_iter, loss, updater):  #@save
-    """The training loop defined in Chapter 3."""
-    # Sum of training loss, sum of training accuracy, no. of examples
+    """Bolum 3'te tanimlanan egitim dongusu."""
+    # Modeli egitim moduna kurun
+    if isinstance(net, torch.nn.Module):
+        net.train()
+    # Egitim kaybi toplami, egitim dogrulugu toplami, ornek sayisi
     metric = Accumulator(3)
     for X, y in train_iter:
-        # Compute gradients and update parameters
+        # Gradyanlari hesaplayin ve parametreleri guncelleyin
         y_hat = net(X)
         l = loss(y_hat, y)
         if isinstance(updater, torch.optim.Optimizer):
+            # PyTorch yerleşik optimize edicisini ve kayip kriterini kullanma
             updater.zero_grad()
-            l.backward()
+            l.sum().backward()
             updater.step()
-            metric.add(float(l)*len(y), accuracy(y_hat, y), y.size().numel())
         else:
+            # Ozel olarak oluşturulmus optimize edicisini ve kayip olcutunu kullanma
             l.sum().backward()
             updater(X.shape[0])
-            metric.add(float(l.sum()), accuracy(y_hat, y), y.size().numel())
-    # Return training loss and training accuracy
+        metric.add(float(l.sum()), accuracy(y_hat, y), y.numel())
+    # Egitim kaybini ve dogrulugunu dondur
     return metric[0] / metric[2], metric[1] / metric[2]
 ```
 
 ```{.python .input}
 #@tab tensorflow
 def train_epoch_ch3(net, train_iter, loss, updater):  #@save
-    """The training loop defined in Chapter 3."""
-    # Sum of training loss, sum of training accuracy, no. of examples
+    """Bolum 3'te tanimlanan egitim dongusu."""
+    # Egitim kaybi toplami, egitim dogrulugu toplami, ornek sayisi
     metric = Accumulator(3)
     for X, y in train_iter:
-        # Compute gradients and update parameters
+        # Gradyanlari hesaplayin ve parametreleri guncelleyin
         with tf.GradientTape() as tape:
             y_hat = net(X)
-            # Keras implementations for loss takes (labels, predictions)
-            # instead of (predictions, labels) that users might implement
-            # in this book, e.g. `cross_entropy` that we implemented above
+            # Kullanicilarin bu kitapta uygulayabilecekleri (tahminler, etiketler) 
+            # yerine kayip alimları (etiketler, tahminler) için Keras uygulamalari
+            # ör. yukarida uyguladigimiz 'cross_entropy'
             if isinstance(loss, tf.keras.losses.Loss):
                 l = loss(y, y_hat)
             else:
@@ -334,38 +327,38 @@ def train_epoch_ch3(net, train_iter, loss, updater):  #@save
             updater.apply_gradients(zip(grads, params))
         else:
             updater(X.shape[0], tape.gradient(l, updater.params))
-        # Keras loss by default returns the average loss in a batch
+        # Varsayilan olarak Keras kaybi, bir toplu is icindeki ortalama kaybı döndürür
         l_sum = l * float(tf.size(y)) if isinstance(
             loss, tf.keras.losses.Loss) else tf.reduce_sum(l)
         metric.add(l_sum, accuracy(y_hat, y), tf.size(y))
-    # Return training loss and training accuracy
+    # Egitim kaybini ve dogrulugunu dondur
     return metric[0] / metric[2], metric[1] / metric[2]
 ```
 
-Eğitim işlevinin uygulamasını göstermeden önce, verileri animasyonda (canlandırma) çizen bir yardımcı program sınıfı tanımlıyoruz. Yine kitabın geri kalanında kodu basitleştirmeyi amaçlamaktadır.
+Eğitim işlevinin uygulamasını göstermeden önce, [**verileri animasyonda (canlandırma) çizen bir yardımcı program sınıfı tanımlıyoruz**]. Yine kitabın geri kalanında kodu basitleştirmeyi amaçlamaktadır.
 
 ```{.python .input}
 #@tab all
 class Animator:  #@save
-    """For plotting data in animation."""
+    """Animasyonda veri cizdirme"""
     def __init__(self, xlabel=None, ylabel=None, legend=None, xlim=None,
                  ylim=None, xscale='linear', yscale='linear',
                  fmts=('-', 'm--', 'g-.', 'r:'), nrows=1, ncols=1,
                  figsize=(3.5, 2.5)):
-        # Incrementally plot multiple lines
+        # Coklu cizgileri artarak cizdir
         if legend is None:
             legend = []
         d2l.use_svg_display()
         self.fig, self.axes = d2l.plt.subplots(nrows, ncols, figsize=figsize)
         if nrows * ncols == 1:
             self.axes = [self.axes, ]
-        # Use a lambda function to capture arguments
+        # Argumanlari elde tutmak icin bir lambda islevi kullan
         self.config_axes = lambda: d2l.set_axes(
             self.axes[0], xlabel, ylabel, xlim, ylim, xscale, yscale, legend)
         self.X, self.Y, self.fmts = None, None, fmts
 
     def add(self, x, y):
-        # Add multiple data points into the figure
+        # Coklu veri noktalarini sekile ekleyin
         if not hasattr(y, "__len__"):
             y = [y]
         n = len(y)
@@ -387,12 +380,13 @@ class Animator:  #@save
         display.clear_output(wait=True)
 ```
 
+[~~Eğitim işlevi~~]
 Aşağıdaki eğitim işlevi daha sonra, `num_epochs` ile belirtilen birden çok dönem için `train_iter` aracılığıyla erişilen bir eğitim veri kümesinde bir `net` modeli eğitir. Her dönemin sonunda model, `test_iter` aracılığıyla erişilen bir test veri kümesinde değerlendirilir. Eğitimin ilerlemesini görselleştirmek için `Animator` sınıfından yararlanacağız.
 
 ```{.python .input}
 #@tab all
 def train_ch3(net, train_iter, test_iter, loss, num_epochs, updater):  #@save
-    """Train a model (defined in Chapter 3)."""
+    """Bir modeli egitin (Bolum 3'te tanimlanmistir)."""
     animator = Animator(xlabel='epoch', xlim=[1, num_epochs], ylim=[0.3, 0.9],
                         legend=['train loss', 'train acc', 'test acc'])
     for epoch in range(num_epochs):
@@ -405,7 +399,7 @@ def train_ch3(net, train_iter, test_iter, loss, num_epochs, updater):  #@save
     assert test_acc <= 1 and test_acc > 0.7, test_acc
 ```
 
-Sıfırdan bir uygulama olarak, modelin kayıp fonksiyonunu 0.1 öğrenme oranıyla optimize ederek :numref:`sec_linear_scratch` içinde tanımlanan minigrup rasgele gradyan inişini kullanıyoruz.
+Sıfırdan bir uygulama olarak, modelin kayıp fonksiyonunu 0.1 öğrenme oranıyla optimize ederek :numref:`sec_linear_scratch` içinde tanımlanan [**minigrup rasgele gradyan inişini kullanıyoruz**].
 
 ```{.python .input}
 #@tab mxnet, pytorch
@@ -418,7 +412,7 @@ def updater(batch_size):
 ```{.python .input}
 #@tab tensorflow
 class Updater():  #@save
-    """For updating parameters using minibatch stochastic gradient descent."""
+    """Minigrup rasgele gradyan inisini kullanarak parametreleri guncellemek icin."""
     def __init__(self, params, lr):
         self.params = params
         self.lr = lr
@@ -429,7 +423,7 @@ class Updater():  #@save
 updater = Updater([W, b], lr=0.1)
 ```
 
-Şimdi modeli 10 dönem ile eğitiyoruz. Hem dönem sayısının (`num_epochs`) hem de öğrenme oranının (`lr`) ayarlanabilir hiperparametreler olduğuna dikkat edin. Değerlerini değiştirerek modelin sınıflandırma doğruluğunu artırabiliriz.
+Şimdi [**modeli 10 dönem ile eğitiyoruz**]. Hem dönem sayısının (`num_epochs`) hem de öğrenme oranının (`lr`) ayarlanabilir hiperparametreler olduğuna dikkat edin. Değerlerini değiştirerek modelin sınıflandırma doğruluğunu artırabiliriz.
 
 ```{.python .input}
 #@tab all
@@ -439,32 +433,19 @@ train_ch3(net, train_iter, test_iter, cross_entropy, num_epochs, updater)
 
 ## Tahminleme
 
-Artık eğitim tamamlandı, modelimiz bazı imgeleri sınıflandırmaya hazır. Bir dizi resim verildiğinde, bunların gerçek etiketlerini (metin çıktısının ilk satırı) ve modelden gelen tahminleri (metin çıktısının ikinci satırı) karşılaştıracağız.
+Artık eğitim tamamlandı, [**modelimiz bazı imgeleri sınıflandırmaya**] hazır. Bir dizi resim verildiğinde, bunların gerçek etiketlerini (metin çıktısının ilk satırı) ve modelden gelen tahminleri (metin çıktısının ikinci satırı) karşılaştıracağız.
 
 ```{.python .input}
-#@tab mxnet, pytorch
+#@tab all
 def predict_ch3(net, test_iter, n=6):  #@save
-    """Predict labels (defined in Chapter 3)."""
+    """Etiketleri tahmin etme (Bolum 3'te tanimlanmistir)."""
     for X, y in test_iter:
         break
     trues = d2l.get_fashion_mnist_labels(y)
-    preds = d2l.get_fashion_mnist_labels(net(X).argmax(axis=1))
-    titles = [true + '\n' + pred for true, pred in zip(trues, preds)]
-    d2l.show_images(X[0:n].reshape(n, 28, 28), 1, n, titles=titles[0:n])
-
-predict_ch3(net, test_iter)
-```
-
-```{.python .input}
-#@tab tensorflow
-def predict_ch3(net, test_iter, n=6):  #@save
-    """Predict labels (defined in Chapter 3)."""
-    for X, y in test_iter:
-        break
-    trues = d2l.get_fashion_mnist_labels(y)
-    preds = d2l.get_fashion_mnist_labels(tf.argmax(net(X), axis=1))
-    titles = [true+'\n' + pred for true, pred in zip(trues, preds)]
-    d2l.show_images(tf.reshape(X[0:n], (n, 28, 28)), 1, n, titles=titles[0:n])
+    preds = d2l.get_fashion_mnist_labels(d2l.argmax(net(X), axis=1))
+    titles = [true +'\n' + pred for true, pred in zip(trues, preds)]
+    d2l.show_images(
+        d2l.reshape(X[0:n], (n, 28, 28)), 1, n, titles=titles[0:n])
 
 predict_ch3(net, test_iter)
 ```
@@ -472,7 +453,7 @@ predict_ch3(net, test_iter)
 ## Özet
 
 * Softmaks regresyonu ile çok sınıflı sınıflandırma için modeller eğitebiliriz.
-* Softmaks regresyonunun eğitim döngüsü doğrusal regresyondakine çok benzer: Verileri alın ve okuyun, modelleri ve kayıp fonksiyonlarını tanımlayın, ardından optimizasyon algoritmalarını kullanarak modelleri eğitin. Yakında öğreneceğiniz gibi, en yaygın derin öğrenme modellerinin benzer eğitim prosedürleri vardır.
+* Softmaks regresyonunun eğitim döngüsü doğrusal regresyondakine çok benzer: Verileri alın ve okuyun, modelleri ve kayıp fonksiyonlarını tanımlayın, ardından optimizasyon algoritmalarını kullanarak modelleri eğitin. Yakında öğreneceğiniz gibi, en yaygın derin öğrenme modellerinin benzer eğitim yordamları vardır.
 
 ## Alıştırmalar
 

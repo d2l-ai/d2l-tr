@@ -202,21 +202,18 @@ of the predicted probability assigned to the true label.
 Rather than iterating over the predictions with a Python for-loop
 (which tends to be inefficient),
 we can pick all elements by a single operator.
-Below, we create a toy data `y_hat`
-with 2 examples of predicted probabilities over 3 classes.
-Then we pick the probability of the first class in the first example
+Below, we [**create sample data `y_hat`
+with 2 examples of predicted probabilities over 3 classes and their corresponding labels `y`.**]
+With `y` we know that in the first example the first class is the correct prediction and
+in the second example the third class is the ground-truth.
+[**Using `y` as the indices of the probabilities in `y_hat`,**]
+we pick the probability of the first class in the first example
 and the probability of the third class in the second example.
 
 ```{.python .input}
-y_hat = np.array([[0.1, 0.3, 0.6], [0.3, 0.2, 0.5]])
-y = np.array([0, 2])
-y_hat[[0, 1], y]
-```
-
-```{.python .input}
-#@tab pytorch
-y = torch.tensor([0, 2])
-y_hat = torch.tensor([[0.1, 0.3, 0.6], [0.3, 0.2, 0.5]])
+#@tab mxnet, pytorch
+y = d2l.tensor([0, 2])
+y_hat = d2l.tensor([[0.1, 0.3, 0.6], [0.3, 0.2, 0.5]])
 y_hat[[0, 1], y]
 ```
 
@@ -227,19 +224,12 @@ y = tf.constant([0, 2])
 tf.boolean_mask(y_hat, tf.one_hot(y, depth=y_hat.shape[-1]))
 ```
 
-Now we can implement the cross-entropy loss function efficiently with just one line of code.
+Now we can (**implement the cross-entropy loss function**) efficiently with just one line of code.
 
 ```{.python .input}
+#@tab mxnet, pytorch
 def cross_entropy(y_hat, y):
-    return - np.log(y_hat[range(len(y_hat)), y])
-
-cross_entropy(y_hat, y)
-```
-
-```{.python .input}
-#@tab pytorch
-def cross_entropy(y_hat, y):
-    return - torch.log(y_hat[range(len(y_hat)), y])
+    return - d2l.log(y_hat[range(len(y_hat)), y])
 
 cross_entropy(y_hat, y)
 ```
@@ -273,36 +263,20 @@ To compute accuracy we do the following.
 First, if `y_hat` is a matrix,
 we assume that the second dimension stores prediction scores for each class.
 We use `argmax` to obtain the predicted class by the index for the largest entry in each row.
-Then we compare the predicted class with the ground-truth `y` elementwise.
+Then we [**compare the predicted class with the ground-truth `y` elementwise.**]
 Since the equality operator `==` is sensitive to data types,
 we convert `y_hat`'s data type to match that of `y`.
 The result is a tensor containing entries of 0 (false) and 1 (true).
 Taking the sum yields the number of correct predictions.
 
 ```{.python .input}
+#@tab all
 def accuracy(y_hat, y):  #@save
     """Compute the number of correct predictions."""
     if len(y_hat.shape) > 1 and y_hat.shape[1] > 1:
-        y_hat = y_hat.argmax(axis=1)
-    return float((y_hat.astype(y.dtype) == y).sum())
-```
-
-```{.python .input}
-#@tab pytorch
-def accuracy(y_hat, y):  #@save
-    """Compute the number of correct predictions."""
-    if len(y_hat.shape) > 1 and y_hat.shape[1] > 1:
-        y_hat = y_hat.argmax(axis=1)
-    return float((y_hat.type(y.dtype) == y).sum())
-```
-
-```{.python .input}
-#@tab tensorflow
-def accuracy(y_hat, y):  #@save
-    """Compute the number of correct predictions."""
-    if len(y_hat.shape) > 1 and y_hat.shape[1] > 1:
-        y_hat = tf.argmax(y_hat, axis=1)
-    return float((tf.cast(y_hat, dtype=y.dtype) == y).numpy().sum())
+        y_hat = d2l.argmax(y_hat, axis=1)
+    cmp = d2l.astype(y_hat, y.dtype) == y
+    return float(d2l.reduce_sum(d2l.astype(cmp, y.dtype)))
 ```
 
 We will continue to use the variables `y_hat` and `y`
@@ -321,16 +295,30 @@ Therefore, the classification accuracy rate for these two examples is 0.5.
 accuracy(y_hat, y) / len(y)
 ```
 
-Similarly, we can evaluate the accuracy for any model `net` on a dataset
+[**Similarly, we can evaluate the accuracy for any model `net` on a dataset**]
 that is accessed via the data iterator `data_iter`.
 
 ```{.python .input}
-#@tab all
+#@tab mxnet, tensorflow
 def evaluate_accuracy(net, data_iter):  #@save
     """Compute the accuracy for a model on a dataset."""
     metric = Accumulator(2)  # No. of correct predictions, no. of predictions
-    for _, (X, y) in enumerate(data_iter):
-        metric.add(accuracy(net(X), y), sum(y.shape))
+    for X, y in data_iter:
+        metric.add(accuracy(net(X), y), d2l.size(y))
+    return metric[0] / metric[1]
+```
+
+```{.python .input}
+#@tab pytorch
+def evaluate_accuracy(net, data_iter):  #@save
+    """Compute the accuracy for a model on a dataset."""
+    if isinstance(net, torch.nn.Module):
+        net.eval()  # Set the model to evaluation mode
+    metric = Accumulator(2)  # No. of correct predictions, no. of predictions
+
+    with torch.no_grad():
+        for X, y in data_iter:
+            metric.add(accuracy(net(X), y), d2l.size(y))
     return metric[0] / metric[1]
 ```
 
@@ -357,8 +345,8 @@ class Accumulator:  #@save
         return self.data[idx]
 ```
 
-Because we initialized the `net` model with random weights,
-the accuracy of this model should be close to random guessing,
+[**Because we initialized the `net` model with random weights,
+the accuracy of this model should be close to random guessing,**]
 i.e., 0.1 for 10 classes.
 
 ```{.python .input}
@@ -368,7 +356,8 @@ evaluate_accuracy(net, test_iter)
 
 ## Training
 
-The training loop for softmax regression should look strikingly familiar
+[**The training loop**]
+for softmax regression should look strikingly familiar
 if you read through our implementation
 of linear regression in :numref:`sec_linear_scratch`.
 Here we refactor the implementation to make it reusable.
@@ -401,6 +390,9 @@ def train_epoch_ch3(net, train_iter, loss, updater):  #@save
 #@tab pytorch
 def train_epoch_ch3(net, train_iter, loss, updater):  #@save
     """The training loop defined in Chapter 3."""
+    # Set the model to training mode
+    if isinstance(net, torch.nn.Module):
+        net.train()
     # Sum of training loss, sum of training accuracy, no. of examples
     metric = Accumulator(3)
     for X, y in train_iter:
@@ -408,14 +400,15 @@ def train_epoch_ch3(net, train_iter, loss, updater):  #@save
         y_hat = net(X)
         l = loss(y_hat, y)
         if isinstance(updater, torch.optim.Optimizer):
+            # Using PyTorch in-built optimizer & loss criterion
             updater.zero_grad()
-            l.backward()
+            l.sum().backward()
             updater.step()
-            metric.add(float(l)*len(y), accuracy(y_hat, y), y.size().numel())
         else:
+            # Using custom built optimizer & loss criterion
             l.sum().backward()
             updater(X.shape[0])
-            metric.add(float(l.sum()), accuracy(y_hat, y), y.size().numel())
+        metric.add(float(l.sum()), accuracy(y_hat, y), y.numel())
     # Return training loss and training accuracy
     return metric[0] / metric[2], metric[1] / metric[2]
 ```
@@ -452,7 +445,7 @@ def train_epoch_ch3(net, train_iter, loss, updater):  #@save
 ```
 
 Before showing the implementation of the training function,
-we define a utility class that plot data in animation.
+we define [**a utility class that plot data in animation.**]
 Again, it aims to simplify code in the rest of the book.
 
 ```{.python .input}
@@ -498,7 +491,8 @@ class Animator:  #@save
         display.clear_output(wait=True)
 ```
 
-The following training function then 
+[~~The training function~~]
+The following training function then
 trains a model `net` on a training dataset accessed via `train_iter`
 for multiple epochs, which is specified by `num_epochs`.
 At the end of each epoch,
@@ -523,7 +517,7 @@ def train_ch3(net, train_iter, test_iter, loss, num_epochs, updater):  #@save
 ```
 
 As an implementation from scratch,
-we use the minibatch stochastic gradient descent defined in :numref:`sec_linear_scratch`
+we [**use the minibatch stochastic gradient descent**] defined in :numref:`sec_linear_scratch`
 to optimize the loss function of the model with a learning rate 0.1.
 
 ```{.python .input}
@@ -548,7 +542,7 @@ class Updater():  #@save
 updater = Updater([W, b], lr=0.1)
 ```
 
-Now we train the model with 10 epochs.
+Now we [**train the model with 10 epochs.**]
 Note that both the number of epochs (`num_epochs`),
 and learning rate (`lr`) are adjustable hyperparameters.
 By changing their values, we may be able
@@ -563,7 +557,7 @@ train_ch3(net, train_iter, test_iter, cross_entropy, num_epochs, updater)
 ## Prediction
 
 Now that training is complete,
-our model is ready to classify some images.
+our model is ready to [**classify some images.**]
 Given a series of images,
 we will compare their actual labels
 (first line of text output)
@@ -571,29 +565,16 @@ and the predictions from the model
 (second line of text output).
 
 ```{.python .input}
-#@tab mxnet, pytorch
+#@tab all
 def predict_ch3(net, test_iter, n=6):  #@save
     """Predict labels (defined in Chapter 3)."""
     for X, y in test_iter:
         break
     trues = d2l.get_fashion_mnist_labels(y)
-    preds = d2l.get_fashion_mnist_labels(net(X).argmax(axis=1))
-    titles = [true + '\n' + pred for true, pred in zip(trues, preds)]
-    d2l.show_images(X[0:n].reshape(n, 28, 28), 1, n, titles=titles[0:n])
-
-predict_ch3(net, test_iter)
-```
-
-```{.python .input}
-#@tab tensorflow
-def predict_ch3(net, test_iter, n=6):  #@save
-    """Predict labels (defined in Chapter 3)."""
-    for X, y in test_iter:
-        break
-    trues = d2l.get_fashion_mnist_labels(y)
-    preds = d2l.get_fashion_mnist_labels(tf.argmax(net(X), axis=1))
-    titles = [true+'\n' + pred for true, pred in zip(trues, preds)]
-    d2l.show_images(tf.reshape(X[0:n], (n, 28, 28)), 1, n, titles=titles[0:n])
+    preds = d2l.get_fashion_mnist_labels(d2l.argmax(net(X), axis=1))
+    titles = [true +'\n' + pred for true, pred in zip(trues, preds)]
+    d2l.show_images(
+        d2l.reshape(X[0:n], (n, 28, 28)), 1, n, titles=titles[0:n])
 
 predict_ch3(net, test_iter)
 ```
