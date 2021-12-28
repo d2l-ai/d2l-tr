@@ -40,7 +40,7 @@ $\epsilon$'u öznitelikler ve etiketlerdeki olası ölçüm hatalarını yakalı
 ```{.python .input}
 #@tab mxnet, pytorch
 def synthetic_data(w, b, num_examples):  #@save
-    """y = Xw + b + gurultu"""
+    """Veri yaratma, y = Xw + b + gurultu."""
     X = d2l.normal(0, 1, (num_examples, len(w)))
     y = d2l.matmul(X, w) + b
     y += d2l.normal(0, 0.01, y.shape)
@@ -50,7 +50,7 @@ def synthetic_data(w, b, num_examples):  #@save
 ```{.python .input}
 #@tab tensorflow
 def synthetic_data(w, b, num_examples):  #@save
-    """y = Xw + b + gurultu"""
+    """Veri yaratma, y = Xw + b + gurultu."""
     X = d2l.zeros((num_examples, w.shape[0]))
     X += tf.random.normal(shape=X.shape)
     y = d2l.matmul(X, tf.reshape(w, (-1, 1))) + b
