@@ -1,7 +1,7 @@
 # Geometri ve Doğrusal Cebirsel İşlemler
 :label:`sec_geometry-linear-algebraic-ops`
 
-:numref:`sec_linear-cebebra`da, doğrusal cebirin temelleriyle karşılaştık ve verilerimizi dönüştürürken genel işlemleri ifade etmek için nasıl kullanılabileceğini gördük. Doğrusal cebir, derin öğrenmede ve daha geniş anlamda makine öğrenmesinde yaptığımız işlerin çoğunun altında yatan temel matematiksel sütunlardan biridir. :numref:`sec_linear-cebebra`, modern derin öğrenme modellerinin mekaniğini iletmek için yeterli mekanizmayı içerirken, konuyla ilgili daha çok şey var.
+:numref:`sec_linear-algebra`da, doğrusal cebirin temelleriyle karşılaştık ve verilerimizi dönüştürürken genel işlemleri ifade etmek için nasıl kullanılabileceğini gördük. Doğrusal cebir, derin öğrenmede ve daha geniş anlamda makine öğrenmesinde yaptığımız işlerin çoğunun altında yatan temel matematiksel sütunlardan biridir. :numref:`sec_linear-algebra`, modern derin öğrenme modellerinin mekaniğini iletmek için yeterli mekanizmayı içerirken, konuyla ilgili daha çok şey var.
 Bu bölümde daha derine ineceğiz, doğrusal cebir işlemlerinin bazı geometrik yorumlarını vurgulayacağız ve özdeğerler (eigenvalues) ve özvektörler (eigenvectors) dahil birkaç temel kavramı tanıtacağız.
 
 ## Vektörlerin Geometrisi
@@ -504,7 +504,7 @@ Doğrusal cebir ile çalışırken sıkça karşılaşılan çetrefilli sayısal
 
 ## Determinant
 Doğrusal cebirin geometrik görünümü, *determinant* olarak bilinen temel bir miktarı yorumlamanın sezgisel bir yolunu sunar.
-Önceki ızgara görüntüsünü, ama şimdi vurgulanmış bölgeyle (:numref:`fig_grid-dolu`) düşünün.
+Önceki ızgara görüntüsünü, ama şimdi vurgulanmış bölgeyle (:numref:`fig_grid-filled`) düşünün.
 
 ![$\mathbf{A}$ matrisi yine ızgarayı bozuyor. Bu sefer, vurgulanan kareye ne olduğuna özellikle dikkat çekmek istiyoruz.](../img/grid-transform-filled.svg)
 :label:`fig_grid-filled`

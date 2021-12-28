@@ -125,7 +125,7 @@ Diyelim ki, bunu $L$ kaybımızı en aza indirmeye yardımcı olmak için kullan
 3. Bu yönde küçük bir adım atın: $\mathbf{w} \rightarrow \mathbf{w} + \epsilon\mathbf{v}$.
 4. Tekrar edin.
 
-Tam olarak nasıl yapılacağını bilmediğimiz tek şey, ikinci adımdaki $\mathbf{v}$ vektörünü hesaplamaktır. Böyle bir yöne *en dik iniş yönü* diyeceğiz. :numref:`sec_geometry-linear-cebebraic-ops` konusundan nokta çarpımlarının geometrik anlamını kullanarak, şunu, :eqref:`eq_nabla_use`, yeniden yazabileceğimizi görüyoruz:
+Tam olarak nasıl yapılacağını bilmediğimiz tek şey, ikinci adımdaki $\mathbf{v}$ vektörünü hesaplamaktır. Böyle bir yöne *en dik iniş yönü* diyeceğiz. :numref:`sec_geometry-linear-algebraic-ops` konusundan nokta çarpımlarının geometrik anlamını kullanarak, şunu, :eqref:`eq_nabla_use`, yeniden yazabileceğimizi görüyoruz:
 
 $$
 L(\mathbf{w} + \mathbf{v}) \approx L(\mathbf{w}) + \mathbf{v}\cdot \nabla_{\mathbf{w}} L(\mathbf{w}) = \|\nabla_{\mathbf{w}} L(\mathbf{w})\|\cos(\theta).
