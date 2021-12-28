@@ -32,7 +32,7 @@ Matrisler yararlı veri yapılarıdır: Değişimlerinde farklı model modların
 Bir vektör verildiğinde, ona vermemiz gereken ilk yorum uzayda bir nokta olduğudur.
 İki veya üç boyutta, bu noktaları, *köken (orijin)* adı verilen sabit bir referansa kıyasla uzaydaki konumlarını belirtmek için vektör bileşenlerini kullanarak görselleştirebiliriz. Bu, şurada görülebilir :numref:`fig_grid`.
 
-![Vektörleri düzlemdeki noktalar olarak görselleştirmenin bir örneği. Vektörün ilk bileşeni $x$ koordinatını verir, ikinci bileşen $y$ koordinatını verir. Görselleştirilmesi çok daha zor olsa da, daha yüksek boyutlar da benzerdir.](../img/GridPoints.svg)
+![Vektörleri düzlemdeki noktalar olarak görselleştirmenin bir örneği. Vektörün ilk bileşeni $x$ koordinatını verir, ikinci bileşen $y$ koordinatını verir. Görselleştirilmesi çok daha zor olsa da, daha yüksek boyutlar da benzerdir.](../img/grid-points.svg)
 :label:`fig_grid`
 
 Bu geometrik bakış açısı, sorunu daha soyut bir düzeyde ele almamızı sağlar.
@@ -42,13 +42,13 @@ Buna paralel olarak, insanların genellikle vektörleri aldıkları ikinci bir b
 $\mathbf{v} = [2,3]^\top$ vektörünü başlangıç noktasından $2$ birim sağda ve $3$ birim yukarıda bir konum olarak düşünmekle kalmayabiliriz, aynı zamanda onu sağa doğru $2$ adım ve yukarı doğru $3$ adım şekilde yönün kendisi olarak da düşünebiliriz.
 Bu şekilde, şekildeki tüm vektörleri aynı kabul ederiz :numref:`fig_arrow`.
 
-![Herhangi bir vektör, düzlemde bir ok olarak görselleştirilebilir. Bu durumda, çizilen her vektör $(2,3)$ vektörünün bir temsilidir.](../img/ParVec.svg)
+![Herhangi bir vektör, düzlemde bir ok olarak görselleştirilebilir. Bu durumda, çizilen her vektör $(2,3)$ vektörünün bir temsilidir.](../img/par-vec.svg)
 :label:`fig_arrow`
 
 Bu değisik gösterimin faydalarından biri, vektör toplama işlemini görsel olarak anlamlandırabilmemizdir.
 Özellikle, bir vektör tarafından verilen yönleri izliyoruz ve sonra diğerinin verdiği yönleri takip ediyoruz, şekilde görüldüğü gibi :numref:`fig_add-vec`.
 
-![Önce bir vektörü, sonra diğerini takip ederek vektör toplamayı görselleştirebiliriz.](../img/VecAdd.svg)
+![Önce bir vektörü, sonra diğerini takip ederek vektör toplamayı görselleştirebiliriz.](../img/vec-add.svg)
 :label:`fig_add-vec`
 
 Vektör çıkarma işleminin benzer bir yorumu vardır.
@@ -71,7 +71,7 @@ Böylece vektörlerin sırasını değiştirmenin aynı cevabı vereceği gerçe
 
 İç çarpım :eqref:`eq_dot_def` ayrıca geometrik bir yorumu da kabul eder: O da iki vektör arasındaki açı ile yakından ilgilidir. :numref:`fig_angle`da gösterilen açıyı düşünün.
 
-![Düzlemdeki herhangi iki vektör arasında iyi tanımlanmış bir $\theta$ açısı vardır. Bu açının iç çarpıma yakından bağlı olduğunu göreceğiz.](../img/VecAngle.svg)
+![Düzlemdeki herhangi iki vektör arasında iyi tanımlanmış bir $\theta$ açısı vardır. Bu açının iç çarpıma yakından bağlı olduğunu göreceğiz.](../img/vec-angle.svg)
 :label:`fig_angle`
 
 Başlamak için iki belli vektörü ele alalım:
@@ -173,7 +173,7 @@ $$
 \|\mathbf{v}\|\|\mathbf{w}\|\cos(\theta) = 1 \; \iff \; \|\mathbf{v}\|\cos(\theta) = \frac{1}{\|\mathbf{w}\|} = \frac{1}{\sqrt{5}}.
 $$
 
-![Trigonometriyi anımsarsak, $\|\mathbf{v}\|\cos(\theta)$ formülünün $\mathbf{v}$ vektörünün $\mathbf{w}$ yönüne izdüşümünün uzunluğu olduğunu görürüz.](../img/ProjVec.svg)
+![Trigonometriyi anımsarsak, $\|\mathbf{v}\|\cos(\theta)$ formülünün $\mathbf{v}$ vektörünün $\mathbf{w}$ yönüne izdüşümünün uzunluğu olduğunu görürüz.](../img/proj-vec.svg)
 :label:`fig_vector-project`
 
 Bu ifadenin geometrik anlamını düşünürsek, bunun $\mathbf{v}$'ın $\mathbf{w}$ yönündeki izdüşümünün uzunluğunun tam olarak $1/\|\mathbf{w}\|$ olduğunu söylemeye eşdeğer olduğunu görürüz, :numref:`fig_vector-project`'da gösterildiği gibi.
@@ -184,14 +184,14 @@ Bunun ifadenin doğru olduğu tüm noktalar kümesi, $\mathbf{w}$ vektörüne di
 Dolayısıyla, bu iki eşitsizlik çizginin her iki tarafını da tanımlar.
 Bu şekilde, uzayımızı iki yarıma bölmenin bir yolunu bulduk, burada bir taraftaki tüm noktaların bir eşiğin altında iç çarpımları var ve diğer tarafta üstünde, aynı :numref:`fig_space-division`da gördüğümüz gibi.
 
-![Şimdi ifadenin eşitsizlik versiyonunu ele alırsak, hiperdüzlemimizin (bu durumda: sadece bir çizgi) uzayı iki yarıma ayırdığını görürüz.](../img/SpaceDivision.svg)
+![Şimdi ifadenin eşitsizlik versiyonunu ele alırsak, hiperdüzlemimizin (bu durumda: sadece bir çizgi) uzayı iki yarıma ayırdığını görürüz.](../img/space-division.svg)
 :label:`fig_space-division`
 
 Daha yüksek boyuttaki hikaye hemen hemen aynıdır.
 Şimdi $\mathbf{w} = [1,2,3]^\top$ alırsak ve $\mathbf{w}\cdot\mathbf{v} = 1$ ile üç boyuttaki noktaları sorarsak, verilen $\mathbf{w}$ vektörüne dik açıda bir düzlem elde ederiz.
 İki eşitsizlik yine düzlemin iki tarafını şu şekilde gösterildiği gibi tanımlar :numref:`fig_higher-division`.
 
-![Herhangi bir boyuttaki hiperdüzlemler, uzayı ikiye böler.](../img/SpaceDivision3D.svg)
+![Herhangi bir boyuttaki hiperdüzlemler, uzayı ikiye böler.](../img/space-division-3d.svg)
 :label:`fig_higher-division`
 
 Bu noktada görselleştirme yeteneğimiz tükenirken, bizi bunu onlarca, yüzlerce veya milyarlarca boyutta yapmaktan hiçbir şey alıkoyamaz.
@@ -329,7 +329,7 @@ $$
 Belirli $\mathbf{v} = [2, -1]^\top$ vektörüne bakarsak, bunun $2\cdot[1,0]^\top + -1\cdot[0,1]^\top$ olduğunu görürüz, dolayısıyla $A$ matrisinin bunu $$2(\mathbf{A}[1,0]^\top) + -1(\mathbf{A}[0,1])^\top = 2[1, -1]^\top - [2,3]^\top = [0, -5]^\top$'e göndereceğini biliyoruz.
 Bu mantığı dikkatlice takip edersek, diyelim ki tüm tamsayı nokta çiftlerinin ızgarasını (grid) göz önünde bulundurarak, matris çarpımının ızgarayı eğriltebileceğini, döndürebileceğini ve ölçekleyebileceğini görürüz, ancak ızgara yapısı aşağıda gördüğünüz gibi kalmalıdır :numref:`fig_grid-transform`.
 
-![Verilen temel vektörlere göre hareket eden $\mathbf {A}$ matrisi. Tüm ızgaranın onunla birlikte nasıl taşındığına dikkat edin.](../img/GridTransform.svg)
+![Verilen temel vektörlere göre hareket eden $\mathbf {A}$ matrisi. Tüm ızgaranın onunla birlikte nasıl taşındığına dikkat edin.](../img/grid-transform.svg)
 :label:`fig_grid-transform`
 
 Bu, matrisler tarafından temsil edilen doğrusal dönüşümler hakkında içselleştirilmesi gereken en önemli sezgisel noktadır.
@@ -506,7 +506,7 @@ Doğrusal cebir ile çalışırken sıkça karşılaşılan çetrefilli sayısal
 Doğrusal cebirin geometrik görünümü, *determinant* olarak bilinen temel bir miktarı yorumlamanın sezgisel bir yolunu sunar.
 Önceki ızgara görüntüsünü, ama şimdi vurgulanmış bölgeyle (:numref:`fig_grid-dolu`) düşünün.
 
-![$\mathbf{A}$ matrisi yine ızgarayı bozuyor. Bu sefer, vurgulanan kareye ne olduğuna özellikle dikkat çekmek istiyoruz.](../img/GridTransformFilled.svg)
+![$\mathbf{A}$ matrisi yine ızgarayı bozuyor. Bu sefer, vurgulanan kareye ne olduğuna özellikle dikkat çekmek istiyoruz.](../img/grid-transform-filled.svg)
 :label:`fig_grid-filled`
 
 Vurgulanan kareye bakın. Bu, kenarları $(0,1)$ ve $(1,0)$ ile verilen bir karedir ve dolayısıyla bir birim alana sahiptir. $\mathbf{A}$ bu kareyi dönüştürdükten sonra, bunun bir paralelkenar olduğunu görürüz.

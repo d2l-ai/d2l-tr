@@ -195,7 +195,7 @@ $$\begin{aligned}f(u, v) & = (u+v)^{2} \\u(a, b) & = (a+b)^{2}, \qquad v(a, b) =
 
 Sinir ağları ile çalışırken bu tür denklem zincirleri yaygındır, bu nedenle bu tür işlevlerin gradyanlarının nasıl hesaplanacağını anlamaya çalışmak çok önemlidir. Hangi değişkenlerin doğrudan birbiriyle ilişkili olduğuna bakarsak, bu bağlantının görsel ipuçlarını :numref:`fig_chain-1`'de görmeye başlayabiliriz.
 
-![Düğümlerin değerleri temsil ettiği ve kenarların işlevsel bağımlılığı gösterdiği yukarıda geçen işlev ilişkileri.](../img/ChainNet1.svg)
+![Düğümlerin değerleri temsil ettiği ve kenarların işlevsel bağımlılığı gösterdiği yukarıda geçen işlev ilişkileri.](../img/chain-net1.svg)
 :label:`fig_chain-1`
 
 Hiçbir şey bizi sadece :eqref:`eq_multi_func_def`'den her şeyi birleştirmekten ve bunu yazmaktan alıkoyamaz
@@ -236,7 +236,7 @@ Sürecin anlamını düşünmekte fayda var. $f(u (a, b), v(a, b))$ biçimindeki
 
 Sağdaki işlevlerin soldakilere, şekilde gösterildiği gibi, bağlı oldukları farklı bir işlev ağına sahip olduğumuzu düşünün :numref:`fig_chain-2`.
 
-![Zincir kuralının daha ince bir başka örneği.](../img/ChainNet2.svg)
+![Zincir kuralının daha ince bir başka örneği.](../img/chain-net2.svg)
 :label:`fig_chain-2`
 
 $\frac{\partial f}{\partial y}$ gibi bir şeyi hesaplamak için, $y$'den $f$'e kadar tüm (bu durumda $3$) yolları toplamamız gerekir.
