@@ -51,6 +51,7 @@ En iyi *parametreleri* (veya *model parametrelerini*) $\mathbf{w}$ ve $b$'yi ara
 Modelimizi veri ile nasıl *oturtacağımızı* düşünmeye başlamadan önce, bir *uygunluk* ölçüsü belirlememiz gerekir. *Kayıp işlevi*, hedefin *gerçek* ve *tahmini* değeri arasındaki mesafeyi ölçer. Kayıp, genellikle, daha küçük değerlerin daha iyi olduğu ve mükemmel tahminlerin 0 kayba neden olduğu negatif olmayan bir sayı olacaktır. Regresyon problemlerinde en popüler kayıp fonksiyonu, hata karesidir. Bir $i$ örneğine ilişkin tahminimiz $\hat{y}^{(i)}$ ve buna karşılık gelen doğru etiket $y^{(i)}$ olduğunda, hata karesi şu şekilde verilir:
 
 $$l^{(i)}(\mathbf{w}, b) = \frac{1}{2} \left(\hat{y}^{(i)} - y^{(i)}\right)^2.$$
+:eqlabel:`eq_mse`
 
 $\frac{1}{2}$ sabiti gerçekte bir fark yaratmaz, ancak gösterim olarak uygun olduğunu ispatlayacak ve kaybın türevini aldığımızda dengelenip kaybolacak. Eğitim veri kümesi bize verildiğinden, kontrolümüz dışında, sadece deneysel hata model parametrelerinin bir fonksiyonudur. İşleri daha somut hale getirmek için, aşağıdaki örnekte gösterildiği gibi tek boyutlu bir durum için bir regresyon problemi çizdiğimizi düşünün :numref:`fig_fit_linreg`.
 
