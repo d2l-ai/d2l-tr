@@ -1,7 +1,7 @@
 # Softmaks Regresyonunun Kısa Uygulaması
 :label:`sec_softmax_concise`
 
-:numref:`sec_linear_concise` içindeki derin öğrenme çerçevelerinin (**yüksek seviyeli API'leri**) (**doğrusal regresyon uygulamasını çok daha kolay hale getirdi**), ( ~~burada~~) onu sınıflandırma modellerini uygulamada (**benzer şekilde**) (veya muhtemelen daha fazla) uygun bulacağız . Fashion-MNIST veri kümesine bağlı kalalım ve iş boyutunu :numref:`sec_softmax_scratch` gibi 256'da tutalım.
+:numref:`sec_linear_concise` içindeki derin öğrenme çerçevelerinin (**yüksek seviyeli API'leri**) (**doğrusal regresyon uygulamasını çok daha kolay hale getirdi**), (~~burada~~) onu sınıflandırma modellerini uygulamada (**benzer şekilde**) (veya muhtemelen daha fazla) uygun bulacağız . Fashion-MNIST veri kümesine bağlı kalalım ve iş boyutunu :numref:`sec_softmax_scratch` gibi 256'da tutalım.
 
 ```{.python .input}
 from d2l import mxnet as d2l
