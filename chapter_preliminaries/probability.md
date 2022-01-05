@@ -11,7 +11,7 @@ Daha önceki bölümlerde, tam olarak ne olduklarını açıklamadan veya somut 
 :width:`300px`
 :label:`fig_cat_dog`
 
-Gösterildiği gibi :numref:`fig_cat_dog`, insanlar için kedileri ve köpekleri $160 \times 16 $ piksel çözünürlükte tanımak kolayken, $40 \times 40$ pikselde zorlayıcı ve $10 \times 10$ piksel'de imkansıza yakın hale geliyor. Başka bir deyişle, kedi ve köpekleri büyük bir mesafeden (ve dolayısıyla düşük çözünürlükten) ayırma yeteneğimiz bilgisiz (cahilce) tahminlere yaklaşabilir. Olasılık, bize kesinlik seviyemiz hakkında resmi (kurallı) bir mantık yürütme yöntemi verir.
+Gösterildiği gibi :numref:`fig_cat_dog`, insanlar için kedileri ve köpekleri $160 \times 16$ piksel çözünürlükte tanımak kolayken, $40 \times 40$ pikselde zorlayıcı ve $10 \times 10$ piksel'de imkansıza yakın hale geliyor. Başka bir deyişle, kedi ve köpekleri büyük bir mesafeden (ve dolayısıyla düşük çözünürlükten) ayırma yeteneğimiz bilgisiz (cahilce) tahminlere yaklaşabilir. Olasılık, bize kesinlik seviyemiz hakkında resmi (kurallı) bir mantık yürütme yöntemi verir.
 Görüntünün bir kediyi gösterdiğinden tamamen eminsek, karşılık gelen $y$ etiketinin "kedi" olma *olasılığının*, $P(y= $"kedi"$)$, $1$'e eşit olduğunu söyleriz.
 $y =$ "kedi" veya $y =$ "köpek" olduğunu önerecek hiçbir kanıtımız yoksa, iki olasılığın eşit derecede *muhtemelen* olduğunu $P(y=$ "kedi"$) = P(y=$ "köpek"$) = 0.5$ diye ifade ederek söyleyebiliriz. Makul derecede emin olsaydık, ancak görüntünün bir kediyi gösterdiğinden kesin emin olamasaydık, $0.5  < P(y=$ "kedi"$) < 1$ bir olasılık atayabilirdik.
 
@@ -204,7 +204,7 @@ Olasılık teorisindeki bir olay, örnek uzaydan bir küme sonuç olduğu için,
 
 Bir zarın yüzleri gibi *kesikli* rastgele değişkenler ile bir kişinin ağırlığı ve boyu gibi *sürekli* olanlar arasında ince bir fark olduğunu unutmayın. İki kişinin tam olarak aynı boyda olup olmadığını sormanın pek bir anlamı yok. Yeterince hassas ölçümler alırsak, gezegendeki hiçbir insanın aynı boyda olmadığını göreceksiniz. Aslında, yeterince ince bir ölçüm yaparsak, uyandığınızda ve uyuduğunuzda da boyunuz aynı olmayacaktır. Dolayısıyla, birinin 1,80139278291028719210196740527486202 metre boyunda olma olasılığını sormanın hiçbir amacı yoktur. Dünya insan nüfusu göz önüne alındığında, olasılık neredeyse 0'dır. Bu durumda, birinin boyunun belirli bir aralıkta, örneğin 1,79 ile 1,81 metre arasında olup olmadığını sormak daha mantıklıdır. Bu durumlarda, bir değeri *yoğunluk* olarak görme olasılığımızı ölçüyoruz. Tam olarak 1.80 metrelik boyun olasılığı yoktur, ancak yoğunluğu sıfır değildir. Herhangi iki farklı boy arasındaki aralıkta sıfır olmayan bir olasılığa sahibiz.
 Bu bölümün geri kalanında, olasılığı ayrık uzayda ele alıyoruz.
-Sürekli rastgele değişkenler üzerindeki olasılık için, şunlara başvurabilirsiniz :numref:`sec_random_variables`.
+Sürekli rastgele değişkenler üzerindeki olasılık için, şuraya başvurabilirsiniz :numref:`sec_random_variables`.
 
 ## Çoklu Rastgele Değişkenlerle Başa Çıkma
 
@@ -216,8 +216,8 @@ Bunların hepsi birlikte oluşan rastgele değişkenlerdir. Birden çok rastgele
 
 ### Bileşik olasılık
 
-İlki, *bileşik olasılık* $P(A = a, B = b)$ olarak adlandırılır. Herhangi $a$ ve $b$ değerleri verildiğinde, bileşik olasılık şu cevabı vermemizi sağlar: $A = a$ ve $B = b$ aynı anda olma olasılığı nedir?
-Tüm $a$ ve $b$ değerleri için, $P(A = a, B = b) \leq P (A=a)$ olduğuna dikkat edin.
+İlki, *bileşik olasılık* $P(A=a, B=b)$ olarak adlandırılır. Herhangi $a$ ve $b$ değerleri verildiğinde, bileşik olasılık şu cevabı vermemizi sağlar: $A = a$ ve $B = b$ aynı anda olma olasılığı nedir?
+Tüm $a$ ve $b$ değerleri için, $P(A=a, B=b) \leq P (A=a)$ olduğuna dikkat edin.
 Durum böyle olmalıdır, çünkü $A=a$ ve $B=b$ olması için $A=a$ olması gerekir *ve* $B=b$ de gerçekleşmelidir (ve bunun tersi de geçerlidir). Bu nedenle, $A=a$ ve $B=b$, tek tek $A=a$ veya $B=b$ değerinden daha büyük olamaz.
 
 ### Koşullu olasılık
@@ -232,7 +232,7 @@ Yapısı gereği, $P(A, B) = P(B \mid A) P(A)$ şeklindeki *çarpma kuralına* s
 
 $$P(A \mid B) = \frac{P(B \mid A) P(A)}{P(B)}.$$
 
-Burada, $P(A, B)$'nin *bileşik dağılım* ve $P(A \mid B)$'nin *koşullu dağılım* olduğu, daha sıkı gösterimi kullandığımıza dikkat edin. Bu tür dağılımlar belirli $A = a, B = b$ değerleri için hesaplanabilir.
+Burada, $P(A, B)$'nin *bileşik dağılım* ve $P(A \mid B)$'nin *koşullu dağılım* olduğu, daha sıkı gösterimi kullandığımıza dikkat edin. Bu tür dağılımlar belirli $A = a, B=b$ değerleri için hesaplanabilir.
 
 
 ### Marjinalleştirme
@@ -268,7 +268,7 @@ Becerilerimizi test edelim. Bir doktorun bir hastaya HIV testi uyguladığını 
 |$P(D_1 = 0 \mid H)$|            0 |         0.99 |
 :label:`conditional_prob_D1`
 
-Koşullu olasılığın, olasılık gibi 1'e toplanması gerektiğinden, sütun toplamlarının hepsinin 1 olduğuna dikkat edin (ancak satır toplamları değildir). Test pozitif çıkarsa hastanın HIV'li olma olasılığını hesaplayalım, yani $P(H = 1 \mid D_1 = 1)$. Açıkçası bu, yanlış alarmların sayısını etkilediği için hastalığın ne kadar yaygın olduğuna bağlı olacaktır. Nüfusun oldukça sağlıklı olduğunu varsayalım, örneğin $P(H = 1) = 0.0015$. Bayes teoremini uygulamak için, marjinalleştirmeyi ve çarpım kuralını uygulamalıyız.
+Koşullu olasılığın, olasılık gibi 1'e toplanması gerektiğinden, sütun toplamlarının hepsinin 1 olduğuna dikkat edin (ancak satır toplamları değildir). Test pozitif çıkarsa hastanın HIV'li olma olasılığını hesaplayalım, yani $P(H = 1 \mid D_1 = 1)$. Açıkçası bu, yanlış alarmların sayısını etkilediği için hastalığın ne kadar yaygın olduğuna bağlı olacaktır. Nüfusun oldukça sağlıklı olduğunu varsayalım, örneğin $P(H=1) = 0.0015$. Bayes teoremini uygulamak için, marjinalleştirmeyi ve çarpım kuralını uygulamalıyız.
 
 $$\begin{aligned}
 &P(D_1 = 1) \\

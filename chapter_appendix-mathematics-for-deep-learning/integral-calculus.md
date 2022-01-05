@@ -153,7 +153,7 @@ $$
 
 Bu, alanı en uzak uç noktaya kadar ölçebildiğimiz ve ardından yakın uç noktaya kadaki alanı çıkarabileceğimiz gerçeğinin matematiksel bir kodlamasıdır :numref:`fig_area-subtract`.
 
-![İki nokta arasındaki bir eğrinin altındaki alanı hesaplama sorununu bir noktanın solundaki alanı hesaplamaya neden indirgeyeceğimizi görselleştirelim.](../img/SubArea.svg)
+![İki nokta arasındaki bir eğrinin altındaki alanı hesaplama sorununu bir noktanın solundaki alanı hesaplamaya neden indirgeyeceğimizi görselleştirelim.](../img/sub-area.svg)
 :label:`fig_area-subtract`
 
 Dolayısıyla, herhangi bir aralıktaki integralin ne olduğunu $F(x)$'in ne olduğunu bularak bulabiliriz.
@@ -240,7 +240,7 @@ Bu, *değişkenlerin değişimi* formülüdür.
 
 Daha sezgisel bir türetme için, $x$ ile $x+\epsilon$ arasında bir $f(u(x))$ integralini aldığımızda ne olacağını düşünün. Küçük bir $\epsilon$ için, bu integral, yaklaşık olarak $\epsilon f(u(x))$, yani ilişkili dikdörtgenin alanıdır. Şimdi bunu $u(x) $ ile $u(x+\epsilon)$ arasındaki $f(y)$ integraliyle karşılaştıralım. $u(x+\epsilon) \approx u(x) + \epsilon \frac{du}{dx}(x)$ olduğunu biliyoruz, bu nedenle bu dikdörtgenin alanı yaklaşık $\epsilon \frac{du}{dx}(x)f(u(x))$'dir. Bu nedenle, bu iki dikdörtgenin alanını uyuşacak hale getirmek için, ilkini $\frac{du}{dx}(x)$ ile çarpmamız gerekiyor :numref:`fig_rect-transform`.
 
-![Değişkenlerin değişimi altında tek bir ince dikdörtgenin dönüşümünü görselleştirelim.](../img/RectTrans.svg)
+![Değişkenlerin değişimi altında tek bir ince dikdörtgenin dönüşümünü görselleştirelim.](../img/rect-trans.svg)
 :label:`fig_rect-transform`
 
 Bu bize şunu söyler:
@@ -363,7 +363,7 @@ $$
  \sum _ {j} \epsilon \left(\sum_{i} \epsilon f(\epsilon i, \epsilon j)\right).
 $$
 
-![İlk önce sütunlar üzerinden bir toplam olarak birçok karede bir toplamın nasıl ayrıştırılacağını (1), ardından sütun toplamlarının nasıl toplanacağını (2) gösterelim.](../img/SumOrder.svg)
+![İlk önce sütunlar üzerinden bir toplam olarak birçok karede bir toplamın nasıl ayrıştırılacağını (1), ardından sütun toplamlarının nasıl toplanacağını (2) gösterelim.](../img/sum-order.svg)
 :label:`fig_sum-order`
  
 İç kısımdaki toplam, tam olarak integralin ayrıklaştırılmasıdır.

@@ -35,6 +35,7 @@ we still use models that make soft assignments.
 
 
 ## Classification Problem
+:label:`subsec_classification-problem`
 
 To get our feet wet, let us start off with
 a simple image classification problem.
@@ -47,10 +48,10 @@ among the categories "cat", "chicken", and "dog".
 Next, we have to choose how to represent the labels.
 We have two obvious choices.
 Perhaps the most natural impulse would be to choose $y \in \{1, 2, 3\}$,
-where the integers represent {dog, cat, chicken} respectively.
+where the integers represent $\{\text{dog}, \text{cat}, \text{chicken}\}$ respectively.
 This is a great way of *storing* such information on a computer.
 If the categories had some natural ordering among them,
-say if we were trying to predict {baby, toddler, adolescent, young adult, adult, geriatric},
+say if we were trying to predict $\{\text{baby}, \text{toddler}, \text{adolescent}, \text{young adult}, \text{adult}, \text{geriatric}\}$,
 then it might even make sense to cast this problem as regression
 and keep the labels in this format.
 
@@ -65,7 +66,6 @@ with $(1, 0, 0)$ corresponding to "cat", $(0, 1, 0)$ to "chicken",
 and $(0, 0, 1)$ to "dog":
 
 $$y \in \{(1, 0, 0), (0, 1, 0), (0, 0, 1)\}.$$
-
 
 ## Network Architecture
 
@@ -101,12 +101,37 @@ In vector form, we arrive at
 $\mathbf{o} = \mathbf{W} \mathbf{x} + \mathbf{b}$,
 a form better suited both for mathematics, and for writing code.
 Note that we have gathered all of our weights into a $3 \times 4$ matrix
-and that for features of a given data instance $\mathbf{x}$,
+and that for features of a given data example $\mathbf{x}$,
 our outputs are given by a matrix-vector product of our weights by our input features
 plus our biases $\mathbf{b}$.
 
 
+## Parameterization Cost of Fully-Connected Layers
+:label:`subsec_parameterization-cost-fc-layers`
+
+As we will see in subsequent chapters,
+fully-connected layers are ubiquitous in deep learning.
+However, as the name suggests,
+fully-connected layers are *fully* connected
+with potentially many learnable parameters.
+Specifically,
+for any fully-connected layer
+with $d$ inputs and $q$ outputs,
+the parameterization cost is $\mathcal{O}(dq)$,
+which can be prohibitively high in practice.
+Fortunately,
+this cost 
+of transforming $d$ inputs into $q$ outputs
+can be reduced to $\mathcal{O}(\frac{dq}{n})$,
+where the hyperparameter $n$ can be flexibly specified
+by us to balance between parameter saving and model effectiveness in real-world applications :cite:`Zhang.Tay.Zhang.ea.2021`.
+
+
+
+
+
 ## Softmax Operation
+:label:`subsec_softmax_operation`
 
 The main approach that we are going to take here
 is to interpret the outputs of our model as probabilities.
@@ -193,7 +218,7 @@ This accelerates the dominant operation into
 a matrix-matrix product $\mathbf{X} \mathbf{W}$
 vs. the matrix-vector products we would be executing
 if we processed one example at a time.
-Since each row in $\mathbf{X}$ is a data instance,
+Since each row in $\mathbf{X}$ represents a data example,
 the softmax operation itself can be computed *rowwise*:
 for each row of $\mathbf{O}$, exponentiate all entries and then normalize them by the sum.
 Triggering broadcasting during the summation $\mathbf{X} \mathbf{W} + \mathbf{b}$ in :eqref:`eq_minibatch_softmax_reg`,
@@ -261,6 +286,7 @@ are not sufficiently informative
 to classify every example perfectly.
 
 ### Softmax and Derivatives
+:label:`subsec_softmax_and_derivatives`
 
 Since the softmax and the corresponding loss are so common,
 it is worth understanding a bit better how it is computed.
@@ -291,7 +317,8 @@ In this sense, it is very similar to what we saw in regression,
 where the gradient was the difference
 between the observation $y$ and estimate $\hat{y}$.
 This is not coincidence.
-In any [exponential family](https://en.wikipedia.org/wiki/Exponential_family) model,
+In any exponential family (see the
+[online appendix on distributions](https://d2l.ai/chapter_appendix-mathematics-for-deep-learning/distributions.html)) model,
 the gradients of the log-likelihood are given by precisely this term.
 This fact makes computing gradients easy in practice.
 
@@ -313,7 +340,10 @@ We can demystify the name by introducing just the basics of information theory.
 If you wish to understand more details of information theory,
 you may further refer to the [online appendix on information theory](https://d2l.ai/chapter_appendix-mathematics-for-deep-learning/information-theory.html).
 
+
+
 ## Information Theory Basics
+:label:`subsec_info_theory_basics`
 
 *Information theory* deals with the problem of encoding, decoding, transmitting,
 and manipulating information (also known as data) in as concise form as possible.
@@ -323,15 +353,15 @@ and manipulating information (also known as data) in as concise form as possible
 
 The central idea in information theory is to quantify the information content in data.
 This quantity places a hard limit on our ability to compress the data.
-In information theory, this quantity is called the *entropy* of a distribution $p$,
+In information theory, this quantity is called the *entropy* of a distribution $P$,
 and it is captured by the following equation:
 
-$$H[p] = \sum_j - p(j) \log p(j).$$
+$$H[P] = \sum_j - P(j) \log P(j).$$
 :eqlabel:`eq_softmax_reg_entropy`
 
 One of the fundamental theorems of information theory states
-that in order to encode data drawn randomly from the distribution $p$,
-we need at least $H[p]$ "nats" to encode it.
+that in order to encode data drawn randomly from the distribution $P$,
+we need at least $H[P]$ "nats" to encode it.
 If you wonder what a "nat" is, it is the equivalent of bit
 but when using a code with base $e$ rather than one with base 2.
 Thus, one nat is $\frac{1}{\log(2)} \approx 1.44$ bit.
@@ -366,11 +396,11 @@ that truly match the data-generating process.
 So if entropy is level of surprise experienced
 by someone who knows the true probability,
 then you might be wondering, what is cross-entropy?
-The cross-entropy *from* $p$ *to* $q$, denoted $H(p, q)$,
-is the expected surprisal of an observer with subjective probabilities $q$
-upon seeing data that were actually generated according to probabilities $p$.
-The lowest possible cross-entropy is achieved when $p=q$.
-In this case, the cross-entropy from $p$ to $q$ is $H(p, p)= H(p)$.
+The cross-entropy *from* $P$ *to* $Q$, denoted $H(P, Q)$,
+is the expected surprisal of an observer with subjective probabilities $Q$
+upon seeing data that were actually generated according to probabilities $P$.
+The lowest possible cross-entropy is achieved when $P=Q$.
+In this case, the cross-entropy from $P$ to $Q$ is $H(P, P)= H(P)$.
 
 In short, we can think of the cross-entropy classification objective
 in two ways: (i) as maximizing the likelihood of the observed data;
@@ -385,7 +415,7 @@ we can predict the probability of each output class.
 Normally, we use the class with the highest predicted probability as the output class.
 The prediction is correct if it is consistent with the actual class (label).
 In the next part of the experiment,
-we will use *accuracy* to evaluate the model’s performance.
+we will use *accuracy* to evaluate the model's performance.
 This is equal to the ratio between the number of correct predictions and the total number of predictions.
 
 
@@ -398,16 +428,16 @@ This is equal to the ratio between the number of correct predictions and the tot
 ## Exercises
 
 1. We can explore the connection between exponential families and the softmax in some more depth.
-    * Compute the second derivative of the cross-entropy loss $l(\mathbf{y},\hat{\mathbf{y}})$ for the softmax.
-    * Compute the variance of the distribution given by $\mathrm{softmax}(\mathbf{o})$ and show that it matches the second derivative computed above.
+    1. Compute the second derivative of the cross-entropy loss $l(\mathbf{y},\hat{\mathbf{y}})$ for the softmax.
+    1. Compute the variance of the distribution given by $\mathrm{softmax}(\mathbf{o})$ and show that it matches the second derivative computed above.
 1. Assume that we have three classes which occur with equal probability, i.e., the probability vector is $(\frac{1}{3}, \frac{1}{3}, \frac{1}{3})$.
-    * What is the problem if we try to design a binary code for it?
-    * Can you design a better code? Hint: what happens if we try to encode two independent observations? What if we encode $n$ observations jointly?
+    1. What is the problem if we try to design a binary code for it?
+    1. Can you design a better code? Hint: what happens if we try to encode two independent observations? What if we encode $n$ observations jointly?
 1. Softmax is a misnomer for the mapping introduced above (but everyone in deep learning uses it). The real softmax is defined as $\mathrm{RealSoftMax}(a, b) = \log (\exp(a) + \exp(b))$.
-    * Prove that $\mathrm{RealSoftMax}(a, b) > \mathrm{max}(a, b)$.
-    * Prove that this holds for $\lambda^{-1} \mathrm{RealSoftMax}(\lambda a, \lambda b)$, provided that $\lambda > 0$.
-    * Show that for $\lambda \to \infty$ we have $\lambda^{-1} \mathrm{RealSoftMax}(\lambda a, \lambda b) \to \mathrm{max}(a, b)$.
-    * What does the soft-min look like?
-    * Extend this to more than two numbers.
+    1. Prove that $\mathrm{RealSoftMax}(a, b) > \mathrm{max}(a, b)$.
+    1. Prove that this holds for $\lambda^{-1} \mathrm{RealSoftMax}(\lambda a, \lambda b)$, provided that $\lambda > 0$.
+    1. Show that for $\lambda \to \infty$ we have $\lambda^{-1} \mathrm{RealSoftMax}(\lambda a, \lambda b) \to \mathrm{max}(a, b)$.
+    1. What does the soft-min look like?
+    1. Extend this to more than two numbers.
 
 [Discussions](https://discuss.d2l.ai/t/46)

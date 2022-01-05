@@ -255,7 +255,7 @@ tensor; gerey
 
 tutorial; öğreticiler
 
-token; andıç
+token; andıç, belirteç
 
 transduction; dönüştürme
 
@@ -280,3 +280,5 @@ vocabulary; kelime dağarcığı
 warp; bükülme
 
 weight decay; ağırlık sönümü
+
+wrapper: sarmalayıcı

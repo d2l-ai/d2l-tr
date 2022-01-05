@@ -260,7 +260,7 @@ Tüm bu ilişkileri görsel :numref:`fig_mutual_information`'de özetleyebiliriz
 * $H(Y) − H(Y \mid X)$
 * $H(X) + H(Y) − H(X, Y)$
 
-![Karşılıklı bilginin bileşik entropi ve koşullu entropi ile ilişkisi.](../img/mutual_information.svg)
+![Karşılıklı bilginin bileşik entropi ve koşullu entropi ile ilişkisi.](../img/mutual-information.svg)
 :label:`fig_mutual_information`
 
 Karşılıklı bilgiyi :eqref:`eq_mut_ent_def` birçok yönden :numref:`sec_random_variables`'de gördüğümüz korelasyon katsayısının ilkesel uzantısı olarak düşünebiliriz. Bu, yalnızca değişkenler arasındaki doğrusal ilişkileri değil, aynı zamanda herhangi bir türdeki iki rastgele değişken arasında paylaşılan maksimum bilgiyi de sorabilmemize olanak tanır.

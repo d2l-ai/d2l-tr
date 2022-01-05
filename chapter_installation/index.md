@@ -71,6 +71,7 @@ pip install mxnet==1.7.0.post1
 
 :end_tab:
 
+
 :begin_tab:`pytorch`
 
 ```bash
@@ -89,6 +90,7 @@ pip install tensorflow tensorflow-probability
 
 
 :end_tab:
+
 
 Bir sonraki adımımız, bu kitapta bulunan sık kullanılan işlevleri ve sınıfları kapsamak için geliştirdiğimiz `d2l` paketini kurmaktır.
 

@@ -279,7 +279,7 @@ Bunun *neden* yararlı bir fikir olduğunu anlamaya çalışalım. Aşağıda, $
 ![İkinci türevin negatif bir sabit olduğunu varsayarsak, azalmakta olan ilk türev, fonksiyonun kendisinin bir maksimuma sahip olduğu anlamına gelir.](../img/negSecDer.svg)
 :label:`fig_negative-second`
 
-Üçüncüsü, eğer ikinci türev her zaman sıfırsa, o zaman ilk türev asla değişmeyecektir---sabittir! Bu, $f$'nin sabit bir oranda arttığı (veya azaldığı) anlamına gelir ve $f$'nin kendisi de gösterildiği gibi düz bir doğrudur :numref:`fig_zero-saniye`.
+Üçüncüsü, eğer ikinci türev her zaman sıfırsa, o zaman ilk türev asla değişmeyecektir---sabittir! Bu, $f$'nin sabit bir oranda arttığı (veya azaldığı) anlamına gelir ve $f$'nin kendisi de gösterildiği gibi düz bir doğrudur :numref:`fig_zero-second`.
 
 ![İkinci türevin sıfır olduğunu varsayarsak, ilk türev sabittir, bu da fonksiyonun kendisinin düz bir doğru olduğu anlamına gelir.](../img/zeroSecDer.svg)
 :label:`fig_zero-second`

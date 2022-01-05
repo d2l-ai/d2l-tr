@@ -32,7 +32,7 @@ import tensorflow as tf
 print(dir(tf.random))
 ```
 
-Genel olarak, "__" (Python'daki özel nesneler) ile başlayan ve biten işlevleri veya tek bir "_" ile başlayan işlevleri (genellikle dahili işlevler) yok sayabiliriz. Kalan işlev veya özellik adlarına bağlı olarak bu modülün tekdüze dağılım (`uniform`), normal dağılım (`normal`) ve çok terimli dağılımdan (`multinomial`) örnekleme dahil, bu modülün rastgele sayılar oluşturmak için çeşitli yöntemler sunduğunu tahmin edebiliriz.
+Genel olarak, `__` (Python'daki özel nesneler) ile başlayan ve biten işlevleri veya tek bir `_` ile başlayan işlevleri (genellikle dahili işlevler) yok sayabiliriz. Kalan işlev veya özellik adlarına bağlı olarak bu modülün tekdüze dağılım (`uniform`), normal dağılım (`normal`) ve çok terimli dağılımdan (`multinomial`) örnekleme dahil, bu modülün rastgele sayılar oluşturmak için çeşitli yöntemler sunduğunu tahmin edebiliriz.
 
 ## Belli İşlevlerin ve Sınıfların Kullanımını Bulma
 

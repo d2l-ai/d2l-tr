@@ -79,7 +79,7 @@ y
 
 ```{.python .input}
 #@tab tensorflow
-# Bütün hesaplamaları teype kaydet
+# Bütün hesaplamaları teybe kaydet
 with tf.GradientTape() as t:
     y = 2 * tf.tensordot(x, x, axes=1)
 y
