@@ -1,7 +1,7 @@
 # Çok Katmanlı Algılayıcıların Sıfırdan Uygulanması
 :label:`sec_mlp_scratch`
 
-Artık çok katmanlı algılayıcıları (MLP'ler) matematiksel olarak nitelendirdiğimize göre, birini kendimiz uygulamaya çalışalım.
+Artık çok katmanlı algılayıcıları (MLP'ler) matematiksel olarak nitelendirdiğimize göre, birini kendimiz uygulamaya çalışalım.Softmax regresyonu (:numref:`sec_softmax_scratch`) ile elde ettiğimiz önceki sonuçlarla karşılaştırmak için Fashion-MNIST imge sınıflandırma veri kümesi (:numref:`sec_fashion_mnist`) ile çalışmaya devam edeceğiz.
 
 ```{.python .input}
 from d2l import mxnet as d2l
@@ -22,8 +22,6 @@ from d2l import tensorflow as d2l
 import tensorflow as tf
 ```
 
-Softmax bağlanımı ile elde ettiğimiz önceki sonuçlarımızla karşılaştırmak için (:numref:`sec_softmax_scratch`), Fashion-MNIST resim sınıflandırma veri kümesiyle (:numref:`sec_fashion_mnist`) çalışmaya devam edeceğiz.
-
 ```{.python .input}
 #@tab all
 batch_size = 256
@@ -32,7 +30,7 @@ train_iter, test_iter = d2l.load_data_fashion_mnist(batch_size)
 
 ## Model Parametrelerini İlkleme
 
-Fashion-MNIST'in 10 sınıf içerdiğini ve her görüntünün $28 \times 28 = 784$ gri tonlamalı piksel değerleri ızgarasından oluştuğunu hatırlayın. Yine şimdilik pikseller arasındaki uzamsal yapıyı göz ardı edeceğiz, bu nedenle bunu 784 girdi özniteliği ve 10 sınıf içeren basit bir sınıflandırma veri kümesi olarak düşünebiliriz. Başlarken, bir gizli katman ve 256 gizli birim içeren bir MLP uygulayacağız. Bu miktarların ikisini de hiperparametreler olarak kabul edebileceğimizi unutmayın. Tipik olarak, belleğin donanımda öyle tahsis edildiğinden ve adreslendiğinden hesaplama açısından verimli olma eğiliminde olan 2'nin katlarında katman genişliklerini seçiyoruz.
+Fashion-MNIST'in 10 sınıf içerdiğini ve her görüntünün $28 \times 28 = 784$ gri tonlamalı piksel değerleri ızgarasından oluştuğunu hatırlayın. Yine şimdilik pikseller arasındaki uzamsal yapıyı göz ardı edeceğiz, bu nedenle bunu 784 girdi özniteliği ve 10 sınıf içeren basit bir sınıflandırma veri kümesi olarak düşünebiliriz. Başlarken, [**bir gizli katman ve 256 gizli birim içeren bir MLP uygulayacağız.**] Bu miktarların ikisini de hiperparametreler olarak kabul edebileceğimizi unutmayın. Tipik olarak, belleğin donanımda öyle tahsis edildiğinden ve adreslendiğinden hesaplama açısından verimli olma eğiliminde olan 2'nin katlarında katman genişliklerini seçiyoruz.
 
 Yine, parametrelerimizi birkaç tensörle temsil edeceğiz. *Her katman* için, bir ağırlık matrisi ve bir ek girdi vektörünü izlememiz gerektiğini unutmayın. Her zaman olduğu gibi, bu parametrelere göre kaybın gradyanları için bellek ayırıyoruz.
 
@@ -79,7 +77,7 @@ params = [W1, b1, W2, b2]
 
 ## Etkinleştirme Fonksiyonu
 
-Her şeyin nasıl çalıştığını bildiğimizden emin olmak için, ReLU aktivasyonunu yerleşik `relu` işlevini doğrudan çağırmak yerine maksimum işlevi kullanarak kendimiz uygulayacağız.
+Her şeyin nasıl çalıştığını bildiğimizden emin olmak için, [**ReLU aktivasyonunu**] yerleşik `relu` işlevini doğrudan çağırmak yerine maksimum işlevi kullanarak [**kendimiz uygulayacağız**].
 
 ```{.python .input}
 def relu(X):
@@ -101,7 +99,7 @@ def relu(X):
 
 ## Model
 
-Uzamsal yapıyı göz ardı ettiğimiz için, her iki boyutlu görüntüyü `num_inputs` uzunluğuna sahip düz bir vektör halinde  (`reshape`) yeniden şekillendiriyoruz. Son olarak, modelimizi sadece birkaç satır kodla uyguluyoruz.
+Uzamsal yapıyı göz ardı ettiğimiz için, her iki boyutlu imgeyi `num_inputs` uzunluğuna sahip düz bir vektör halinde  (`reshape`) yeniden şekillendiriyoruz. Son olarak, (**modelimizi**) sadece birkaç satır kodla (**uyguluyoruz**).
 
 ```{.python .input}
 def net(X):
@@ -114,7 +112,7 @@ def net(X):
 #@tab pytorch
 def net(X):
     X = d2l.reshape(X, (-1, num_inputs))
-    H = relu(X@W1 + b1)  # Here '@' stands for matrix multiplication
+    H = relu(X@W1 + b1)  # Burada '@' matris carpimini temsil eder
     return (H@W2 + b2)
 ```
 
@@ -148,29 +146,29 @@ def loss(y_hat, y):
 
 ## Eğitim
 
-Neyse ki, MLP'ler için eğitim döngüsü softmax bağlanımıyla tamamen aynıdır. Tekrar `d2l` paketini kullanarak, `train_ch3` fonksiyonunu çağırıyoruz (bakınız :numref:`sec_softmax_scratch`), dönem sayısını 10 ve öğrenme oranını 0.5 olarak ayarlıyoruz.
+Neyse ki, [**MLP'ler için eğitim döngüsü softmax bağlanımıyla tamamen aynıdır.**] Tekrar `d2l` paketini kullanarak, `train_ch3` fonksiyonunu çağırıyoruz (bakınız :numref:`sec_softmax_scratch`), dönem sayısını 10 ve öğrenme oranını 0.1 olarak ayarlıyoruz.
 
 ```{.python .input}
-num_epochs, lr = 10, 0.5
+num_epochs, lr = 10, 0.1
 d2l.train_ch3(net, train_iter, test_iter, loss, num_epochs,
               lambda batch_size: d2l.sgd(params, lr, batch_size))
 ```
 
 ```{.python .input}
 #@tab pytorch
-num_epochs, lr = 10, 0.5
+num_epochs, lr = 10, 0.1
 updater = torch.optim.SGD(params, lr=lr)
 d2l.train_ch3(net, train_iter, test_iter, loss, num_epochs, updater)
 ```
 
 ```{.python .input}
 #@tab tensorflow
-num_epochs, lr = 10, 0.5
+num_epochs, lr = 10, 0.1
 updater = d2l.Updater([W1, W2, b1, b2], lr)
 d2l.train_ch3(net, train_iter, test_iter, loss, num_epochs, updater)
 ```
 
-Öğrenilen modeli değerlendirmek için onu bazı test verilerine uyguluyoruz.
+Öğrenilen modeli değerlendirmek için onu [**bazı test verisine uyguluyoruz**].
 
 ```{.python .input}
 #@tab all

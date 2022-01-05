@@ -1,8 +1,8 @@
 # Concise Implementation of Multilayer Perceptrons
 :label:`sec_mlp_concise`
 
-As you might expect, by relying on the high-level APIs,
-we can implement MLPs even more concisely.
+As you might expect, by (**relying on the high-level APIs,
+we can implement MLPs even more concisely.**)
 
 ```{.python .input}
 from d2l import mxnet as d2l
@@ -32,9 +32,9 @@ of softmax regression implementation
 the only difference is that we add
 *two* fully-connected layers
 (previously, we added *one*).
-The first is our hidden layer,
-which contains 256 hidden units
-and applies the ReLU activation function.
+The first is [**our hidden layer**],
+which (**contains 256 hidden units
+and applies the ReLU activation function**).
 The second is our output layer.
 
 ```{.python .input}
@@ -46,20 +46,16 @@ net.initialize(init.Normal(sigma=0.01))
 
 ```{.python .input}
 #@tab pytorch
-class Reshape(torch.nn.Module):
-    def forward(self, x):
-        return x.view(-1,784)
-
-net = nn.Sequential(Reshape(),
+net = nn.Sequential(nn.Flatten(),
                     nn.Linear(784, 256),
                     nn.ReLU(),
                     nn.Linear(256, 10))
 
 def init_weights(m):
     if type(m) == nn.Linear:
-        torch.nn.init.normal_(m.weight, std=0.01)
+        nn.init.normal_(m.weight, std=0.01)
 
-net.apply(init_weights)
+net.apply(init_weights);
 ```
 
 ```{.python .input}
@@ -70,35 +66,35 @@ net = tf.keras.models.Sequential([
     tf.keras.layers.Dense(10)])
 ```
 
-The training loop is exactly the same
+[**The training loop**] is exactly the same
 as when we implemented softmax regression.
 This modularity enables us to separate
 matters concerning the model architecture
 from orthogonal considerations.
 
 ```{.python .input}
-batch_size, num_epochs = 256, 10
-train_iter, test_iter = d2l.load_data_fashion_mnist(batch_size)
+batch_size, lr, num_epochs = 256, 0.1, 10
 loss = gluon.loss.SoftmaxCrossEntropyLoss()
-trainer = gluon.Trainer(net.collect_params(), 'sgd', {'learning_rate': 0.5})
-d2l.train_ch3(net, train_iter, test_iter, loss, num_epochs, trainer)
+trainer = gluon.Trainer(net.collect_params(), 'sgd', {'learning_rate': lr})
 ```
 
 ```{.python .input}
 #@tab pytorch
-num_epochs, lr, batch_size = 10, 0.5, 256
-train_iter, test_iter = d2l.load_data_fashion_mnist(batch_size)
+batch_size, lr, num_epochs = 256, 0.1, 10
 loss = nn.CrossEntropyLoss()
 trainer = torch.optim.SGD(net.parameters(), lr=lr)
-d2l.train_ch3(net, train_iter, test_iter, loss, num_epochs, trainer)
 ```
 
 ```{.python .input}
 #@tab tensorflow
-num_epochs, lr, batch_size = 10, 0.5, 256
-train_iter, test_iter = d2l.load_data_fashion_mnist(batch_size)
+batch_size, lr, num_epochs = 256, 0.1, 10
 loss = tf.keras.losses.SparseCategoricalCrossentropy(from_logits=True)
 trainer = tf.keras.optimizers.SGD(learning_rate=lr)
+```
+
+```{.python .input}
+#@tab all
+train_iter, test_iter = d2l.load_data_fashion_mnist(batch_size)
 d2l.train_ch3(net, train_iter, test_iter, loss, num_epochs, trainer)
 ```
 
@@ -109,7 +105,7 @@ d2l.train_ch3(net, train_iter, test_iter, loss, num_epochs, trainer)
 
 ## Exercises
 
-1. Try adding different numbers of hidden layers. What setting (keeping other hyperparameters constant) works best?
+1. Try adding different numbers of hidden layers (you may also modify the learning rate). What setting works best?
 1. Try out different activation functions. Which one works best?
 1. Try different schemes for initializing the weights. What method works best?
 
