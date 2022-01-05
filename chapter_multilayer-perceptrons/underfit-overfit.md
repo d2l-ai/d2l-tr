@@ -142,9 +142,9 @@ Bu nedenden *öznitelikler* $x^i$'dan $\frac{x^i}{i!}$'ya ölçeklendirilir. Bu 
 
 ```{.python .input}
 #@tab all
-max_degree = 20  # Maximum degree of the polynomial
-n_train, n_test = 100, 100  # Training and test dataset sizes
-true_w = np.zeros(max_degree)  # Allocate lots of empty space
+max_degree = 20  # Polinomun maksimum derecesi
+n_train, n_test = 100, 100  # Egitim ve test veri kumesi boyutlari
+true_w = np.zeros(max_degree)  # Bos alan tahsisi
 true_w[0:4] = np.array([5, 1.2, -3.4, 5.6])
 
 features = np.random.normal(size=(n_train + n_test, 1))
@@ -152,17 +152,17 @@ np.random.shuffle(features)
 poly_features = np.power(features, np.arange(max_degree).reshape(1, -1))
 for i in range(max_degree):
     poly_features[:, i] /= math.gamma(i + 1)  # `gamma(n)` = (n-1)!
-# Shape of `labels`: (`n_train` + `n_test`,)
+# `labels`'in sekli: (`n_train` + `n_test`,)
 labels = np.dot(poly_features, true_w)
 labels += np.random.normal(scale=0.1, size=labels.shape)
 ```
 
 Yine, `poly_features` içinde depolanan tek terimler, $\Gamma(n)=(n-1)!$ olmak üzere, gamma işlevi tarafından yeniden ölçeklendirilir.
-[**Oluşturulan veri kümesinden ilk 2 örneğe bir göz atın**]. 1 değeri teknik olarak bir özelliktir, yani ek girdiye karşılık gelen sabit özelliktir.
+[**Oluşturulan veri kümesinden ilk 2 örneğe bir göz atın**]. 1 değeri teknik olarak bir özniteliktir, yani ek girdiye karşılık gelen sabit özniteliktir.
 
 ```{.python .input}
 #@tab pytorch, tensorflow
-# Convert from NumPy ndarrays to tensors
+# NumPy ndarray'lardan tensorlere cevirme
 true_w, features, poly_features, labels = [d2l.tensor(x, dtype=
     d2l.float32) for x in [true_w, features, poly_features, labels]]
 ```
@@ -180,7 +180,7 @@ features[:2], poly_features[:2, :], labels[:2]
 #@tab mxnet, tensorflow
 def evaluate_loss(net, data_iter, loss):  #@save
     """Evaluate the loss of a model on the given dataset."""
-    metric = d2l.Accumulator(2)  # Sum of losses, no. of examples
+    metric = d2l.Accumulator(2)  # Kayiplarin toplami, ornek sayisi
     for X, y in data_iter:
         l = loss(net(X), y)
         metric.add(d2l.reduce_sum(l), d2l.size(l))
@@ -191,7 +191,7 @@ def evaluate_loss(net, data_iter, loss):  #@save
 #@tab pytorch
 def evaluate_loss(net, data_iter, loss):  #@save
     """Evaluate the loss of a model on the given dataset."""
-    metric = d2l.Accumulator(2)  # Sum of losses, no. of examples
+    metric = d2l.Accumulator(2)  # Kayiplarin toplami, ornek sayisi
     for X, y in data_iter:
         out = net(X)
         y = d2l.reshape(y, out.shape)
@@ -207,8 +207,7 @@ def train(train_features, test_features, train_labels, test_labels,
           num_epochs=400):
     loss = gluon.loss.L2Loss()
     net = nn.Sequential()
-    # Switch off the bias since we already catered for it in the polynomial
-    # features
+    # Polinomdaki ozniteliklerde zaten sagladigimiz için ek girdiyi yok sayin
     net.add(nn.Dense(1, use_bias=False))
     net.initialize()
     batch_size = min(10, train_labels.shape[0])
@@ -234,8 +233,7 @@ def train(train_features, test_features, train_labels, test_labels,
           num_epochs=400):
     loss = nn.MSELoss(reduction='none')
     input_shape = train_features.shape[-1]
-    # Switch off the bias since we already catered for it in the polynomial
-    # features
+    # Polinomdaki ozniteliklerde zaten sagladigimiz için ek girdiyi yok sayin
     net = nn.Sequential(nn.Linear(input_shape, 1, bias=False))
     batch_size = min(10, train_labels.shape[0])
     train_iter = d2l.load_array((train_features, train_labels.reshape(-1,1)),
@@ -260,8 +258,7 @@ def train(train_features, test_features, train_labels, test_labels,
           num_epochs=400):
     loss = tf.losses.MeanSquaredError()
     input_shape = train_features.shape[-1]
-    # Switch off the bias since we already catered for it in the polynomial
-    # features
+    # Polinomdaki ozniteliklerde zaten sagladigimiz için ek girdiyi yok sayin
     net = tf.keras.Sequential()
     net.add(tf.keras.layers.Dense(1, use_bias=False))
     batch_size = min(10, train_labels.shape[0])
@@ -286,8 +283,7 @@ def train(train_features, test_features, train_labels, test_labels,
 
 ```{.python .input}
 #@tab all
-# Pick the first four dimensions, i.e., 1, x, x^2/2!, x^3/3! from the
-# polynomial features
+# Polinom ozniteliklerden ilk dort boyutu alin, orn., 1, x, x^2/2!, x^3/3!
 train(poly_features[:n_train, :4], poly_features[n_train:, :4],
       labels[:n_train], labels[n_train:])
 ```
@@ -298,7 +294,7 @@ Doğrusal fonksiyon oturtmaya başka bir bakış atalım. Erken dönemlerdeki d�
 
 ```{.python .input}
 #@tab all
-# Pick the first two dimensions, i.e., 1, x, from the polynomial features
+# Polinom ozniteliklerden ilk iki boyutu alin, orn., 1, x.
 train(poly_features[:n_train, :2], poly_features[n_train:, :2],
       labels[:n_train], labels[n_train:])
 ```
@@ -309,7 +305,7 @@ train(poly_features[:n_train, :2], poly_features[n_train:, :2],
 
 ```{.python .input}
 #@tab all
-# Pick all the dimensions from the polynomial features
+# Polinom ozniteliklerden butun boyutlarini alin.
 train(poly_features[:n_train, :], poly_features[n_train:, :],
       labels[:n_train], labels[n_train:], num_epochs=1500)
 ```
