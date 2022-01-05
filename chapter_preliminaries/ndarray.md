@@ -48,14 +48,25 @@ import tensorflow as tf
 ```
 
 [**Bir tensör, (muhtemelen çok boyutlu) bir sayısal değerler dizisini temsil eder.**]
-Bir eksende, bir tensör (matematikte) bir *vektöre* karşılık gelir.
-İki eksende, bir tensör *matrise* karşılık gelir.
+Bir eksende, tensöre *vektör* denir.
+İki eksende, tensöre *matris* denir.
 İkiden fazla ekseni olan tensörlerin özel matematik isimleri yoktur.
+$k > 2$ eksende, tensörlerin özel adları yoktur, bu nesnelere $k.$ *dereceli tensörler* deriz.
 
-Başlamak için, varsayılan olarak kayan virgüllü sayı (float) olarak oluşturulmuş olmalarına rağmen, 0 ile başlayan ilk 12 tamsayıyı içeren bir satır vektörü, `x`, oluşturmak için `arange` i kullanabiliriz.
-Bir tensördeki değerlerin her birine tensörün *eleman*ı denir.
-Örneğin, tensör `x`'de 12 eleman vardır.
-Aksi belirtilmedikçe, yeni bir tensör ana bellekte saklanacak ve CPU tabanlı hesaplama için kullanılacaktır.
+:begin_tab:`mxnet`
+MXNet, değerlerle önceden doldurulmuş yeni tensörler oluşturmak için çeşitli işlevler sağlar. Örneğin, `arange(n)`'yi çağırarak, 0'dan başlayarak (dahil) ve `n` ile biten (dahil değil) eşit aralıklı değerlerden oluşan bir vektör oluşturabiliriz.
+Varsayılan olarak, aralık boyutu $1$'dir. Aksi belirtilmedikçe, yeni tensörler ana bellekte depolanır ve CPU tabanlı hesaplama için atanır.
+:end_tab:
+
+:begin_tab:`pytorch`
+PyTorch, değerlerle önceden doldurulmuş yeni tensörler oluşturmak için çeşitli işlevler sağlar. Örneğin, `arange(n)`'yi çağırarak, 0'dan başlayarak (dahil) ve `n` ile biten (dahil değil) eşit aralıklı değerlerden oluşan bir vektör oluşturabiliriz.
+Varsayılan olarak, aralık boyutu $1$'dir. Aksi belirtilmedikçe, yeni tensörler ana bellekte depolanır ve CPU tabanlı hesaplama için atanır.
+:end_tab:
+
+:begin_tab:`tensorflow`
+TensorFlow, değerlerle önceden doldurulmuş yeni tensörler oluşturmak için çeşitli işlevler sağlar. Örneğin, `arange(n)`'yi çağırarak, 0'dan başlayarak (dahil) ve `n` ile biten (dahil değil) eşit aralıklı değerlerden oluşan bir vektör oluşturabiliriz.
+Varsayılan olarak, aralık boyutu $1$'dir. Aksi belirtilmedikçe, yeni tensörler ana bellekte depolanır ve CPU tabanlı hesaplama için atanır.
+:end_tab:
 
 ```{.python .input}
 x = np.arange(12)
@@ -64,13 +75,13 @@ x
 
 ```{.python .input}
 #@tab pytorch
-x = torch.arange(12)
+x = torch.arange(12, dtype=torch.float32)
 x
 ```
 
 ```{.python .input}
 #@tab tensorflow
-x = tf.range(12)
+x = tf.range(12, dtype=tf.float32)
 x
 ```
 
@@ -359,10 +370,10 @@ Okumanın ötesinde, (**indeksleri belirterek matrisin elemanlarını da yazabil
 :end_tab:
 
 :begin_tab:`tensorflow`
-TensorFlow'daki `tensörler` değişmezdir, ve atanamazlar.
-TensorFlow'daki `değişkenler` atanmayı destekleyen durumların değiştirilebilir kapsayıcılardır. TensorFlow'daki gradyanların `değişken` atamaları aracılığıyla geriye doğru akmadığını unutmayın.
+TensorFlow'daki `tensörler` (`Tensors`) değişmezdir, ve atanamazlar.
+TensorFlow'daki `değişkenler` (`Variables`) atanmayı destekleyen durumların değiştirilebilir kapsayıcılardır. TensorFlow'daki gradyanların `değişken` (`Variable`) atamaları aracılığıyla geriye doğru akmadığını unutmayın.
 
-Tüm `değişkenler`e bir değer atamanın ötesinde, bir `değişken`in öğelerini indeksler belirterek yazabiliriz.
+Tüm `değişkenler`e (`Variable`) bir değer atamanın ötesinde, bir `değişken`in (`Variable`) öğelerini indeksler belirterek yazabiliriz.
 :end_tab:
 
 ```{.python .input}
@@ -424,15 +435,7 @@ Bu kavramı göstermek için, önce başka bir `Y` ile aynı şekle sahip yeni b
 :end_tab:
 
 :begin_tab:`tensorflow`
-`Variables` are mutable containers of state in TensorFlow. They provide
-a way to store your model parameters.
-We can assign the result of an operation
-to a `Variable` with `assign`.
-To illustrate this concept, we create a `Variable` `Z`
-with the same shape as another tensor `Y`,
-using `zeros_like` to allocate a block of $0$ entries.
-
-`Değişkenler`, TensorFlow'daki değişken durum kapsayıcılarıdır. Model parametrelerinizi saklamanın bir yolunu sağlarlar. Bir işlemin sonucunu `atama` ile bir `değişken`e atayabiliriz. Bu kavramı göstermek için, $0$ girdilerinden oluşan bir blok ayırmak için `zeros_like` kullanarak, başka bir `Y` tensörü ile aynı şekle sahip bir `değişken` `Z` oluşturuyoruz.
+`Değişkenler` (`Variable`), TensorFlow'daki değişken durum kapsayıcılarıdır. Model parametrelerinizi saklamanın bir yolunu sağlarlar. Bir işlemin sonucunu `atama` ile bir `değişken`e atayabiliriz. Bu kavramı göstermek için, $0$ girdilerinden oluşan bir blok ayırmak için `zeros_like` kullanarak, başka bir `Y` tensörü ile aynı şekle sahip bir `değişken` `Z` oluşturuyoruz.
 :end_tab:
 
 ```{.python .input}
@@ -453,8 +456,8 @@ print('id(Z):', id(Z))
 ```{.python .input}
 #@tab tensorflow
 Z = tf.Variable(tf.zeros_like(Y))
-print('id(z):', id(Z))
-Z[:].assign(X + Y)
+print('id(Z):', id(Z))
+Z.assign(X + Y)
 print('id(Z):', id(Z))
 ```
 

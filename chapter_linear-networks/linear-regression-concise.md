@@ -1,9 +1,9 @@
 # Doğrusal Regresyonunun Kısa Uygulaması
 :label:`sec_linear_concise`
 
-Son birkaç yıldır derin öğrenmeye olan geniş ve yoğun ilgi, gradyan tabanlı öğrenme algoritmalarını uygulamanın tekrarlayan işyükünü otomatikleştirmek için şirketler, akademisyenler ve amatör geliştiricilere çeşitli olgun açık kaynak çerçeveleri geliştirmeleri için ilham verdi. :numref: `sec_linear_scratch`'de, biz sadece (i) veri depolama ve doğrusal cebir için tensörlere; ve (ii) gradyanları hesaplamak için otomatik türev almaya güvendik. Pratikte, veri yineleyiciler, kayıp işlevleri, optimize ediciler ve sinir ağı katmanları çok yaygın olduğu için, modern kütüphaneler bu bileşenleri bizim için de uygular.
+Son birkaç yıldır derin öğrenmeye olan geniş ve yoğun ilgi, gradyan tabanlı öğrenme algoritmalarını uygulamanın tekrarlayan işyükünü otomatikleştirmek için şirketler, akademisyenler ve amatör geliştiricilere çeşitli olgun açık kaynak çerçeveleri geliştirmeleri için ilham verdi. :numref:`sec_linear_scratch`'de, biz sadece (i) veri depolama ve doğrusal cebir için tensörlere; ve (ii) gradyanları hesaplamak için otomatik türev almaya güvendik. Pratikte, veri yineleyiciler, kayıp işlevleri, optimize ediciler ve sinir ağı katmanları çok yaygın olduğu için, modern kütüphaneler bu bileşenleri bizim için de uygular.
 
-Bu bölümde, derin öğrenme çerçevelerinin (**üst düzey API'lerini kullanarak :numref: `sec_linear_scratch`'daki doğrusal regresyon modelini kısaca nasıl uygulayacağınızı göstereceğiz**).
+Bu bölümde, derin öğrenme çerçevelerinin (**üst düzey API'lerini kullanarak :numref:`sec_linear_scratch`'daki doğrusal regresyon modelini kısaca nasıl uygulayacağınızı göstereceğiz**).
 
 ## Veri Kümesini Oluşturma
 
@@ -59,7 +59,7 @@ def load_array(data_arrays, batch_size, is_train=True):  #@save
 ```{.python .input}
 #@tab tensorflow
 def load_array(data_arrays, batch_size, is_train=True):  #@save
-    """Bir Tensorflow veri yineleyici olusturun."""
+    """Bir TensorFlow veri yineleyici olusturun."""
     dataset = tf.data.Dataset.from_tensor_slices(data_arrays)
     if is_train:
         dataset = dataset.shuffle(buffer_size=1000)
@@ -130,7 +130,7 @@ net.add(tf.keras.layers.Dense(1))
 `net`'i kullanmadan önce, doğrusal regresyon modelindeki ağırlıklar ve ek girdi gibi (**model parametrelerini ilkletmemiz**) gerekir. Derin öğrenme çerçeveleri genellikle parametreleri ilklemek için önceden tanımlanmış bir yola sahiptir. Burada, her ağırlık parametresinin, ortalama 0 ve standart sapma 0.01 ile normal bir dağılımdan rastgele örneklenmesi gerektiğini belirtiyoruz. Ek girdi parametresi sıfır olarak ilklenecektir.
 
 :begin_tab:`mxnet`
-MXNet'ten `initializer` modülünü içe aktaracağız. Bu modül, model parametresi ilkletme için çeşitli yöntemler sağlar. Gluon, `init`'i `initializer` paketine erişmek için bir kısayol (kısaltma) olarak kullanılabilir hale getirir. Ağırlığın nasıl ilkleneceğini sadece `init.Normal(sigma=0.01)`'i çağırarak belirtiyoruz. Ek girdi parametreleri varsayılan olarak sıfıra başlatılır.
+MXNet'ten `initializer` modülünü içe aktaracağız. Bu modül, model parametresi ilkletme için çeşitli yöntemler sağlar. Gluon, `init`'i `initializer` paketine erişmek için bir kısayol (kısaltma) olarak kullanılabilir hale getirir. Ağırlığın nasıl ilkleneceğini sadece `init.Normal(sigma=0.01)`'i çağırarak belirtiyoruz. Ek girdi parametreleri sıfır olarak ilklenecektir.
 :end_tab:
 
 :begin_tab:`pytorch`

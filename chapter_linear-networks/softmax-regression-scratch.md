@@ -140,7 +140,7 @@ Daha sonra, :numref:`sec_softmax`da tanıtıldığı gibi, çapraz entropi kayb�
 
 Çapraz entropinin, gerçek etikete atanan tahmin edilen olasılığın negatif log-olabilirliğini aldığını hatırlayın. Bir Python for-döngüsü (verimsiz olma eğilimindedir) ile tahminler üzerinde yinelemek yerine, tüm öğeleri tek bir operatörle seçebiliriz. 
 
-Aşağıda, [**3 sınıf üzerinde tahmin edilen olasılıkların 2 örneğini ve bunlara karşılık gelen `y` etiketleriyle `y_hat` örnek verilerini oluşturuyoruz.**] "y" ile, ilk örnekte birinci sınıfın doğru tahmin olduğunu biliyoruz. ve ikinci örnekte üçüncü sınıf temel gerçektir. [**`y`'yi `y_hat` içindeki olasılıkların indeksleri olarak kullanarak,**] ilk örnekte birinci sınıfın olasılığını ve ikinci örnekte üçüncü sınıfın olasılığını seçiyoruz.
+Aşağıda, [**3 sınıf üzerinde tahmin edilen olasılıkların 2 örneğini ve bunlara karşılık gelen `y` etiketleriyle `y_hat` örnek verilerini oluşturuyoruz.**] `y` ile, ilk örnekte birinci sınıfın doğru tahmin olduğunu biliyoruz. ve ikinci örnekte üçüncü sınıf temel gerçektir. [**`y`'yi `y_hat` içindeki olasılıkların indeksleri olarak kullanarak,**] ilk örnekte birinci sınıfın olasılığını ve ikinci örnekte üçüncü sınıfın olasılığını seçiyoruz.
 
 Aşağıda, 3 sınıf üzerinden tahmin edilen olasılıkların 2 örneğini içeren bir oyuncak verisi `y_hat`'i oluşturuyoruz. Ardından birinci örnekte birinci sınıfın olasılığını ve ikinci örnekte üçüncü sınıfın olasılığını seçiyoruz.
 

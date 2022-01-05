@@ -12,7 +12,7 @@ Ayrıca, bir çek defterini dengelediyseniz veya hatta bir restoranda akşam yem
 Örneğin, Palo Alto'daki sıcaklık $52$ Fahrenheit derecedir.
 Usul olarak, sadece bir sayısal miktar içeren değerlere *sayıl (skaler)* diyoruz.
 Bu değeri Celsius'a (metrik sistemin daha anlamlı sıcaklık ölçeği) dönüştürmek istiyorsanız, $f$i $52$ olarak ayarlayarak $c = \frac{5}{9}(f - 32)$ ifadesini hesaplarsınız.
-Bu denklemde --- $5$, $9$ ve $32$ --- terimlerinin her biri skaler değerlerdir.
+Bu denklemde ---$5$, $9$ ve $32$--- terimlerinin her biri skaler değerlerdir.
 $c$ ve $f$ göstermelik ifadelerine (placeholders) *değişkenler* denir ve bilinmeyen skaler değerleri temsil ederler.
 
 Bu kitapta, skaler değişkenlerin normal küçük harflerle (ör. $x$, $y$ ve $z$) gösterildiği matematiksel gösterimi kabul ediyoruz.
@@ -164,7 +164,7 @@ Genellikle kalın, büyük harflerle (örn., $\mathbf{X}$, $\mathbf{Y}$, and $\m
 Matematiksel gösterimde, $\mathbf{A}$ matrisinin gerçel değerli skaler $m$ satır ve $n$ sütundan oluştuğunu ifade etmek için $\mathbf{A} \in \mathbb{R}^{m \times n}$i kullanırız .
 Görsel olarak, herhangi bir $\mathbf{A} \in \mathbb{R}^{m \times n}$ matrisini $a_{ij}$ öğesinin $i.$ satıra ve $j.$ sütuna ait olduğu bir tablo olarak gösterebiliriz:
 
-$$\mathbf{A}=\begin{bmatrix} a_{11} & a_{12} & \cdots & a_{1n} \\ a_{21} & a_{22} & \cdots & a_{2n} \\ \vdots & \vdots & \ddots & \vdots \\ a_{m1} & a_{m2} & \cdots & a_{mn} \\ \end{bmatrix}$$
+$$\mathbf{A}=\begin{bmatrix} a_{11} & a_{12} & \cdots & a_{1n} \\ a_{21} & a_{22} & \cdots & a_{2n} \\ \vdots & \vdots & \ddots & \vdots \\ a_{m1} & a_{m2} & \cdots & a_{mn} \\ \end{bmatrix}.$$
 :eqlabel:`eq_matrix_def`
 
 Herhangi bir $\mathbf{A}\in \mathbb{R}^{m\times n}$ için, $\mathbf{A}$ ($m$, $n$) veya $m\times n$ şeklindedir.

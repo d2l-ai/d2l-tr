@@ -3,12 +3,12 @@
 
 Bir çokgenin alanını bulmak, eski Yunanlıların bir çokgeni üçgenlere böldüğü ve alanlarını topladığı en az 2.500 yıl öncesine kadar gizemli kalmıştı.
 Bir daire gibi kavisli şekillerin alanını bulmak için, eski Yunanlılar bu şekillerin içine çokgenler yerleştirdiler.
-:numref:`fig_circle_area`'da gösterildiği gibi, eşit uzunlukta daha fazla kenarı olan çizili bir çokgen daireye bayağı yaklaşır. Bu işlem *tükenme yöntemi* olarak da bilinir.
+:numref:`fig_circle_area`'da gösterildiği gibi, eşit uzunlukta daha fazla kenarı olan çizili bir çokgen daireye bayağı yaklaşır. Bu işlem *tüketme yöntemi* olarak da bilinir.
 
-![Tükenme yöntemiyle bir dairenin alanını bulun.](../img/polygon-circle.svg)
+![Tüketme yöntemiyle bir dairenin alanını bulun.](../img/polygon-circle.svg)
 :label:`fig_circle_area`
 
-Aslında, tükenme yöntemi *integral hesabının* (şurada açıklanacaktır :numref:`sec_integral_calculus`) kaynaklandığı yerdir.
+Aslında, tüketme yöntemi *integral hesabının* (şurada açıklanacaktır :numref:`sec_integral_calculus`) kaynaklandığı yerdir.
 2.000 yıldan fazla bir müddetten sonra, diğer kalkülüs alanı, *diferansiyel (türevsel) kalkülüs* icat edildi.
 Diferansiyel kalkülüsün en kritik uygulamaları arasındaki optimizasyon problemleri bir şeyin nasıl *en iyi* şekilde yapılacağını düşünür.
 :numref:`subsec_norms_and_objectives`'te tartışıldığı gibi, bu tür sorunlar derin öğrenmede her yerde bulunur.

@@ -205,7 +205,7 @@ Amazon Web Services'e, özellikle Swami Sivasubramanian, Peter DeSantis, Adam Se
 
 ## Alıştırmalar
 
-1. Bu kitabın [forum.d2l.ai](https://discuss.d2l.ai/) tartışma forumunda bir hesap açın.
+1. Bu kitabın [discuss.d2l.ai](https://discuss.d2l.ai/) tartışma forumunda bir hesap açın.
 1. Python'u bilgisayarınıza yükleyin.
 1. Yazarın ve daha geniş bir topluluğun katılımıyla yardım arayabileceğiniz, kitabı tartışabileceğiniz ve sorularınıza cevap bulabileceğiniz bölüm altındaki forum bağlantılarını takip edin.
 

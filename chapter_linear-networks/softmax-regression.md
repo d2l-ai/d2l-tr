@@ -173,8 +173,8 @@ Softmaks regresyon modelini eğittikten sonra, herhangi bir örnek öznitelik ve
 ## Alıştırmalar
 
 1. Üstel aileler ile softmaks arasındaki bağlantıyı biraz daha derinlemesine inceleyebiliriz.
-    1. Softmaks için çapraz entropi kaybının, $l(\mathbf{y}, \hat{\mathbf{y}})$, ikinci türevini  hesaplayın.
-    1. $\mathrm{softmax} (\mathbf{o})$ tarafından verilen dağılımın varyansını hesaplayın ve yukarıda hesaplanan ikinci türevle eşleştiğini gösterin.
+    1. Softmaks için çapraz entropi kaybının, $l(\mathbf{y},\hat{\mathbf{y}})$, ikinci türevini  hesaplayın.
+    1. $\mathrm{softmax}(\mathbf{o})$ tarafından verilen dağılımın varyansını hesaplayın ve yukarıda hesaplanan ikinci türevle eşleştiğini gösterin.
 1. Eşit olasılıkla ortaya çıkan üç sınıfımız olduğunu varsayın, yani olasılık vektörü $(\frac{1}{3}, \frac{1}{3}, \frac{1}{3})$.
     1. Bunun için bir ikilik kod tasarlamaya çalışırsak ne sorun olur?
     1. Daha iyi bir kod tasarlayabilir misiniz? İpucu: İki bağımsız gözlemi kodlamaya çalışırsak ne olur? Ya $n$ tane gözlemi birlikte kodlarsak?

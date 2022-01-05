@@ -274,7 +274,7 @@ Derin öğrenme uygulayıcıları, modellerinde neler olduğunu görselleştirme
 
 :numref:`fig_single_neuron`da gösterilen sinir ağı için, girdiler $x_1, \ldots, x_d$'dir, dolayısıyla girdi katmanındaki *girdi sayısı* (veya *öznitelik boyutu*) $d$'dir. Ağın :numref:`fig_single_neuron`deki çıktısı $ o_1 $'dir, dolayısıyla çıktı katmanındaki *çıktı sayısı* $1$'dir. Girdi değerlerinin hepsinin *verildiğini* ve sadece tek bir *hesaplanmış*  nöron (sinir hücresi) olduğuna dikkat edin. Hesaplamanın nerede gerçekleştiğine odaklanarak, geleneksel olarak katmanları sayarken girdi katmanını dikkate almayız. Yani :numref:`fig_single_neuron`daki sinir ağı için *katman sayısı* $1$'dir. Doğrusal regresyon modellerini sadece tek bir yapay nörondan oluşan sinir ağları veya tek katmanlı sinir ağları olarak düşünebiliriz.
 
-Doğrusal regresyon için, her girdi her çıktıya bağlı olduğundan (bu durumda yalnızca bir çıktı vardır), bu dönüşümü (:numref:`fig_single_neuron`daki çıktı katmanı) *tam bağlantılı katman* veya *yoğun katman* olarak kabul edebiliriz. Bir sonraki bölümde bu tür katmanlardan oluşan ağlar hakkında daha çok konuşacağız.
+Doğrusal regresyon için, her girdi her çıktıya bağlı olduğundan (bu durumda yalnızca bir çıktı vardır), bu dönüşümü (:numref:`fig_single_neuron`'deki çıktı katmanı) *tam bağlantılı katman* veya *yoğun katman* olarak kabul edebiliriz. Bir sonraki bölümde bu tür katmanlardan oluşan ağlar hakkında daha çok konuşacağız.
 
 ### Biyoloji
 
