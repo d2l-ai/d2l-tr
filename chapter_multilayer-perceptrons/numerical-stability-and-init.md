@@ -6,21 +6,23 @@ Buraya kadar, uyguladığımız her model, parametrelerini önceden belirlenmiş
 
 ## Kaybolan ve Patlayan Gradyanlar
 
-$L$ katmanlı $\mathbf{x}$ girdili ve $\mathbf{o}$ çıktılı derin bir ağ düşünün. Her $l$ katmanı $f_l$ ağırlıkları $\mathbf{W}_l$ ile parametreleştirilmiş bir dönüşüm tarafından tanımlandığında, ağımız şu şekilde ifade edilebilir:
+$L$ katmanlı $\mathbf{x}$ girdili ve $\mathbf{o}$ çıktılı derin bir ağ düşünün. Bir $f_l$ dönüşümü ile tanımlanan $\mathbf{W}^{(l)}$ ağırlıklarıyla parametreleştirilen her bir katman $l$ ile, ki gizli değişkenleri $\mathbf{h}^{(l)}$'dir ($\mathbf{h}^{(0)} = \mathbf{x}$), ağımız şu şekilde ifade edilebilir:
+$$\mathbf{h}^{(l)} = f_l (\mathbf{h}^{(l-1)}) \text{ ve böylece } \mathbf{o} = f_L \circ \ldots \circ f_1(\mathbf{x}).$$
 
-$$\mathbf{h}^{l+1} = f_l (\mathbf{h}^l) \text{ and thus } \mathbf{o} = f_L \circ \ldots, \circ f_1(\mathbf{x}).$$
 
-Tüm etkinleştirmeler ve girdiler vektör ise, $\mathbf{o}$ gradyanını herhangi bir $\mathbf{W} _l$ parametre kümesine göre aşağıdaki gibi yazabiliriz:
+Tüm gizli değişkenler ve girdiler vektör ise, $\mathbf{o}$ gradyanını herhangi bir $\mathbf{W}^{(l)}$ parametre kümesine göre aşağıdaki gibi yazabiliriz:
 
-$$\partial_{\mathbf{W}_l} \mathbf{o} = \underbrace{\partial_{\mathbf{h}^{L-1}} \mathbf{h}^L}_{:= \mathbf{M}_L} \cdot \ldots, \cdot \underbrace{\partial_{\mathbf{h}^{l}} \mathbf{h}^{l+1}}_{:= \mathbf{M}_l} \underbrace{\partial_{\mathbf{W}_l} \mathbf{h}^l}_{:= \mathbf{v}_l}.$$
+$$\partial_{\mathbf{W}^{(l)}} \mathbf{o} = \underbrace{\partial_{\mathbf{h}^{(L-1)}} \mathbf{h}^{(L)}}_{ \mathbf{M}^{(L)} \stackrel{\mathrm{def}}{=}} \cdot \ldots \cdot \underbrace{\partial_{\mathbf{h}^{(l)}} \mathbf{h}^{(l+1)}}_{ \mathbf{M}^{(l+1)} \stackrel{\mathrm{def}}{=}} \underbrace{\partial_{\mathbf{W}^{(l)}} \mathbf{h}^{(l)}}_{ \mathbf{v}^{(l)} \stackrel{\mathrm{def}}{=}}.$$
 
-Başka bir deyişle, bu gradyan $L-l$ matrisleri  $\mathbf{M}_L \cdot \ldots, \cdot \mathbf{M}_l$ ve $\mathbf{v}_l$ gradyan vektörünün çarpımıdır. Bu nedenle, çok fazla olasılığı bir araya getirirken sıklıkla ortaya çıkan aynı sayısal küçümenlik sorunlarına duyarlıyız. Olasılıklarla uğraşırken, yaygın bir marifet, logaritma-uzayına geçmektir, yani basıncı mantisten sayısal temsilin üssüne kaydırmaktır. Ne yazık ki, yukarıdaki sorunumuz daha ciddidir: Başlangıçta $M_l$ matrisleri çok çeşitli özdeğerlere sahip olabilir. Küçük veya büyük olabilirler ve çarpımları *çok büyük* veya *çok küçük* olabilir.
 
-Kararsız gradyanların yarattığı riskler sayısal temsilin ötesine geçer. Tahmin edilemeyen büyüklükteki gradyanlar, optimizasyon algoritmalarımızın kararlılığını da tehdit eder. Ya (i) aşırı büyük olan, modelimizi yok eden (*patlayan* gradyan problemi); veya (ii) aşırı derecede küçük (*kaybolan gradyan problemi*), parametreler neredeyse hiç hareket etmediği için öğrenmeyi imkansız kılan güncellemeler.
+Başka bir deyişle, bu gradyan $L-l$ matrisleri 
+$\mathbf{M}^{(L)} \cdot \ldots \cdot \mathbf{M}^{(l+1)}$ ve $\mathbf{v}^{(l)}$ gradyan vektörünün çarpımıdır. Bu nedenle, çok fazla olasılığı bir araya getirirken sıklıkla ortaya çıkan aynı sayısal küçümenlik sorunlarına duyarlıyız. Olasılıklarla uğraşırken, yaygın bir hile, logaritma-uzayına geçmektir, yani basıncı mantisten sayısal temsilin üssüne kaydırmaktır. Ne yazık ki, yukarıdaki sorunumuz daha ciddidir: Başlangıçta $\mathbf{M}^{(l)}$ matrisleri çok çeşitli özdeğerlere sahip olabilir. Küçük veya büyük olabilirler ve çarpımları *çok büyük* veya *çok küçük* olabilir.
 
-### Kaybolan Gradyanlar
+Kararsız gradyanların yarattığı riskler sayısal temsilin ötesine geçer. Tahmin edilemeyen büyüklükteki gradyanlar, optimizasyon algoritmalarımızın kararlılığını da tehdit eder: Ya (i) aşırı büyük olan, modelimizi yok eden (*patlayan gradyan* problemi); veya (ii) aşırı derecede küçük (*kaybolan gradyan* problemi), parametreler neredeyse hiç hareket etmediği için öğrenmeyi imkansız kılan güncellemeler.
 
-Kaybolan gradyan sorununa neden olan sık karşılaşılan bir suçlu, her katmanın doğrusal işlemlerinin ardından eklenen $\sigma$ etkinleştirme işlevinin seçimidir. Tarihsel olarak, sigmoid işlevi $1/(1 + \exp(-x))$ (bakınız :numref:`sec_mlp`), bir eşikleme işlevine benzediği için popülerdi. Erken yapay sinir ağları biyolojik sinir ağlarından ilham aldığından, ya *tamamen* ateşleyen ya da *hiç* ateşlemeyen (biyolojik nöronlar gibi) nöronlar fikri çekici görünüyordu. Neden yok olan gradyanlara neden olabileceğini görmek için sigmoide daha yakından bakalım.
+### (**Kaybolan Gradyanlar**)
+
+Kaybolan gradyan sorununa neden olan sık karşılaşılan bir kabahat, her katmanın doğrusal işlemlerinin ardından eklenen $\sigma$ etkinleştirme işlevinin seçimidir. Tarihsel olarak, sigmoid işlevi $1/(1 + \exp(-x))$ (bakınız :numref:`sec_mlp`), bir eşikleme işlevine benzediği için popülerdi. Erken yapay sinir ağları biyolojik sinir ağlarından ilham aldığından, ya *tamamen* ateşleyen ya da *hiç* ateşlemeyen (biyolojik nöronlar gibi) nöronlar fikri çekici görünüyordu. Neden yok olan gradyanlara neden olabileceğini görmek için sigmoide daha yakından bakalım.
 
 ```{.python .input}
 %matplotlib inline
@@ -64,47 +66,49 @@ d2l.plot(x.numpy(), [y.numpy(), t.gradient(y, x).numpy()],
          legend=['sigmoid', 'gradient'], figsize=(4.5, 2.5))
 ```
 
-Gördüğünüz gibi sigmoidin gradyanı, girdileri hem büyük hem de küçük olduklarında kaybolur. Dahası, birçok katmanda geri yayma yaparken, birçok sigmoidin girdilerinin sıfıra yakın olduğu Goldilocks bölgesinde olmadıkça, tüm çarpımın gradyanları kaybolabilir. Ağımız birçok katmana sahip olduğunda, dikkatli olmadıkça, gradyan muhtemelen *herhangi bir* katmanda kesilecektir. Gerçekten de, bu problem derin ağ eğitiminda başa bela oluyordu. Sonuç olarak, daha kararlı (ancak sinirsel olarak daha az makul olan) ReLU'lar, pratisyenlerin varsayılan seçimi olarak öne çıktı.
+Gördüğünüz gibi (**sigmoidin gradyanı, girdileri hem büyük hem de küçük olduklarında kaybolur**). Dahası, birçok katmanda geri yayma yaparken, birçok sigmoidin girdilerinin sıfıra yakın olduğu Goldilocks bölgesinde olmadıkça, tüm çarpımın gradyanları kaybolabilir. Ağımız birçok katmana sahip olduğunda, dikkatli olmadıkça, gradyan muhtemelen herhangi bir katmanda kesilecektir. Gerçekten de, bu problem derin ağ eğitiminda başa bela oluyordu. Sonuç olarak, daha kararlı (ancak sinirsel olarak daha az makul olan) ReLU'lar, uygulayıcıların varsayılan seçimi olarak öne çıktı.
 
 
-### Patlayan Gradyanlar
+### [**Patlayan Gradyanlar**]
 
-Tersi problem de, gradyanlar patladığında, benzer şekilde can sıkıcı olabilir. Bunu biraz daha iyi açıklamak için, $100$ tane Gauss'luk rasgele matrisler çekip bunları bir başlangıç matrisiyle çarpıyoruz. Seçtiğimiz ölçek için ($\sigma^2=1$ varyans seçimi ile), matris çarpımı patlar. Bu, derin bir ağın ilklenmesi nedeniyle gerçekleştiğinde, yakınsama için bir gradyan iniş optimize ediciyi alma şansımız yoktur.
+Tersi problem de, gradyanlar patladığında, benzer şekilde can sıkıcı olabilir. Bunu biraz daha iyi açıklamak için, 100 tane Gauss'luk rasgele matrisler çekip bunları bir başlangıç matrisiyle çarpıyoruz. Seçtiğimiz ölçek için ($\sigma^2=1$ varyans seçimi ile), matris çarpımı patlar. Bu, derin bir ağın ilklenmesi nedeniyle gerçekleştiğinde, yakınsama için bir gradyan iniş optimize ediciyi alma şansımız yoktur.
 
 ```{.python .input}
 M = np.random.normal(size=(4, 4))
-print('A single matrix', M)
+print('Tek bir matris', M)
 for i in range(100):
     M = np.dot(M, np.random.normal(size=(4, 4)))
 
-print('After multiplying 100 matrices', M)
+print('100 matrisi çarptiktan sonra', M)
 ```
 
 ```{.python .input}
 #@tab pytorch
 M = torch.normal(0, 1, size=(4,4))
-print('A single matrix \n',M)
+print('Tek bir matris \n',M)
 for i in range(100):
-    M = torch.mm(M,torch.normal(0, 1, size=(4,4)))
+    M = torch.mm(M,torch.normal(0, 1, size=(4, 4)))
 
-print('After multiplying 100 matrices\n',M)
+print('100 matrisi çarptiktan sonra\n',M)
 ```
 
 ```{.python .input}
 #@tab tensorflow
 M = tf.random.normal((4, 4))
-print('A single matrix \n', M)
+print('Tek bir matris \n', M)
 for i in range(100):
     M = tf.matmul(M, tf.random.normal((4, 4)))
 
-print('After multiplying 100 matrices\n', M.numpy())
+print('100 matrisi çarptiktan sonra\n', M.numpy())
 ```
 
-### Bakışım (Simetri)
+### Bakışımı (Simetriyi) Kırma
 
-Derin ağ tasarımındaki bir başka sorun, parametrelendirilmesinde bulunan simetridir. Bir gizli katman ve iki birim , örneğin $h_1$ ve $h_2$, içeren derin bir ağımız olduğunu varsayalım. Bu durumda, ilk katmanın $\mathbf{W}_1$ ağırlıklarını ve aynı şekilde aynı işlevi elde etmek için çıktı katmanının ağırlıklarını devrişebiliriz (permütasyon). İlk gizli birimi veya ikinci gizli birimi türev alma arasında bir fark yoktur. Başka bir deyişle, her katmanın gizli birimleri arasında devrişim bakışımımız var.
+Sinir ağı tasarımındaki bir başka sorun, parametrelendirilmesinde bulunan simetridir. Bir gizli katman ve iki birim içeren basit bir MLP'miz olduğunu varsayalım. Bu durumda, ilk katmanın $\mathbf{W}^{(1)}$ ağırlıklarını ve aynı şekilde aynı işlevi elde etmek için çıktı katmanının ağırlıklarını devrişebiliriz (permütasyon). İlk gizli birimi veya ikinci gizli birimi türev alma arasında bir fark yoktur. Başka bir deyişle, her katmanın gizli birimleri arasında devrişim bakışımımız var.
 
-Bu teorik bir can sıkıntısından daha fazlasıdır. Sabit herhangi bir $c$ için herhangi bir katmanın tüm parametrelerini $\mathbf{W}_l = c$ olarak başlatırsak ne olacağını bir düşünün. Bu durumda, tüm boyutlar için gradyanlar aynıdır: Bu nedenle yalnızca her birim aynı değeri almakla kalmaz, aynı güncellemeyi de alır. Rasgele gradyan inişi, bakışımı asla kendi başına bozmaz ve ağın ifade gücünü asla gerçekleyemeyebiliriz. Gizli katman, yalnızca tek bir birimi varmış gibi davranacaktır. RGİ bu bakışımı bozmasa da, hattan düşürme düzenlileştirmesinin bozacağını unutmayın!
+Bu teorik bir can sıkıntısından daha fazlasıdır. Yukarıda bahsedilen, iki gizli birimi olan tek-katmanlı MLP'yi düşünün. Örnek olarak, çıktı katmanının iki gizli birimi yalnızca bir çıktı birimine dönüştürdüğünü varsayalım. Bir sabit $c$ için gizli katmanın tüm parametrelerini $\mathbf{W}^{(1)} = c$ olarak ilkletirsek ne olacağını hayal edin. Bu durumda, ileriye doğru yayma sırasında gizli birim aynı girdileri ve parametreleri alarak aynı aktivasyonu üretir, ki o da çıktı birimine beslenir. Geri yayma sırasında, çıktı biriminin $\mathbf{W}^{(1)}$ parametrelerine göre türevini almak, öğelerinin tümü aynı değeri alan bir gradyan verir. Bu nedenle, gradyan tabanlı yinelemeden sonra (örneğin, minigrup rasgele gradyan inişi), $\mathbf{W}^{(1)}$ öğesinin tüm öğeleri hala aynı değeri alır.
+
+Bu yinelemeler, *bakışımı asla kendi başına bozmaz* ve ağın ifade gücünü asla gerçekleyemeyebiliriz. Gizli katman, yalnızca tek bir birimi varmış gibi davranacaktır. Minigrup rasgele gradyan inişi bu bakışımı bozmasa da, hattan düşürme düzenlileştirmesinin bozacağını unutmayın!
 
 
 ## Parametre İlkleme
@@ -113,41 +117,52 @@ Yukarıda belirtilen sorunları ele almanın---ya da en azından hafifletmenin--
 
 ### Varsayılan İlkletme
 
-Önceki bölümlerde, örneğin :numref:`sec_linear_concise`'deki gibi, ağırlıklarımızın değerlerini ilkletmek için 0 ortalama ve 0.01 varyanslı normal bir dağılım kullandık. İlkleme yöntemini belirtmezsek, çerçeve, pratikte genellikle orta düzey problem boyutları için iyi çalışan varsayılan bir rastgele ilkleme yöntemi kullanacaktır.
+Önceki bölümlerde, örneğin :numref:`sec_linear_concise`'deki gibi, ağırlıklarımızın değerlerini ilkletmek için normal dağılım kullandık. İlkleme yöntemini belirtmezsek, çerçeve, pratikte genellikle orta düzey problem boyutları için iyi çalışan varsayılan bir rastgele ilkleme yöntemi kullanacaktır.
 
-### Xavier İlklemesi
 
-Bir katman için $h_{i}$ gizli birimlerinin etkinleştirmelerinin ölçek dağılımına bakalım. Aşağıdaki gibi verilirler:
 
-$$h_{i} = \sum_{j=1}^{n_\mathrm{in}} W_{ij} x_j.$$
 
-$W_{ij}$ ağırlıklarının tümü aynı dağılımdan bağımsız olarak çekilir. Dahası, bu dağılımın sıfır ortalamaya ve $\sigma^2$ varyansına sahip olduğunu varsayalım (bu, dağılımın Gaussian olması gerektiği anlamına gelmez, sadece ortalama ve varyansın var olması gerektiği anlamına gelir). Şimdilik, $x_j$ katmanındaki girdilerin de sıfır ortalamaya ve $\gamma^2$ vryansa sahip olduğunu ve $\mathbf{W}$'dan bağımsız olduklarını varsayalım. Bu durumda, $h_i$'nin ortalamasını ve varyansını şu şekilde hesaplayabiliriz:
+### Xavier İlkletmesi
+:label:`subsec_xavier`
+
+Bir çıktının (örneğin, bir gizli değişken) $o_{i}$ tam bağlı bir katman *doğrusal olmayanlar* için ölçek dağılımına bakalım.
+Bu katman için $n_\mathrm{in}$ tane $x_j$ girdisi ve bunlarla ilişkili ağırlıkları $w_{ij}$ ile,  çıktı şu şekilde verilir:
+
+$$o_{i} = \sum_{j=1}^{n_\mathrm{in}} w_{ij} x_j.$$
+
+$w_{ij}$ ağırlıklarının tümü aynı dağılımdan bağımsız olarak çekilir. Dahası, bu dağılımın sıfır ortalamaya ve $\sigma^2$ varyansına sahip olduğunu varsayalım. Bu, dağılımın Gaussian olması gerektiği anlamına gelmez, sadece ortalama ve varyansın var olması gerektiği anlamına gelir. Şimdilik, $x_j$ katmanındaki girdilerin de sıfır ortalamaya ve $\gamma^2$ varyansına sahip olduğunu ve $w_{ij}$'den ve birbirinden bağımsız olduklarını varsayalım. Bu durumda, $o_i$'nin ortalamasını ve varyansını şu şekilde hesaplayabiliriz:
 
 $$
 \begin{aligned}
-    E[h_i] & = \sum_{j=1}^{n_\mathrm{in}} E[W_{ij} x_j] = 0, \\
-    Var[h_i] & = E[h_i^2] - (E[h_i])^2 \\
-        & = \sum_{j=1}^{n_\mathrm{in}} E[W^2_{ij} x^2_j] - 0 \\
-        & = \sum_{j=1}^{n_\mathrm{in}} E[W^2_{ij}] E[x^2_j] \\
+    E[o_i] & = \sum_{j=1}^{n_\mathrm{in}} E[w_{ij} x_j] \\&= \sum_{j=1}^{n_\mathrm{in}} E[w_{ij}] E[x_j] \\&= 0, \\
+    \mathrm{Var}[o_i] & = E[o_i^2] - (E[o_i])^2 \\
+        & = \sum_{j=1}^{n_\mathrm{in}} E[w^2_{ij} x^2_j] - 0 \\
+        & = \sum_{j=1}^{n_\mathrm{in}} E[w^2_{ij}] E[x^2_j] \\
         & = n_\mathrm{in} \sigma^2 \gamma^2.
 \end{aligned}
 $$
 
-Varyansı sabit tutmanın bir yolu, $n_\mathrm{in} \sigma^2 = 1$ diye ayarlamaktır. Şimdi geri yaymayı düşünün. Orada, en üst katmanlardan yayılmakta olan gradyanlarla da olsa benzer bir sorunla karşı karşıyayız. Yani, $\mathbf{W} \mathbf{x}$ yerine, $\mathbf{W}^\top \mathbf{g}$ ile uğraşmamız gerekiyor, burada $\mathbf{g}$ gelen yukarıdaki katmandan gradyandır. İleri yaymayla aynı mantığı kullanarak, gradyanların varyansının $n_\mathrm{out} \sigma^2 = 1$ olmadıkça patlayabileceğini görüyoruz. Bu bizi bir ikilemde bırakıyor: Her iki koşulu aynı anda karşılayamayız. Bunun yerine, sadece şunlara uymaya çalışırız:
+Varyansı sabit tutmanın bir yolu, $n_\mathrm{in} \sigma^2 = 1$ diye ayarlamaktır. Şimdi geri yaymayı düşünün. Orada, çıktıya yakın katmanlardan yayılmakta olan gradyanlarla da olsa benzer bir sorunla karşı karşıyayız. İleri yaymayla aynı mantığı kullanarak, gradyanların varyansının $n_\mathrm{out} \sigma^2 = 1$, ki $n_\mathrm{out}$ burada bu katmanın çıktı sayısıdır, olmadıkça patlayabileceğini görüyoruz. Bu bizi bir ikilemde bırakıyor: Her iki koşulu aynı anda karşılayamayız. Bunun yerine, sadece şunlara uymaya çalışırız:
 
 $$
 \begin{aligned}
-\frac{1}{2} (n_\mathrm{in} + n_\mathrm{out}) \sigma^2 = 1 \text{ or equivalently }
+\frac{1}{2} (n_\mathrm{in} + n_\mathrm{out}) \sigma^2 = 1 \text{ veya eşdeğeri }
 \sigma = \sqrt{\frac{2}{n_\mathrm{in} + n_\mathrm{out}}}.
 \end{aligned}
 $$
 
-Bu, yaratıcısının adını taşıyan, artık standart ve pratik olarak faydalı *Xavier* ilkletmesinin altında yatan mantıktır :cite:`Glorot.Bengio.2010`. Tipik olarak, Xavier ilkletmesi sıfır ortalama ve $\sigma^2 = 2/(n_\mathrm{in} + n_\mathrm{out})$ varyansına sahip bir Gauss dağılımından ağırlıkları örnekler. Aynı zamanda, tekdüze bir dağılımdan ağırlıkları örneklerken, Xavier'in sezgisini varyansı seçecek şekilde uyarlayabiliriz. $U[-a, a]$ dağılımının $a^2/3$ varyansına sahip olduğuna dikkat edin. $a^2/3$'ü $\sigma^2$ üzerindeki koşulumuza eklemek, $U\left[-\sqrt{6/(n_\mathrm{in} + n_\mathrm{out})}, \sqrt{6/(n_\mathrm{in} + n_\mathrm{out})}\right]$'a göre ilkletme önerisini verir.
+Bu, yaratıcılarının ilk yazarının adını taşıyan, artık standart ve pratik olarak faydalı *Xavier ilkletmesi*nin altında yatan mantıktır cite:`Glorot.Bengio.2010`. Tipik olarak, Xavier ilkletmesi sıfır ortalama ve $\sigma^2 = \frac{2}{n_\mathrm{in} + n_\mathrm{out}}$ varyansına sahip bir Gauss dağılımından ağırlıkları örnekler. Aynı zamanda, tekdüze bir dağılımdan ağırlıkları örneklerken, Xavier'in sezgisini varyansı seçecek şekilde uyarlayabiliriz. $U(-a, a)$ tekdüze dağılımının $\frac{a^2}{3}$ varyansına sahip olduğuna dikkat edin. $\frac{a^2}{3}$'ı $\sigma^2$'daki koşulumuza eklemek, şu ilkletme önerisini verir:
+
+$$U\left(-\sqrt{\frac{6}{n_\mathrm{in} + n_\mathrm{out}}}, \sqrt{\frac{6}{n_\mathrm{in} + n_\mathrm{out}}}\right).$$
+
+Yukarıdaki matematiksel akıl yürütmede doğrusal olmayanların var olmadığı varsayımı, sinir ağlarında kolayca ihlal edilebilse de, Xavier ilkletme yönteminin pratikte iyi çalıştığı ortaya çıkıyor.
 
 
-### Daha Ötesi
+### Daha Fazlası
 
-Yukarıdaki mantık, parametre ilklendirmesine yönelik modern yaklaşımların yüzeyini anca çiziyor. Bir derin öğrenme çerçevesi genellikle bir düzineden fazla farklı buluşsal yöntem uygular. Dahası, parametre ilkletme, derin öğrenmede temel araştırma için sıcak bir alan olmaya devam ediyor. Bunlar arasında bağlı (paylaşılan) parametreler, süper çözünürlük, dizi modelleri ve diğer durumlar için özelleştirilmiş buluşsal yöntemler bulunur. Konu ilginizi çekiyorsa, bu modülün önerdiklerine derinlemesine dalmanızı, her buluşsal yöntemi öneren ve analiz eden calışmaları okumanızı ve ardından konuyla ilgili en son yayınlarda gezinmenizi öneririz. Belki de zekice bir fikre rastlarsınız (hatta icat edersiniz!) Ve derin öğrenme çerçevelerinde bir uygulamaya katkıda bulunursunuz.
+Yukarıdaki mantık, parametre ilklendirmesine yönelik modern yaklaşımların yüzeyine ışık tutuyor. Bir derin öğrenme çerçevesi genellikle bir düzineden fazla farklı buluşsal yöntem uygular. Dahası, parametre ilkletme, derin öğrenmede temel araştırma için sıcak bir alan olmaya devam ediyor. Bunlar arasında bağlı (paylaşılan) parametreler, süper çözünürlük, dizi modelleri ve diğer durumlar için özelleştirilmiş buluşsal yöntemler bulunur. Örneğin, Xiao ve ark. dikkatle tasarlanmış bir ilkletme yöntemi kullanarak mimari hileler olmadan 10000 katmanlı sinir ağlarını eğitme olasılığını gösterdi :cite:`Xiao.Bahri.Sohl-Dickstein.ea.2018`.
+
+Konu ilginizi çekiyorsa, bu modülün önerdiklerine derinlemesine dalmanızı, her buluşsal yöntemi öneren ve analiz eden çalışmaları okumanızı ve ardından konuyla ilgili en son yayınlarda gezinmenizi öneririz. Belki de zekice bir fikre rastlarsınız, hatta icat edersiniz ve derin öğrenme çerçevelerinde bir uygulamaya katkıda bulunursunuz.
 
 ## Özet
 
@@ -155,13 +170,14 @@ Yukarıdaki mantık, parametre ilklendirmesine yönelik modern yaklaşımların 
 * İlk gradyanların ne çok büyük ne de çok küçük olmasını sağlamak için ilkleme buluşsal yöntemlerine ihtiyaç vardır.
 * ReLU etkinleştirme fonksiyonları, kaybolan gradyan problemini azaltır. Bu yakınsamayı hızlandırabilir.
 * Rastgele ilkleme, optimizasyondan önce bakışımın bozulmasını sağlamak için anahtardır.
+* Xavier ilkletme, her katman için herhangi bir çıktının varyansının girdi sayısından etkilenmediğini ve herhangi bir gradyanın varyansının çıktı sayısından etkilenmediğini öne sürer.
 
 ## Alıştırmalar
 
-1. Bir sinir ağının, çok katmanlı bir algılayıcı katmanlarında devrişim bakışımının yanı sıra kırılma gerektiren bakışım sergileyebileceği başka durumlar tasarlayabilir misiniz?
+1. Bir sinir ağının, bir MLP'nin, katmanlarında devrişim bakışımının yanısıra kırılma gerektiren bakışım sergileyebileceği başka durumlar tasarlayabilir misiniz?
 1. Doğrusal regresyonda veya softmaks regresyonunda tüm ağırlık parametrelerini aynı değere ilkleyebilir miyiz?
 1. İki matrisin çarpımının özdeğerlerindeki analitik sınırlara bakınız. Bu, gradyanların iyi şartlandırılmasının sağlanması konusunda size ne anlatıyor?
-1. Bazı terimlerin ıraksadığını biliyorsak, bunu sonradan düzeltebilir miyiz? İlham almak için LARS makalesine bakınız :cite:`You.Gitman.Ginsburg.2017`.
+1. Bazı terimlerin ıraksadığını biliyorsak, bunu sonradan düzeltebilir miyiz? İlham almak için katmanlı uyarlanabilir oran ölçekleme makalesine bakınız :cite:`You.Gitman.Ginsburg.2017`.
 
 
 :begin_tab:`mxnet`
