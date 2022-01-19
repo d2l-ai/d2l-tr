@@ -1,4 +1,4 @@
-# Özel Kesim Katmanlar
+# Özelleştirilmiş Katmanlar
 
 Derin öğrenmenin başarısının ardındaki faktörlerden biri, çok çeşitli görevlere uygun mimariler tasarlamak için yaratıcı yollarla oluşturulabilen çok çeşitli katmanların mevcut olmasıdır. Örneğin, araştırmacılar özellikle imgelerle baş etmek, metin, dizili veriler üzerinde döngü yapmak ve dinamik programlama yapmak için katmanlar icat ettiler. Er ya da geç, derin öğrenme çerçevesinde henüz var olmayan bir katmanla karşılaşacaksınız (veya onu icat edeceksiniz). Özel bir katman oluşturmanız gerekebilir. Bu bölümde size bunu nasıl yapacağınızı gösteriyoruz.
 
