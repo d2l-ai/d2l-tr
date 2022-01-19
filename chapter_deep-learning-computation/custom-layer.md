@@ -1,13 +1,13 @@
-# Özel Kesim Katmanlar
+# Özelleştirilmiş Katmanlar
 
-Derin öğrenmenin başarısının ardındaki faktörlerden biri, çok çeşitli görevlere uygun mimariler tasarlamak için yaratıcı yollarla oluşturulabilen çok çeşitli katmanların mevcut olmasıdır. Örneğin, araştırmacılar özellikle imgelerle baş etmek, metin, dizili veriler üzerinde döngü yapmak, dinamik programlama yapmak vb. için katmanlar icat ettiler. Er ya da geç, çerçevede henüz var olmayan bir katmanla karşılaşacaksınız (veya onu icat edeceksiniz). Özel bir katman oluşturmanız gerekebilir. Bu bölümde size bunu nasıl yapacağınızı gösteriyoruz.
+Derin öğrenmenin başarısının ardındaki faktörlerden biri, çok çeşitli görevlere uygun mimariler tasarlamak için yaratıcı yollarla oluşturulabilen çok çeşitli katmanların mevcut olmasıdır. Örneğin, araştırmacılar özellikle imgelerle baş etmek, metin, dizili veriler üzerinde döngü yapmak ve dinamik programlama yapmak için katmanlar icat ettiler. Er ya da geç, derin öğrenme çerçevesinde henüz var olmayan bir katmanla karşılaşacaksınız (veya onu icat edeceksiniz). Özel bir katman oluşturmanız gerekebilir. Bu bölümde size bunu nasıl yapacağınızı gösteriyoruz.
 
-## Paramatresiz Katmanlar
+## (**Paramatresiz Katmanlar**)
 
-Başlangıç olarak, kendi parametresi olmayan özel kesim bir katman oluşturalım. Bloğu tanıttığımızı bölümü hatırlarsanız, :numref:`sec_model_construction`, burası size tanıdık gelecektir. Aşağıdaki `CenteredLayer` sınıfı, girdiden ortalamayı çıkarır. Bunu inşa etmek için, temel katman sınıfından kalıtımla üretmemiz ve ileriye doğru yöntemini uygulamamız gerekir.
+Başlangıç olarak, kendi parametresi olmayan özelleştirilmiş bir katman oluşturalım. Bloğu tanıttığımızı bölümü hatırlarsanız, :numref:`sec_model_construction`, burası size tanıdık gelecektir. Aşağıdaki `CenteredLayer` sınıfı, girdiden ortalamayı çıkarır. Bunu inşa etmek için, temel katman sınıfından kalıtımla üretmemiz ve ileri yayma işlevini uygulamamız gerekir.
 
 ```{.python .input}
-from mxnet import gluon, np, npx
+from mxnet import np, npx
 from mxnet.gluon import nn
 npx.set_np()
 
@@ -15,21 +15,22 @@ class CenteredLayer(nn.Block):
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
 
-    def forward(self, x):
-        return x - x.mean()
+    def forward(self, X):
+        return X - X.mean()
 ```
 
 ```{.python .input}
 #@tab pytorch
 import torch
 from torch import nn
+from torch.nn import functional as F
 
 class CenteredLayer(nn.Module):
     def __init__(self):
         super().__init__()
 
-    def forward(self, x):
-        return x - x.mean()
+    def forward(self, X):
+        return X - X.mean()
 ```
 
 ```{.python .input}
@@ -63,7 +64,7 @@ layer = CenteredLayer()
 layer(tf.constant([1, 2, 3, 4, 5]))
 ```
 
-Artık katmanımızı daha karmaşık modeller oluşturmada bir bileşen olarak kullanabiliriz.
+[**Artık katmanımızı daha karmaşık modeller oluşturmada bir bileşen olarak kullanabiliriz.**]
 
 ```{.python .input}
 net = nn.Sequential()
@@ -81,30 +82,30 @@ net = nn.Sequential(nn.Linear(8, 128), CenteredLayer())
 net = tf.keras.Sequential([tf.keras.layers.Dense(128), CenteredLayer()])
 ```
 
-Ekstra bir makulluk kontrolü olarak, ağa rastgele veri gönderebilir ve ortalamanın gerçekte 0 olup olmadığına bakabiliriz. Kayan virgüllü sayılarla uğraştığımız için, nicemlemeden dolayı *çok* küçük sıfır olmayan bir sayı görebiliriz.
+Ekstra bir makulluk kontrolü olarak, ağa rastgele veri gönderebilir ve ortalamanın gerçekte 0 olup olmadığına bakabiliriz. Kayan virgüllü sayılarla uğraştığımız için, nicemlemeden dolayı çok küçük sıfır olmayan bir sayı görebiliriz.
 
 ```{.python .input}
-y = net(np.random.uniform(size=(4, 8)))
-y.mean()
+Y = net(np.random.uniform(size=(4, 8)))
+Y.mean()
 ```
 
 ```{.python .input}
 #@tab pytorch
-y = net(torch.rand(4, 8))
-y.mean()
+Y = net(torch.rand(4, 8))
+Y.mean()
 ```
 
 ```{.python .input}
 #@tab tensorflow
-y = net(tf.random.uniform((4, 8)))
-tf.reduce_mean(y)
+Y = net(tf.random.uniform((4, 8)))
+tf.reduce_mean(Y)
 ```
 
-## Parametreli Katmanlar
+## [**Parametreli Katmanlar**]
 
-Artık basit katmanları nasıl tanımlayacağımızı bildiğimize göre, eğitim yoluyla ayarlanabilen parametrelerle katmanları tanımlamaya geçelim. Bazı temel idari işlevleri sağlayan parametreler oluşturmak için yerleşik yöntemi kullanabiliriz. Özellikle erişim, ilkleme, paylaşma, modeli kaydetme ve yükleme parametrelerini yönetirler. Bu şekilde, diğer faydaların yanı sıra, her özel katman için özel serileştirme (serialization) rutinleri yazmamız gerekmeyecek.
+Artık basit katmanları nasıl tanımlayacağımızı bildiğimize göre, eğitim yoluyla ayarlanabilen parametrelerle katmanları tanımlamaya geçelim. Bazı temel idari işlevleri sağlayan parametreler oluşturmak için yerleşik işlevleri kullanabiliriz. Özellikle erişim, ilkleme, paylaşma, modeli kaydetme ve yükleme parametrelerini yönetirler. Bu şekilde, diğer faydaların yanı sıra, her özel katman için özel serileştirme (serialization) rutinleri yazmamız gerekmeyecek.
 
-Şimdi tam bağlı katman sürümümüzü uygulayalım. Bu katmanın iki parametreye ihtiyaç duyduğunu hatırlayınız, biri ağırlığı ve diğeri ek girdiyi temsil etmek için. Bu uygulamada, varsayılan olarak ReLU etkinleştirmesini kullanıyoruz. Bu katman, sırasıyla girdilerin ve çıktıların sayısını gösteren `in_units` ve `units` bağımsız değişkenlerinin girilmesini gerektirir.
+Şimdi tam bağlı katman sürümümüzü uygulayalım. Bu katmanın iki parametreye ihtiyaç duyduğunu hatırlayınız, biri ağırlığı ve diğeri ek girdiyi temsil etmek için. Bu uygulamada, varsayılan olarak ReLU etkinleştirmesini kullanıyoruz. Bu katman, sırasıyla girdilerin ve çıktıların sayısını gösteren `in_units` ve `units` girdi argümanlarının girilmesini gerektirir.
 
 ```{.python .input}
 class MyDense(nn.Block):
@@ -126,8 +127,9 @@ class MyLinear(nn.Module):
         super().__init__()
         self.weight = nn.Parameter(torch.randn(in_units, units))
         self.bias = nn.Parameter(torch.randn(units,))
-    def forward(self, x):
-        return torch.matmul(x, self.weight.data) + self.bias.data
+    def forward(self, X):
+        linear = torch.matmul(X, self.weight.data) + self.bias.data
+        return F.relu(linear)
 ```
 
 ```{.python .input}
@@ -137,19 +139,26 @@ class MyDense(tf.keras.Model):
         super().__init__()
         self.units = units
 
-    def build(self, x_shape):
+    def build(self, X_shape):
         self.weight = self.add_weight(name='weight',
-            shape=[x_shape[-1], self.units],
+            shape=[X_shape[-1], self.units],
             initializer=tf.random_normal_initializer())
         self.bias = self.add_weight(
             name='bias', shape=[self.units],
             initializer=tf.zeros_initializer())
 
-    def call(self, x):
-        return tf.matmul(x, self.weight) + self.bias
+    def call(self, X):
+        linear = tf.matmul(X, self.weight) + self.bias
+        return tf.nn.relu(linear)
 ```
 
+:begin_tab:`mxnet, tensorflow`
 Daha sonra, `MyDense` sınıfını ilkliyoruz ve model parametrelerine erişiyoruz.
+:end_tab:
+
+:begin_tab:`pytorch`
+Daha sonra, `MyLinear` sınıfını ilkliyoruz ve model parametrelerine erişiyoruz.
+:end_tab:
 
 ```{.python .input}
 dense = MyDense(units=3, in_units=5)
@@ -158,8 +167,8 @@ dense.params
 
 ```{.python .input}
 #@tab pytorch
-dense = MyLinear(5, 3)
-dense.weight
+linear = MyLinear(5, 3)
+linear.weight
 ```
 
 ```{.python .input}
@@ -169,7 +178,7 @@ dense(tf.random.uniform((2, 5)))
 dense.get_weights()
 ```
 
-Özel kesim katmanları kullanarak doğrudan ileriye doğru hesaplamalar yapabiliriz.
+[**Özel kesim katmanları kullanarak doğrudan ileri yayma hesaplamaları yapabiliriz.**]
 
 ```{.python .input}
 dense.initialize()
@@ -178,7 +187,7 @@ dense(np.random.uniform(size=(2, 5)))
 
 ```{.python .input}
 #@tab pytorch
-dense(torch.randn(2, 5))
+linear(torch.rand(2, 5))
 ```
 
 ```{.python .input}
@@ -186,7 +195,7 @@ dense(torch.randn(2, 5))
 dense(tf.random.uniform((2, 5)))
 ```
 
-Özel kesim katmanlar kullanarak da modeller oluşturabiliriz. Bir kere ona sahip olduğumuzda, onu tıpkı yerleşik yoğun katman gibi kullanabiliriz.
+(**Özelleştirilmiş kesim katmanlar kullanarak da modeller oluşturabiliriz.**) Bir kere ona sahip olduğumuzda, onu tıpkı yerleşik tam bağlı katman gibi kullanabiliriz.
 
 ```{.python .input}
 net = nn.Sequential()
@@ -198,8 +207,8 @@ net(np.random.uniform(size=(2, 64)))
 
 ```{.python .input}
 #@tab pytorch
-net = nn.Sequential(MyLinear(64, 8), nn.ReLU(), MyLinear(8, 1))
-net(torch.randn(2, 64))
+net = nn.Sequential(MyLinear(64, 8), MyLinear(8, 1))
+net(torch.rand(2, 64))
 ```
 
 ```{.python .input}
@@ -212,12 +221,11 @@ net(tf.random.uniform((2, 64)))
 
 * Temel katman sınıfı üzerinden özel kesim katmanlar tasarlayabiliriz. Bu, kütüphanedeki mevcut katmanlardan farklı davranan yeni esnek katmanlar tanımlamamıza olanak tanır.
 * Tanımlandıktan sonra, özel kesim katmanlar keyfi bağlamlarda ve mimarilerde çağrılabilir.
-* Katmanlar, yerleşik yöntemler aracılığıyla yaratılabilen yerel parametrelere sahip olabilirler.
+* Katmanlar, yerleşik işlevler aracılığıyla yaratılabilen yerel parametrelere sahip olabilirler.
 
 
 ## Alıştırmalar
 
-1. Verinin afin dönüşümünü öğrenen bir katman tasarlayınız.
 1. Bir girdi alan ve bir tensör indirgemesi hesaplayan bir katman tasarlayınız, yani $y_k = \sum_{i, j} W_{ijk} x_i x_j$ döndürsün.
 1. Verilerin Fourier katsayılarının ilk baştaki yarısını döndüren bir katman tasarlayınız.
 
