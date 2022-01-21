@@ -179,7 +179,7 @@ pipeline; veri/komut işleme hattı
 
 placeholder; göstermelik değişken
 
-pooling; biriktirme
+pooling; ortaklama
 
 posterior; sonsal olasılık
 

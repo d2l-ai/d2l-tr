@@ -16,7 +16,7 @@ Ancak, $c_i>1$ olduğunda, *her* girdi kanalı için $k_h\times k_w$ şeklindeki
 ![2 girdi kanalı ile çapraz korelasyon hesaplaması.](../img/conv-multi-in.svg)
 :label:`fig_conv_multi_in`
 
-Burada neler olduğunu gerçekten anladığımızdan emin olmak için birden fazla girdi kanalı ile çapraz korelasyon işlemlerini kendimiz uygulayabiliriz. Yaptığımız tek şey kanal başına bir çapraz korelasyon işlemi gerçekleştirmek ve ardından sonuçları toplamak olduğuna dikkat edin.
+Burada neler olduğunu gerçekten anladığımızdan emin olmak için (**birden fazla girdi kanalı ile çapraz korelasyon işlemlerini kendimiz uygulayabiliriz.**) Yaptığımız tek şeyin kanal başına bir çapraz korelasyon işlemi gerçekleştirmek ve ardından sonuçları toplamak olduğuna dikkat edin.
 
 ```{.python .input}
 from d2l import mxnet as d2l
@@ -33,8 +33,8 @@ import torch
 ```{.python .input}
 #@tab mxnet, pytorch
 def corr2d_multi_in(X, K):
-    # First, iterate through the 0th dimension (channel dimension) of `X` and
-    # `K`. Then, add them together
+    # İlk olarak, `X` ve `K`'nin 0. boyutunu (kanal boyutu) yineleyin.
+    # Ardından, onları toplayın.
     return sum(d2l.corr2d(x, k) for x, k in zip(X, K))
 ```
 
@@ -44,12 +44,12 @@ from d2l import tensorflow as d2l
 import tensorflow as tf
 
 def corr2d_multi_in(X, K):
-    # First, iterate through the 0th dimension (channel dimension) of `X` and
-    # `K`. Then, add them together
+    # İlk olarak, `X` ve `K`'nin 0. boyutunu (kanal boyutu) yineleyin.
+    # Ardından, onları toplayın.
     return tf.reduce_sum([d2l.corr2d(x, k) for x, k in zip(X, K)], axis=0)
 ```
 
-Çapraz korelasyon işleminin çıktısını doğrulamak için :numref:`fig_conv_multi_in`'teki değerlere karşılık gelen `X` girdi tensörünü ve `K` çekirdek tensörünü inşa edebiliriz.
+Çapraz korelasyon (**işleminin çıktısını doğrulamak**) için :numref:`fig_conv_multi_in`'teki değerlere karşılık gelen `X` girdi tensörünü ve `K` çekirdek tensörünü inşa edebiliriz.
 
 ```{.python .input}
 #@tab all
@@ -61,19 +61,20 @@ corr2d_multi_in(X, K)
 ```
 
 ## Çoklu Çıktı Kanalları
+:label:`subsec_multi-output-channels`
 
 Girdi kanallarının sayısı ne olursa olsun, şimdiye kadar hep elimizde bir çıktı kanalı kaldı. Bununla birlikte, :numref:`subsec_why-conv-channels`'te tartıştığımız gibi, her katmanda birden fazla kanalın olması gerekli olduğu ortaya çıkıyor. En popüler sinir ağı mimarilerinde, sinir ağında daha yükseğe çıktıkça kanal boyutunu artırıyoruz, tipik olarak uzamsal çözünürlüğü daha büyük bir *kanal derinliği* için takas ederek altörnekleme yapıyoruz. Sezgisel olarak, her kanalı bazı farklı öznitelik kümesine yanıt veriyor gibi düşünebilirsiniz. Gerçeklik, bu sezginin en saf yorumlarından biraz daha karmaşıktır, çünkü temsiller bağımsız olarak öğrenilmemiştir, ancak ortaklaşa yararlı olmak için eniyilenmişlerdir. Bu nedenle, tek bir kanalın bir kenar dedektörünü öğrenmesi değil, kanal uzayındaki bazı yönlerin kenarları algılamaya karşılık gelmesi olabilir.
 
-$c_i$ ve $c_o$ ile sırasıyla girdi ve çıktı kanallarının sayısını belirtsin ve $k_h$ ve $k_w$'in çekirdeğin yüksekliği ve genişliği olsun. Birden fazla kanal içeren bir çıktı elde etmek amacıyla, *her* çıktı kanalı için $c_i\times k_h\times k_w$ şeklinde bir çekirdek tensör oluşturabiliriz. Onları çıktı kanalı boyutunda birleştiririz, böylece evrişim çekirdeğinin şekli $c_o\times c_i\times k_h\times k_w$ olur. Çapraz korelasyon işlemlerinde, her çıktı kanalındaki sonuç, çıktı kanalına karşılık gelen evrişim çekirdeğinden hesaplanır ve girdi tensöründeki tüm kanallardan girdi alır.
+$c_i$ ile $c_o$ sırasıyla girdi ve çıktı kanallarının sayısını belirtsin ve $k_h$ ile $k_w$ çekirdeğin yüksekliği ve genişliği olsun. Birden fazla kanal içeren bir çıktı elde etmek amacıyla, *her* çıktı kanalı için $c_i\times k_h\times k_w$ şeklinde bir çekirdek tensör oluşturabiliriz. Onları çıktı kanalı boyutunda birleştiririz, böylece evrişim çekirdeğinin şekli $c_o\times c_i\times k_h\times k_w$ olur. Çapraz korelasyon işlemlerinde, her çıktı kanalındaki sonuç, çıktı kanalına karşılık gelen evrişim çekirdeğinden hesaplanır ve girdi tensöründeki tüm kanallardan girdi alır.
 
-Aşağıda gösterildiği gibi birden fazla kanalın çıktısını hesaplamak için bir çapraz korelasyon fonksiyonu uyguluyoruz.
+Aşağıda gösterildiği gibi [**birden fazla kanalın çıktısını hesaplamak**] için bir çapraz korelasyon fonksiyonu uyguluyoruz.
 
 ```{.python .input}
 #@tab all
 def corr2d_multi_in_out(X, K):
-    # Iterate through the 0th dimension of `K`, and each time, perform
-    # cross-correlation operations with input `X`. All of the results are
-    # stacked together
+    # `K`'nın 0. boyutunu yineleyin ve her seferinde `X` 
+    # girdisiyle çapraz korelasyon işlemleri gerçekleştirin. 
+    # Tüm sonuçlar birlikte istiflenir.
     return d2l.stack([corr2d_multi_in(X, k) for k in K], 0)
 ```
 
@@ -94,7 +95,7 @@ corr2d_multi_in_out(X, K)
 
 ## $1\times 1$ Evrişimli Katman
 
-İlk başta, bir $1 \times 1$ evrişimi, yani $k_h = k_w = 1$, çok mantıklı görünmüyor. Sonuçta, bir evrişim bitişik pikselleri ilişkilendirir. Bir $1 \times 1$ evrişimi besbelli öyle yapmıyor. Bununla birlikte, bazen karmaşık derin ağların tasarımlarına dahil olan popüler işlemlerdir. Aslında ne yaptığını biraz ayrıntılı olarak görelim.
+İlk başta, bir [**$1 \times 1$ evrişimi**], yani $k_h = k_w = 1$, çok mantıklı görünmüyor. Sonuçta, bir evrişim bitişik pikselleri ilişkilendirir. Bir $1 \times 1$ evrişimi besbelli öyle yapmıyor. Bununla birlikte, bazen karmaşık derin ağların tasarımlarına dahil olan popüler işlemlerdir. Aslında ne yaptığını biraz ayrıntılı olarak görelim.
 
 En küçük pencere kullanıldığında, $1\times 1$ evrişim, daha büyük evrişimli katmanların yükseklik ve genişlik boyutlarındaki bitişik elemanlar arasındaki etkileşimlerden oluşan desenleri tanıma yeteneğini kaybeder. $1\times 1$ evrişiminin tek hesaplaması kanal boyutunda gerçekleşir.
 
@@ -112,7 +113,8 @@ def corr2d_multi_in_out_1x1(X, K):
     c_o = K.shape[0]
     X = d2l.reshape(X, (c_i, h * w))
     K = d2l.reshape(K, (c_o, c_i))
-    Y = d2l.matmul(K, X)  # Matrix multiplication in the fully-connected layer
+    # Tam bağlı katmanda matris çarpımı
+    Y = d2l.matmul(K, X)
     return d2l.reshape(Y, (c_o, h, w))
 ```
 
