@@ -5,7 +5,7 @@ Giderek daha derin ağlar tasarlarken, katman eklemenin ağın karmaşıklığı
 
 ## Fonksiyon Sınıfları
 
-Belirli bir ağ mimarisinin (öğrenme hızları ve diğer hiperparametre ayarları ile birlikte) ulaşabileceği işlevlerin sınıfı olan $\mathcal{F}$'i düşünün. Yani, $f \in \mathcal{F}$'un tümü için uygun bir veri kümesi üzerinde eğitim yoluyla elde edilebilecek bazı parametreler (örneğin, ağırlıklar ve ek girdiler) vardır. $f^*$'in gerçekten bulmak istediğimiz “gerçek” fonksiyon olduğunu varsayalım. Eğer $\mathcal{F}$'te ise, iyi durumdayız ancak tipik olarak bu kadar şanslı olmayacağız. Bunun yerine, $\mathcal{F}$ içinde en iyi aday olan herhangi bir $f^*_\mathcal{F}$ bulmaya çalışacağız. Örneğin, $\mathbf{X}$ öznitelikleri ve $\mathbf{y}$ etiketleri olan bir veri kümesi göz önüne alındığında, aşağıdaki eniyileme sorununu çözerek aday bulmayı deneyebiliriz:
+Belirli bir ağ mimarisinin (öğrenme hızları ve diğer hiper parametre ayarları ile birlikte) ulaşabileceği işlevlerin sınıfı olan $\mathcal{F}$'i düşünün. Yani, $f \in \mathcal{F}$'un tümü için uygun bir veri kümesi üzerinde eğitim yoluyla elde edilebilecek bazı parametreler (örneğin, ağırlıklar ve ek girdiler) vardır. $f^*$'in gerçekten bulmak istediğimiz “gerçek” fonksiyon olduğunu varsayalım. Eğer $\mathcal{F}$'te ise, iyi durumdayız ancak tipik olarak bu kadar şanslı olmayacağız. Bunun yerine, $\mathcal{F}$ içinde en iyi aday olan herhangi bir $f^*_\mathcal{F}$ bulmaya çalışacağız. Örneğin, $\mathbf{X}$ öznitelikleri ve $\mathbf{y}$ etiketleri olan bir veri kümesi göz önüne alındığında, aşağıdaki eniyileme sorununu çözerek aday bulmayı deneyebiliriz:
 
 $$f^*_\mathcal{F} \stackrel{\mathrm{def}}{=} \mathop{\mathrm{argmin}}_f L(\mathbf{X}, \mathbf{y}, f) \text{ subject to } f \in \mathcal{F}.$$
 
@@ -16,9 +16,9 @@ Sadece farklı ve daha güçlü bir mimari tasarlarsak $\mathcal{F}'$ daha iyi b
 
 Böylece, daha büyük fonksiyon sınıfları daha küçük olanları içeriyorsa, onları artırmanın ağın açıklayıcı gücünü kesinlikle arttırdığını garanti ederiz. Derin sinir ağları için, yeni eklenen katmanı bir birim fonksiyonu $f(\mathbf{x}) = \mathbf{x}$ olarak eğitebilirsek, yeni model orijinal model kadar etkili olacaktır. Yeni model, eğitim veri kümesine uyacak şekilde daha iyi bir çözüm elde edebileceğinden, eklenen katman eğitim hatalarını azaltmayı kolaylaştırabilir.
 
-Bu çok derin bilgisayarla görme modelleri üzerinde çalışırken He ve diğerlerinin :cite:`He.Zhang.Ren.ea.2016` üstünde düşündüğü sorudur. Önerilen *artık ağ*ın (*ResNet*) özünde, her ek katmanın kendi elemanlarıdan biri olarak birim işlevini daha kolaylıkla içermesi gerektiği fikri vardır. Bu fikirler oldukça derindi, fakat şaşırtıcı derecede basit bir çözüme ulaştılar; *artık blok*. ResNet, 2015 yılında ImageNet Büyük Ölçekli Görsel Tanıma Yarışmasını kazandı. Tasarımın derin sinir ağlarının nasıl kurulacağı üzerinde derin bir etkisi oldu.
+Bu çok derin bilgisayarla görme modelleri üzerinde çalışırken He ve diğerlerinin :cite:`He.Zhang.Ren.ea.2016` üstünde düşündüğü sorudur. Önerilen *artık ağ*ın (*ResNet*) özünde, her ek katmanın kendi elemanlarından biri olarak birim işlevini daha kolaylıkla içermesi gerektiği fikri vardır. Bu fikirler oldukça derindi, fakat şaşırtıcı derecede basit bir çözüme ulaştılar; *artık blok*. ResNet, 2015 yılında ImageNet Büyük Ölçekli Görsel Tanıma Yarışmasını kazandı. Tasarımın derin sinir ağlarının nasıl kurulacağı üzerinde derin bir etkisi oldu.
 
-## Artık Blokları
+## (**Artık Blokları**)
 
 :numref:`fig_residual_block`'te gösterildiği gibi, bir sinir ağının yerel bir bölümüne odaklanalım. Girdiyi $\mathbf{x}$ ile belirtin. Öğrenerek elde etmek istediğimiz altta yatan eşlemenin üstteki etkinleştirme işlevine girdi olarak kullanılacak $f(\mathbf{x})$ olduğunu varsayıyoruz. :numref:`fig_residual_block`'ün solunda, kesik çizgili kutudaki kısım doğrudan $f(\mathbf{x})$ eşlemesini öğrenmelidir. Sağda, kesik çizgili kutudaki bölümün, artık bloğun adını belirleyen *artık eşleme* $f(\mathbf{x}) - \mathbf{x}$'i öğrenmesi gerekir. Birim eşlemesi $f(\mathbf{x}) = \mathbf{x}$ istenen altta yatan eşleme ise, artık eşlemeyi öğrenmek daha kolaydır: Sadece kesik çizgili kutudaki üst ağırlık katmanının ağırlıklarını ve ek girdilerini (örn. tam bağlı katman ve evrişimli katman) sıfıra itmemiz gerekir. :numref:`fig_residual_block`'teki sağdaki şekil, ResNet'in *artık bloğu*nu göstermektedir; burada $\mathbf{x}$ katman girdisini toplama işlemine taşıyan düz çizgiye *artık bağlantı* (veya *kısayol bağlantısı*) denir. Artık bloklarla girdiler, katmanlar arasında kalan bağlantılar üzerinden daha hızlı yayılabilir.
 
@@ -79,7 +79,6 @@ class Residual(nn.Module):  #@save
             self.conv3 = None
         self.bn1 = nn.BatchNorm2d(num_channels)
         self.bn2 = nn.BatchNorm2d(num_channels)
-        self.relu = nn.ReLU(inplace=True)
 
     def forward(self, X):
         Y = F.relu(self.bn1(self.conv1(X)))
@@ -124,7 +123,7 @@ Bu kod iki tür ağ oluşturur: Biri, `use_1x1conv=False`'te ReLU doğrusal olma
 ![$1 \times 1$ evrişim içeren ve içermeyen ResNet bloğu.](../img/resnet-block.svg)
 :label:`fig_resnet_block`
 
-Şimdi girdi ve çıktının aynı şekle sahip olduğu bir duruma bakalım.
+Şimdi [**girdi ve çıktının aynı şekle sahip olduğu bir duruma**] bakalım.
 
 ```{.python .input}
 blk = Residual(3)
@@ -149,7 +148,7 @@ Y = blk(X)
 Y.shape
 ```
 
-Ayrıca çıktı kanallarının sayısını artırırken çıktı yüksekliğini ve genişliğini yarıya indirme seçeneğine de sahibiz.
+Ayrıca [**çıktı kanallarının sayısını artırırken çıktı yüksekliğini ve genişliğini yarıya indirme seçeneğine**] de sahibiz.
 
 ```{.python .input}
 blk = Residual(6, use_1x1conv=True, strides=2)
@@ -169,9 +168,9 @@ blk = Residual(6, use_1x1conv=True, strides=2)
 blk(X).shape
 ```
 
-## ResNet Modeli
+## [**ResNet Modeli**]
 
-ResNet'in ilk iki katmanı, daha önce tarif ettiğimiz GoogLeNet'inkiyle aynıdır: 64 çıktı kanallı ve 2'lik bir uzun adımlı $7\times 7$ evrişimli katmanını 2'lik bir uzun adımlı $3\times 3$ maksimum biriktirme katmanı takip eder. Fark, ResNet'teki her evrişimli katmandan sonra eklenen toplu normalleştirme katmanıdır.
+ResNet'in ilk iki katmanı, daha önce tarif ettiğimiz GoogLeNet'inkiyle aynıdır: 64 çıktı kanallı ve 2'lik bir uzun adımlı $7\times 7$ evrişimli katmanını 2'lik bir uzun adımlı $3\times 3$ maksimum ortaklama katmanı takip eder. Fark, ResNet'teki her evrişimli katmandan sonra eklenen toplu normalleştirme katmanıdır.
 
 ```{.python .input}
 net = nn.Sequential()
@@ -196,7 +195,7 @@ b1 = tf.keras.models.Sequential([
     tf.keras.layers.MaxPool2D(pool_size=3, strides=2, padding='same')])
 ```
 
-GoogLeNet, başlangıç bloklarından oluşan dört modül kullanır. Bununla birlikte, ResNet, her biri aynı sayıda çıktı kanalına sahip içinde birkaç artık blok kullanan artık bloklardan oluşan dört modül kullanır. İlk modüldeki kanal sayısı, girdi kanallarının sayısı ile aynıdır. 2'lik uzun adımlı maksimum bir biriktirme katmanı kullanıldığından, yüksekliği ve genişliği azaltmak gerekli değildir. Sonraki modüllerin her biri için ilk artık blokta, kanal sayısı önceki modülünkine kıyasla iki katına çıkarılır ve yükseklik ve genişlik yarıya indirilir.
+GoogLeNet, başlangıç bloklarından oluşan dört modül kullanır. Bununla birlikte, ResNet, her biri aynı sayıda çıktı kanalına sahip içinde birkaç artık blok kullanan artık bloklardan oluşan dört modül kullanır. İlk modüldeki kanal sayısı, girdi kanallarının sayısı ile aynıdır. 2'lik uzun adımlı maksimum bir ortaklama katmanı kullanıldığından, yüksekliği ve genişliği azaltmak gerekli değildir. Sonraki modüllerin her biri için ilk artık blokta, kanal sayısı önceki modülünkine kıyasla iki katına çıkarılır ve yükseklik ve genişlik yarıya indirilir.
 
 Şimdi, bu modülü uyguluyoruz. İlk modülde özel işlemenin gerçekleştirildiğine dikkat edin.
 
@@ -270,7 +269,7 @@ b4 = ResnetBlock(256, 2)
 b5 = ResnetBlock(512, 2)
 ```
 
-Son olarak, tıpkı GoogLeNet gibi global bir ortalama biriktirme katmanı ekliyoruz ve ardına tam bağlı çıktı katmanı koyuyoruz.
+Son olarak, tıpkı GoogLeNet gibi global bir ortalama ortaklama katmanı ekliyoruz ve ardına tam bağlı çıktı katmanı koyuyoruz.
 
 ```{.python .input}
 net.add(nn.GlobalAvgPool2D(), nn.Dense(10))
@@ -312,7 +311,7 @@ Her modülde 4 evrişimli katman vardır ($1\times 1$ evrişimli katman hariç).
 ![The ResNet-18 architecture.](../img/resnet18.svg)
 :label:`fig_resnet18`
 
-ResNet'i eğitmeden önce, girdi şeklinin ResNet'teki farklı modüllerde nasıl değiştiğini gözlemleyelim. Önceki tüm mimarilerinde olduğu gibi, çözünürlük azalırken, kanal sayısı küresel ortalama biriktirme katmanının tüm öznitelikleri topladığı noktaya kadar artar.
+ResNet'i eğitmeden önce, [**girdi şeklinin ResNet'teki farklı modüllerde nasıl değiştiğini gözlemleyelim.**] Önceki tüm mimarilerinde olduğu gibi, çözünürlük azalırken, kanal sayısı küresel ortalama ortaklama katmanının tüm öznitelikleri topladığı noktaya kadar artar.
 
 ```{.python .input}
 X = np.random.uniform(size=(1, 1, 224, 224))
@@ -338,9 +337,9 @@ for layer in net().layers:
     print(layer.__class__.__name__,'output shape:\t', X.shape)
 ```
 
-## Eğitim
+## [**Eğitim**]
 
-ResNet'i moda-MNIST veri kümesi üzerinde eğitiyoruz, tıpkı öncekiler gibi.
+ResNet'i Fashion-MNIST veri kümesi üzerinde eğitiyoruz, tıpkı öncekiler gibi.
 
 ```{.python .input}
 #@tab all
@@ -351,10 +350,10 @@ d2l.train_ch6(net, train_iter, test_iter, num_epochs, lr, d2l.try_gpu())
 
 ## Özet
 
-* İç içe işlev sınıfları istenir. Derin sinir ağlarında bir birim fonksiyonu olarak ek bir katman öğrenmek (bu aşırı bir durum olsa da) kolaylaştırılmalıdır.
+* İç içe işlev sınıfları arzulanır. Derin sinir ağlarında bir birim fonksiyonu olarak ek bir katman öğrenmek (bu aşırı bir durum olsa da) kolaylaştırılmalıdır.
 * Artık eşleme, ağırlık katmanındaki parametreleri sıfıra iterek birim işlevini daha kolay öğrenebilir.
 * Artık blokları ile etkili bir derin sinir ağı eğitebiliriz. Girdiler, katmanlar arasındaki artık bağlantılar üzerinden daha hızlı yayılabilir.
-* ResNet, hem evrişimli hem de sıralı içerikli müteakip derin sinir ağlarının tasarımı üzerinde büyük bir etkiye sahip oldu.
+* ResNet, hem evrişimli hem de sıralı içerikli, müteakip derin sinir ağlarının tasarımı üzerinde büyük bir etkiye sahip oldu.
 
 ## Alıştırmalar
 

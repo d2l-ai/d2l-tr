@@ -9,20 +9,20 @@ Toplu normalleştirmeyi anlamak için, özellikle makine öğrenmesi modellerini
 
 İlk olarak, veri ön işleme ile ilgili seçimler genellikle nihai sonuçlarda muazzam bir fark yaratmaktadır. Ev fiyatlarını tahmin etmek için MLP'i uygulamamızı hatırlayın (:numref:`sec_kaggle_house`). Gerçek verilerle çalışırken ilk adımımız, girdi özniteliklerimizin her birinin sıfır ortalaması ve bir varyansı olması için standartlaştırmaktı. Sezgisel olarak, bu standartleştirme eniyileyicilerimizle uyumlu olur, çünkü parametreleri benzer ölçekte bir *önsel dağılıma* yerleştirir.
 
-İkincisi, tipik bir MLP veya CNN için, eğittiğimiz gibi, ara katmanlardaki değişkenler (örneğin, MLP'deki afin dönüşüm çıktıları), geniş çapta değişen büyüklüklere sahip değerler alabilir: Hem aynı katmandaki birimler arasında girdiden çıktıya katmanlar boyunca,  hem de zamanla model parametrelerine yapılan güncellemelerimiz nedeniyle. Toplu normalleştirmenin mucitleri, bu tür değişkenlerin dağılımındaki bu kaymanın ağın yakınsamasını engelleyebileceğini gayri resmi olarak önerdi. Sezgisel olarak, bir katmanın değişken değerleri başka bir katmandakilerin 100 katı kadarsa, bunun öğrenme oranlarında telafi edici ayarlamaları gerektirebileceğini varsayıyoruz.
+İkincisi, tipik bir MLP veya CNN için, eğittiğimiz gibi, ara katmanlardaki değişkenler (örneğin, MLP'deki afin dönüşüm çıktıları), geniş çapta değişen büyüklüklere sahip değerler alabilir: Model parametrelerinde hem girdiden çıktıya kadar olan katmanlar boyunca, hem de aynı katmandaki birimler arasında ve zaman içinde yaptığımız güncellemeler nedeniyle. Toplu normalleştirmenin mucitleri, bu tür değişkenlerin dağılımındaki bu kaymanın ağın yakınsamasını engelleyebileceğini gayri resmi olarak önerdi. Sezgisel olarak, bir katmanın değişken değerleri başka bir katmandakilerin 100 katı kadarsa, bunun öğrenme oranlarında telafi edici ayarlamaları gerektirebileceğini varsayıyoruz.
 
 Üçüncü olarak, daha derin ağlar karmaşıktır ve aşırı öğrenmeye yatkındır. Bu, düzenlileştirmenin daha kritik hale geldiği anlamına gelir.
 
 Toplu normalleştirme bireysel katmanlara uygulanır (isteğe bağlı olarak, hepsi için) ve şu şekilde çalışır: Her eğitim yinelemesinde, ilk olarak, ortalamalarını çıkararak ve standart sapmaları ile bölerek (toplu normalleştirme), ki her ikisi de mevcut minigrup istatistiklerinden tahmin edilir, girdileri normalleştiririz. Daha sonra, bir ölçek katsayısı ve bir ölçek ofseti (sabit kaydırma değeri) uyguluyoruz. Tam olarak, *toplu normalleştirme* adı *toplu* istatistiklerine dayanan bu *normalleştirme*den kaynaklanmaktadır.
 
-Boyut 1 olan minigruplarla toplu normalleştirmeyi uygulamaya çalışırsak, hiçbir şey öğrenemeyeceğimizi unutmayın. Bunun nedeni, ortalamayı çıkardıktan sonra, her gizli birimin 0 değerini alacak olmasıdır! Tahmin edebileceğiniz gibi, ki bu nedenle toplu normalleştirmeye koca bir bölümü ayırıyoruz, yeterince büyük minigruplarla, yaklaşım etkili ve istikrarlı olduğunu kanıtlıyor. Buradan alınması gereken esas, toplu normalleştirmeyi uygularken, grup boyutunun seçiminin toplu normalleştirmesiz durumda olduğundan daha önemli olabileceğidir.
+Boyutu 1 olan minigruplarla toplu normalleştirmeyi uygulamaya çalışırsak, hiçbir şey öğrenemeyeceğimizi unutmayın. Bunun nedeni, ortalamayı çıkardıktan sonra, her gizli birimin 0 değerini alacak olmasıdır! Tahmin edebileceğiniz gibi, ki bu nedenle toplu normalleştirmeye koca bir bölümü ayırıyoruz, yeterince büyük minigruplarla, yaklaşım etkili ve istikrarlı olduğunu kanıtlıyor. Buradan alınması gereken esas, toplu normalleştirmeyi uygularken, grup boyutunun seçiminin toplu normalleştirmesiz durumda olduğundan daha önemli olabileceğidir.
 
 Biçimsel olarak, bir minigrup olan $\mathcal{B}$'ye dahil olan $\mathbf {x} \in \mathcal {B}$, toplu normalleştirmeye ($\mathrm{BN}$) girdi olursa, toplu normalleştirme $\mathbf{x}$ aşağıdaki ifadeye dönüşür:
 
 $$\mathrm{BN}(\mathbf{x}) = \boldsymbol{\gamma} \odot \frac{\mathbf{x} - \hat{\boldsymbol{\mu}}_\mathcal{B}}{\hat{\boldsymbol{\sigma}}_\mathcal{B}} + \boldsymbol{\beta}.$$ 
 :eqlabel:`eq_batchnorm`
 
-:eqref:`eq_batchnorm`'te, $\hat{\boldsymbol{\mu}}_\mathcal{B}$ örneklem ortalaması ve $\hat{\boldsymbol{\sigma}}_\mathcal{B}$ minigrup $\mathcal{B}$'nın örneklem standart sapmasıdır. Standartlaştırma uygulandıktan sonra, ortaya çıkan minigrup sıfır ortalama ve birim varyansa sahiptir. Birim varyans seçimi (diğer bazı sihirli sayılara karşı) keyfi bir seçim olduğundan, genel olarak eleman-yönlü  *ölçek parametresi* $\boldsymbol{\gamma}$'yı ve *kayma parametresi*  $\boldsymbol{\beta}$'yı dahil ederiz ve onlar$\mathbf{x}$ ile aynı şekle sahiptirler. $\boldsymbol{\gamma}$ ve $\boldsymbol{\beta}$'in diğer model parametreleriyle birlikte öğrenilmesi gereken parametreler olduğunu unutmayın.
+:eqref:`eq_batchnorm`'te, $\hat{\boldsymbol{\mu}}_\mathcal{B}$ örneklem ortalaması ve $\hat{\boldsymbol{\sigma}}_\mathcal{B}$ minigrup $\mathcal{B}$'nın örneklem standart sapmasıdır. Standartlaştırma uygulandıktan sonra, ortaya çıkan minigrup sıfır ortalama ve birim varyansa sahiptir. Birim varyans seçimi (diğer bazı sihirli sayılara karşı) keyfi bir seçim olduğundan, genel olarak eleman-yönlü  *ölçek parametresi* $\boldsymbol{\gamma}$'yı ve *kayma parametresi*  $\boldsymbol{\beta}$'yı dahil ederiz ve onlar $\mathbf{x}$ ile aynı şekle sahiptirler. $\boldsymbol{\gamma}$ ve $\boldsymbol{\beta}$'in diğer model parametreleriyle birlikte öğrenilmesi gereken parametreler olduğunu unutmayın.
 
 Sonuç olarak, ara katmanlar için değişken büyüklükleri eğitim sırasında ayrılamaz, çünkü toplu normalleştirme bunları belirli bir ortalama ve boyuta ($\hat{\boldsymbol{\mu}}_\mathcal{B}$ ve ${\hat{\boldsymbol{\sigma}}_\mathcal{B}}$ üzerinden) aktif olarak ortalar ve yeniden ölçeklendirir. Uygulayıcının sezgi veya bilgeliğinin bir parçası, toplu normalleştirmenin daha saldırgan öğrenme oranlarına izin vermesi gibi görünmesidir.
 
@@ -61,7 +61,7 @@ Daha önce de belirttiğimiz gibi, toplu normalleştirme genellikle eğitim modu
 
 Genellikle, eğitimden sonra, değişken istatistiklerin kararlı tahminlerini hesaplamak ve daha sonra bunları tahmin zamanında sabitlemek için veri kümesinin tamamını kullanırız. Sonuç olarak, toplu normalleştirme, eğitim sırasında ve test zamanında farklı davranır. Hattan düşürmenin de bu özelliği sergilediğini hatırlayın.
 
-## Sıfırdan Uygulama
+## (**Sıfırdan Uygulama**)
 
 Aşağıda, tensörlerle sıfırdan bir toplu normalleştirme tabakası uyguluyoruz.
 
@@ -145,7 +145,7 @@ from d2l import tensorflow as d2l
 import tensorflow as tf
 
 def batch_norm(X, gamma, beta, moving_mean, moving_var, eps):
-    # Compute reciprocal of square root of the moving variance element-wise
+    # Compute reciprocal of square root of the moving variance elementwise
     inv = tf.cast(tf.math.rsqrt(moving_var + eps), X.dtype)
     # Scale and shift
     inv *= gamma
@@ -153,9 +153,9 @@ def batch_norm(X, gamma, beta, moving_mean, moving_var, eps):
     return Y
 ```
 
-Artık uygun bir `BatchNorm` katmanı oluşturabiliriz. Katmanımız `gamma` ölçeği ve `beta` kayması için uygun parametreleri koruyacaktır, bunların her ikisi de eğitim sırasında güncellenecektir. Ayrıca, katmanımız modelin tahmini sırasında sonraki kullanım için ortalamaların ve varyansların hareketli ortalamalarını koruyacaktır.
+[**Artık uygun bir `BatchNorm` katmanı oluşturabiliriz.**] Katmanımız `gamma` ölçeği ve `beta` kayması için uygun parametreleri koruyacaktır, bunların her ikisi de eğitim sırasında güncellenecektir. Ayrıca, katmanımız modelin tahmini sırasında sonraki kullanım için ortalamaların ve varyansların hareketli ortalamalarını koruyacaktır.
 
-Algoritmik ayrıntıları bir kenara bırakırsak, katmanın uygulanmasının altında yatan tasarım desenine dikkat edin. Tipik olarak, matematiği ayrı bir işlevde tanımlarız, varsayalım `batch_norm`. Daha sonra bu işlevselliği, verileri doğru cihazın bağlamına taşıma, gerekli değişkenleri tahsis etme ve ilkleme, hareketli ortalamaları takip etme (ortalama ve varyans için), vb. gibi çoğunlukla defter tutma konularını ele alan özel bir katmana kaynaştırıyoruz. Bu model, matematiğin basmakalıp koddan temiz bir şekilde ayrılmasını sağlar. Ayrıca, kolaylık sağlamak için burada girdi şeklini otomatik olarak çıkarma konusunda endişelenmediğimizi, bu nedenle özniteliklerin sayısını belirtmemiz gerektiğini unutmayın. Kaygılanmayın, derin öğrenme çerçevesindeki üst düzey toplu normalleştirme API'leri bunu bizim için halledecek; bunu daha sonra göreceğiz.
+Algoritmik ayrıntıları bir kenara bırakırsak, katmanın uygulanmasının altında yatan tasarım desenine dikkat edin. Tipik olarak, matematiği ayrı bir işlevde tanımlarız, varsayalım `batch_norm`. Daha sonra bu işlevselliği, verileri doğru cihazın bağlamına taşıma, gerekli değişkenleri tahsis etme ve ilkleme, hareketli ortalamaları takip etme (ortalama ve varyans için) vb. gibi çoğunlukla defter tutma konularını ele alan özel bir katmana kaynaştırıyoruz. Bu model, matematiğin basmakalıp koddan temiz bir şekilde ayrılmasını sağlar. Ayrıca, kolaylık sağlamak için burada girdi şeklini otomatik olarak çıkarma konusunda endişelenmediğimizi, bu nedenle özniteliklerin sayısını belirtmemiz gerektiğini unutmayın. Kaygılanmayın, derin öğrenme çerçevesindeki üst düzey toplu normalleştirme API'leri bunu bizim için halledecek; bunu daha sonra göreceğiz.
 
 ```{.python .input}
 class BatchNorm(nn.Block):
@@ -172,9 +172,9 @@ class BatchNorm(nn.Block):
         # initialized to 1 and 0, respectively
         self.gamma = self.params.get('gamma', shape=shape, init=init.One())
         self.beta = self.params.get('beta', shape=shape, init=init.Zero())
-        # The variables that are not model parameters are initialized to 0
+        # The variables that are not model parameters are initialized to 0 and 1
         self.moving_mean = np.zeros(shape)
-        self.moving_var = np.zeros(shape)
+        self.moving_var = np.ones(shape)
 
     def forward(self, X):
         # If `X` is not on the main memory, copy `moving_mean` and
@@ -205,9 +205,9 @@ class BatchNorm(nn.Module):
         # initialized to 1 and 0, respectively
         self.gamma = nn.Parameter(torch.ones(shape))
         self.beta = nn.Parameter(torch.zeros(shape))
-        # The variables that are not model parameters are initialized to 0
+        # The variables that are not model parameters are initialized to 0 and 1
         self.moving_mean = torch.zeros(shape)
-        self.moving_var = torch.zeros(shape)
+        self.moving_var = torch.ones(shape)
 
     def forward(self, X):
         # If `X` is not on the main memory, copy `moving_mean` and
@@ -241,7 +241,7 @@ class BatchNorm(tf.keras.layers.Layer):
             shape=weight_shape, initializer=tf.initializers.zeros,
             trainable=False)
         self.moving_variance = self.add_weight(name='moving_variance',
-            shape=weight_shape, initializer=tf.initializers.zeros,
+            shape=weight_shape, initializer=tf.initializers.ones,
             trainable=False)
         super(BatchNorm, self).build(input_shape)
 
@@ -273,20 +273,20 @@ class BatchNorm(tf.keras.layers.Layer):
         return output
 ```
 
-## LeNet'te Toplu Normalleştirme Uygulaması
+## [**LeNet'te Toplu Normalleştirme Uygulaması**]
 
-Bağlamda `BatchNorm`'in nasıl uygulanacağını görmek için, aşağıda geleneksel bir LeNet modeline (:numref:`sec_lenet`) uyguluyoruz. Toplu normalleştirmenin, evrişimli katmanlardan veya tam bağlı katmanlardan sonra ancak karşılık gelen etkinleştirme işlevlerinden önce uygulandığını hatırlayın.
+Bağlamda `BatchNorm`'un nasıl uygulanacağını görmek için, aşağıda geleneksel bir LeNet modeline (:numref:`sec_lenet`) uyguluyoruz. Toplu normalleştirmenin, evrişimli katmanlardan veya tam bağlı katmanlardan sonra ancak karşılık gelen etkinleştirme işlevlerinden önce uygulandığını hatırlayın.
 
 ```{.python .input}
 net = nn.Sequential()
 net.add(nn.Conv2D(6, kernel_size=5),
         BatchNorm(6, num_dims=4),
         nn.Activation('sigmoid'),
-        nn.MaxPool2D(pool_size=2, strides=2),
+        nn.AvgPool2D(pool_size=2, strides=2),
         nn.Conv2D(16, kernel_size=5),
         BatchNorm(16, num_dims=4),
         nn.Activation('sigmoid'),
-        nn.MaxPool2D(pool_size=2, strides=2),
+        nn.AvgPool2D(pool_size=2, strides=2),
         nn.Dense(120),
         BatchNorm(120, num_dims=2),
         nn.Activation('sigmoid'),
@@ -300,9 +300,9 @@ net.add(nn.Conv2D(6, kernel_size=5),
 #@tab pytorch
 net = nn.Sequential(
     nn.Conv2d(1, 6, kernel_size=5), BatchNorm(6, num_dims=4), nn.Sigmoid(),
-    nn.MaxPool2d(kernel_size=2, stride=2),
+    nn.AvgPool2d(kernel_size=2, stride=2),
     nn.Conv2d(6, 16, kernel_size=5), BatchNorm(16, num_dims=4), nn.Sigmoid(),
-    nn.MaxPool2d(kernel_size=2, stride=2), nn.Flatten(),
+    nn.AvgPool2d(kernel_size=2, stride=2), nn.Flatten(),
     nn.Linear(16*4*4, 120), BatchNorm(120, num_dims=2), nn.Sigmoid(),
     nn.Linear(120, 84), BatchNorm(84, num_dims=2), nn.Sigmoid(),
     nn.Linear(84, 10))
@@ -319,11 +319,11 @@ def net():
                                input_shape=(28, 28, 1)),
         BatchNorm(),
         tf.keras.layers.Activation('sigmoid'),
-        tf.keras.layers.MaxPool2D(pool_size=2, strides=2),
+        tf.keras.layers.AvgPool2D(pool_size=2, strides=2),
         tf.keras.layers.Conv2D(filters=16, kernel_size=5),
         BatchNorm(),
         tf.keras.layers.Activation('sigmoid'),
-        tf.keras.layers.MaxPool2D(pool_size=2, strides=2),
+        tf.keras.layers.AvgPool2D(pool_size=2, strides=2),
         tf.keras.layers.Flatten(),
         tf.keras.layers.Dense(120),
         BatchNorm(),
@@ -335,23 +335,23 @@ def net():
     )
 ```
 
-Daha önce olduğu gibi, ağımızı Moda-MNIST veri kümesi üzerinde eğiteceğiz. Bu kod, LeNet'i ilk eğittiğimizdeki ile neredeyse aynıdır (:numref:`sec_lenet`). Temel fark, önemli ölçüde daha büyük öğrenme oranıdır.
+Daha önce olduğu gibi, [**ağımızı Fashion-MNIST veri kümesi üzerinde eğiteceğiz**]. Bu kod, LeNet'i ilk eğittiğimizdeki ile neredeyse aynıdır (:numref:`sec_lenet`). Temel fark, daha büyük öğrenme oranıdır.
 
 ```{.python .input}
 #@tab mxnet, pytorch
 lr, num_epochs, batch_size = 1.0, 10, 256
 train_iter, test_iter = d2l.load_data_fashion_mnist(batch_size)
-d2l.train_ch6(net, train_iter, test_iter, num_epochs, lr)
+d2l.train_ch6(net, train_iter, test_iter, num_epochs, lr, d2l.try_gpu())
 ```
 
 ```{.python .input}
 #@tab tensorflow
 lr, num_epochs, batch_size = 1.0, 10, 256
 train_iter, test_iter = d2l.load_data_fashion_mnist(batch_size)
-net = d2l.train_ch6(net, train_iter, test_iter, num_epochs, lr)
+net = d2l.train_ch6(net, train_iter, test_iter, num_epochs, lr, d2l.try_gpu())
 ```
 
-`gamma` ölçek parametresine ve ilk toplu normalleştirme katmanından öğrenilen `beta` kayma parametresine bir göz atalım.
+[**`gamma` ölçek parametresine**] ve ilk toplu normalleştirme katmanından öğrenilen [**`beta` kayma parametresine**] bir göz atalım.
 
 ```{.python .input}
 net[1].gamma.data().reshape(-1,), net[1].beta.data().reshape(-1,)
@@ -367,7 +367,7 @@ net[1].gamma.reshape((-1,)), net[1].beta.reshape((-1,))
 tf.reshape(net.layers[1].gamma, (-1,)), tf.reshape(net.layers[1].beta, (-1,))
 ```
 
-## Kısa Uygulama
+## [**Kısa Uygulama**]
 
 Kendimizi tanımladığımız `BatchNorm` sınıfıyla karşılaştırıldığında, doğrudan derin öğrenme çerçevesinden üst düzey API'lerde tanımlanan `BatchNorm` sınıfını kullanabiliriz. Kod, yukarıdaki uygulamamız ile hemen hemen aynı görünüyor.
 
@@ -376,11 +376,11 @@ net = nn.Sequential()
 net.add(nn.Conv2D(6, kernel_size=5),
         nn.BatchNorm(),
         nn.Activation('sigmoid'),
-        nn.MaxPool2D(pool_size=2, strides=2),
+        nn.AvgPool2D(pool_size=2, strides=2),
         nn.Conv2D(16, kernel_size=5),
         nn.BatchNorm(),
         nn.Activation('sigmoid'),
-        nn.MaxPool2D(pool_size=2, strides=2),
+        nn.AvgPool2D(pool_size=2, strides=2),
         nn.Dense(120),
         nn.BatchNorm(),
         nn.Activation('sigmoid'),
@@ -394,9 +394,9 @@ net.add(nn.Conv2D(6, kernel_size=5),
 #@tab pytorch
 net = nn.Sequential(
     nn.Conv2d(1, 6, kernel_size=5), nn.BatchNorm2d(6), nn.Sigmoid(),
-    nn.MaxPool2d(kernel_size=2, stride=2),
+    nn.AvgPool2d(kernel_size=2, stride=2),
     nn.Conv2d(6, 16, kernel_size=5), nn.BatchNorm2d(16), nn.Sigmoid(),
-    nn.MaxPool2d(kernel_size=2, stride=2), nn.Flatten(),
+    nn.AvgPool2d(kernel_size=2, stride=2), nn.Flatten(),
     nn.Linear(256, 120), nn.BatchNorm1d(120), nn.Sigmoid(),
     nn.Linear(120, 84), nn.BatchNorm1d(84), nn.Sigmoid(),
     nn.Linear(84, 10))
@@ -410,11 +410,11 @@ def net():
                                input_shape=(28, 28, 1)),
         tf.keras.layers.BatchNormalization(),
         tf.keras.layers.Activation('sigmoid'),
-        tf.keras.layers.MaxPool2D(pool_size=2, strides=2),
+        tf.keras.layers.AvgPool2D(pool_size=2, strides=2),
         tf.keras.layers.Conv2D(filters=16, kernel_size=5),
         tf.keras.layers.BatchNormalization(),
         tf.keras.layers.Activation('sigmoid'),
-        tf.keras.layers.MaxPool2D(pool_size=2, strides=2),
+        tf.keras.layers.AvgPool2D(pool_size=2, strides=2),
         tf.keras.layers.Flatten(),
         tf.keras.layers.Dense(120),
         tf.keras.layers.BatchNormalization(),
@@ -426,22 +426,22 @@ def net():
     ])
 ```
 
-Aşağıda, modelimizi eğitmek için aynı hiperparametreleri kullanıyoruz. Özel uygulamamız Python tarafından yorumlanılır iken, her zamanki gibi üst düzey API sürümünün kodu C++ veya CUDA için derlendiğinden, çok daha hızlı çalıştığını unutmayın.
+Aşağıda, [**modelimizi eğitmek için aynı hiper parametreleri kullanıyoruz.**] Özel uygulamamız Python tarafından yorumlanılır iken, her zamanki gibi üst düzey API sürümünün kodu C++ veya CUDA için derlendiğinden, çok daha hızlı çalıştığını unutmayın.
 
 ```{.python .input}
 #@tab all
-d2l.train_ch6(net, train_iter, test_iter, num_epochs, lr)
+d2l.train_ch6(net, train_iter, test_iter, num_epochs, lr, d2l.try_gpu())
 ```
 
 ## Tartışma
 
-Sezgisel olarak, toplu normalleştirmenin eniyileme alanını daha pürüzsüz hale getirdiği düşünülmektedir. Bununla birlikte, derin modelleri eğitirken gözlemlediğimiz olgular için kurgusal sezgiler ve gerçek açıklamalar arasında ayrım yaparken dikkatli olmalıyız. İlk etapta daha basit derin sinir ağlarının (MLP'ler ve konvansiyonel CNN'ler) neden genelleştirildiğini bile bilmediğimizi hatırlayın. Hattan düşürme ve ağırlık sönümü ile bile, görünmeyen verilere genelleme kabiliyetleri geleneksel öğrenme-kuramsal genelleme garantileri ile açıklanamayacak kadar esnek kalırlar.
+Sezgisel olarak, toplu normalleştirmenin eniyileme alanını daha pürüzsüz hale getirdiği düşünülmektedir. Bununla birlikte, derin modelleri eğitirken gözlemlediğimiz olgular için kurgusal sezgiler ve gerçek açıklamalar arasında ayrım yaparken dikkatli olmalıyız. İlk etapta daha basit derin sinir ağlarının (MLP'ler ve geleneksel CNN'ler) neden genelleştirildiğini bile bilmediğimizi hatırlayın. Hattan düşürme ve ağırlık sönümü ile bile, görünmeyen verilere genelleme kabiliyetleri geleneksel öğrenme-kuramsal genelleme garantileri ile açıklanamayacak kadar esnek kalırlar.
 
 Toplu normalleştirmeyi öneren orijinal çalışmada, yazarlar, güçlü ve kullanışlı bir araç tanıtmanın yanı sıra, neden çalıştığına dair bir açıklama sundular: *Dahili eşdeğişken kayması*nı (internal covariate shift) azaltmak. Muhtemelen *dahili eşdeğişken kayması* ile yazarlar, yukarıda ifade edilen sezgiye benzer bir şey ifade ettiler - değişken değerlerinin dağılımının eğitim boyunca değiştiği düşüncesi. Bununla birlikte, bu açıklamayla ilgili iki mesele vardı: i) Bu sürüklenme, *eşdeğişken kayması*ndan çok farklıdır, bir yanlış isimlendirir. ii) Açıklama az belirtilmiş bir sezgi sunar ancak *neden tam olarak bu teknik çalışır* sorusunu titiz bir açıklama isteyen açık bir soru olarak bırakır. Bu kitap boyunca, uygulayıcıların derin sinir ağlarının gelişimine rehberlik etmek için kullandıkları sezgileri aktarmayı amaçlıyoruz. Bununla birlikte, bu rehberlik sezgilerini yerleşik bilimsel gerçeklerden ayırmanın önemli olduğuna inanıyoruz. Sonunda, bu materyale hakim olduğunuzda ve kendi araştırma makalelerinizi yazmaya başladığınızda, teknik iddialar ve önseziler arasında konumumuzu bulmak için net olmak isteyeceksiniz.
 
 Toplu normalleşmenin başarısını takiben, başarısının *dahili eşdeğişken kayması* açısından açıklanması, teknik yazındaki tartışmalarda ve makine öğrenmesi araştırmasının nasıl sunulacağı konusunda daha geniş bir söylemde defalarca ortaya çıkmıştır. 2017 NeurIPS konferansında Zaman Testi Ödülü'nü kabul ederken verdiği unutulmaz bir konuşmada Ali Rahimi, modern derin öğrenme pratiğini simyaya benzeten bir argümanda odak noktası olarak *dahili eşdeğişken kayması*nı kullandı. Daha sonra, örnek makine öğrenmesindeki sıkıntılı eğilimleri özetleyen bir konum kağıdında (position paper) ayrıntılı olarak yeniden gözden geçirildi :cite:`Lipton.Steinhardt.2018`. Diğer yazarlar toplu normalleştirmenin başarısı için alternatif açıklamalar önerdiler, bazıları toplu normalleştirmenin başarısının bazı yönlerden orijinal makalede :cite:`Santurkar.Tsipras.Ilyas.ea.2018` iddia edilenlerin tersi olan davranışları sergilemesinden geldiğini iddia ettiler.
 
-*İç eşdeğişken kayması*nın, teknik makine öğrenmesi yazınında benzer şekilde her yıl yapılan belirsiz iddiaların herhangi birinden daha fazla eleştiriye layık olmadığını not ediyoruz. Muhtemelen, bu tartışmaların odak noktası olarak rezonansını, hedef kitledeki geniş tanınabilirliğine borçludur. Toplu normalleştirme, neredeyse tüm konuşlandırılmış imge sınıflandırıcılarında uygulanan vazgeçilmez bir yöntem olduğunu kanıtlamıştır, tekniği tanıtan makaleye on binlerce atıf kazandırmıştır.
+*İç eşdeğişken kayması*nın, teknik makine öğrenmesi yazınında benzer şekilde her yıl yapılan belirsiz iddiaların herhangi birinden daha fazla eleştiriye layık olmadığını not ediyoruz. Muhtemelen, bu tartışmaların odak noktası olarak tınlamasını (rezonans), hedef kitledeki geniş tanınabilirliğine borçludur. Toplu normalleştirme, neredeyse tüm konuşlandırılmış imge sınıflandırıcılarında uygulanan vazgeçilmez bir yöntem olduğunu kanıtlamıştır, tekniği tanıtan makaleye on binlerce atıf kazandırmıştır.
 
 ## Özet
 
@@ -456,7 +456,7 @@ Toplu normalleşmenin başarısını takiben, başarısının *dahili eşdeğiş
 1. Toplu normalleştirme ile ve olmadan LeNet için öğrenme oranlarını karşılaştırın.
     1. Eğitim ve test doğruluğundaki artışı çizin.
     1. Öğrenme oranını ne kadar büyük yapabilirsiniz?
-1. Her katmanda toplu normalleştirmeye ihtiyacımız var mı? Deneyle gözlemleyebilir misiniz??
+1. Her katmanda toplu normalleştirmeye ihtiyacımız var mı? Deneyle gözlemleyebilir misiniz?
 1. Toplu normalleştirme ile hattan düşürmeyi yer değiştirebilir misiniz? Davranış nasıl değişir?
 1. `beta` ve `gamma` parametrelerini sabitleyin, sonuçları gözlemleyin ve analiz edin.
 1. Toplu normalleştirmenin diğer uygulamaları görmek amacıyla üst düzey API'lerden `BatchNorm` için çevrimiçi belgeleri gözden geçirin.

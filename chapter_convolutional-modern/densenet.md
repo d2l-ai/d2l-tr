@@ -1,6 +1,6 @@
 # Yoğun Bağlı Ağlar (DenseNet)
 
-ResNet, derin ağlardaki işlevlerin nasıl parametrize edileceği görüşünü önemli ölçüde değiştirdi. *DenseNet* (yoğun evrişimli ağ) bir dereceye kadar bunun :cite:`Huang.Liu.Van-Der-Maaten.ea.2017` mantıksal uzantısıdır. Ona nasıl ulaşacağımızı anlamak için, matematiğe küçük bir gezinti yapalım.
+ResNet, derin ağlardaki işlevlerin nasıl parametrize edileceği görüşünü önemli ölçüde değiştirdi. *DenseNet* (yoğun evrişimli ağ) bir dereceye kadar bunun :cite:`Huang.Liu.Van-Der-Maaten.ea.2017` mantıksal uzantısıdır. Ona nasıl ulaşacağımızı anlamak için, matematikte küçük bir gezinti yapalım.
 
 ## ResNet'ten DenseNet'e
 
@@ -8,7 +8,7 @@ Fonksiyonlar için Taylor açılımını hatırlayın. $x = 0$ noktası için ş
 
 $$f(x) = f(0) + f'(0) x + \frac{f''(0)}{2!}  x^2 + \frac{f'''(0)}{3!}  x^3 + \ldots.$$
 
-Önemli nokta, bir işlevi giderek daha yüksek dereceli terimlerine ayırmasıdır. Benzer bir damarda, ResNet fonksiyonları
+Önemli nokta, bir işlevi giderek daha yüksek dereceli terimlerine ayırmasıdır. Benzer bir davranış ile, ResNet fonksiyonları aşağıdaki gibi parçalar
 
 $$f(\mathbf{x}) = \mathbf{x} + g(\mathbf{x}).$$
 
@@ -31,7 +31,7 @@ Sonunda, tüm bu işlevler tekrar öznitelik sayısını azaltmak için MLP'de b
 
 DenseNet oluşturan ana bileşenler *yoğun bloklar* ve *geçiş katmanları*dır. Birincisi, girdilerin ve çıktıların nasıl bitiştirildiğini tanımlarken, ikincisi kanal sayısını kontrol eder, böylece çok büyümezlerdir.
 
-## Yoğun Bloklar
+## [**Yoğun Bloklar**]
 
 DenseNet, ResNet'in değiştirilmiş “toplu normalleştirme, etkinleştirme ve evrişim” yapısını kullanır (bkz. :numref:`sec_resnet`'teki alıştırma). İlk olarak, bu evrişim blok yapısını uyguluyoruz.
 
@@ -138,7 +138,7 @@ class DenseBlock(tf.keras.layers.Layer):
         return x
 ```
 
-Aşağıdaki örnekte, 10 çıktı kanalından oluşan 2 evrişim bloğu içeren bir `DenseBlock` örneği tanımlıyoruz. 3 kanallı bir girdi kullanırken, $3+2\times 10=23$ kanallı bir çıktı alacağız. Evrişim blok kanallarının sayısı, girdi kanallarının sayısına göre çıktı kanallarının sayısındaki büyümeyi kontrol eder. Bu aynı zamanda *büyüme oranı* olarak da adlandırılır.
+Aşağıdaki örnekte, 10 çıktı kanalından oluşan 2 evrişim bloğu içeren [**bir `DenseBlock` örneği tanımlıyoruz**]. 3 kanallı bir girdi kullanırken, $3+2\times 10=23$ kanallı bir çıktı alacağız. Evrişim blok kanallarının sayısı, girdi kanallarının sayısına göre çıktı kanallarının sayısındaki büyümeyi kontrol eder. Bu aynı zamanda *büyüme oranı* olarak da adlandırılır.
 
 ```{.python .input}
 blk = DenseBlock(2, 10)
@@ -164,9 +164,9 @@ Y = blk(X)
 Y.shape
 ```
 
-## Geçiş Katmanları
+## [**Geçiş Katmanları**]
 
-Her yoğun blok kanal sayısını artıracağından, çok fazla sayıda eklemek aşırı karmaşık bir modele yol açacaktır. Modelin karmaşıklığını kontrol etmek için bir *geçiş katmanı* kullanılır. $1\times 1$ evrişimli katmanı kullanarak kanal sayısını azaltılır ve ortalama biriktirme tabakasının yüksekliğini ve genişliğini 2'lik bir uzun adımla yarıya indirilir ve modelin karmaşıklığını daha da azaltılır.
+Her yoğun blok kanal sayısını artıracağından, çok fazla sayıda eklemek aşırı karmaşık bir modele yol açacaktır. Modelin karmaşıklığını kontrol etmek için bir *geçiş katmanı* kullanılır. $1\times 1$ evrişimli katmanı kullanarak kanal sayısını azaltılır ve ortalama ortaklama tabakasının yüksekliğini ve genişliğini 2'lik bir uzun adımla yarıya indirilir ve modelin karmaşıklığını daha da azaltılır.
 
 ```{.python .input}
 def transition_block(num_channels):
@@ -203,7 +203,7 @@ class TransitionBlock(tf.keras.layers.Layer):
         return self.avg_pool(x)
 ```
 
-Önceki örnekte yoğun bloğun çıktısına 10 kanallı bir geçiş katmanı uygulayın. Bu, çıktı kanallarının sayısını 10'a düşürür ve yüksekliği ve genişliği yarıya indirir.
+Önceki örnekte yoğun bloğun çıktısına 10 kanallı [**bir geçiş katmanı uygulayın**]. Bu, çıktı kanallarının sayısını 10'a düşürür ve yüksekliği ve genişliği yarıya indirir.
 
 ```{.python .input}
 blk = transition_block(10)
@@ -223,9 +223,9 @@ blk = TransitionBlock(10)
 blk(Y).shape
 ```
 
-## DenseNet Modeli
+## [**DenseNet Modeli**]
 
-Şimdi, bir DenseNet modeli inşa edeceğiz. DenseNet, ilk olarak ResNet'te olduğu gibi aynı tek evrişimli katmanı ve maksimum biriktirme katmanını kullanır.
+Şimdi, bir DenseNet modeli inşa edeceğiz. DenseNet, ilk olarak ResNet'te olduğu gibi aynı tek evrişimli katmanı ve maksimum ortaklama katmanını kullanır.
 
 ```{.python .input}
 net = nn.Sequential()
@@ -254,7 +254,7 @@ def block_1():
 
 Daha sonra, ResNet'in kullandığı artık bloklardan oluşan dört modüle benzer, DenseNet de dört yoğun blok kullanır. ResNet'e benzer şekilde, her yoğun blokta kullanılan evrişimli katmanların sayısını da ayarlayabiliriz. Burada, :numref:`sec_resnet`'teki ResNet-18 modeliyle uyumlu olarak katmanların sayısını 4'e ayarladık. Ayrıca, yoğun bloktaki evrişimli katmanlar için kanal sayısını (yani büyüme hızı) 32'ye ayarladık, böylece her yoğun bloğa 128 kanal eklenecektir.
 
-ResNet'te, her modül arasındaki yükseklik ve genişlik, 2'lik uzum adımlı bir artık bloğu ile azaltılır. Burada, yükseklik ve genişliği yarıya indirip kanal sayısını yarılayarak geçiş katmanını kullanıyoruz.
+ResNet'te, her modül arasındaki yükseklik ve genişlik, 2'lik uzun adımlı bir artık bloğu ile azaltılır. Burada, yükseklik ve genişliği yarıya indirip kanal sayısını yarılayarak geçiş katmanını kullanıyoruz.
 
 ```{.python .input}
 # `num_channels`: the current number of channels
@@ -282,7 +282,7 @@ for i, num_convs in enumerate(num_convs_in_dense_blocks):
     blks.append(DenseBlock(num_convs, num_channels, growth_rate))
     # This is the number of output channels in the previous dense block
     num_channels += num_convs * growth_rate
-    # A transition layer that haves the number of channels is added between
+    # A transition layer that halves the number of channels is added between
     # the dense blocks
     if i != len(num_convs_in_dense_blocks) - 1:
         blks.append(transition_block(num_channels, num_channels // 2))
@@ -301,7 +301,7 @@ def block_2():
         net.add(DenseBlock(num_convs, growth_rate))
         # This is the number of output channels in the previous dense block
         num_channels += num_convs * growth_rate
-        # A transition layer that haves the number of channels is added
+        # A transition layer that halves the number of channels is added
         # between the dense blocks
         if i != len(num_convs_in_dense_blocks) - 1:
             num_channels //= 2
@@ -309,7 +309,7 @@ def block_2():
     return net
 ```
 
-ResNet'e benzer şekilde, çıktıyı üretmek için global bir biriktirme katmanı ile tam bağlı bir katman bağlanır.
+ResNet'e benzer şekilde, çıktıyı üretmek için global bir ortaklama katmanı ile tam bağlı bir katman bağlanır.
 
 ```{.python .input}
 net.add(nn.BatchNorm(),
@@ -340,7 +340,7 @@ def net():
     return net
 ```
 
-## Eğitim
+## [**Eğitim**]
 
 Burada daha derin bir ağ kullandığımızdan, bu bölümde, hesaplamaları basitleştirmek için girdi yüksekliğini ve genişliğini 224'ten 96'ya düşüreceğiz.
 
@@ -359,7 +359,7 @@ d2l.train_ch6(net, train_iter, test_iter, num_epochs, lr, d2l.try_gpu())
 
 ## Alıştırmalar
 
-1. Neden geçiş katmanında maksimum biriktirme yerine ortalama biriktirme kullanıyoruz?
+1. Neden geçiş katmanında maksimum ortaklama yerine ortalama ortaklama kullanıyoruz?
 1. DenseNet makalesinde belirtilen avantajlardan biri, model parametrelerinin ResNet'ten daha küçük olmasıdır. Bu neden burada geçerlidir?
 1. DenseNet'in eleştirildiği bir sorun, yüksek bellek tüketimidir.
     1. Bu gerçekten doğru mudur? Gerçek GPU bellek tüketimini görmek için girdi şeklini $224\times 224$ olarak değiştirmeye çalışın.
