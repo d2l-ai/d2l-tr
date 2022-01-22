@@ -96,7 +96,7 @@ We are barely scratching the surface of it.
 After reviewing so many statistical tools,
 let us try this out in practice.
 We begin by generating some data.
-To keep things simple we generate our sequence data by using a sine function with some additive noise for time steps $1, 2, \ldots, 1000$.
+To keep things simple we (**generate our sequence data by using a sine function with some additive noise for time steps $1, 2, \ldots, 1000$.**)
 
 ```{.python .input}
 %matplotlib inline
@@ -111,7 +111,7 @@ npx.set_np()
 %matplotlib inline
 from d2l import torch as d2l
 import torch
-import torch.nn as nn
+from torch import nn
 ```
 
 ```{.python .input}
@@ -138,7 +138,7 @@ d2l.plot(time, [x], 'time', 'x', xlim=[1, 1000], figsize=(6, 3))
 ```
 
 Next, we need to turn such a sequence into features and labels that our model can train on.
-Based on the embedding dimension $\tau$ we map the data into pairs $y_t = x_t$ and $\mathbf{x}_t = [x_{t-\tau}, \ldots, x_{t-1}]$.
+Based on the embedding dimension $\tau$ we [**map the data into pairs $y_t = x_t$ and $\mathbf{x}_t = [x_{t-\tau}, \ldots, x_{t-1}]$.**]
 The astute reader might have noticed that this gives us $\tau$ fewer data examples, since we do not have sufficient history for the first $\tau$ of them.
 A simple fix, in particular if the sequence is long,
 is to discard those few terms.
@@ -171,8 +171,8 @@ train_iter = d2l.load_array((features[:n_train], labels[:n_train]),
                             batch_size, is_train=True)
 ```
 
-Here we keep the architecture fairly simple:
-just an MLP with two fully-connected layers, ReLU activation, and squared loss.
+Here we [**keep the architecture fairly simple:
+just an MLP**] with two fully-connected layers, ReLU activation, and squared loss.
 
 ```{.python .input}
 # A simple MLP
@@ -192,7 +192,7 @@ loss = gluon.loss.L2Loss()
 # Function for initializing the weights of the network
 def init_weights(m):
     if type(m) == nn.Linear:
-        torch.nn.init.xavier_uniform_(m.weight)
+        nn.init.xavier_uniform_(m.weight)
 
 # A simple MLP
 def get_net():
@@ -202,8 +202,8 @@ def get_net():
     net.apply(init_weights)
     return net
 
-# Square loss
-loss = nn.MSELoss()
+# Note: `MSELoss` computes squared error without the 1/2 factor
+loss = nn.MSELoss(reduction='none')
 ```
 
 ```{.python .input}
@@ -214,14 +214,11 @@ def get_net():
                               tf.keras.layers.Dense(1)])
     return net
 
-# Least mean squares loss
-# Note: L2 Loss = 1/2 * MSE Loss. TensorFlow has MSE Loss that is slightly
-# different from MXNet's L2Loss by a factor of 2. Hence we halve the loss
-# value to get L2Loss in TF
+# Note: `MeanSquaredError` computes squared error without the 1/2 factor
 loss = tf.keras.losses.MeanSquaredError()
 ```
 
-Now we are ready to train the model. The code below is essentially identical to the training loop in previous sections,
+Now we are ready to [**train the model**]. The code below is essentially identical to the training loop in previous sections,
 such as :numref:`sec_linear_concise`.
 Thus, we will not delve into much detail.
 
@@ -250,7 +247,7 @@ def train(net, train_iter, loss, epochs, lr):
         for X, y in train_iter:
             trainer.zero_grad()
             l = loss(net(X), y)
-            l.backward()
+            l.sum().backward()
             trainer.step()
         print(f'epoch {epoch + 1}, '
               f'loss: {d2l.evaluate_loss(net, train_iter, loss):f}')
@@ -267,7 +264,7 @@ def train(net, train_iter, loss, epochs, lr):
         for X, y in train_iter:
             with tf.GradientTape() as g:
                 out = net(X)
-                l = loss(y, out) / 2
+                l = loss(y, out)
                 params = net.trainable_variables
                 grads = g.gradient(l, params)
             trainer.apply_gradients(zip(grads, params))
@@ -280,7 +277,7 @@ train(net, train_iter, loss, 5, 0.01)
 
 ## Prediction
 
-Since the training loss is small, we would expect our model to work well. Let us see what this means in practice. The first thing to check is how well the model is able to predict what happens just in the next time step,
+Since the training loss is small, we would expect our model to work well. Let us see what this means in practice. The first thing to check is how well the model is able to [**predict what happens just in the next time step**],
 namely the *one-step-ahead prediction*.
 
 ```{.python .input}
@@ -305,8 +302,8 @@ $$
 \ldots
 $$
 
-Generally, for an observed sequence up to $x_t$, its predicted output $\hat{x}_{t+k}$ at time step $t+k$ is called the *$k$-step-ahead prediction*. Since we have observed up to $x_{604}$, its $k$-step-ahead prediction is $\hat{x}_{604+k}$.
-In other words, we will have to use our own predictions to make multistep-ahead predictions.
+Generally, for an observed sequence up to $x_t$, its predicted output $\hat{x}_{t+k}$ at time step $t+k$ is called the $k$*-step-ahead prediction*. Since we have observed up to $x_{604}$, its $k$-step-ahead prediction is $\hat{x}_{604+k}$.
+In other words, we will have to [**use our own predictions to make multistep-ahead predictions**].
 Let us see how well this goes.
 
 ```{.python .input}
@@ -342,7 +339,7 @@ This is ultimately due to the fact that the errors build up.
 Let us say that after step 1 we have some error $\epsilon_1 = \bar\epsilon$.
 Now the *input* for step 2 is perturbed by $\epsilon_1$, hence we suffer some error in the order of $\epsilon_2 = \bar\epsilon + c \epsilon_1$ for some constant $c$, and so on. The error can diverge rather rapidly from the true observations. This is a common phenomenon. For instance, weather forecasts for the next 24 hours tend to be pretty accurate but beyond that the accuracy declines rapidly. We will discuss methods for improving this throughout this chapter and beyond.
 
-Let us take a closer look at the difficulties in $k$-step-ahead predictions
+Let us [**take a closer look at the difficulties in $k$-step-ahead predictions**]
 by computing predictions on the entire sequence for $k = 1, 4, 16, 64$.
 
 ```{.python .input}
@@ -396,8 +393,8 @@ While the 4-step-ahead predictions still look good, anything beyond that is almo
 * There is quite a difference in difficulty between interpolation and extrapolation. Consequently, if you have a sequence, always respect the temporal order of the data when training, i.e., never train on future data.
 * Sequence models require specialized statistical tools for estimation. Two popular choices are autoregressive models and latent-variable autoregressive models.
 * For causal models (e.g., time going forward), estimating the forward direction is typically a lot easier than the reverse direction.
-* For an observed sequence up to time step $t$, its predicted output at time step $t+k$ is the *$k$-step-ahead prediction*. As we predict further in time by increasing $k$, the errors accumulate and the quality of the prediction degrades, often dramatically.
-
+* For an observed sequence up to time step $t$, its predicted output at time step $t+k$ is the $k$*-step-ahead prediction*. As we predict further in time by increasing $k$, the errors accumulate and the quality of the prediction degrades, often dramatically.
+	
 
 ## Exercises
 
