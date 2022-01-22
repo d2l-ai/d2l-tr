@@ -95,8 +95,8 @@ class Vocab:  #@save
             if freq < min_freq:
                 break
             if token not in self.token_to_idx:
-            self.idx_to_token.append(token)
-            self.token_to_idx[token] = len(self.idx_to_token) - 1
+                self.idx_to_token.append(token)
+                self.token_to_idx[token] = len(self.idx_to_token) - 1
 
     def __len__(self):
         return len(self.idx_to_token)
