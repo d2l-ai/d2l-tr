@@ -7,7 +7,7 @@ $$P(x_1, x_2, \ldots, x_T).$$
 
 Dil modelleri inanılmaz derecede kullanışlıdır. Örneğin, ideal bir dil modeli, sadece bir seferde bir andıç çekerek tek başına doğal metin oluşturabilir: $x_t \sim P(x_t \mid x_{t-1}, \ldots, x_1)$. Daktilo kullanan maymunun aksine, böyle bir modelden çıkan tüm metinler doğal dil, örneğin İngilizce metin olarak geçer. Ayrıca, sadece metni önceki diyalog parçalarına koşullandırarak anlamlı bir diyalog oluşturmak için yeterli olacaktır. Açıkçası, böyle bir sistemi tasarlamaktan çok uzaktayız, çünkü sadece dilbilgisi olarak mantıklı içerik üretmek yerine metni *anlamak* gerekir.
 
-Bununla birlikte, dil modelleri sınırlı formlarında bile mükemmel hizmet vermektedir. Örneğin, “konuşmayı tanımak” ve “konuşma tınmak” ifadeleri çok benzerdir. Bu konuşma tanımada belirsizliğe neden olabilir, ki ikinci çeviriyi tuhaf görüp reddeden bir dil modeli aracılığıyla kolayca çözülebilir. Aynı şekilde, bir belge özetleme algoritmasında “köpek adamı ısırdı” ifadesinin “adam köpeği ısırdı” ifadesinden çok daha sık ya da “Ben büyükanne yemek istiyorum” oldukça rahatsız edici bir ifade iken, “Ben yemek istiyorum, büyükanne” cümlesinin çok daha anlamlı olduğunu bilmek önemlidir.
+Bununla birlikte, dil modelleri sınırlı biçimlerde bile mükemmel hizmet vermektedir. Örneğin, “konuşmayı tanımak” ve “konuşma tınmak” ifadeleri çok benzerdir. Bu konuşma tanımada belirsizliğe neden olabilir, ki ikinci çeviriyi tuhaf görüp reddeden bir dil modeli aracılığıyla kolayca çözülebilir. Aynı şekilde, bir belge özetleme algoritmasında “köpek adamı ısırdı” ifadesinin “adam köpeği ısırdı” ifadesinden çok daha sık ya da “Ben büyükanne yemek istiyorum” oldukça rahatsız edici bir ifade iken, “Ben yemek istiyorum, büyükanne” cümlesinin çok daha anlamlı olduğunu bilmek önemlidir.
 
 ## Dil Modeli Öğrenme
 
@@ -27,7 +27,7 @@ $$\hat{P}(\text{öğrenme} \mid \text{derin}) = \frac{n(\text{derin, öğrenme})
 
 burada $n(x)$ ve $n(x, x')$, sırasıyla tekli ve ardışık kelime çiftlerinin oluşlarının sayısıdır. Ne yazık ki, bir kelime çiftinin olasılığını tahmin etmek biraz daha zordur, çünkü “derin öğrenme” oluşları çok daha az sıklıktadır. Özellikle, bazı olağandışı kelime birleşimleri için, doğru tahminler elde etmek için yeterli oluş bulmak zor olabilir. İşler üç kelimelik birleşimler ve ötesi için daha da kötüsü bir hal alır. Veri kümemizde muhtemelen göremeyeceğimiz birçok makul üç kelimelik birleşim olacaktır. Bu tür sözcük birleşimlerini sıfır olmayan sayım atamak için bazı çözümler sağlamadığımız sürece, bunları bir dil modelinde kullanamayacağız. Veri kümesi küçükse veya kelimeler çok nadirse, bunlardan bir tanesini bile bulamayabiliriz.
 
-Genel bir strateji, bir çeşit *Laplace düzleştirme* uygulamaktır. Çözüm, tüm sayımlara küçük bir sabit eklemektir. $n$ ile eğitim kümesindeki toplam kelime sayısını ve $m$ ile benzersiz kelimelerin sayısını gösterelim. Bu çözüm, teklilerde yardımcı olur, örn.
+Genel bir strateji, bir çeşit *Laplace düzleştirme*si uygulamaktır. Çözüm, tüm sayımlara küçük bir sabit eklemektir. $n$ ile eğitim kümesindeki toplam kelime sayısını ve $m$ ile benzersiz kelimelerin sayısını gösterelim. Bu çözüm, teklilerde yardımcı olur, örn.
 
 $$\begin{aligned}
 	\hat{P}(x) & = \frac{n(x) + \epsilon_1/m}{n + \epsilon_1}, \\
@@ -35,7 +35,7 @@ $$\begin{aligned}
 	\hat{P}(x'' \mid x,x') & = \frac{n(x, x',x'') + \epsilon_3 \hat{P}(x'')}{n(x, x') + \epsilon_3}.
 \end{aligned}$$
 
-Burada $\epsilon_1,\epsilon_2$ ve $\epsilon_3$ hiperparametrelerdir. Örnek olarak $\epsilon_1$'yi alın: $\epsilon_1 = 0$ olduğunda, düzleştirme uygulanmaz; $\epsilon_1$ pozitif sonsuzluğa yaklaştığında, $\hat{P}(x)$ tekdüze $1/m$ olasılığına yaklaşır. Yukarıdakiler, diğer tekniklerin başarabileceklerinin oldukça ilkel bir türüdür :cite:`Wood.Gasthaus.Archambeau.ea.2011`.
+Burada $\epsilon_1,\epsilon_2$ ve $\epsilon_3$ hiper parametrelerdir. Örnek olarak $\epsilon_1$'yi alın: $\epsilon_1 = 0$ olduğunda, düzleştirme uygulanmaz; $\epsilon_1$ pozitif sonsuzluğa yaklaştığında, $\hat{P}(x)$ tekdüze $1/m$ olasılığına yaklaşır. Yukarıdakiler, diğer tekniklerin başarabileceklerinin oldukça ilkel bir türüdür :cite:`Wood.Gasthaus.Archambeau.ea.2011`.
 
 Ne yazık ki, bunun gibi modeller aşağıdaki nedenlerden dolayı oldukça hızlı bir şekilde hantallaşır. İlk olarak, tüm sayımları saklamamız gerekir. İkincisi, kelimelerin anlamını tamamen görmezden gelinir. Örneğin, “kedi” ve “pisi” ilgili bağlamlarda ortaya çıkmalıdır. Bu tür modelleri ek bağlamlara ayarlamak oldukça zordur, oysa, derin öğrenme tabanlı dil modelleri bunu dikkate almak için çok uygundur. Son olarak, uzun kelime dizilerinin sıradışı olması neredeyse kesindir, bu nedenle sadece daha önce görülen kelime dizilerinin sıklığını sayan bir model orada kötü başarım göstermeye mahkumdur.
 
@@ -88,7 +88,7 @@ vocab = d2l.Vocab(corpus)
 vocab.token_freqs[:10]
 ```
 
-Gördüğümüz gibi, en popüler kelimelere bakmak aslında oldukça sıkıcı. Genellikle *duraklama kelimeleri* olarak adlandırılır ve böylece filtrelenir. Yine de, hala anlam taşırlar ve biz de onları kullanacağız. Ayrıca, kelime frekansının oldukça hızlı bir şekilde sönümlendiği oldukça açıktır. $10$. en sık kullanılan kelime, en popüler olanının $1/5$'nden daha az yaygındır. Daha iyi bir fikir elde etmek için, kelime frekansının şeklini çiziyoruz.
+Gördüğümüz gibi, (**en popüler kelimelere**) bakmak aslında oldukça sıkıcı. Genellikle (***duraklama kelimeleri***) olarak adlandırılır ve böylece filtrelenir. Yine de, hala anlam taşırlar ve biz de onları kullanacağız. Ayrıca, kelime frekansının oldukça hızlı bir şekilde sönümlendiği oldukça açıktır. $10$. en sık kullanılan kelime, en popüler olanının $1/5$'nden daha az yaygındır. Daha iyi bir fikir elde etmek için, [**kelime frekansının şeklini çizdiriyoruz**].
 
 ```{.python .input}
 #@tab all
@@ -106,7 +106,7 @@ ki o da aşağıdaki ifadeye eşdeğerdir
 
 $$\log n_i = -\alpha \log i + c,$$
 
-burada $\alpha$, dağılımı karakterize eden üstür ve $c$ bir sabittir. Sayım istatistiklerine ve düzleştirmeye göre kelimeleri modellemek istiyorsak, zaten burada ara vermeliyiz. Sonuçta, nadir kelimeler olarak da bilinen kuyruk sıklığına önemli ölçüde saparak fazla değer vereceğiz. Peki ya diğer kelime birleşimleri, örneğin bigramlar, trigramlar ve ötesi? Bigram frekansının unigram frekansı ile aynı şekilde davranıp davranmadığını görelim.
+burada $\alpha$, dağılımı karakterize eden üstür ve $c$ bir sabittir. İstatistiklerine saymaya ve düzleştirmeye göre kelimeleri modellemek istiyorsak, zaten burada ara vermeliyiz. Sonuçta, nadir kelimeler olarak da bilinen kuyruk sıklığına önemli ölçüde saparak fazla değer vereceğiz. Peki ya [**diğer kelime birleşimleri, örneğin bigramlar, trigramlar**] ve ötesi? Bigram frekansının unigram frekansı ile aynı şekilde davranıp davranmadığını görelim.
 
 ```{.python .input}
 #@tab all
@@ -125,7 +125,7 @@ trigram_vocab = d2l.Vocab(trigram_tokens)
 trigram_vocab.token_freqs[:10]
 ```
 
-Son olarak, bu üç model arasında andıç frekansını görselleştirmemize izin verin: Unigramlar, bigramlar ve trigramlar.
+Son olarak, bu üç model arasında [**andıç frekansını görselleştirmemize**] izin verin: Unigramlar, bigramlar ve trigramlar.
 
 ```{.python .input}
 #@tab all
@@ -140,7 +140,7 @@ Bu rakam birtakım nedenlerden dolayı oldukça heyecan verici. Birincisi, unigr
 
 ## Uzun Dizi Verilerini Okuma
 
-Dizi verileri doğası gereği dizili olduğundan, işleme konusunu ele almamız gerekiyor. Bunu :numref:`sec_sequence`'te oldukça geçici bir şekilde yaptık. Diziler, modeller tarafından tek seferde işlenemeyecek kadar uzun olduğunda, bu tür dizileri okumak için bölmek isteyebiliriz. Şimdi genel stratejileri tanımlayalım. Modeli tanıtmadan önce, ağın önceden tanımlanmış uzunlukta, bir seferde $n$ zaman adımı mesela, bir minigrup dizisini işlediği bir dil modelini eğitmek için bir sinir ağı kullanacağımızı varsayalım. Şimdi asıl soru, özniteliklerin ve etiketlerin minigruplarının rastgele nasıl okunacağıdır.
+Dizi verileri doğası gereği dizili olduğundan, işleme konusunu ele almamız gerekiyor. Bunu :numref:`sec_sequence`'te oldukça geçici bir şekilde yaptık. Diziler, modeller tarafından tek seferde işlenemeyecek kadar uzun olduğunda, bu tür dizileri okumak için bölmek isteyebiliriz. Şimdi genel stratejileri tanımlayalım. Modeli tanıtmadan önce, ağın önceden tanımlanmış uzunlukta, bir seferde $n$ zaman adımı mesela, bir minigrup dizisini işlediği bir dil modelini eğitmek için bir sinir ağı kullanacağımızı varsayalım. Şimdi asıl soru, [**özniteliklerin ve etiketlerin minigruplarının rastgele nasıl okunacağıdır.**]
 
 Başlarken, bir metin dizisi keyfi olarak uzun olabileceğinden, *Zaman Makinesi* kitabının tamamı gibi, bu kadar uzun bir diziyi aynı sayıda zaman adımlı altdizilere parçalayabiliriz. Sinir ağımızı eğitirken, bu tür altdizilerden bir minigrup modele beslenecektir. Ağın bir seferde $n$ zaman adımlı bir altdizisini işlediğini varsayalım. :numref:`fig_timemachine_5gram`, orijinal bir metin dizisinden altdizi elde etmenin tüm farklı yollarını gösterir; burada $n=5$ ve her seferinde bir andıç bir karaktere karşılık gelir. Başlangıç pozisyonunu gösteren keyfi bir bağıl konum (offset) seçebileceğimizden oldukça özgür olduğumuzu unutmayın.
 
@@ -151,7 +151,7 @@ Bu nedenle, :numref:`fig_timemachine_5gram`'ten hangisini seçmeliyiz? Aslında,
 
 ### Rastgele Örnekleme
 
-Rastgele örneklemede, her örnek, orijinal uzun dizide keyfi olarak yakalanan bir altdizidir. Yineleme sırasında iki bitişik rasgele minigruptaki altdiziler mutlaka orijinal diziside bitişik olmak zorunda değildir. Dil modellemesi için hedef, şimdiye kadar gördüğümüz andıçlara dayanan bir sonraki andıcı tahmin etmektir, bu nedenle etiketler bir andıç kaydırılmış orijinal dizidir.
+(**Rastgele örneklemede, her örnek, orijinal uzun dizide keyfi olarak yakalanan bir altdizidir.**) Yineleme sırasında iki bitişik rasgele minigruptaki altdiziler mutlaka orijinal diziside bitişik olmak zorunda değildir. Dil modellemesi için hedef, şimdiye kadar gördüğümüz andıçlara dayanan bir sonraki andıcı tahmin etmektir, bu nedenle etiketler bir andıç kaydırılmış orijinal dizidir.
 
 Aşağıdaki kod, her seferinde verilerden bir rasgele minigrup oluşturur. Burada, `batch_size` bağımsız değişkeni her minigruptaki altdizi örneklerinin sayısını belirtir ve `num_steps` her altdizideki zaman adımlarının önceden tanımlanmış sayısıdır.
 
@@ -185,7 +185,7 @@ def seq_data_iter_random(corpus, batch_size, num_steps):  #@save
         yield d2l.tensor(X), d2l.tensor(Y)
 ```
 
-Elimiz ile 0'dan 34'e kadar bir dizi oluşturalım. Biz grup boyutunun ve zaman adımlarının sayısının sırasıyla 2 ve 5 olduğunu varsayalım. Bu, $\lfloor (35 - 1) / 5 \rfloor= 6$ öznitelik-etiket altdizi çiftleri üretebileceğimiz anlamına gelir. 2 minigrup boyutu ile sadece 3 minigrup elde ediyoruz.
+Elimiz ile [**0'dan 34'e kadar bir dizi oluşturalım.**] Biz grup boyutunun ve zaman adımlarının sayısının sırasıyla 2 ve 5 olduğunu varsayalım. Bu, $\lfloor (35 - 1) / 5 \rfloor= 6$ öznitelik-etiket altdizi çiftleri üretebileceğimiz anlamına gelir. 2 minigrup boyutu ile sadece 3 minigrup elde ediyoruz.
 
 ```{.python .input}
 #@tab all
@@ -196,7 +196,7 @@ for X, Y in seq_data_iter_random(my_seq, batch_size=2, num_steps=5):
 
 ### Sıralı Bölümleme
 
-Orijinal dizinin rastgele örneklemesine ek olarak, yineleme sırasında iki bitişik minigrubun altdizilerinin orijinal dizide bitişik olmasını da sağlayabiliriz. Bu strateji, minigruplar üzerinde yineleme yaparken bölünmüş altdizilerin sırasını korur, dolayısıyla sıralı bölümleme olarak adlandırılır.
+Orijinal dizinin rastgele örneklemesine ek olarak, [**yineleme sırasında iki bitişik minigrubun altdizilerinin orijinal dizide bitişik olmasını da sağlayabiliriz.**] Bu strateji, minigruplar üzerinde yineleme yaparken bölünmüş altdizilerin sırasını korur, dolayısıyla sıralı bölümleme olarak adlandırılır.
 
 ```{.python .input}
 #@tab mxnet, pytorch
@@ -233,7 +233,7 @@ def seq_data_iter_sequential(corpus, batch_size, num_steps):  #@save
         yield X, Y
 ```
 
-Aynı ayarları kullanarak, sıralı bölümleme tarafından okunan her altdizi minigrubu için `X` ve etiketleri `Y` yazdıracağız. Yineleme sırasında iki bitişik minigrubun altdizilerinin orijinal dizisi üzerinde gerçekten bitişik olduğunu unutmayın.
+Aynı ayarları kullanarak, sıralı bölümleme tarafından okunan her altdizi [**minigrubu için `X` özniteliklerini ve `Y` etiketleri yazdıracağız.**] Yineleme sırasında iki bitişik minigrubun altdizilerinin orijinal dizisi üzerinde gerçekten bitişik olduğunu unutmayın.
 
 ```{.python .input}
 #@tab all
@@ -259,7 +259,7 @@ class SeqDataLoader:  #@save
         return self.data_iter_fn(self.corpus, self.batch_size, self.num_steps)
 ```
 
-Son olarak, hem veri yineleyiciyi hem de kelime dağarcığını döndüren bir `load_data_time_machine` işlevi tanımlarız, böylece :numref:`sec_fashion_mnist`'te tanımlanan `d2l.load_data_fashion_mnist` gibi `load_data` öneki ile diğer işlevlerle benzer şekilde kullanabiliriz.
+[**Son olarak, hem veri yineleyiciyi hem de kelime dağarcığını döndüren bir `load_data_time_machine` işlevi tanımlarız**], böylece :numref:`sec_fashion_mnist`'te tanımlanan `d2l.load_data_fashion_mnist` gibi `load_data` öneki ile diğer işlevlerle benzer şekilde kullanabiliriz.
 
 ```{.python .input}
 #@tab all
@@ -282,7 +282,7 @@ def load_data_time_machine(batch_size, num_steps,  #@save
 
 ## Alıştırmalar
 
-1. Eğitim veri kümesinde $100,000$ kelime olduğunu varsayalım. Dört-gramın ne kadar kelime frekansı ve çok kelimeli bitişik frekans depolaması gerekiyor?
+1. Eğitim veri kümesinde $100000$ kelime olduğunu varsayalım. Dört-gramın ne kadar kelime frekansı ve çok kelimeli bitişik frekans depolaması gerekiyor?
 1. Bir diyaloğu nasıl modellersiniz?
 1. Unigramlar, bigramlar ve trigramlar için Zipf yasasının üssünü tahmin edin.
 1. Uzun dizi verilerini okumak için başka hangi yöntemleri düşünebilirsiniz?
