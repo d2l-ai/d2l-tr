@@ -56,7 +56,10 @@ class AttentionDecoder(d2l.Decoder):
         raise NotImplementedError
 ```
 
-Şimdi aşağıdaki `Seq2SeqAttentionDecoder` sınıfında [**Bahdanau dikkatli** ile RNN kod çözücüsünü uygulayalım]. Kod çözücünün durumu ile başlatılır (i) kodlayıcı son katman gizli durumları her zaman adımlarında (tuşlar ve dikkat değerleri olarak); (ii) son zaman adımında kodlayıcı tüm katmanlı gizli durumu (kod çözücünün gizli durumunu başlatmak için); ve (iii) kodlayıcının geçerli uzunluğu ( dikkat havuzunda dolgu belirteçleri). Her kod çözme zaman adımında, kod çözücü son katman gizli durumu önceki zaman adımında dikkat sorgusu olarak kullanılır. Sonuç olarak, hem dikkat çıkışı hem de giriş gömme RNN kod çözücünün girişi olarak birleştirilir.
+Now let us [**implement
+the RNN decoder with Bahdanau attention**]
+in the following `Seq2SeqAttentionDecoder` class.
+Kod çözücünün durumu ile başlatılır (i) kodlayıcı son katman gizli durumları her zaman adımlarında (tuşlar ve dikkat değerleri olarak); (ii) son zaman adımında kodlayıcı tüm katmanlı gizli durumu (kod çözücünün gizli durumunu başlatmak için); ve (iii) kodlayıcının geçerli uzunluğu ( dikkat havuzunda dolgu belirteçleri). Her kod çözme zaman adımında, kod çözücü son katman gizli durumu önceki zaman adımında dikkat sorgusu olarak kullanılır. Sonuç olarak, hem dikkat çıkışı hem de giriş gömme RNN kod çözücünün girişi olarak birleştirilir.
 
 ```{.python .input}
 class Seq2SeqAttentionDecoder(AttentionDecoder):
@@ -209,7 +212,10 @@ class Seq2SeqAttentionDecoder(AttentionDecoder):
         return self._attention_weights
 ```
 
-Aşağıda, 7 zaman adımından oluşan 4 sıra girişinden oluşan bir mini batch kullanarak Bahdanau'nun dikkatini çekerek [**test ediyoruz) uygulanan kod çözücüyü [**test ediyoruz].
+In the following, we [**test the implemented
+decoder**] with Bahdanau attention
+using a minibatch of 4 sequence inputs
+of 7 time steps.
 
 ```{.python .input}
 encoder = d2l.Seq2SeqEncoder(vocab_size=10, embed_size=8, num_hiddens=16,

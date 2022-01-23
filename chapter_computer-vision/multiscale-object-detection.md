@@ -76,7 +76,7 @@ display_anchors(fmap_w=4, fmap_h=4, s=[0.15])
 display_anchors(fmap_w=2, fmap_h=2, s=[0.4])
 ```
 
-Son olarak, [**özellik haritasının yüksekliğini ve genişliğini yarıya indirir ve çapa kutusu ölçeğini 0,8** seviyesine çıkarırız]. Şimdi çapa kutusunun merkezi görüntünün merkezidir.
+Son olarak, [**özellik haritasının yüksekliğini ve genişliğini yarıya indirir ve çapa kutusu ölçeğini 0,8 seviyesine çıkarırız**]. Şimdi çapa kutusunun merkezi görüntünün merkezidir.
 
 ```{.python .input}
 #@tab all

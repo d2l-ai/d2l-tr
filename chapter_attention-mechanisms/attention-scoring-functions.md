@@ -245,7 +245,7 @@ class AdditiveAttention(tf.keras.layers.Layer):
             self.attention_weights, **kwargs), values)
 ```
 
-[**yukarıdaki `AdditiveAttention` sınıfı** gösterelim], sorguların, anahtarların ve değerlerin şekillerinin ($2$, $1$, $20$), ($2$, $20$), ($2$, $10$, $2$) ve ($2$, $2$, $2$) ve ($2$, $2$, $2$) sırasıyla 32293619, $10$, $4$). Dikkat havuzu çıktısı bir şekle sahiptir (toplu iş boyutu, sorgular için adım sayısı, değerler için özellik boyutu).
+[**yukarıdaki `AdditiveAttention` sınıfı gösterelim**], sorguların, anahtarların ve değerlerin şekillerinin ($2$, $1$, $20$), ($2$, $20$), ($2$, $10$, $2$) ve ($2$, $2$, $2$) ve ($2$, $2$, $2$) sırasıyla 32293619, $10$, $4$). Dikkat havuzu çıktısı bir şekle sahiptir (toplu iş boyutu, sorgular için adım sayısı, değerler için özellik boyutu).
 
 ```{.python .input}
 queries, keys = d2l.normal(0, 1, (2, 1, 20)), d2l.ones((2, 10, 2))

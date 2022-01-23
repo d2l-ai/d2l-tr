@@ -68,7 +68,7 @@ X = torch.rand(size=(1, 3, 320, 480))
 net(X).shape
 ```
 
-Ardından, çıkış kanallarının sayısını Pascal VOC2012 veri setinin sınıf sayısına (21) dönüştürmek için bir $1\times 1$ evrimsel katman kullanıyoruz.**] Son olarak, giriş görüntüsünün yüksekliğine ve genişliğine geri döndürmek için (**özellik haritalarının yüksekliğini ve genişliğini 32 kat artırma**) ihtiyacımız var. :numref:`sec_padding`'te bir kıvrımsal tabakanın çıkış şeklini nasıl hesaplayacağınızı hatırlayın. $(320-64+16\times2+32)/32=10$ ve $(480-64+16\times2+32)/32=15$'den bu yana, $(480-64+16\times2+32)/32=15$'den beri, $16$'a kadar çekirdeğin yüksekliğini ve genişliğini $64$'ya, dolgu $16$'a ayarlayarak $32$ adımıyla transpoze edilmiş bir kıvrımsal tabaka oluşturuyoruz. Genel olarak, $s$, $s$ dolgu $s/2$ ($s/2$ bir tamsayı varsayarak) ve çekirdeğin yüksekliği ve genişliği $2s$, dönüştürülmüş konvolüsyon $s$ kez giriş yüksekliğini ve genişliğini artıracağını görebilirsiniz.
+Ardından, [**çıkış kanallarının sayısını Pascal VOC2012 veri setinin sınıf sayısına (21) dönüştürmek için bir $1\times 1$ evrimsel katman kullanıyoruz.**] Son olarak, giriş görüntüsünün yüksekliğine ve genişliğine geri döndürmek için (**özellik haritalarının yüksekliğini ve genişliğini 32 kat artırma**) ihtiyacımız var. :numref:`sec_padding`'te bir kıvrımsal tabakanın çıkış şeklini nasıl hesaplayacağınızı hatırlayın. $(320-64+16\times2+32)/32=10$ ve $(480-64+16\times2+32)/32=15$'den bu yana, $(480-64+16\times2+32)/32=15$'den beri, $16$'a kadar çekirdeğin yüksekliğini ve genişliğini $64$'ya, dolgu $16$'a ayarlayarak $32$ adımıyla transpoze edilmiş bir kıvrımsal tabaka oluşturuyoruz. Genel olarak, $s$, $s$ dolgu $s/2$ ($s/2$ bir tamsayı varsayarak) ve çekirdeğin yüksekliği ve genişliği $2s$, dönüştürülmüş konvolüsyon $s$ kez giriş yüksekliğini ve genişliğini artıracağını görebilirsiniz.
 
 ```{.python .input}
 num_classes = 21
@@ -129,7 +129,11 @@ def bilinear_kernel(in_channels, out_channels, kernel_size):
     return weight
 ```
 
-Transpoze edilmiş bir evrimsel tabaka tarafından uygulanan bilineer enterpolasyonun çoğaltılmasıyla [**deney yapalım]. Yükseklik ve ağırlığı ikiye katlayan ve çekirdeğini `bilinear_kernel` işleviyle başlatan transpoze edilmiş bir kıvrımsal tabaka oluşturuyoruz.
+Let us [**experiment with upsampling of bilinear interpolation**] 
+that is implemented by a transposed convolutional layer. 
+We construct a transposed convolutional layer that 
+doubles the height and weight,
+and initialize its kernel with the `bilinear_kernel` function.
 
 ```{.python .input}
 conv_trans = nn.Conv2DTranspose(3, kernel_size=4, padding=1, strides=2)
@@ -179,7 +183,7 @@ print('output image shape:', out_img.shape)
 d2l.plt.imshow(out_img);
 ```
 
-Tamamen evrimsel bir ağda, ikili enterpolasyonun örneklenmesi ile dönüştürülmüş evrimsel tabakayı başlatırız. $1\times 1$ konvolsiyonel katman için Xavier başlatma kullanıyoruz.**]
+[**Tamamen evrimsel bir ağda, ikili enterpolasyonun örneklenmesi ile dönüştürülmüş evrimsel tabakayı başlatırız. $1\times 1$ konvolsiyonel katman için Xavier başlatma kullanıyoruz.**]
 
 ```{.python .input}
 W = bilinear_kernel(num_classes, num_classes, 64)

@@ -88,7 +88,7 @@ def read_voc_images(voc_dir, is_train=True):
 train_features, train_labels = read_voc_images(voc_dir, True)
 ```
 
-İlk beş giriş görüntüsünü ve etiketlerini çiziyoruz [**]. Etiket görüntülerinde, beyaz ve siyah sırasıyla kenarlıkları ve arka planı temsil ederken, diğer renkler farklı sınıflara karşılık gelir.
+We [**draw the first five input images and their labels**]. Etiket görüntülerinde, beyaz ve siyah sırasıyla kenarlıkları ve arka planı temsil ederken, diğer renkler farklı sınıflara karşılık gelir.
 
 ```{.python .input}
 n = 5

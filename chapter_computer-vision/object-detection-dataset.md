@@ -1,7 +1,15 @@
 # Nesne Algılama Veri Kümesi
 :label:`sec_object-detection-dataset`
 
-Nesne algılama alanında MNIST ve Moda-MNIST gibi küçük veri kümesi yoktur. Nesne algılama modellerini hızlı bir şekilde göstermek için [**küçük bir veri kümesi topladık ve etiketledik]. İlk olarak, ofisimizden ücretsiz muzların fotoğraflarını çektik ve farklı rotasyon ve boyutlarda 1000 muz görüntüsü ürettik. Sonra her muz görüntüsünü arka plan görüntüsünde rastgele bir konuma yerleştirdik. Sonunda, resimlerdeki muzlar için sınırlayıcı kutuları etiketledik. 
+There is no small dataset such as MNIST and Fashion-MNIST in the field of object detection.
+In order to quickly demonstrate object detection models,
+[**we collected and labeled a small dataset**].
+First, we took photos of free bananas from our office
+and generated
+1000 banana images with different rotations and sizes.
+Then we placed each banana image
+at a random position on some background image.
+In the end, we labeled bounding boxes for those bananas on the images. 
 
 ## [**Veri Kümesi İndiriliyor**]
 
@@ -82,7 +90,7 @@ def read_data_bananas(is_train=True):
     return images, torch.tensor(targets).unsqueeze(1) / 256
 ```
 
-Görüntüleri ve etiketleri okumak için `read_data_bananas` işlevini kullanarak, aşağıdaki `BananasDataset` sınıfı muz algılama veri kümesini yüklemek için [**özelleştirilmiş bir `Dataset` örneği** oluşturmamızı] sağlayacaktır.
+Görüntüleri ve etiketleri okumak için `read_data_bananas` işlevini kullanarak, aşağıdaki `BananasDataset` sınıfı muz algılama veri kümesini yüklemek için [**özelleştirilmiş bir `Dataset` örneği** oluşturmamızı**] sağlayacaktır.
 
 ```{.python .input}
 #@save
@@ -118,7 +126,11 @@ class BananasDataset(torch.utils.data.Dataset):
         return len(self.features)
 ```
 
-Son olarak, `load_data_bananas` işlevini [**eğitim ve test setleri için iki veri yineleme örneği döndürmek üzere tanımlıyoruz. **] Test veri kümesi için, rastgele sırayla okumaya gerek yoktur.
+Finally, we define
+the `load_data_bananas` function to [**return two
+data iterator instances for both the training and test sets.**]
+For the test dataset,
+there is no need to read it in random order.
 
 ```{.python .input}
 #@save
@@ -143,7 +155,16 @@ def load_data_bananas(batch_size):
     return train_iter, val_iter
 ```
 
-Bu minibatch içinde [**bir mini batch okuyalım ve hem resimlerin hem de etiketlerin şekillerini yazdıralım. Görüntü minibatch şekli, (parti boyutu, kanal sayısı, yükseklik, genişlik), tanıdık görünüyor: önceki görüntü sınıflandırma görevlerimizde olduğu gibi aynıdır. Etiket minibatch şekli (toplu boyutu, $m$, 5) olup, burada $m$, veri kümelerinde herhangi bir görüntünün sahip olduğu en büyük sınırlayıcı kutu sayısıdır. 
+Let us [**read a minibatch and print the shapes of
+both images and labels**] in this minibatch.
+The shape of the image minibatch,
+(batch size, number of channels, height, width),
+looks familiar:
+it is the same as in our earlier image classification tasks.
+The shape of the label minibatch is
+(batch size, $m$, 5),
+where $m$ is the largest possible number of bounding boxes
+that any image has in the dataset.
 
 Minibatch'lerde hesaplama daha verimli olmasına rağmen, tüm görüntü örneklerinin birleştirme yoluyla bir mini batch oluşturmak için aynı sayıda sınırlayıcı kutuları içermesini gerektirir. Genel olarak, görüntüler farklı sayıda sınırlayıcı kutuya sahip olabilir; bu nedenle $m$'ten daha az sınırlayıcı kutuya sahip görüntüler, $m$'e ulaşılana kadar yasadışı sınırlayıcı kutularla doldurulacaktır. Daha sonra her sınırlayıcı kutunun etiketi 5 uzunluğunda bir dizi ile temsil edilir. Dizideki ilk öğe, sınırlayıcı kutudaki nesnenin sınıfıdır ve burada -1 dolgu için yasadışı bir sınırlama kutusunu gösterir. Dizinin kalan dört öğesi, sol üst köşenin ve sınırlayıcı kutunun sağ alt köşesinin ($x$, $y$) koordinat değerleridir (aralık 0 ile 1 arasındadır). Muz veri seti için, her görüntüde sadece bir sınırlayıcı kutu olduğundan $m=1$ sahibiz.
 

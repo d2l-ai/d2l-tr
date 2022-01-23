@@ -48,7 +48,7 @@ d2l.plt.imshow(img);
 
 Nesne algılamada, genellikle bir nesnenin uzamsal konumunu tanımlamak için bir *sınırlayıcı kutu* kullanırız. Sınırlayıcı kutu dikdörtgen olup, dikdörtgenin sol üst köşesinin $x$ ve $y$ koordinatları ve sağ alt köşenin koordinatları ile belirlenir. Yaygın olarak kullanılan bir diğer sınırlayıcı kutu gösterimi, sınırlayıcı kutu merkezinin $(x, y)$ eksen koordinatları ve kutunun genişliği ve yüksekliğidir. 
 
-[**Burada** arasında dönüştürmek için işlevleri tanımlıyoruz**] bunlar (**iki gösterim**): `box_corner_to_center` iki köşeli temsilden merkez-genişlik yüksekliği sunumuna dönüştürür ve `box_center_to_corner` tersi. `boxes` giriş argümanı, $n$ sınırlayıcı kutuların sayısıdır burada iki boyutlu bir şekil tenörü ($n$, 4) olmalıdır.
+[**Burada arasında dönüştürmek için işlevleri tanımlıyoruz**] bunlar (**iki gösterim**): `box_corner_to_center` iki köşeli temsilden merkez-genişlik yüksekliği sunumuna dönüştürür ve `box_center_to_corner` tersi. `boxes` giriş argümanı, $n$ sınırlayıcı kutuların sayısıdır burada iki boyutlu bir şekil tenörü ($n$, 4) olmalıdır.
 
 ```{.python .input}
 #@tab all
@@ -75,7 +75,11 @@ def box_center_to_corner(boxes):
     return boxes
 ```
 
-Koordinat bilgilerine dayanarak [**köpeğin ve kedinin görüntüdeki sınırlayıcı kutularını tanımlayacağız. Görüntüdeki koordinatların kökeni görüntünün sol üst köşesidir ve sağ ve aşağı ise sırasıyla $x$ ve $y$ eksenlerinin pozitif yönleridir.
+We will [**define the bounding boxes of the dog and the cat in the image**] based
+on the coordinate information.
+The origin of the coordinates in the image
+is the upper-left corner of the image, and to the right and down are the
+positive directions of the $x$ and $y$ axes, respectively.
 
 ```{.python .input}
 #@tab all

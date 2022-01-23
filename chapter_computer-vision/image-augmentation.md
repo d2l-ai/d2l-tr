@@ -52,11 +52,11 @@ def apply(img, aug, num_rows=2, num_cols=4, scale=1.5):
 ### Flipping ve Kırpma
 
 :begin_tab:`mxnet`
-[**Resmin sola ve sağa doğru döndürülmesi] genellikle nesnenin kategorisini değiştirmez. Bu, en eski ve en yaygın kullanılan görüntü büyütme yöntemlerinden biridir. Daha sonra, `transforms` modülünü `RandomFlipLeftRight` örneğini oluşturmak için kullanıyoruz ve görüntüyü sola ve sağa döndürebilir.
+[**Resmin sola ve sağa doğru döndürülmesi**] genellikle nesnenin kategorisini değiştirmez. Bu, en eski ve en yaygın kullanılan görüntü büyütme yöntemlerinden biridir. Daha sonra, `transforms` modülünü `RandomFlipLeftRight` örneğini oluşturmak için kullanıyoruz ve görüntüyü sola ve sağa döndürebilir.
 :end_tab:
 
 :begin_tab:`pytorch`
-[**Resmin sola ve sağa doğru döndürülmesi] genellikle nesnenin kategorisini değiştirmez. Bu, en eski ve en yaygın kullanılan görüntü büyütme yöntemlerinden biridir. Daha sonra, `transforms` modülünü `RandomHorizontalFlip` örneğini oluşturmak için kullanıyoruz ve görüntüyü sağa ve sola döndürebilir.
+[**Resmin sola ve sağa doğru döndürülmesi**] genellikle nesnenin kategorisini değiştirmez. Bu, en eski ve en yaygın kullanılan görüntü büyütme yöntemlerinden biridir. Daha sonra, `transforms` modülünü `RandomHorizontalFlip` örneğini oluşturmak için kullanıyoruz ve görüntüyü sağa ve sola döndürebilir.
 :end_tab:
 
 ```{.python .input}
@@ -104,7 +104,7 @@ apply(img, shape_aug)
 
 ### Renkleri Değiştirme
 
-Başka bir büyütme yöntemi renkleri değiştirmektir. Görüntü renginin dört yönünü değiştirebiliriz: parlaklık, kontrast, doygunluk ve renk tonu. Aşağıdaki örnekte, görüntünün parlaklığını**] orijinal resminin%50'si ($1-0.5$) ile%150'si ($1+0.5$) arasında bir değere [**rastgele değiştiriyoruz).
+Another augmentation method is changing colors. We can change four aspects of the image color: brightness, contrast, saturation, and hue. In the example below, we [**randomly change the brightness**] of the image to a value between 50% ($1-0.5$) and 150% ($1+0.5$) of the original image.
 
 ```{.python .input}
 apply(img, gluon.data.vision.transforms.RandomBrightness(0.5))
@@ -365,7 +365,7 @@ def train_with_data_aug(train_augs, test_augs, net, lr=0.001):
     train_ch13(net, train_iter, test_iter, loss, trainer, 10, devices)
 ```
 
-Rastgele sol-sağ çevirmeye dayalı görüntü büyütme kullanarak [**modeli** eğitelim] izin verin.
+Rastgele sol-sağ çevirmeye dayalı görüntü büyütme kullanarak [**modeli eğitelim**] izin verin.
 
 ```{.python .input}
 #@tab all

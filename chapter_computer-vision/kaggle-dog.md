@@ -231,7 +231,9 @@ def get_net(devices):
     return finetune_net
 ```
 
-[**Kayıp** hesaplanmadan önce] önce, önce önceden eğitilmiş modelin çıktı katmanının girişini elde ederiz, yani ayıklanan özellik. Daha sonra kaybı hesaplamak için küçük özel çıkış ağımızın giriş olarak bu özelliği kullanıyoruz.
+Before [**calculating the loss**],
+we first obtain the input of the pretrained model's output layer, i.e., the extracted feature.
+Then we use this feature as the input for our small custom output network to calculate the loss.
 
 ```{.python .input}
 loss = gluon.loss.SoftmaxCrossEntropyLoss()

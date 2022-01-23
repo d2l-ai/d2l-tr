@@ -236,7 +236,13 @@ valid_ds, test_ds = [torchvision.datasets.ImageFolder(
     transform=transform_test) for folder in ['valid', 'test']]
 ```
 
-Eğitim sırasında [**yukarıda tanımlanan tüm görüntü büyütme işlemlerini belirtmemiz gerekir]. Hiperparametre ayarlaması sırasında model değerlendirmesi için doğrulama kümesi kullanıldığında, görüntü büyütmesinden rastgelelik kullanılmamalıdır. Nihai tahminden önce, modeli etiketli tüm verileri tam olarak kullanmak için kombine eğitim seti ve doğrulama setinde eğitiyoruz.
+During training,
+we need to [**specify all the image augmentation operations defined above**].
+When the validation set
+is used for model evaluation during hyperparameter tuning,
+no randomness from image augmentation should be introduced.
+Before final prediction,
+we train the model on the combined training set and validation set to make full use of all the labeled data.
 
 ```{.python .input}
 train_iter, train_valid_iter = [gluon.data.DataLoader(

@@ -131,7 +131,7 @@ weight.data(devices[0])[0], weight.data(devices[1])[0]
 ```
 
 :begin_tab:`mxnet`
-Ardından, kodu [**doğruluğu** değerlendirmek] için işe yarayan bir kodla değiştirelim (**birden fazla cihazda** paralel olarak). Bu `evaluate_accuracy_gpu` işlevinin :numref:`sec_lenet`'ten değiştirilmesi görevi görür. Temel fark, ağı çağırmadan önce bir mini batch paylaşmamızdır. Diğer her şey esasen aynıdır.
+Next, let us replace the code to [**evaluate the accuracy**] by one that works (**in parallel across multiple devices**). This serves as a replacement of the `evaluate_accuracy_gpu` function from :numref:`sec_lenet`. The main difference is that we split a minibatch before invoking the network. All else is essentially identical.
 :end_tab:
 
 ```{.python .input}

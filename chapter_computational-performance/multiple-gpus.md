@@ -197,7 +197,7 @@ print('after allreduce:\n', data[0], '\n', data[1])
 
 ## Veri Dağıtımı
 
-[**Bir minibatch birden çok GPU boyunca eşit olarak dağıtmak için] basit bir yardımcı program işlevine ihtiyacımız var. Örneğin, iki GPU'da verilerin yarısının GPU'lardan birine kopyalanmasını istiyoruz. Daha kullanışlı ve daha özlü olduğu için, $4 \times 5$ matrisinde denemek için derin öğrenme çerçevesinden yerleşik işlevi kullanıyoruz.
+[**Bir minibatch birden çok GPU boyunca eşit olarak dağıtmak için**] basit bir yardımcı program işlevine ihtiyacımız var. Örneğin, iki GPU'da verilerin yarısının GPU'lardan birine kopyalanmasını istiyoruz. Daha kullanışlı ve daha özlü olduğu için, $4 \times 5$ matrisinde denemek için derin öğrenme çerçevesinden yerleşik işlevi kullanıyoruz.
 
 ```{.python .input}
 data = np.arange(20).reshape(4, 5)
@@ -335,7 +335,7 @@ Bunun ne kadar iyi çalıştığını görelim [**tek bir GPU**]. İlk olarak 25
 train(num_gpus=1, batch_size=256, lr=0.2)
 ```
 
-Toplu iş boyutunu ve öğrenme oranını değişmeden tutarak ve [**GPU sayısını 2** olarak artırarak], test doğruluğunun önceki deneye kıyasla kabaca aynı kaldığını görebiliriz. Optimizasyon algoritmaları açısından aynıdır. Ne yazık ki burada kazanılacak anlamlı bir hız yok: model sadece çok küçük; dahası, çoklu GPU eğitimini uygulamaya yönelik biraz sofistike yaklaşımımızın önemli Python yükünden muzdarip olduğu küçük bir veri kümesine sahibiz. Daha karmaşık modellerle ve daha gelişmiş paralelleşme yollarıyla karşılaşacağız. Bize Moda-MNIST için yine ne olacağını görelim.
+Toplu iş boyutunu ve öğrenme oranını değişmeden tutarak ve [**GPU sayısını 2 olarak artırarak**], test doğruluğunun önceki deneye kıyasla kabaca aynı kaldığını görebiliriz. Optimizasyon algoritmaları açısından aynıdır. Ne yazık ki burada kazanılacak anlamlı bir hız yok: model sadece çok küçük; dahası, çoklu GPU eğitimini uygulamaya yönelik biraz sofistike yaklaşımımızın önemli Python yükünden muzdarip olduğu küçük bir veri kümesine sahibiz. Daha karmaşık modellerle ve daha gelişmiş paralelleşme yollarıyla karşılaşacağız. Bize Moda-MNIST için yine ne olacağını görelim.
 
 ```{.python .input}
 #@tab all

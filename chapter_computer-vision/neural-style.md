@@ -59,7 +59,7 @@ style_img = d2l.Image.open('../img/autumn-oak.jpg')
 d2l.plt.imshow(style_img);
 ```
 
-## [**Önişleme ve Sonrası İşleme Sonrası]
+## [**Önişleme ve Sonrası İşleme Sonrası**]
 
 Aşağıda, önişleme ve postprocessing görüntüleri için iki işlev tanımlıyoruz. `preprocess` işlevi, giriş görüntüsünün üç RGB kanalının her birini standartlaştırır ve sonuçları CNN giriş biçimine dönüştürür. `postprocess` işlevi, standardizasyondan önce çıktı görüntüsünde piksel değerlerini orijinal değerlerine geri yükler. Görüntü yazdırma işlevi, her pikselin 0'dan 1'e kadar kayan nokta değerine sahip olmasını gerektirdiğinden, 0'dan küçük veya 1'den büyük herhangi bir değeri sırasıyla 0 veya 1 ile değiştiririz.
 

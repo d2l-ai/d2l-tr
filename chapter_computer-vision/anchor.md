@@ -29,7 +29,7 @@ torch.set_printoptions(2)  # Simplify printing accuracy
 
 Giriş görüntüsünün $h$ yüksekliğine ve $w$ genişliğine sahip olduğunu varsayalım. Görüntünün her pikselinde ortalanmış farklı şekillere sahip çapa kutuları oluşturuyoruz. *scale* $s\in (0, 1]$, *en boy oranı* (genişliğin yüksekliğe oranı) $r > 0$'dır. Ardından [**çapa kutusunun genişliği ve yüksekliği sırasıyla $ws\sqrt{r}$ ve $hs/\sqrt{r}$'dür.**] Merkez konumu verildiğinde, bilinen genişlik ve yüksekliğe sahip bir çapa kutusu belirlendiğini unutmayın. 
 
-Farklı şekillere sahip birden çok çapa kutusu oluşturmak için bir dizi terazi $s_1,\ldots, s_n$ ve bir dizi en/boy oranı $r_1,\ldots, r_m$ ayarlayalım. Bu ölçeklerin ve en boy oranlarının tüm kombinasyonlarını merkez olarak her pikselle birlikte kullanırken, girdi görüntüsünde toplam $whnm$ bağlantı kutusu bulunur. Bu çapa kutuları tüm zemin gerçeği sınırlayıcı kutuları kapsayabilir rağmen, hesaplama karmaşıklığı kolayca çok yüksektir. Uygulamada, sadece $s_1$ veya $r_1$ (** içeren bu kombinasyonları göz önünde bulundurun): 
+Farklı şekillere sahip birden çok çapa kutusu oluşturmak için bir dizi terazi $s_1,\ldots, s_n$ ve bir dizi en/boy oranı $r_1,\ldots, r_m$ ayarlayalım. Bu ölçeklerin ve en boy oranlarının tüm kombinasyonlarını merkez olarak her pikselle birlikte kullanırken, girdi görüntüsünde toplam $whnm$ bağlantı kutusu bulunur. Bu çapa kutuları tüm zemin gerçeği sınırlayıcı kutuları kapsayabilir rağmen, hesaplama karmaşıklığı kolayca çok yüksektir. Uygulamada, sadece $s_1$ veya $r_1$ (** içeren bu kombinasyonları göz önünde bulundurun**): 
 
 (**$$(s_1, r_1), (s_1, r_2), \ldots, (s_1, r_m), (s_2, r_1), (s_3, r_1), \ldots, (s_n, r_1).$$**) 
 
@@ -429,7 +429,7 @@ def multibox_target(anchors, labels):
 
 ### Bir Örnek
 
-Çapa kutusu etiketlemesini somut bir örnekle gösterelim. İlk eleman sınıftır (köpek için 0 ve kedi için 1) ve kalan dört öğe - sol üst köşede ve sağ alt köşede $(x, y)$ eksen koordinatlarıdır (aralık 0 ile 1 arasındadır) yüklenen görüntüde köpek ve kedi için zemin gerçeği sınırlayıcı kutuları tanımlıyoruz. Ayrıca, sol üst köşenin ve sağ alt köşenin koordinatlarını kullanarak etiketlenecek beş çapa kutusu oluşturuyoruz: $A_0, \ldots, A_4$ (indeks 0'dan başlar). Sonra [****resimdeki bu temel doğruluk sınırlayıcı kutuları ve çapa kutularını çiziyoruz.
+Çapa kutusu etiketlemesini somut bir örnekle gösterelim. İlk eleman sınıftır (köpek için 0 ve kedi için 1) ve kalan dört öğe - sol üst köşede ve sağ alt köşede $(x, y)$ eksen koordinatlarıdır (aralık 0 ile 1 arasındadır) yüklenen görüntüde köpek ve kedi için zemin gerçeği sınırlayıcı kutuları tanımlıyoruz. Ayrıca, sol üst köşenin ve sağ alt köşenin koordinatlarını kullanarak etiketlenecek beş çapa kutusu oluşturuyoruz: $A_0, \ldots, A_4$ (indeks 0'dan başlar). Sonra [**resimdeki bu temel doğruluk sınırlayıcı kutuları ve çapa kutularını çiziyoruz.**]
 
 ```{.python .input}
 #@tab all
@@ -483,7 +483,15 @@ labels[0]
 ## Maksimum Olmayan Bastırma ile Sınırlayıcı Kutuları Tahmin Edileme
 :label:`subsec_predicting-bounding-boxes-nms`
 
-Tahmin sırasında, görüntü için birden çok bağlantı kutusu oluşturur ve bunların her biri için sınıfları ve uzaklıkları tahmin ederiz. * Tahmin edilen sınırlama kutusu*, tahmin edilen ofset ile bir çapa kutusuna göre elde edilir. Aşağıda, giriş olarak ankraj ve ofset tahminleri alan `offset_inverse` işlevini uyguluyoruz ve [**öngörülen sınırlama kutusu koordinatlarını döndürmek için ters ofset dönüşümleri uygular].
+During prediction,
+we generate multiple anchor boxes for the image and predict classes and offsets for each of them.
+A *predicted bounding box*
+is thus obtained according to 
+an anchor box with its predicted offset.
+Below we implement the `offset_inverse` function
+that takes in anchors and
+offset predictions as inputs and [**applies inverse offset transformations to
+return the predicted bounding box coordinates**].
 
 ```{.python .input}
 #@tab all
@@ -507,7 +515,7 @@ def offset_inverse(anchors, offset_preds):
 1. $L$'teki tüm öngörülen sınırlama kutuları temel olarak kullanılıncaya kadar yukarıdaki işlemi yineleyin. Şu anda, $L$'teki öngörülen sınırlayıcı kutuların herhangi bir çiftinin IoU $\epsilon$ eşiğinin altındadır; bu nedenle, hiçbir çift birbiriyle çok benzer değildir. 
 1. Listedeki tüm öngörülen sınırlayıcı kutuları çıktısı $L$.
 
-[**Aşağıdaki `nms` işlevi, güven puanlarını azalan sırada sıralar ve indekslerini döndürür. **]
+[**Aşağıdaki `nms` işlevi, güven puanlarını azalan sırada sıralar ve indekslerini döndürür.**]
 
 ```{.python .input}
 #@save
@@ -617,7 +625,7 @@ def multibox_detection(cls_probs, offset_preds, anchors, nms_threshold=0.5,
     return d2l.stack(out)
 ```
 
-Şimdi [**yukarıdaki uygulamaları dört çapa kutusuna sahip somut bir örneğe uygulayalım]. Basitlik için, tahmin edilen ofsetlerin tümünün sıfırlar olduğunu varsayıyoruz. Bu, tahmin edilen sınırlayıcı kutuların çapa kutuları olduğu anlamına gelir. Arka plan, köpek ve kedi arasındaki her sınıf için, öngörülen olasılığını da tanımlıyoruz.
+Şimdi [**yukarıdaki uygulamaları dört çapa kutusuna sahip somut bir örneğe uygulayalım**]. Basitlik için, tahmin edilen ofsetlerin tümünün sıfırlar olduğunu varsayıyoruz. Bu, tahmin edilen sınırlayıcı kutuların çapa kutuları olduğu anlamına gelir. Arka plan, köpek ve kedi arasındaki her sınıf için, öngörülen olasılığını da tanımlıyoruz.
 
 ```{.python .input}
 #@tab all

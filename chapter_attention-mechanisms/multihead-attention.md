@@ -44,7 +44,21 @@ import tensorflow as tf
 
 ## Uygulama
 
-Uygulamamızda, çok kafa dikkatinin her kafası için ölçeklendirilmiş nokta ürün dikkatini [**seçiyoruz]. Hesaplamalı maliyet ve parametreleme maliyetinin önemli ölçüde büyümesini önlemek için $p_q = p_k = p_v = p_o / h$'i belirledik. Sorgu, anahtar ve değer için doğrusal dönüşümlerin çıkış sayısını $p_q h = p_k h = p_v h = p_o$ olarak ayarlarsak $h$ kafaları paralel olarak hesaplanabileceğini unutmayın. Aşağıdaki uygulamada $p_o$, `num_hiddens` argümanı vasıtasıyla belirtilmiştir.
+In our implementation,
+we [**choose the scaled dot-product attention
+for each head**] of the multi-head attention.
+To avoid significant growth
+of computational cost and parameterization cost,
+we set
+$p_q = p_k = p_v = p_o / h$.
+Note that $h$ heads
+can be computed in parallel
+if we set
+the number of outputs of linear transformations
+for the query, key, and value
+to $p_q h = p_k h = p_v h = p_o$.
+In the following implementation,
+$p_o$ is specified via the argument `num_hiddens`.
 
 ```{.python .input}
 #@save
@@ -264,7 +278,11 @@ def transpose_output(X, num_heads):
     return tf.reshape(X, shape=(X.shape[0], X.shape[1], -1))
 ```
 
-Tuşların ve değerlerin aynı olduğu bir oyuncak örneği kullanarak `MultiHeadAttention` sınıfını [**test etmemize izin verelim. Sonuç olarak, çok kafalı dikkat çıkışının şekli (`batch_size`, `num_queries`, `num_hiddens`) 'dir.
+Let us [**test our implemented**] `MultiHeadAttention` class
+using a toy example where keys and values are the same.
+As a result,
+the shape of the multi-head attention output
+is (`batch_size`, `num_queries`, `num_hiddens`).
 
 ```{.python .input}
 num_hiddens, num_heads = 100, 5

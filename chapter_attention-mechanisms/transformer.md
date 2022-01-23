@@ -192,7 +192,7 @@ class AddNorm(tf.keras.layers.Layer):
         return self.ln(self.dropout(Y, **kwargs) + X)
 ```
 
-Artık bağlantı, iki girişin aynı şekle sahip olmasını gerektirir, böylece [**çıkış tensörünün ekleme işleminden sonra da aynı şekle sahip olmasını sağlar].
+Artık bağlantı, iki girişin aynı şekle sahip olmasını gerektirir, böylece [**çıkış tensörünün ekleme işleminden sonra da aynı şekle sahip olmasını sağlar**].
 
 ```{.python .input}
 add_norm = AddNorm(0.5)
@@ -215,7 +215,14 @@ add_norm(tf.ones((2, 3, 4)), tf.ones((2, 3, 4)), training=False).shape
 
 ## Kodlayıcı
 
-Transformatör kodlayıcıyı monte etmek için gerekli tüm bileşenlerle, [**kodlayıcı içinde tek bir katman] uygulayarak başlayalım. Aşağıdaki `EncoderBlock` sınıfı iki alt katman içerir: çok kafalı özdikkat ve konumsal ilerleme ağları, ardından katman normalleştirmesinin ardından kalan bir bağlantının her iki alt katman etrafında kullanıldığı yer.
+With all the essential components to assemble
+the transformer encoder,
+let us start by
+implementing [**a single layer within the encoder**].
+The following `EncoderBlock` class
+contains two sublayers: multi-head self-attention and positionwise feed-forward networks,
+where a residual connection followed by layer normalization is employed
+around both sublayers.
 
 ```{.python .input}
 #@save

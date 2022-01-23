@@ -215,7 +215,7 @@ def get_blk(i):
     return blk
 ```
 
-Şimdi her blok için [**ileri yayılımı** tanımlıyoruz]. Görüntü sınıflandırma görevlerinden farklı olarak, buradaki çıktılar arasında (i) CNN özellik eşlemeleri `Y`, (ii) geçerli ölçekte `Y` kullanılarak oluşturulan bağlantı kutuları ve (iii) sınıflar ve uzaklıklar (`Y`'e dayalı) bu çapa kutuları için tahmin edilen (`Y`'e dayalı) içerir.
+Şimdi her blok için [**ileri yayılımı tanımlıyoruz**]. Görüntü sınıflandırma görevlerinden farklı olarak, buradaki çıktılar arasında (i) CNN özellik eşlemeleri `Y`, (ii) geçerli ölçekte `Y` kullanılarak oluşturulan bağlantı kutuları ve (iii) sınıflar ve uzaklıklar (`Y`'e dayalı) bu çapa kutuları için tahmin edilen (`Y`'e dayalı) içerir.
 
 ```{.python .input}
 def blk_forward(X, blk, size, ratio, cls_predictor, bbox_predictor):
@@ -306,7 +306,7 @@ class TinySSD(nn.Module):
         return anchors, cls_preds, bbox_preds
 ```
 
-$256 \times 256$ görüntü `X` mini toplu işleminde [**bir model örneği oluşturup ileri yaymayı gerçekleştirmek için kullanıyoruz]. 
+$256 \times 256$ görüntü `X` mini toplu işleminde [**bir model örneği oluşturup ileri yaymayı gerçekleştirmek için kullanıyoruz**]. 
 
 Bu bölümde daha önce gösterildiği gibi, ilk blok $32 \times 32$ özellik haritalarını çıkarır. İkinci ila dördüncü altörnekleme bloklarının yükseklik ve genişliği yarıya indirdiğini ve beşinci bloğun genel havuzlama kullandığını hatırlayın. Özellik haritalarının uzamsal boyutları boyunca her birim için 4 çapa kutusu oluşturulduğundan, beş ölçekte her görüntü için toplam $(32^2 + 16^2 + 8^2 + 4^2 + 1)\times 4 = 5444$ çapa kutusu oluşturulur.
 
