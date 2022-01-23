@@ -87,7 +87,8 @@ apply(img, torchvision.transforms.RandomVerticalFlip())
 
 Kullandığımız örnek görüntüde, kedi görüntünün ortasındadır, ancak bu genel olarak böyle olmayabilir. :numref:`sec_pooling`'te, havuzlama katmanının konvolüsyonel bir tabakanın hedef konuma duyarlılığını azaltabileceğini açıkladık. Buna ek olarak, nesnelerin görüntüdeki farklı ölçeklerde farklı konumlarda görünmesini sağlamak için görüntüyü rastgele kırpabiliriz, bu da bir modelin hedef konuma duyarlılığını da azaltabilir. 
 
-Aşağıdaki kodda, $10\ %\ sim 100\ %$ of the original area each time, and the ratio of width to height of this area is randomly selected from $0.5\ sim 2$ alana sahip bir alanı rasgele kırpıyoruz. Ardından bölgenin genişliği ve yüksekliği 200 piksele ölçeklendirilir. Aksi belirtilmedikçe, bu bölümdeki $a$ ve $b$ arasındaki rastgele sayı, $[a, b]$ aralığından rastgele ve tekdüze örnekleme ile elde edilen sürekli bir değeri ifade eder.
+In the code below, we [**randomly crop**] an area with an area of $10\% \sim 100\%$ of the original area each time, and the ratio of width to height of this area is randomly selected from $0.5 \sim 2$. Then, the width and height of the region are both scaled to 200 pixels. 
+Unless otherwise specified, the random number between $a$ and $b$ in this section refers to a continuous value obtained by random and uniform sampling from the interval $[a, b]$.
 
 ```{.python .input}
 shape_aug = gluon.data.vision.transforms.RandomResizedCrop(
