@@ -74,7 +74,6 @@ import tensorflow as tf
 
 Etiketimizi, sıfır ortalama ve 0.01 standart sapma ile Gauss gürültüsü ile bozulmuş girdilerimizin doğrusal bir fonksiyonu olarak seçiyoruz. Aşırı eğitimin etkilerini belirgin hale getirmek için problemimizin boyutunu $d = 200$'e çıkarabilir ve sadece 20 örnek içeren küçük bir eğitim kümesi ile çalışabiliriz.
 
-
 ```{.python .input}
 #@tab all
 n_train, n_test, num_inputs, batch_size = 20, 100, 200, 5
@@ -284,7 +283,7 @@ def train_concise(wd):
         for X, y in train_iter:
             trainer.zero_grad()
             l = loss(net(X), y)
-            l.sum().backward()
+            l.mean().backward()
             trainer.step()
         if (epoch + 1) % 5 == 0:
             animator.add(epoch + 1, (d2l.evaluate_loss(net, train_iter, loss),

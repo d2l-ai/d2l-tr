@@ -293,7 +293,7 @@ def train_epoch_ch3(net, train_iter, loss, updater):  #@save
         if isinstance(updater, torch.optim.Optimizer):
             # PyTorch yerleşik optimize edicisini ve kayip kriterini kullanma
             updater.zero_grad()
-            l.sum().backward()
+            l.mean().backward()
             updater.step()
         else:
             # Ozel olarak oluşturulmus optimize edicisini ve kayip olcutunu kullanma
