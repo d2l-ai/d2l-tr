@@ -1,7 +1,7 @@
 # Derin Yinelemeli Sinir Ağları
 :label:`sec_deep_rnn`
 
-Şimdiye kadar, tek tek yönlü gizli katmanlı RNN'leri tartıştık. İçinde gizli değişkenlerin ve gözlemlerin nasıl etkileşime girdiğinin özgül fonksiyonel formu oldukça keyfidir. Farklı etkileşim türlerini modellemek için yeterli esnekliğe sahip olduğumuz sürece bu büyük bir sorun değildir. Bununla birlikte, tek bir katman ile, bu oldukça zor olabilir. Doğrusal modellerde, daha fazla katman ekleyerek bu sorunu düzelttik. RNN'ler içinde bu biraz daha zor, çünkü öncelikle ek doğrusal olmayanlığın nasıl ve nerede ekleneceğine karar vermemiz gerekiyor.
+Şimdiye kadar, tek bir tek yönlü gizli katmanlı RNN'leri tartıştık. İçinde gizli değişkenlerin ve gözlemlerin nasıl etkileşime girdiğinin özgül fonksiyonel formu oldukça keyfidir. Farklı etkileşim türlerini modellemek için yeterli esnekliğe sahip olduğumuz sürece bu büyük bir sorun değildir. Bununla birlikte, tek bir katman ile, bu oldukça zor olabilir. Doğrusal modellerde, daha fazla katman ekleyerek bu sorunu düzelttik. RNN'ler içinde bu biraz daha zor, çünkü öncelikle ek doğrusal olmayanlığın nasıl ve nerede ekleneceğine karar vermemiz gerekiyor.
 
 Aslında, birden fazla RNN katmanını üst üste yığabiliriz. Bu, birkaç basit katmanın kombinasyonu sayesinde esnek bir mekanizma ile sonuçlanır. Özellikle, veriler yığının farklı düzeylerinde alakalı olabilir. Örneğin, finansal piyasa koşulları (hisse alım ve satım piyasası) ile ilgili üst düzey verileri elimizde mevcut tutmak isteyebiliriz, ancak daha düşük bir seviyede yalnızca kısa vadeli zamansal dinamikleri kaydederiz.
 
@@ -14,12 +14,12 @@ Yukarıdaki soyut tartışmaların ötesinde, :numref:`fig_deep_rnn`'ü inceleye
 
 :numref:`fig_deep_rnn`'te tasvir edilen $L$ gizli katmanın derin mimarisi içindeki işlevsel bağımlıkları resmileştirebiliriz. Aşağıdaki tartışmamız öncelikle sıradan RNN modeline odaklanmaktadır, ancak diğer dizi modelleri için de geçerlidir.
 
-Bir $t$ zaman adımında $\mathbf{X}_t \in \mathbb{R}^{n \times d}$ minigrup girdisine sahip olduğumuzu varsayalım (örnek sayısı: $n$, her örnekte girdi sayısı: $d$). Aynı zamanda adımda, $l^\mathrm{th}$ gizli katmanın ($l=1,\ldots,L$), $\mathbf{H}_t^{(l)}  \in \mathbb{R}^{n \times h}$ gizli durumunun (gizli birimlerin sayısı: $h$) ve $\mathbf{O}_t \in \mathbb{R}^{n \times q}$ çıktı katmanı değişkeninin (çıktı sayısı: $q$) olduğunu varsayalım. $\mathbf{H}_t^{(0)} = \mathbf{X}_t$, $\phi_l$ etkinleştirme işlevini kullanan $l^\mathrm{th}$ gizli katmanın gizli durumu aşağıdaki gibi ifade edilir:
+Bir $t$ zaman adımında $\mathbf{X}_t \in \mathbb{R}^{n \times d}$ minigrup girdisine sahip olduğumuzu varsayalım (örnek sayısı: $n$, her örnekte girdi sayısı: $d$). Aynı zamanda adımda, $l.$ gizli katmanın ($l=1,\ldots,L$), $\mathbf{H}_t^{(l)}  \in \mathbb{R}^{n \times h}$ gizli durumunun (gizli birimlerin sayısı: $h$) ve $\mathbf{O}_t \in \mathbb{R}^{n \times q}$ çıktı katmanı değişkeninin (çıktı sayısı: $q$) olduğunu varsayalım. $\mathbf{H}_t^{(0)} = \mathbf{X}_t$, $\phi_l$ etkinleştirme işlevini kullanan $l.$ gizli katmanın gizli durumu aşağıdaki gibi ifade edilir:
 
 $$\mathbf{H}_t^{(l)} = \phi_l(\mathbf{H}_t^{(l-1)} \mathbf{W}_{xh}^{(l)} + \mathbf{H}_{t-1}^{(l)} \mathbf{W}_{hh}^{(l)}  + \mathbf{b}_h^{(l)}),$$
 :eqlabel:`eq_deep_rnn_H`
 
-burada $\mathbf{W}_{xh}^{(l)} \in \mathbb{R}^{h \times h}$ ve $\mathbf{W}_{hh}^{(l)} \in \mathbb{R}^{h \times h}$ ağırlıkları $\mathbf{b}_h^{(l)} \in \mathbb{R}^{1 \times h}$ ekgirdisi ile birlikte $l^\mathrm{th}$ gizli katmanın model parametreleridir.
+burada $\mathbf{W}_{xh}^{(l)} \in \mathbb{R}^{h \times h}$ ve $\mathbf{W}_{hh}^{(l)} \in \mathbb{R}^{h \times h}$ ağırlıkları $\mathbf{b}_h^{(l)} \in \mathbb{R}^{1 \times h}$ ekgirdisi ile birlikte $l.$ gizli katmanın model parametreleridir.
 
 Sonunda, çıktı katmanının hesaplanması yalnızca son $L$. gizli katmanın gizli durumuna dayanır:
 
@@ -27,7 +27,7 @@ $$\mathbf{O}_t = \mathbf{H}_t^{(L)} \mathbf{W}_{hq} + \mathbf{b}_q,$$
 
 burada ağırlık $\mathbf{W}_{hq} \in \mathbb{R}^{h \times q}$ ve ek girdi $\mathbf{b}_q \in \mathbb{R}^{1 \times q}$, çıktı katmanının model parametreleridir.
 
-MLP'lerde olduğu gibi, $L$ gizli katmanların sayısı ve $h$ gizli birimlerin sayısı hiperparametrelerdir. Başka bir deyişle, bunlar bizim tarafımızdan ayarlanabilir veya belirtilebilir. Buna ek olarak, :eqref:`eq_deep_rnn_H`'teki gizli durum hesaplamalarını GRU veya LSTM ile değiştirerek bir derin geçitli RNN elde edebiliriz.
+MLP'lerde olduğu gibi, $L$ gizli katmanların sayısı ve $h$ gizli birimlerin sayısı hiper parametrelerdir. Başka bir deyişle, bunlar bizim tarafımızdan ayarlanabilir veya belirtilebilir. Buna ek olarak, :eqref:`eq_deep_rnn_H`'teki gizli durum hesaplamalarını GRU veya LSTM ile değiştirerek bir derin geçitli RNN elde edebiliriz.
 
 ## Kısa Uygulama
 
@@ -53,7 +53,15 @@ batch_size, num_steps = 32, 35
 train_iter, vocab = d2l.load_data_time_machine(batch_size, num_steps)
 ```
 
-Hiperparametre seçimi gibi mimari kararlar :numref:`sec_lstm`'tekine çok benzer. Farklı andıçlara sahip olduğumuz için aynı sayıda girdi ve çıktı seçiyoruz, yani `vocab_size`. Gizli birimlerin sayısı hala 256'dır. Tek fark, şimdi apaçık olmayan gizli katmanların sayısını `num_layers` değerini belirterek seçmemizdir.
+```{.python .input}
+#@tab tensorflow
+from d2l import tensorflow as d2l
+import tensorflow as tf
+batch_size, num_steps = 32, 35
+train_iter, vocab = d2l.load_data_time_machine(batch_size, num_steps)
+```
+
+Hiper parametre seçimi gibi mimari kararlar :numref:`sec_lstm`'tekine çok benzer. Farklı andıçlara sahip olduğumuz için aynı sayıda girdi ve çıktı seçiyoruz, yani `vocab_size`. Gizli birimlerin sayısı hala 256'dır. Tek fark, şimdi (**apaçık olmayan gizli katmanların sayısını `num_layers` değerini belirterek seçmemizdir.**)
 
 ```{.python .input}
 vocab_size, num_hiddens, num_layers = len(vocab), 256, 2
@@ -72,14 +80,34 @@ model = d2l.RNNModel(lstm_layer, len(vocab))
 model = model.to(device)
 ```
 
-## Eğitim ve Tahmin
+```{.python .input}
+#@tab tensorflow
+vocab_size, num_hiddens, num_layers = len(vocab), 256, 2
+num_inputs = vocab_size
+device_name = d2l.try_gpu()._device_name
+strategy = tf.distribute.OneDeviceStrategy(device_name)
+rnn_cells = [tf.keras.layers.LSTMCell(num_hiddens) for _ in range(num_layers)]
+stacked_lstm = tf.keras.layers.StackedRNNCells(rnn_cells)
+lstm_layer = tf.keras.layers.RNN(stacked_lstm, time_major=True,
+                                 return_sequences=True, return_state=True)
+with strategy.scope():
+    model = d2l.RNNModel(lstm_layer, len(vocab))
+```
+
+## [**Eğitim ve Tahmin**]
 
 Şu andan itibaren LSTM modeli ile iki katman oluşturuyoruz, bu oldukça karmaşık mimari eğitimi önemli ölçüde yavaşlatıyor.
 
 ```{.python .input}
-#@tab all
+#@tab mxnet, pytorch
 num_epochs, lr = 500, 2
 d2l.train_ch8(model, train_iter, vocab, lr, num_epochs, device)
+```
+
+```{.python .input}
+#@tab tensorflow
+num_epochs, lr = 500, 2
+d2l.train_ch8(model, train_iter, vocab, lr, num_epochs, strategy)
 ```
 
 ## Özet

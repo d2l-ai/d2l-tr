@@ -1,7 +1,7 @@
 # Çift Yönlü Yinelemeli Sinir Ağları
 :label:`sec_bi_rnn`
 
-Dizi öğrenmede, şu ana kadar amacımızın, şimdiye kadar gördüklerimizle bir sonraki çıktıyı modellemek olduğunu varsaydık; örneğin, bir zaman serisi veya bir dil modeli bağlamında. Bu tipik bir senaryo olsa da, karşılaşabileceğimiz tek senaryo değil. Sorunu göstermek için, bir metin dizisinde boş doldurmada aşağıdaki üç görevi gözünüzde canlandırın:
+Dizi öğrenmede, şu ana kadar amacımızın, şimdiye kadar gördüklerimizle bir sonraki çıktıyı modellemek olduğunu varsaydık; örneğin, bir zaman serisi veya bir dil modeli bağlamında. Bu tipik bir senaryo olsa da, karşılaşabileceğimiz tek senaryo değil. Sorunu göstermek için, bir metin dizisinde boşluk doldurmada aşağıdaki üç görevi gözünüzde canlandırın:
 
 * Ben `___`.
 * `___` açım.
@@ -13,14 +13,14 @@ Mevcut bilgi miktarına bağlı olarak boşlukları “mutluyum”, “yarı” 
 
 Bu alt bölüm, dinamik programlama problemini göstermeyi amaçlar. Belirli teknik detaylar derin öğrenme modellerini anlamak için önemli değildir, ancak neden derin öğrenmeyi kullanabileceğimizi ve neden belirli mimarileri seçebileceğimizi anlamaya yardımcı olurlar.
 
-Problemi olasılıksal çizge modelleri kullanarak çözmek istiyorsak, mesela aşağıdaki gibi gizli bir değişken modeli tasarlayabiliriz. Herhangi bir $t$ zamanda adımında, $P(x_t \mid h_t)$ olasılığında $x_t$ aracılığıyla gözlenen salımını yöneten bazı gizli $h_t$ değişkenimiz olduğunu varsayalım. Dahası, herhangi bir $h_t \to h_{t+1}$ geçişi, bir durum geçiş olasılığı $P(h_{t+1} \mid h_{t})$ ile verilir. Bu olasılıksal çizge modeli :numref:`fig_hmm`'te olduğu gibi bir *saklı Markov modeli*dir.
+Problemi olasılıksal çizge modelleri kullanarak çözmek istiyorsak, mesela aşağıdaki gibi gizli bir değişken modeli tasarlayabiliriz. Herhangi bir $t$ zamanda adımında, $P(x_t \mid h_t)$ olasılığında $x_t$ aracılığıyla gözlenen salınımı yöneten bazı gizli $h_t$ değişkenimiz olduğunu varsayalım. Dahası, herhangi bir $h_t \to h_{t+1}$ geçişi, bir durum geçiş olasılığı $P(h_{t+1} \mid h_{t})$ ile verilir. Bu olasılıksal çizge modeli :numref:`fig_hmm`'te olduğu gibi bir *saklı Markov modeli*dir.
 
 ![Saklı Markov Modeli.](../img/hmm.svg)
 :label:`fig_hmm`
 
 Böylece, $T$ gözlemlerinin bir dizisi için gözlemlenen ve gizli durumlar üzerinde aşağıdaki bileşik olasılık dağılımına sahibiz:
 
-$$P(x_1, \ldots, x_T, h_1, \ldots, h_T) = \prod_{t=1}^T P(h_t \mid h_{t-1}) P(x_t \mid h_t), \text{ where } P(h_1 \mid h_0) = P(h_1).$$
+$$P(x_1, \ldots, x_T, h_1, \ldots, h_T) = \prod_{t=1}^T P(h_t \mid h_{t-1}) P(x_t \mid h_t), \text{ öyleki } P(h_1 \mid h_0) = P(h_1).$$
 :eqlabel:`eq_hmm_jointP`
 
 Şimdi bazı $x_j$'ler hariç tüm $x_i$'leri gözlemlediğimizi varsayalım ve amacımız $P(x_j \mid x_{-j})$'yı hesaplamaktır ve burada $x_{-j} = (x_1, \ldots, x_{j-1}, x_{j+1}, \ldots, x_{T})$'dir. $P(x_j \mid x_{-j})$'te saklı bir değişken olmadığından, $h_1, \ldots, h_T$ için olası tüm seçenek kombinasyonlarını toplamayı düşünürüz. Herhangi bir $h_i$'un $k$ farklı değerlere (sonlu sayıda durum) sahip olması durumunda, bu, $k^T$ terimi toplamamız gerektiği anlamına gelir; bu da genellikle imkansız bir işlemdir! Neyse ki bunun için şık bir çözüm var: *Dinamik programlama*.
@@ -63,7 +63,7 @@ Böylece *geriye özyineleme* olarak yazabiliriz:
 
 $$\rho_{t-1}(h_{t-1})= \sum_{h_{t}} P(h_{t} \mid h_{t-1}) P(x_{t} \mid h_{t}) \rho_{t}(h_{t}),$$
 
-$\rho_T(h_T) = 1$ olarak ilkleriz. Hem ileriye hem de geriye özyinelemeler $T$ saklı değişkenlerini üstel zaman yerine bütün $(h_1, \ldots, h_T)$ değerler için $\mathcal{O}(kT)$ (doğrusal) zaman içinde toplamamızı sağlar. Bu, çizgesel modellerle olasılık çıkarımının en büyük avantajlarından biridir. Aynı zamanda genel mesaj geçişi algoritmasının çok özel bir örneğidir :cite:`Aji.McEliece.2000`. Hem ileriye hem de geri özyinelemeleri birleştirerek, şöyle bir hesaplamay ulaşabiliriz:
+$\rho_T(h_T) = 1$ olarak ilkleriz. Hem ileriye hem de geriye özyinelemeler $T$ saklı değişkenlerini üstel zaman yerine bütün $(h_1, \ldots, h_T)$ değerler için $\mathcal{O}(kT)$ (doğrusal) zaman içinde toplamamızı sağlar. Bu, çizgesel modellerle olasılık çıkarımının en büyük avantajlarından biridir. Aynı zamanda genel mesaj geçişi algoritmasının çok özel bir örneğidir :cite:`Aji.McEliece.2000`. Hem ileriye hem de geri özyinelemeleri birleştirerek, şöyle bir hesaplamaya ulaşabiliriz:
 
 $$P(x_j \mid x_{-j}) \propto \sum_{h_j} \pi_j(h_j) \rho_j(h_j) P(x_j \mid h_j).$$
 
@@ -107,9 +107,9 @@ Yaraya tuz ekler gibi üstelik çift yönlü RNN'ler de son derece yavaştır. B
 
 Pratikte çift yönlü katmanlar çok az kullanılır ve yalnızca eksik kelimeleri doldurma, andıçlara açıklama ekleme (örneğin, adlandırılmış nesne tanıma için) ve dizileri toptan kodlayarak diziyi veri işleme hattında bir adım işlemek gibi (örneğin, makine çevirisi için) dar bir uygulama kümesi için kullanılır. :numref:`sec_bert` ve :numref:`sec_sentiment_rnn`'te, metin dizilerini kodlamak için çift yönlü RNN'lerin nasıl kullanılacağını tanıtacağız.
 
-## Yanlış Bir Uygulama İçin Çift Yönlü RNN Eğitmek
+## (**Yanlış Bir Uygulama İçin Çift Yönlü RNN Eğitmek**)
 
-İki yönlü RNN'lerin geçmişteki ve gelecekteki verileri kullanmalarına gerçeğine ilişkin tüm ikazları görmezden gelirsek ve basitçe dil modellerine uyguladıklarsak, kabul edilebilir bir şaşkınlık değeriyle tahminler elde edebiliriz. Bununla birlikte, modelin gelecekteki andıçlarını tahmin etme yeteneği, aşağıdaki deney gösterildiği gibi ciddi bir şekilde zarar sokulmuştur. Makul şaşkınlığa rağmen, birçok yinelemeden sonra bile anlamsız ifadeler üretir. Aşağıdaki kodu, yanlış bağlamda kullanmaya karşı uyarıcı bir örnek olarak ekliyoruz.
+İki yönlü RNN'lerin geçmişteki ve gelecekteki verileri kullanmalarına gerçeğine ilişkin tüm ikazları görmezden gelirsek ve basitçe dil modellerine uygularsak, kabul edilebilir bir şaşkınlık değeriyle tahminler elde edebiliriz. Bununla birlikte, modelin gelecekteki andıçlarını tahmin etme yeteneği, aşağıdaki deney gösterildiği gibi ciddi bir şekilde zarar sokulmuştur. Makul şaşkınlığa rağmen, birçok yinelemeden sonra bile anlamsız ifadeler üretir. Aşağıdaki kodu, yanlış bağlamda kullanmaya karşı uyarıcı bir örnek olarak ekliyoruz.
 
 ```{.python .input}
 from d2l import mxnet as d2l
@@ -155,7 +155,7 @@ d2l.train_ch8(model, train_iter, vocab, lr, num_epochs, device)
 
 * İki yönlü RNN'lerde, her zaman adımı için gizli durum, şu anki zaman adımından önceki ve sonraki veriler tarafından eş zamanlı olarak belirlenir.
 * Çift yönlü RNN'ler olasılıksal çizge modellerdeki ileri-geri algoritması ile çarpıcı bir benzerlik taşır.
-* Çift yönlü RNN'ler çoğunlukla dizi kodlaması ve iki yönlü bağlam verilen gözlemlerin tahmini için yararlıdır.
+* Çift yönlü RNN'ler çoğunlukla dizi kodlaması ve çift yönlü bağlam verilen gözlemlerin tahmini için yararlıdır.
 * Çift yönlü RNN'lerin uzun gradyan zincirleri nedeniyle eğitilmesi maliyetlidir.
 
 ## Alıştırmalar

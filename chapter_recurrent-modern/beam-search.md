@@ -1,9 +1,9 @@
 # Işın Arama
 :label:`sec_beam-search`
 
-:numref:`sec_seq2seq`'te, özel dizi sonu andıcı, "<eos>", tahmin edilene kadar çıktı dizisini andıç andıç ile tahmin ettik. Bu bölümde, bu *açgözlü arama* stratejisini formüle dökmeye ve onunla ilgili sorunları araştırmaya başlayacağız, daha sonra bu stratejiyi diğer seçeneklerle karşılaştıracağız: *Kapsamlı arama (exhaustive search)* ve *ışın arama (beam search)*.
+:numref:`sec_seq2seq`'te, özel dizi sonu andıcı, "&lt;eos&gt;", tahmin edilene kadar çıktı dizisini andıç andıç ile tahmin ettik. Bu bölümde, bu *açgözlü arama* stratejisini formüle dökmeye ve onunla ilgili sorunları araştırmaya başlayacağız, daha sonra bu stratejiyi diğer seçeneklerle karşılaştıracağız: *Kapsamlı arama (exhaustive search)* ve *ışın arama (beam search)*.
 
-Açgözlü aramaya biçimsel bir girişten önce, :numref:`sec_seq2seq`'ten aynı matematiksel gösterimi kullanarak arama problemini formülleştirelim. Herhangi bir $t'$ zamanda adımında, $y_{t'}$ kodçüzücü çıktı olasılığı $y_1, önceki çıktı altdizisi \ldots, y_{t'-1}$  $y_1, \ldots, y_{t'-1}$'e ve girdi dizisinin bilgilerini kodlayan bağlam değişkeni $\mathbf{c}$'ye koşulludur. Hesaplama maliyetini ölçmek için, ("<eos>" içeren) çıktı kelime dağarcığını $\mathcal{Y}$ ile belirtelim. Yani bu kelime kümesinin küme büyüklüğü $\left|\mathcal{Y}\right|$ kelime dağarcığı büyüklüğündedir. Ayrıca, bir çıktı dizisinin en fazla andıç adedini $T'$ olarak belirtelim. Sonuç olarak, hedefimiz tüm $\mathcal{O}(\left|\mathcal{Y}\right|^{T'})$ olası çıktı dizilerinden ideal bir çıktı aramaktır. Tabii ki, tüm bu çıktı dizileri için, gerçek çıktıda "<eos>" dahil sonrasındaki bölümler atılacaktır.
+Açgözlü aramaya biçimsel bir girişten önce, :numref:`sec_seq2seq`'ten aynı matematiksel gösterimi kullanarak arama problemini formülleştirelim. Herhangi bir $t'$ zamanda adımında, $y_{t'}$ kodçüzücü çıktı olasılığı önceki çıktı altdizisi $y_1, \ldots, y_{t'-1}$  $y_1, \ldots, y_{t'-1}$'e ve girdi dizisinin bilgilerini kodlayan bağlam değişkeni $\mathbf{c}$'ye koşulludur. Hesaplama maliyetini ölçmek için, ("&lt;eos&gt;" içeren) çıktı kelime dağarcığını $\mathcal{Y}$ ile belirtelim. Yani bu kelime kümesinin küme büyüklüğü $\left|\mathcal{Y}\right|$ kelime dağarcığı büyüklüğündedir. Ayrıca, bir çıktı dizisinin en fazla andıç adedini $T'$ olarak belirtelim. Sonuç olarak, hedefimiz tüm $\mathcal{O}(\left|\mathcal{Y}\right|^{T'})$ olası çıktı dizilerinden ideal bir çıktı aramaktır. Tabii ki, tüm bu çıktı dizileri için, gerçek çıktıda "&lt;eos&gt;" dahil sonrasındaki bölümler atılacaktır.
 
 ## Açgözlü Arama
 
@@ -11,19 +11,19 @@ Açgözlü aramaya biçimsel bir girişten önce, :numref:`sec_seq2seq`'ten ayn�
 
 $$y_{t'} = \operatorname*{argmax}_{y \in \mathcal{Y}} P(y \mid y_1, \ldots, y_{t'-1}, \mathbf{c}),$$
  
-“<eos>" çıktılandıktan veya çıktı dizisi maksimum uzunluğuna ulaştıktan sonra çıktı dizisi tamamlanmış olur.
+"&lt;eos&gt;" yayıldıktan veya çıktı dizisi maksimum uzunluğuna ulaştıktan sonra çıktı dizisi tamamlanmış olur.
 
 Peki açgözlü arama ile ne yanlış gidebilir? Aslında, *en iyi dizi*  maksimum $\prod_{t'=1}^{T'} P(y_{t'} \mid y_1, \ldots, y_{t'-1}, \mathbf{c})$ değerine sahip çıktı dizisi olmalıdır, ki bu da girdi dizisine dayalı bir çıktı dizisi oluşturmanın koşullu olasılığıdır. Ne yazık ki, en iyi dizinin açgözlü arama ile elde edileceğinin garantisi yoktur.
 
 ![Her adımda, açgözlü arama, en yüksek koşullu olasılığa sahip andıcı seçer.](../img/s2s-prob1.svg)
 :label:`fig_s2s-prob1`
 
-Bir örnekle gösterelim. Çıktı sözlüğünde “A”, “B”, “C” ve "<eos>" dört andıcı olduğunu varsayalım. :numref:`fig_s2s-prob1`'te, her zaman adımının altındaki dört sayı, o zaman adımında sırasıyla “A”, “B”, “C” ve "<eos>" üretme koşullu olasılıklarını temsil eder. Her adımda, açgözlü arama, en yüksek koşullu olasılığa sahip andıcı seçer. Bu nedenle, “A”, “B”, “C” ve "<eos>" çıktı dizisi :numref:`fig_s2s-prob1`'te tahmin edilecektir. Bu çıktı dizisinin koşullu olasılığı $0.5\times0.4\times0.4\times0.6 = 0.048$'dir.
+Bir örnekle gösterelim. Çıktı sözlüğünde “A”, “B”, “C” ve "&lt;eos&gt;" dört andıcı olduğunu varsayalım. :numref:`fig_s2s-prob1`'te, her zaman adımının altındaki dört sayı, o zaman adımında sırasıyla “A”, “B”, “C” ve "&lt;eos&gt;" üretme koşullu olasılıklarını temsil eder. Her adımda, açgözlü arama, en yüksek koşullu olasılığa sahip andıcı seçer. Bu nedenle, “A”, “B”, “C” ve "&lt;eos&gt;" çıktı dizisi :numref:`fig_s2s-prob1`'te tahmin edilecektir. Bu çıktı dizisinin koşullu olasılığı $0.5\times0.4\times0.4\times0.6 = 0.048$'dir.
 
 ![Her zaman adımının altındaki dört sayı, o zaman adımında "A", "B", "C" ve "&lt;eos&gt;" oluşturmanın koşullu olasılıklarını temsil eder. 2. zaman adımında, ikinci en yüksek koşullu olasılığa sahip olan "C" andıcı seçilir.](../img/s2s-prob2.svg)
 :label:`fig_s2s-prob2`
 
-Sonra, :numref:`fig_s2s-prob2`'teki başka bir örneğe bakalım. :numref:`fig_s2s-prob1`'ün aksine, zaman adımında :numref:`fig_s2s-prob2`'te *ikinci* en yüksek koşullu olasılığa sahip “C” andıcını seçiyoruz. Zaman adım 3 dayandığı zaman adımları 1 ve 2, çıktı dizileri :numref:`fig_s2s-prob1`'te “A” ve “B”'den :numref:`fig_s2s-prob2`'de “A” ve “C”'ye değiştiğinden, :numref:`fig_s2s-prob2`'de her andıcın koşullu olasılığı zaman adımı 3'te de değişti. Zaman adım 3'te “B” andıcını seçtiğimizi varsayalım. Şimdi adım 4, :numref:`fig_s2s-prob1`'te  ilk üç zaman adımın çıktısı  "A", "B" ve "C" altdizisinden farklı olan “A”, “C” ve “B” üzerinde koşulludur. Bu nedenle, :numref:`fig_s2s-prob2`'teki 4. adımda her andıcı üretmenin koşullu olasılığı da :numref:`fig_s2s-prob1`'teki durumdan farklıdır. Sonuç olarak, :numref:`fig_s2s-prob2`'te “A”, “C”, “B” ve "<eos>" çıktı dizisinin koşullu olasılığı $0.5\times0.3 \times0.6\times0.6=0.054$'tür, bu da :numref:`fig_s2s-prob1`'teki açgözlü aramadakinden daha büyüktür. Bu örnekte, açgözlü arama ile elde edilen “A”, “B”, “C” ve "<eos>" çıktı dizisi en uygun sıra değildir.
+Sonra, :numref:`fig_s2s-prob2`'teki başka bir örneğe bakalım. :numref:`fig_s2s-prob1`'ün aksine, zaman adımında :numref:`fig_s2s-prob2`'te *ikinci* en yüksek koşullu olasılığa sahip “C” andıcını seçiyoruz. 3. zaman adımı dayandığı zaman adımları 1 ve 2, çıktı dizileri :numref:`fig_s2s-prob1`'te “A” ve “B”'den :numref:`fig_s2s-prob2`'de “A” ve “C”'ye değiştiğinden, :numref:`fig_s2s-prob2`'de her andıcın koşullu olasılığı 3. zaman adımında da değişti. 3. zaman adımında “B” andıcını seçtiğimizi varsayalım. Şimdi adım 4, :numref:`fig_s2s-prob1`'te  ilk üç zaman adımın çıktısı  "A", "B" ve "C" altdizisinden farklı olan “A”, “C” ve “B” üzerinde koşulludur. Bu nedenle, :numref:`fig_s2s-prob2`'teki 4. adımda her andıcı üretmenin koşullu olasılığı da :numref:`fig_s2s-prob1`'teki durumdan farklıdır. Sonuç olarak, :numref:`fig_s2s-prob2`'te “A”, “C”, “B” ve "&lt;eos&gt;" çıktı dizisinin koşullu olasılığı $0.5\times0.3 \times0.6\times0.6=0.054$'tür, bu da :numref:`fig_s2s-prob1`'teki açgözlü aramadakinden daha büyüktür. Bu örnekte, açgözlü arama ile elde edilen “A”, “B”, “C” ve"&lt;eos&gt;" çıktı dizisi en uygun sıra değildir.
 
 ## Kapsamlı Arama
 
@@ -41,7 +41,7 @@ Zaman adımında, en yüksek koşullu olasılıklara sahip $k$ tane andıcı se�
 ![Işın arama süreci (ışın boyutu: 2, bir çıktı dizisinin maksimum uzunluğu: 3). Aday çıktı dizileri $A$, $C$, $AB$, $CE$, $ABD$ ve $CED$ şeklindedir.](../img/beam-search.svg)
 :label:`fig_beam-search`
 
-:numref:`fig_beam-search`, bir örnek ile ışın arama sürecini gösterir. Çıktı kelime dağarcığının sadece beş öğe içerdiğini varsayalım: $\mathcal{Y} = \{A, B, C, D, E\}$ ve bunlardan biri “<eos>”dir. Işın boyutunun 2 ve bir çıktı dizisinin maksimum uzunluğunun 3 olduğunu düşünün. 1. zaman adımında, $P(y_1 \mid \mathbf{c})$ en yüksek koşullu olasılıklara sahip andıçların $A$ ve $C$ olduğunu varsayalım. 2. zaman adımında, tüm $y_2 \in \mathcal{Y},$ için hesaplarız:
+:numref:`fig_beam-search`, bir örnek ile ışın arama sürecini gösterir. Çıktı kelime dağarcığının sadece beş öğe içerdiğini varsayalım: $\mathcal{Y} = \{A, B, C, D, E\}$ ve bunlardan biri “&lt;eos&gt;”dir. Işın boyutunun 2 ve bir çıktı dizisinin maksimum uzunluğunun 3 olduğunu düşünün. 1. zaman adımında, $P(y_1 \mid \mathbf{c})$ en yüksek koşullu olasılıklara sahip andıçların $A$ ve $C$ olduğunu varsayalım. 2. zaman adımında, tüm $y_2 \in \mathcal{Y},$ için hesaplarız:
 
 $$\begin{aligned}P(A, y_2 \mid \mathbf{c}) = P(A \mid \mathbf{c})P(y_2 \mid A, \mathbf{c}),\\ P(C, y_2 \mid \mathbf{c}) = P(C \mid \mathbf{c})P(y_2 \mid C, \mathbf{c}),\end{aligned}$$  
 
@@ -49,16 +49,16 @@ ve bu on değer arasında en büyük ikisini seçeriz, diyelim ki $P(A, B \mid \
 
 $$\begin{aligned}P(A, B, y_3 \mid \mathbf{c}) = P(A, B \mid \mathbf{c})P(y_3 \mid A, B, \mathbf{c}),\\P(C, E, y_3 \mid \mathbf{c}) = P(C, E \mid \mathbf{c})P(y_3 \mid C, E, \mathbf{c}),\end{aligned}$$ 
 
-ve bu on değer arasında en büyük ikisini seçeriz, diyelim ki $P(A, B, D \mid \mathbf{c})$ ve $P(C, E, D \mid  \mathbf{c}).$ Sonuç olarak, altı aday çıktı dizileri elde ederiz: (i) $A$; (ii) $C$; (iii) $A$, $B$; (iv) $C$, $E$; (v) $A$, $A$, $A$, $A$, $P(C, E, D \mid  \mathbf{c}).$ 32293614, $D$; ve (vi) $C$, $E$, $D$.
+ve bu on değer arasında en büyük ikisini seçeriz, diyelim ki $P(A, B, D \mid \mathbf{c})$ ve $P(C, E, D \mid  \mathbf{c}).$ Sonuç olarak, altı aday çıktı dizileri elde ederiz: (i) $A$; (ii) $C$; (iii) $A$, $B$; (iv) $C$, $E$; (v) $A$, $B$, $D$ ve (vi) $C$, $E$, $D$.
 
-Sonunda, bu altı diziye dayalı nihai aday çıktı dizileri kümesini elde ederiz (örneğin, “<eos>” ve sonrasındaki tüm parçaları atın). Ardından, çıktı dizisi olarak aşağıdaki skorun en yüksek seviyesine sahip diziyi seçeriz:
+Sonunda, bu altı diziye dayalı nihai aday çıktı dizileri kümesini elde ederiz (örneğin, “&lt;eos&gt;” ve sonrasındaki tüm parçaları atın). Ardından, çıktı dizisi olarak aşağıdaki skorun en yüksek seviyesine sahip diziyi seçeriz:
 
-$$ \frac{1}{L^\alpha} \log P(y_1, \ldots, y_{L}) = \frac{1}{L^\alpha} \sum_{t'=1}^L \log P(y_{t'} \mid y_1, \ldots, y_{t'-1}, \mathbf{c}),$$
+$$ \frac{1}{L^\alpha} \log P(y_1, \ldots, y_{L}\mid \mathbf{c}) = \frac{1}{L^\alpha} \sum_{t'=1}^L \log P(y_{t'} \mid y_1, \ldots, y_{t'-1}, \mathbf{c}),$$
 :eqlabel:`eq_beam-search-score`
 
 Burada $L$, son aday dizisinin uzunluğudur ve $\alpha$ genellikle 0.75 olarak ayarlanır. Daha uzun bir dizi :eqref:`eq_beam-search-score` toplamında daha fazla logaritmik terime sahip olduğundan, paydadaki $L^\alpha$ terimi uzun dizileri cezalandırır.
 
-Işın aramasının hesaplama maliyeti $\mathcal{O}(k\left|\mathcal{Y}\right|T')$'tür. Bu sonuç açgözlü arama ile kapsamlı arama arasında yer alır. Aslında, açgözlü arama, 1 ışın boyutuna sahip özel bir ışın araması türü olarak kabul edilebilir. Esnek bir ışın boyutu seçimi ile ışın arama, hesaplama maliyetine karşı doğruluk arasında bir denge sağlar.
+Işın aramasının hesaplama maliyeti $\mathcal{O}(k\left|\mathcal{Y}\right|T')$'dir. Bu sonuç açgözlü arama ile kapsamlı arama arasında yer alır. Aslında, açgözlü arama, 1 ışın boyutuna sahip özel bir ışın araması türü olarak kabul edilebilir. Esnek bir ışın boyutu seçimi ile ışın arama, hesaplama maliyetine karşı doğruluk arasında bir denge sağlar.
 
 ## Özet
 

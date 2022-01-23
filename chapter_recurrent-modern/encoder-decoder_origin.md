@@ -37,7 +37,7 @@ in subsequent sections,
 this section will convert this architecture
 into an interface that will be implemented later.
 
-## Encoder
+## (**Encoder**)
 
 In the encoder interface,
 we just specify that
@@ -72,7 +72,21 @@ class Encoder(nn.Module):
         raise NotImplementedError
 ```
 
-## Decoder
+```{.python .input}
+#@tab tensorflow
+import tensorflow as tf
+
+#@save
+class Encoder(tf.keras.layers.Layer):
+    """The base encoder interface for the encoder-decoder architecture."""
+    def __init__(self, **kwargs):
+        super(Encoder, self).__init__(**kwargs)
+
+    def call(self, X, *args, **kwargs):
+        raise NotImplementedError
+```
+
+## [**Decoder**]
 
 In the following decoder interface,
 we add an additional `init_state` function
@@ -118,7 +132,22 @@ class Decoder(nn.Module):
         raise NotImplementedError
 ```
 
-## Putting the Encoder and Decoder Together
+```{.python .input}
+#@tab tensorflow
+#@save
+class Decoder(tf.keras.layers.Layer):
+    """The base decoder interface for the encoder-decoder architecture."""
+    def __init__(self, **kwargs):
+        super(Decoder, self).__init__(**kwargs)
+
+    def init_state(self, enc_outputs, *args):
+        raise NotImplementedError
+
+    def call(self, X, state, **kwargs):
+        raise NotImplementedError
+```
+
+## [**Putting the Encoder and Decoder Together**]
 
 In the end,
 the encoder-decoder architecture
@@ -159,6 +188,22 @@ class EncoderDecoder(nn.Module):
         enc_outputs = self.encoder(enc_X, *args)
         dec_state = self.decoder.init_state(enc_outputs, *args)
         return self.decoder(dec_X, dec_state)
+```
+
+```{.python .input}
+#@tab tensorflow
+#@save
+class EncoderDecoder(tf.keras.Model):
+    """The base class for the encoder-decoder architecture."""
+    def __init__(self, encoder, decoder, **kwargs):
+        super(EncoderDecoder, self).__init__(**kwargs)
+        self.encoder = encoder
+        self.decoder = decoder
+
+    def call(self, enc_X, dec_X, *args, **kwargs):
+        enc_outputs = self.encoder(enc_X, *args, **kwargs)
+        dec_state = self.decoder.init_state(enc_outputs, *args)
+        return self.decoder(dec_X, dec_state, **kwargs)
 ```
 
 The term "state" in the encoder-decoder architecture

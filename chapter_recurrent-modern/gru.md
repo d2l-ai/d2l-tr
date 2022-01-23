@@ -1,7 +1,7 @@
 # Geçitli Yinelemeli Birimler (GRU)
 :label:`sec_gru`
 
-:numref:`sec_bptt`'te, gradyanların RNN'lerde nasıl hesaplandığını tartıştık. Özellikle matrislerin uzun çarpımlarının kaybolan veya patlayan gradyanlara yol açabileceğini bulduk. Bu tür gradyan sıradışılıklarının pratikte ne anlama geldiğini hakkında kısaca düşünelim:
+:numref:`sec_bptt`'te, gradyanların RNN'lerde nasıl hesaplandığını tartıştık. Özellikle matrislerin uzun çarpımlarının kaybolan veya patlayan gradyanlara yol açabileceğini gördük. Bu tür gradyan sıradışılıklarının pratikte ne anlama geldiğini hakkında kısaca düşünelim:
 
 * Gelecekteki tüm gözlemleri tahmin etmek için erken bir gözlemin son derece önemli olduğu bir durumla karşılaşabiliriz. Biraz karmaşık bir durumu düşünün; ilk gözlem bir sağlama toplamı (checksum) içerir ve hedef de sağlama toplamının dizinin sonunda doğru olup olmadığını fark etmektir. Bu durumda, ilk andıcın etkisi hayati önem taşır. Hayati önem taşıyan erken bilgileri bir *bellek hücresinde* depolamak için bazı mekanizmalara sahip olmak isteriz. Böyle bir mekanizma olmadan, bu gözlemlere çok büyük bir gradyan atamak zorunda kalacağız, çünkü sonraki tüm gözlemleri etkilerler.
 * Bazı andıçların uygun gözlem taşımadığı durumlarla karşılaşabiliriz. Örneğin, bir web sayfasını ayrıştırırken, sayfada iletilen duygunun değerlendirilmesi amacıyla alakasız olan yardımcı HTML kodu olabilir. Gizli durum temsilinde bu tür andıçları *atlamak* için birtakım mekanizmaya sahip olmak isteriz.
@@ -91,9 +91,18 @@ batch_size, num_steps = 32, 35
 train_iter, vocab = d2l.load_data_time_machine(batch_size, num_steps)
 ```
 
-### Model Parametrelerini İlkleme
+```{.python .input}
+#@tab tensorflow
+from d2l import tensorflow as d2l
+import tensorflow as tf
 
-Bir sonraki adım model parametrelerini ilklemektir. Ağırlıkları standart sapması 0.01 olan bir Gauss dağılımından çekiyoruz ve ek girdiyi 0'a ayarlıyoruz. Hiperparametre `num_hiddens`, gizli birimlerin sayısını tanımlar. Güncelleme geçidi, sıfırlama geçidi, aday gizli durumu ve çıktı katmanı ile ilgili tüm ağırlıkları ve ek girdileri ilkleyeceğiz.
+batch_size, num_steps = 32, 35
+train_iter, vocab = d2l.load_data_time_machine(batch_size, num_steps)
+```
+
+### (**Model Parametrelerini İlkleme**)
+
+Bir sonraki adım model parametrelerini ilklemektir. Ağırlıkları standart sapması 0.01 olan bir Gauss dağılımından çekiyoruz ve ek girdiyi 0'a ayarlıyoruz. Hiper parametre `num_hiddens`, gizli birimlerin sayısını tanımlar. Güncelleme geçidi, sıfırlama geçidi, aday gizli durumu ve çıktı katmanı ile ilgili tüm ağırlıkları ve ek girdileri ilkleyeceğiz.
 
 ```{.python .input}
 def get_params(vocab_size, num_hiddens, device):
@@ -145,10 +154,32 @@ def get_params(vocab_size, num_hiddens, device):
         param.requires_grad_(True)
     return params
 ```
+```{.python .input}
+#@tab tensorflow
+def get_params(vocab_size, num_hiddens):
+    num_inputs = num_outputs = vocab_size
+
+    def normal(shape):
+        return d2l.normal(shape=shape,stddev=0.01,mean=0,dtype=tf.float32)
+
+    def three():
+        return (tf.Variable(normal((num_inputs, num_hiddens)), dtype=tf.float32),
+                tf.Variable(normal((num_hiddens, num_hiddens)), dtype=tf.float32),
+                tf.Variable(d2l.zeros(num_hiddens), dtype=tf.float32))
+
+    W_xz, W_hz, b_z = three()  # Update gate parameters
+    W_xr, W_hr, b_r = three()  # Reset gate parameters
+    W_xh, W_hh, b_h = three()  # Candidate hidden state parameters
+    # Output layer parameters
+    W_hq = tf.Variable(normal((num_hiddens, num_outputs)), dtype=tf.float32)
+    b_q = tf.Variable(d2l.zeros(num_outputs), dtype=tf.float32)
+    params = [W_xz, W_hz, b_z, W_xr, W_hr, b_r, W_xh, W_hh, b_h, W_hq, b_q]
+    return params
+```
 
 ### Modelin Tanımlanması
 
-Şimdi gizli durum ilkleme işlevini tanımlayacağız `init_gru_state`. :numref:`sec_rnn_scratch`'te tanımlanan `init_rnn_state` işlevi gibi, bu işlev, değerleri sıfırlar olan (toplu boyut, gizli birim sayısı) şekline sahip bir tensör döndürür.
+Şimdi [**gizli durum ilkleme işlevini**] tanımlayacağız `init_gru_state`. :numref:`sec_rnn_scratch`'te tanımlanan `init_rnn_state` işlevi gibi, bu işlev, değerleri sıfırlar olan (toplu boyut, gizli birim sayısı) şekline sahip bir tensör döndürür.
 
 ```{.python .input}
 def init_gru_state(batch_size, num_hiddens, device):
@@ -161,7 +192,13 @@ def init_gru_state(batch_size, num_hiddens, device):
     return (torch.zeros((batch_size, num_hiddens), device=device), )
 ```
 
-Şimdi GRU modelini tanımlamaya hazırız. Yapısı, güncelleme denklemlerinin daha karmaşık olması dışında, temel RNN hücresinin yapısı ile aynıdır.
+```{.python .input}
+#@tab tensorflow
+def init_gru_state(batch_size, num_hiddens):
+    return (d2l.zeros((batch_size, num_hiddens)), )
+```
+
+Şimdi [**GRU modelini tanımlamaya**] hazırız. Yapısı, güncelleme denklemlerinin daha karmaşık olması dışında, temel RNN hücresinin yapısı ile aynıdır.
 
 ```{.python .input}
 def gru(inputs, state, params):
@@ -194,20 +231,49 @@ def gru(inputs, state, params):
     return torch.cat(outputs, dim=0), (H,)
 ```
 
-### Eğitim ve Tahmin
+```{.python .input}
+#@tab tensorflow
+def gru(inputs, state, params):
+    W_xz, W_hz, b_z, W_xr, W_hr, b_r, W_xh, W_hh, b_h, W_hq, b_q = params
+    H, = state
+    outputs = []
+    for X in inputs:
+        X = tf.reshape(X,[-1,W_xh.shape[0]])
+        Z = tf.sigmoid(tf.matmul(X, W_xz) + tf.matmul(H, W_hz) + b_z)
+        R = tf.sigmoid(tf.matmul(X, W_xr) + tf.matmul(H, W_hr) + b_r)
+        H_tilda = tf.tanh(tf.matmul(X, W_xh) + tf.matmul(R * H, W_hh) + b_h)
+        H = Z * H + (1 - Z) * H_tilda
+        Y = tf.matmul(H, W_hq) + b_q
+        outputs.append(Y)
+    return tf.concat(outputs, axis=0), (H,)
+```
 
-Eğitim ve tahmin, tam olarak :numref:`sec_rnn_scratch`'tekiyle aynı şekilde çalışır. Eğitimden sonra, sırasıyla sağlanan “zaman yolcusu” ve “yolcusu” ön eklerini takip eden eğitim kümesindeki şaşkınlığı ve tahmin edilen diziyi yazdırırız.
+### Eğitme ve Tahmin Etme
+
+[**Eğitim**] ve tahmin, tam olarak :numref:`sec_rnn_scratch`'tekiyle aynı şekilde çalışır. Eğitimden sonra, sırasıyla sağlanan “zaman yolcusu” ve “yolcusu” ön eklerini takip eden eğitim kümesindeki şaşkınlığı ve tahmin edilen diziyi yazdırırız.
 
 ```{.python .input}
-#@tab all
+#@tab mxnet, pytorch
 vocab_size, num_hiddens, device = len(vocab), 256, d2l.try_gpu()
 num_epochs, lr = 500, 1
 model = d2l.RNNModelScratch(len(vocab), num_hiddens, device, get_params,
                             init_gru_state, gru)
 d2l.train_ch8(model, train_iter, vocab, lr, num_epochs, device)
 ```
+```{.python .input}
+#@tab tensorflow
+vocab_size, num_hiddens, device_name = len(vocab), 256, d2l.try_gpu()._device_name
+# defining tensorflow training strategy
+strategy = tf.distribute.OneDeviceStrategy(device_name)
+num_epochs, lr = 500, 1
+with strategy.scope():
+    model = d2l.RNNModelScratch(len(vocab), num_hiddens, init_gru_state, gru, get_params)
 
-## Kısa Uygulama
+d2l.train_ch8(model, train_iter, vocab, lr, num_epochs, strategy)
+```
+
+
+## [**Kısa Uygulama**]
 
 Üst düzey API'lerde, doğrudan bir GPU modelini oluşturabiliriz. Bu, yukarıda açıkça yaptığımız tüm yapılandırma ayrıntılarını gizler. Kod, daha önce yazdığımız birçok ayrıntı için Python yerine derlenmiş operatörleri kullandığı için önemli ölçüde daha hızlıdır.
 
@@ -226,6 +292,21 @@ model = model.to(device)
 d2l.train_ch8(model, train_iter, vocab, lr, num_epochs, device)
 ```
 
+```{.python .input}
+#@tab tensorflow
+gru_cell = tf.keras.layers.GRUCell(num_hiddens,
+    kernel_initializer='glorot_uniform')
+gru_layer = tf.keras.layers.RNN(gru_cell, time_major=True,
+    return_sequences=True, return_state=True)
+
+device_name = d2l.try_gpu()._device_name
+strategy = tf.distribute.OneDeviceStrategy(device_name)
+with strategy.scope():
+    model = d2l.RNNModel(gru_layer, vocab_size=len(vocab))
+
+d2l.train_ch8(model, train_iter, vocab, lr, num_epochs, strategy)
+```
+
 ## Özet
 
 * Geçitli RNN'ler, büyük zaman adım mesafeleri olan diziler için bağlılıkları daha iyi yakalayabilir.
@@ -236,7 +317,7 @@ d2l.train_ch8(model, train_iter, vocab, lr, num_epochs, device)
 ## Alıştırmalar
 
 1. Sadece $t'$ zaman adımını girdi olarak kullanarak $t > t'$ zaman adımlarındaki çıktıyı tahmin etmek için istediğimizi varsayalım. Her zaman adımında sıfırlama ve güncelleme geçitleri için en iyi değerler nelerdir?
-1. Hiperparametreleri ayarlayın ve çalışma süresi, şaşkınlık ve çıktı dizisi üzerindeki etkilerini analiz edin.
+1. Hiper parametreleri ayarlayın ve çalışma süresi, şaşkınlık ve çıktı dizisi üzerindeki etkilerini analiz edin.
 1. `rnn.RNN` ve `rnn.GRU` uygulamaları için çalışma zamanı, şaşkınlık ve çıktı dizgilerini birbirleriyle karşılaştırın.
 1. Yalnızca GRU'nun parçalarını, örneğin yalnızca bir sıfırlama geçidi veya yalnızca bir güncelleme geçidi, uygularsanız ne olur?
 

@@ -90,7 +90,7 @@ $$\rho_{t-1}(h_{t-1})= \sum_{h_{t}} P(h_{t} \mid h_{t-1}) P(x_{t} \mid h_{t}) \r
 
 with initialization $\rho_T(h_T) = 1$. 
 Both the forward and backward recursions allow us to sum over $T$ latent variables in $\mathcal{O}(kT)$ (linear) time over all values of $(h_1, \ldots, h_T)$ rather than in exponential time.
-This is one of the great benefits of the probabilistic inference with graphical models.
+This is one of the great benefits of the probabilistic inferenc	e with graphical models.
 It is 
 also a very special instance of 
 a general message passing algorithm :cite:`Aji.McEliece.2000`.
@@ -169,7 +169,7 @@ to encode text sequences.
 
 
 
-## Training a Bidirectional RNN for a Wrong Application
+## (**Training a Bidirectional RNN for a Wrong Application**)
 
 If we were to ignore all advice regarding the fact that bidirectional RNNs use past and future data and simply apply it to language models, 
 we will get estimates with acceptable perplexity. Nonetheless, the ability of the model to predict future tokens is severely compromised as the experiment below illustrates. 
