@@ -8,7 +8,7 @@
 
 Örnek olarak İngilizce'den Fransızca'ya makine çevirisini ele alalım. İngilizce bir girdi dizisi göz önüne alındığımızda, örneğin “They”, “are”, “watching”,”.“, (Onlar izliyorlar.) gibi, kodlayıcı-kodçözücü mimarisi önce değişken uzunluklu girdiyi bir duruma kodlar, sonra da durumu her seferinde bir andıç işleyerek çevrilmiş dizi çıktısını oluşturmak üzere çözer: “Ils”, “regardent”, “.”. Kodlayıcı-kodçözücü mimarisi, sonraki bölümlerdeki farklı dizi dönüştürme modellerinin temelini oluşturduğundan, bu bölüm bu mimariyi daha sonra uygulanacak bir arayüze dönüştürecektir.
 
-## Kodlayıcı
+## (**Kodlayıcı**)
 
 Kodlayıcı arayüzünde, kodlayıcının `X` girdisi olarak değişken uzunlukta dizileri aldığını belirtiyoruz. Uygulaması, bu temel `Encoder` sınıfından kalıtımla türetilmiş model tarafından sağlanacaktır.
 
@@ -39,7 +39,21 @@ class Encoder(nn.Module):
         raise NotImplementedError
 ```
 
-## Kodçözücü
+```{.python .input}
+#@tab tensorflow
+import tensorflow as tf
+
+#@save
+class Encoder(tf.keras.layers.Layer):
+    """The base encoder interface for the encoder-decoder architecture."""
+    def __init__(self, **kwargs):
+        super(Encoder, self).__init__(**kwargs)
+
+    def call(self, X, *args, **kwargs):
+        raise NotImplementedError
+```
+
+## [**Kodçözücü**]
 
 Aşağıdaki kodçözücü arayüzünde, kodlayıcı çıktısını (`enc_outputs`) kodlanmış duruma dönüştürmek için ek bir `init_state` işlevi ekliyoruz. Bu adımın :numref:`subsec_mt_data_loading`'te açıklanan girdinin geçerli uzunluğu gibi ek girdiler gerektirebileceğini unutmayın. Her seferinde bir andıç yaratarak değişken uzunlukta bir dizi oluşturmak için, her zaman kodçözücü bir girdiyi (örneğin, önceki zaman adımında oluşturulan andıç) ve kodlanmış durumu şu anki zaman adımındaki bir çıktı andıcına eşler.
 
@@ -72,7 +86,22 @@ class Decoder(nn.Module):
         raise NotImplementedError
 ```
 
-## Kodlayıcıyı ve Kodçözücüyü Bir Araya Koyma
+```{.python .input}
+#@tab tensorflow
+#@save
+class Decoder(tf.keras.layers.Layer):
+    """The base decoder interface for the encoder-decoder architecture."""
+    def __init__(self, **kwargs):
+        super(Decoder, self).__init__(**kwargs)
+
+    def init_state(self, enc_outputs, *args):
+        raise NotImplementedError
+
+    def call(self, X, state, **kwargs):
+        raise NotImplementedError
+```
+
+## [**Kodlayıcıyı ve Kodçözücüyü Bir Araya Koyma**]
 
 Sonunda, kodlayıcı-kodçözücü mimarisi, isteğe bağlı olarak ekstra argümanlarla beraber, hem bir kodlayıcı hem de bir kodçözücü içeriyor. İleri yaymada, kodlayıcının çıktısı kodlanmış durumu üretmek için kullanılır ve bu durum daha sonrasında kodçözücü tarafından girdilerinden biri olarak kullanılacaktır.
 
@@ -105,6 +134,22 @@ class EncoderDecoder(nn.Module):
         enc_outputs = self.encoder(enc_X, *args)
         dec_state = self.decoder.init_state(enc_outputs, *args)
         return self.decoder(dec_X, dec_state)
+```
+
+```{.python .input}
+#@tab tensorflow
+#@save
+class EncoderDecoder(tf.keras.Model):
+    """The base class for the encoder-decoder architecture."""
+    def __init__(self, encoder, decoder, **kwargs):
+        super(EncoderDecoder, self).__init__(**kwargs)
+        self.encoder = encoder
+        self.decoder = decoder
+
+    def call(self, enc_X, dec_X, *args, **kwargs):
+        enc_outputs = self.encoder(enc_X, *args, **kwargs)
+        dec_state = self.decoder.init_state(enc_outputs, *args)
+        return self.decoder(dec_X, dec_state, **kwargs)
 ```
 
 Kodlayıcı-kodçözücü mimarisindeki “durum” terimi, muhtemelen durumlara sahip sinir ağlarını kullanarak bu mimariyi uygulamak için size ilham vermiştir. Bir sonraki bölümde, bu kodlayıcı-kodçözücü mimarisine dayanan dizi dönüştürme modellerini tasarlamak için RNN'lerin nasıl uygulanacağını göreceğiz.
