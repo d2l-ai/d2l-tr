@@ -24,7 +24,8 @@ It is easy to implement these repeated structures in code
 with any modern deep learning framework by using loops and subroutines.
 
 
-## VGG Blocks
+## (**VGG Blocks**)
+:label:`subsec_vgg-blocks`
 
 The basic building block of classic CNNs
 is a sequence of the following:
@@ -32,19 +33,28 @@ is a sequence of the following:
 with padding to maintain the resolution,
 (ii) a nonlinearity such as a ReLU,
 (iii) a pooling layer such
-as a max pooling layer.
+as a maximum pooling layer.
 One VGG block consists of a sequence of convolutional layers,
-followed by a max pooling layer for spatial downsampling.
+followed by a maximum pooling layer for spatial downsampling.
 In the original VGG paper :cite:`Simonyan.Zisserman.2014`,
 the authors
 employed convolutions with $3\times3$ kernels with padding of 1 (keeping height and width)
-and $2 \times 2$ max pooling with stride of 2
+and $2 \times 2$ maximum pooling with stride of 2
 (halving the resolution after each block).
 In the code below, we define a function called `vgg_block`
 to implement one VGG block.
+
+:begin_tab:`mxnet,tensorflow`
 The function takes two arguments
 corresponding to the number of convolutional layers `num_convs`
 and the number of output channels `num_channels`.
+:end_tab:
+
+:begin_tab:`pytorch`
+The function takes three arguments corresponding to the number
+of convolutional layers `num_convs`, the number of input channels `in_channels`
+and the number of output channels `out_channels`.
+:end_tab:
 
 ```{.python .input}
 from d2l import mxnet as d2l
@@ -68,7 +78,7 @@ import torch
 from torch import nn
 
 def vgg_block(num_convs, in_channels, out_channels):
-    layers=[]
+    layers = []
     for _ in range(num_convs):
         layers.append(nn.Conv2d(in_channels, out_channels,
                                 kernel_size=3, padding=1))
@@ -92,7 +102,7 @@ def vgg_block(num_convs, num_channels):
     return blk
 ```
 
-## VGG Network
+## [**VGG Network**]
 
 Like AlexNet and LeNet,
 the VGG Network can be partitioned into two parts:
@@ -148,9 +158,9 @@ net = vgg(conv_arch)
 ```{.python .input}
 #@tab pytorch
 def vgg(conv_arch):
+    conv_blks = []
+    in_channels = 1
     # The convolutional part
-    conv_blks=[]
-    in_channels=1
     for (num_convs, out_channels) in conv_arch:
         conv_blks.append(vgg_block(num_convs, in_channels, out_channels))
         in_channels = out_channels
@@ -186,7 +196,7 @@ net = vgg(conv_arch)
 ```
 
 Next, we will construct a single-channel data example
-with a height and width of 224 to observe the output shape of each layer.
+with a height and width of 224 to [**observe the output shape of each layer**].
 
 ```{.python .input}
 net.initialize()
@@ -219,8 +229,8 @@ for processing by the fully-connected part of the network.
 
 ## Training
 
-Since VGG-11 is more computationally-heavy than AlexNet
-we construct a network with a smaller number of channels.
+[**Since VGG-11 is more computationally-heavy than AlexNet
+we construct a network with a smaller number of channels.**]
 This is more than sufficient for training on Fashion-MNIST.
 
 ```{.python .input}
@@ -241,13 +251,13 @@ net = lambda: vgg(small_conv_arch)
 ```
 
 Apart from using a slightly larger learning rate,
-the model training process is similar to that of AlexNet in :numref:`sec_alexnet`.
+the [**model training**] process is similar to that of AlexNet in :numref:`sec_alexnet`.
 
 ```{.python .input}
 #@tab all
 lr, num_epochs, batch_size = 0.05, 10, 128
 train_iter, test_iter = d2l.load_data_fashion_mnist(batch_size, resize=224)
-d2l.train_ch6(net, train_iter, test_iter, num_epochs, lr)
+d2l.train_ch6(net, train_iter, test_iter, num_epochs, lr, d2l.try_gpu())
 ```
 
 ## Summary

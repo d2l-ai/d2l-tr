@@ -24,7 +24,15 @@ batch_size, num_steps = 32, 35
 train_iter, vocab = d2l.load_data_time_machine(batch_size, num_steps)
 ```
 
-## Modelin Tanımlanması
+```{.python .input}
+#@tab tensorflow
+from d2l import tensorflow as d2l
+import tensorflow as tf
+batch_size, num_steps = 32, 35
+train_iter, vocab = d2l.load_data_time_machine(batch_size, num_steps)
+```
+
+## [**Modelin Tanımlanması**]
 
 Yüksek seviyeli API'ler, yinelemeli sinir ağlarının uygulamalarını sağlar. Yinelemeli sinir ağı tabakasını `rnn_layer`'i tek bir gizli katman ve 256 gizli birimle inşa ediyoruz. Aslında, birden fazla katmana sahip olmanın ne anlama geldiğini henüz tartışmadık; onu :numref:`sec_deep_rnn`'te göreceğiz. Şimdilik, basitçe, birden fazla katmanın bir RNN katmanının çıktısının bir sonraki RNN katmanı için girdi olarak kullanılması olduğunu söylemek yeterli.
 
@@ -40,12 +48,21 @@ num_hiddens = 256
 rnn_layer = nn.RNN(len(vocab), num_hiddens)
 ```
 
+```{.python .input}
+#@tab tensorflow
+num_hiddens = 256
+rnn_cell = tf.keras.layers.SimpleRNNCell(num_hiddens,
+    kernel_initializer='glorot_uniform')
+rnn_layer = tf.keras.layers.RNN(rnn_cell, time_major=True,
+    return_sequences=True, return_state=True)
+```
+
 :begin_tab:`mxnet`
-Gizli durumu ilklemek basittir. Üye fonksiyonunu `begin_state`'i çağırıyoruz . Bu, minigruptaki her örnek için (gizli katman sayısı, grup boyutu, gizli birim sayısı) şekilli bir ilk gizli durumu içeren liste (`state`) döndürür. Daha sonra tanıtılacak bazı modellerde (örneğin, uzun ömürlü kısa-dönem belleği), bu liste başka bilgiler de içerir.
+Gizli durumu ilklemek basittir. Üye fonksiyonunu, `begin_state`'i çağırıyoruz . Bu, minigruptaki her örnek için (gizli katman sayısı, grup boyutu, gizli birim sayısı) şekilli bir ilk gizli durumu içeren liste (`state`) döndürür. Daha sonra tanıtılacak bazı modellerde (örneğin, uzun ömürlü kısa-dönem belleği), bu liste başka bilgiler de içerir.
 :end_tab:
 
 :begin_tab:`pytorch`
-Şekli (gizli katman sayısı, grup boyutu, gizli birim sayısı) olan bir tensörü gizli durumu ilklemek için kullanırız .
+Şekli (gizli katman sayısı, grup boyutu, gizli birim sayısı) olan (**bir tensörü gizli durumu ilklemek için kullanırız**).
 :end_tab:
 
 ```{.python .input}
@@ -59,7 +76,13 @@ state = torch.zeros((1, batch_size, num_hiddens))
 state.shape
 ```
 
-Gizli bir durum ve bir girdi ile, çıktıyı güncellenmiş gizli durumla hesaplayabiliriz. `rnn_layer`'in “çıktı” (`Y`)'inin çıktı katmanlarının hesaplanmasını içermediği vurgulanmalıdır: *Her bir* zaman adımındaki gizli durumu ifade eder ve sonraki çıktı katmanına girdi olarak kullanılabilir.
+```{.python .input}
+#@tab tensorflow
+state = rnn_cell.get_initial_state(batch_size=batch_size, dtype=tf.float32)
+state.shape
+```
+
+[**Gizli bir durum ve bir girdi ile, çıktıyı güncellenmiş gizli durumla hesaplayabiliriz.**] `rnn_layer`'in “çıktı” (`Y`)'inin çıktı katmanlarının hesaplanmasını *içermediği* vurgulanmalıdır: *Her bir* zaman adımındaki gizli durumu ifade eder ve sonraki çıktı katmanına girdi olarak kullanılabilir.
 
 :begin_tab:`mxnet`
 Ayrıca, `rnn_layer` tarafından döndürülen güncelleştirilmiş gizli durum (`state_new`) minigrubun *son* zaman adımındaki gizli durumunu ifade eder. Sıralı bölümlemede bir dönem içinde sonraki minigrubun gizli durumunu ilklemede kullanılabilir. Birden çok gizli katman için, her katmanın gizli durumu bu değişkende saklanır (`state_new`). Daha sonra tanıtılacak bazı modellerde (örneğin, uzun ömürlü kısa-dönem belleği), bu değişken başka bilgiler de içerir.
@@ -78,7 +101,14 @@ Y, state_new = rnn_layer(X, state)
 Y.shape, state_new.shape
 ```
 
-:numref:`sec_rnn_scratch`'e benzer şekilde, tam bir RNN modeli için bir `RNNModel` sınıfı tanımlarız. `rnn_layer`'in yalnızca gizli yinelemeli katmanları içerdiğini unutmayın, ayrı bir çıktı katmanı oluşturmamız gerekir.
+```{.python .input}
+#@tab tensorflow
+X = tf.random.uniform((num_steps, batch_size, len(vocab)))
+Y, state_new = rnn_layer(X, state)
+Y.shape, len(state_new), state_new[0].shape
+```
+
+:numref:`sec_rnn_scratch`'e benzer şekilde, [**tam bir RNN modeli için bir `RNNModel` sınıfı tanımlarız.**] `rnn_layer`'in yalnızca gizli yinelemeli katmanları içerdiğini unutmayın, ayrı bir çıktı katmanı oluşturmamız gerekir.
 
 ```{.python .input}
 #@save
@@ -148,31 +178,73 @@ class RNNModel(nn.Module):
                         batch_size, self.num_hiddens), device=device))
 ```
 
+```{.python .input}
+#@tab tensorflow
+#@save
+class RNNModel(tf.keras.layers.Layer):
+    def __init__(self, rnn_layer, vocab_size, **kwargs):
+        super(RNNModel, self).__init__(**kwargs)
+        self.rnn = rnn_layer
+        self.vocab_size = vocab_size
+        self.dense = tf.keras.layers.Dense(vocab_size)
+
+    def call(self, inputs, state):
+        X = tf.one_hot(tf.transpose(inputs), self.vocab_size)
+        # Later RNN like `tf.keras.layers.LSTMCell` return more than two values
+        Y, *state = self.rnn(X, state)
+        output = self.dense(tf.reshape(Y, (-1, Y.shape[-1])))
+        return output, state
+
+    def begin_state(self, *args, **kwargs):
+        return self.rnn.cell.get_initial_state(*args, **kwargs)
+```
+
 ## Eğitim ve Tahmin
 
-Modeli eğitmeden önce, rastgele ağırlıklara sahip bir modelle bir tahmin yapalım.
+Modeli eğitmeden önce, [**rastgele ağırlıklara sahip bir modelle bir tahmin yapalım.**]
 
 ```{.python .input}
 device = d2l.try_gpu()
-model = RNNModel(rnn_layer, len(vocab))
-model.initialize(force_reinit=True, ctx=device)
-d2l.predict_ch8('time traveller', 10, model, vocab, device)
+net = RNNModel(rnn_layer, len(vocab))
+net.initialize(force_reinit=True, ctx=device)
+d2l.predict_ch8('time traveller', 10, net, vocab, device)
 ```
 
 ```{.python .input}
 #@tab pytorch
 device = d2l.try_gpu()
-model = RNNModel(rnn_layer, vocab_size=len(vocab))
-model = model.to(device)
-d2l.predict_ch8('time traveller', 10, model, vocab, device)
+net = RNNModel(rnn_layer, vocab_size=len(vocab))
+net = net.to(device)
+d2l.predict_ch8('time traveller', 10, net, vocab, device)
 ```
 
-Oldukça açık, bu model hiç çalışmıyor. Ardından, :numref:`sec_rnn_scratch`'te tanımlanan aynı hiperparametrelerle `train_ch8`'i çağırdık ve modelimizi üst düzey API'lerle eğitiyoruz.
+```{.python .input}
+#@tab tensorflow
+device_name = d2l.try_gpu()._device_name
+strategy = tf.distribute.OneDeviceStrategy(device_name)
+with strategy.scope():
+    net = RNNModel(rnn_layer, vocab_size=len(vocab))
+
+d2l.predict_ch8('time traveller', 10, net, vocab)
+```
+
+Oldukça açık, bu model hiç çalışmıyor. Ardından, :numref:`sec_rnn_scratch`'te tanımlanan aynı hiper parametrelerle `train_ch8`'i çağırdık ve [**modelimizi üst düzey API'lerle eğitiyoruz.**]
 
 ```{.python .input}
-#@tab all
 num_epochs, lr = 500, 1
-d2l.train_ch8(model, train_iter, vocab, lr, num_epochs, device)
+d2l.train_ch8(net, train_iter, vocab, lr, num_epochs, device)
+```
+
+```{.python .input}
+#@tab pytorch
+num_epochs, lr = 500, 1
+d2l.train_ch8(net, train_iter, vocab, lr, num_epochs, device)
+```
+
+```{.python .input}
+#@tab tensorflow
+num_epochs, lr = 500, 1
+d2l.train_ch8(net, train_iter, vocab, lr, num_epochs, strategy)
 ```
 
 Son bölümle karşılaştırıldığında, bu model, kodun derin öğrenme çerçevesinin üst düzey API'leriyle daha iyi hale getirilmesinden dolayı daha kısa bir süre içinde olsa da, benzer bir şaşkınlığa ulaşmaktadır.
@@ -194,5 +266,9 @@ Son bölümle karşılaştırıldığında, bu model, kodun derin öğrenme çer
 :end_tab:
 
 :begin_tab:`pytorch`
-[Tartışmalar](https://discuss.d2l.ai/t/1053)
+[Discussions](https://discuss.d2l.ai/t/1053)
+:end_tab:
+
+:begin_tab:`tensorflow`
+[Discussions](https://discuss.d2l.ai/t/2211)
 :end_tab:

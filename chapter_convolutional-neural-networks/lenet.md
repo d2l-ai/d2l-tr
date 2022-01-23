@@ -1,20 +1,20 @@
 # Evrişimli Sinir Ağları (LeNet)
 :label:`sec_lenet`
 
-Artık tam fonksiyonlu bir CNN kurmak için gerekli tüm malzemelere sahibiz. imge verileriyle daha önceki karşılaşmamızda, Moda-MNIST veri kümesindeki giyim resimlerine bir softmaks bağlanım modeli (:numref:`sec_softmax_scratch`) ve bir MLP modeli (:numref:`sec_mlp_scratch`) uyguladık. Bu tür verileri softmaks bağlanıma ve MLP'lere uygun hale getirmek için, önce $28\times28$ matrisinden her imgeyi sabit uzunlukta $784$ boyutlu bir vektöre düzleştirdik ve daha sonra bunları tam bağlı katmanlarla işledik. Artık evrişimli katmanlar üzerinde bir tutuşumuz olduğuna göre, imgelerimizdeki uzaysal yapıyı koruyabiliriz. Tam bağlı katmanları evrişimsel katmanlarla değiştirmenin ek bir avantajı olarak, çok daha az parametre gerektiren daha cimri modellerin keyfini çıkaracağız.
+Artık tam fonksiyonlu bir CNN kurmak için gerekli tüm malzemelere sahibiz. İmge verileriyle daha önceki karşılaşmamızda, Fashion-MNIST veri kümesindeki giyim resimlerine bir softmaks bağlanım modeli (:numref:`sec_softmax_scratch`) ve bir MLP modeli (:numref:`sec_mlp_scratch`) uyguladık. Bu tür verileri softmaks bağlanıma ve MLP'lere uygun hale getirmek için, önce $28\times28$ matrisinden her imgeyi sabit uzunlukta $784$ boyutlu bir vektöre düzleştirdik ve daha sonra bunları tam bağlı katmanlarla işledik. Artık evrişimli katmanlar üzerinde bir kavrayışımız olduğuna göre, imgelerimizdeki uzaysal yapıyı koruyabiliriz. Tam bağlı katmanları evrişimsel katmanlarla değiştirmenin ek bir avantajı olarak, çok daha az parametre gerektiren daha eli sıkı modellerin keyfini çıkaracağız.
 
-Bu bölümde, ilk yayınlanan CNN'ler arasından bilgisayarla görme görevlerinde performansından dolayı dikkat çekmek için *LeNet*'i tanıtacağız. Model, (:cite:`LeCun.Bottou.Bengio.ea.1998`) imgelerdeki el yazısı rakamlarını tanımak amacıyla AT&T Bell Labs'te araştırmacı olan Yann LeCun tarafından tanıtıldı (ve adlandırıldı). Bu çalışma, bu teknolojiyi geliştiren on yıllık bir araştırmanın doruk noktalarını temsil ediyordu. 1989'da LeCun, CNN'leri geri yayma yoluyla başarılı bir şekilde eğiten ilk çalışmayı yayınladı.
+Bu bölümde, ilk yayınlanan CNN'ler arasından bilgisayarla görme görevlerinde performansından dolayı dikkat çeken *LeNet*'i tanıtacağız. Model, (:cite:`LeCun.Bottou.Bengio.ea.1998`) imgelerdeki el yazısı rakamlarını tanımak amacıyla AT&T Bell Labs'te araştırmacı olan Yann LeCun tarafından tanıtıldı (ve adlandırıldı). Bu çalışma, bu teknolojiyi geliştiren on yıllık bir araştırmanın doruk noktalarını temsil ediyordu. 1989'da LeCun, CNN'leri geri yayma yoluyla başarılı bir şekilde eğiten ilk çalışmayı yayınladı.
 
 LeNet, destek vektörü makinelerinin performansıyla eşleşen olağanüstü sonuçlar elde etti, daha sonra gözetimli öğrenmede baskın bir yaklaşım oldu. LeNet en sonunda ATM makinelerinde mevduat işlemede rakamları tanımak için uyarlanmıştır. Günümüze kadar, bazı ATM'ler hala Yann ve meslektaşı Leon Bottou'nun 1990'larda yazdığı kodu çalıştırıyor!
 
 ## LeNet
 
-Yüksek düzeyde, LeNet (LeNet-5) iki parçadan oluşur: (i) iki evrişimli katmandan oluşan bir evrişimli kodlayıcı; ve (ii) üç tam bağlı katmandan oluşan yoğun bir blok: Mimarisi :numref:`img_lenet`'te özetlenmiştir.
+Yüksek düzeyde, (**LeNet (LeNet-5) iki parçadan oluşur: (i) iki evrişimli katmandan oluşan bir evrişimli kodlayıcı; ve (ii) üç tam bağlı katmandan oluşan yoğun bir blok**): Mimarisi :numref:`img_lenet`'te özetlenmiştir.
 
-![LeNet'te veri akışı. Giriş el yazısı bir rakamdır, çıktı ise 10 olası sonucun üzerinde bir olasılıktır.](../img/lenet.svg)
+![LeNet'te veri akışı. Girdi el yazısı bir rakamdır, çıktı ise 10 olası sonucun üzerinde bir olasılıktır.](../img/lenet.svg)
 :label:`img_lenet`
 
-Her bir evrişimli bloktaki temel birimler, bir evrişimli tabaka, bir sigmoid etkinleştirme fonksiyonu ve sonrasında bir ortalama biriktirme işlemidir. ReLU'lar ve maksimum biriktirme daha iyi çalışırken, bu keşifler henüz 1990'larda yapılmamıştı. Her bir evrişimli katman bir $5\times 5$ çekirdeği ve sigmoid etkinleştirme işlevi kullanır. Bu katmanlar, konumsal olarak düzenlenmiş girdileri bir dizi iki boyutlu öznitelik eşlemelerine eşler ve genellikle kanal sayısını arttırır. İlk evrişimli tabaka 6 tane çıktı kanalına, ikincisi ise 16 taneye sahiptir. Her $2\times2$ biriktirme işlemi (2'lik uzun adım), uzamsal altörnekleme yoluyla boyutsallığı $4$ kat düşürür. Evrişimli blok tarafından verilen şekle sahip bir çıktı yayar (parti boyutu, kanal sayısı, yükseklik, genişlik).
+Her bir evrişimli bloktaki temel birimler, bir evrişimli tabaka, bir sigmoid etkinleştirme fonksiyonu ve sonrasında bir ortalama ortaklama işlemidir. ReLU'lar ve maksimum ortaklama daha iyi çalışırken, bu keşifler henüz 1990'larda yapılmamıştı. Her bir evrişimli katman bir $5\times 5$ çekirdeği ve sigmoid etkinleştirme işlevi kullanır. Bu katmanlar, konumsal olarak düzenlenmiş girdileri bir dizi iki boyutlu öznitelik eşlemelerine eşler ve genellikle kanal sayısını arttırır. İlk evrişimli tabaka 6 tane çıktı kanalına, ikincisi ise 16 taneye sahiptir. Her $2\times2$ ortaklama işlemi (2'lik uzun adım), uzamsal altörnekleme yoluyla boyutsallığı $4$ kat düşürür. Evrişimli blok tarafından verilen şekle sahip bir çıktı yayar (parti boyutu, kanal sayısı, yükseklik, genişlik).
 
 Evrişimli bloktan yoğun bloğa çıktıyı geçirmek için, minigruptaki her örneği düzleştirmeliyiz. Başka bir deyişle, bu dört boyutlu girdiyi alıp tam bağlı katmanlar tarafından beklenen iki boyutlu girdiye dönüştürüyoruz: Bir hatırlatma olarak, arzu ettiğimiz iki boyutlu gösterim, minigrup örneklerini indekslemek için ilk boyutu kullanır ve ikincisini örneği temsil eden düz vektörü vermek için kullanır. LeNet'in yoğun bloğu sırasıyla 120, 84 ve 10 çıktılı üç tam bağlı katman içerir. Hala sınıflandırma gerçekleştirdiğimiz için, 10 boyutlu çıktı katmanı olası çıktı sınıflarının sayısına karşılık gelir.
 
@@ -45,12 +45,7 @@ from d2l import torch as d2l
 import torch
 from torch import nn
 
-class Reshape(torch.nn.Module):
-    def forward(self, x):
-        return x.view(-1, 1, 28, 28)
-
-net = torch.nn.Sequential(
-    Reshape(),
+net = nn.Sequential(
     nn.Conv2d(1, 6, kernel_size=5, padding=2), nn.Sigmoid(),
     nn.AvgPool2d(kernel_size=2, stride=2),
     nn.Conv2d(6, 16, kernel_size=5), nn.Sigmoid(),
@@ -65,7 +60,6 @@ net = torch.nn.Sequential(
 #@tab tensorflow
 from d2l import tensorflow as d2l
 import tensorflow as tf
-from tensorflow.distribute import MirroredStrategy, OneDeviceStrategy
 
 def net():
     return tf.keras.models.Sequential([
@@ -83,7 +77,7 @@ def net():
 
 Orijinal modelde biraz özgürce davrandık, son kattaki Gauss etkinleştirmesini kaldırdık. Bunun dışında, bu ağ orijinal LeNet-5 mimarisiyle eşleşir.
 
-Tek kanallı (siyah beyaz) $28 \times 28$ imgesini ağ üzerinden geçirerek ve çıktı şeklini her katmanda yazdırarak, işlemlerinin :numref:`img_lenet_vert`'ten beklediğimiz şeyle hizaladığından emin olmak için modeli inceleyebiliriz.
+Tek kanallı (siyah beyaz) $28 \times 28$ imgesini ağ üzerinden geçirerek ve çıktı şeklini her katmanda yazdırarak, işlemlerinin :numref:`img_lenet_vert`'ten beklediğimiz şeyle hizaladığından emin olmak için [**modeli inceleyebiliriz**].
 
 ![LeNet-5'in sıkıştırılmış gösterimi.](../img/lenet-vert.svg)
 :label:`img_lenet_vert`
@@ -98,7 +92,7 @@ for layer in net:
 
 ```{.python .input}
 #@tab pytorch
-X = torch.randn(size=(1, 1, 28, 28), dtype=torch.float32)
+X = torch.rand(size=(1, 1, 28, 28), dtype=torch.float32)
 for layer in net:
     X = layer(X)
     print(layer.__class__.__name__,'output shape: \t',X.shape)
@@ -112,11 +106,11 @@ for layer in net().layers:
     print(layer.__class__.__name__, 'output shape: \t', X.shape)
 ```
 
-Evrişimli blok boyunca her katmanda gösterim yüksekliğinin ve genişliğinin azaltıldığını (önceki katmanla karşılaştırıldığında) unutmayın. İlk evrişimli katman, $5 \times 5$ çekirdeğinin kullanılmasından kaynaklanan yükseklik ve genişlik azalmasını telafi etmek için 2 piksellik dolgu kullanır. Buna karşılık, ikinci evrişimli tabaka dolgudan vazgeçer ve böylece yüksekliğin ve genişliğin her ikisi de 4'er piksel azaltılır. Katman yığınında yukarı çıktığımızda, kanalların sayısı, ilk evrişimli tabakadan sonra girdideki 1'den 6'ya ve ikinci evrişimli tabakadan sonra 16'ya yükselir. Bununla birlikte, her bir biriktirme katmanı yüksekliği ve genişliği yarıya indirir. Son olarak, her tam bağlı katman boyutsallığı azaltır ve nihai olarak boyutu sınıf sayısıyla eşleşen bir çıktı yayar.
+Evrişimli blok boyunca her katmanda (önceki katmanla karşılaştırıldığında) gösterim yüksekliğinin ve genişliğinin azaltıldığını unutmayın. İlk evrişimli katman, $5 \times 5$ çekirdeğinin kullanılmasından kaynaklanan yükseklik ve genişlik azalmasını telafi etmek için 2 piksellik dolgu kullanır. Buna karşılık, ikinci evrişimli tabaka dolgudan vazgeçer ve böylece yüksekliğin ve genişliğin her ikisi de 4'er piksel azaltılır. Katman yığınında yukarı çıktığımızda, kanalların sayısı, ilk evrişimli tabakadan sonra girdideki 1'den 6'ya ve ikinci evrişimli tabakadan sonra 16'ya yükselir. Bununla birlikte, her bir ortaklama katmanı yüksekliği ve genişliği yarıya indirir. Son olarak, her tam bağlı katman boyutsallığı azaltır ve nihai olarak boyutu sınıf sayısıyla eşleşen bir çıktı yayar.
 
 ## Eğitim
 
-Modeli uyguladığımıza göre, LeNet'in Moda-MNIST üzerinde nasıl çalışacağını görmek için bir deney yapalım.
+Modeli uyguladığımıza göre, [**LeNet'in Fashion-MNIST üzerinde nasıl çalışacağını görmek için bir deney yapalım**].
 
 ```{.python .input}
 #@tab all
@@ -127,7 +121,7 @@ train_iter, test_iter = d2l.load_data_fashion_mnist(batch_size=batch_size)
 CNN'lerde daha az parametre olsa da, hesaplamalar benzer derin MLP'lerden daha külfetli olabilir çünkü her parametre daha fazla çarpmada kullanılır. GPU'ya erişiminiz varsa, bu işlemi hızlandırmak için harekete geçirmenin tam zamanı olabilir.
 
 :begin_tab:`mxnet, pytorch`
-Değerlendirme için :numref:`sec_softmax_scratch`'te tarif ettiğimiz `evaluate_accuracy` işlevinde hafif bir değişiklik yapmamız gerekiyor. Bütün veri kümesi ana bellekte olduğundan, modelin veri kümesiyle hesaplama yapabilmesi için GPU'yu kullanmadan önce veriyi GPU belleğine kopyalamamız gerekir.
+Değerlendirme için :numref:`sec_softmax_scratch`'te tarif ettiğimiz [**`evaluate_accuracy` işlevinde hafif bir değişiklik yapmamız gerekiyor.**] Bütün veri kümesi ana bellekte olduğundan, modelin veri kümesiyle hesaplama yapabilmesi için GPU'yu kullanmadan önce veriyi GPU belleğine kopyalamamız gerekir.
 :end_tab:
 
 ```{.python .input}
@@ -147,25 +141,32 @@ def evaluate_accuracy_gpu(net, data_iter, device=None):  #@save
 #@tab pytorch
 def evaluate_accuracy_gpu(net, data_iter, device=None): #@save
     """Compute the accuracy for a model on a dataset using a GPU."""
-    net.eval()  # Set the model to evaluation mode
-    if not device:
-        device = next(iter(net.parameters())).device
+    if isinstance(net, nn.Module):
+        net.eval()  # Set the model to evaluation mode
+        if not device:
+            device = next(iter(net.parameters())).device
     # No. of correct predictions, no. of predictions
     metric = d2l.Accumulator(2)
-    for X, y in data_iter:
-        X, y = X.to(device), y.to(device)
-        metric.add(d2l.accuracy(net(X), y), d2l.size(y))
+
+    with torch.no_grad():
+        for X, y in data_iter:
+            if isinstance(X, list):
+                # Required for BERT Fine-tuning (to be covered later)
+                X = [x.to(device) for x in X]
+            else:
+                X = X.to(device)
+            y = y.to(device)
+            metric.add(d2l.accuracy(net(X), y), d2l.size(y))
     return metric[0] / metric[1]
 ```
 
-Ayrıca GPU'larla başa çıkmak için eğitim fonksiyonumuzu güncellememiz gerekiyor. :numref:`sec_softmax_scratch`'te tanımlanan `train_epoch_ch3`'in aksine, şimdi ileri ve geri yayma yapmadan önce her bir veri minigrubunu belirlenen cihazımıza (GPU olması beklenir) taşımamız gerekiyor.
+Ayrıca [**GPU'larla başa çıkmak için eğitim fonksiyonumuzu güncellememiz**] gerekiyor. :numref:`sec_softmax_scratch`'te tanımlanan `train_epoch_ch3`'in aksine, şimdi ileri ve geri yayma yapmadan önce her bir veri minigrubunu belirlenen cihazımıza (GPU olması beklenir) taşımamız gerekiyor.
 
 Eğitim fonksiyonu `train_ch6`, :numref:`sec_softmax_scratch`'te tanımlanan `train_ch3`'ya da benzer. Birçok ileriye doğru ilerleyen katmanlardan oluşan ağları uygulayacağımızdan, öncelikle üst düzey API'lere güveneceğiz. Aşağıdaki eğitim işlevi, girdi olarak üst düzey API'lerden oluşturulan bir modeli varsayar ve buna göre eniyilenir. :numref:`subsec_xavier`'da tanıtıldığı gibi Xavier ilklemede `device` argümanı ile belirtilen cihazdaki model parametrelerini başlatıyoruz. Tıpkı MLP'lerde olduğu gibi, kayıp fonksiyonumuzu çapraz entropi ve minigrup rasgele eğim inişi yoluyla en aza indiriyoruz. Her bir dönemin çalışması on saniye sürdüğünden, eğitim kaybını daha sık görselleştiriyoruz.
 
 ```{.python .input}
 #@save
-def train_ch6(net, train_iter, test_iter, num_epochs, lr,
-              device=d2l.try_gpu()):
+def train_ch6(net, train_iter, test_iter, num_epochs, lr, device):
     """Train a model with a GPU (defined in Chapter 6)."""
     net.initialize(force_reinit=True, ctx=device, init=init.Xavier())
     loss = gluon.loss.SoftmaxCrossEntropyLoss()
@@ -204,12 +205,11 @@ def train_ch6(net, train_iter, test_iter, num_epochs, lr,
 ```{.python .input}
 #@tab pytorch
 #@save
-def train_ch6(net, train_iter, test_iter, num_epochs, lr,
-              device=d2l.try_gpu()):
+def train_ch6(net, train_iter, test_iter, num_epochs, lr, device):
     """Train a model with a GPU (defined in Chapter 6)."""
     def init_weights(m):
         if type(m) == nn.Linear or type(m) == nn.Conv2d:
-            torch.nn.init.xavier_uniform_(m.weight)
+            nn.init.xavier_uniform_(m.weight)
     net.apply(init_weights)
     print('training on', device)
     net.to(device)
@@ -221,9 +221,9 @@ def train_ch6(net, train_iter, test_iter, num_epochs, lr,
     for epoch in range(num_epochs):
         # Sum of training loss, sum of training accuracy, no. of examples
         metric = d2l.Accumulator(3)
+        net.train()
         for i, (X, y) in enumerate(train_iter):
             timer.start()
-            net.train()
             optimizer.zero_grad()
             X, y = X.to(device), y.to(device)
             y_hat = net(X)
@@ -233,8 +233,8 @@ def train_ch6(net, train_iter, test_iter, num_epochs, lr,
             with torch.no_grad():
                 metric.add(l * X.shape[0], d2l.accuracy(y_hat, y), X.shape[0])
             timer.stop()
-            train_l = metric[0]/metric[2]
-            train_acc = metric[1]/metric[2]
+            train_l = metric[0] / metric[2]
+            train_acc = metric[1] / metric[2]
             if (i + 1) % (num_batches // 5) == 0 or i == num_batches - 1:
                 animator.add(epoch + (i + 1) / num_batches,
                              (train_l, train_acc, None))
@@ -278,8 +278,7 @@ class TrainCallback(tf.keras.callbacks.Callback):  #@save
                   f'{str(self.device_name)}')
 
 #@save
-def train_ch6(net_fn, train_iter, test_iter, num_epochs, lr,
-              device=d2l.try_gpu()):
+def train_ch6(net_fn, train_iter, test_iter, num_epochs, lr, device):
     """Train a model with a GPU (defined in Chapter 6)."""
     device_name = device._device_name
     strategy = tf.distribute.OneDeviceStrategy(device_name)
@@ -294,25 +293,25 @@ def train_ch6(net_fn, train_iter, test_iter, num_epochs, lr,
     return net
 ```
 
-Şimdi LeNet-5 modelini eğitip değerlendirelim.
+[**Şimdi LeNet-5 modelini eğitip değerlendirelim.**]
 
 ```{.python .input}
 #@tab all
 lr, num_epochs = 0.9, 10
-train_ch6(net, train_iter, test_iter, num_epochs, lr)
+train_ch6(net, train_iter, test_iter, num_epochs, lr, d2l.try_gpu())
 ```
 
 ## Özet
 
 * CNN, evrişimli katmanları kullanan bir ağdır.
-* Bir CNN'de, evrişimlerinin arasına, doğrusal olmayanları işlemleri ve (genellikle) biriktirme işlemlerini koyuyoruz.
+* Bir CNN'de, evrişimlerinin arasına, doğrusal olmayanları işlemleri ve (genellikle) ortaklama işlemlerini koyuyoruz.
 * Bir CNN'de, evrişimli katmanlar tipik olarak, kanal sayısını arttırırken gösterimlerin mekansal çözünürlüğünü yavaş yavaş azaltacak şekilde düzenlenir.
 * Geleneksel CNN'lerde, evrişimli bloklar tarafından kodlanan temsiller, çıktı yayılmadan önce bir veya daha fazla tam bağlı katman tarafından işlenir.
 * LeNet, tartışmasız, böyle bir ağın ilk başarılı konuşlandırması oldu.
 
 ## Alıştırmalar
 
-1. Ortalama biriktirme ile maksimum biriktirmeyi değiştirin. Ne olur?
+1. Ortalama ortaklama ile maksimum ortaklamayı değiştirin. Ne olur?
 1. Doğruluğunu artırmak için LeNet'e dayalı daha karmaşık bir ağ oluşturmaya çalışın.
     1. Evrişim penceresi boyutunu ayarlayın.
     1. Çıktı kanallarının sayısını ayarlayın.

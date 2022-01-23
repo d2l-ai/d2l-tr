@@ -43,9 +43,9 @@ tıklayabilirsiniz. Alternatif olarak, "unzip" varsa kullanabilirsiniz
 (yoksa "sudo apt install unzip" yazarak kurabilirsiniz):
 
 ```bash
-mkdir d2l-en && cd d2l-en
-curl https://d2l.ai/d2l-en.zip -o d2l-en.zip
-unzip d2l-en.zip && rm d2l-en.zip
+mkdir d2l-tr && cd d2l-tr
+curl https://tr.d2l.ai/d2l-tr.zip -o d2l-tr.zip
+unzip d2l-tr.zip && rm d2l-tr.zip
 ```
 
 Şimdi `d2l` ortamını etkinleştirebiliriz:
@@ -71,6 +71,7 @@ pip install mxnet==1.7.0.post1
 
 :end_tab:
 
+
 :begin_tab:`pytorch`
 
 ```bash
@@ -89,6 +90,7 @@ pip install tensorflow tensorflow-probability
 
 
 :end_tab:
+
 
 Bir sonraki adımımız, bu kitapta bulunan sık kullanılan işlevleri ve sınıfları kapsamak için geliştirdiğimiz `d2l` paketini kurmaktır.
 

@@ -90,9 +90,17 @@ batch_size, num_steps = 32, 35
 train_iter, vocab = d2l.load_data_time_machine(batch_size, num_steps)
 ```
 
-### Model Parametrelerini İlkleme
+```{.python .input}
+#@tab tensorflow
+from d2l import tensorflow as d2l
+import tensorflow as tf
+batch_size, num_steps = 32, 35
+train_iter, vocab = d2l.load_data_time_machine(batch_size, num_steps)
+```
 
-Daha sonra model parametrelerini tanımlamamız ve ilklememiz gerekiyor. Daha önce olduğu gibi, hiperparametre `num_hiddens` gizli birimlerin sayısını tanımlar. 0.01 standart sapmalı Gauss dağılımı ile ağırlıkları ilkleriz ve ek girdileri 0'a ayarlarız.
+### [**Model Parametrelerini İlkleme**]
+
+Daha sonra model parametrelerini tanımlamamız ve ilklememiz gerekiyor. Daha önce olduğu gibi, hiper parametre `num_hiddens` gizli birimlerin sayısını tanımlar. 0.01 standart sapmalı Gauss dağılımı ile ağırlıkları ilkleriz ve ek girdileri 0'a ayarlarız.
 
 ```{.python .input}
 def get_lstm_params(vocab_size, num_hiddens, device):
@@ -149,9 +157,35 @@ def get_lstm_params(vocab_size, num_hiddens, device):
     return params
 ```
 
+```{.python .input}
+#@tab tensorflow
+def get_lstm_params(vocab_size, num_hiddens):
+    num_inputs = num_outputs = vocab_size
+
+    def normal(shape):
+        return tf.Variable(tf.random.normal(shape=shape, stddev=0.01,
+                                            mean=0, dtype=tf.float32))
+    def three():
+        return (normal((num_inputs, num_hiddens)),
+                normal((num_hiddens, num_hiddens)),
+                tf.Variable(tf.zeros(num_hiddens), dtype=tf.float32))
+
+    W_xi, W_hi, b_i = three()  # Input gate parameters
+    W_xf, W_hf, b_f = three()  # Forget gate parameters
+    W_xo, W_ho, b_o = three()  # Output gate parameters
+    W_xc, W_hc, b_c = three()  # Candidate memory cell parameters
+    # Output layer parameters
+    W_hq = normal((num_hiddens, num_outputs))
+    b_q = tf.Variable(tf.zeros(num_outputs), dtype=tf.float32)
+    # Attach gradients
+    params = [W_xi, W_hi, b_i, W_xf, W_hf, b_f, W_xo, W_ho, b_o, W_xc, W_hc,
+              b_c, W_hq, b_q]
+    return params
+```
+
 ### Modeli Tanımlama
 
-İlkleme işlevinde, LSTM'nin gizli durumunun değeri 0 ve şekli (toplu iş boyutu, gizli birimlerin sayısı) olan bir *ek* bellek hücresi döndürmesi gerekir. Böylece aşağıdaki durum ilklemeyi elde ederiz.
+[**İlkleme işlevinde**], LSTM'nin gizli durumunun değeri 0 ve şekli (toplu iş boyutu, gizli birimlerin sayısı) olan bir *ek* bellek hücresi döndürmesi gerekir. Böylece aşağıdaki durum ilklemeyi elde ederiz.
 
 ```{.python .input}
 def init_lstm_state(batch_size, num_hiddens, device):
@@ -166,7 +200,14 @@ def init_lstm_state(batch_size, num_hiddens, device):
             torch.zeros((batch_size, num_hiddens), device=device))
 ```
 
-Gerçek model, daha önce tartıştığımız gibi tanımlanmıştır: Üç geçit ve bir yardımcı bellek hücresi sağlar. Çıktı katmanına yalnızca gizli durumun iletildiğini unutmayın. Bellek hücresi $\mathbf{C}_t$ doğrudan çıktı hesaplamasına katılmaz.
+```{.python .input}
+#@tab tensorflow
+def init_lstm_state(batch_size, num_hiddens):
+    return (tf.zeros(shape=(batch_size, num_hiddens)),
+            tf.zeros(shape=(batch_size, num_hiddens)))
+```
+
+[**Gerçek model**], daha önce tartıştığımız gibi tanımlanmıştır: Üç geçit ve bir yardımcı bellek hücresi sağlar. Çıktı katmanına yalnızca gizli durumun iletildiğini unutmayın. Bellek hücresi $\mathbf{C}_t$ doğrudan çıktı hesaplamasına katılmaz.
 
 ```{.python .input}
 def lstm(inputs, state, params):
@@ -205,12 +246,31 @@ def lstm(inputs, state, params):
     return torch.cat(outputs, dim=0), (H, C)
 ```
 
-### Eğitim ve Tahmin
+```{.python .input}
+#@tab tensorflow
+def lstm(inputs, state, params):
+    W_xi, W_hi, b_i, W_xf, W_hf, b_f, W_xo, W_ho, b_o, W_xc, W_hc, b_c, W_hq, b_q = params
+    (H, C) = state
+    outputs = []
+    for X in inputs:
+        X=tf.reshape(X,[-1,W_xi.shape[0]])
+        I = tf.sigmoid(tf.matmul(X, W_xi) + tf.matmul(H, W_hi) + b_i)
+        F = tf.sigmoid(tf.matmul(X, W_xf) + tf.matmul(H, W_hf) + b_f)
+        O = tf.sigmoid(tf.matmul(X, W_xo) + tf.matmul(H, W_ho) + b_o)
+        C_tilda = tf.tanh(tf.matmul(X, W_xc) + tf.matmul(H, W_hc) + b_c)
+        C = F * C + I * C_tilda
+        H = O * tf.tanh(C)
+        Y = tf.matmul(H, W_hq) + b_q
+        outputs.append(Y)
+    return tf.concat(outputs, axis=0), (H,C)
+```
+
+### [**Eğitim**] ve Tahmin Etme
 
 :numref:`sec_rnn_scratch`'te tanıtılan `RNNModelScratch` sınıfını başlatarak :numref:`sec_gru`'te yaptığımız gibi bir LSTM'yi eğitmeye başlayalım.
 
 ```{.python .input}
-#@tab all
+#@tab mxnet, pytorch
 vocab_size, num_hiddens, device = len(vocab), 256, d2l.try_gpu()
 num_epochs, lr = 500, 1
 model = d2l.RNNModelScratch(len(vocab), num_hiddens, device, get_lstm_params,
@@ -218,7 +278,17 @@ model = d2l.RNNModelScratch(len(vocab), num_hiddens, device, get_lstm_params,
 d2l.train_ch8(model, train_iter, vocab, lr, num_epochs, device)
 ```
 
-## Kısa Uygulama
+```{.python .input}
+#@tab tensorflow
+vocab_size, num_hiddens, device_name = len(vocab), 256, d2l.try_gpu()._device_name
+num_epochs, lr = 500, 1
+strategy = tf.distribute.OneDeviceStrategy(device_name)
+with strategy.scope():
+    model = d2l.RNNModelScratch(len(vocab), num_hiddens, init_lstm_state, lstm, get_lstm_params)
+d2l.train_ch8(model, train_iter, vocab, lr, num_epochs, strategy)
+```
+
+## [**Kısa Uygulama**]
 
 Üst düzey API'leri kullanarak doğrudan bir `LSTM` modeli oluşturabiliriz. Bu, yukarıda açıkça yaptığımız tüm yapılandırma ayrıntılarını gizler. Daha önce ayrıntılı olarak yazdığımız birçok detay yerine Python'un derlenmiş operatörlerini kullandığından kod önemli ölçüde daha hızlıdır.
 
@@ -237,17 +307,30 @@ model = model.to(device)
 d2l.train_ch8(model, train_iter, vocab, lr, num_epochs, device)
 ```
 
+```{.python .input}
+#@tab tensorflow
+lstm_cell = tf.keras.layers.LSTMCell(num_hiddens,
+    kernel_initializer='glorot_uniform')
+lstm_layer = tf.keras.layers.RNN(lstm_cell, time_major=True,
+    return_sequences=True, return_state=True)
+device_name = d2l.try_gpu()._device_name
+strategy = tf.distribute.OneDeviceStrategy(device_name)
+with strategy.scope():
+    model = d2l.RNNModel(lstm_layer, vocab_size=len(vocab))
+d2l.train_ch8(model, train_iter, vocab, lr, num_epochs, strategy)
+```
+
 LSTM'ler, apaçık olmayan durum kontrolü ile ilk örnek saklı değişken özbağlanımlı modeldir. Birçok türevi yıllar içinde önerilmiştir, örn. birden fazla katman, artık bağlantılar, farklı düzenlileştirme türleri. Bununla birlikte, LSTM'leri ve diğer dizi modellerini (GRU'lar gibi) eğitmek dizinin uzun menzilli bağlılığı nedeniyle oldukça maliyetlidir. Daha sonra bazı durumlarda kullanılabilen dönüştürücüler (transformers) gibi diğer seçenek modeller ile karşılaşacağız.
 
 ## Özet
 
-* LSTM'lerin üç tip geçit vardır: girdi, unutma ve bilgi akışını kontrol eden çıktı geçitleri.
+* LSTM'lerin üç tip geçit vardır: Girdi, unutma ve bilgi akışını kontrol eden çıktı geçitleri.
 * Gizli katman çıktısı LSTM gizli durumu ve bellek hücresini içerir. Çıktı katmanına yalnızca gizli durum iletilir. Hafıza hücresi tamamen içseldir.
 * LSTM'ler kaybolan ve patlayan gradyanları hafifletebilir.
 
 ## Alıştırmalar
 
-1. Hiperparametreleri ayarlayın ve çalışma süresi, şaşkınlık ve çıktı dizisi üzerindeki etkilerini analiz edin.
+1. Hiper parametreleri ayarlayın ve çalışma süresi, şaşkınlık ve çıktı dizisi üzerindeki etkilerini analiz edin.
 1. Karakter dizilerinin aksine doğru kelimeler üretmek için modeli nasıl değiştirmeniz gerekir?
 1. Belirli bir gizli boyuttaki GRU'lar, LSTM'ler ve normal RNN'ler için hesaplama maliyetini karşılaştırın. Eğitim ve çıkarsama maliyetine özel dikkat gösterin.
 1. Aday hafıza hücresi, tanh fonksiyonunu kullanarak değer aralığının -1 ile 1 arasında olmasını sağladığından, çıktı değeri aralığının -1 ile 1 arasında olmasını sağlamak için gizli durumun neden tekrar tanh fonksiyonunu kullanması gerekiyor?

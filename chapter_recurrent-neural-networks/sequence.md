@@ -35,7 +35,7 @@ Bunu başarmak için, simsarımız :numref:`sec_linear_concise`'te eğittiğimiz
 
 İlk olarak, potansiyel olarak oldukça uzun dizinin $x_{t-1}, \ldots, x_1$ gerçekten gerekli olmadığını varsayalım. Bu durumda kendimizi $\tau$ uzunluğunda bir süre ile memnun edebilir ve sadece $x_{t-1}, \ldots, x_{t-\tau}$ gözlemlerini kullanabiliriz. İlk faydası, artık argüman sayısının en azından $t > \tau$ için her zaman aynı olmasıdır. Bu, yukarıda belirtildiği gibi derin bir ağı eğitmemizi sağlar. Bu tür modeller, kelimenin tam anlamıyla kendileri üzerinde bağlanım gerçekleştirdikleri için *özbağlanımlı modeller* olarak adlandırılacaktır.
 
-:numref:`fig_sequence-model`'te gösterilen ikinci strateji, geçmiş gözlemlerin $h_t$'sının bir özetini tutmak ve aynı zamanda $\hat{x}_t$'in tahmine ek olarak $h_t$'yı güncellemektir. Bu, bize $\hat{x}_t = P(x_t \mid h_{t})$ ile $x_t$'i tahmin eden ve dahası $h_t = g(h_{t-1}, x_{t-1})$ formunu güncelleyen modellere yönlendirir. $h_t$ asla gözlenmediğinden, bu modellere *saklı özbağlanımlı modeller* de denir.
+:numref:`fig_sequence-model`'te gösterilen ikinci strateji, geçmiş gözlemlerin $h_t$'sının bir özetini tutmak ve aynı zamanda $\hat{x}_t$'in tahmine ek olarak $h_t$'yı güncellemektir. Bu, bizi $\hat{x}_t = P(x_t \mid h_{t})$ ile $x_t$'i tahmin eden ve dahası $h_t = g(h_{t-1}, x_{t-1})$ formunu güncelleyen modellere yönlendirir. $h_t$ asla gözlenmediğinden, bu modellere *saklı özbağlanımlı modeller* de denir.
 
 ![Saklı özbağlanımlı model.](../img/sequence-model.svg)
 :label:`fig_sequence-model`
@@ -74,7 +74,7 @@ Aslında, eğer bir Markov modelimiz varsa, bir ters koşullu olasılık dağıl
 
 ## Eğitim
 
-Bu kadar çok istatistiksel aracı inceledikten sonra, bunu pratikte de deneyelim. Biraz veri üreterek başlıyoruz. İşleri basit tutmak için, $1, 2, \ldots, 1000$ adımları için biraz gürültülü bir sinüs fonksiyonu kullanarak dizi verimizi üretiyoruz.
+Bu kadar çok istatistiksel aracı inceledikten sonra, bunu pratikte de deneyelim. Biraz veri üreterek başlıyoruz. İşleri basit tutmak için, (**$1, 2, \ldots, 1000$ adımları için biraz gürültülü bir sinüs fonksiyonu kullanarak dizi verimizi üretiyoruz.**)
 
 ```{.python .input}
 %matplotlib inline
@@ -89,7 +89,7 @@ npx.set_np()
 %matplotlib inline
 from d2l import torch as d2l
 import torch
-import torch.nn as nn
+from torch import nn
 ```
 
 ```{.python .input}
@@ -115,7 +115,7 @@ x = d2l.sin(0.01 * time) + d2l.normal([T], 0, 0.2)
 d2l.plot(time, [x], 'time', 'x', xlim=[1, 1000], figsize=(6, 3))
 ```
 
-Ardından, böyle bir diziyi modelimizin üzerinde eğitebileceği özniteliklere ve etiketlere dönüştürmemiz gerekiyor. $\tau$ gömme boyutuna dayanarak, verileri $y_t = x_t$ ve $\mathbf{x}_t = [x_{t-\tau}, \ldots, x_{t-1}]$ çiftleri halinde eşleriz. Dikkatli okuyucu, bunun bize $\tau$ adet daha az veri örneği verdiğini fark etmiş olabilir, çünkü ilk $\tau$ için yeterli geçmişe sahip değiliz. Basit bir düzeltme, özellikle dizi uzunsa, bu ilk birkaç terimi atmaktır. Alternatif olarak diziye sıfırlarla dolgu yapabiliriz. Burada eğitim için sadece ilk 600 öznitelik-etiket çiftini kullanıyoruz.
+Ardından, böyle bir diziyi modelimizin üzerinde eğitebileceği özniteliklere ve etiketlere dönüştürmemiz gerekiyor. $\tau$ gömme boyutuna dayanarak, [**verileri $y_t = x_t$ ve $\mathbf{x}_t = [x_{t-\tau}, \ldots, x_{t-1}]$ çiftleri halinde eşleriz.**] Dikkatli okuyucu, bunun bize $\tau$ adet daha az veri örneği verdiğini fark etmiş olabilir, çünkü ilk $\tau$ için yeterli geçmişe sahip değiliz. Basit bir düzeltme, özellikle dizi uzunsa, bu ilk birkaç terimi atmaktır. Alternatif olarak diziye sıfırlarla dolgu yapabiliriz. Burada eğitim için sadece ilk 600 öznitelik-etiket çiftini kullanıyoruz.
 
 ```{.python .input}
 #@tab mxnet, pytorch
@@ -143,7 +143,7 @@ train_iter = d2l.load_array((features[:n_train], labels[:n_train]),
                             batch_size, is_train=True)
 ```
 
-Burada mimariyi oldukça basit tutuyoruz: Sadece iki tam bağlı katmanlı bir MLP, ReLU etkinleştirmesi ve kare kaybı.
+Burada [**mimariyi oldukça basit tutuyoruz:**] Sadece iki tam bağlı katmanlı bir [**MLP**], ReLU etkinleştirmesi ve kare kaybı.
 
 ```{.python .input}
 # A simple MLP
@@ -163,7 +163,7 @@ loss = gluon.loss.L2Loss()
 # Function for initializing the weights of the network
 def init_weights(m):
     if type(m) == nn.Linear:
-        torch.nn.init.xavier_uniform_(m.weight)
+        nn.init.xavier_uniform_(m.weight)
 
 # A simple MLP
 def get_net():
@@ -173,8 +173,8 @@ def get_net():
     net.apply(init_weights)
     return net
 
-# Square loss
-loss = nn.MSELoss()
+# Note: `MSELoss` computes squared error without the 1/2 factor
+loss = nn.MSELoss(reduction='none')
 ```
 
 ```{.python .input}
@@ -185,14 +185,11 @@ def get_net():
                               tf.keras.layers.Dense(1)])
     return net
 
-# Least mean squares loss
-# Note: L2 Loss = 1/2 * MSE Loss. TensorFlow has MSE Loss that is slightly
-# different from MXNet's L2Loss by a factor of 2. Hence we halve the loss
-# value to get L2Loss in TF
+# Note: `MeanSquaredError` computes squared error without the 1/2 factor
 loss = tf.keras.losses.MeanSquaredError()
 ```
 
-Şimdi modeli eğitmeye hazırız. Aşağıdaki kod esas olarak :numref:`sec_linear_concise` gibi, önceki bölümlerdeki eğitim döngüsüyle aynıdır. Bu yüzden, çok fazla ayrıntıya girmeyeceğiz.
+Şimdi [**modeli eğitmeye**] hazırız. Aşağıdaki kod esas olarak :numref:`sec_linear_concise` gibi, önceki bölümlerdeki eğitim döngüsüyle aynıdır. Bu yüzden, çok fazla ayrıntıya girmeyeceğiz.
 
 ```{.python .input}
 def train(net, train_iter, loss, epochs, lr):
@@ -219,7 +216,7 @@ def train(net, train_iter, loss, epochs, lr):
         for X, y in train_iter:
             trainer.zero_grad()
             l = loss(net(X), y)
-            l.backward()
+            l.sum().backward()
             trainer.step()
         print(f'epoch {epoch + 1}, '
               f'loss: {d2l.evaluate_loss(net, train_iter, loss):f}')
@@ -236,7 +233,7 @@ def train(net, train_iter, loss, epochs, lr):
         for X, y in train_iter:
             with tf.GradientTape() as g:
                 out = net(X)
-                l = loss(y, out) / 2
+                l = loss(y, out)
                 params = net.trainable_variables
                 grads = g.gradient(l, params)
             trainer.apply_gradients(zip(grads, params))
@@ -249,7 +246,7 @@ train(net, train_iter, loss, 5, 0.01)
 
 ## Tahmin
 
-Eğitim kaybı küçük olduğu için modelimizin iyi çalışmasını bekleriz. Bunun pratikte ne anlama geldiğini görelim. Kontrol edilmesi gereken ilk şey, modelin sadece bir sonraki adımında ne kadar iyi tahmin edebildiğidir, yani *bir adım sonrasını tahmin*.
+Eğitim kaybı küçük olduğu için modelimizin iyi çalışmasını bekleriz. Bunun pratikte ne anlama geldiğini görelim. Kontrol edilmesi gereken ilk şey, [**modelin sadece bir sonraki adımında ne kadar iyi tahmin edebildiğidir**], yani *bir adım sonrasını tahmin*.
 
 ```{.python .input}
 #@tab all
@@ -269,7 +266,7 @@ $$
 \ldots
 $$
 
-Genel olarak, $x_t$'ye kadar gözlenen bir dizi için $t+k$ zaman adımında tahmin edilen çıktı $\hat{x}_{t+k}$, *$k$-adım tahmin* olarak adlandırılır. $x_{604}$'ya kadar gözlemlediğimizden, $k$-adım tahminimiz $\hat{x}_{604+k}$'dir. Başka bir deyişle, çok ileriki tahminler için kendi tahminlerimizi kullanmak zorunda kalacağız. Bakalım ne kadar iyi gidicek.
+Genel olarak, $x_t$'ye kadar gözlenen bir dizi için $t+k$ zaman adımında tahmin edilen çıktı $\hat{x}_{t+k}$, $k$*-adım tahmin* olarak adlandırılır. $x_{604}$'ya kadar gözlemlediğimizden, $k$-adım tahminimiz $\hat{x}_{604+k}$'dir. Başka bir deyişle, [**çok ileriki tahminler için kendi tahminlerimizi kullanmak zorunda kalacağız**]. Bakalım ne kadar iyi gidicek.
 
 ```{.python .input}
 #@tab mxnet, pytorch
@@ -300,7 +297,7 @@ d2l.plot([time, time[tau:], time[n_train + tau:]],
 
 Yukarıdaki örnekte görüldüğü gibi, tam bir felaket. Tahminler birkaç tahminden sonra oldukça hızlı bir şekilde bir sabite sönümlenir. Peki algoritma neden bu kadar kötü çalıştı? Bu sonuç hataların birikmesinden kaynaklanmaktadır. 1. adımdan sonra hatamızın $\epsilon_1 = \bar\epsilon$ olduğunu varsayalım. Şimdi 2. adımda *girdi* $\epsilon_1$ tarafından dürtülüyor ve bazı $c$ sabiti için $\epsilon_2 = \bar\epsilon + c \epsilon_1$ formunda hatalar görüyoruz. Hata, gerçek gözlemlerden oldukça hızlı bir şekilde uzaklaşabilir. Bu yaygın bir olgudur. Örneğin, önümüzdeki 24 saat için hava tahminleri oldukça doğru olma eğilimindedir ama bunun ötesinde doğruluk hızla azalır. Bu bölümde ve sonrasında bunun iyileştirilmesi için olası yöntemleri tartışacağız.
 
-$k = 1, 4, 16, 64$ için tüm dizideki tahminleri hesaplayarak $k$ adım ilerideki tahminlerdeki zorluklara daha yakından bir göz atalım.
+$k = 1, 4, 16, 64$ için tüm dizideki tahminleri hesaplayarak [**$k$ adım ilerideki tahminlerdeki zorluklara daha yakından bir göz atalım**].
 
 ```{.python .input}
 #@tab all
@@ -351,7 +348,7 @@ Bu, gelecekte daha da ileriyi doğru tahmin etmeye çalıştıkça, tahminin kal
 * Aradeğerleme ve dışdeğerleme arasında zorluk bakımında oldukça fark vardır. Sonuç olarak, bir diziniz varsa, eğitim sırasında verilerin zamansal sırasına daima saygı gösterin, yani gelecekteki veriler ile asla eğitmeyin.
 * Dizi modelleri tahmin için özel istatistiksel araçlar gerektirir. İki popüler seçenek özbağlanımlı modeller ve saklı-değişken özbağlanımlı modellerdir.
 * Nedensel modellerde (örn. ileriye akan zaman), ileri yönün tahmin edilmesi genellikle ters yönden çok daha kolaydır.
-* $t$'ye kadar gözlenen bir dizi için, $t+k$ zaman adımındaki tahmin edilen çıktı *$k$-adım tahmin* olur. $k$'yı artırarak daha da ileriki zaman için tahmin ettiğimizde, hatalar birikir ve tahminin kalitesi genellikle dramatik bir şekilde bozulur.
+* $t$'ye kadar gözlenen bir dizi için, $t+k$ zaman adımındaki tahmin edilen çıktı $k$*-adım tahmin* olur. $k$'yı artırarak daha da ileriki zaman için tahmin ettiğimizde, hatalar birikir ve tahminin kalitesi genellikle dramatik bir şekilde bozulur.
 
 ## Alıştırmalar
 

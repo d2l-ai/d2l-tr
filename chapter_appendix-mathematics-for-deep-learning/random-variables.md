@@ -513,7 +513,7 @@ $$
 \end{aligned}
 $$
 
-![Olasılık dizimizin sütunları boyunca toplayarak, sadece $x$ ekseni boyunca temsil edilen rastgele değişken için marjinal dağılımı elde edebiliriz.](../img/Marginal.svg)
+![Olasılık dizimizin sütunları boyunca toplayarak, sadece $x$ ekseni boyunca temsil edilen rastgele değişken için marjinal dağılımı elde edebiliriz.](../img/marginal.svg)
 :label:`fig_marginal`
 
 Bu bize, :numref:`fig_marginal`'deki gibi bir satırdaki bir dizi kare boyunca yoğunluk değerini toplamamızı söyler. Aslında, her iki taraftan bir epsilon çarpanı iptal ettikten ve sağdaki toplamın $y$'nin üzerindeki integral olduğunu gördükten sonra, şu sonuca varabiliriz:

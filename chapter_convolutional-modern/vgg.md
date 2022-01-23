@@ -5,11 +5,20 @@ AlexNet derin CNN'lerin iyi sonuçlar elde edebileceğine dair deneysel kanıtla
 
 Bu alandaki ilerleme, mühendislerin transistörleri yerleştirilmede mantıksal elemanlardan mantık bloklarına geçtiği yonga tasarımına benzemektedir. Benzer şekilde, sinir ağı mimarilerinin tasarımı, araştırmacıların bireysel nöron tabanlı düşünmekten tam katmanlara ve şimdi de katmanların kalıplarını tekrarlayan bloklara geçerek daha soyut bir hale gelmişti.
 
-Blokları kullanma fikri ilk olarak Oxford Üniversitesi'ndeki [Görsel Geometri Grubu](http://www.robots.ox.ac.uk/~vgg/)'nun (VGG), kendi adını taşıyan *VGG* ağında ortaya çıkmıştır. Bu tekrarlanan yapıları, döngüler ve alt programlar kullanarak herhangi bir modern derin öğrenme çerçevesi ile kodda uygulamak kolaydır.
+Blokları kullanma fikri ilk olarak Oxford Üniversitesi'ndeki [Görsel Geometri Grubu](http://www.robots.ox.ac.uk/~vgg/)'nun (Visual Geometry Group  - VGG), kendi adını taşıyan *VGG* ağında ortaya çıkmıştır. Bu tekrarlanan yapıları, döngüler ve alt programlar kullanarak herhangi bir modern derin öğrenme çerçevesi ile kodda uygulamak kolaydır.
 
-## VGG Blokları
+## (**VGG Blokları**)
+:label:`subsec_vgg-blocks`
 
-Klasik CNN'lerin temel yapı taşı aşağıdakilerin bir dizisidir: (i) Çözünürlüğü korumak için dolgulu bir evrişimli katman, (ii) ReLU gibi bir doğrusal olmayan işlev, (iii) Maksimum biriktirme katmanı gibi bir biriktirme katmanı. Bir VGG bloğu, uzamsal altörnekleme için bir maksimum biriktirme katmanı izleyen bir evrişimli katman dizisinden oluşur. Orijinal VGG makalesinde :cite:`Simonyan.Zisserman.2014`, yazarlar $3\times3$ çekirdeklerle evrişim (yüksekliği ve genişliği aynı tutarak) ve 2 birim uzun adımlı $2 \times 2$ maksimum biriktirme (her bloktan sonra çözünürlüğü yarıya indirerek) kullandılar. Aşağıdaki kodda, bir VGG bloğu uygulamak için `vgg_block` adlı bir işlev tanımlıyoruz. İşlev, evrişimli katmanların sayısına `num_convs` ve çıktı kanalı sayısına `num_channels` karşılık gelen iki argüman alır.
+Klasik CNN'lerin temel yapı taşı aşağıdakilerin bir dizisidir: (i) Çözünürlüğü korumak için dolgulu bir evrişimli katman, (ii) ReLU gibi bir doğrusal olmayan işlev, (iii) Maksimum ortaklama katmanı gibi bir ortaklama katmanı. Bir VGG bloğu, uzamsal altörnekleme için bir maksimum ortaklama katmanı izleyen bir evrişimli katman dizisinden oluşur. Orijinal VGG makalesinde :cite:`Simonyan.Zisserman.2014`, yazarlar $3\times3$ çekirdeklerle evrişim (yüksekliği ve genişliği aynı tutarak) ve 2 birim uzun adımlı $2 \times 2$ maksimum ortaklama (her bloktan sonra çözünürlüğü yarıya indirerek) kullandılar. Aşağıdaki kodda, bir VGG bloğu uygulamak için `vgg_block` adlı bir işlev tanımlıyoruz. 
+
+:begin_tab:`mxnet,tensorflow`
+İşlev, evrişimli katmanların sayısına `num_convs` ve çıktı kanalı sayısına `num_channels` karşılık gelen iki argüman alır.
+:end_tab:
+
+:begin_tab:`pytorch`
+İşlev, `num_convs` evrişim katmanlarının sayısına, `in_channels` girdi kanallarının sayısına ve `out_channels` çıktı kanallarının sayısına karşılık gelen üç argüman alır.
+:end_tab:
 
 ```{.python .input}
 from d2l import mxnet as d2l
@@ -33,7 +42,7 @@ import torch
 from torch import nn
 
 def vgg_block(num_convs, in_channels, out_channels):
-    layers=[]
+    layers = []
     for _ in range(num_convs):
         layers.append(nn.Conv2d(in_channels, out_channels,
                                 kernel_size=3, padding=1))
@@ -57,15 +66,15 @@ def vgg_block(num_convs, num_channels):
     return blk
 ```
 
-## VGG Ağı
+## [**VGG Ağı**]
 
-AlexNet ve LeNet gibi, VGG Ağı iki kısma bölünebilir: Birincisi çoğunlukla evrişim ve biriktirme katmanlarından ve ikincisi tam bağlı katmanlardan oluşur. Bu :numref:`fig_vgg`'te tasvir edilmiştir.
+AlexNet ve LeNet gibi, VGG ağı iki kısma bölünebilir: Birincisi çoğunlukla evrişim ve ortaklama katmanlarından ve ikincisi tam bağlı katmanlardan oluşur. Bu :numref:`fig_vgg`'te tasvir edilmiştir.
 
 ![AlexNet'ten yapı bloklarından tasarlanmış VGG'ye](../img/vgg.svg)
 :width:`400px`
 :label:`fig_vgg`
 
-Ağın evrişimli kısmı, :numref:`fig_vgg`'tek (`vgg_block` işlevinde de tanımlanmıştır) birkaç VGG bloğunu arka arkaya bağlar. Aşağıdaki `conv_arch` değişken, her biri iki değer içeren bir çokuzlu (blok başına bir) listesinden oluşur: Evrişimli katmanların sayısı ve çıktı kanallarının sayısı,ki tam olarak `vgg_block` işlevini çağırmak için gerekli argümanlardır. VGG ağının tam bağlı kısmı AlexNet'te kapsananla aynıdır.
+Ağın evrişimli kısmı, :numref:`fig_vgg`'tek (`vgg_block` işlevinde de tanımlanmıştır) birkaç VGG bloğunu arka arkaya bağlar. Aşağıdaki `conv_arch` değişken, her biri iki değer içeren bir çokuzlu (blok başına bir) listesinden oluşur: Evrişimli katmanların sayısı ve çıktı kanallarının sayısı, ki tam olarak `vgg_block` işlevini çağırmak için gerekli argümanlardır. VGG ağının tam bağlı kısmı AlexNet'te kapsananla aynıdır.
 
 Orijinal VGG ağında, ilk ikisinin her birinin bir evrişimli tabakaya sahip olduğu ve sonraki üçünün her birinin iki evrişimli katman içerdiği 5 evrişimli blok vardı. İlk blokta 64 çıktı kanalı vardır ve sonraki her blok, bu sayı 512'ye ulaşıncaya kadar çıktı kanalı sayısını iki katına çıkarır. Bu ağ 8 evrişimli katman ve 3 tam bağlı katman kullandığından, genellikle VGG-11 olarak adlandırılır.
 
@@ -94,9 +103,9 @@ net = vgg(conv_arch)
 ```{.python .input}
 #@tab pytorch
 def vgg(conv_arch):
+    conv_blks = []
+    in_channels = 1
     # The convolutional part
-    conv_blks=[]
-    in_channels=1
     for (num_convs, out_channels) in conv_arch:
         conv_blks.append(vgg_block(num_convs, in_channels, out_channels))
         in_channels = out_channels
@@ -131,7 +140,7 @@ def vgg(conv_arch):
 net = vgg(conv_arch)
 ```
 
-Daha sonra, her katmanın çıktı şeklini gözlemlemek için 224'lik yükseklik ve genişliğe sahip tek kanallı bir veri örneği oluşturacağız.
+Daha sonra, [**her katmanın çıktı şeklini gözlemlemek için**] 224'lik yüksekliğe ve genişliğe sahip tek kanallı bir veri örneği oluşturacağız.
 
 ```{.python .input}
 net.initialize()
@@ -157,11 +166,11 @@ for blk in net.layers:
     print(blk.__class__.__name__,'output shape:\t', X.shape)
 ```
 
-Gördüğünüz gibi, her blokta yükseklik ve genişliği yarıya indiriyoruz, nihayet ağın tam bağlı kısmı tarafından işleme için temsilleri düzleştirmeden önce 7'lik bir yüksekliğe ve genişliğe ulaşıyoruz.
+Gördüğünüz gibi, her blokta yüksekliği ve genişliği yarıya indiriyoruz, nihayet ağın tam bağlı kısmı tarafından işleme için temsilleri düzleştirmeden önce 7'lik bir yüksekliğe ve genişliğe ulaşıyoruz.
 
 ## Eğitim
 
-VGG-11 AlexNet'ten hesaplamalı olarak daha ağır olduğundan, daha az sayıda kanala sahip bir ağ oluşturuyoruz. Bu, Moda-MNIST üzerinde eğitim için fazlasıyla yeterlidir.
+[**VGG-11 AlexNet'ten hesaplamalı olarak daha ağır olduğundan, daha az sayıda kanala sahip bir ağ oluşturuyoruz.**] Bu, Fashion-MNIST üzerinde eğitim için fazlasıyla yeterlidir.
 
 ```{.python .input}
 #@tab mxnet, pytorch
@@ -180,7 +189,7 @@ small_conv_arch = [(pair[0], pair[1] // ratio) for pair in conv_arch]
 net = lambda: vgg(small_conv_arch)
 ```
 
-Biraz daha büyük bir öğrenme hızı kullanmanın haricinde, model eğitim süreci :numref:`sec_alexnet`'teki AlexNet'e benzerdir.
+Biraz daha büyük bir öğrenme hızı kullanmanın haricinde, [**model eğitim**] süreci :numref:`sec_alexnet`'teki AlexNet'e benzerdir.
 
 ```{.python .input}
 #@tab all
@@ -199,7 +208,7 @@ d2l.train_ch6(net, train_iter, test_iter, num_epochs, lr, d2l.try_gpu())
 
 1. Katmanların boyutlarını yazdırırken 11 yerine sadece 8 sonuç gördük. Kalan 3 katman bilgisi nereye gitti?
 1. AlexNet ile karşılaştırıldığında, VGG hesaplama açısından çok daha yavaştır ve ayrıca daha fazla GPU belleğine ihtiyaç duyar. Bunun nedenlerini analiz edin.
-1. Moda-MNIST içindeki imgelerin yüksekliğini ve genişliğini 224'ten 96'ya değiştirmeyi deneyin. Bunun deneyler üzerinde ne etkisi olur?
+1. Fashion-MNIST içindeki imgelerin yüksekliğini ve genişliğini 224'ten 96'ya değiştirmeyi deneyin. Bunun deneyler üzerinde ne etkisi olur?
 1. VGG-16 veya VGG-19 gibi diğer yaygın modelleri oluşturmak için VGG makalesideki :cite:`Simonyan.Zisserman.2014` Tablo 1'e bakın.
 
 :begin_tab:`mxnet`

@@ -3,14 +3,14 @@
 
 2014'te, *GoogLeNet* ImageNet Yarışması'nı kazandı ve NiN'in güçlü yanlarını ve :cite:`Szegedy.Liu.Jia.ea.2015`'ün tekrarlanan bloklarının faydalarını birleştiren bir yapı önerdi. Makalenin odak noktası, hangi büyüklükteki evrişim çekirdeklerinin en iyi olduğu sorusunu ele almaktı. Sonuçta, önceki popüler ağlar $1 \times 1$ gibi küçük ve $11 \times 11$ kadar büyük seçimler kullandı. Bu makaledeki bir öngörü, bazen çeşitli boyutlarda çekirdeklerin bir kombinasyonunu kullanmanın avantajlı olabileceğiydi. Bu bölümde, orijinal modelin biraz basitleştirilmiş bir versiyonunu sunarak GoogLeNet'i tanıtacağız: Eğitimi kararlı hale getirmek için eklenen ancak artık daha iyi eğitim algoritmaları ile gereksiz olan birkaç geçici özelliği atlıyoruz.
 
-## Başlangıç (Inception) Blokları
+## (**Başlangıç (Inception) Blokları**)
 
 GoogLeNet'teki temel evrişimli bloğa, viral bir mizah unsuru (meme) başlatan *Başlangıç (Inception)* (“Daha derine gitmemiz gerekiyor”) filminden bir alıntı nedeniyle adlandırılmış bir *başlangıç bloğu* denir.
 
 ![Başlangıç bloğu yapısı.](../img/inception.svg)
 :label:`fig_inception`
 
-:numref:`fig_inception`'te gösterildiği gibi, başlangıç bloğu dört paralel yoldan oluşur. İlk üç yol, farklı uzamsal boyutlardan bilgi ayıklamak için $1\times 1$, $3\times 3$ ve $5\times 5$ pencere boyutlarına sahip evrişimli katmanlar kullanır. Orta iki yol, kanalların sayısını azaltmak ve modelin karmaşıklığını azaltmak için girdi üzerinde bir $1\times 1$ evrişim gerçekleştirir. Dördüncü yol, $3\times 3$ maksimum biriktirme katmanı kullanır ve onu ardından kanal sayısını değiştiren $1\times 1$ evrişimli katman izler. Dört yol, girdi ve çıktıya aynı yüksekliği ve genişliği vermek için uygun dolguyu kullanır. Son olarak, her yol boyunca çıktılar kanal boyutu boyunca bitiştirilir ve bloğun çıktısını oluşturur. Başlangıç bloğunun yaygın olarak ayarlanan hiperparametreleri, katman başına çıkış kanallarının sayısıdır.
+:numref:`fig_inception`'te gösterildiği gibi, başlangıç bloğu dört paralel yoldan oluşur. İlk üç yol, farklı uzamsal boyutlardan bilgi ayıklamak için $1\times 1$, $3\times 3$ ve $5\times 5$ pencere boyutlarına sahip evrişimli katmanlar kullanır. Orta iki yol, kanalların sayısını azaltmak ve modelin karmaşıklığını azaltmak için girdi üzerinde bir $1\times 1$ evrişim gerçekleştirir. Dördüncü yol, $3\times 3$ maksimum ortaklama katmanı kullanır ve onu ardından kanal sayısını değiştiren $1\times 1$ evrişimli katman izler. Dört yol, girdi ve çıktıya aynı yüksekliği ve genişliği vermek için uygun dolguyu kullanır. Son olarak, her yol boyunca çıktılar kanal boyutu boyunca bitiştirilir ve bloğun çıktısını oluşturur. Başlangıç bloğunun yaygın olarak ayarlanan hiper parametreleri, katman başına çıktı kanallarının sayısıdır.
 
 ```{.python .input}
 from d2l import mxnet as d2l
@@ -121,9 +121,9 @@ class Inception(tf.keras.Model):
 
 Bu ağın neden bu kadar iyi çalıştığına dair sezgi kazanmak için filtrelerin kombinasyonunu göz önünde bulundurun. İmgeyi çeşitli filtre boyutlarında tarıyorlar. Bu, farklı boyutlardaki ayrıntıların farklı boyutlardaki filtrelerle verimli bir şekilde tanınabileceği anlamına gelir. Aynı zamanda, farklı filtreler için farklı miktarlarda parametre tahsis edebiliriz.
 
-## GoogLeNet Modeli
+## [**GoogLeNet Modeli**]
 
-:numref:`fig_inception_full`'te gösterildiği gibi, GoogLeNet tahminlerini oluşturmak için toplam 9 başlangıç bloğu ve global ortalama biriktirmeden oluşan bir yığın kullanır. Başlangıç blokları arasındaki maksimum biriktirme boyutsallığı azaltır. İlk modül AlexNet ve LeNet'e benzer. Blokların yığını VGG'den devralınır ve küresel ortalama biriktirme sonunda tam bağlı katman yığınını önler.
+:numref:`fig_inception_full`'te gösterildiği gibi, GoogLeNet tahminlerini oluşturmak için toplam 9 başlangıç bloğu ve global ortalama ortaklamadan oluşan bir yığın kullanır. Başlangıç blokları arasındaki maksimum ortaklama boyutsallığı azaltır. İlk modül AlexNet ve LeNet'e benzer. Blokların yığını VGG'den devralınır ve küresel ortalama ortaklama ile sondaki tam bağlı katman yığınından kaçınır.
 
 ![GoogLeNet mimarisi.](../img/inception-full.svg)
 :label:`fig_inception_full`
@@ -166,6 +166,7 @@ b2.add(nn.Conv2D(64, kernel_size=1, activation='relu'),
 b2 = nn.Sequential(nn.Conv2d(64, 64, kernel_size=1),
                    nn.ReLU(),
                    nn.Conv2d(64, 192, kernel_size=3, padding=1),
+                   nn.ReLU(),
                    nn.MaxPool2d(kernel_size=3, stride=2, padding=1))
 ```
 
@@ -203,7 +204,7 @@ def b3():
         tf.keras.layers.MaxPool2D(pool_size=3, strides=2, padding='same')])
 ```
 
-Dördüncü modül daha karmaşıktır. Beş başlangıç bloğunu seri olarak bağlar ve sırasıyla $192+208+48+64=512$, $160+224+64+64=512$, $128+256+64+64=512$, $112+288+64+64=528$ ve $256+320+128+128=832$ çıktı kanallarına sahiptir. Bu yollara atanan kanalların sayısı üçüncü modüldekine benzerdir: en fazla kanal sayısına sahip $3\times 3$ evrişimli tabaka ile ikinci yol, onu izleyen sadece $1\times 1$ evrişimli tabaka ile ilk yol, $5\times 5$ evrişimli tabaka ile üçüncü yol ve $3\times 3$ maksimum biriktirme katmanı ile dördüncü yol. İkinci ve üçüncü yollar orana göre önce kanal sayısını azaltacaktır. Bu oranlar farklı başlangıç bloklarında biraz farklıdır.
+Dördüncü modül daha karmaşıktır. Beş başlangıç bloğunu seri olarak bağlar ve sırasıyla $192+208+48+64=512$, $160+224+64+64=512$, $128+256+64+64=512$, $112+288+64+64=528$ ve $256+320+128+128=832$ çıktı kanallarına sahiptir. Bu yollara atanan kanalların sayısı üçüncü modüldekine benzerdir: En fazla kanal sayısına sahip $3\times 3$ evrişimli tabaka ile ikinci yol, onu izleyen sadece $1\times 1$ evrişimli tabaka ile ilk yol, $5\times 5$ evrişimli tabaka ile üçüncü yol ve $3\times 3$ maksimum biriktirme katmanı ile dördüncü yol. İkinci ve üçüncü yollar orana göre önce kanal sayısını azaltacaktır. Bu oranlar farklı başlangıç bloklarında biraz farklıdır.
 
 ```{.python .input}
 b4 = nn.Sequential()
@@ -237,7 +238,7 @@ def b4():
         tf.keras.layers.MaxPool2D(pool_size=3, strides=2, padding='same')])
 ```
 
-Beşinci modül, $256+320+128+128=832$ ve $384+384+128+128=1024$ çıktı kanallarına sahip iki başlangıç bloğu içerir. Her yola atanan kanal sayısı, üçüncü ve dördüncü modüllerdeki kanallarla aynıdır, ancak belirli değerlerde farklılık gösterir. Beşinci bloğu çıktı katmanının takip edildiğine dikkat edilmelidir. Bu blok, her kanalın yüksekliğini ve genişliğini NiN'de olduğu gibi 1'e değiştirmek için küresel ortalama biriktirme katmanını kullanır. Son olarak, çıktıyı iki boyutlu bir diziye dönüştürüyoruz ve ardından çıktı sayısı etiket sınıflarının sayısı olan tam bağlı bir katman oluşturuyoruz.
+Beşinci modül, $256+320+128+128=832$ ve $384+384+128+128=1024$ çıktı kanallarına sahip iki başlangıç bloğu içerir. Her yola atanan kanal sayısı, üçüncü ve dördüncü modüllerdeki kanallarla aynıdır, ancak belirli değerlerde farklılık gösterir. Beşinci bloğu çıktı katmanının takip edildiğine dikkat edilmelidir. Bu blok, her kanalın yüksekliğini ve genişliğini NiN'de olduğu gibi 1'e değiştirmek için küresel ortalama ortaklama katmanını kullanır. Son olarak, çıktıyı iki boyutlu bir diziye dönüştürüyoruz ve ardından çıktı sayısı etiket sınıflarının sayısı olan tam bağlı bir katman oluşturuyoruz.
 
 ```{.python .input}
 b5 = nn.Sequential()
@@ -253,7 +254,7 @@ net.add(b1, b2, b3, b4, b5, nn.Dense(10))
 #@tab pytorch
 b5 = nn.Sequential(Inception(832, 256, (160, 320), (32, 128), 128),
                    Inception(832, 384, (192, 384), (48, 128), 128),
-                   nn.AdaptiveMaxPool2d((1,1)),
+                   nn.AdaptiveAvgPool2d((1,1)),
                    nn.Flatten())
 
 net = nn.Sequential(b1, b2, b3, b4, b5, nn.Linear(1024, 10))
@@ -276,7 +277,7 @@ def net():
                                 tf.keras.layers.Dense(10)])
 ```
 
-GoogLeNet modeli hesaplama açısından karmaşıktır, bu nedenle VG'deki gibi kanal sayısını değiştirmek kolay değildir. Moda-MNIST üzerinde makul bir eğitim süresine sahip olmak için girdi yüksekliğini ve genişliğini 224'ten 96'ya düşürüyoruz. Bu, hesaplamayı basitleştirir. Çeşitli modüller arasındaki çıktı şeklindeki değişiklikler aşağıda gösterilmiştir.
+GoogLeNet modeli hesaplama açısından karmaşıktır, bu nedenle VGG'deki gibi kanal sayısını değiştirmek kolay değildir. [**Fashion-MNIST üzerinde makul bir eğitim süresine sahip olmak için girdi yüksekliğini ve genişliğini 224'ten 96'ya düşürüyoruz.**] Bu, hesaplamayı basitleştirir. Çeşitli modüller arasındaki çıktı şeklindeki değişiklikler aşağıda gösterilmiştir.
 
 ```{.python .input}
 X = np.random.uniform(size=(1, 1, 96, 96))
@@ -302,9 +303,9 @@ for layer in net().layers:
     print(layer.__class__.__name__, 'output shape:\t', X.shape)
 ```
 
-## Eğitim
+## [**Eğitim**]
 
-Daha önce olduğu gibi modelimizi Moda-MNIST veri kümesini kullanarak eğitiyoruz. Eğitim prosedürünü çağırmadan önce veriyi $96 \times 96$ piksel çözünürlüğüne dönüştürüyoruz.
+Daha önce olduğu gibi modelimizi Fashion-MNIST veri kümesini kullanarak eğitiyoruz. Eğitim prosedürünü çağırmadan önce veriyi $96 \times 96$ piksel çözünürlüğüne dönüştürüyoruz.
 
 ```{.python .input}
 #@tab all

@@ -3,7 +3,7 @@
 
 CNN'ler LeNet'in ortaya çıkışını takiben bilgisayarla görme ve makine öğrenmesi topluluklarında iyi bilinse de, alanda hemen baskın olmadılar. LeNet, ilk küçük veri kümelerinde iyi sonuçlar elde etse de, CNN'leri daha büyük, daha gerçekçi veri kümeleri üzerinde eğitmenin başarımı ve uygulanabilirliği henüz belirlenmemişti. Aslında, 1990'ların başları ile 2012 yılının dönüm noktası sonuçları ortasındaki ara dönemin büyük bir bölümünde, sinir ağları genellikle destek vektör makineleri gibi diğer makine öğrenmesi yöntemleri tarafından aşıldı.
 
-Bilgisayarla görme için, bu karşılaştırma belki de adil değildir. Bu, evrişimli ağlara girdiler ham veya hafif işlenmiş (örneğin, ortalama yoluyla) piksel değerlerinden oluşsa da, uygulayıcılar asla ham pikselleri geleneksel modellere beslemezlerdir. Bunun yerine, tipik bilgisayarla görmedeki işlem hatları, manuel, öznitelik çıkarma işlem hatlarından oluşuyordu. *Öznitelikleri öğrenmek* yerine, öznitelikler *hazırlanırdı*. İlerlemenin çoğu, öznitelikler için daha akıllı fikirlere sahip olunmasından gelirdi ve öğrenme algoritması genellikle sonradan düşünülürdü.
+Bilgisayarla görme için, bu karşılaştırma belki de adil değildir. Bu, evrişimli ağlara girdiler ham veya hafif işlenmiş (örneğin, merkeze çekme yoluyla) piksel değerlerinden oluşsa da, uygulayıcılar asla ham pikselleri geleneksel modellere beslemezlerdir. Bunun yerine, tipik bilgisayarla görmedeki işlem hatları, manuel, öznitelik çıkarma işlem hatlarından oluşuyordu. *Öznitelikleri öğrenmek* yerine, öznitelikler *hazırlanırdı*. İlerlemenin çoğu, öznitelikler için daha akıllı fikirlere sahip olunmasından gelirdi ve öğrenme algoritması genellikle sonradan düşünülürdü.
 
 Bazı sinir ağı hızlandırıcıları 1990'larda da mevcut olmasına rağmen, çok sayıda parametreyle derin çok kanallı, çok katmanlı CNN'ler yapmak için henüz yeterince güçlü değillerdi. Dahası, veri kümeleri hala nispeten küçüktü. Bu engellere ek olarak, parametre ilkleme sezgisel yöntemleri, rasgele eğim inişin akıllı biçimleri, daralmayan etkinleştirme fonksiyonları ve etkili düzenlileştirme teknikleri de dahil olmak üzere sinir ağlarını eğitmek için anahtar püf noktaları hala eksikti.
 
@@ -20,7 +20,7 @@ Makine öğrenmesi araştırmacılarıyla konuştuysanız, makine öğrenmesinin
 
 Vaziyeti ortaya dökmenin bir diğer yolu da işlem hattının en önemli kısmının temsil olmasıdır. 2012 yılına kadar temsil mekanik olarak hesaplanırdı. Aslında, yeni bir öznitelik fonksiyonu kümesi işleme, sonuçları iyileştirme ve yöntemi yazma belirgin bir makale türüydü. SIFT :cite:`Lowe.2004`, SURF :cite:`Bay.Tuytelaars.Van-Gool.2006`, HOG (yönlendirilmiş gradyan histogramları) :cite:`Dalal.Triggs.2005`, [görsel sözcük torbası](https://en.wikipedia.org/wiki/Bag-of-words_model_in_computer_vision) ve benzeri öznitelik çıkarıcılar sözünü dinletti.
 
-Yann LeCun, Geoff Hinton, Yoshua Bengio, Andrew Ng, Shun-ichi Amari ve Juergen Schmidhuber de dahil olmak üzere bir başka araştırmacı grubunun farklı planları vardı. Onlar özniteliklerin kendilerinin öğrenilmesi gerektiğine inanıyordu. Dahası, makul derecede karmaşık olması için, özniteliklerin hiyerarşik olarak, her biri öğrenilebilir parametrelere sahip birden çok ortak öğrenilen katmanla oluşması gerektiğine inanıyorlardı. İmge durumunda, en düşük katmanlar kenarları, renkleri ve dokuları algılayabilir. Gerçekten de, Alex Krizhevsky, Ilya Sutskever ve Geoff Hinton, yeni bir CNN biçimi önerdi *AlexNet* ve 2012 ImageNet yarışmasında mükemmel performans elde etti. AlexNet, :cite:`Krizhevsky.Sutskever.Hinton.2012`'ün atılım yapan ImageNet sınıflandırma makalesinin ilk yazarı olan Alex Krizhevsky'nin adını aldı.
+Yann LeCun, Geoff Hinton, Yoshua Bengio, Andrew Ng, Shun-ichi Amari ve Juergen Schmidhuber de dahil olmak üzere bir başka araştırmacı grubunun farklı planları vardı. Onlar özniteliklerin kendilerinin öğrenilmesi gerektiğine inanıyordu. Dahası, makul derecede karmaşık olması için, özniteliklerin hiyerarşik olarak, her biri öğrenilebilir parametrelere sahip birden çok ortak öğrenilen katmanla oluşması gerektiğine inanıyorlardı. İmge durumunda, en düşük katmanlar kenarları, renkleri ve dokuları algılayabilir. Gerçekten de, Alex Krizhevsky, Ilya Sutskever ve Geoff Hinton, yeni bir CNN biçimi önerdi. *AlexNet* ve 2012 ImageNet yarışmasında mükemmel performans elde etti. AlexNet, :cite:`Krizhevsky.Sutskever.Hinton.2012`'ün atılım yapan ImageNet sınıflandırma makalesinin ilk yazarı olan Alex Krizhevsky'nin adını aldı.
 
 İlginçtir ki, ağın en düşük katmanlarında, model bazı geleneksel filtrelere benzeyen öznitelik çıkarıcıları öğrendi. Şekil :numref:`fig_filters`, AlexNet :cite:`Krizhevsky.Sutskever.Hinton.2012` makalesinden tekrar üretilmiştir ve alt düzey imge tanımlayıcılarını göstermektedir.
 
@@ -63,7 +63,7 @@ AlexNet ve LeNet'in tasarım felsefeleri çok benzer, ancak önemli farklılıkl
 
 ### Mimari
 
-AlexNet'in ilk katmanında, evrişim penceresinin şekli $11\times11$'dir. ImageNet'teki çoğu imge MNIST imgelerinden on kat daha yüksek ve daha geniş olduğundan, ImageNet verilerindeki nesneler daha fazla piksel kaplama eğilimindedir. Sonuç olarak, nesneyi anlamak için daha büyük bir evrişim penceresi gereklidir. İkinci kattaki evrişim pencere şekli $5\times5$'ya, ardından $3\times3$'e indirgenir. Buna ek olarak, birinci, ikinci ve beşinci kıvrımsal katmanlardan sonra, ağ $3\times3$ pencere şekli ve 2'lik bir uzun adım ile maksimum biriktirme katmanları ekler. Ayrıca, AlexNet'in LeNet'ten on kat daha fazla evrişim kanalı vardır.
+AlexNet'in ilk katmanında, evrişim penceresinin şekli $11\times11$'dir. ImageNet'teki çoğu imge MNIST imgelerinden on kat daha yüksek ve daha geniş olduğundan, ImageNet verilerindeki nesneler daha fazla piksel kaplama eğilimindedir. Sonuç olarak, nesneyi anlamak için daha büyük bir evrişim penceresi gereklidir. İkinci kattaki evrişim pencere şekli $5\times5$'ya, ardından $3\times3$'e indirgenir. Buna ek olarak, birinci, ikinci ve beşinci kıvrımsal katmanlardan sonra, ağ $3\times3$ pencere şekli ve 2'lik bir uzun adım ile maksimum ortaklama katmanları ekler. Ayrıca, AlexNet'in LeNet'ten on kat daha fazla evrişim kanalı vardır.
 
 Son evrişimli tabakadan sonra 4096 çıktılı iki tam bağlı katman vardır. Bu iki büyük tam bağlı katman, yaklaşık 1 GB'lık model parametresi üretir. İlk GPU'lardaki sınırlı bellek nedeniyle, orijinal AlexNet çift veri akışı tasarımı kullandı, böylece iki GPU'larının her biri modelin yalnızca yarısını depolamaktan ve hesaplamaktan sorumlu olabilirdi. Neyse ki, GPU belleği artık nispeten bol, bu yüzden nadiren GPU'lar arasında modelleri parçalamamız gerekiyor (AlexNet modeli versiyonumuz bu açıdan orijinal makaleden sapıyor).
 
@@ -196,7 +196,7 @@ def net():
     ])
 ```
 
-Her katmanın çıktı şeklini gözlemlemek için 224 yüksekliğinde ve 224 genişliğinde tek kanallı bir veri örneği oluşturuyoruz. :numref:`fig_alexnet`'teki AlexNet mimarisine uyuyor.
+(**Her katmanın çıktı şeklini gözlemlemek**) için 224 yüksekliğinde ve  genişliğinde [**tek kanallı bir veri örneği oluşturuyoruz**]. :numref:`fig_alexnet`'teki AlexNet mimarisine uyuyor.
 
 ```{.python .input}
 X = np.random.uniform(size=(1, 1, 224, 224))
@@ -211,7 +211,7 @@ for layer in net:
 X = torch.randn(1, 1, 224, 224)
 for layer in net:
     X=layer(X)
-    print(layer.__class__.__name__,'Output shape:\t',X.shape)
+    print(layer.__class__.__name__,'output shape:\t',X.shape)
 ```
 
 ```{.python .input}
@@ -219,12 +219,12 @@ for layer in net:
 X = tf.random.uniform((1, 224, 224, 1))
 for layer in net().layers:
     X = layer(X)
-    print(layer.__class__.__name__, 'Output shape:\t', X.shape)
+    print(layer.__class__.__name__, 'output shape:\t', X.shape)
 ```
 
 ## Veri Kümesini Okuma
 
-AlexNet gazetede ImageNet üzerinde eğitilmiş olsa da, bir ImageNet modelini modern bir GPU'da bile saatler veya günler sürebileceğinden, burada Moda-MNIST veri kümesini kullanıyoruz. AlexNet'in doğrudan Moda-MNIST üzerine uygulanmasıyla ilgili sorunlardan biri, imgelerinin ImageNet imgelerinden daha düşük çözünürlüğe ($28 \times 28$ piksel) sahip olmasıdır. İşleri yürütebilmek için onları $224 \times 224$'ye yükseltiyoruz (genellikle akıllı bir uygulama değil, ama burada AlexNet mimarisine sadık olmak için yapıyoruz). Bu yeniden boyutlandırmayı `resize` bağımsız değişkeni ile `d2l.load_data_fashion_mnist` işlevinde gerçekleştiriyoruz.
+AlexNet makalede ImageNet üzerinde eğitilmiş olsa da, bir ImageNet modelini modern bir GPU'da bile saatler veya günler sürebileceğinden, burada Fashion-MNIST veri kümesini kullanıyoruz. AlexNet'in doğrudan [**Fashion-MNIST**] üzerine uygulanmasıyla ilgili sorunlardan biri, imgelerinin (**ImageNet imgelerinden daha düşük çözünürlüğe**) ($28 \times 28$ piksel) sahip olmasıdır. İşleri yürütebilmek için (**onları $224 \times 224$'ye yükseltiyoruz**) (genellikle akıllı bir uygulama değil, ama burada AlexNet mimarisine sadık olmak için yapıyoruz). Bu yeniden boyutlandırmayı `resize` bağımsız değişkeni ile `d2l.load_data_fashion_mnist` işlevinde gerçekleştiriyoruz.
 
 ```{.python .input}
 #@tab all
@@ -234,7 +234,7 @@ train_iter, test_iter = d2l.load_data_fashion_mnist(batch_size, resize=224)
 
 ## Eğitim
 
-Şimdi AlexNet'i eğitmeye başlayabiliriz. :numref:`sec_lenet`'teki LeNet ile karşılaştırıldığında, buradaki ana değişiklik, daha derin ve daha geniş ağ, daha yüksek imge çözünürlüğü ve daha maliyetli evrişimler nedeniyle daha küçük bir öğrenme hızı ve çok daha yavaş eğitim kullanılmasıdır.
+Şimdi [**AlexNet'i eğitmeye başlayabiliriz.**] :numref:`sec_lenet`'teki LeNet ile karşılaştırıldığında, buradaki ana değişiklik, daha derin ve daha geniş ağ, daha yüksek imge çözünürlüğü ve daha maliyetli evrişimler nedeniyle daha küçük bir öğrenme hızı ve çok daha yavaş eğitim kullanılmasıdır.
 
 ```{.python .input}
 #@tab all
@@ -246,13 +246,13 @@ d2l.train_ch6(net, train_iter, test_iter, num_epochs, lr, d2l.try_gpu())
 
 * AlexNet, LeNet'e benzer bir yapıya sahiptir, ancak büyük ölçekli ImageNet veri kümesine uyacak şekilde daha fazla evrişimli katman ve daha büyük bir parametre uzayı kullanır.
 * Bugün AlexNet çok daha etkili mimariler tarafından aşıldı, ancak günümüzde kullanılan sığdan derin ağlara doğru önemli bir adımdır.
-* AlexNet'in uygulamasının LeNet'ten sadece birkaç satır daha fazlası var gibi görünse de, akademik cemiyetin bu kavramsal değişimi benimsemesi ve obub mükemmel deneysel sonuçlarından yararlanması uzun yıllar aldı. Bu aynı zamanda verimli hesaplama araçlarının eksikliğinden kaynaklanıyordu.
+* AlexNet'in uygulamasının LeNet'ten sadece birkaç satır daha fazlası var gibi görünse de, akademik cemiyetin bu kavramsal değişimi benimsemesi ve onun mükemmel deneysel sonuçlarından yararlanması uzun yıllar aldı. Bu aynı zamanda verimli hesaplama araçlarının eksikliğinden kaynaklanıyordu.
 * Hattan düşürme, ReLU ve ön işleme, bilgisayarla görme görevlerinde mükemmel performans elde etmek için diğer önemli adımlardı.
 
 ## Alıştırmalar
 
 1. Dönemlerin sayısını artırmayı deneyin. LeNet ile karşılaştırıldığında, sonuçlar nasıl farklı? Neden?
-1. AlexNet Moda-MNIST veri kümesi için çok karmaşık olabilir.
+1. AlexNet Fashion-MNIST veri kümesi için çok karmaşık olabilir.
     1. Doğruluğun önemli ölçüde düşmediğinden emin olurken, eğitimi daha hızlı yapmak için modeli basitleştirmeyi deneyin.
     1. Doğrudan $28 \times 28$ imgelerde çalışan daha iyi bir model tasarlayın.
 1. Minigrup boyutunu değiştirin ve doğruluk ve GPU belleğindeki değişiklikleri gözlemleyin.

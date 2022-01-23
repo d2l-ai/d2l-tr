@@ -3,12 +3,12 @@
 
 :numref:`sec_machine_translation`'te gördüğümüz gibi, makine çevirisinde hem girdi hem de çıktı değişken uzunlukta dizilerdir. Bu tür problemleri çözmek için :numref:`sec_encoder-decoder`'te genel bir kodlayıcı-kodçözücü mimarisi tasarladık. Bu bölümde, bu mimarinin kodlayıcısını ve kodçözücüsünü tasarlamak için iki RNN kullanacağız ve makine çevirisi :cite:`Sutskever.Vinyals.Le.2014,Cho.Van-Merrienboer.Gulcehre.ea.2014` için *diziden diziye* öğrenmeyi uygulayacağız.
 
-Kodlayıcı-kodçözücü mimarisinin tasarım ilkesini takiben, RNN kodlayıcı girdi olarak değişken uzunlukta bir diziyi alabilir ve bir sabit şekilli gizli duruma dönüştürebilir. Başka bir deyişle, girdi dizisinin bilgileri RNN kodlayıcısının gizli durumunda *kodlanmış* olur. Çıktı dizisi andıç andıç oluşturmak için, ayrı bir RNN kodçözücü, girdi dizisinin kodlanmış bilgileriyle birlikte, hangi andıçların görüldüğünü (dil modellemesinde olduğu gibi) veya oluşturulduğuna bağlı olarak bir sonraki andıcı tahmin edebilir. :numref:`fig_seq2seq`, makine çevirisinde diziden diziye öğrenme için iki RNN'nin nasıl kullanılacağını gösterir.
+Kodlayıcı-kodçözücü mimarisinin tasarım ilkesini takiben, RNN kodlayıcı girdi olarak değişken uzunlukta bir diziyi alabilir ve bir sabit şekilli gizli duruma dönüştürebilir. Başka bir deyişle, girdi (kaynak) dizisinin bilgileri RNN kodlayıcısının gizli durumunda *kodlanmış* olur. Çıktı dizisi andıç andıç oluşturmak için, ayrı bir RNN kodçözücü, girdi dizisinin kodlanmış bilgileriyle birlikte, hangi andıçların görüldüğünü (dil modellemesinde olduğu gibi) veya oluşturulduğuna bağlı olarak bir sonraki andıcı tahmin edebilir. :numref:`fig_seq2seq`, makine çevirisinde diziden diziye öğrenme için iki RNN'nin nasıl kullanılacağını gösterir.
 
 ![Bir RNN kodlayıcı ve bir RNN kodçözücü ile diziden diziye öğrenme.](../img/seq2seq.svg)
 :label:`fig_seq2seq`
 
-:numref:`fig_seq2seq`'te, özel "<eos>" andıcı dizinin sonunu işaretler. Model, bu andıç oluşturulduktan sonra tahminlerde bulunmayı durdurabilir. RNN kodçözücüsünün ilk zaman adımında, iki özel tasarım kararı vardır. İlk olarak, özel dizi başlangıç andıcı, "<bos>", bir girdidir. İkincisi, RNN kodlayıcısının son gizli durumu, kodçözücünün gizli durumunu ilklemek için kullanılır. :cite:`Sutskever.Vinyals.Le.2014`'teki gibi tasarımlarda, kodlanmış girdi dizisi bilgilerinin çıktı dizisini oluşturmak için kodçözücüsüne beslenmesi tam olarak da budur. :cite:`Cho.Van-Merrienboer.Gulcehre.ea.2014` gibi diğer bazı tasarımlarda, kodlayıcının son gizli durumu, :numref:`fig_seq2seq`'te gösterildiği gibi her adımda girdilerin bir parçası olarak kodçözücüye beslenir. :numref:`sec_language_model`'deki dil modellerinin eğitimine benzer şekilde, etiketlerin bir andıç ile kaydırılmış orijinal çıktı dizisi olmasına izin verebiliriz: "<bos>“, “Ils”, “regardent”, “.” $\rightarrow$ “Ils”, “regardent”,”.“,"<eos>”.
+:numref:`fig_seq2seq`'te, özel "&lt;eos&gt;" andıcı dizinin sonunu işaretler. Model, bu andıç oluşturulduktan sonra tahminlerde bulunmayı durdurabilir. RNN kodçözücüsünün ilk zaman adımında, iki özel tasarım kararı vardır. İlk olarak, özel dizi başlangıç andıcı, "&lt;bos&gt;", bir girdidir. İkincisi, RNN kodlayıcısının son gizli durumu, kodçözücünün gizli durumunu ilklemek için kullanılır. :cite:`Sutskever.Vinyals.Le.2014`'teki gibi tasarımlarda, kodlanmış girdi dizisi bilgilerinin çıktı (hedef) dizisini oluşturmak için kodçözücüsüne beslenmesi tam olarak da budur. :cite:`Cho.Van-Merrienboer.Gulcehre.ea.2014` gibi diğer bazı tasarımlarda, kodlayıcının son gizli durumu, :numref:`fig_seq2seq`'te gösterildiği gibi her adımda girdilerin bir parçası olarak kodçözücüye beslenir. :numref:`sec_language_model`'deki dil modellerinin eğitimine benzer şekilde, etiketlerin bir andıç ile kaydırılmış orijinal çıktı dizisi olmasına izin verebiliriz: "&lt;bos&gt;", “Ils”, “regardent”, “.” $\rightarrow$ “Ils”, “regardent”,”.“,"&lt;eos&gt;".
 
 Aşağıda, :numref:`fig_seq2seq`'ün tasarımını daha ayrıntılı olarak açıklayacağız. Bu modeli :numref:`sec_machine_translation`'te tanıtılan İngilizce-Fransız veri kümesinde makine çevirisi için eğiteceğiz.
 
@@ -30,6 +30,14 @@ import torch
 from torch import nn
 ```
 
+```{.python .input}
+#@tab tensorflow
+import collections
+from d2l import tensorflow as d2l
+import math
+import tensorflow as tf
+```
+
 ## Kodlayıcı
 
 Teknik olarak konuşursak, kodlayıcı değişken uzunluktaki bir girdi dizisini sabit şekilli *bağlam değişkeni* $\mathbf{c}$'ye dönüştürür ve bu bağlam değişkende girdi dizisinin bilgilerini kodlar. :numref:`fig_seq2seq`'te gösterildiği gibi, kodlayıcıyı tasarlamak için bir RNN kullanabiliriz.
@@ -38,7 +46,7 @@ Bir dizi örneği düşünelim (toplu küme boyutu: 1). Girdi dizimizin $x_1, \l
 
 $$\mathbf{h}_t = f(\mathbf{x}_t, \mathbf{h}_{t-1}). $$
 
-Genel olarak, kodlayıcı, gizli durumları her zaman adamında özelleştirilmiş bir $q$ işlevi aracılığıyla bağlam değişkenine dönüştürür:
+Genel olarak, kodlayıcı, gizli durumları her zaman adımında özelleştirilmiş bir $q$ işlevi aracılığıyla bağlam değişkenine dönüştürür:
 
 $$\mathbf{c} =  q(\mathbf{h}_1, \ldots, \mathbf{h}_T).$$
 
@@ -46,7 +54,7 @@ $$\mathbf{c} =  q(\mathbf{h}_1, \ldots, \mathbf{h}_T).$$
 
 Şimdiye kadar kodlayıcıyı tasarlamak için tek yönlü bir RNN kullandık, burada gizli bir durum yalnızca gizli durumun önceki ve o anki zaman adımındaki girdi altdizisine bağlıdır. Ayrıca çift yönlü RNN'leri kullanarak kodlayıcılar da oluşturabiliriz. Bu durumda, tüm dizinin bilgilerini kodlayan gizli durum, zaman adımından önceki ve sonraki altdiziye (geçerli zaman adımındaki girdi dahil) bağlıdır.
 
-Şimdi RNN kodlayıcısını uygulamaya başlayalım. Girdi dizisindeki her andıç için öznitelik vektörünü elde ederken bir *gömme katmanı* kullandığımıza dikkat edin. Bir gömme katmanın ağırlığı, satır sayısı girdi kelime dağarcığının boyutuna (`vocab_size`) ve sütun sayısı öznitelik vektörünün boyutuna eşit olan bir matristir (`embed_size`). Herhangi bir girdi andıcı dizini $i$ için gömme katmanı, öznitelik vektörünü döndürmek üzere ağırlık matrisinin $i.$ satırını (0'dan başlayarak) getirir. Ayrıca, burada kodlayıcıyı uygulamak için çok katmanlı bir GRU seçiyoruz.
+Şimdi [**RNN kodlayıcısını uygulamaya başlayalım**]. Girdi dizisindeki her andıç için öznitelik vektörünü elde ederken bir *gömme katmanı* kullandığımıza dikkat edin. Bir gömme katmanın ağırlığı, satır sayısı girdi kelime dağarcığının boyutuna (`vocab_size`) ve sütun sayısı öznitelik vektörünün boyutuna eşit olan bir matristir (`embed_size`). Herhangi bir girdi andıcı dizini $i$ için gömme katmanı, öznitelik vektörünü döndürmek üzere ağırlık matrisinin $i.$ satırını (0'dan başlayarak) getirir. Ayrıca, burada kodlayıcıyı uygulamak için çok katmanlı bir GRU seçiyoruz.
 
 ```{.python .input}
 #@save
@@ -96,7 +104,30 @@ class Seq2SeqEncoder(d2l.Encoder):
         return output, state
 ```
 
-Yinelemeli katmanların döndürülen değişkenleri :numref:`sec_rnn-concise`'te açıklanmıştı. Yukarıdaki kodlayıcı uygulamasını göstermek için somut bir örnek kullanalım. Aşağıda, gizli birimlerin sayısı 16 olan iki katmanlı bir GRU kodlayıcısı oluşturuyoruz. `X` dizi girdilerinin bir minigrubu göz önüne alındığında (grup boyutu: 4, zaman adımı sayısı: 7), son katmanın gizli durumları (kodlayıcının yinelemeli katmanları tarafından döndürülen `output`) şekli (zaman adımlarının sayısı, grup boyutu, gizli birimlerin sayısı) olan tensörlerdir.
+```{.python .input}
+#@tab tensorflow
+#@save
+class Seq2SeqEncoder(d2l.Encoder):
+    """The RNN encoder for sequence to sequence learning."""
+    def __init__(self, vocab_size, embed_size, num_hiddens, num_layers, dropout=0, **kwargs): 
+        super().__init__(*kwargs)
+        # Embedding layer
+        self.embedding = tf.keras.layers.Embedding(vocab_size, embed_size)
+        self.rnn = tf.keras.layers.RNN(tf.keras.layers.StackedRNNCells(
+            [tf.keras.layers.GRUCell(num_hiddens, dropout=dropout)
+             for _ in range(num_layers)]), return_sequences=True,
+                                       return_state=True)
+    
+    def call(self, X, *args, **kwargs):
+        # The input `X` shape: (`batch_size`, `num_steps`)
+        # The output `X` shape: (`batch_size`, `num_steps`, `embed_size`)
+        X = self.embedding(X)
+        output = self.rnn(X, **kwargs)
+        state = output[1:]
+        return output[0], state
+```
+
+Yinelemeli katmanların döndürülen değişkenleri :numref:`sec_rnn-concise`'te açıklanmıştı. Yukarıdaki [**kodlayıcı uygulamasını göstermek**] için somut bir örnek kullanalım. Aşağıda, gizli birimlerin sayısı 16 olan iki katmanlı bir GRU kodlayıcısı oluşturuyoruz. `X` dizi girdilerinin bir minigrubu göz önüne alındığında (grup boyutu: 4, zaman adımı sayısı: 7), son katmanın gizli durumları (kodlayıcının yinelemeli katmanları tarafından döndürülen `output`) şekli (zaman adımlarının sayısı, grup boyutu, gizli birimlerin sayısı) olan tensörlerdir.
 
 ```{.python .input}
 encoder = Seq2SeqEncoder(vocab_size=10, embed_size=8, num_hiddens=16,
@@ -117,6 +148,15 @@ output, state = encoder(X)
 output.shape
 ```
 
+```{.python .input}
+#@tab tensorflow
+encoder = Seq2SeqEncoder(vocab_size=10, embed_size=8, num_hiddens=16, num_layers=2)
+X = tf.zeros((4, 7))
+output, state = encoder(X, training=False)
+output.shape
+```
+
+
 Burada bir GRU kullanıldığından, son zaman adımındaki çok katmanlı gizli durumlar (gizli katmanların sayısı, grup boyutu, gizli birim sayısı) şeklindedir. Bir LSTM kullanılıyorsa, bellek hücresi bilgileri de `state`'te yer alır.
 
 ```{.python .input}
@@ -128,7 +168,12 @@ len(state), state[0].shape
 state.shape
 ```
 
-## Kodçözücü
+```{.python .input}
+#@tab tensorflow
+len(state), [element.shape for element in state]
+```
+
+## [**Kodçözücü**]
 :label:`sec_seq2seq_decoder`
 
 Az önce de belirttiğimiz gibi, kodlayıcının çıktısının $\mathbf{c}$ bağlam değişkeni $x_1, \ldots, x_T$ tüm girdi dizisini kodlar. Eğitim veri kümesinden $y_1, y_2, \ldots, y_{T'}$ çıktı dizisi göz önüne alındığında, her zaman adım $t'$ için (sembol, girdi dizilerinin veya kodlayıcıların $t$ zaman adımından farklıdır), kodçözücü çıktısının olasılığı $y_{t'}$, önceki çıktı altdizisi $y_1, \ldots, y_{t'-1}$ ve $\mathbf{c}$ bağlam değişkeni üzerinde koşulludur, yani, $P(y_{t'} \mid y_1, \ldots, y_{t'-1}, \mathbf{c})$.
@@ -136,6 +181,7 @@ Az önce de belirttiğimiz gibi, kodlayıcının çıktısının $\mathbf{c}$ ba
 Bu koşullu olasılığı diziler üzerinde modellemek için, kodçözücü olarak başka bir RNN kullanabiliriz. Herhangi bir $t^\prime$ zaman adımındaki çıktı dizisinde, RNN önceki zaman adımından $y_{t^\prime-1}$ çıktı dizisini ve $\mathbf{c}$ bağlam değişkenini girdi olarak alır, sonra onları ve önceki gizli durumu $\mathbf{s}_{t^\prime-1}$ ile beraber şu aki zaman adımındaki gizli durum $\mathbf{s}_{t^\prime}$'ye dönüştürür. Sonuç olarak, kodçözücünün gizli katmanının dönüşümünü ifade etmek için $g$ işlevini kullanabiliriz:
 
 $$\mathbf{s}_{t^\prime} = g(y_{t^\prime-1}, \mathbf{c}, \mathbf{s}_{t^\prime-1}).$$
+:eqlabel:`eq_seq2seq_s_t`
 
 Kodçözücünün gizli durumunu elde ettikten sonra, $t^\prime$ adımındaki çıktı için koşullu olasılık dağılımını, $P(y_{t^\prime} \mid y_1, \ldots, y_{t^\prime-1}, \mathbf{c})$'yi hesaplamak için bir çıktı katmanını ve softmaks işlemini kullanabiliriz.
 
@@ -198,7 +244,38 @@ class Seq2SeqDecoder(d2l.Decoder):
         return output, state
 ```
 
-Uygulanan kodçözücüyü göstermek için, aşağıda belirtilen kodlayıcıdan aynı hiperparametrelerle ilkliyoruz. Gördüğümüz gibi, kodçözücünün çıktı şekli (küme boyutu, zaman adımlarının sayısı, kelime dağarcığı boyutu) olur, burada tensörün son boyutu tahmin edilen andıç dağılımını tutar.
+```{.python .input}
+#@tab tensorflow
+class Seq2SeqDecoder(d2l.Decoder):
+    """The RNN decoder for sequence to sequence learning."""
+    def __init__(self, vocab_size, embed_size, num_hiddens, num_layers,
+                 dropout=0, **kwargs):
+        super().__init__(**kwargs)
+        self.embedding = tf.keras.layers.Embedding(vocab_size, embed_size)
+        self.rnn = tf.keras.layers.RNN(tf.keras.layers.StackedRNNCells(
+            [tf.keras.layers.GRUCell(num_hiddens, dropout=dropout)
+             for _ in range(num_layers)]), return_sequences=True,
+                                       return_state=True)
+        self.dense = tf.keras.layers.Dense(vocab_size)
+        
+    def init_state(self, enc_outputs, *args):
+        return enc_outputs[1]
+    
+    def call(self, X, state, **kwargs):
+        # The output `X` shape: (`batch_size`, `num_steps`, `embed_size`)
+        X = self.embedding(X)
+        # Broadcast `context` so it has the same `num_steps` as `X`
+        context = tf.repeat(tf.expand_dims(state[-1], axis=1), repeats=X.shape[1], axis=1)
+        X_and_context = tf.concat((X, context), axis=2)
+        rnn_output = self.rnn(X_and_context, state, **kwargs)
+        output = self.dense(rnn_output[0])
+        # `output` shape: (`batch_size`, `num_steps`, `vocab_size`)
+        # `state` is a list with `num_layers` entries. Each entry has shape:
+        # (`batch_size`, `num_hiddens`)
+        return output, rnn_output[1:]
+```
+
+[**Uygulanan kodçözücüyü göstermek için**], aşağıda belirtilen kodlayıcıdan aynı hiper parametrelerle ilkliyoruz. Gördüğümüz gibi, kodçözücünün çıktı şekli (küme boyutu, zaman adımlarının sayısı, kelime dağarcığı boyutu) olur, burada tensörün son boyutu tahmin edilen andıç dağılımını tutar.
 
 ```{.python .input}
 decoder = Seq2SeqDecoder(vocab_size=10, embed_size=8, num_hiddens=16,
@@ -219,6 +296,14 @@ output, state = decoder(X, state)
 output.shape, state.shape
 ```
 
+```{.python .input}
+#@tab tensorflow
+decoder = Seq2SeqDecoder(vocab_size=10, embed_size=8, num_hiddens=16, num_layers=2)
+state = decoder.init_state(encoder(X))
+output, state = decoder(X, state, training=False)
+output.shape, len(state), state[0].shape
+```
+
 Özetlemek gerekirse, yukarıdaki RNN kodlayıcı-kodçözücü modelindeki katmanlar :numref:`fig_seq2seq_details`'te gösterilmektedir.
 
 ![Bir RNN kodlayıcı-kodçözücü modelindeki katmanlar.](../img/seq2seq-details.svg)
@@ -228,7 +313,7 @@ output.shape, state.shape
 
 Her adımda, kodçözücü çıktı andıçları için bir olasılık dağılımı öngörür. Dil modellemesine benzer şekilde, dağılımı elde etmek ve eniyilemek için çapraz entropi kaybını hesaplarken softmaks uygulayabiliriz. :numref:`sec_machine_translation`'tan özel dolgu andıçlarının dizilerin sonuna eklendiğini hatırlayın, böylece değişen uzunluklardaki dizilerin aynı şekildeki minigruplara verimli bir şekilde yüklenebilmesini sağlanır. Bununla birlikte, dolgu andıçlarının tahminlenmesi kayıp hesaplamalarında harici tutulmalıdır.
 
-Bu amaçla, alakasız girdileri sıfır değerleriyle maskelemek için aşağıdaki `sequence_mask` işlevini kullanabiliriz, böylece daha sonra alakasız tahminlerin sıfır ile çarpımı sıfıra eşit olur. Örneğin, dolgu andıçları hariç iki dizinin geçerli uzunluğu sırasıyla bir ve iki ise, ilk bir ve ilk iki girdiden sonra kalan girdiler sıfırlara çekilmiş olur.
+Bu amaçla, [**alakasız girdileri sıfır değerleriyle maskelemek**] için aşağıdaki `sequence_mask` işlevini kullanabiliriz, böylece daha sonra alakasız tahminlerin sıfır ile çarpımı sıfıra eşit olur. Örneğin, dolgu andıçları hariç iki dizinin geçerli uzunluğu sırasıyla bir ve iki ise, ilk bir ve ilk iki girdiden sonra kalan girdiler sıfırlara çekilmiş olur.
 
 ```{.python .input}
 X = np.array([[1, 2, 3], [4, 5, 6]])
@@ -250,7 +335,25 @@ X = torch.tensor([[1, 2, 3], [4, 5, 6]])
 sequence_mask(X, torch.tensor([1, 2]))
 ```
 
-Son birkaç eksendeki tüm girdileri de maskeleyebiliriz. İsterseniz, bu tür girdileri sıfır olmayan bir değerle değiştirmeyi bile belirtebilirsiniz.
+```{.python .input}
+#@tab tensorflow
+#@save
+def sequence_mask(X, valid_len, value=0):
+    """Mask irrelevant entries in sequences."""
+    maxlen = X.shape[1]
+    mask = tf.range(start=0, limit=maxlen, dtype=tf.float32)[
+        None, :] < tf.cast(valid_len[:, None], dtype=tf.float32)
+    
+    if len(X.shape) == 3:
+        return tf.where(tf.expand_dims(mask, axis=-1), X, value)
+    else:
+        return tf.where(mask, X, value)
+    
+X = tf.constant([[1, 2, 3], [4, 5, 6]])
+sequence_mask(X, tf.constant([1, 2]))
+```
+
+(**Son birkaç eksendeki tüm girdileri de maskeleyebiliriz.**) İsterseniz, bu tür girdileri sıfır olmayan bir değerle değiştirmeyi bile belirtebilirsiniz.
 
 ```{.python .input}
 X = d2l.ones((2, 3, 4))
@@ -263,7 +366,13 @@ X = d2l.ones(2, 3, 4)
 sequence_mask(X, torch.tensor([1, 2]), value=-1)
 ```
 
-Artık alakasız tahminlerin maskelenmesine izin vermek için softmaks çapraz entropi kaybını genişletebiliriz. Başlangıçta, tahmin edilen tüm andıçlar için maskeler bir olarak ayarlanır. Geçerli uzunluk verildikten sonra, herhangi bir dolgu andıcına karşılık gelen maske sıfır olarak ayarlanır. Sonunda, tüm andıçların kaybı, kayıptaki dolgu andıçlarının ilgisiz tahminlerini filtrelemek için maske ile çarpılacaktır.
+```{.python .input}
+#@tab tensorflow
+X = tf.ones((2,3,4))
+sequence_mask(X, tf.constant([1, 2]), value=-1)
+```
+
+[**Artık alakasız tahminlerin maskelenmesine izin vermek için softmaks çapraz entropi kaybını genişletebiliriz.**] Başlangıçta, tahmin edilen tüm andıçlar için maskeler bir olarak ayarlanır. Geçerli uzunluk verildikten sonra, herhangi bir dolgu andıcına karşılık gelen maske sıfır olarak ayarlanır. Sonunda, tüm andıçların kaybı, kayıptaki dolgu andıçlarının ilgisiz tahminlerini filtrelemek için maske ile çarpılacaktır.
 
 ```{.python .input}
 #@save
@@ -297,7 +406,29 @@ class MaskedSoftmaxCELoss(nn.CrossEntropyLoss):
         return weighted_loss
 ```
 
-Makulluk kontrolü için üç özdeş dizi oluşturabiliriz. Ardından, bu dizilerin geçerli uzunluklarının sırasıyla 4, 2 ve 0 olduğunu belirtebiliriz. Sonuç olarak, birinci dizinin kaybı ikinci dizininkinden iki kat kadar büyük olmalı, üçüncü dizi sıfır kaybına sahip olmalıdır.
+```{.python .input}
+#@tab tensorflow
+#@save
+class MaskedSoftmaxCELoss(tf.keras.losses.Loss):
+    """The softmax cross-entropy loss with masks."""
+    def __init__(self, valid_len):
+        super().__init__(reduction='none')
+        self.valid_len = valid_len
+    
+    # `pred` shape: (`batch_size`, `num_steps`, `vocab_size`)
+    # `label` shape: (`batch_size`, `num_steps`)
+    # `valid_len` shape: (`batch_size`,)
+    def call(self, label, pred):
+        weights = tf.ones_like(label, dtype=tf.float32)
+        weights = sequence_mask(weights, self.valid_len)
+        label_one_hot = tf.one_hot(label, depth=pred.shape[-1])
+        unweighted_loss = tf.keras.losses.CategoricalCrossentropy(
+            from_logits=True, reduction='none')(label_one_hot, pred)
+        weighted_loss = tf.reduce_mean((unweighted_loss*weights), axis=1)
+        return weighted_loss
+```
+
+[**Makulluk kontrolü**] için üç özdeş dizi oluşturabiliriz. Ardından, bu dizilerin geçerli uzunluklarının sırasıyla 4, 2 ve 0 olduğunu belirtebiliriz. Sonuç olarak, birinci dizinin kaybı ikinci dizininkinden iki kat kadar büyük olmalı, üçüncü dizi sıfır kaybına sahip olmalıdır.
 
 ```{.python .input}
 loss = MaskedSoftmaxCELoss()
@@ -311,17 +442,23 @@ loss(d2l.ones(3, 4, 10), d2l.ones((3, 4), dtype=torch.long),
      torch.tensor([4, 2, 0]))
 ```
 
-## Eğitim
+```{.python .input}
+#@tab tensorflow
+loss = MaskedSoftmaxCELoss(tf.constant([4, 2, 0]))
+loss(tf.ones((3,4), dtype = tf.int32), tf.ones((3, 4, 10))).numpy()
+```
+
+## [**Eğitim**]
 :label:`sec_seq2seq_training`
 
 Aşağıdaki eğitim döngüsünde, :numref:`fig_seq2seq`'te gösterildiği gibi, kodçözücüye girdi olarak son andıç hariç özel dizi-başlangıç andıcını ve orijinal çıktı dizisini bitiştiririz. Buna *öğretici zorlama* denir çünkü orijinal çıktı dizisi (andıç etiketleri) kodçözücüye beslenir. Alternatif olarak, önceki zaman adımından *öngörülen* andıcı kodçözücüye geçerli girdi olarak da besleyebiliriz.
 
 ```{.python .input}
 #@save
-def train_s2s_ch9(model, data_iter, lr, num_epochs, tgt_vocab, device):
-    """Train a model for sequence to sequence (defined in Chapter 9)."""
-    model.initialize(init.Xavier(), force_reinit=True, ctx=device)
-    trainer = gluon.Trainer(model.collect_params(), 'adam',
+def train_seq2seq(net, data_iter, lr, num_epochs, tgt_vocab, device):
+    """Train a model for sequence to sequence."""
+    net.initialize(init.Xavier(), force_reinit=True, ctx=device)
+    trainer = gluon.Trainer(net.collect_params(), 'adam',
                             {'learning_rate': lr})
     loss = MaskedSoftmaxCELoss()
     animator = d2l.Animator(xlabel='epoch', ylabel='loss',
@@ -336,10 +473,10 @@ def train_s2s_ch9(model, data_iter, lr, num_epochs, tgt_vocab, device):
                 [tgt_vocab['<bos>']] * Y.shape[0], ctx=device).reshape(-1, 1)
             dec_input = d2l.concat([bos, Y[:, :-1]], 1)  # Teacher forcing
             with autograd.record():
-                Y_hat, _ = model(X, dec_input, X_valid_len)
+                Y_hat, _ = net(X, dec_input, X_valid_len)
                 l = loss(Y_hat, Y, Y_valid_len)
             l.backward()
-            d2l.grad_clipping(model, 1)
+            d2l.grad_clipping(net, 1)
             num_tokens = Y_valid_len.sum()
             trainer.step(num_tokens)
             metric.add(l.sum(), num_tokens)
@@ -352,34 +489,35 @@ def train_s2s_ch9(model, data_iter, lr, num_epochs, tgt_vocab, device):
 ```{.python .input}
 #@tab pytorch
 #@save
-def train_s2s_ch9(model, data_iter, lr, num_epochs, tgt_vocab, device):
-    """Train a model for sequence to sequence (defined in Chapter 9)."""
+def train_seq2seq(net, data_iter, lr, num_epochs, tgt_vocab, device):
+    """Train a model for sequence to sequence."""
     def xavier_init_weights(m):
         if type(m) == nn.Linear:
-            torch.nn.init.xavier_uniform_(m.weight)
+            nn.init.xavier_uniform_(m.weight)
         if type(m) == nn.GRU:
             for param in m._flat_weights_names:
                 if "weight" in param:
-                    torch.nn.init.xavier_uniform_(m._parameters[param])
-    model.apply(xavier_init_weights)
-    model.to(device)
-    optimizer = torch.optim.Adam(model.parameters(), lr=lr)
+                    nn.init.xavier_uniform_(m._parameters[param])
+    net.apply(xavier_init_weights)
+    net.to(device)
+    optimizer = torch.optim.Adam(net.parameters(), lr=lr)
     loss = MaskedSoftmaxCELoss()
-    model.train()
+    net.train()
     animator = d2l.Animator(xlabel='epoch', ylabel='loss',
                             xlim=[10, num_epochs])
     for epoch in range(num_epochs):
         timer = d2l.Timer()
         metric = d2l.Accumulator(2)  # Sum of training loss, no. of tokens
         for batch in data_iter:
+            optimizer.zero_grad()
             X, X_valid_len, Y, Y_valid_len = [x.to(device) for x in batch]
             bos = torch.tensor([tgt_vocab['<bos>']] * Y.shape[0],
                                device=device).reshape(-1, 1)
             dec_input = d2l.concat([bos, Y[:, :-1]], 1)  # Teacher forcing
-            Y_hat, _ = model(X, dec_input, X_valid_len)
+            Y_hat, _ = net(X, dec_input, X_valid_len)
             l = loss(Y_hat, Y, Y_valid_len)
             l.sum().backward()  # Make the loss scalar for `backward`
-            d2l.grad_clipping(model, 1)
+            d2l.grad_clipping(net, 1)
             num_tokens = Y_valid_len.sum()
             optimizer.step()
             with torch.no_grad():
@@ -390,7 +528,37 @@ def train_s2s_ch9(model, data_iter, lr, num_epochs, tgt_vocab, device):
           f'tokens/sec on {str(device)}')
 ```
 
-Artık makine çevirisi veri kümesinde diziden-diziye öğrenme için bir RNN kodlayıcı-kodçözücü modeli oluşturabilir ve eğitebiliriz.
+```{.python .input}
+#@tab tensorflow
+#@save
+def train_seq2seq(net, data_iter, lr, num_epochs, tgt_vocab, device):
+    """Train a model for sequence to sequence."""
+    optimizer = tf.keras.optimizers.Adam(learning_rate=lr)
+    animator = d2l.Animator(xlabel="epoch", ylabel="loss",
+                            xlim=[10, num_epochs])
+    for epoch in range(num_epochs):
+        timer = d2l.Timer()
+        metric = d2l.Accumulator(2)  # Sum of training loss, no. of tokens
+        for batch in data_iter:
+            X, X_valid_len, Y, Y_valid_len = [x for x in batch]
+            bos = tf.reshape(tf.constant([tgt_vocab['<bos>']] * Y.shape[0]),
+                             shape=(-1, 1))
+            dec_input = tf.concat([bos, Y[:, :-1]], 1)  # Teacher forcing
+            with tf.GradientTape() as tape:
+                Y_hat, _ = net(X, dec_input, X_valid_len, training=True)
+                l = MaskedSoftmaxCELoss(Y_valid_len)(Y, Y_hat)
+            gradients = tape.gradient(l, net.trainable_variables)
+            gradients = d2l.grad_clipping(gradients, 1)
+            optimizer.apply_gradients(zip(gradients, net.trainable_variables))
+            num_tokens = tf.reduce_sum(Y_valid_len).numpy()
+            metric.add(tf.reduce_sum(l), num_tokens)
+        if (epoch + 1) % 10 == 0:
+            animator.add(epoch + 1, (metric[0] / metric[1],))
+    print(f'loss {metric[0] / metric[1]:.3f}, {metric[1] / timer.stop():.1f} '
+          f'tokens/sec on {str(device)}')
+```
+
+Artık makine çevirisi veri kümesinde diziden-diziye öğrenme için [**bir RNN kodlayıcı-kodçözücü modeli oluşturabilir ve eğitebiliriz**].
 
 ```{.python .input}
 #@tab all
@@ -403,13 +571,13 @@ encoder = Seq2SeqEncoder(
     len(src_vocab), embed_size, num_hiddens, num_layers, dropout)
 decoder = Seq2SeqDecoder(
     len(tgt_vocab), embed_size, num_hiddens, num_layers, dropout)
-model = d2l.EncoderDecoder(encoder, decoder)
-train_s2s_ch9(model, train_iter, lr, num_epochs, tgt_vocab, device)
+net = d2l.EncoderDecoder(encoder, decoder)
+train_seq2seq(net, train_iter, lr, num_epochs, tgt_vocab, device)
 ```
 
-## Tahmin
+## [**Tahmin**]
 
-Çıktı dizisi andıç andıç ile tahmin etmek için, her kodçözücü zaman adımında önceki zaman adımından tahmin edilen andıç kodçözücüye girdi olarak beslenir. Eğitime benzer şekilde, ilk zaman adımında dizi-başlangıç andıcı (”<bos>“) kodçözücüye beslenir. Bu tahmin süreci :numref:`fig_seq2seq_predict`'te gösterilmektedir. Dizi-sonu andıcı (”<eos> “) tahmin edildiğinde, çıktı dizisinin tahmini tamamlanmış olur.
+Çıktı dizisi andıç andıç tahmin etmek için, her kodçözücü zaman adımında önceki zaman adımından tahmin edilen andıç kodçözücüye girdi olarak beslenir. Eğitime benzer şekilde, ilk zaman adımında dizi-başlangıç andıcı ("&lt;bos&gt;") kodçözücüye beslenir. Bu tahmin süreci :numref:`fig_seq2seq_predict`'te gösterilmektedir. Dizi-sonu andıcı ("&lt;eos&gt;") tahmin edildiğinde, çıktı dizisinin tahmini tamamlanmış olur.
 
 ![Bir RNN kodlayıcı-kodçözücüsü kullanarak andıç andıç çıktı dizisini tahmin etme.](../img/seq2seq-predict.svg)
 :label:`fig_seq2seq_predict`
@@ -418,42 +586,45 @@ train_s2s_ch9(model, train_iter, lr, num_epochs, tgt_vocab, device)
 
 ```{.python .input}
 #@save
-def predict_s2s_ch9(model, src_sentence, src_vocab, tgt_vocab, num_steps,
-                    device):
-    """Predict sequences (defined in Chapter 9)."""
+def predict_seq2seq(net, src_sentence, src_vocab, tgt_vocab, num_steps,
+                    device, save_attention_weights=False):
+    """Predict for sequence to sequence."""
     src_tokens = src_vocab[src_sentence.lower().split(' ')] + [
         src_vocab['<eos>']]
     enc_valid_len = np.array([len(src_tokens)], ctx=device)
     src_tokens = d2l.truncate_pad(src_tokens, num_steps, src_vocab['<pad>'])
     # Add the batch axis
     enc_X = np.expand_dims(np.array(src_tokens, ctx=device), axis=0)
-    enc_outputs = model.encoder(enc_X, enc_valid_len)
-    dec_state = model.decoder.init_state(enc_outputs, enc_valid_len)
+    enc_outputs = net.encoder(enc_X, enc_valid_len)
+    dec_state = net.decoder.init_state(enc_outputs, enc_valid_len)
     # Add the batch axis
     dec_X = np.expand_dims(np.array([tgt_vocab['<bos>']], ctx=device), axis=0)
-    output_seq = []
+    output_seq, attention_weight_seq = [], []
     for _ in range(num_steps):
-        Y, dec_state = model.decoder(dec_X, dec_state)
+        Y, dec_state = net.decoder(dec_X, dec_state)
         # We use the token with the highest prediction likelihood as the input
         # of the decoder at the next time step
         dec_X = Y.argmax(axis=2)
         pred = dec_X.squeeze(axis=0).astype('int32').item()
-        # Once the end-of-sequence token is predicted, the generation of
-        # the output sequence is complete
+        # Save attention weights (to be covered later)
+        if save_attention_weights:
+            attention_weight_seq.append(net.decoder.attention_weights)
+        # Once the end-of-sequence token is predicted, the generation of the
+        # output sequence is complete
         if pred == tgt_vocab['<eos>']:
             break
         output_seq.append(pred)
-    return ' '.join(tgt_vocab.to_tokens(output_seq))
+    return ' '.join(tgt_vocab.to_tokens(output_seq)), attention_weight_seq
 ```
 
 ```{.python .input}
 #@tab pytorch
 #@save
-def predict_s2s_ch9(model, src_sentence, src_vocab, tgt_vocab, num_steps,
-                    device):
-    """Predict sequences (defined in Chapter 9)."""
-    # Set model to eval mode for inference
-    model.eval()
+def predict_seq2seq(net, src_sentence, src_vocab, tgt_vocab, num_steps,
+                    device, save_attention_weights=False):
+    """Predict for sequence to sequence."""
+    # Set `net` to eval mode for inference
+    net.eval()
     src_tokens = src_vocab[src_sentence.lower().split(' ')] + [
         src_vocab['<eos>']]
     enc_valid_len = torch.tensor([len(src_tokens)], device=device)
@@ -461,24 +632,61 @@ def predict_s2s_ch9(model, src_sentence, src_vocab, tgt_vocab, num_steps,
     # Add the batch axis
     enc_X = torch.unsqueeze(
         torch.tensor(src_tokens, dtype=torch.long, device=device), dim=0)
-    enc_outputs = model.encoder(enc_X, enc_valid_len)
-    dec_state = model.decoder.init_state(enc_outputs, enc_valid_len)
+    enc_outputs = net.encoder(enc_X, enc_valid_len)
+    dec_state = net.decoder.init_state(enc_outputs, enc_valid_len)
     # Add the batch axis
     dec_X = torch.unsqueeze(torch.tensor(
         [tgt_vocab['<bos>']], dtype=torch.long, device=device), dim=0)
-    output_seq = []
+    output_seq, attention_weight_seq = [], []
     for _ in range(num_steps):
-        Y, dec_state = model.decoder(dec_X, dec_state)
+        Y, dec_state = net.decoder(dec_X, dec_state)
         # We use the token with the highest prediction likelihood as the input
         # of the decoder at the next time step
         dec_X = Y.argmax(dim=2)
         pred = dec_X.squeeze(dim=0).type(torch.int32).item()
-        # Once the end-of-sequence token is predicted, the generation of
-        # the output sequence is complete
+        # Save attention weights (to be covered later)
+        if save_attention_weights:
+            attention_weight_seq.append(net.decoder.attention_weights)
+        # Once the end-of-sequence token is predicted, the generation of the
+        # output sequence is complete
         if pred == tgt_vocab['<eos>']:
             break
         output_seq.append(pred)
-    return ' '.join(tgt_vocab.to_tokens(output_seq))
+    return ' '.join(tgt_vocab.to_tokens(output_seq)), attention_weight_seq
+```
+
+```{.python .input}
+#@tab tensorflow
+#@save
+def predict_seq2seq(net, src_sentence, src_vocab, tgt_vocab, num_steps,
+                    save_attention_weights=False):
+    """Predict for sequence to sequence."""
+    src_tokens = src_vocab[src_sentence.lower().split(' ')] + [
+        src_vocab['<eos>']]
+    enc_valid_len = tf.constant([len(src_tokens)])
+    src_tokens = d2l.truncate_pad(src_tokens, num_steps, src_vocab['<pad>'])
+    # Add the batch axis
+    enc_X = tf.expand_dims(src_tokens, axis=0)
+    enc_outputs = net.encoder(enc_X, enc_valid_len, training=False)
+    dec_state = net.decoder.init_state(enc_outputs, enc_valid_len)
+    # Add the batch axis
+    dec_X = tf.expand_dims(tf.constant([tgt_vocab['<bos>']]), axis=0)
+    output_seq, attention_weight_seq = [], []
+    for _ in range(num_steps):
+        Y, dec_state = net.decoder(dec_X, dec_state, training=False)
+        # We use the token with the highest prediction likelihood as the input
+        # of the decoder at the next time step
+        dec_X = tf.argmax(Y, axis=2)
+        pred = tf.squeeze(dec_X, axis=0)
+        # Save attention weights
+        if save_attention_weights:
+            attention_weight_seq.append(net.decoder.attention_weights)
+        # Once the end-of-sequence token is predicted, the generation of the
+        # output sequence is complete
+        if pred == tgt_vocab['<eos>']:
+            break
+        output_seq.append(pred.numpy())
+    return ' '.join(tgt_vocab.to_tokens(tf.reshape(output_seq, shape = -1).numpy().tolist())), attention_weight_seq
 ```
 
 ## Tahmin Edilen Dizilerin Değerlendirilmesi
@@ -492,9 +700,9 @@ $$ \exp\left(\min\left(0, 1 - \frac{\mathrm{len}_{\text{label}}}{\mathrm{len}_{\
 
 burada $k$ eşleşme için en uzun $n$-gramdır.
 
-:eqref:`eq_bleu`'teki BLEU tanımına dayanarak, tahmin edilen dizi etiket dizisi ile aynı olduğunda, BLEU değeri 1 olur. Dahası, daha uzun $n$-gramları eşleştirmek daha zor olduğundan, BLEU daha uzun $n$-gram hassasiyetine daha büyük bir ağırlık atar. Özellikle $p_n$ sabit olduğunda $n$ büyüdükçe $p_n^{1/2^n}$ artar. Ayrıca, daha kısa dizileri tahmin etmek daha yüksek bir $p_n$ değeri elde etme eğiliminde olduğundan, :eqref:`eq_bleu`'teki çarpım teriminin öncesindeki katsayı daha kısa tahmin edilmiş dizileri cezalandırır. Örneğin, $k=2$, $A$, $B$, $C$, $D$, $E$, $F$ etiket dizisi ve $A$, $B$ tahminlenen dizi ise, $p_1 = p_2 = 1$ olmasına rağmen, ceza çarpanı, $\exp(1-6/2) \approx 0.14$, BLEU değerini düşürür.
+:eqref:`eq_bleu`'teki BLEU tanımına dayanarak, tahmin edilen dizi etiket dizisi ile aynı olduğunda, BLEU değeri 1 olur. Dahası, daha uzun $n$-gramları eşleştirmek daha zor olduğundan, BLEU daha uzun $n$-gram hassasiyetine daha büyük bir ağırlık atar. Özellikle $p_n$ sabit olduğunda $n$ büyüdükçe $p_n^{1/2^n}$ artar (orjinal makale $p_n^{1/n}$ kullanır). Ayrıca, daha kısa dizileri tahmin etmek daha yüksek bir $p_n$ değeri elde etme eğiliminde olduğundan, :eqref:`eq_bleu`'teki çarpım teriminin öncesindeki katsayı daha kısa tahmin edilmiş dizileri cezalandırır. Örneğin, $k=2$, $A$, $B$, $C$, $D$, $E$, $F$ etiket dizisi ve $A$, $B$ tahminlenen dizi ise, $p_1 = p_2 = 1$ olmasına rağmen, ceza çarpanı, $\exp(1-6/2) \approx 0.14$, BLEU değerini düşürür.
 
-BLEU ölçüsünü aşağıdaki gibi uyguluyoruz.
+[**BLEU ölçüsünü aşağıdaki gibi uyguluyoruz**].
 
 ```{.python .input}
 #@tab all
@@ -506,31 +714,35 @@ def bleu(pred_seq, label_seq, k):  #@save
     for n in range(1, k + 1):
         num_matches, label_subs = 0, collections.defaultdict(int)
         for i in range(len_label - n + 1):
-            label_subs[''.join(label_tokens[i: i + n])] += 1
+            label_subs[' '.join(label_tokens[i: i + n])] += 1
         for i in range(len_pred - n + 1):
-            if label_subs[''.join(pred_tokens[i: i + n])] > 0:
+            if label_subs[' '.join(pred_tokens[i: i + n])] > 0:
                 num_matches += 1
-                label_subs[''.join(pred_tokens[i: i + n])] -= 1
+                label_subs[' '.join(pred_tokens[i: i + n])] -= 1
         score *= math.pow(num_matches / (len_pred - n + 1), math.pow(0.5, n))
     return score
 ```
 
-Sonunda, birkaç İngilizce cümleyi Fransızca'ya çevirmek ve sonuçların BLEU değerini hesaplamak için eğitilmiş RNN kodlayıcı-kodçözücüsünü kullanıyoruz.
+Sonunda, [**birkaç İngilizce cümleyi Fransızca'ya çevirmek**] ve sonuçların BLEU değerini hesaplamak için eğitilmiş RNN kodlayıcı-kodçözücüsünü kullanıyoruz.
 
 ```{.python .input}
-#@tab all
-#@save
-def translate(engs, fras, model, src_vocab, tgt_vocab, num_steps, device):
-    """Translate text sequences."""
-    for eng, fra in zip(engs, fras):
-        translation = predict_s2s_ch9(
-            model, eng, src_vocab, tgt_vocab, num_steps, device)
-        print(
-            f'{eng} => {translation}, bleu {bleu(translation, fra, k=2):.3f}')
+#@tab mxnet, pytorch
+engs = ['go .', "i lost .", 'he\'s calm .', 'i\'m home .']
+fras = ['va !', 'j\'ai perdu .', 'il est calme .', 'je suis chez moi .']
+for eng, fra in zip(engs, fras):
+    translation, attention_weight_seq = predict_seq2seq(
+        net, eng, src_vocab, tgt_vocab, num_steps, device)
+    print(f'{eng} => {translation}, bleu {bleu(translation, fra, k=2):.3f}')
+```
 
-engs = ['go .', "i lost .", 'i\'m home .', 'he\'s calm .']
-fras = ['va !', 'j\'ai perdu .', 'je suis chez moi .', 'il est calme .']
-translate(engs, fras, model, src_vocab, tgt_vocab, num_steps, device)
+```{.python .input}
+#@tab tensorflow
+engs = ['go .', "i lost .", 'he\'s calm .', 'i\'m home .']
+fras = ['va !', 'j\'ai perdu .', 'il est calme .', 'je suis chez moi .']
+for eng, fra in zip(engs, fras):
+    translation, attention_weight_seq = predict_seq2seq(
+        net, eng, src_vocab, tgt_vocab, num_steps)
+    print(f'{eng} => {translation}, bleu {bleu(translation, fra, k=2):.3f}')
 ```
 
 ## Özet
@@ -543,7 +755,7 @@ translate(engs, fras, model, src_vocab, tgt_vocab, num_steps, device)
 
 ## Alıştırmalar
 
-1. Çeviri sonuçlarını iyileştirmek için hiperparametreleri ayarlayabilir misiniz?
+1. Çeviri sonuçlarını iyileştirmek için hiper parametreleri ayarlayabilir misiniz?
 1. Kayıp hesaplamasında maskeler kullanmadan deneyi yeniden çalıştırın. Ne sonuçlar gözlemliyorsunuz? Neden?
 1. Kodlayıcı ve kodçözücü katman sayısı veya gizli birimlerin sayısı bakımından farklıysa, kodçözücünün gizli durumunu nasıl ilkleyebiliriz?
 1. Eğitimde, eğitici zorlamayı kodçözücüye önceki zamanın tahminini besleme ile değiştirin. Bu performansı nasıl etkiler?
