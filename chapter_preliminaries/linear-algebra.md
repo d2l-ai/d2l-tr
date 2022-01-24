@@ -84,7 +84,7 @@ x
 ```
 
 Bir vektörün herhangi bir öğesini bir altindis kullanarak tanımlayabiliriz.
-Örneğin, $\mathbf{x}$in $i.$ elemanını $x_i$ ile ifade edebiliriz.
+Örneğin, $\mathbf{x}$'in $i.$ elemanını $x_i$ ile ifade edebiliriz.
 $x_i$ öğesinin bir skaler olduğuna dikkat edin, bu nedenle ondan bahsederken fontta kalın yazı tipi kullanmıyoruz.
 Genel literatür sütun vektörlerini vektörlerin varsayılan yönü olarak kabul eder, bu kitap da öyle kabullenir.
 Matematikte, $\mathbf{x}$ vektörü şu şekilde yazılabilir:
@@ -197,7 +197,7 @@ Gösterimi basit tutarken indeksleri ayırmak için virgüller yalnızca gerekli
 Bazen eksenleri ters çevirmek isteriz.
 Bir matrisin satırlarını ve sütunlarını değiştirdiğimizde çıkan sonuç matrisine *devrik (transpose)* adı verilir.
 Usul olarak, bir $\mathbf{A}$'nin devriğini $\mathbf{A}^\top$ ile gösteririz ve eğer $\mathbf{B} = \mathbf{A}^\top$ ise herhangi bir $i$ and $j$ için $b_{ij} = a_{ji}$'dir.
-Bu nedenle, :eqref:`eq_matrix_def`deki $\mathbf{A}$'nin devriği bir $n\times m$ matristir:
+Bu nedenle, :eqref:`eq_matrix_def`'deki $\mathbf{A}$'nin devriği bir $n\times m$ matristir:
 
 $$
 \mathbf{A}^\top =
@@ -266,7 +266,7 @@ Matrisler yararlı veri yapılarıdır: Farklı değişim (varyasyon) kiplerine 
 Daha önce elektronik tablo yazılımı kullandıysanız veya şurayı okuduysanız :numref:`sec_pandas`, bu size tanıdık gelecektir.
 Bu nedenle, tek bir vektörün varsayılan yönü bir sütun vektörü olmasına rağmen, bir tablo veri kümesini temsil eden bir matriste, her veri örneğini matristeki bir satır vektörü olarak ele almak daha gelenekseldir.
 Ve sonraki bölümlerde göreceğimiz gibi, bu düzen ortak derin öğrenme tatbikatlarını mümkün kılacaktır.
-Örneğin, bir tensörün en dış ekseni boyunca, veri örneklerinin mini-grup'larına veya  mini-grup yoksa yalnızca veri örneklerine erişebilir veya bir bir sayabiliriz.
+Örneğin, bir tensörün en dış ekseni boyunca, veri örneklerinin minigruplarına veya  minigrup yoksa yalnızca veri örneklerine erişebilir veya bir bir sayabiliriz.
 
 ## Tensörler
 
@@ -322,7 +322,7 @@ A, A + B
 ```
 
 Özellikle, [**iki matrisin eleman yönlü çarpımına *Hadamard çarpımı***] (matematik gösterimi $\odot$) denir.
-$i.$ satır ve $j.$ sütununun öğesi $b_{ij}$ olan $\mathbf{B}\in\mathbb{R}^{m\times n}$ matrisini düşünün. $\mathbf{A}$ (:eqref:`eq_matrix_def`da tanımlanmıştır) ve $\mathbf{B}$ matrislerinin Hadamard çarpımı:
+$i.$ satır ve $j.$ sütununun öğesi $b_{ij}$ olan $\mathbf{B}\in\mathbb{R}^{m\times n}$ matrisini düşünün. $\mathbf{A}$ (:eqref:`eq_matrix_def`'da tanımlanmıştır) ve $\mathbf{B}$ matrislerinin Hadamard çarpımı:
 
 $$
 \mathbf{A} \odot \mathbf{B} =
@@ -543,7 +543,7 @@ A / sum_A
 A / sum_A
 ```
 
-[**Bir eksen boyunca `A`'nın öğelerinin biriktirilmiş (kümülatif) toplamını hesaplamak**] istiyorsak, `axis=0` diyelim (satır satır),`cumsum` işlevini çağırabiliriz. Bu işlev girdi tensörünü herhangi bir eksen boyunca indirgemez.
+[**Bir eksen boyunca `A`'nın öğelerinin biriktirilmiş (kümülatif) toplamını hesaplamak**] istiyorsak, `axis=0` diyelim (satır satır), `cumsum` işlevini çağırabiliriz. Bu işlev girdi tensörünü herhangi bir eksen boyunca indirgemez.
 
 ```{.python .input}
 A.cumsum(axis=0)
@@ -599,7 +599,7 @@ tf.reduce_sum(x * y)
 ```
 
 Nokta çarpımları çok çeşitli bağlamlarda kullanışlıdır.
-Örneğin, $\mathbf{x} \in \mathbb{R}^d$ vektörü ve $\mathbf{w} \in \mathbb{R}^d$ ile belirtilen bir ağırlık kümesi verildiğinde, $\mathbf{x}$ içindeki değerlerin $\mathbf{w}$ ağırlıklarına göre ağırlıklı toplamı $\mathbf{x}^\top \mathbf{w}$ nokta çarpımı olarak ifade edilebilir .
+Örneğin, $\mathbf{x} \in \mathbb{R}^d$ vektörü ve $\mathbf{w} \in \mathbb{R}^d$ ile belirtilen bir ağırlık kümesi verildiğinde, $\mathbf{x}$ içindeki değerlerin $\mathbf{w}$ ağırlıklarına göre ağırlıklı toplamı $\mathbf{x}^\top \mathbf{w}$ nokta çarpımı olarak ifade edilebilir.
 Ağırlıklar negatif olmadığında ve bire (i.e., $\left(\sum_{i=1}^{d} {w_i} = 1\right)$) toplandığında, nokta çarpımı *ağırlıklı ortalama*yı ifade eder.
 İki vektörü birim uzunluğa sahip olacak şekilde normalleştirdikten sonra, nokta ürünler aralarındaki açının kosinüsünü ifade eder.
 *Uzunluk* kavramını bu bölümün ilerleyen kısımlarında usüle uygun tanıtacağız.
@@ -607,7 +607,7 @@ Ağırlıklar negatif olmadığında ve bire (i.e., $\left(\sum_{i=1}^{d} {w_i} 
 ## Matris-Vektör Çarpımları
 
 Artık nokta çarpımlarını nasıl hesaplayacağımızı bildiğimize göre, *matris-vektör çarpımları* anlamaya başlayabiliriz.
-$\mathbf{A} \in \mathbb{R}^{m \times n}$ matrisini ve $\mathbf{x} \in \mathbb{R}^n$ vektörünü sırasıyla tanımladık ve görselleştirdik :eqref:`eq_matrix_def` ve :eqref:`eq_vec_def` .
+$\mathbf{A} \in \mathbb{R}^{m \times n}$ matrisini ve $\mathbf{x} \in \mathbb{R}^n$ vektörünü sırasıyla tanımladık ve :eqref:`eq_matrix_def` ve :eqref:`eq_vec_def`'de görselleştirdik.
 $\mathbf{A}$ matrisini satır vektörleriyle görselleştirerek başlayalım.
 
 $$\mathbf{A}=
@@ -729,7 +729,7 @@ $$
 
 [**Matris-matris çarpımı $\mathbf{AB}$'yi sadece $m$ tane matris-vektör çarpımı gerçekleştirmek ve sonuçları $n\times m$ matrisi oluşturmak için birleştirmek olarak düşünebiliriz.**]
 Aşağıdaki kod parçasında, `A` ve `B` üzerinde matris çarpımı yapıyoruz.
-Burada `A`, 5 satır ve 4 sütunlu bir matristir ve` B` 4 satır ve 3 sütunlu bir matristir.
+Burada `A`, 5 satır ve 4 sütunlu bir matristir ve `B` 4 satır ve 3 sütunlu bir matristir.
 Çarpma işleminden sonra 5 satır ve 3 sütun içeren bir matris elde ederiz.
 
 ```{.python .input}
@@ -873,7 +873,7 @@ Ancak bu kitap derin öğrenmeye odaklanmaktadır.
 Gerçek veri kümelerinde faydalı makine öğrenmesi modelleri uygulayarak ellerinizi kirlettikten sonra daha fazla matematik öğrenmeye çok daha meyilli olacağınıza inanıyoruz.
 Bu nedenle, daha sonra daha fazla matematik tanıtma hakkımızı saklı tutarken, bu bölümü burada toparlayacağız.
 
-Doğrusal cebir hakkında daha fazla bilgi edinmek istiyorsanız, şunlardan birine başvurabilirsiniz: [doğrusal cebir işlemleri üzerine çevrimiçi ek](https://tr.d2l.ai/chapter_appendix-mathematics-for-deep-learning/geometry-linear-algebraic-ops.html) veya diğer mükemmel kaynaklar :cite:`Strang.1993,Kolter.2008,Petersen.Pedersen.ea.2008`.
+Doğrusal cebir hakkında daha fazla bilgi edinmek istiyorsanız, şunlardan birine başvurabilirsiniz: [Doğrusal cebir işlemleri üzerine çevrimiçi ek](https://tr.d2l.ai/chapter_appendix-mathematics-for-deep-learning/geometry-linear-algebraic-ops.html) veya diğer mükemmel kaynaklar :cite:`Strang.1993,Kolter.2008,Petersen.Pedersen.ea.2008`.
 
 
 ## Özet

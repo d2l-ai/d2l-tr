@@ -1,7 +1,7 @@
 # Dikkat Mekanizmaları
 :label:`chap_attention`
 
-Bir primatın görme sisteminin optik siniri, beynin tam olarak işleyebildiği şeyi aşan devasa duyusal giriş alır. Neyse ki, tüm uyaranlar eşit yaratılmaz. Odaklanma ve bilinç konsantrasyonu primatların karmaşık görsel ortamda avlar ve yırtıcı hayvanlar gibi ilgi çekici nesnelere dikkati çekmesini sağladı. Bilginin sadece küçük bir kısmına dikkat etme yeteneği evrimsel öneme sahiptir ve bu da insanların yaşamasına ve başarılı olmasına izin verir. 
+Bir primatın görme sisteminin optik siniri, beynin tam olarak işleyebildiği şeyi aşan devasa duyusal girdi alır. Neyse ki, tüm uyaranlar eşit yaratılmaz. Odaklanma ve bilinç konsantrasyonu primatların karmaşık görsel ortamda avlar ve yırtıcı hayvanlar gibi ilgi çekici nesnelere dikkati çekmesini sağladı. Bilginin sadece küçük bir kısmına dikkat etme yeteneği evrimsel öneme sahiptir ve bu da insanların yaşamasına ve başarılı olmasına izin verir. 
 
 Bilim adamları 19. yüzyıldan beri bilişsel sinirbilim alanında dikkat çekiyor. Bu bölümde, dikkatin görsel bir sahnede nasıl dağıtıldığını açıklayan popüler bir çerçeveyi inceleyerek başlayacağız. Bu çerçevedeki dikkat işlerinden esinlenerek, bu tür dikkat göstermelerinden faydalanan modeller tasarlayacağız. Özellikle, 1964 yılında Nadaraya-Waston çekirdek regresyonu, *dikkat mekanizmaları* ile makine öğreniminin basit bir gösterimidir. 
 
