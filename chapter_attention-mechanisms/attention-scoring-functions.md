@@ -1,0 +1,423 @@
+# Dikkat Puanlama Fonksiyonları
+:label:`sec_attention-scoring-functions`
+
+:numref:`sec_nadaraya-watson`'te, sorgular ve anahtarlar arasındaki etkileşimleri modellemek için bir Gauss çekirdeği kullandık. :eqref:`eq_nadaraya-watson-gaussian` yılında Gauss çekirdeğinin üssüne bir *dikkat puanlama fonksiyonu* (veya kısaca *puanlama fonksiyonu*) olarak muamele edilerek, bu fonksiyonun sonuçları temelde bir softmax işlemine beslendi. Sonuç olarak, anahtarlarla eşleştirilmiş değerler üzerinde bir olasılık dağılımı (dikkat ağırlıkları) elde ettik. Sonunda, dikkat havuzunun çıktısı, bu dikkat ağırlıklarına dayanan değerlerin ağırlıklı bir toplamıdır. 
+
+Yüksek düzeyde, :numref:`fig_qkv`'te dikkat mekanizmalarının çerçevesini oluşturmak için yukarıdaki algoritmayı kullanabiliriz. $a$ ile dikkat puanlama işlevini gösteren :numref:`fig_attention_output`, dikkat havuzlama çıktısının ağırlıklı bir değer toplamı olarak nasıl hesaplanabileceğini göstermektedir. Dikkat ağırlıkları bir olasılık dağılımı olduğundan, ağırlıklı toplamı esas olarak ağırlıklı bir ortalamadır. 
+
+![Computing the output of attention pooling as a weighted average of values.](../img/attention-output.svg)
+:label:`fig_attention_output`
+
+Matematiksel olarak, bir sorgu olduğunu varsayalım $\mathbf{q} \in \mathbb{R}^q$ ve $m$ anahtar-değer çiftleri $(\mathbf{k}_1, \mathbf{v}_1), \ldots, (\mathbf{k}_m, \mathbf{v}_m)$, nerede herhangi $\mathbf{k}_i \in \mathbb{R}^k$ ve herhangi $\mathbf{v}_i \in \mathbb{R}^v$. Dikkat biriktirme $f$ değerlerin ağırlıklı bir toplamı olarak örneklenir: 
+
+$$f(\mathbf{q}, (\mathbf{k}_1, \mathbf{v}_1), \ldots, (\mathbf{k}_m, \mathbf{v}_m)) = \sum_{i=1}^m \alpha(\mathbf{q}, \mathbf{k}_i) \mathbf{v}_i \in \mathbb{R}^v,$$
+:eqlabel:`eq_attn-pooling`
+
+$\mathbf{q}$ ve anahtar $\mathbf{k}_i$ için dikkat ağırlığı (skaler), iki vektörü bir skalere eşleyen bir dikkat puanlama işlevinin $a$'nın softmax çalışması ile hesaplanır: 
+
+$$\alpha(\mathbf{q}, \mathbf{k}_i) = \mathrm{softmax}(a(\mathbf{q}, \mathbf{k}_i)) = \frac{\exp(a(\mathbf{q}, \mathbf{k}_i))}{\sum_{j=1}^m \exp(a(\mathbf{q}, \mathbf{k}_j))} \in \mathbb{R}.$$
+:eqlabel:`eq_attn-scoring-alpha`
+
+Gördüğümüz gibi, dikkat puanlama fonksiyonunun farklı seçimleri $a$ farklı dikkat havuzlama davranışlarına yol açar. Bu bölümde, daha sonra daha sofistike dikkat mekanizmaları geliştirmek için kullanacağımız iki popüler puanlama fonksiyonunu tanıtıyoruz.
+
+```{.python .input}
+import math
+from d2l import mxnet as d2l
+from mxnet import np, npx
+from mxnet.gluon import nn
+npx.set_np()
+```
+
+```{.python .input}
+#@tab pytorch
+from d2l import torch as d2l
+import math
+import torch
+from torch import nn
+```
+
+```{.python .input}
+#@tab tensorflow
+from d2l import tensorflow as d2l
+import tensorflow as tf
+```
+
+## [**Maskeli Softmax İşlem**]
+
+Daha önce de belirttiğimiz gibi, dikkat ağırlıkları olarak olasılık dağılımını elde etmek için bir softmax işlemi kullanılır. Bazı durumlarda, tüm değerler dikkat havuzuna beslenmemelidir. Örneğin, :numref:`sec_machine_translation`'te verimli mini toplu işlem için, bazı metin dizileri anlam taşımayan özel belirteçlerle doldurulmuştur. Değerler olarak yalnızca anlamlı belirteçler üzerinde bir dikkat biriktirmek için, softmax hesaplarken bu belirtilen aralığın ötesinde olanları filtrelemek için geçerli bir sıra uzunluğu (belirteç sayısı olarak) belirtebiliriz. Bu şekilde, geçerli uzunluğun ötesinde herhangi bir değerin sıfır olarak maskelendiği aşağıdaki `masked_softmax` işlevinde böyle bir *maskelenmiş softmax işlemi* uygulayabiliriz.
+
+```{.python .input}
+#@save
+def masked_softmax(X, valid_lens):
+    """Perform softmax operation by masking elements on the last axis."""
+    # `X`: 3D tensor, `valid_lens`: 1D or 2D tensor
+    if valid_lens is None:
+        return npx.softmax(X)
+    else:
+        shape = X.shape
+        if valid_lens.ndim == 1:
+            valid_lens = valid_lens.repeat(shape[1])
+        else:
+            valid_lens = valid_lens.reshape(-1)
+        # On the last axis, replace masked elements with a very large negative
+        # value, whose exponentiation outputs 0
+        X = npx.sequence_mask(X.reshape(-1, shape[-1]), valid_lens, True,
+                              value=-1e6, axis=1)
+        return npx.softmax(X).reshape(shape)
+```
+
+```{.python .input}
+#@tab pytorch
+#@save
+def masked_softmax(X, valid_lens):
+    """Perform softmax operation by masking elements on the last axis."""
+    # `X`: 3D tensor, `valid_lens`: 1D or 2D tensor
+    if valid_lens is None:
+        return nn.functional.softmax(X, dim=-1)
+    else:
+        shape = X.shape
+        if valid_lens.dim() == 1:
+            valid_lens = torch.repeat_interleave(valid_lens, shape[1])
+        else:
+            valid_lens = valid_lens.reshape(-1)
+        # On the last axis, replace masked elements with a very large negative
+        # value, whose exponentiation outputs 0
+        X = d2l.sequence_mask(X.reshape(-1, shape[-1]), valid_lens,
+                              value=-1e6)
+        return nn.functional.softmax(X.reshape(shape), dim=-1)
+```
+
+```{.python .input}
+#@tab tensorflow
+#@save
+def masked_softmax(X, valid_lens):
+    """Perform softmax operation by masking elements on the last axis."""
+    # `X`: 3D tensor, `valid_lens`: 1D or 2D tensor
+    if valid_lens is None:
+        return tf.nn.softmax(X, axis=-1)
+    else:
+        shape = X.shape
+        if len(valid_lens.shape) == 1:
+            valid_lens = tf.repeat(valid_lens, repeats=shape[1])
+            
+        else:
+            valid_lens = tf.reshape(valid_lens, shape=-1)
+        # On the last axis, replace masked elements with a very large negative
+        # value, whose exponentiation outputs 0    
+        X = d2l.sequence_mask(tf.reshape(X, shape=(-1, shape[-1])), valid_lens, value=-1e6)    
+        return tf.nn.softmax(tf.reshape(X, shape=shape), axis=-1)
+```
+
+[**bu işlevin nasıl çalıştığını gösterin**] için, bu iki örnek için geçerli uzunlukların sırasıyla iki ve üç olduğu iki $2 \times 4$ matris örneğinden oluşan bir mini batch düşünün. Maskelenmiş softmax işleminin bir sonucu olarak, geçerli uzunlukların dışındaki değerlerin tümü sıfır olarak maskelenir.
+
+```{.python .input}
+masked_softmax(np.random.uniform(size=(2, 2, 4)), d2l.tensor([2, 3]))
+```
+
+```{.python .input}
+#@tab pytorch
+masked_softmax(torch.rand(2, 2, 4), torch.tensor([2, 3]))
+```
+
+```{.python .input}
+#@tab tensorflow
+masked_softmax(tf.random.uniform(shape=(2, 2, 4)), tf.constant([2, 3]))
+```
+
+Benzer şekilde, her matris örneğindeki her satır için geçerli uzunlukları belirtmek için iki boyutlu bir tensör de kullanabiliriz.
+
+```{.python .input}
+masked_softmax(np.random.uniform(size=(2, 2, 4)),
+               d2l.tensor([[1, 3], [2, 4]]))
+```
+
+```{.python .input}
+#@tab pytorch
+masked_softmax(torch.rand(2, 2, 4), d2l.tensor([[1, 3], [2, 4]]))
+```
+
+```{.python .input}
+#@tab tensorflow
+masked_softmax(tf.random.uniform((2, 2, 4)), tf.constant([[1, 3], [2, 4]]))
+```
+
+## [**Katkı Maddi Dikkat**]
+:label:`subsec_additive-attention`
+
+Genel olarak, sorgular ve anahtarlar farklı uzunluklarda vektörler olduğunda, puanlama işlevi olarak katkı maddesi dikkat kullanabiliriz. Bir sorgu $\mathbf{q} \in \mathbb{R}^q$ ve bir anahtar $\mathbf{k} \in \mathbb{R}^k$, *katkı dikkat* puanlama fonksiyonu göz önüne alındığında 
+
+$$a(\mathbf q, \mathbf k) = \mathbf w_v^\top \text{tanh}(\mathbf W_q\mathbf q + \mathbf W_k \mathbf k) \in \mathbb{R},$$
+:eqlabel:`eq_additive-attn`
+
+burada öğrenilebilir parametreler $\mathbf W_q\in\mathbb R^{h\times q}$, $\mathbf W_k\in\mathbb R^{h\times k}$ ve $\mathbf w_v\in\mathbb R^{h}$. :eqref:`eq_additive-attn`'e eşdeğer olarak, sorgu ve anahtar birleştirilir ve gizli birim sayısı $h$ olan bir hiper parametre olan tek bir gizli katman ile bir MLP beslenir. Etkinleştirme fonksiyonu olarak $\tanh$'yı kullanarak ve önyargı terimlerini devre dışı bırakarak, aşağıdakilere katkı maddesi dikkat uyguluyoruz.
+
+```{.python .input}
+#@save
+class AdditiveAttention(nn.Block):
+    """Additive attention."""
+    def __init__(self, num_hiddens, dropout, **kwargs):
+        super(AdditiveAttention, self).__init__(**kwargs)
+        # Use `flatten=False` to only transform the last axis so that the
+        # shapes for the other axes are kept the same
+        self.W_k = nn.Dense(num_hiddens, use_bias=False, flatten=False)
+        self.W_q = nn.Dense(num_hiddens, use_bias=False, flatten=False)
+        self.w_v = nn.Dense(1, use_bias=False, flatten=False)
+        self.dropout = nn.Dropout(dropout)
+
+    def forward(self, queries, keys, values, valid_lens):
+        queries, keys = self.W_q(queries), self.W_k(keys)
+        # After dimension expansion, shape of `queries`: (`batch_size`, no. of
+        # queries, 1, `num_hiddens`) and shape of `keys`: (`batch_size`, 1,
+        # no. of key-value pairs, `num_hiddens`). Sum them up with
+        # broadcasting
+        features = np.expand_dims(queries, axis=2) + np.expand_dims(
+            keys, axis=1)
+        features = np.tanh(features)
+        # There is only one output of `self.w_v`, so we remove the last
+        # one-dimensional entry from the shape. Shape of `scores`:
+        # (`batch_size`, no. of queries, no. of key-value pairs)
+        scores = np.squeeze(self.w_v(features), axis=-1)
+        self.attention_weights = masked_softmax(scores, valid_lens)
+        # Shape of `values`: (`batch_size`, no. of key-value pairs, value
+        # dimension)
+        return npx.batch_dot(self.dropout(self.attention_weights), values)
+```
+
+```{.python .input}
+#@tab pytorch
+#@save
+class AdditiveAttention(nn.Module):
+    """Additive attention."""
+    def __init__(self, key_size, query_size, num_hiddens, dropout, **kwargs):
+        super(AdditiveAttention, self).__init__(**kwargs)
+        self.W_k = nn.Linear(key_size, num_hiddens, bias=False)
+        self.W_q = nn.Linear(query_size, num_hiddens, bias=False)
+        self.w_v = nn.Linear(num_hiddens, 1, bias=False)
+        self.dropout = nn.Dropout(dropout)
+
+    def forward(self, queries, keys, values, valid_lens):
+        queries, keys = self.W_q(queries), self.W_k(keys)
+        # After dimension expansion, shape of `queries`: (`batch_size`, no. of
+        # queries, 1, `num_hiddens`) and shape of `keys`: (`batch_size`, 1,
+        # no. of key-value pairs, `num_hiddens`). Sum them up with
+        # broadcasting
+        features = queries.unsqueeze(2) + keys.unsqueeze(1)
+        features = torch.tanh(features)
+        # There is only one output of `self.w_v`, so we remove the last
+        # one-dimensional entry from the shape. Shape of `scores`:
+        # (`batch_size`, no. of queries, no. of key-value pairs)
+        scores = self.w_v(features).squeeze(-1)
+        self.attention_weights = masked_softmax(scores, valid_lens)
+        # Shape of `values`: (`batch_size`, no. of key-value pairs, value
+        # dimension)
+        return torch.bmm(self.dropout(self.attention_weights), values)
+```
+
+```{.python .input}
+#@tab tensorflow
+#@save
+class AdditiveAttention(tf.keras.layers.Layer):
+    """Additive attention."""
+    def __init__(self, key_size, query_size, num_hiddens, dropout, **kwargs):
+        super().__init__(**kwargs)
+        self.W_k = tf.keras.layers.Dense(num_hiddens, use_bias=False)
+        self.W_q = tf.keras.layers.Dense(num_hiddens, use_bias=False)
+        self.w_v = tf.keras.layers.Dense(1, use_bias=False)
+        self.dropout = tf.keras.layers.Dropout(dropout)
+        
+    def call(self, queries, keys, values, valid_lens, **kwargs):
+        queries, keys = self.W_q(queries), self.W_k(keys)
+        # After dimension expansion, shape of `queries`: (`batch_size`, no. of
+        # queries, 1, `num_hiddens`) and shape of `keys`: (`batch_size`, 1,
+        # no. of key-value pairs, `num_hiddens`). Sum them up with
+        # broadcasting
+        features = tf.expand_dims(queries, axis=2) + tf.expand_dims(
+            keys, axis=1)
+        features = tf.nn.tanh(features)
+        # There is only one output of `self.w_v`, so we remove the last
+        # one-dimensional entry from the shape. Shape of `scores`:
+        # (`batch_size`, no. of queries, no. of key-value pairs)
+        scores = tf.squeeze(self.w_v(features), axis=-1)
+        self.attention_weights = masked_softmax(scores, valid_lens)
+        # Shape of `values`: (`batch_size`, no. of key-value pairs, value
+        # dimension)
+        return tf.matmul(self.dropout(
+            self.attention_weights, **kwargs), values)
+```
+
+[**yukarıdaki `AdditiveAttention` sınıfı gösterelim**], sorguların, anahtarların ve değerlerin şekillerinin ($2$, $1$, $20$), ($2$, $20$), ($2$, $10$, $2$) ve ($2$, $2$, $2$) ve ($2$, $2$, $2$) sırasıyla 32293619, $10$, $4$). Dikkat havuzu çıktısı bir şekle sahiptir (toplu iş boyutu, sorgular için adım sayısı, değerler için özellik boyutu).
+
+```{.python .input}
+queries, keys = d2l.normal(0, 1, (2, 1, 20)), d2l.ones((2, 10, 2))
+# The two value matrices in the `values` minibatch are identical
+values = np.arange(40).reshape(1, 10, 4).repeat(2, axis=0)
+valid_lens = d2l.tensor([2, 6])
+
+attention = AdditiveAttention(num_hiddens=8, dropout=0.1)
+attention.initialize()
+attention(queries, keys, values, valid_lens)
+```
+
+```{.python .input}
+#@tab pytorch
+queries, keys = d2l.normal(0, 1, (2, 1, 20)), d2l.ones((2, 10, 2))
+# The two value matrices in the `values` minibatch are identical
+values = torch.arange(40, dtype=torch.float32).reshape(1, 10, 4).repeat(
+    2, 1, 1)
+valid_lens = d2l.tensor([2, 6])
+
+attention = AdditiveAttention(key_size=2, query_size=20, num_hiddens=8,
+                              dropout=0.1)
+attention.eval()
+attention(queries, keys, values, valid_lens)
+```
+
+```{.python .input}
+#@tab tensorflow
+queries, keys = tf.random.normal(shape=(2, 1, 20)), tf.ones((2, 10, 2))
+# The two value matrices in the `values` minibatch are identical
+values = tf.repeat(tf.reshape(
+    tf.range(40, dtype=tf.float32), shape=(1, 10, 4)), repeats=2, axis=0)
+valid_lens = tf.constant([2, 6])
+
+attention = AdditiveAttention(key_size=2, query_size=20, num_hiddens=8,
+                              dropout=0.1)
+attention(queries, keys, values, valid_lens, training=False)
+```
+
+Her ne kadar katkı maddesi öğrenilebilir parametreler içerse de, bu örnekte her anahtar aynı olduğundan, [**dikkat ağırlıkları**] belirtilen geçerli uzunluklara göre belirlenir.
+
+```{.python .input}
+#@tab all
+d2l.show_heatmaps(d2l.reshape(attention.attention_weights, (1, 1, 2, 10)),
+                  xlabel='Keys', ylabel='Queries')
+```
+
+## [**Ölçekli Nokta Ürün Dikkati**]
+
+Puanlama fonksiyonu için hesaplama açısından daha verimli bir tasarım sadece nokta ürünü olabilir. Ancak, nokta ürün işlemi hem sorgu hem de anahtarın aynı vektör uzunluğuna sahip olmasını gerektirir, yani $d$. Sorgu ve anahtar tüm öğeleri sıfır ortalama ve birim varyansı ile bağımsız rasgele değişkenler olduğunu varsayalım. Her iki vektörün nokta çarpımının sıfır ortalama ve $d$ varyansı vardır. Nokta ürününün varyansının vektör uzunluğundan bağımsız olarak hala bir kalmasını sağlamak için*ölçeklendirilmiş nokta ürün dikkati* puanlama işlevi 
+
+$$a(\mathbf q, \mathbf k) = \mathbf{q}^\top \mathbf{k}  /\sqrt{d}$$
+
+nokta ürününü $\sqrt{d}$ ile böler. Uygulamada, çoğu zaman $n$ sorguları ve $m$ anahtar-değer çiftleri için bilgi işlem dikkat gibi verimlilik için minibatch'larda düşünüyoruz, burada sorguların ve anahtarların uzunluğu $d$ ve değerlerin uzunluğu $v$ olduğu. $\mathbf Q\in\mathbb R^{n\times d}$, anahtarlar $\mathbf K\in\mathbb R^{m\times d}$ ve $\mathbf V\in\mathbb R^{m\times v}$ değerlerinin ölçeklendirilmiş nokta ürün dikkatini 
+
+$$ \mathrm{softmax}\left(\frac{\mathbf Q \mathbf K^\top }{\sqrt{d}}\right) \mathbf V \in \mathbb{R}^{n\times v}.$$
+:eqlabel:`eq_softmax_QK_V`
+
+Ölçeklendirilmiş nokta ürün dikkatini aşağıdaki uygulamada, model düzenlenmesi için bırakma kullanıyoruz.
+
+```{.python .input}
+#@save
+class DotProductAttention(nn.Block):
+    """Scaled dot product attention."""
+    def __init__(self, dropout, **kwargs):
+        super(DotProductAttention, self).__init__(**kwargs)
+        self.dropout = nn.Dropout(dropout)
+
+    # Shape of `queries`: (`batch_size`, no. of queries, `d`)
+    # Shape of `keys`: (`batch_size`, no. of key-value pairs, `d`)
+    # Shape of `values`: (`batch_size`, no. of key-value pairs, value
+    # dimension)
+    # Shape of `valid_lens`: (`batch_size`,) or (`batch_size`, no. of queries)
+    def forward(self, queries, keys, values, valid_lens=None):
+        d = queries.shape[-1]
+        # Set `transpose_b=True` to swap the last two dimensions of `keys`
+        scores = npx.batch_dot(queries, keys, transpose_b=True) / math.sqrt(d)
+        self.attention_weights = masked_softmax(scores, valid_lens)
+        return npx.batch_dot(self.dropout(self.attention_weights), values)
+```
+
+```{.python .input}
+#@tab pytorch
+#@save
+class DotProductAttention(nn.Module):
+    """Scaled dot product attention."""
+    def __init__(self, dropout, **kwargs):
+        super(DotProductAttention, self).__init__(**kwargs)
+        self.dropout = nn.Dropout(dropout)
+
+    # Shape of `queries`: (`batch_size`, no. of queries, `d`)
+    # Shape of `keys`: (`batch_size`, no. of key-value pairs, `d`)
+    # Shape of `values`: (`batch_size`, no. of key-value pairs, value
+    # dimension)
+    # Shape of `valid_lens`: (`batch_size`,) or (`batch_size`, no. of queries)
+    def forward(self, queries, keys, values, valid_lens=None):
+        d = queries.shape[-1]
+        # Set `transpose_b=True` to swap the last two dimensions of `keys`
+        scores = torch.bmm(queries, keys.transpose(1,2)) / math.sqrt(d)
+        self.attention_weights = masked_softmax(scores, valid_lens)
+        return torch.bmm(self.dropout(self.attention_weights), values)
+```
+
+```{.python .input}
+#@tab tensorflow
+#@save
+class DotProductAttention(tf.keras.layers.Layer):
+    """Scaled dot product attention."""
+    def __init__(self, dropout, **kwargs):
+        super().__init__(**kwargs)
+        self.dropout = tf.keras.layers.Dropout(dropout)
+        
+    # Shape of `queries`: (`batch_size`, no. of queries, `d`)
+    # Shape of `keys`: (`batch_size`, no. of key-value pairs, `d`)
+    # Shape of `values`: (`batch_size`, no. of key-value pairs, value
+    # dimension)
+    # Shape of `valid_lens`: (`batch_size`,) or (`batch_size`, no. of queries)
+    def call(self, queries, keys, values, valid_lens, **kwargs):
+        d = queries.shape[-1]
+        scores = tf.matmul(queries, keys, transpose_b=True)/tf.math.sqrt(
+            tf.cast(d, dtype=tf.float32))
+        self.attention_weights = masked_softmax(scores, valid_lens)
+        return tf.matmul(self.dropout(self.attention_weights, **kwargs), values)
+```
+
+[**yukarıdaki `DotProductAttention` sınıfı**] göstermek için, daha önceki oyuncak örneğindeki aynı tuşları, değerleri ve geçerli uzunlukları katkı maddesi için kullanıyoruz. Nokta ürün işlemi için, sorguların özellik boyutunu anahtarlarınkiyle aynı hale getiririz.
+
+```{.python .input}
+queries = d2l.normal(0, 1, (2, 1, 2))
+attention = DotProductAttention(dropout=0.5)
+attention.initialize()
+attention(queries, keys, values, valid_lens)
+```
+
+```{.python .input}
+#@tab pytorch
+queries = d2l.normal(0, 1, (2, 1, 2))
+attention = DotProductAttention(dropout=0.5)
+attention.eval()
+attention(queries, keys, values, valid_lens)
+```
+
+```{.python .input}
+#@tab tensorflow
+queries = tf.random.normal(shape=(2, 1, 2))
+attention = DotProductAttention(dropout=0.5)
+attention(queries, keys, values, valid_lens, training=False)
+```
+
+Katkı dikkat gösterimindeki gibi, `keys` herhangi bir sorgu ile ayırt edilemeyen aynı elemanı içerdiğinden, [**tekdüze dikkat ağırlıkları**] elde edilir.
+
+```{.python .input}
+#@tab all
+d2l.show_heatmaps(d2l.reshape(attention.attention_weights, (1, 1, 2, 10)),
+                  xlabel='Keys', ylabel='Queries')
+```
+
+## Özet
+
+* Dikkat puanlama fonksiyonunun farklı seçeneklerinin dikkat havuzunun farklı davranışlarına yol açtığı ağırlıklı bir değer ortalaması olarak dikkat biriktirme çıktısını hesaplayabiliriz.
+* Sorgular ve anahtarlar farklı uzunluklarda vektörler olduğunda, katkı maddesi dikkat puanlama işlevini kullanabiliriz. Aynı olduklarında, ölçeklendirilmiş nokta ürün dikkat puanlama işlevi hesaplama açısından daha etkilidir.
+
+## Egzersizler
+
+1. Oyuncak örneğindeki tuşları değiştirin ve dikkat ağırlıklarını görselleştirin. Katkı dikkat ve ölçekli nokta ürün dikkati hala aynı dikkat ağırlıklarını veriyor mu? Neden ya da neden olmasın?
+1. Yalnızca matris çarpımlarını kullanarak, farklı vektör uzunluklarına sahip sorgular ve anahtarlar için yeni bir puanlama işlevi tasarlayabilir misiniz?
+1. Sorgular ve anahtarlar aynı vektör uzunluğuna sahip olduğunda, vektör toplamı puanlama fonksiyonu için nokta ürününden daha iyi bir tasarım mıdır? Neden ya da neden olmasın?
+
+:begin_tab:`mxnet`
+[Discussions](https://discuss.d2l.ai/t/346)
+:end_tab:
+
+:begin_tab:`pytorch`
+[Discussions](https://discuss.d2l.ai/t/1064)
+:end_tab:
