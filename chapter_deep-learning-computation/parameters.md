@@ -18,10 +18,10 @@ npx.set_np()
 net = nn.Sequential()
 net.add(nn.Dense(8, activation='relu'))
 net.add(nn.Dense(1))
-net.initialize()  # Use the default initialization method
+net.initialize()  # Varsayılan ilkleme yöntemini kullan
 
 X = np.random.uniform(size=(2, 4))
-net(X)  # Forward computation
+net(X)  # İleri hesaplama
 ```
 
 ```{.python .input}
@@ -262,8 +262,8 @@ Varsayılan olarak Keras, girdi ve çıktı boyutuna göre hesaplanan bir aralı
 Yerleşik ilkleticileri çağırarak ilkleyelim. Aşağıdaki kod, tüm ağırlık parametrelerini standart sapması 0.01 olan Gauss rastgele değişkenler olarak ilkletir, ek girdi parametreleri de 0 olarak atanır.
 
 ```{.python .input}
-# Here `force_reinit` ensures that parameters are freshly initialized even if
-# they were already initialized previously
+# Burada 'force_reinit', daha önce ilklenmiş olsalar bile parametrelerin 
+# yeniden ilklenmesini sağlar
 net.initialize(init=init.Normal(sigma=0.01), force_reinit=True)
 net[0].weight.data()[0]
 ```
