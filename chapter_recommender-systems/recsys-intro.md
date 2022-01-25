@@ -1,0 +1,31 @@
+# Tavsiye Sistemlerine Genel Bakış
+
+Son on yılda İnternet, iletişim kurma, haber okuma, ürün satın alma ve film izleme şeklimizi derinden değiştiren büyük ölçekli çevrimiçi hizmetler için bir platform haline geldi. Bu arada, benzeri görülmemiş sayıda öğe (filmler, haberler, kitaplar ve ürünlere atıfta bulunmak için *öğe* terimini kullanıyoruz.) çevrimiçi olarak sunulan, tercih ettiğimiz öğeleri keşfetmemize yardımcı olabilecek bir sistem gerektirir. Bu nedenle Tavsiye Sistemleri, kişiselleştirilmiş hizmetleri kolaylaştırabilen ve bireysel kullanıcılara özel deneyim sunabilen güçlü bilgi filtreleme araçlarıdır. Kısacası, önerici sistemleri, seçimleri yönetilebilir hale getirmek için mevcut veri zenginliğinin kullanılmasında önemli bir rol oynamaktadır. Günümüzde öneri sistemleri Amazon, Netflix ve YouTube gibi bir dizi çevrimiçi hizmet sağlayıcısının özünde yer almaktadır. :numref:`subsec_recommender_systems`'te Amazon tarafından önerilen Derin öğrenme kitaplarının örneğini hatırlayın. Tavsiye sistemlerini kullanmanın faydaları iki kattır: Bir yandan, kullanıcıların öğeleri bulma çabalarını büyük ölçüde azaltabilir ve aşırı bilgi yüklemesi sorununu hafifletebilir. Öte yandan, online servis sağlayıcılara iş değeri katabilir ve önemli bir gelir kaynağıdır. Bu bölümde, uygulamaya konan örneklerle birlikte tavsiye sistemleri alanında derin öğrenme ile ilgili temel kavramları, klasik modelleri ve son gelişmeleri tanıtacaktır. 
+
+![Illustration of the Recommendation Process](../img/rec-intro.svg)
+
+## İşbirliğine Dayalı Filtreleme
+
+Yolculuğa, ilk olarak Goblen sistemi :cite:`Goldberg.Nichols.Oki.ea.1992` tarafından icat edilen ortak filtreleme (CF), tavsiye sistemlerindeki önemli konseptle başlıyoruz: “insanlar, büyük miktarlarda e-posta ve mesajların işlemek için filtreleme sürecini gerçekleştirmek için birbirlerine yardımcı olmak için işbirliği yapıyorlar. haber grupları”. Bu terim daha fazla duyu ile zenginleştirilmiştir. Geniş anlamda, birden çok kullanıcı, aracılar ve veri kaynağı arasında işbirliği içeren teknikleri kullanarak bilgi veya desenler için filtreleme işlemidir. CF, gelişinden bu yana önerilen birçok form ve çok sayıda CF yöntemine sahiptir.   
+
+Genel olarak, CF teknikleri : memory-based CF, model-based CF, and their hybrid :cite:`Su.Khoshgoftaar.2009` kategorize edilebilir. Temsilci bellek tabanlı CF teknikleri, kullanıcı tabanlı CF ve madde tabanlı CF :cite:`Sarwar.Karypis.Konstan.ea.2001` gibi en yakın komşu tabanlı CF teknikleridir. Matris çarpanları gibi latent faktorizasyon modelleri model tabanlı CF örnekleridir. Bellek tabanlı CF, ortak öğelere göre benzerlik değerlerini hesapladığından seyrek ve büyük ölçekli verilerle uğraşmada sınırlamaları vardır. Model tabanlı yöntemler, seyrek ve ölçeklenebilirlik ile ilgili daha iyi yeteneği ile daha popüler hale gelir. Birçok model tabanlı CF yaklaşımı sinir ağları ile genişletilebilir, bu da derin öğrenmede :cite:`Zhang.Yao.Sun.ea.2019`'da hesaplama hızlanmasıyla daha esnek ve ölçeklenebilir modellere yol açar. Genel olarak, CF yalnızca tahmin ve öneriler yapmak için kullanıcı öğesi etkileşim verilerini kullanır. CF'nin yanı sıra içerik tabanlı ve bağlam tabanlı öneri sistemleri, öğelerinin/kullanıcıların içerik açıklamalarının yanı sıra zaman damgaları ve konumlar gibi bağlamsal sinyallerin eklenmesinde de yararlıdır. Açıkçası, farklı giriş verileri mevcut olduğunda model türleri/yapılarını ayarlamamız gerekebilir. 
+
+## Açık Geri Bildirim ve Kapalı Geri Bildirim
+
+Kullanıcıların tercihini öğrenmek için sistem onlardan geri bildirim toplayacaktır. Geri bildirim açık veya örtük :cite:`Hu.Koren.Volinsky.2008` olabilir. Örneğin, [IMDB](https://www.imdb.com/) filmler için bir ila on yıldız arasında değişen yıldız derecelendirmelerini toplar. YouTube, kullanıcıların tercihlerini göstermeleri için başparmak yukarı ve aşağı düğmeleri sağlar. Açık geri bildirimlerin toplanması, kullanıcıların ilgi alanlarını proaktif olarak belirtmelerini gerektirdiği açıktır. Bununla birlikte, birçok kullanıcı ürünleri derecelendirmeye isteksiz olabileceğinden, açık geri bildirimler her zaman hazır değildir. Nispeten konuşursak, örtük geri bildirimler genellikle kullanıcı tıklamaları gibi örtük davranışların modellenmesiyle ilgili olduğu için genellikle kolayca kullanılabilir. Bu nedenle, birçok öneri sistemi, kullanıcı davranışlarını gözlemleyerek kullanıcının görüşünü dolaylı olarak yansıtan örtük geri bildirimlere odaklanmıştır. Satın alma geçmişi, tarama geçmişi, saatler ve hatta fare hareketleri dahil olmak üzere çeşitli örtülü geri bildirim formları vardır. Örneğin, aynı yazar tarafından birçok kitap satın alan bir kullanıcı muhtemelen bu yazarı sever. Kapalı geri bildirimin doğal olarak gürültülü olduğunu unutmayın. Sadece tercihlerini ve gerçek motiflerini tahmin edebiliriz. Bir kullanıcı bir filmi izledi, bu filmin olumlu bir görünümünü göstermez. 
+
+## Öneri Görevleri
+
+Geçtiğimiz yıllarda bir dizi öneri görevi araştırılmıştır. Uygulamaların etki alanına dayanarak, film önerileri, haber önerileri, :cite:`Ye.Yin.Lee.ea.2011` vb. Görevleri geri bildirim ve giriş verilerinin türlerine göre ayırt etmek de mümkündür, örneğin, derecelendirme tahmini görevi açık derecelendirmeleri tahmin etmeyi amaçlamaktadır. Top-$n$ öneri (öğe sıralaması), örtük geri bildirimlere dayanarak her kullanıcı için kişisel olarak tüm öğeleri sıralamalar. Zaman damgası bilgileri de dahil edilmişse, :cite:`Quadrana.Cremonesi.Jannach.2018` sırası duyarlı öneri oluşturabiliriz. Bir başka popüler görev, örtülü geri bildirimlere dayanan tıklama oranı tahmini olarak adlandırılır, ancak çeşitli kategorik özellikler kullanılabilir. Yeni kullanıcılar için tavsiye edilen ve mevcut kullanıcılara yeni öğeler önermek, soğuk başlangıç tavsiyesi :cite:`Schein.Popescul.Ungar.ea.2002` olarak adlandırılır. 
+
+## Özet
+
+* Tavsiye sistemleri bireysel kullanıcılar ve endüstriler için önemlidir. İşbirliğine dayalı filtreleme, öneride önemli bir kavramdır.
+* İki tür geri bildirim vardır: örtülü geri bildirim ve açık geri bildirimler. Son on yılda bir dizi öneri görevi araştırılmıştır.
+
+## Egzersizler
+
+1. Tavsiye sistemlerinin günlük yaşamınızı nasıl etkilediğini açıklayabilir misiniz?
+2. Hangi ilginç öneri görevlerinin araştırılabileceğini düşünüyorsunuz?
+
+[Discussions](https://discuss.d2l.ai/t/398)
