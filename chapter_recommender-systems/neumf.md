@@ -27,7 +27,10 @@ $$
 
 burada $\mathbf{W}^*, \mathbf{b}^*$ ve $\alpha^*$ ağırlık matrisini, önyargı vektörü ve etkinleştirme işlevini gösterir. $\phi^*$ karşılık gelen katmanın işlevini gösterir. $\mathbf{z}^*$ karşılık gelen katmanın çıkışını gösterir. 
 
-GMF ve MLP sonuçlarını birleştirmek için, basit bir ekleme yerine, NeuMF, iki alt ağın ikinci son katmanlarını birleştirerek, diğer katmanlara iletilebilen bir özellik vektörü oluşturur. Daha sonra, çıkışlar matris $\mathbf{h}$ ve sigmoid aktivasyon fonksiyonu ile yansıtılır. Tahmin katmanı şu şekilde formüle edilir: $$\ hat {y} _ {ui} =\ sigma (\ mathbf {h} ^\ top [\ mathbf {x},\ phi^L (z^ {(L-1)})]) . $$ 
+GMF ve MLP sonuçlarını birleştirmek için, basit bir ekleme yerine, NeuMF, iki alt ağın ikinci son katmanlarını birleştirerek, diğer katmanlara iletilebilen bir özellik vektörü oluşturur. Daha sonra, çıkışlar matris $\mathbf{h}$ ve sigmoid aktivasyon fonksiyonu ile yansıtılır. Tahmin katmanı şu şekilde formüle edilir:
+$$
+\hat{y}_{ui} = \sigma(\mathbf{h}^\top[\mathbf{x}, \phi^L(z^{(L-1)})]).
+$$
 
 Aşağıdaki şekil, NeuMF'nin model mimarisini göstermektedir. 
 
