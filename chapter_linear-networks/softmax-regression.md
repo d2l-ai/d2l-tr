@@ -1,7 +1,7 @@
 # Eşiksiz En Büyük İşlev Bağlanımı  (Softmaks Regresyon)
 :label:`sec_softmax`
 
-:numref:`sec_linear_regression`'de, doğrusal bağlanımı tanıttık, :numref:`sec_linear_scratch`'da sıfırdan uygulamalar üzerinde çalıştık ve ağır işi yapmak için :numref:`sec_linear_concise`'da derin öğrenme çerçevesinin yüksek seviyeli API'lerini tekrar kullandık.
+:numref:`sec_linear_regression`'de, doğrusal bağlanımı tanıttık, :numref:`sec_linear_scratch`'da sıfırdan uygulamalar üzerinde çalıştık ve ağır işi yapmak için :numref:`sec_linear_concise`'te derin öğrenme çerçevesinin yüksek seviyeli API'lerini tekrar kullandık.
 
 Bağlanım, *ne kadar?* veya *kaç?* sorularını yanıtlamak istediğimizde ulaştığımız araçtır. Bir evin kaç dolara satılacağını (fiyatı) veya bir beyzbol takımının kazanabileceği galibiyet sayısını veya bir hastanın taburcu edilmeden önce hastanede kalacağı gün sayısını tahmin etmek istiyorsanız, o zaman muhtemelen bir regresyon modeli arıyorsunuz.
 
@@ -37,7 +37,7 @@ o_3 &= x_1 w_{31} + x_2 w_{32} + x_3 w_{33} + x_4 w_{34} + b_3.
 \end{aligned}
 $$
 
-Bu hesaplamayı :numref:`fig_softmaxreg`'da gösterilen sinir ağı diyagramı ile tasvir edebiliriz. Doğrusal regresyonda olduğu gibi, softmaks regresyon da tek katmanlı bir sinir ağıdır. Ayrıca her çıktının, $o_1, o_2$ ve $o_3$, hesaplanması,  tüm girdilere, $x_1$, $x_2$, $x_3$ ve $x_4$, bağlı olduğundan, eşiksiz en büyük işlev bağlanımının (softmaks regresyonunun) çıktı katmanı da tamamen bağlı katman olarak tanımlanır.
+Bu hesaplamayı :numref:`fig_softmaxreg`'de gösterilen sinir ağı diyagramı ile tasvir edebiliriz. Doğrusal regresyonda olduğu gibi, softmaks regresyon da tek katmanlı bir sinir ağıdır. Ayrıca her çıktının, $o_1, o_2$ ve $o_3$, hesaplanması,  tüm girdilere, $x_1$, $x_2$, $x_3$ ve $x_4$, bağlı olduğundan, eşiksiz en büyük işlev bağlanımının (softmaks regresyonunun) çıktı katmanı da tamamen bağlı katman olarak tanımlanır.
 
 ![Eşiksiz en büyük işlev bağlanımı bir tek katmanlı sinir ağıdır.](../img/softmaxreg.svg)
 :label:`fig_softmaxreg`
@@ -47,7 +47,7 @@ Modeli daha öz bir şekilde ifade etmek için doğrusal cebir gösterimini kull
 ## Tam Bağlantı Katmanların Parametrelendirme Maliyeti
 :label:`subsec_parameterization-cost-fc-layers`
 
-Sonraki bölümlerde göreceğimiz gibi, derin öğrenmede tam bağlı katmanlar her yerde bulunur. Ancak, adından da anlaşılacağı gibi, tam bağlı katmanlar, potansiyel olarak birçok öğrenilebilir parametreyle *tamamen* bağlantılıdır. Özellikle, $d$ girdileri ve $q$ çıktıları olan herhangi bir tam bağlı katman için, parametreleştirme maliyeti $\mathcal{O}(dq)$'dır ve bu pratikte aşırı derecede yüksek olabilir. Neyse ki, $d$ girdilerini $q$ çıktılarına dönüştürmenin bu maliyeti $\mathcal{O}(\frac{dq}{n})$'a düşürülebilir, burada $n$ hiperparametresi bizim tarafımızdan gerçek dünya uygulamalarında, parametre tasarrufu ve model etkinliği arasındaki dengeyi sağlamak için esnek bir şekilde belirtilebilir :cite:`Zhang.Tay.Zhang.ea.2021`.
+Sonraki bölümlerde göreceğimiz gibi, derin öğrenmede tam bağlı katmanlar her yerde bulunur. Ancak, adından da anlaşılacağı gibi, tam bağlı katmanlar, potansiyel olarak birçok öğrenilebilir parametreyle *tamamen* bağlantılıdır. Özellikle, $d$ girdileri ve $q$ çıktıları olan herhangi bir tam bağlı katman için, parametreleştirme maliyeti $\mathcal{O}(dq)$'dır ve bu pratikte aşırı derecede yüksek olabilir. Neyse ki, $d$ girdilerini $q$ çıktılarına dönüştürmenin bu maliyeti $\mathcal{O}(\frac{dq}{n})$'a düşürülebilir, burada $n$ hiper parametresi bizim tarafımızdan gerçek dünya uygulamalarında, parametre tasarrufu ve model etkinliği arasındaki dengeyi sağlamak için esnek bir şekilde belirtilebilir :cite:`Zhang.Tay.Zhang.ea.2021`.
 
 # Eşiksiz En Büyük İşlev İşlemi 
 :label:`subsec_softmax_operation`
@@ -112,7 +112,7 @@ Daha sonra açıklanacak nedenlerden ötürü, :eqref:`eq_l_cross_entropy`'deki 
 ### Softmaks ve Türevleri
 :label:`subsec_softmax_and_derivatives`
 
-Softmaks ve karşılık gelen kayıp fonksiyonu çok yaygın olduğundan, nasıl hesaplandığını biraz daha iyi anlamaya değerdir. :eqref:`eq_softmax_y_and_o`'ü kayıp tanımına, :eqref:`eq_l_cross_entropy` eklersek ve softmaks tanımını kullanırsak:
+Softmaks ve karşılık gelen kayıp fonksiyonu çok yaygın olduğundan, nasıl hesaplandığını biraz daha iyi anlamaya değerdir. :eqref:`eq_softmax_y_and_o`'i kayıp tanımına, :eqref:`eq_l_cross_entropy` eklersek ve softmaks tanımını kullanırsak:
 
 $$
 \begin{aligned}
@@ -132,7 +132,7 @@ Başka bir deyişle, türev, softmax işlemiyle ifade edildiği gibi modelimiz t
 
 ### Çapraz Entropi Kaybı
 
-Şimdi, sadece tek bir sonucu değil, sonuçlara göre bütün bir dağılımı gözlemlediğimiz durumu düşünün. $\mathbf{y}$ etiketi için önceki ile aynı gösterimi kullanabiliriz. Tek fark, $(0, 0, 1)$ gibi sadece ikilik girdiler içeren bir vektör yerine, artık genel bir olasılık vektörüne sahibiz, örneğin $(0.1, 0.2, 0.7)$. Daha önce :eqref:`eq_l_cross_entropy`'de $l$ kaybını tanımlamak için kullandığımız matematik hala iyi çalışıyor, sadece yorumu biraz daha genel. Burada etiketler üzerindeki dağılım için beklenen kayıp değeridir. Bu kayıp, *çapraz entropi kaybı* olarak adlandırılır ve sınıflandırma problemlerinde en sık kullanılan kayıplardan biridir. Bilgi teorisinin sadece temellerini tanıtarak ismin gizemini çözebiliriz. Bilgi teorisinin daha fazla detayını anlamak isterseniz, [bilgi teorisi üzerine çevrimiçi ek](https://tr.d2l.ai/chapter_appendix-mathematics-for-deep-learning/information-theory.html)'ye başvurabilirsiniz.
+Şimdi, sadece tek bir sonucu değil, sonuçlara göre bütün bir dağılımı gözlemlediğimiz durumu düşünün. $\mathbf{y}$ etiketi için önceki ile aynı gösterimi kullanabiliriz. Tek fark, $(0, 0, 1)$ gibi sadece ikilik girdiler içeren bir vektör yerine, artık genel bir olasılık vektörüne sahibiz, örneğin $(0.1, 0.2, 0.7)$. Daha önce :eqref:`eq_l_cross_entropy`'da $l$ kaybını tanımlamak için kullandığımız matematik hala iyi çalışıyor, sadece yorumu biraz daha genel. Burada etiketler üzerindeki dağılım için beklenen kayıp değeridir. Bu kayıp, *çapraz entropi kaybı* olarak adlandırılır ve sınıflandırma problemlerinde en sık kullanılan kayıplardan biridir. Bilgi teorisinin sadece temellerini tanıtarak ismin gizemini çözebiliriz. Bilgi teorisinin daha fazla detayını anlamak isterseniz, [bilgi teorisi üzerine çevrimiçi ek](https://tr.d2l.ai/chapter_appendix-mathematics-for-deep-learning/information-theory.html)'e başvurabilirsiniz.
 
 ## Bilgi Teorisinin Temelleri
 :label:`subsec_info_theory_basics`
@@ -152,13 +152,13 @@ Bilgi teorisinin temel teoremlerinden biri, $P$ dağılımından rastgele çekil
 
 Sıkıştırmanın tahminle ne ilgisi olduğunu merak ediyor olabilirsiniz. Sıkıştırmak istediğimiz bir veri akışımız olduğunu hayal edin. Bir sonraki belirteci (token) tahmin etmek bizim için her zaman kolaysa, bu verinin sıkıştırılması da kolaydır! Akıştaki her belirtecin her zaman aynı değeri aldığı uç örneği ele alalım. Bu çok sıkıcı bir veri akışı! Ayrıca sadece sıkıcı değil, aynı zamanda tahmin etmesi de kolay. Her zaman aynı olduklarından, akışın içeriğini iletmek için herhangi bir bilgi iletmemiz gerekmez. Tahmin etmesi kolay, sıkıştırması kolay.
 
-Halbuki, her olayı tam olarak tahmin edemezsek, o zaman bazen şaşırabiliriz. Bir olaya daha düşük bir olasılık atadığımızda sürprizimiz daha da büyük olur. Claude Shannon (öznel) bir olasılık, $P(j)$, atamış olan bir $j$ olayı gözlemlemenin *şaşırtıcı* olduğunu göstermek için $\log \frac{1}{P(j)} = -\log P(j)$'yi hesapladı. :eqref:`eq_softmax_reg_entropy`'de tanımlanan entropi, veri oluşturma süreciyle gerçekten eşleşen doğru olasılıklar atandığında *beklenen şaşırtıcılıktır*.
+Halbuki, her olayı tam olarak tahmin edemezsek, o zaman bazen şaşırabiliriz. Bir olaya daha düşük bir olasılık atadığımızda sürprizimiz daha da büyük olur. Claude Shannon (öznel) bir olasılık, $P(j)$, atamış olan bir $j$ olayı gözlemlemenin *şaşırtıcı* olduğunu göstermek için $\log \frac{1}{P(j)} = -\log P(j)$'yi hesapladı. :eqref:`eq_softmax_reg_entropy`'da tanımlanan entropi, veri oluşturma süreciyle gerçekten eşleşen doğru olasılıklar atandığında *beklenen şaşırtıcılıktır*.
 
 ### Çapraz Entropiye Yeniden Bakış
 
 Öyleyse, entropi gerçek olasılığı bilen birinin yaşadığı sürpriz seviyesiyse, merak ediyor olabilirsiniz, çapraz entropi nedir? $H(P, Q)$ olarak gösterilen $P$ ile $Q$ *arasındaki* çapraz entropi, öznel olasılıkları $Q$ olan bir gözlemcinin gerçekte $P$ olasılıklarına göre oluşturulan verileri gördükten sonra beklenen şaşkınlığıdır. Olası en düşük çapraz entropi $P=Q$ olduğunda elde edilir. Bu durumda, $P$ ile $Q$ arasındaki çapraz entropi $H(P, P) = H(P)$ şeklindedir.
 
-Kısacası, çapraz entropi sınıflandırma amaç fonksiyonunu iki şekilde düşünebiliriz: (i) gözlemlenen verilerin olabilirliğini maksimize etmek ve (ii) etiketleri iletmek için gerekli olan şaşkınlığımızı (ve dolayısıyla bit sayısını) en aza indirmek.
+Kısacası, çapraz entropi sınıflandırma amaç fonksiyonunu iki şekilde düşünebiliriz: (i) Gözlemlenen verilerin olabilirliğini maksimize etmek ve (ii) etiketleri iletmek için gerekli olan şaşkınlığımızı (ve dolayısıyla bit sayısını) en aza indirmek.
 
 ## Model Tahmini ve Değerlendirme
 

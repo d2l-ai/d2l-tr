@@ -167,7 +167,7 @@ d2l.train_ch6(net, train_iter, test_iter, num_epochs, lr, d2l.try_gpu())
 
 ## Alıştırmalar
 
-1. Sınıflandırma doğruluğunu artırmak için hiperparametreleri ayarlayın.
+1. Sınıflandırma doğruluğunu artırmak için hiper parametreleri ayarlayın.
 1. NiN bloğunda neden iki $1\times 1$ evrişimli katman var? Bunlardan birini çıkarın, deneysel olguları gözlemleyin ve çözümleyin.
 1. NiN için kaynak kullanımını hesaplayın.
     1. Parametrelerin sayısı nedir?

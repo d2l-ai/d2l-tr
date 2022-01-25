@@ -25,7 +25,7 @@ import tensorflow as tf
 
 ## Model
 
-Kısa softmaks bağlanım uygulamamızla karşılaştırıldığında (:numref:`sec_softmax_concise`), tek fark *iki* tam-bağlı katman eklememizdir (önceden *bir* tane ekledik). İlki, (**256 gizli birim içeren ve ReLU etkinleştirme fonksiyonunu uygulayan**) [**gizli katmanımızdır**]. İkincisi, çıktı katmanımızdır.
+Kısa softmaks bağlanım uygulamamızla karşılaştırıldığında (:numref:`sec_softmax_concise`), tek fark *iki* tam bağlı katman eklememizdir (önceden *bir* tane ekledik). İlki, (**256 gizli birim içeren ve ReLU etkinleştirme fonksiyonunu uygulayan**) [**gizli katmanımızdır**]. İkincisi, çıktı katmanımızdır.
 
 ```{.python .input}
 net = nn.Sequential()

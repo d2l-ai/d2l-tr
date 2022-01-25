@@ -3,7 +3,7 @@
 
 Artık derin ağlar oluşturmak ve eğitmek için bazı temel araçları sunduğumuza ve bunları ağırlık sönümü ve hattan düşürme gibi tekniklerle düzenlediğimize göre, tüm bu bilgileri bir Kaggle yarışmasına katılarak uygulamaya koymaya hazırız. Ev fiyat tahmini yarışması başlangıç için harika bir yerdir. Veriler oldukça geneldir ve özel modeller gerektirebilecek (ses veya video gibi) acayip yapılar sergilememektedir. Bart de Cock tarafından 2011 yılında toplanan bu veri kümesi, :cite:`De-Cock.2011`, 2006--2010 döneminden itibaren Ames, IA'daki ev fiyatlarını kapsamaktadır. Harrison ve Rubinfeld'in (1978) ünlü [Boston konut veri kümesi](https://archive.ics.uci.edu/ml/machine-learning-databases/housing/housing.names)'nden önemli ölçüde daha büyüktür ve hem fazla örneğe, hem de daha fazla özniteliğe sahiptir.
 
-Bu bölümde, veri ön işleme, model tasarımı ve hiperparametre seçimi ayrıntılarında size yol göstereceğiz. Uygulamalı bir yaklaşımla, bir veri bilimcisi olarak kariyerinizde size rehberlik edecek bazı sezgiler kazanacağınızı umuyoruz.
+Bu bölümde, veri ön işleme, model tasarımı ve hiper parametre seçimi ayrıntılarında size yol göstereceğiz. Uygulamalı bir yaklaşımla, bir veri bilimcisi olarak kariyerinizde size rehberlik edecek bazı sezgiler kazanacağınızı umuyoruz.
 
 ## Veri Kümelerini İndirme ve Önbelleğe Alma
 
@@ -27,7 +27,7 @@ Aşağıdaki `download` işlevi, bir veri kümesini indirir, yerel bir dizinde (
 ```{.python .input}
 #@tab all
 def download(name, cache_dir=os.path.join('..', 'data')):  #@save
-    """Download a file inserted into DATA_HUB, return the local filename."""
+    """DATA_HUB'a eklenen bir dosyayı indir, yerel dosya adını döndür."""
     assert name in DATA_HUB, f"{name} does not exist in {DATA_HUB}."
     url, sha1_hash = DATA_HUB[name]
     os.makedirs(cache_dir, exist_ok=True)
@@ -54,7 +54,7 @@ Ayrıca iki ek fayda işlevini de gerçekleştiriyoruz: Biri bir zip veya tar do
 ```{.python .input}
 #@tab all
 def download_extract(name, folder=None):  #@save
-    """Download and extract a zip/tar file."""
+    """Bir zip/tar dosyası indir ve aç."""
     fname = download(name)
     base_dir = os.path.dirname(fname)
     data_dir, ext = os.path.splitext(fname)
@@ -68,7 +68,7 @@ def download_extract(name, folder=None):  #@save
     return os.path.join(base_dir, folder) if folder else data_dir
 
 def download_all():  #@save
-    """Download all files in the DATA_HUB."""
+    """DATA_HUB içindeki tüm dosyaları indir."""
     for name in DATA_HUB:
         download(name)
 ```
@@ -114,7 +114,7 @@ Neyse ki, Jupyter'de okuyorsanız, pandas'ı not defterinden bile
 çıkmadan kurabiliriz.
 
 ```{.python .input}
-# If pandas is not installed, please uncomment the following line:
+# Pandas kurulu değilse, lütfen aşağıdaki satırın yorumunu kaldırın:
 # !pip install pandas
 
 %matplotlib inline
@@ -127,7 +127,7 @@ npx.set_np()
 
 ```{.python .input}
 #@tab pytorch
-# If pandas is not installed, please uncomment the following line:
+# Pandas kurulu değilse, lütfen aşağıdaki satırın yorumunu kaldırın:
 # !pip install pandas
 
 %matplotlib inline
@@ -140,7 +140,7 @@ import numpy as np
 
 ```{.python .input}
 #@tab tensorflow
-# If pandas is not installed, please uncomment the following line:
+# Pandas kurulu değilse, lütfen aşağıdaki satırın yorumunu kaldırın:
 # !pip install pandas
 
 %matplotlib inline
@@ -210,13 +210,13 @@ burada $\mu$ ve $\sigma$ sırasıyla ortalamayı ve standard sapmayı ifade eder
 
 ```{.python .input}
 #@tab all
-# If test data were inaccessible, mean and standard deviation could be 
-# calculated from training data
+# Test verilerine erişilemiyorsa, eğitim verilerinden 
+# ortalama ve standart sapma hesaplanabilir
 numeric_features = all_features.dtypes[all_features.dtypes != 'object'].index
 all_features[numeric_features] = all_features[numeric_features].apply(
     lambda x: (x - x.mean()) / (x.std()))
-# After standardizing the data all means vanish, hence we can set missing
-# values to 0
+# # Verileri standartlaştırdıktan sonra her şey yok olur, 
+# dolayısıyla eksik değerleri 0 olarak ayarlayabiliriz.
 all_features[numeric_features] = all_features[numeric_features].fillna(0)
 ```
 
@@ -233,8 +233,8 @@ vektörlere dönüştürdüğümüz gibi
 
 ```{.python .input}
 #@tab all
-# `Dummy_na=True` considers "na" (missing value) as a valid feature value, and
-# creates an indicator feature for it
+# # `Dummy_na=True`, "na"yı (eksik değer) geçerli bir öznitelik değeri olarak 
+# kabul eder ve bunun için bir gösterge özniteliği oluşturur
 all_features = pd.get_dummies(all_features, dummy_na=True)
 all_features.shape
 ```
@@ -319,8 +319,8 @@ $$\sqrt{\frac{1}{n}\sum_{i=1}^n\left(\log y_i -\log \hat{y}_i\right)^2}.$$
 
 ```{.python .input}
 def log_rmse(net, features, labels):
-    # To further stabilize the value when the logarithm is taken, set the
-    # value less than 1 as 1
+    # Logaritma alındığında değeri daha da sabitlemek için 
+    # 1'den küçük değeri 1 olarak ayarlayın
     clipped_preds = np.clip(net(features), 1, float('inf'))
     return np.sqrt(2 * loss(np.log(clipped_preds), np.log(labels)).mean())
 ```
@@ -328,8 +328,8 @@ def log_rmse(net, features, labels):
 ```{.python .input}
 #@tab pytorch
 def log_rmse(net, features, labels):
-    # To further stabilize the value when the logarithm is taken, set the
-    # value less than 1 as 1
+    # Logaritma alındığında değeri daha da sabitlemek için 
+    # 1'den küçük değeri 1 olarak ayarlayın
     clipped_preds = torch.clamp(net(features), 1, float('inf'))
     rmse = torch.sqrt(loss(torch.log(clipped_preds),
                            torch.log(labels)))
@@ -339,21 +339,21 @@ def log_rmse(net, features, labels):
 ```{.python .input}
 #@tab tensorflow
 def log_rmse(y_true, y_pred):
-    # To further stabilize the value when the logarithm is taken, set the
-    # value less than 1 as 1
+    # Logaritma alındığında değeri daha da sabitlemek için 
+    # 1'den küçük değeri 1 olarak ayarlayın
     clipped_preds = tf.clip_by_value(y_pred, 1, float('inf'))
     return tf.sqrt(tf.reduce_mean(loss(
         tf.math.log(y_true), tf.math.log(clipped_preds))))
 ```
 
-Önceki bölümlerden farklı olarak, [**eğitim işlevlerimiz Adam optimize edicisine dayanacaktır (daha sonra daha ayrıntılı olarak açıklayacağız)**]. Bu eniyileyicinin ana cazibesi hiperparametre optimizasyonu için sınırsız kaynaklar verildiğinde daha iyisini yapmamasına (ve bazen daha kötüsünü yapmasına) rağmen, insanların başlangıç öğrenme oranına önemli ölçüde daha az duyarlı olduğunu bulma eğiliminde olmasıdır.
+Önceki bölümlerden farklı olarak, [**eğitim işlevlerimiz Adam optimize edicisine dayanacaktır (daha sonra daha ayrıntılı olarak açıklayacağız)**]. Bu eniyileyicinin ana cazibesi hiper parametre optimizasyonu için sınırsız kaynaklar verildiğinde daha iyisini yapmamasına (ve bazen daha kötüsünü yapmasına) rağmen, insanların başlangıç öğrenme oranına önemli ölçüde daha az duyarlı olduğunu bulma eğiliminde olmasıdır.
 
 ```{.python .input}
 def train(net, train_features, train_labels, test_features, test_labels,
           num_epochs, learning_rate, weight_decay, batch_size):
     train_ls, test_ls = [], []
     train_iter = d2l.load_array((train_features, train_labels), batch_size)
-    # The Adam optimization algorithm is used here
+    # Burada Adam optimizasyon algoritması kullanılıyor
     trainer = gluon.Trainer(net.collect_params(), 'adam', {
         'learning_rate': learning_rate, 'wd': weight_decay})
     for epoch in range(num_epochs):
@@ -374,7 +374,7 @@ def train(net, train_features, train_labels, test_features, test_labels,
           num_epochs, learning_rate, weight_decay, batch_size):
     train_ls, test_ls = [], []
     train_iter = d2l.load_array((train_features, train_labels), batch_size)
-    # The Adam optimization algorithm is used here
+    # Burada Adam optimizasyon algoritması kullanılıyor
     optimizer = torch.optim.Adam(net.parameters(),
                                  lr = learning_rate,
                                  weight_decay = weight_decay)
@@ -396,7 +396,7 @@ def train(net, train_features, train_labels, test_features, test_labels,
           num_epochs, learning_rate, weight_decay, batch_size):
     train_ls, test_ls = [], []
     train_iter = d2l.load_array((train_features, train_labels), batch_size)
-    # The Adam optimization algorithm is used here
+    # Burada Adam optimizasyon algoritması kullanılıyor
     optimizer = tf.keras.optimizers.Adam(learning_rate)
     net.compile(loss=loss, optimizer=optimizer)
     for epoch in range(num_epochs):
@@ -417,7 +417,7 @@ def train(net, train_features, train_labels, test_features, test_labels,
 
 Model seçimiyle nasıl başa çıkılacağını tartıştığımız bölümde $K$-kat 
 çapraz geçerlemeyi tanıttığımızı hatırlayabilirsiniz (:numref:`sec_model_selection`).
-Bunu, model tasarımını seçmek ve hiperparametreleri ayarlamak için iyi bir 
+Bunu, model tasarımını seçmek ve hiper parametreleri ayarlamak için iyi bir 
 şekilde kullanacağız. Öncelikle, $K$-kat çapraz geçerleme prosedüründe 
 verilerin $i.$ katını döndüren bir işleve ihtiyacımız var. 
 $i.$ parçayı geçerleme verisi olarak dilimleyerek ve geri kalanını eğitim verisi 
@@ -471,10 +471,10 @@ def k_fold(k, X_train, y_train, num_epochs, learning_rate, weight_decay,
 
 ## [**Model Seçimi**]
 
-Bu örnekte, ayarlanmamış bir hiperparametre kümesi seçiyoruz ve 
+Bu örnekte, ayarlanmamış bir hiper parametre kümesi seçiyoruz ve 
 modeli geliştirmek için okuyucuya bırakıyoruz. İyi bir seçim bulmak, 
 kişinin kaç değişkeni optimize ettiğine bağlı olarak zaman alabilir. 
-Yeterince büyük bir veri kümesi ve normal hiperparametreler ile 
+Yeterince büyük bir veri kümesi ve normal hiper parametreler ile 
 $K$-kat çapraz geçerleme, çoklu testlere karşı makul ölçüde dirençli 
 olma eğilimindedir. Bununla birlikte, mantıksız bir şekilde çok 
 sayıda seçeneği denersek, sadece şanslı olabiliriz ve geçerleme 
@@ -490,7 +490,7 @@ print(f'{k}-fold validation: avg train log rmse: {float(train_l):f}, '
 ```
 
 $K$-kat çapraz geçerlemedeki hata sayısı önemli ölçüde daha yüksek olsa bile, 
-bir dizi hiperparametre için eğitim hatası sayısının bazen çok düşük olabileceğine 
+bir dizi hiper parametre için eğitim hatası sayısının bazen çok düşük olabileceğine 
 dikkat edin. Bu bizim aşırı öğrendiğimizi gösterir. Eğitim boyunca her 
 iki sayıyı da izlemek isteyeceksiniz. Daha az aşırı öğrenme, verilerimizin 
 daha güçlü bir modeli destekleyebileceğini gösteremez. Aşırı öğrenme, 
@@ -498,7 +498,7 @@ düzenlileştirme tekniklerini dahil ederek kazanç sağlayabileceğimizi göste
 
 ## Tahminleri Kaggle'da Teslim Etme
 
-Artık iyi bir hiperparametre seçiminin ne olması gerektiğini bildiğimize göre, 
+Artık iyi bir hiper parametre seçiminin ne olması gerektiğini bildiğimize göre, 
 onu eğitmek için tüm verileri de kullanabiliriz (çapraz geçerleme dilimlerinde 
 kullanılan verinin yalnızca $1-1/K$'ı yerine). Bu şekilde elde ettiğimiz model 
 daha sonra test kümesine uygulanabilir. Tahminlerin bir csv dosyasına kaydedilmesi, 
@@ -514,9 +514,9 @@ def train_and_pred(train_features, test_feature, train_labels, test_data,
     d2l.plot(np.arange(1, num_epochs + 1), [train_ls], xlabel='epoch',
              ylabel='log rmse', xlim=[1, num_epochs], yscale='log')
     print(f'train log rmse {float(train_ls[-1]):f}')
-    # Apply the network to the test set
+    # Ağı test kümesine uygula
     preds = d2l.numpy(net(test_features))
-    # Reformat it to export to Kaggle
+    # Kaggle'a dış aktarmak için yeniden biçimlendirin
     test_data['SalePrice'] = pd.Series(preds.reshape(1, -1)[0])
     submission = pd.concat([test_data['Id'], test_data['SalePrice']], axis=1)
     submission.to_csv('submission.csv', index=False)
@@ -559,7 +559,7 @@ karşılaştırıldıklarını görebiliriz. Adımlar oldukça basittir:
 1. Bu bölümdeki tahminlerinizi Kaggle'a gönderin. Tahminleriniz ne kadar iyi?
 1. Fiyatın logaritmasını doğrudan en aza indirerek modelinizi geliştirebilir misiniz? Fiyat yerine fiyatın logaritmasını tahmin etmeye çalışırsanız ne olur?
 1. Eksik değerleri ortalamalarıyla değiştirmek her zaman iyi bir fikir midir? İpucu: Değerlerin rastgele eksik olmadığı bir durum oluşturabilir misiniz?
-1. $K$-kat çapraz geçerleme yoluyla hiperparametreleri ayarlayarak Kaggle'daki puanı iyileştiriniz.
+1. $K$-kat çapraz geçerleme yoluyla hiper parametreleri ayarlayarak Kaggle'daki puanı iyileştiriniz.
 1. Modeli geliştirerek puanı iyileştirin (örn. katmanlar, ağırlık sönümü ve hattan düşürme).
 1. Bu bölümde yaptığımız gibi sayısal sürekli öznitelikleri standartlaştırmazsak ne olur?
 

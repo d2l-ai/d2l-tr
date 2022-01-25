@@ -70,7 +70,7 @@ features, labels = synthetic_data(true_w, true_b, 1000)
 
 ```{.python .input}
 #@tab all
-print('features:', features[0],'\nlabel:', labels[0])
+print('oznitelikler:', features[0],'\netiket:', labels[0])
 ```
 
 İkinci öznitelik `features[:, 1]` ve `labels` kullanılarak bir dağılım grafiği oluşturup ikisi arasındaki doğrusal korelasyonu net bir şekilde gözlemleyebiliriz.
@@ -86,7 +86,7 @@ d2l.plt.scatter(d2l.numpy(features[:, 1]), d2l.numpy(labels), 1);
 
 Model eğitimlerinin, veri kümesi üzerinde birden çok geçiş yapmaktan, her seferde bir minigrup örnek almaktan ve bunları modelimizi güncellemek için kullanmaktan oluştuğunu hatırlayın. Bu süreç, makine öğrenmesi algoritmalarını eğitmek için çok temel olduğundan, veri kümesini karıştırmak ve ona minigruplar halinde erişmek için bir yardımcı işlev tanımlamaya değer.
 
-Aşağıdaki kodda, bu işlevselliğin olası bir uygulamasını göstermek için [**`data_iter` işlevini tanımlıyoruz**]. Fonksiyon, (**bir grup boyutunu, bir öznitelik matrisini ve bir etiket vektörünü alarak `batch_size` boyutundaki minigrupları verir**). Her bir mini parti, bir dizi öznitelik ve etiketten oluşur.
+Aşağıdaki kodda, bu işlevselliğin olası bir uygulamasını göstermek için [**`data_iter` işlevini tanımlıyoruz**]. Fonksiyon, (**bir grup boyutunu, bir öznitelik matrisini ve bir etiket vektörünü alarak `batch_size` boyutundaki minigrupları verir**). Her bir minigrup, bir dizi öznitelik ve etiketten oluşur.
 
 ```{.python .input}
 #@tab mxnet, pytorch
@@ -154,7 +154,7 @@ b = tf.Variable(tf.zeros(1), trainable=True)
 
 Parametrelerimizi ilkledikten sonra, bir sonraki görevimiz, verilerimize yeterince iyi oturana kadar onları güncellemektir. Her güncelleme, parametrelere göre kayıp fonksiyonumuzun gradyanını almayı gerektirir. Gradyan verildiğinde, her parametreyi kaybı azaltabilecek yönde güncelleyebiliriz.
 
-Hiç kimse gradyanları açıkça hesaplamak istemediğinden (bu sıkıcı ve hataya açıktır), gradyanı hesaplamak için :numref:`sec_autograd`da tanıtıldığı gibi otomatik türev almayı kullanırız.
+Hiç kimse gradyanları açıkça hesaplamak istemediğinden (bu sıkıcı ve hataya açıktır), gradyanı hesaplamak için :numref:`sec_autograd`'te tanıtıldığı gibi otomatik türev almayı kullanırız.
 
 ## Modeli Tanımlama
 
@@ -180,7 +180,7 @@ def squared_loss(y_hat, y):  #@save
 
 ## Optimizasyon Algoritmasını Tanımlama
 
-:numref:`sec_linear_regression`da tartıştığımız gibi, doğrusal regresyon kapalı form bir çözüme sahiptir. Ancak, bu doğrusal regresyon hakkında bir kitap değil: Derin öğrenme hakkında bir kitap. Bu kitabın tanıttığı diğer modellerin hiçbiri analitik olarak çözülemediğinden, bu fırsatı minigrup rasgele gradyan inişinin ilk çalışan örneğini tanıtmak için kullanacağız.
+:numref:`sec_linear_regression`'de tartıştığımız gibi, doğrusal regresyon kapalı form bir çözüme sahiptir. Ancak, bu doğrusal regresyon hakkında bir kitap değil: Derin öğrenme hakkında bir kitap. Bu kitabın tanıttığı diğer modellerin hiçbiri analitik olarak çözülemediğinden, bu fırsatı minigrup rasgele gradyan inişinin ilk çalışan örneğini tanıtmak için kullanacağız.
 [~~Doğrusal regresyonun kapalı biçimli bir çözümü olmasına rağmen, bu kitaptaki diğer modellerde yoktur. Burada minigrup rasgele gradyan inişini tanıtıyoruz.~~] 
 
 Her adımda, veri setimizden rastgele alınan bir minigrup kullanarak, parametrelerimize göre kaybın gradyanını tahmin edeceğiz. Daha sonra kayıpları azaltabilecek yönde parametrelerimizi güncelleyeceğiz. Aşağıdaki kod, bir küme parametre, bir öğrenme oranı ve bir grup boyutu verildiğinde minigrup rasgele gradyan iniş güncellemesini uygular. Güncelleme adımının boyutu, öğrenme oranı `lr` tarafından belirlenir. Kaybımız, örneklerin minigrubu üzerinden bir toplam olarak hesaplandığından, adım boyutumuzu grup boyutuna (`batch_size`) göre normalleştiririz, böylece tipik bir adım boyutunun büyüklüğü, grup boyutu seçimimize büyük ölçüde bağlı olmaz.
@@ -223,7 +223,7 @@ Her yinelemede, bir minigrup eğitim örneği alacağız ve bir dizi tahmin elde
      * Gradyanı hesaplayın: $\mathbf{g} \leftarrow \partial_{(\mathbf{w},b)} \frac{1}{|\mathcal{B}|} \sum_{i \in \mathcal{B}} l(\mathbf{x}^{(i)}, y^{(i)}, \mathbf{w}, b)$
      * Parametreleri güncelleyin: $(\mathbf{w}, b) \leftarrow (\mathbf{w}, b) - \eta \mathbf{g}$
 
-Her bir *dönemde (epoch)*, eğitim veri kümesindeki her örnekten geçtikten sonra (örneklerin sayısının grup boyutuna bölünebildiği varsayılarak) tüm veri kümesini (`data_iter` işlevini kullanarak) yineleyeceğiz. Dönemlerin sayısı, `num_epochs`, ve öğrenme hızı, `lr`, burada sırasıyla 3 ve 0,03 olarak belirlediğimiz hiperparametrelerdir. Ne yazık ki, hiperparametrelerin belirlenmesi zordur ve deneme yanılma yoluyla bazı ayarlamalar gerektirir. Bu ayrıntıları şimdilik atlıyoruz, ancak daha sonra :numref:`chap_optimization` bölümünde tekrarlayacağız.
+Her bir *dönemde (epoch)*, eğitim veri kümesindeki her örnekten geçtikten sonra (örneklerin sayısının grup boyutuna bölünebildiği varsayılarak) tüm veri kümesini (`data_iter` işlevini kullanarak) yineleyeceğiz. Dönemlerin sayısı, `num_epochs`, ve öğrenme hızı, `lr`, burada sırasıyla 3 ve 0,03 olarak belirlediğimiz hiper parametrelerdir. Ne yazık ki, hiper parametrelerin belirlenmesi zordur ve deneme yanılma yoluyla bazı ayarlamalar gerektirir. Bu ayrıntıları şimdilik atlıyoruz, ancak daha sonra :numref:`chap_optimization` bölümünde tekrarlayacağız.
 
 ```{.python .input}
 #@tab all

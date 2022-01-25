@@ -91,7 +91,7 @@ frame; çerçeve
 
 full rank; tam kerteli
 
-fully-connected; tam-bağlı
+fully-connected; tam bağlı
 
 gate; geçit
 

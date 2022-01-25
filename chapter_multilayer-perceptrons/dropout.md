@@ -18,7 +18,7 @@ Derin ağların kafa karıştırıcı genelleme özelliklerinin matematiksel tem
 
 ## Düzensizliğe Gürbüzlük
 
-İyi bir tahminci modelden ne beklediğimizi kısaca düşünelim. Görünmeyen veriler üzerinde iyi başarım göstermelerini istiyoruz. Klasik genelleme teorisi, eğitim ve test performansı arasındaki aralığı kapatmak için basit bir modeli hedeflememiz gerektiğini öne sürer. Sadelik, az sayıda boyut şeklinde olabilir. :numref:`sec_model_selection` içinde doğrusal modellerin tek terimli temel fonksiyonlarını tartışırken bunu araştırdık. Ek olarak, ağırlık sönümünü ($L_2$ düzenlileştirmesi) :numref:`sec_weight_decay`'de tartışırken gördüğümüz gibi, parametrelerin (ters) normu, basitliğin de bir kullanışlı ölçüsünü temsil eder. Bir başka kullanışlı basitlik kavramı, pürüzsüzlüktür, yani işlevin girdilerindeki küçük değişikliklere hassas olmaması gerektiğidir. Örneğin, imgeleri sınıflandırdığımızda, piksellere bazı rastgele gürültü eklemenin çoğunlukla zararsız olmasını bekleriz.
+İyi bir tahminci modelden ne beklediğimizi kısaca düşünelim. Görünmeyen veriler üzerinde iyi başarım göstermelerini istiyoruz. Klasik genelleme teorisi, eğitim ve test performansı arasındaki aralığı kapatmak için basit bir modeli hedeflememiz gerektiğini öne sürer. Sadelik, az sayıda boyut şeklinde olabilir. :numref:`sec_model_selection` içinde doğrusal modellerin tek terimli temel fonksiyonlarını tartışırken bunu araştırdık. Ek olarak, ağırlık sönümünü ($L_2$ düzenlileştirmesi) :numref:`sec_weight_decay`'te tartışırken gördüğümüz gibi, parametrelerin (ters) normu, basitliğin de bir kullanışlı ölçüsünü temsil eder. Bir başka kullanışlı basitlik kavramı, pürüzsüzlüktür, yani işlevin girdilerindeki küçük değişikliklere hassas olmaması gerektiğidir. Örneğin, imgeleri sınıflandırdığımızda, piksellere bazı rastgele gürültü eklemenin çoğunlukla zararsız olmasını bekleriz.
 
 1995'te Christopher Bishop, girdi gürültüsü ile eğitimin Tikhonov düzenlemesine eşdeğer olduğunu kanıtladığında bu fikri resmileştirdi :cite:`Bishop.1995`. Bu çalışma, bir fonksiyonun düzgün (ve dolayısıyla basit) olması gerekliliği ile girdideki karışıklıklara dirençli olması gerekliliği arasında açık bir matematiksel bağlantı kurdu.
 
@@ -30,7 +30,7 @@ Açık olmak gerekirse, Bishop'la bağlantı kurarak kendi hikayemizi dayatıyor
 
 O halde asıl zorluk bu gürültünün nasıl yerleştirileceğidir. Bir fikir, gürültüyü *tarafsız* bir şekilde yerleştirmektir, böylece her katmanın beklenen değeri---diğerlerini sabitlerken---gürültü eksikken alacağı değere eşittir.
 
-Bishop çalışmasında, doğrusal bir modelin girdilerine Gauss gürültüsünü ekledi. Her eğitim yinelemesinde, $\mathbf{x}$ girdisine ortalaması sıfır $ \epsilon \sim \mathcal{N}(0,\sigma^2)$ bir dağılımdan örneklenen gürültü ekleyerek dürtülmüş bir $\mathbf{x}' = \mathbf{x} + \epsilon$ noktası elde etti. Beklenti değeri, $E[\mathbf{x}'] = \mathbf{x}$'dir.
+Bishop çalışmasında, doğrusal bir modelin girdilerine Gauss gürültüsünü ekledi. Her eğitim yinelemesinde, $\mathbf{x}$ girdisine ortalaması sıfır $\epsilon \sim \mathcal{N}(0,\sigma^2)$ bir dağılımdan örneklenen gürültü ekleyerek dürtülmüş bir $\mathbf{x}' = \mathbf{x} + \epsilon$ noktası elde etti. Beklenti değeri, $E[\mathbf{x}'] = \mathbf{x}$'dir.
 
 Standart hattan düşürme düzenlileştirmesinde, bir kısmı tutulan (hattan düşürülmeyen) düğümlere göre normalleştirerek her katmanı yansızlaştırır. Diğer bir deyişle, *hattan düşürme olasılığı* $p$ ile, her bir ara $h$ etkinleştirmesi aşağıdaki gibi rastgele bir $h'$ değişkeni ile değiştirilir:
 
@@ -69,10 +69,10 @@ npx.set_np()
 
 def dropout_layer(X, dropout):
     assert 0 <= dropout <= 1
-    # In this case, all elements are dropped out
+    # Bu durumda tüm elemanlar düşürülür.
     if dropout == 1:
         return np.zeros_like(X)
-    # In this case, all elements are kept
+    # Bu durumda tüm elemanlar tutulur
     if dropout == 0:
         return X
     mask = np.random.uniform(0, 1, X.shape) > dropout
@@ -87,10 +87,10 @@ from torch import nn
 
 def dropout_layer(X, dropout):
     assert 0 <= dropout <= 1
-    # In this case, all elements are dropped out
+    # Bu durumda tüm elemanlar düşürülür.
     if dropout == 1:
         return torch.zeros_like(X)
-    # In this case, all elements are kept
+    # Bu durumda tüm elemanlar tutulur
     if dropout == 0:
         return X
     mask = (torch.rand(X.shape) > dropout).float()
@@ -104,10 +104,10 @@ import tensorflow as tf
 
 def dropout_layer(X, dropout):
     assert 0 <= dropout <= 1
-    # In this case, all elements are dropped out
+    # Bu durumda tüm elemanlar düşürülür.
     if dropout == 1:
         return tf.zeros_like(X)
-    # In this case, all elements are kept
+    # Bu durumda tüm elemanlar tutulur
     if dropout == 0:
         return X
     mask = tf.random.uniform(
@@ -144,7 +144,7 @@ print(dropout_layer(X, 1.))
 
 ### Model Parametrelerini Tanımlama
 
-Yine, :numref:`sec_fashion_mnist`'de tanıtılan Fashion-MNIST veri kümesiyle çalışıyoruz. [**Her biri 256 çıktı içeren iki gizli katmana sahip bir MLP tanımlıyoruz.**]
+Yine, :numref:`sec_fashion_mnist`'da tanıtılan Fashion-MNIST veri kümesiyle çalışıyoruz. [**Her biri 256 çıktı içeren iki gizli katmana sahip bir MLP tanımlıyoruz.**]
 
 ```{.python .input}
 num_inputs, num_outputs, num_hiddens1, num_hiddens2 = 784, 10, 256, 256

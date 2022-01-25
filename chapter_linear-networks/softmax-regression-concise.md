@@ -31,7 +31,7 @@ train_iter, test_iter = d2l.load_data_fashion_mnist(batch_size)
 
 ## Model Parametrelerini İlkleme
 
-:numref:`sec_softmax`'da bahsedildiği gibi, [**softmaks regresyonunun çıktı katmanı tam-bağlı bir katmandır**]. Bu nedenle, modelimizi uygulamak için, `Sequential`'a 10 çıktılı tam-bağlı bir katman eklememiz yeterlidir. Yine burada, `Sequential` gerçekten gerekli değildir, ancak derin modelleri uygularken her yerde bulunacağından bu alışkanlığı oluşturalım. Yine, ağırlıkları sıfır ortalama ve 0.01 standart sapma ile rastgele ilkliyoruz.
+:numref:`sec_softmax`'te bahsedildiği gibi, [**softmaks regresyonunun çıktı katmanı tam bağlı bir katmandır**]. Bu nedenle, modelimizi uygulamak için, `Sequential`'a 10 çıktılı tam bağlı bir katman eklememiz yeterlidir. Yine burada, `Sequential` gerçekten gerekli değildir, ancak derin modelleri uygularken her yerde bulunacağından bu alışkanlığı oluşturalım. Yine, ağırlıkları sıfır ortalama ve 0.01 standart sapma ile rastgele ilkliyoruz.
 
 ```{.python .input}
 net = nn.Sequential()
@@ -64,7 +64,7 @@ net.add(tf.keras.layers.Dense(10, kernel_initializer=weight_initializer))
 ## Softmaks Uygulamasına Yeniden Bakış
 :label:`subsec_softmax-implementation-revisited`
 
-Önceki örneğimiz :numref:`sec_softmax_scratch`'ta, modelimizin çıktısını hesapladık ve sonra bu çıktıyı çapraz entropi kaybıyla çalıştırdık. Matematiksel olarak bu, yapılacak son derece makul bir şeydir. Bununla birlikte, hesaplama açısından, üs alma, sayısal kararlılık sorunlarının bir kaynağı olabilir.
+Önceki örneğimiz :numref:`sec_softmax_scratch`'de, modelimizin çıktısını hesapladık ve sonra bu çıktıyı çapraz entropi kaybıyla çalıştırdık. Matematiksel olarak bu, yapılacak son derece makul bir şeydir. Bununla birlikte, hesaplama açısından, üs alma, sayısal kararlılık sorunlarının bir kaynağı olabilir.
 
 Softmaks fonksiyonunun $\hat y_j = \frac{\exp(o_j)}{\sum_k \exp(o_k)}$'yi hesapladığını hatırlayın; burada $\hat y_j$  tahmin edilen olasılık dağılımı $\hat {\mathbf y}$'nin $j.$ öğesidir ve $o_j$, $\mathbf{o}$ logitlerinin $j.$ öğesidir. $o_k$ değerlerinden bazıları çok büyükse (yani çok pozitifse), o zaman $\exp(o_k)$ belirli veri türleri için sahip olabileceğimiz en büyük sayıdan daha büyük olabilir (yani *taşar*). Bu, paydayı (ve/veya payı) `inf` (sonsuz) yapar ve o zaman $\hat y_j$ için 0, `inf` veya `nan` (sayı değil) ile karşılaşırız. Bu durumlarda çapraz entropi için iyi tanımlanmış bir dönüş değeri elde edemeyiz.
 
@@ -89,7 +89,7 @@ $$
 \end{aligned}
 $$
 
-Modelimizin çıktı olasılıklarını değerlendirmek istememiz durumunda, geleneksel softmaks işlevini el altında tutmak isteyeceğiz. Ancak softmax olasılıklarını yeni kayıp fonksiyonumuza geçirmek yerine, akıllılık yapıp ["LogSumExp numarası"](https://en.wikipedia.org/wiki/LogSumExp) kullanarak [**logitleri geçireceğiz, bütün softmaks ve logaritma değerlerini çapraz entropi kaybında hesaplayacağız**].
+Modelimizin çıktı olasılıklarını değerlendirmek istememiz durumunda, geleneksel softmaks işlevini el altında tutmak isteyeceğiz. Ancak softmaks olasılıklarını yeni kayıp fonksiyonumuza geçirmek yerine, akıllılık yapıp ["LogSumExp numarası"](https://en.wikipedia.org/wiki/LogSumExp) kullanarak [**logitleri geçireceğiz, bütün softmaks ve logaritma değerlerini çapraz entropi kaybında hesaplayacağız**].
 
 ```{.python .input}
 loss = gluon.loss.SoftmaxCrossEntropyLoss()
@@ -142,7 +142,7 @@ Daha önce olduğu gibi, bu algoritma, bu sefer öncekinden daha az kod satırı
 
 ## Alıştırmalar
 
-1. Sonuçların ne olduğunu görmek için grup boyutu, dönem sayısı ve öğrenme oranı gibi hiperparametreleri ayarlamayı deneyin.
+1. Sonuçların ne olduğunu görmek için grup boyutu, dönem sayısı ve öğrenme oranı gibi hiper parametreleri ayarlamayı deneyin.
 1. Eğitim için dönem sayısını artırın. Test doğruluğu neden bir süre sonra düşüyor olabilir? Bunu nasıl düzeltebiliriz?
 
 :begin_tab:`mxnet`

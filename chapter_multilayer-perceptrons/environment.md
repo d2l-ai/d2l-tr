@@ -73,7 +73,7 @@ ABD Ordusu ormandaki tankları ilk defa tespit etmeye çalıştıklarında da be
 
 Dağılım yavaş değiştiğinde ve model yeterince güncellenmediğinde çok daha hassas bir durum ortaya çıkar (*durağan olmayan dağılımlar* da diye de bilinir). Bazı tipik durumlar aşağıdadır:
 
-* Bir hesaplamalı reklamcılık modelini eğitiyor ve ardından onu sık sık güncellemekte başarısız oluyoruz (örneğin, iPad adı verilen belirsiz yeni bir cihazın henüz piyasaya sürüldüğünü dahil etmeyi unuttuk)
+* Bir hesaplamalı reklamcılık modelini eğitiyor ve ardından onu sık sık güncellemekte başarısız oluyoruz (örneğin, iPad adı verilen belirsiz yeni bir cihazın henüz piyasaya sürüldüğünü dahil etmeyi unuttuk).
 * Bir yaramaz posta filtresi oluşturuyoruz. Şimdiye kadar gördüğümüz tüm yaramaz postaları tespit etmede iyi çalışıyor. Ancak daha sonra, yaramaz posta gönderenler akıllanıyor ve daha önce gördüğümüz hiçbir şeye benzemeyen yeni mesajlar oluşturuyorlar.
 * Ürün öneri sistemi oluşturuyoruz. Kış boyunca işe yarıyor, ancak Noel'den sonra da Noel Baba şapkalarını önermeye devam ediyor.
 
@@ -126,7 +126,7 @@ $$\mathop{\mathrm{minimize}}_f \frac{1}{n} \sum_{i=1}^n \beta_i l(f(\mathbf{x}_i
 
 
 
-Ne yazık ki, bu oranı bilmiyoruz, bu yüzden faydalı bir şey yapmadan önce onu tahmin etmemiz gerekiyor. Beklenti işlemini bir minimum norm veya bir maksimum entropi ilkesi kullanarak doğrudan yeniden ayar etmeye çalışan bazı süslü operatör-teorik yaklaşımlar dahil olmak üzere birçok yöntem mevcuttur. Bu tür herhangi bir yaklaşım için, her iki dağılımdan da alınan örneklere ihtiyacımız olduğuna dikkat edin: "doğru" $p$, örneğin, test verilerine erişim yoluyla elde edilen ve $q$ eğitim kümesini oluşturmak için kullanılan (sonraki bariz mevcuttur). Ancak, yalnızca $\mathbf{x} \sim p(\mathbf{x})$ özniteliklerine ihtiyacımız olduğunu unutmayın; $y \sim p(y)$ etiketlerine erişmemize gerek yok.
+Ne yazık ki, bu oranı bilmiyoruz, bu yüzden faydalı bir şey yapmadan önce onu tahmin etmemiz gerekiyor. Beklenti işlemini bir minimum norm veya bir maksimum entropi ilkesi kullanarak doğrudan yeniden ayar etmeye çalışan bazı süslü operatör-teorik yaklaşımlar dahil olmak üzere birçok yöntem mevcuttur. Bu tür herhangi bir yaklaşım için, her iki dağılımdan da alınan örneklere ihtiyacımız olduğuna dikkat edin: "Doğru" $p$, örneğin, test verilerine erişim yoluyla elde edilen ve $q$ eğitim kümesini oluşturmak için kullanılan (sonraki bariz mevcuttur). Ancak, yalnızca $\mathbf{x} \sim p(\mathbf{x})$ özniteliklerine ihtiyacımız olduğunu unutmayın; $y \sim p(y)$ etiketlerine erişmemize gerek yok.
 
 Bu durumda, neredeyse orijinali kadar iyi sonuçlar verecek çok etkili bir yaklaşım vardır: İkili sınıflandırmada softmaks regresyonun özel bir durumu olan (bkz. :numref:`sec_softmax`) lojistik regresyon. Tahmini olasılık oranlarını hesaplamak için gereken tek şey budur. $p(\mathbf{x})$'den alınan veriler ile $q(\mathbf{x})$'den alınan verileri ayırt etmek için bir sınıflandırıcı öğreniyoruz. İki dağılım arasında ayrım yapmak imkansızsa, bu, ilişkili örneklerin iki dağılımdan birinden gelme olasılığının eşit olduğu anlamına gelir. Öte yandan, iyi ayırt edilebilen herhangi bir örnek, buna göre önemli ölçüde yüksek veya düşük ağırlıklı olmalıdır. 
 
@@ -182,9 +182,9 @@ Bazı ılımlı koşullar altında --- eğer sınıflandırıcımız ilk etapta 
 
 $$\mathbf{C} p(\mathbf{y}) = \mu(\hat{\mathbf{y}}),$$
 
-çünkü bir tahmin olarak $\sum_{j=1}^k c_{ij} p(y_j) = \mu(\hat{y}_i)$ tüm $1 \leq i \leq k$ için geçerlidir, burada $p(y_j)$, $k$ boyutlu etiket dağılım vektörü $p(\mathbf{y})$'ın $j.$ öğesidir. Sınıflandırıcımız başlangıç için yeterince doğruysa, o zaman $\mathbf{C}$ hata matrisi tersine çevrilebilir ve $p(\mathbf{y}) = \mathbf{C}^{-1} \mu(\hat{\mathbf{y}})$ çözümünü elde ederiz.
+çünkü bir tahmin olarak $\sum_{j=1}^k c_{ij} p(y_j) = \mu(\hat{y}_i)$ tüm $1 \leq i \leq k$ için geçerlidir, burada $p(y_j)$, $k$ boyutlu etiket dağılım vektörü $p(\mathbf{y})$'nin $j.$ öğesidir. Sınıflandırıcımız başlangıç için yeterince doğruysa, o zaman $\mathbf{C}$ hata matrisi tersine çevrilebilir ve $p(\mathbf{y}) = \mathbf{C}^{-1} \mu(\hat{\mathbf{y}})$ çözümünü elde ederiz.
 
-Kaynak verilerdeki etiketleri gözlemlediğimiz için $q(y)$ dağılımını tahmin etmek kolaydır. Ardından, $y_i$ etiketli herhangi bir eğitim örneği $i$ için, $\beta_i$ ağırlığını hesaplamak için tahmini $p(y_i)/q(y_i)$ oranını alabilir ve bunu :eqref:`eq_weighted-ampirik-risk-min` içindeki ağırlıklı deneysel risk minimizasyonuna bağlayabiliriz.
+Kaynak verilerdeki etiketleri gözlemlediğimiz için $q(y)$ dağılımını tahmin etmek kolaydır. Ardından, $y_i$ etiketli herhangi bir eğitim örneği $i$ için, $\beta_i$ ağırlığını hesaplamak için tahmini $p(y_i)/q(y_i)$ oranını alabilir ve bunu :eqref:`eq_weighted-empirical-risk-min` içindeki ağırlıklı deneysel risk minimizasyonuna bağlayabiliriz.
 
 
 ### Kavram Kayması Düzeltmesi
@@ -226,7 +226,7 @@ $$
 ### Kontrol
 
 Çoğu durumda ortam ne yaptığımızı hatırlar. Mutlaka düşmanca bir şekilde değil, ancak sadece hatırlayacak ve yanıt daha önce ne olduğuna bağlı olacaktır. Örneğin, bir kahve kaynatıcı kontrolörü, kaynatıcıyı önceden ısıtıp ısıtmadığına bağlı olarak farklı sıcaklıklar gözlemleyecektir. PID (orantılı integral türev) kontrolcü algoritmaları burada popüler bir seçimdir. Benzer şekilde, bir kullanıcının bir haber sitesindeki davranışı, ona daha önce ne gösterdiğimize bağlı olacaktır (örneğin, çoğu haberi yalnızca bir kez okuyacaktır). Bu tür birçok algoritma, kararlarının daha az rastgele görünmesini sağlamak gibi hareket ettikleri ortamın bir modelini oluşturur.
-Son zamanlarda, kontrol teorisi (örneğin, PID varyantları), daha iyi çözme ve geri çatma kalitesi elde etmek ve oluşturulan metnin çeşitliliğini ve oluşturulan görüntülerin geri çatma kalitesini iyileştirmek için hiperparametreleri otomatik olarak ayarlamak için de kullanıldı :cite:`Shao.Yao.Sun. ea.2020`.
+Son zamanlarda, kontrol teorisi (örneğin, PID varyantları), daha iyi çözme ve geri çatma kalitesi elde etmek ve oluşturulan metnin çeşitliliğini ve oluşturulan görüntülerin geri çatma kalitesini iyileştirmek için hiper parametreleri otomatik olarak ayarlamak için de kullanıldı :cite:`Shao.Yao.Sun. ea.2020`.
 
 ### Pekiştirmeli Öğrenme
 

@@ -42,9 +42,9 @@ $${\hat{\mathbf{y}}} = \mathbf{X} \mathbf{w} + b,$$
 
 burada yayma (bkz :numref:`subsec_broadcasting`) toplama esnasında uygulanır. $\mathbf{X}$ eğitim veri kümesinin öznitelikleri ve karşılık gelen (bilinen) $\mathbf{y}$ etiketleri verildiğinde, doğrusal regresyonun amacı $\mathbf{w}$ ağırlık vektörünü ve $b$ ek girdi terimini bulmaktır, öyle ki $\mathbf{X}$ ile aynı dağılımdan örneklenmiş yeni bir örneğin öznitelikleri verildiğinde, yeni veri örneğinin etiketi (ortalamada) en düşük hata ile tahmin edilecektir.
 
-$\mathbf{x}$ verildiğinde $y$ tahmini için en iyi modelin doğrusal olduğuna inansak bile, $n$ örnekten oluşan bir gerçek dünya veri kümesinde $y^{(i)}$'nin tüm $1 \leq i \leq n$ için $\mathbf{w}^\top \mathbf{x}^{(i)}+b$'e tam olarak eşit olmasını beklemiyoruz. Örneğin, $\mathbf{X}$ özelliklerini ve $\mathbf{y}$ etiketlerini gözlemlemek için kullandığımız araçlar ne olursa olsun az miktarda ölçüm hatası yapabilir. Dolayısıyla, temeldeki ilişkinin doğrusal olduğundan emin olsak bile, bu tür hataları hesaba katmak için bir gürültü terimi dahil edeceğiz.
+$\mathbf{x}$ verildiğinde $y$ tahmini için en iyi modelin doğrusal olduğuna inansak bile, $n$ örnekten oluşan bir gerçek dünya veri kümesinde $y^{(i)}$'nin tüm $1 \leq i \leq n$ için $\mathbf{w}^\top \mathbf{x}^{(i)}+b$'ye tam olarak eşit olmasını beklemiyoruz. Örneğin, $\mathbf{X}$ özelliklerini ve $\mathbf{y}$ etiketlerini gözlemlemek için kullandığımız araçlar ne olursa olsun az miktarda ölçüm hatası yapabilir. Dolayısıyla, temeldeki ilişkinin doğrusal olduğundan emin olsak bile, bu tür hataları hesaba katmak için bir gürültü terimi dahil edeceğiz.
 
-En iyi *parametreleri* (veya *model parametrelerini*) $\mathbf{w}$ ve $b$'yi aramaya başlamadan önce, iki şeye daha ihtiyacımız var: (i) belirli bir model için bir kalite ölçütü; ve (ii) kalitesini iyileştirmek için modelin güncellenmesine yönelik bir yordam (prosedür).
+En iyi *parametreleri* (veya *model parametrelerini*) $\mathbf{w}$ ve $b$'yi aramaya başlamadan önce, iki şeye daha ihtiyacımız var: (i) Belirli bir model için bir kalite ölçütü; ve (ii) kalitesini iyileştirmek için modelin güncellenmesine yönelik bir yordam (prosedür).
 
 ### Kayıp İşlevi
 
@@ -88,12 +88,12 @@ Güncellemeyi matematiksel olarak şu şekilde ifade edebiliriz ($\partial$ kıs
 
 $$(\mathbf{w},b) \leftarrow (\mathbf{w},b) - \frac{\eta}{|\mathcal{B}|} \sum_{i \in \mathcal{B}} \partial_{(\mathbf{w},b)} l^{(i)}(\mathbf{w},b).$$
 
-Özetlemek gerekirse, algoritmanın adımları şöyledir: (i) model parametrelerinin değerlerini tipik olarak rastgele olarak başlatıyoruz; (ii) verilerden yinelemeli olarak rastgele minigruplar örnekleyerek parametreleri negatif gradyan yönünde güncelliyoruz. İkinci dereceden kayıplar ve afin dönüşümler için, bunu açıkça şu şekilde yazabiliriz:
+Özetlemek gerekirse, algoritmanın adımları şöyledir: (i) Model parametrelerinin değerlerini tipik olarak rastgele olarak başlatıyoruz; (ii) verilerden yinelemeli olarak rastgele minigruplar örnekleyerek parametreleri negatif gradyan yönünde güncelliyoruz. İkinci dereceden kayıplar ve afin dönüşümler için, bunu açıkça şu şekilde yazabiliriz:
 
 $$\begin{aligned} \mathbf{w} &\leftarrow \mathbf{w} -   \frac{\eta}{|\mathcal{B}|} \sum_{i \in \mathcal{B}} \partial_{\mathbf{w}} l^{(i)}(\mathbf{w}, b) = \mathbf{w} - \frac{\eta}{|\mathcal{B}|} \sum_{i \in \mathcal{B}} \mathbf{x}^{(i)} \left(\mathbf{w}^\top \mathbf{x}^{(i)} + b - y^{(i)}\right),\\ b &\leftarrow b -  \frac{\eta}{|\mathcal{B}|} \sum_{i \in \mathcal{B}} \partial_b l^{(i)}(\mathbf{w}, b)  = b - \frac{\eta}{|\mathcal{B}|} \sum_{i \in \mathcal{B}} \left(\mathbf{w}^\top \mathbf{x}^{(i)} + b - y^{(i)}\right). \end{aligned}$$
 :eqlabel:`eq_linreg_batch_update`
 
-$\mathbf{w}$ ve $\mathbf{x}$'in :eqref:`eq_linreg_batch_update` içinde vektörler olduğuna dikkat edin. Burada, daha zarif vektör gösterimi, matematiği, $w_1, w_2, \ldots, w_d$ gibi, katsayılarla ifade etmekten çok daha okunaklı hale getirir. Küme niceliği (kardinalite), $|\mathcal{B}|$, her bir minigruptaki örneklerin sayısını (*grup boyutu*) ve $\eta$ *öğrenme oranını* gösterir. Burada grup boyutu ve öğrenme oranı değerlerinin manuel olarak önceden belirlendiğini ve tipik olarak model eğitimi yoluyla öğrenilmediğini vurguluyoruz. Ayarlanabilir ancak eğitim döngüsünde güncellenmeyen bu parametrelere *hiperparametreler* denir. *Hiperparametre ayarı*, hiperparametrelerin seçildiği süreçtir ve genellikle onları eğitim döngüsününde ayrı bir *geçerleme veri kümesinde* (veya *geçerleme kümesinde*) elde edilen değerlendirilme sonuçlarına göre ayarlamamızı gerektirir.
+$\mathbf{w}$ ve $\mathbf{x}$'in :eqref:`eq_linreg_batch_update` içinde vektörler olduğuna dikkat edin. Burada, daha zarif vektör gösterimi, matematiği, $w_1, w_2, \ldots, w_d$ gibi, katsayılarla ifade etmekten çok daha okunaklı hale getirir. Küme niceliği (kardinalite), $|\mathcal{B}|$, her bir minigruptaki örneklerin sayısını (*grup boyutu*) ve $\eta$ *öğrenme oranını* gösterir. Burada grup boyutu ve öğrenme oranı değerlerinin manuel olarak önceden belirlendiğini ve tipik olarak model eğitimi yoluyla öğrenilmediğini vurguluyoruz. Ayarlanabilir ancak eğitim döngüsünde güncellenmeyen bu parametrelere *hiper parametreler* denir. *Hiper parametre ayarı*, hiper parametrelerin seçildiği süreçtir ve genellikle onları eğitim döngüsününde ayrı bir *geçerleme veri kümesinde* (veya *geçerleme kümesinde*) elde edilen değerlendirilme sonuçlarına göre ayarlamamızı gerektirir.
 
 Önceden belirlenmiş sayıda yineleme kadar eğitimden sonra (veya başka bazı durdurma kriterleri karşılanana kadar), $\hat{\mathbf{w}}, \hat{b}$ olarak belirtilen tahmini model parametrelerini kaydediyoruz. Fonksiyonumuz gerçekten doğrusal ve gürültüsüz olsa bile, bu parametreler kaybın kesin minimum değerleri olmayacaktır, çünkü algoritma yavaşça en küçük değerlere doğru yaklaşsa da sonlu bir adımda tam olarak başaramayacaktır.
 
@@ -151,30 +151,30 @@ Bu kitapta çalışma süresini sık sık karşılaştıracağımızdan [**bir z
 ```{.python .input}
 #@tab all
 class Timer:  #@save
-    """Record multiple running times."""
+    """Birden fazla koşma zamanını kaydedin."""
     def __init__(self):
         self.times = []
         self.start()
 
     def start(self):
-        """Start the timer."""
+        """Zamanlayıcıyı başlatın."""
         self.tik = time.time()
 
     def stop(self):
-        """Stop the timer and record the time in a list."""
+        """Zamanlayıcı durdurun ve zamanı listeye kaydedin."""
         self.times.append(time.time() - self.tik)
         return self.times[-1]
 
     def avg(self):
-        """Return the average time."""
+        """Ortalama zamanı döndürün."""
         return sum(self.times) / len(self.times)
 
     def sum(self):
-        """Return the sum of time."""
+        """Toplam zamanı döndürün."""
         return sum(self.times)
 
     def cumsum(self):
-        """Return the accumulated time."""
+        """Biriktirilmiş zamanı döndürün."""
         return np.array(self.times).cumsum().tolist()
 ```
 
@@ -186,7 +186,7 @@ c = d2l.zeros(n)
 timer = Timer()
 for i in range(n):
     c[i] = a[i] + b[i]
-f'{timer.stop():.5f} sec'
+f'{timer.stop():.5f} sn'
 ```
 
 ```{.python .input}
@@ -195,7 +195,7 @@ c = tf.Variable(d2l.zeros(n))
 timer = Timer()
 for i in range(n):
     c[i].assign(a[i] + b[i])
-f'{timer.stop():.5f} sec'
+f'{timer.stop():.5f} sn'
 ```
 
 (**Alternatif olarak, eleman-yönlü toplamı hesaplamak için yeniden yüklenen `+` operatörüne güveniyoruz.**)
@@ -204,7 +204,7 @@ f'{timer.stop():.5f} sec'
 #@tab all
 timer.start()
 d = a + b
-f'{timer.stop():.5f} sec'
+f'{timer.stop():.5f} sn'
 ```
 
 Muhtemelen ikinci yöntemin birincisinden çok daha hızlı olduğunu fark etmişsinizdir. Vektörleştirme kodu genellikle büyük ölçeklerde hız artışları sağlar. Dahası, matematiğin çoğunun sorumluluğunu kütüphaneye yüklüyoruz ve kendimizin bu kadar çok hesaplamayı yazmamıza gerek yok, bu da hata olasılığını azaltıyor.
@@ -231,10 +231,10 @@ Artık (**normal dağılımları görselleştirebiliriz**).
 
 ```{.python .input}
 #@tab all
-# Use numpy again for visualization
+# Görselleştirme için gene numpy kullanın
 x = np.arange(-7, 7, 0.01)
 
-# Mean and standard deviation pairs
+# Ortalama ve standart sapma çifti
 params = [(0, 1), (0, 2), (3, 1)]
 d2l.plot(x, [normal(x, mu, sigma) for mu, sigma in params], xlabel='x',
          ylabel='p(x)', figsize=(4.5, 2.5),
@@ -272,7 +272,7 @@ Derin öğrenme uygulayıcıları, modellerinde neler olduğunu görselleştirme
 ![Doğrusal regresyon, tek katmanlı bir sinir ağıdır.](../img/singleneuron.svg)
 :label:`fig_single_neuron`
 
-:numref:`fig_single_neuron`da gösterilen sinir ağı için, girdiler $x_1, \ldots, x_d$'dir, dolayısıyla girdi katmanındaki *girdi sayısı* (veya *öznitelik boyutu*) $d$'dir. Ağın :numref:`fig_single_neuron`deki çıktısı $ o_1 $'dir, dolayısıyla çıktı katmanındaki *çıktı sayısı* $1$'dir. Girdi değerlerinin hepsinin *verildiğini* ve sadece tek bir *hesaplanmış*  nöron (sinir hücresi) olduğuna dikkat edin. Hesaplamanın nerede gerçekleştiğine odaklanarak, geleneksel olarak katmanları sayarken girdi katmanını dikkate almayız. Yani :numref:`fig_single_neuron`daki sinir ağı için *katman sayısı* $1$'dir. Doğrusal regresyon modellerini sadece tek bir yapay nörondan oluşan sinir ağları veya tek katmanlı sinir ağları olarak düşünebiliriz.
+:numref:`fig_single_neuron`'de gösterilen sinir ağı için, girdiler $x_1, \ldots, x_d$'dir, dolayısıyla girdi katmanındaki *girdi sayısı* (veya *öznitelik boyutu*) $d$'dir. Ağın :numref:`fig_single_neuron`'deki çıktısı $ o_1 $'dir, dolayısıyla çıktı katmanındaki *çıktı sayısı* $1$'dir. Girdi değerlerinin hepsinin *verildiğini* ve sadece tek bir *hesaplanmış*  nöron (sinir hücresi) olduğuna dikkat edin. Hesaplamanın nerede gerçekleştiğine odaklanarak, geleneksel olarak katmanları sayarken girdi katmanını dikkate almayız. Yani :numref:`fig_single_neuron`'deki sinir ağı için *katman sayısı* $1$'dir. Doğrusal regresyon modellerini sadece tek bir yapay nörondan oluşan sinir ağları veya tek katmanlı sinir ağları olarak düşünebiliriz.
 
 Doğrusal regresyon için, her girdi her çıktıya bağlı olduğundan (bu durumda yalnızca bir çıktı vardır), bu dönüşümü (:numref:`fig_single_neuron`'deki çıktı katmanı) *tam bağlantılı katman* veya *yoğun katman* olarak kabul edebiliriz. Bir sonraki bölümde bu tür katmanlardan oluşan ağlar hakkında daha çok konuşacağız.
 
@@ -309,7 +309,7 @@ Aynı zamanda, günümüzde derin öğrenmedeki çoğu araştırma, sinirbilimde
 1. Eklenen gürültü $\epsilon$'u yöneten gürültü modelinin üssel dağılım olduğunu varsayın. Yani, $p(\epsilon) = \frac{1}{2} \exp(-|\epsilon|)$'dur.
     1. Verilerin negatif log-olabilirliğini $-\log P(\mathbf y \mid \mathbf X)$ modeli altında yazınız.
     1. Kapalı form çözümü bulabilir misiniz?
-    1. Bu sorunu çözmek için bir rasgele gradyan iniş algoritması önerin. Ne yanlış gidebilir (ipucu: Parametreleri güncellemeye devam ederken durağan noktanın yakınında ne olur)? Bunu düzeltebilir misiniz?
+    1. Bu sorunu çözmek için bir rasgele gradyan iniş algoritması önerin. Ne yanlış gidebilir (İpucu: Parametreleri güncellemeye devam ederken durağan noktanın yakınında ne olur)? Bunu düzeltebilir misiniz?
 
 :begin_tab:`mxnet`
 [Tartışmalar](https://discuss.d2l.ai/t/40)
