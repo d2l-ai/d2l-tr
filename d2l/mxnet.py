@@ -1963,6 +1963,843 @@ def reorg_test(data_dir):
 d2l.DATA_HUB['dog_tiny'] = (d2l.DATA_URL + 'kaggle_dog_tiny.zip',
                             '0cb91d09b814ecdc07b50f31f8dcad3e81d6a86d')
 
+d2l.DATA_HUB['ptb'] = (d2l.DATA_URL + 'ptb.zip',
+                       '319d85e578af0cdc590547f26231e4e31cdf1e42')
+
+def read_ptb():
+    """Load the PTB dataset into a list of text lines.
+
+    Defined in :numref:`sec_word2vec_data`"""
+    data_dir = d2l.download_extract('ptb')
+    # Read the training set.
+    with open(os.path.join(data_dir, 'ptb.train.txt')) as f:
+        raw_text = f.read()
+    return [line.split() for line in raw_text.split('\n')]
+
+def subsample(sentences, vocab):
+    """Subsample high-frequency words.
+
+    Defined in :numref:`sec_word2vec_data`"""
+    # Exclude unknown tokens '<unk>'
+    sentences = [[token for token in line if vocab[token] != vocab.unk]
+                 for line in sentences]
+    counter = d2l.count_corpus(sentences)
+    num_tokens = sum(counter.values())
+
+    # Return True if `token` is kept during subsampling
+    def keep(token):
+        return(random.uniform(0, 1) <
+               math.sqrt(1e-4 / counter[token] * num_tokens))
+
+    return ([[token for token in line if keep(token)] for line in sentences],
+            counter)
+
+def get_centers_and_contexts(corpus, max_window_size):
+    """Return center words and context words in skip-gram.
+
+    Defined in :numref:`sec_word2vec_data`"""
+    centers, contexts = [], []
+    for line in corpus:
+        # To form a "center word--context word" pair, each sentence needs to
+        # have at least 2 words
+        if len(line) < 2:
+            continue
+        centers += line
+        for i in range(len(line)):  # Context window centered at `i`
+            window_size = random.randint(1, max_window_size)
+            indices = list(range(max(0, i - window_size),
+                                 min(len(line), i + 1 + window_size)))
+            # Exclude the center word from the context words
+            indices.remove(i)
+            contexts.append([line[idx] for idx in indices])
+    return centers, contexts
+
+class RandomGenerator:
+    """Randomly draw among {1, ..., n} according to n sampling weights."""
+    def __init__(self, sampling_weights):
+        """Defined in :numref:`sec_word2vec_data`"""
+        # Exclude
+        self.population = list(range(1, len(sampling_weights) + 1))
+        self.sampling_weights = sampling_weights
+        self.candidates = []
+        self.i = 0
+
+    def draw(self):
+        if self.i == len(self.candidates):
+            # Cache `k` random sampling results
+            self.candidates = random.choices(
+                self.population, self.sampling_weights, k=10000)
+            self.i = 0
+        self.i += 1
+        return self.candidates[self.i - 1]
+
+def get_negatives(all_contexts, vocab, counter, K):
+    """Return noise words in negative sampling.
+
+    Defined in :numref:`sec_word2vec_data`"""
+    # Sampling weights for words with indices 1, 2, ... (index 0 is the
+    # excluded unknown token) in the vocabulary
+    sampling_weights = [counter[vocab.to_tokens(i)]**0.75
+                        for i in range(1, len(vocab))]
+    all_negatives, generator = [], RandomGenerator(sampling_weights)
+    for contexts in all_contexts:
+        negatives = []
+        while len(negatives) < len(contexts) * K:
+            neg = generator.draw()
+            # Noise words cannot be context words
+            if neg not in contexts:
+                negatives.append(neg)
+        all_negatives.append(negatives)
+    return all_negatives
+
+def batchify(data):
+    """Return a minibatch of examples for skip-gram with negative sampling.
+
+    Defined in :numref:`sec_word2vec_data`"""
+    max_len = max(len(c) + len(n) for _, c, n in data)
+    centers, contexts_negatives, masks, labels = [], [], [], []
+    for center, context, negative in data:
+        cur_len = len(context) + len(negative)
+        centers += [center]
+        contexts_negatives += [context + negative + [0] * (max_len - cur_len)]
+        masks += [[1] * cur_len + [0] * (max_len - cur_len)]
+        labels += [[1] * len(context) + [0] * (max_len - len(context))]
+    return (d2l.reshape(d2l.tensor(centers), (-1, 1)), d2l.tensor(
+        contexts_negatives), d2l.tensor(masks), d2l.tensor(labels))
+
+def load_data_ptb(batch_size, max_window_size, num_noise_words):
+    """Download the PTB dataset and then load it into memory.
+
+    Defined in :numref:`subsec_word2vec-minibatch-loading`"""
+    sentences = read_ptb()
+    vocab = d2l.Vocab(sentences, min_freq=10)
+    subsampled, counter = subsample(sentences, vocab)
+    corpus = [vocab[line] for line in subsampled]
+    all_centers, all_contexts = get_centers_and_contexts(
+        corpus, max_window_size)
+    all_negatives = get_negatives(
+        all_contexts, vocab, counter, num_noise_words)
+    dataset = gluon.data.ArrayDataset(
+        all_centers, all_contexts, all_negatives)
+    data_iter = gluon.data.DataLoader(
+        dataset, batch_size, shuffle=True,batchify_fn=batchify,
+        num_workers=d2l.get_dataloader_workers())
+    return data_iter, vocab
+
+d2l.DATA_HUB['glove.6b.50d'] = (d2l.DATA_URL + 'glove.6B.50d.zip',
+                                '0b8703943ccdb6eb788e6f091b8946e82231bc4d')
+
+d2l.DATA_HUB['glove.6b.100d'] = (d2l.DATA_URL + 'glove.6B.100d.zip',
+                                 'cd43bfb07e44e6f27cbcc7bc9ae3d80284fdaf5a')
+
+d2l.DATA_HUB['glove.42b.300d'] = (d2l.DATA_URL + 'glove.42B.300d.zip',
+                                  'b5116e234e9eb9076672cfeabf5469f3eec904fa')
+
+d2l.DATA_HUB['wiki.en'] = (d2l.DATA_URL + 'wiki.en.zip',
+                           'c1816da3821ae9f43899be655002f6c723e91b88')
+
+class TokenEmbedding:
+    """Token Embedding."""
+    def __init__(self, embedding_name):
+        """Defined in :numref:`sec_synonyms`"""
+        self.idx_to_token, self.idx_to_vec = self._load_embedding(
+            embedding_name)
+        self.unknown_idx = 0
+        self.token_to_idx = {token: idx for idx, token in
+                             enumerate(self.idx_to_token)}
+
+    def _load_embedding(self, embedding_name):
+        idx_to_token, idx_to_vec = ['<unk>'], []
+        data_dir = d2l.download_extract(embedding_name)
+        # GloVe website: https://nlp.stanford.edu/projects/glove/
+        # fastText website: https://fasttext.cc/
+        with open(os.path.join(data_dir, 'vec.txt'), 'r') as f:
+            for line in f:
+                elems = line.rstrip().split(' ')
+                token, elems = elems[0], [float(elem) for elem in elems[1:]]
+                # Skip header information, such as the top row in fastText
+                if len(elems) > 1:
+                    idx_to_token.append(token)
+                    idx_to_vec.append(elems)
+        idx_to_vec = [[0] * len(idx_to_vec[0])] + idx_to_vec
+        return idx_to_token, d2l.tensor(idx_to_vec)
+
+    def __getitem__(self, tokens):
+        indices = [self.token_to_idx.get(token, self.unknown_idx)
+                   for token in tokens]
+        vecs = self.idx_to_vec[d2l.tensor(indices)]
+        return vecs
+
+    def __len__(self):
+        return len(self.idx_to_token)
+
+def get_tokens_and_segments(tokens_a, tokens_b=None):
+    """Get tokens of the BERT input sequence and their segment IDs.
+
+    Defined in :numref:`sec_bert`"""
+    tokens = ['<cls>'] + tokens_a + ['<sep>']
+    # 0 and 1 are marking segment A and B, respectively
+    segments = [0] * (len(tokens_a) + 2)
+    if tokens_b is not None:
+        tokens += tokens_b + ['<sep>']
+        segments += [1] * (len(tokens_b) + 1)
+    return tokens, segments
+
+class BERTEncoder(nn.Block):
+    """BERT encoder.
+
+    Defined in :numref:`subsec_bert_input_rep`"""
+    def __init__(self, vocab_size, num_hiddens, ffn_num_hiddens, num_heads,
+                 num_layers, dropout, max_len=1000, **kwargs):
+        super(BERTEncoder, self).__init__(**kwargs)
+        self.token_embedding = nn.Embedding(vocab_size, num_hiddens)
+        self.segment_embedding = nn.Embedding(2, num_hiddens)
+        self.blks = nn.Sequential()
+        for _ in range(num_layers):
+            self.blks.add(d2l.EncoderBlock(
+                num_hiddens, ffn_num_hiddens, num_heads, dropout, True))
+        # In BERT, positional embeddings are learnable, thus we create a
+        # parameter of positional embeddings that are long enough
+        self.pos_embedding = self.params.get('pos_embedding',
+                                             shape=(1, max_len, num_hiddens))
+
+    def forward(self, tokens, segments, valid_lens):
+        # Shape of `X` remains unchanged in the following code snippet:
+        # (batch size, max sequence length, `num_hiddens`)
+        X = self.token_embedding(tokens) + self.segment_embedding(segments)
+        X = X + self.pos_embedding.data(ctx=X.ctx)[:, :X.shape[1], :]
+        for blk in self.blks:
+            X = blk(X, valid_lens)
+        return X
+
+class MaskLM(nn.Block):
+    """The masked language model task of BERT.
+
+    Defined in :numref:`subsec_bert_input_rep`"""
+    def __init__(self, vocab_size, num_hiddens, **kwargs):
+        super(MaskLM, self).__init__(**kwargs)
+        self.mlp = nn.Sequential()
+        self.mlp.add(
+            nn.Dense(num_hiddens, flatten=False, activation='relu'))
+        self.mlp.add(nn.LayerNorm())
+        self.mlp.add(nn.Dense(vocab_size, flatten=False))
+
+    def forward(self, X, pred_positions):
+        num_pred_positions = pred_positions.shape[1]
+        pred_positions = pred_positions.reshape(-1)
+        batch_size = X.shape[0]
+        batch_idx = np.arange(0, batch_size)
+        # Suppose that `batch_size` = 2, `num_pred_positions` = 3, then
+        # `batch_idx` is `np.array([0, 0, 0, 1, 1, 1])`
+        batch_idx = np.repeat(batch_idx, num_pred_positions)
+        masked_X = X[batch_idx, pred_positions]
+        masked_X = masked_X.reshape((batch_size, num_pred_positions, -1))
+        mlm_Y_hat = self.mlp(masked_X)
+        return mlm_Y_hat
+
+class NextSentencePred(nn.Block):
+    """The next sentence prediction task of BERT.
+
+    Defined in :numref:`subsec_mlm`"""
+    def __init__(self, **kwargs):
+        super(NextSentencePred, self).__init__(**kwargs)
+        self.output = nn.Dense(2)
+
+    def forward(self, X):
+        # `X` shape: (batch size, `num_hiddens`)
+        return self.output(X)
+
+class BERTModel(nn.Block):
+    """The BERT model.
+
+    Defined in :numref:`subsec_nsp`"""
+    def __init__(self, vocab_size, num_hiddens, ffn_num_hiddens, num_heads,
+                 num_layers, dropout, max_len=1000):
+        super(BERTModel, self).__init__()
+        self.encoder = BERTEncoder(vocab_size, num_hiddens, ffn_num_hiddens,
+                                   num_heads, num_layers, dropout, max_len)
+        self.hidden = nn.Dense(num_hiddens, activation='tanh')
+        self.mlm = MaskLM(vocab_size, num_hiddens)
+        self.nsp = NextSentencePred()
+
+    def forward(self, tokens, segments, valid_lens=None, pred_positions=None):
+        encoded_X = self.encoder(tokens, segments, valid_lens)
+        if pred_positions is not None:
+            mlm_Y_hat = self.mlm(encoded_X, pred_positions)
+        else:
+            mlm_Y_hat = None
+        # The hidden layer of the MLP classifier for next sentence prediction.
+        # 0 is the index of the '<cls>' token
+        nsp_Y_hat = self.nsp(self.hidden(encoded_X[:, 0, :]))
+        return encoded_X, mlm_Y_hat, nsp_Y_hat
+
+d2l.DATA_HUB['wikitext-2'] = (
+    'https://s3.amazonaws.com/research.metamind.io/wikitext/'
+    'wikitext-2-v1.zip', '3c914d17d80b1459be871a5039ac23e752a53cbe')
+
+def _read_wiki(data_dir):
+    """Defined in :numref:`sec_bert-dataset`"""
+    file_name = os.path.join(data_dir, 'wiki.train.tokens')
+    with open(file_name, 'r') as f:
+        lines = f.readlines()
+    # Uppercase letters are converted to lowercase ones
+    paragraphs = [line.strip().lower().split(' . ')
+                  for line in lines if len(line.split(' . ')) >= 2]
+    random.shuffle(paragraphs)
+    return paragraphs
+
+def _get_next_sentence(sentence, next_sentence, paragraphs):
+    """Defined in :numref:`sec_bert-dataset`"""
+    if random.random() < 0.5:
+        is_next = True
+    else:
+        # `paragraphs` is a list of lists of lists
+        next_sentence = random.choice(random.choice(paragraphs))
+        is_next = False
+    return sentence, next_sentence, is_next
+
+def _get_nsp_data_from_paragraph(paragraph, paragraphs, vocab, max_len):
+    """Defined in :numref:`sec_bert-dataset`"""
+    nsp_data_from_paragraph = []
+    for i in range(len(paragraph) - 1):
+        tokens_a, tokens_b, is_next = _get_next_sentence(
+            paragraph[i], paragraph[i + 1], paragraphs)
+        # Consider 1 '<cls>' token and 2 '<sep>' tokens
+        if len(tokens_a) + len(tokens_b) + 3 > max_len:
+            continue
+        tokens, segments = d2l.get_tokens_and_segments(tokens_a, tokens_b)
+        nsp_data_from_paragraph.append((tokens, segments, is_next))
+    return nsp_data_from_paragraph
+
+def _replace_mlm_tokens(tokens, candidate_pred_positions, num_mlm_preds,
+                        vocab):
+    """Defined in :numref:`sec_bert-dataset`"""
+    # Make a new copy of tokens for the input of a masked language model,
+    # where the input may contain replaced '<mask>' or random tokens
+    mlm_input_tokens = [token for token in tokens]
+    pred_positions_and_labels = []
+    # Shuffle for getting 15% random tokens for prediction in the masked
+    # language modeling task
+    random.shuffle(candidate_pred_positions)
+    for mlm_pred_position in candidate_pred_positions:
+        if len(pred_positions_and_labels) >= num_mlm_preds:
+            break
+        masked_token = None
+        # 80% of the time: replace the word with the '<mask>' token
+        if random.random() < 0.8:
+            masked_token = '<mask>'
+        else:
+            # 10% of the time: keep the word unchanged
+            if random.random() < 0.5:
+                masked_token = tokens[mlm_pred_position]
+            # 10% of the time: replace the word with a random word
+            else:
+                masked_token = random.choice(vocab.idx_to_token)
+        mlm_input_tokens[mlm_pred_position] = masked_token
+        pred_positions_and_labels.append(
+            (mlm_pred_position, tokens[mlm_pred_position]))
+    return mlm_input_tokens, pred_positions_and_labels
+
+def _get_mlm_data_from_tokens(tokens, vocab):
+    """Defined in :numref:`subsec_prepare_mlm_data`"""
+    candidate_pred_positions = []
+    # `tokens` is a list of strings
+    for i, token in enumerate(tokens):
+        # Special tokens are not predicted in the masked language modeling
+        # task
+        if token in ['<cls>', '<sep>']:
+            continue
+        candidate_pred_positions.append(i)
+    # 15% of random tokens are predicted in the masked language modeling task
+    num_mlm_preds = max(1, round(len(tokens) * 0.15))
+    mlm_input_tokens, pred_positions_and_labels = _replace_mlm_tokens(
+        tokens, candidate_pred_positions, num_mlm_preds, vocab)
+    pred_positions_and_labels = sorted(pred_positions_and_labels,
+                                       key=lambda x: x[0])
+    pred_positions = [v[0] for v in pred_positions_and_labels]
+    mlm_pred_labels = [v[1] for v in pred_positions_and_labels]
+    return vocab[mlm_input_tokens], pred_positions, vocab[mlm_pred_labels]
+
+def _pad_bert_inputs(examples, max_len, vocab):
+    """Defined in :numref:`subsec_prepare_mlm_data`"""
+    max_num_mlm_preds = round(max_len * 0.15)
+    all_token_ids, all_segments, valid_lens,  = [], [], []
+    all_pred_positions, all_mlm_weights, all_mlm_labels = [], [], []
+    nsp_labels = []
+    for (token_ids, pred_positions, mlm_pred_label_ids, segments,
+         is_next) in examples:
+        all_token_ids.append(np.array(token_ids + [vocab['<pad>']] * (
+            max_len - len(token_ids)), dtype='int32'))
+        all_segments.append(np.array(segments + [0] * (
+            max_len - len(segments)), dtype='int32'))
+        # `valid_lens` excludes count of '<pad>' tokens
+        valid_lens.append(np.array(len(token_ids), dtype='float32'))
+        all_pred_positions.append(np.array(pred_positions + [0] * (
+            max_num_mlm_preds - len(pred_positions)), dtype='int32'))
+        # Predictions of padded tokens will be filtered out in the loss via
+        # multiplication of 0 weights
+        all_mlm_weights.append(
+            np.array([1.0] * len(mlm_pred_label_ids) + [0.0] * (
+                max_num_mlm_preds - len(pred_positions)), dtype='float32'))
+        all_mlm_labels.append(np.array(mlm_pred_label_ids + [0] * (
+            max_num_mlm_preds - len(mlm_pred_label_ids)), dtype='int32'))
+        nsp_labels.append(np.array(is_next))
+    return (all_token_ids, all_segments, valid_lens, all_pred_positions,
+            all_mlm_weights, all_mlm_labels, nsp_labels)
+
+class _WikiTextDataset(gluon.data.Dataset):
+    """Defined in :numref:`subsec_prepare_mlm_data`"""
+    def __init__(self, paragraphs, max_len):
+        # Input `paragraphs[i]` is a list of sentence strings representing a
+        # paragraph; while output `paragraphs[i]` is a list of sentences
+        # representing a paragraph, where each sentence is a list of tokens
+        paragraphs = [d2l.tokenize(
+            paragraph, token='word') for paragraph in paragraphs]
+        sentences = [sentence for paragraph in paragraphs
+                     for sentence in paragraph]
+        self.vocab = d2l.Vocab(sentences, min_freq=5, reserved_tokens=[
+            '<pad>', '<mask>', '<cls>', '<sep>'])
+        # Get data for the next sentence prediction task
+        examples = []
+        for paragraph in paragraphs:
+            examples.extend(_get_nsp_data_from_paragraph(
+                paragraph, paragraphs, self.vocab, max_len))
+        # Get data for the masked language model task
+        examples = [(_get_mlm_data_from_tokens(tokens, self.vocab)
+                      + (segments, is_next))
+                     for tokens, segments, is_next in examples]
+        # Pad inputs
+        (self.all_token_ids, self.all_segments, self.valid_lens,
+         self.all_pred_positions, self.all_mlm_weights,
+         self.all_mlm_labels, self.nsp_labels) = _pad_bert_inputs(
+            examples, max_len, self.vocab)
+
+    def __getitem__(self, idx):
+        return (self.all_token_ids[idx], self.all_segments[idx],
+                self.valid_lens[idx], self.all_pred_positions[idx],
+                self.all_mlm_weights[idx], self.all_mlm_labels[idx],
+                self.nsp_labels[idx])
+
+    def __len__(self):
+        return len(self.all_token_ids)
+
+def load_data_wiki(batch_size, max_len):
+    """Load the WikiText-2 dataset.
+
+    Defined in :numref:`subsec_prepare_mlm_data`"""
+    num_workers = d2l.get_dataloader_workers()
+    data_dir = d2l.download_extract('wikitext-2', 'wikitext-2')
+    paragraphs = _read_wiki(data_dir)
+    train_set = _WikiTextDataset(paragraphs, max_len)
+    train_iter = gluon.data.DataLoader(train_set, batch_size, shuffle=True,
+                                       num_workers=num_workers)
+    return train_iter, train_set.vocab
+
+def _get_batch_loss_bert(net, loss, vocab_size, tokens_X_shards,
+                         segments_X_shards, valid_lens_x_shards,
+                         pred_positions_X_shards, mlm_weights_X_shards,
+                         mlm_Y_shards, nsp_y_shards):
+    """Defined in :numref:`sec_bert-pretraining`"""
+    mlm_ls, nsp_ls, ls = [], [], []
+    for (tokens_X_shard, segments_X_shard, valid_lens_x_shard,
+         pred_positions_X_shard, mlm_weights_X_shard, mlm_Y_shard,
+         nsp_y_shard) in zip(
+        tokens_X_shards, segments_X_shards, valid_lens_x_shards,
+        pred_positions_X_shards, mlm_weights_X_shards, mlm_Y_shards,
+        nsp_y_shards):
+        # Forward pass
+        _, mlm_Y_hat, nsp_Y_hat = net(
+            tokens_X_shard, segments_X_shard, valid_lens_x_shard.reshape(-1),
+            pred_positions_X_shard)
+        # Compute masked language model loss
+        mlm_l = loss(
+            mlm_Y_hat.reshape((-1, vocab_size)), mlm_Y_shard.reshape(-1),
+            mlm_weights_X_shard.reshape((-1, 1)))
+        mlm_l = mlm_l.sum() / (mlm_weights_X_shard.sum() + 1e-8)
+        # Compute next sentence prediction loss
+        nsp_l = loss(nsp_Y_hat, nsp_y_shard)
+        nsp_l = nsp_l.mean()
+        mlm_ls.append(mlm_l)
+        nsp_ls.append(nsp_l)
+        ls.append(mlm_l + nsp_l)
+        npx.waitall()
+    return mlm_ls, nsp_ls, ls
+
+d2l.DATA_HUB['aclImdb'] = (
+    'http://ai.stanford.edu/~amaas/data/sentiment/aclImdb_v1.tar.gz',
+    '01ada507287d82875905620988597833ad4e0903')
+
+def read_imdb(data_dir, is_train):
+    """Read the IMDb review dataset text sequences and labels.
+
+    Defined in :numref:`sec_sentiment`"""
+    data, labels = [], []
+    for label in ('pos', 'neg'):
+        folder_name = os.path.join(data_dir, 'train' if is_train else 'test',
+                                   label)
+        for file in os.listdir(folder_name):
+            with open(os.path.join(folder_name, file), 'rb') as f:
+                review = f.read().decode('utf-8').replace('\n', '')
+                data.append(review)
+                labels.append(1 if label == 'pos' else 0)
+    return data, labels
+
+def load_data_imdb(batch_size, num_steps=500):
+    """Return data iterators and the vocabulary of the IMDb review dataset.
+
+    Defined in :numref:`sec_sentiment`"""
+    data_dir = d2l.download_extract('aclImdb', 'aclImdb')
+    train_data = read_imdb(data_dir, True)
+    test_data = read_imdb(data_dir, False)
+    train_tokens = d2l.tokenize(train_data[0], token='word')
+    test_tokens = d2l.tokenize(test_data[0], token='word')
+    vocab = d2l.Vocab(train_tokens, min_freq=5)
+    train_features = np.array([d2l.truncate_pad(
+        vocab[line], num_steps, vocab['<pad>']) for line in train_tokens])
+    test_features = np.array([d2l.truncate_pad(
+        vocab[line], num_steps, vocab['<pad>']) for line in test_tokens])
+    train_iter = d2l.load_array((train_features, train_data[1]), batch_size)
+    test_iter = d2l.load_array((test_features, test_data[1]), batch_size,
+                               is_train=False)
+    return train_iter, test_iter, vocab
+
+def predict_sentiment(net, vocab, sequence):
+    """Predict the sentiment of a text sequence.
+
+    Defined in :numref:`sec_sentiment_rnn`"""
+    sequence = np.array(vocab[sequence.split()], ctx=d2l.try_gpu())
+    label = np.argmax(net(sequence.reshape(1, -1)), axis=1)
+    return 'positive' if label == 1 else 'negative'
+
+d2l.DATA_HUB['SNLI'] = (
+    'https://nlp.stanford.edu/projects/snli/snli_1.0.zip',
+    '9fcde07509c7e87ec61c640c1b2753d9041758e4')
+
+def read_snli(data_dir, is_train):
+    """Read the SNLI dataset into premises, hypotheses, and labels.
+
+    Defined in :numref:`sec_natural-language-inference-and-dataset`"""
+    def extract_text(s):
+        # Remove information that will not be used by us
+        s = re.sub('\\(', '', s)
+        s = re.sub('\\)', '', s)
+        # Substitute two or more consecutive whitespace with space
+        s = re.sub('\\s{2,}', ' ', s)
+        return s.strip()
+    label_set = {'entailment': 0, 'contradiction': 1, 'neutral': 2}
+    file_name = os.path.join(data_dir, 'snli_1.0_train.txt'
+                             if is_train else 'snli_1.0_test.txt')
+    with open(file_name, 'r') as f:
+        rows = [row.split('\t') for row in f.readlines()[1:]]
+    premises = [extract_text(row[1]) for row in rows if row[0] in label_set]
+    hypotheses = [extract_text(row[2]) for row in rows if row[0] in label_set]
+    labels = [label_set[row[0]] for row in rows if row[0] in label_set]
+    return premises, hypotheses, labels
+
+class SNLIDataset(gluon.data.Dataset):
+    """A customized dataset to load the SNLI dataset.
+
+    Defined in :numref:`sec_natural-language-inference-and-dataset`"""
+    def __init__(self, dataset, num_steps, vocab=None):
+        self.num_steps = num_steps
+        all_premise_tokens = d2l.tokenize(dataset[0])
+        all_hypothesis_tokens = d2l.tokenize(dataset[1])
+        if vocab is None:
+            self.vocab = d2l.Vocab(all_premise_tokens + all_hypothesis_tokens,
+                                   min_freq=5, reserved_tokens=['<pad>'])
+        else:
+            self.vocab = vocab
+        self.premises = self._pad(all_premise_tokens)
+        self.hypotheses = self._pad(all_hypothesis_tokens)
+        self.labels = np.array(dataset[2])
+        print('read ' + str(len(self.premises)) + ' examples')
+
+    def _pad(self, lines):
+        return np.array([d2l.truncate_pad(
+            self.vocab[line], self.num_steps, self.vocab['<pad>'])
+                         for line in lines])
+
+    def __getitem__(self, idx):
+        return (self.premises[idx], self.hypotheses[idx]), self.labels[idx]
+
+    def __len__(self):
+        return len(self.premises)
+
+def load_data_snli(batch_size, num_steps=50):
+    """Download the SNLI dataset and return data iterators and vocabulary.
+
+    Defined in :numref:`sec_natural-language-inference-and-dataset`"""
+    num_workers = d2l.get_dataloader_workers()
+    data_dir = d2l.download_extract('SNLI')
+    train_data = read_snli(data_dir, True)
+    test_data = read_snli(data_dir, False)
+    train_set = SNLIDataset(train_data, num_steps)
+    test_set = SNLIDataset(test_data, num_steps, train_set.vocab)
+    train_iter = gluon.data.DataLoader(train_set, batch_size, shuffle=True,
+                                       num_workers=num_workers)
+    test_iter = gluon.data.DataLoader(test_set, batch_size, shuffle=False,
+                                      num_workers=num_workers)
+    return train_iter, test_iter, train_set.vocab
+
+def split_batch_multi_inputs(X, y, devices):
+    """Split multi-input `X` and `y` into multiple devices.
+
+    Defined in :numref:`sec_natural-language-inference-attention`"""
+    X = list(zip(*[gluon.utils.split_and_load(
+        feature, devices, even_split=False) for feature in X]))
+    return (X, gluon.utils.split_and_load(y, devices, even_split=False))
+
+def predict_snli(net, vocab, premise, hypothesis):
+    """Predict the logical relationship between the premise and hypothesis.
+
+    Defined in :numref:`sec_natural-language-inference-attention`"""
+    premise = np.array(vocab[premise], ctx=d2l.try_gpu())
+    hypothesis = np.array(vocab[hypothesis], ctx=d2l.try_gpu())
+    label = np.argmax(net([premise.reshape((1, -1)),
+                           hypothesis.reshape((1, -1))]), axis=1)
+    return 'entailment' if label == 0 else 'contradiction' if label == 1 \
+            else 'neutral'
+
+d2l.DATA_HUB['ml-100k'] = (
+    'http://files.grouplens.org/datasets/movielens/ml-100k.zip',
+    'cd4dcac4241c8a4ad7badc7ca635da8a69dddb83')
+
+def read_data_ml100k():
+    data_dir = d2l.download_extract('ml-100k')
+    names = ['user_id', 'item_id', 'rating', 'timestamp']
+    data = pd.read_csv(os.path.join(data_dir, 'u.data'), '\t', names=names,
+                       engine='python')
+    num_users = data.user_id.unique().shape[0]
+    num_items = data.item_id.unique().shape[0]
+    return data, num_users, num_items
+
+def split_data_ml100k(data, num_users, num_items,
+                      split_mode='random', test_ratio=0.1):
+    """Split the dataset in random mode or seq-aware mode."""
+    if split_mode == 'seq-aware':
+        train_items, test_items, train_list = {}, {}, []
+        for line in data.itertuples():
+            u, i, rating, time = line[1], line[2], line[3], line[4]
+            train_items.setdefault(u, []).append((u, i, rating, time))
+            if u not in test_items or test_items[u][-1] < time:
+                test_items[u] = (i, rating, time)
+        for u in range(1, num_users + 1):
+            train_list.extend(sorted(train_items[u], key=lambda k: k[3]))
+        test_data = [(key, *value) for key, value in test_items.items()]
+        train_data = [item for item in train_list if item not in test_data]
+        train_data = pd.DataFrame(train_data)
+        test_data = pd.DataFrame(test_data)
+    else:
+        mask = [True if x == 1 else False for x in np.random.uniform(
+            0, 1, (len(data))) < 1 - test_ratio]
+        neg_mask = [not x for x in mask]
+        train_data, test_data = data[mask], data[neg_mask]
+    return train_data, test_data
+
+def load_data_ml100k(data, num_users, num_items, feedback='explicit'):
+    users, items, scores = [], [], []
+    inter = np.zeros((num_items, num_users)) if feedback == 'explicit' else {}
+    for line in data.itertuples():
+        user_index, item_index = int(line[1] - 1), int(line[2] - 1)
+        score = int(line[3]) if feedback == 'explicit' else 1
+        users.append(user_index)
+        items.append(item_index)
+        scores.append(score)
+        if feedback == 'implicit':
+            inter.setdefault(user_index, []).append(item_index)
+        else:
+            inter[item_index, user_index] = score
+    return users, items, scores, inter
+
+def split_and_load_ml100k(split_mode='seq-aware', feedback='explicit',
+                          test_ratio=0.1, batch_size=256):
+    data, num_users, num_items = read_data_ml100k()
+    train_data, test_data = split_data_ml100k(
+        data, num_users, num_items, split_mode, test_ratio)
+    train_u, train_i, train_r, _ = load_data_ml100k(
+        train_data, num_users, num_items, feedback)
+    test_u, test_i, test_r, _ = load_data_ml100k(
+        test_data, num_users, num_items, feedback)
+    train_set = gluon.data.ArrayDataset(
+        np.array(train_u), np.array(train_i), np.array(train_r))
+    test_set = gluon.data.ArrayDataset(
+        np.array(test_u), np.array(test_i), np.array(test_r))
+    train_iter = gluon.data.DataLoader(
+        train_set, shuffle=True, last_batch='rollover',
+        batch_size=batch_size)
+    test_iter = gluon.data.DataLoader(
+        test_set, batch_size=batch_size)
+    return num_users, num_items, train_iter, test_iter
+
+def train_recsys_rating(net, train_iter, test_iter, loss, trainer, num_epochs,
+                        devices=d2l.try_all_gpus(), evaluator=None,
+                        **kwargs):
+    timer = d2l.Timer()
+    animator = d2l.Animator(xlabel='epoch', xlim=[1, num_epochs], ylim=[0, 2],
+                            legend=['train loss', 'test RMSE'])
+    for epoch in range(num_epochs):
+        metric, l = d2l.Accumulator(3), 0.
+        for i, values in enumerate(train_iter):
+            timer.start()
+            input_data = []
+            values = values if isinstance(values, list) else [values]
+            for v in values:
+                input_data.append(gluon.utils.split_and_load(v, devices))
+            train_feat = input_data[0:-1] if len(values) > 1 else input_data
+            train_label = input_data[-1]
+            with autograd.record():
+                preds = [net(*t) for t in zip(*train_feat)]
+                ls = [loss(p, s) for p, s in zip(preds, train_label)]
+            [l.backward() for l in ls]
+            l += sum([l.asnumpy() for l in ls]).mean() / len(devices)
+            trainer.step(values[0].shape[0])
+            metric.add(l, values[0].shape[0], values[0].size)
+            timer.stop()
+        if len(kwargs) > 0:  # It will be used in section AutoRec
+            test_rmse = evaluator(net, test_iter, kwargs['inter_mat'],
+                                  devices)
+        else:
+            test_rmse = evaluator(net, test_iter, devices)
+        train_l = l / (i + 1)
+        animator.add(epoch + 1, (train_l, test_rmse))
+    print(f'train loss {metric[0] / metric[1]:.3f}, '
+          f'test RMSE {test_rmse:.3f}')
+    print(f'{metric[2] * num_epochs / timer.sum():.1f} examples/sec '
+          f'on {str(devices)}')
+
+class BPRLoss(gluon.loss.Loss):
+    def __init__(self, weight=None, batch_axis=0, **kwargs):
+        super(BPRLoss, self).__init__(weight=None, batch_axis=0, **kwargs)
+
+    def forward(self, positive, negative):
+        distances = positive - negative
+        loss = - np.sum(np.log(npx.sigmoid(distances)), 0, keepdims=True)
+        return loss
+
+class HingeLossbRec(gluon.loss.Loss):
+    def __init__(self, weight=None, batch_axis=0, **kwargs):
+        super(HingeLossbRec, self).__init__(weight=None, batch_axis=0,
+                                            **kwargs)
+
+    def forward(self, positive, negative, margin=1):
+        distances = positive - negative
+        loss = np.sum(np.maximum(- distances + margin, 0))
+        return loss
+
+def hit_and_auc(rankedlist, test_matrix, k):
+    hits_k = [(idx, val) for idx, val in enumerate(rankedlist[:k])
+              if val in set(test_matrix)]
+    hits_all = [(idx, val) for idx, val in enumerate(rankedlist)
+                if val in set(test_matrix)]
+    max = len(rankedlist) - 1
+    auc = 1.0 * (max - hits_all[0][0]) / max if len(hits_all) > 0 else 0
+    return len(hits_k), auc
+
+def evaluate_ranking(net, test_input, seq, candidates, num_users, num_items,
+                     devices):
+    ranked_list, ranked_items, hit_rate, auc = {}, {}, [], []
+    all_items = set([i for i in range(num_users)])
+    for u in range(num_users):
+        neg_items = list(all_items - set(candidates[int(u)]))
+        user_ids, item_ids, x, scores = [], [], [], []
+        [item_ids.append(i) for i in neg_items]
+        [user_ids.append(u) for _ in neg_items]
+        x.extend([np.array(user_ids)])
+        if seq is not None:
+            x.append(seq[user_ids, :])
+        x.extend([np.array(item_ids)])
+        test_data_iter = gluon.data.DataLoader(
+            gluon.data.ArrayDataset(*x), shuffle=False, last_batch="keep",
+            batch_size=1024)
+        for index, values in enumerate(test_data_iter):
+            x = [gluon.utils.split_and_load(v, devices, even_split=False)
+                 for v in values]
+            scores.extend([list(net(*t).asnumpy()) for t in zip(*x)])
+        scores = [item for sublist in scores for item in sublist]
+        item_scores = list(zip(item_ids, scores))
+        ranked_list[u] = sorted(item_scores, key=lambda t: t[1], reverse=True)
+        ranked_items[u] = [r[0] for r in ranked_list[u]]
+        temp = hit_and_auc(ranked_items[u], test_input[u], 50)
+        hit_rate.append(temp[0])
+        auc.append(temp[1])
+    return np.mean(np.array(hit_rate)), np.mean(np.array(auc))
+
+def train_ranking(net, train_iter, test_iter, loss, trainer, test_seq_iter,
+                  num_users, num_items, num_epochs, devices, evaluator,
+                  candidates, eval_step=1):
+    timer, hit_rate, auc = d2l.Timer(), 0, 0
+    animator = d2l.Animator(xlabel='epoch', xlim=[1, num_epochs], ylim=[0, 1],
+                            legend=['test hit rate', 'test AUC'])
+    for epoch in range(num_epochs):
+        metric, l = d2l.Accumulator(3), 0.
+        for i, values in enumerate(train_iter):
+            input_data = []
+            for v in values:
+                input_data.append(gluon.utils.split_and_load(v, devices))
+            with autograd.record():
+                p_pos = [net(*t) for t in zip(*input_data[0:-1])]
+                p_neg = [net(*t) for t in zip(*input_data[0:-2],
+                                              input_data[-1])]
+                ls = [loss(p, n) for p, n in zip(p_pos, p_neg)]
+            [l.backward(retain_graph=False) for l in ls]
+            l += sum([l.asnumpy() for l in ls]).mean()/len(devices)
+            trainer.step(values[0].shape[0])
+            metric.add(l, values[0].shape[0], values[0].size)
+            timer.stop()
+        with autograd.predict_mode():
+            if (epoch + 1) % eval_step == 0:
+                hit_rate, auc = evaluator(net, test_iter, test_seq_iter,
+                                          candidates, num_users, num_items,
+                                          devices)
+                animator.add(epoch + 1, (hit_rate, auc))
+    print(f'train loss {metric[0] / metric[1]:.3f}, '
+          f'test hit rate {float(hit_rate):.3f}, test AUC {float(auc):.3f}')
+    print(f'{metric[2] * num_epochs / timer.sum():.1f} examples/sec '
+          f'on {str(devices)}')
+
+d2l.DATA_HUB['ctr'] = (d2l.DATA_URL + 'ctr.zip',
+                       'e18327c48c8e8e5c23da714dd614e390d369843f')
+
+class CTRDataset(gluon.data.Dataset):
+    def __init__(self, data_path, feat_mapper=None, defaults=None,
+                 min_threshold=4, num_feat=34):
+        self.NUM_FEATS, self.count, self.data = num_feat, 0, {}
+        feat_cnts = defaultdict(lambda: defaultdict(int))
+        self.feat_mapper, self.defaults = feat_mapper, defaults
+        self.field_dims = np.zeros(self.NUM_FEATS, dtype=np.int64)
+        with open(data_path) as f:
+            for line in f:
+                instance = {}
+                values = line.rstrip('\n').split('\t')
+                if len(values) != self.NUM_FEATS + 1:
+                    continue
+                label = np.float32([0, 0])
+                label[int(values[0])] = 1
+                instance['y'] = [np.float32(values[0])]
+                for i in range(1, self.NUM_FEATS + 1):
+                    feat_cnts[i][values[i]] += 1
+                    instance.setdefault('x', []).append(values[i])
+                self.data[self.count] = instance
+                self.count = self.count + 1
+        if self.feat_mapper is None and self.defaults is None:
+            feat_mapper = {i: {feat for feat, c in cnt.items() if c >=
+                               min_threshold} for i, cnt in feat_cnts.items()}
+            self.feat_mapper = {i: {feat_v: idx for idx, feat_v in enumerate(feat_values)}
+                                for i, feat_values in feat_mapper.items()}
+            self.defaults = {i: len(feat_values) for i, feat_values in feat_mapper.items()}
+        for i, fm in self.feat_mapper.items():
+            self.field_dims[i - 1] = len(fm) + 1
+        self.offsets = np.array((0, *np.cumsum(self.field_dims).asnumpy()
+                                 [:-1]))
+
+    def __len__(self):
+        return self.count
+
+    def __getitem__(self, idx):
+        feat = np.array([self.feat_mapper[i + 1].get(v, self.defaults[i + 1])
+                         for i, v in enumerate(self.data[idx]['x'])])
+        return feat + self.offsets, self.data[idx]['y']
+
 def update_D(X, Z, net_D, net_G, loss, trainer_D):
     """Update discriminator.
 
