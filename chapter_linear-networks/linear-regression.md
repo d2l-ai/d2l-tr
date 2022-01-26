@@ -80,7 +80,7 @@ Modelleri analitik olarak çözümleyemediğimiz durumlarda bile, yine de pratik
 
 Neredeyse tüm derin öğrenme modellerini optimize etmek için kullanılan ve bu kitap boyunca değineceğimiz temel teknik, kayıp fonksiyonunu kademeli olarak düşüren yönde parametreleri güncelleyerek hatayı yinelemeli olarak azaltmaktan ibarettir. Bu algoritmaya *gradyan iniş* denir.
 
-Gradyan inişinin en saf uygulaması, veri kümesindeki her bir örnekten hesaplanan kayıpların ortalaması olan kayıp fonksiyonunun türevini almaktan oluşur. Pratikte bu çok yavaş olabilir: Tek bir güncelleme yapmadan önce tüm veri kümesinin üzerinden geçmeliyiz. Bu nedenle, güncellemeyi her hesaplamamız gerektiğinde rastgele bir mini grup örnekten örneklemeyi *minigrup rasgele gradyan inişi* adı verilen bir yöntem ile deneyeceğiz.
+Gradyan inişinin en saf uygulaması, veri kümesindeki her bir örnekten hesaplanan kayıpların ortalaması olan kayıp fonksiyonunun türevini almaktan oluşur. Pratikte bu çok yavaş olabilir: Tek bir güncelleme yapmadan önce tüm veri kümesinin üzerinden geçmeliyiz. Bu nedenle, güncellemeyi her hesaplamamız gerektiğinde rastgele bir minigrup örnekten örneklemeyi *minigrup rasgele gradyan inişi* adı verilen bir yöntem ile deneyeceğiz.
 
 Her bir yinelemede, ilk olarak sabit sayıda eğitim örneğinden oluşan bir minigrubu, $\mathcal{B}$, rasgele örnekliyoruz. Daha sonra minigruptaki ortalama kaybın türevini (gradyan) model parametrelerine göre hesaplıyoruz. Son olarak, gradyanı önceden belirlenmiş pozitif bir değerle, $\eta$, çarpıyoruz ve ortaya çıkan terimi mevcut parametre değerlerinden çıkarıyoruz.
 

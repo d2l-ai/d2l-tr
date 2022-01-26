@@ -323,7 +323,7 @@ Kısacası tüm veriler ve parametreler aynı cihazda olduğu sürece modelleri 
 
 * Depolama ve hesaplama için CPU veya GPU gibi cihazları belirleyebiliriz. Varsayılan olarak, veriler ana bellekte oluşturulur ve ardından hesaplamalar için CPU kullanılır.
 * Derin öğrenme çerçevesi, hesaplama için tüm girdi verilerinin aynı cihazda olmasını gerektirir, ister CPU ister aynı GPU olsun.
-* Verileri dikkatsizce taşıyarak önemli bir performans kaybına uğrayabilirsiniz. Tipik bir hata şudur: GPU'daki her mini grup için kaybı hesaplamak ve bunu komut satırında kullanıcıya geri bildirmek (veya bir NumPy `ndarray`'de kaydetmek), bu tüm GPU'ları durduran global yorumlayıcı kilidini tetikleyecektir. GPU içinde kayıt tutmak için bellek ayırmak ve yalnızca daha büyük kayıtları taşımak çok daha iyidir.
+* Verileri dikkatsizce taşıyarak önemli bir performans kaybına uğrayabilirsiniz. Tipik bir hata şudur: GPU'daki her minigrup için kaybı hesaplamak ve bunu komut satırında kullanıcıya geri bildirmek (veya bir NumPy `ndarray`'de kaydetmek), bu tüm GPU'ları durduran global yorumlayıcı kilidini tetikleyecektir. GPU içinde kayıt tutmak için bellek ayırmak ve yalnızca daha büyük kayıtları taşımak çok daha iyidir.
 
 ## Alıştırmalar
 

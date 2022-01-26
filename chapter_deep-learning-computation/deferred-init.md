@@ -1,7 +1,7 @@
 # Ertelenmiş İlkleme
 :label:`sec_deferred_init`
 
-Şimdiye kadar, ağlarımızı kurarken özensiz davranışımızdan yakayı kurtarmış görünebiliriz. Özellikle, çalışmaması gerektiği düşündüğümüz, aşağıdaki sezgisel olmayan şeyleri yaptık:
+Şimdiye kadar, ağlarımızı kurarken özensiz davranışlarımızdan yakayı kurtarmış görünebiliriz. Özellikle, çalışmaması gerektiği düşündüğümüz, aşağıdaki sezgisel olmayan şeyleri yaptık:
 
 * Ağ mimarilerini girdi boyutlarını belirlemeden tanımladık.
 * Bir önceki katmanın çıktı boyutunu belirtmeden katmanlar ekledik.

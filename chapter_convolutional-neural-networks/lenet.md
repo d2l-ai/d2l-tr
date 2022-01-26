@@ -14,7 +14,7 @@ Yüksek düzeyde, (**LeNet (LeNet-5) iki parçadan oluşur: (i) iki evrişimli k
 ![LeNet'te veri akışı. Girdi el yazısı bir rakamdır, çıktı ise 10 olası sonucun üzerinde bir olasılıktır.](../img/lenet.svg)
 :label:`img_lenet`
 
-Her bir evrişimli bloktaki temel birimler, bir evrişimli tabaka, bir sigmoid etkinleştirme fonksiyonu ve sonrasında bir ortalama ortaklama işlemidir. ReLU'lar ve maksimum ortaklama daha iyi çalışırken, bu keşifler henüz 1990'larda yapılmamıştı. Her bir evrişimli katman bir $5\times 5$ çekirdeği ve sigmoid etkinleştirme işlevi kullanır. Bu katmanlar, konumsal olarak düzenlenmiş girdileri bir dizi iki boyutlu öznitelik eşlemelerine eşler ve genellikle kanal sayısını arttırır. İlk evrişimli tabaka 6 tane çıktı kanalına, ikincisi ise 16 taneye sahiptir. Her $2\times2$ ortaklama işlemi (2'lik uzun adım), uzamsal altörnekleme yoluyla boyutsallığı $4$ kat düşürür. Evrişimli blok tarafından verilen şekle sahip bir çıktı yayar (parti boyutu, kanal sayısı, yükseklik, genişlik).
+Her bir evrişimli bloktaki temel birimler, bir evrişimli tabaka, bir sigmoid etkinleştirme fonksiyonu ve sonrasında bir ortalama ortaklama işlemidir. ReLU'lar ve maksimum ortaklama daha iyi çalışırken, bu keşifler henüz 1990'larda yapılmamıştı. Her bir evrişimli katman bir $5\times 5$ çekirdeği ve sigmoid etkinleştirme işlevi kullanır. Bu katmanlar, konumsal olarak düzenlenmiş girdileri bir dizi iki boyutlu öznitelik eşlemelerine eşler ve genellikle kanal sayısını arttırır. İlk evrişimli tabaka 6 tane çıktı kanalına, ikincisi ise 16 taneye sahiptir. Her $2\times2$ ortaklama işlemi (2'lik uzun adım), uzamsal altörnekleme yoluyla boyutsallığı $4$ kat düşürür. Evrişimli blok tarafından verilen şekle sahip bir çıktı yayar (toplu iş boyutu, kanal sayısı, yükseklik, genişlik).
 
 Evrişimli bloktan yoğun bloğa çıktıyı geçirmek için, minigruptaki her örneği düzleştirmeliyiz. Başka bir deyişle, bu dört boyutlu girdiyi alıp tam bağlı katmanlar tarafından beklenen iki boyutlu girdiye dönüştürüyoruz: Bir hatırlatma olarak, arzu ettiğimiz iki boyutlu gösterim, minigrup örneklerini indekslemek için ilk boyutu kullanır ve ikincisini örneği temsil eden düz vektörü vermek için kullanır. LeNet'in yoğun bloğu sırasıyla 120, 84 ve 10 çıktılı üç tam bağlı katman içerir. Hala sınıflandırma gerçekleştirdiğimiz için, 10 boyutlu çıktı katmanı olası çıktı sınıflarının sayısına karşılık gelir.
 
@@ -31,9 +31,9 @@ net.add(nn.Conv2D(channels=6, kernel_size=5, padding=2, activation='sigmoid'),
         nn.AvgPool2D(pool_size=2, strides=2),
         nn.Conv2D(channels=16, kernel_size=5, activation='sigmoid'),
         nn.AvgPool2D(pool_size=2, strides=2),
-        # `Dense` will transform an input of the shape (batch size, number of
-        # channels, height, width) into an input of the shape (batch size,
-        # number of channels * height * width) automatically by default
+        # `Dense`, bir girdinin biçimini (toplu iş boyutu, kanal sayısı, yükseklik, genişlik) 
+        # otomatik, varsayılan olarak (toplu iş boyutu, kanal sayısı * yükseklik * genişlik)
+        # biçimli bir girdiye dönüştürür.
         nn.Dense(120, activation='sigmoid'),
         nn.Dense(84, activation='sigmoid'),
         nn.Dense(10))
@@ -127,9 +127,9 @@ Değerlendirme için :numref:`sec_softmax_scratch`'te tarif ettiğimiz [**`evalu
 ```{.python .input}
 def evaluate_accuracy_gpu(net, data_iter, device=None):  #@save
     """Compute the accuracy for a model on a dataset using a GPU."""
-    if not device:  # Query the first device where the first parameter is on
+    if not device:  # İlk parametrenin kurulu olduğu ilk cihazı sorgulayın
         device = list(net.collect_params().values())[0].list_ctx()[0]
-    # No. of correct predictions, no. of predictions
+    # Doğru tahmin sayısı, tahminlerin sayısı
     metric = d2l.Accumulator(2)
     for X, y in data_iter:
         X, y = X.as_in_ctx(device), y.as_in_ctx(device)
@@ -142,16 +142,16 @@ def evaluate_accuracy_gpu(net, data_iter, device=None):  #@save
 def evaluate_accuracy_gpu(net, data_iter, device=None): #@save
     """Compute the accuracy for a model on a dataset using a GPU."""
     if isinstance(net, nn.Module):
-        net.eval()  # Set the model to evaluation mode
+        net.eval()  # Modeli değerlendirme moduna ayarlayın
         if not device:
             device = next(iter(net.parameters())).device
-    # No. of correct predictions, no. of predictions
+   # Doğru tahmin sayısı, tahminlerin sayısı
     metric = d2l.Accumulator(2)
 
     with torch.no_grad():
         for X, y in data_iter:
             if isinstance(X, list):
-                # Required for BERT Fine-tuning (to be covered later)
+                # BERT ince ayarı için gerekli (daha sonra ele alınacaktır)
                 X = [x.to(device) for x in X]
             else:
                 X = X.to(device)

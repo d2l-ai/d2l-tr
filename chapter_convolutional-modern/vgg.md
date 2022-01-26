@@ -74,7 +74,7 @@ AlexNet ve LeNet gibi, VGG ağı iki kısma bölünebilir: Birincisi çoğunlukl
 :width:`400px`
 :label:`fig_vgg`
 
-Ağın evrişimli kısmı, :numref:`fig_vgg`'tek (`vgg_block` işlevinde de tanımlanmıştır) birkaç VGG bloğunu arka arkaya bağlar. Aşağıdaki `conv_arch` değişken, her biri iki değer içeren bir çokuzlu (blok başına bir) listesinden oluşur: Evrişimli katmanların sayısı ve çıktı kanallarının sayısı, ki tam olarak `vgg_block` işlevini çağırmak için gerekli argümanlardır. VGG ağının tam bağlı kısmı AlexNet'te kapsananla aynıdır.
+Ağın evrişimli kısmı, :numref:`fig_vgg`'deki (`vgg_block` işlevinde de tanımlanmıştır) birkaç VGG bloğunu arka arkaya bağlar. Aşağıdaki `conv_arch` değişken, her biri iki değer içeren bir çokuzlu (blok başına bir) listesinden oluşur: Evrişimli katmanların sayısı ve çıktı kanallarının sayısı, ki tam olarak `vgg_block` işlevini çağırmak için gerekli argümanlardır. VGG ağının tam bağlı kısmı AlexNet'te kapsananla aynıdır.
 
 Orijinal VGG ağında, ilk ikisinin her birinin bir evrişimli tabakaya sahip olduğu ve sonraki üçünün her birinin iki evrişimli katman içerdiği 5 evrişimli blok vardı. İlk blokta 64 çıktı kanalı vardır ve sonraki her blok, bu sayı 512'ye ulaşıncaya kadar çıktı kanalı sayısını iki katına çıkarır. Bu ağ 8 evrişimli katman ve 3 tam bağlı katman kullandığından, genellikle VGG-11 olarak adlandırılır.
 
@@ -88,10 +88,10 @@ Aşağıdaki kodda VGG-11'i uygulanıyor. Bu, `conv_arch` üzerinde bir -for- d�
 ```{.python .input}
 def vgg(conv_arch):
     net = nn.Sequential()
-    # The convolutional part
+    # Evrişimli kısım
     for (num_convs, num_channels) in conv_arch:
         net.add(vgg_block(num_convs, num_channels))
-    # The fully-connected part
+    # Tam bağlı kısım
     net.add(nn.Dense(4096, activation='relu'), nn.Dropout(0.5),
             nn.Dense(4096, activation='relu'), nn.Dropout(0.5),
             nn.Dense(10))
@@ -105,14 +105,14 @@ net = vgg(conv_arch)
 def vgg(conv_arch):
     conv_blks = []
     in_channels = 1
-    # The convolutional part
+    # Evrişimli kısım
     for (num_convs, out_channels) in conv_arch:
         conv_blks.append(vgg_block(num_convs, in_channels, out_channels))
         in_channels = out_channels
 
     return nn.Sequential(
         *conv_blks, nn.Flatten(),
-        # The fully-connected part
+        # Tam bağlı kısım
         nn.Linear(out_channels * 7 * 7, 4096), nn.ReLU(), nn.Dropout(0.5),
         nn.Linear(4096, 4096), nn.ReLU(), nn.Dropout(0.5),
         nn.Linear(4096, 10))
@@ -124,10 +124,10 @@ net = vgg(conv_arch)
 #@tab tensorflow
 def vgg(conv_arch):
     net = tf.keras.models.Sequential()
-    # The convulational part
+    # Evrişimli kısım
     for (num_convs, num_channels) in conv_arch:
         net.add(vgg_block(num_convs, num_channels))
-    # The fully-connected part
+    # Tam bağlı kısım
     net.add(tf.keras.models.Sequential([
         tf.keras.layers.Flatten(),
         tf.keras.layers.Dense(4096, activation='relu'),
