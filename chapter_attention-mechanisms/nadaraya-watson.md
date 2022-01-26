@@ -1,7 +1,7 @@
-# Dikkat havuzlama: Nadaraya-Watson Çekirdek Regresyon
+# Dikkat Ortaklama: Nadaraya-Watson Çekirdek Bağlanımı
 :label:`sec_nadaraya-watson`
 
-Artık :numref:`fig_qkv` çerçevesinde dikkat mekanizmalarının ana bileşenlerini biliyorsunuz. Yeniden sermayelenmek için sorgular (istemli işaretler) ve anahtarlar (istemsiz işaretler) arasındaki etkileşimler*dikkat havuzu* ile sonuçlanır. Dikkat biriktirme, çıktıyı üretmek için seçici olarak değerleri (duyusal girişler) bir araya getirir. Bu bölümde, dikkat mekanizmalarının pratikte nasıl çalıştığına dair üst düzey bir görünüm vermek için dikkat havuzunu daha ayrıntılı olarak anlatacağız. Özellikle, 1964 yılında önerilen Nadaraya-Watson çekirdek regresyon modeli, dikkat mekanizmaları ile makine öğrenimini göstermek için basit ama eksiksiz bir örnektir.
+Artık :numref:`fig_qkv` çerçevesinde dikkat mekanizmalarının ana bileşenlerini biliyorsunuz. Yeniden özetlemek için sorgular (istemli işaretler) ve anahtarlar (istemsiz işaretler) arasındaki etkileşimler *dikkat ortaklama* ile sonuçlanır. Dikkat ortaklama, çıktıyı üretmek için seçici olarak değerleri (duyusal girdiler) bir araya getirir. Bu bölümde, dikkat mekanizmalarının pratikte nasıl çalıştığına dair üst düzey bir görünüm vermek için dikkat ortaklamasını daha ayrıntılı olarak anlatacağız. Özellikle, 1964 yılında önerilen Nadaraya-Watson çekirdek bağlanım modeli, dikkat mekanizmaları ile makine öğrenmesini göstermek için basit ama eksiksiz bir örnektir.
 
 ```{.python .input}
 from d2l import mxnet as d2l
@@ -25,15 +25,15 @@ import tensorflow as tf
 tf.random.set_seed(seed=1322)
 ```
 
-## [**Veri Kümesi Oluşturulur**]
+## [**Veri Kümesi Oluşturma**]
 
-İşleri basit tutmak için, aşağıdaki regresyon sorununu ele alalım: $\{(x_1, y_1), \ldots, (x_n, y_n)\}$ giriş-çıkış çiftlerinin bir veri kümesi verildiğinde $\{(x_1, y_1), \ldots, (x_n, y_n)\}$, $\hat{y} = f(x)$ yeni giriş $x$ çıktısını tahmin etmek için $\hat{y} = f(x)$ nasıl öğrenilir? 
+İşleri basit tutmak için, aşağıdaki regresyon problemini ele alalım: $\{(x_1, y_1), \ldots, (x_n, y_n)\}$ girdi-çıktı çiftlerinin bir veri kümesi verildiğinde $\{(x_1, y_1), \ldots, (x_n, y_n)\}$, $\hat{y} = f(x)$ yeni bir $x$ girdisinin çıktısını tahmin etmek için $\hat{y} = f(x)$ nasıl öğrenilir? 
 
 Burada $\epsilon$ gürültü terimi ile aşağıdaki doğrusal olmayan fonksiyona göre yapay bir veri kümesi oluşturuyoruz: 
 
 $$y_i = 2\sin(x_i) + x_i^{0.8} + \epsilon,$$
 
-burada $\epsilon$ sıfır ortalama ve standart sapma ile normal bir dağılıma uyar 0.5. Hem 50 eğitim örneği hem de 50 test örneği oluşturulur. Dikkat modelini daha sonra daha iyi görselleştirmek için, eğitim girdileri sıralanır.
+burada $\epsilon$ sıfır ortalama ve 0.5 standart sapma ile normal bir dağılıma uyar. Hem 50 eğitim örneği hem de 50 test örneği üretilir. Dikkat modelini daha sonra daha iyi görselleştirmek için, eğitim girdileri sıralanır.
 
 ```{.python .input}
 n_train = 50  # No. of training examples
@@ -87,7 +87,7 @@ n_test = len(x_test)  # No. of testing examples
 n_test
 ```
 
-Aşağıdaki fonksiyon, tüm eğitim örneklerini (çevrelerle temsil edilir), `f`'ü gürültü terimi olmadan `f`'ü ve öğrenilen öngörü işlevini (“Pred” ile etiketlenmiş) çizer.
+Aşağıdaki işlev, tüm eğitim örneklerini (dairelerle temsil edilmiş), gürültü terimi olmadan gerçek referans değer veri üretme işlevi 'f'yi ("Truth" ile etiketlenmiş) ve öğrenilen tahmin işlevini ("Pred" ile etiketlenmiş) çizer.
 
 ```{.python .input}
 #@tab all
@@ -97,14 +97,14 @@ def plot_kernel_reg(y_hat):
     d2l.plt.plot(x_train, y_train, 'o', alpha=0.5);
 ```
 
-## Ortalama Havuz
+## Ortalama Ortaklama
 
-Bu regresyon problemi için belki de dünyanın “en aptalca” tahmin edicisiyle başlıyoruz: ortalama havuzlama kullanarak tüm eğitim çıktıları üzerinde ortalama: 
+Bu regresyon problemi için belki de dünyanın “en aptalca” tahmin edicisiyle başlıyoruz: Ortalama ortaklama kullanarak tüm eğitim çıktıları üzerinde ortalama: 
 
 $$f(x) = \frac{1}{n}\sum_{i=1}^n y_i,$$
 :eqlabel:`eq_avg-pooling`
 
-hangi aşağıda çizilmiştir. Gördüğümüz gibi, bu tahminci gerçekten o kadar akıllı değil.
+aşağıda çizilmiştir. Gördüğümüz gibi, bu tahminci gerçekten o kadar akıllı değil.
 
 ```{.python .input}
 y_hat = y_train.mean().repeat(n_test)
@@ -123,35 +123,34 @@ y_hat = tf.repeat(tf.reduce_mean(y_train), repeats=n_test)
 plot_kernel_reg(y_hat)
 ```
 
-## [**Parametrik Olmayan Dikkat Havuzu**]
+## [**Parametrik Olmayan Dikkat Ortaklama**]
 
-Açıkçası, ortalama havuzlama girişleri atlar $x_i$. Giriş yerlerine göre $y_i$ çıkışlarını tartmak için Nadaraya :cite:`Nadaraya.1964` ve Watson :cite:`Watson.1964` tarafından daha iyi bir fikir önerildi: 
+Açıkçası, ortalama ortaklama girdileri, $x_i$, atlar. Girdi yerlerine göre $y_i$ çıktılarını ağırlıklandırmak için Nadaraya :cite:`Nadaraya.1964` ve Watson :cite:`Watson.1964` tarafından daha iyi bir fikir önerildi: 
 
 $$f(x) = \sum_{i=1}^n \frac{K(x - x_i)}{\sum_{j=1}^n K(x - x_j)} y_i,$$
 :eqlabel:`eq_nadaraya-watson`
 
-burada $K$ bir *çekirdek*. :eqref:`eq_nadaraya-watson` içindeki tahmin ediciye *Nadaraya-Watson çekirdek regresyonu* denir. Burada çekirdeklerin ayrıntılarına dalmayacağız. :numref:`fig_qkv`'teki dikkat mekanizmalarının çerçevesini hatırlayın. Dikkat açısından bakıldığında, :eqref:`eq_nadaraya-watson`'i*dikkat havuzu* daha genelleştirilmiş bir formda yeniden yazabiliriz: 
+burada $K$ bir *çekirdek*. :eqref:`eq_nadaraya-watson` içindeki tahmin ediciye *Nadaraya-Watson çekirdek regresyonu* denir. Burada çekirdeklerin ayrıntılarına dalmayacağız. :numref:`fig_qkv`'teki dikkat mekanizmalarının çerçevesini hatırlayın. Dikkat açısından bakıldığında, :eqref:`eq_nadaraya-watson`'i *dikkat ortaklama*nın daha genelleştirilmiş bir formunda yeniden yazabiliriz: 
 
 $$f(x) = \sum_{i=1}^n \alpha(x, x_i) y_i,$$
 :eqlabel:`eq_attn-pooling`
 
-burada $x$ sorgu ve $(x_i, y_i)$ anahtar-değer çiftidir. :eqref:`eq_attn-pooling` ve :eqref:`eq_avg-pooling`'ü karşılaştırarak, buradaki dikkat biriktirme $y_i$ değerlerinin ağırlıklı bir ortalamasıdır. :eqref:`eq_attn-pooling` içindeki $\alpha(x, x_i)$, $x$ sorgu ve $\alpha$ ile modellenen anahtar $x_i$ arasındaki etkileşime dayalı olarak $y_i$ karşılık gelen değere atanır. Herhangi bir sorgu için, tüm anahtar-değer çiftleri üzerindeki dikkat ağırlıkları geçerli bir olasılık dağılımıdır: negatif değildir ve bir adede kadar toplamlar. 
+burada $x$ sorgu ve $(x_i, y_i)$ anahtar-değer çiftidir. :eqref:`eq_attn-pooling` ve :eqref:`eq_avg-pooling`'ü karşılaştırarak, buradaki dikkat havuzlama $y_i$ değerlerinin ağırlıklı bir ortalamasıdır. :eqref:`eq_attn-pooling` içindeki *dikkat ağırlığı* $\alpha(x, x_i)$, $x$ sorgu ve $\alpha$ ile modellenen anahtar $x_i$ arasındaki etkileşime dayalı olarak $y_i$ karşılık gelen değere atanır. Herhangi bir sorgu için, tüm anahtar-değer çiftleri üzerindeki dikkat ağırlıkları geçerli bir olasılık dağılımıdır: Negatif değildir ve bire toplanır. 
 
-Dikkat biriktirme sezgileri kazanmak için, sadece bir *Gauss çekirdeği* 
+Dikkat ortaklama sezgileri kazanmak için, sadece aşağıda tanımlanan bir *Gauss çekirdeği*ni düşünün 
 
 $$
 K(u) = \frac{1}{\sqrt{2\pi}} \exp(-\frac{u^2}{2}).
 $$
 
-Gauss çekirdeğini :eqref:`eq_attn-pooling` ve :eqref:`eq_nadaraya-watson`'e takmak 
+Gauss çekirdeğini :eqref:`eq_attn-pooling` ve :eqref:`eq_nadaraya-watson`'e koyarsak 
 
 $$\begin{aligned} f(x) &=\sum_{i=1}^n \alpha(x, x_i) y_i\\ &= \sum_{i=1}^n \frac{\exp\left(-\frac{1}{2}(x - x_i)^2\right)}{\sum_{j=1}^n \exp\left(-\frac{1}{2}(x - x_j)^2\right)} y_i \\&= \sum_{i=1}^n \mathrm{softmax}\left(-\frac{1}{2}(x - x_i)^2\right) y_i. \end{aligned}$$
 :eqlabel:`eq_nadaraya-watson-gaussian`
 
-:eqref:`eq_nadaraya-watson-gaussian`'te, $x$ numaralı sorgunun $x$'e daha yakın olduğu bir anahtar $x_i$ alacak
-*anahtarın karşılık gelen değerine atanan bir *daha büyük dikkat ağırlığı* aracılığıyla daha fazla dikkat* $y_i$.
+:eqref:`eq_nadaraya-watson-gaussian` içinde, verilen $x$ sorgusuna daha yakın olan bir $x_i$ anahtarı, anahtarın karşılık gelen değeri $y_i$'a atanan *daha büyük bir dikkat ağırlığı* aracılığıyla *daha fazla dikkat* alacaktır.
 
-Nadaraya-Watson çekirdek regresyonu parametrik olmayan bir modeldir; bu nedenle :eqref:`eq_nadaraya-watson-gaussian`, *parametrik olmayan dikkat havuzu* bir örnektir. Aşağıda, bu parametrik olmayan dikkat modeline dayanarak tahmini çiziyoruz. Tahmin edilen çizgi düzgün ve ortalama havuzlama tarafından üretilen yerden gerçeğe daha yakındır.
+Nadaraya-Watson çekirdek regresyonu parametrik olmayan bir modeldir; bu nedenle :eqref:`eq_nadaraya-watson-gaussian`, *parametrik olmayan dikkat ortaklama* örneğidir. Aşağıda, bu parametrik olmayan dikkat modeline dayanarak tahmini çiziyoruz. Tahmin edilen çizgi düzgün ve ortalama ortaklama tarafından üretilen gerçek referans değere daha yakındır.
 
 ```{.python .input}
 # Shape of `X_repeat`: (`n_test`, `n_train`), where each row contains the
@@ -196,7 +195,7 @@ y_hat = tf.matmul(attention_weights, tf.expand_dims(y_train, axis=1))
 plot_kernel_reg(y_hat)
 ```
 
-Şimdi [**dikkat ağırlıkları**] bir göz atalım. Burada test girdileri sorgulardır, eğitim girişleri ise anahtardır. Her iki giriş sıralandığından, sorgu anahtarı çifti ne kadar yakın olursa, dikkat ağırlığının dikkat havuzunda olduğunu görebiliriz.
+Şimdi [**dikkat ağırlıkları**na] bir göz atalım. Burada test girdileri sorgulardır, eğitim girdileri ise anahtarlardır. Her iki girdi sıralandığından, sorgu-anahtar çifti ne kadar yakın olursa, dikkat ortaklamasında dikkat ağırlığı o kadar yüksek olur.
 
 ```{.python .input}
 d2l.show_heatmaps(np.expand_dims(np.expand_dims(attention_weights, 0), 0),
@@ -218,23 +217,25 @@ d2l.show_heatmaps(tf.expand_dims(tf.expand_dims(attention_weights, axis=0), axis
                   ylabel='Sorted testing inputs')
 ```
 
-## **Parametrik Dikkat Havuzu**
+## **Parametrik Dikkat Ortaklama**
 
-Parametrik olmayan Nadaraya-Watson çekirdek regresyonu*tutarlı* avantajından yararlanır: Yeterli veri verildiğinde bu model en uygun çözüme yakınlaşır. Bununla birlikte, öğrenilebilir parametreleri dikkat havuzuna kolayca entegre edebiliriz. 
+Parametrik olmayan Nadaraya-Watson çekirdek regresyonu *tutarlılık* avantajından yararlanır: Yeterli veri verildiğinde bu model en uygun çözüme yakınlaşır. Bununla birlikte, öğrenilebilir parametreleri dikkat ortaklamasına kolayca tümleştirebiliriz. 
 
-Örnek olarak, :eqref:`eq_nadaraya-watson-gaussian`'ten biraz farklı, aşağıdaki gibi $x$ sorgu ve $x_i$ anahtarı arasındaki mesafe, öğrenilebilir bir parametre $w$ ile çarpılır: 
+Örnek olarak, :eqref:`eq_nadaraya-watson-gaussian`'ten biraz farklı, aşağıdaki gibi $x$ sorgu ve $x_i$ anahtarı arasındaki uzaklık, öğrenilebilir bir parametre $w$ ile çarpılır: 
 
 $$\begin{aligned}f(x) &= \sum_{i=1}^n \alpha(x, x_i) y_i \\&= \sum_{i=1}^n \frac{\exp\left(-\frac{1}{2}((x - x_i)w)^2\right)}{\sum_{j=1}^n \exp\left(-\frac{1}{2}((x - x_j)w)^2\right)} y_i \\&= \sum_{i=1}^n \mathrm{softmax}\left(-\frac{1}{2}((x - x_i)w)^2\right) y_i.\end{aligned}$$
 :eqlabel:`eq_nadaraya-watson-gaussian-para`
 
-Bölümün geri kalanında, :eqref:`eq_nadaraya-watson-gaussian-para`'teki dikkat havuzunun parametresini öğrenerek bu modeli eğiteceğiz. 
+Bölümün geri kalanında, :eqref:`eq_nadaraya-watson-gaussian-para`'teki dikkat ortaklama parametresini öğrenerek bu modeli eğiteceğiz. 
 
 ### Toplu Matris Çarpması
 :label:`subsec_batch_dot`
 
-Mini partiler için dikkati daha verimli bir şekilde hesaplamak için, derin öğrenme çerçeveleri tarafından sağlanan toplu matris çarpma yardımcı programlarından yararlanabiliriz. 
+Minigruplar için dikkati daha verimli bir şekilde hesaplamak için, derin öğrenme çerçeveleri tarafından sağlanan toplu matris çarpma yardımcı programlarından yararlanabiliriz. 
 
-İlk mini batch $n$ matrisleri $\mathbf{X}_1, \ldots, \mathbf{X}_n$ şekil $a\times b$ içerdiğini ve ikinci minibatch $n$ matrisleri $b\times c$ şekil $b\times c$ $\mathbf{Y}_1, \ldots, \mathbf{Y}_n$ matrisleri içerdiğini varsayalım. Onların toplu matris çarpımı $n$ şekil $a\times c$ matrisleri $\mathbf{X}_1\mathbf{Y}_1, \ldots, \mathbf{X}_n\mathbf{Y}_n$ ile sonuçlanır. Bu nedenle, [**iki şekil tensör verilen ($n$, $a$, $b$) ve ($n$, $b$, $c$), toplu matris çarpma çıktılarının şekli ($n$, $a$, $c$) .**]
+İlk minigrup $n$ matrisleri $\mathbf{X}_1, \ldots, \mathbf{X}_n$ şekil $a\times b$ içerdiğini ve ikinci minibatch $n$ matrisleri $b\times c$ şekil $b\times c$ $\mathbf{Y}_1, \ldots, \mathbf{Y}_n$ matrisleri içerdiğini varsayalım. Onların toplu matris çarpımı $n$ şekil $a\times c$ matrisleri $\mathbf{X}_1\mathbf{Y}_1, \ldots, \mathbf{X}_n\mathbf{Y}_n$ ile sonuçlanır. Bu nedenle, [**iki şekil tensör verilen ($n$, $a$, $b$) ve ($n$, $b$, $c$), toplu matris çarpma çıktılarının şekli ($n$, $a$, $c$) .**]
+
+İlk minigrubun $a\times b$ şeklinde $\mathbf{X}_1, \ldots, \mathbf{X}_n$ $n$ matrisi içerdiğini ve ikinci minigrubun $b\times c$ şeklinde $\mathbf{Y}_1, \ldots, \mathbf{Y}_n$ $n$ matrisi içerdiğini varsayalım. Onların toplu matris çarpımı, $\mathbf{X}_1\mathbf{Y}_1, \ldots, \mathbf{X}_n\mathbf{Y}_n$ $a\times c$ şeklinde $n$ matris ile sonuçlanır. Bu nedenle, [**($n$, $a$, $b$) ve ($n$, $b$, $c$) şeklinde iki tensör verildiğinde, toplu matris çarpım çıktılarının şekli ($n$, $a$, $c$)'dir.**]
 
 ```{.python .input}
 X = d2l.ones((2, 1, 4))
@@ -256,7 +257,7 @@ Y = tf.ones((2, 4, 6))
 tf.matmul(X, Y).shape
 ```
 
-Dikkat mekanizmaları bağlamında [**mini toplu işlemdeki değerlerin ağırlıklı ortalamalarını hesaplamak için minibatch matris çarpımını kullanabiliriz**]
+Dikkat mekanizmaları bağlamında, [**bir minigruptaki değerlerin ağırlıklı ortalamalarını hesaplamak için minigrup matris çarpımını kullanabiliriz.**]
 
 ```{.python .input}
 weights = d2l.ones((2, 10)) * 0.1
@@ -280,7 +281,7 @@ tf.matmul(tf.expand_dims(weights, axis=1), tf.expand_dims(values, axis=-1)).nump
 
 ### Modeli Tanımlama
 
-Mini batch matris çarpımını kullanarak, aşağıda :eqref:`eq_nadaraya-watson-gaussian-para`'teki [**parametrik dikkat havuzu**] temel alan Nadaraya-Watson çekirdek regresyonunun parametrik versiyonunu tanımlıyoruz.
+Minigrup matris çarpımını kullanarak, aşağıda :eqref:`eq_nadaraya-watson-gaussian-para`'teki [**parametrik dikkat ortaklama**]yı temel alan Nadaraya-Watson çekirdek regresyonunun parametrik versiyonunu tanımlıyoruz.
 
 ```{.python .input}
 class NWKernelRegression(nn.Block):
@@ -337,7 +338,7 @@ class NWKernelRegression(tf.keras.layers.Layer):
 
 ### Eğitim
 
-Aşağıda, dikkat modelini eğitmek için eğitim veri kümesini anahtar ve değerlere dönüştürmekteyiz. Parametrik dikkat havuzunda, herhangi bir eğitim girdisi çıktısını tahmin etmek için kendisi dışındaki tüm eğitim örneklerinden anahtar değer çiftlerini alır.
+Aşağıda, dikkat modelini eğitmek için eğitim veri kümesini anahtar ve değerlere dönüştürürüz. Parametrik dikkat ortaklamada, herhangi bir eğitim girdisi çıktısını tahmin etmek için kendisi dışındaki tüm eğitim örneklerinden anahtar-değer çiftlerini alır.
 
 ```{.python .input}
 # Shape of `X_tile`: (`n_train`, `n_train`), where each column contains the
@@ -384,7 +385,7 @@ keys = tf.reshape(X_tile[tf.cast(1 - tf.eye(n_train), dtype=tf.bool)], shape=(n_
 values = tf.reshape(Y_tile[tf.cast(1 - tf.eye(n_train), dtype=tf.bool)], shape=(n_train, -1))
 ```
 
-Kare kayıp ve stokastik degrade iniş kullanarak, [**parametrik dikkat modelini eğitir**].
+Kare kayıp ve rasgele gradyan inişi kullanarak, [**parametrik dikkat modelini eğitiriz**].
 
 ```{.python .input}
 net = NWKernelRegression()
@@ -435,7 +436,7 @@ for epoch in range(5):
     animator.add(epoch + 1, float(loss))
 ```
 
-Parametrik dikkat modelini eğittikten sonra, [**tahmini**] çizebiliriz. Eğitim veri kümesini gürültüye sığdırmaya çalışırken, öngörülen çizgi, daha önce çizilen parametrik olmayan meslektaşından daha az pürüzsüzdür.
+Parametrik dikkat modelini eğittikten sonra, [**tahminini**] çizebiliriz. Eğitim veri kümesini gürültüye oturtmaya çalışırken, tehmin edilen çizgi, daha önce çizilen parametrik olmayan karsılığından daha az pürüzsüzdür.
 
 ```{.python .input}
 # Shape of `keys`: (`n_test`, `n_train`), where each column contains the same
@@ -469,7 +470,7 @@ y_hat = net(x_test, keys, values)
 plot_kernel_reg(y_hat)
 ```
 
-Parametrik olmayan dikkat biriktirme ile karşılaştırıldığında, öğrenilebilir ve parametrik ortamda [**büyük dikkat ağırlıkları olan bölge daha keskinleşiyor**].
+Parametrik olmayan dikkat ortaklama ile karşılaştırıldığında, öğrenilebilir ve parametrik ayarda [**büyük dikkat ağırlıkları olan bölge daha keskinleşir**].
 
 ```{.python .input}
 d2l.show_heatmaps(np.expand_dims(np.expand_dims(net.attention_weights, 0), 0),
@@ -493,16 +494,16 @@ d2l.show_heatmaps(tf.expand_dims(tf.expand_dims(net.attention_weights, axis=0), 
 
 ## Özet
 
-* Nadaraya-Watson çekirdek regresyonu, dikkat mekanizmaları ile makine öğreniminin bir örneğidir.
-* Nadaraya-Watson çekirdek regresyonunun dikkat birikimi, eğitim çıktılarının ağırlıklı bir ortalamasıdır. Dikkat açısından bakıldığında, dikkat ağırlığı, bir sorgunun işlevine ve değerle eşleştirilmiş anahtara dayanan bir değere atanır.
-* Dikkat havuzlama parametrik olmayan veya parametrik olabilir.
+* Nadaraya-Watson çekirdek regresyonu, dikkat mekanizmaları ile makine öğrenmesinin bir örneğidir.
+* Nadaraya-Watson çekirdek regresyonunun dikkat ortaklaması, eğitim çıktılarının ağırlıklı bir ortalamasıdır. Dikkat açısından bakıldığında, dikkat ağırlığı, bir sorgunun işlevine ve değerle eşleştirilmiş anahtara dayanan bir değere atanır.
+* Dikkat ortaklama parametrik olabilir de olmayabilir de.
 
-## Egzersizler
+## Alıştırmalar
 
 1. Eğitim örneklerinin sayısını artırın. Parametrik olmayan Nadaraya-Watson çekirdek regresyonunu daha iyi öğrenebilir misin?
-1. Parametrik dikkat havuzlama deneyinde öğrendiğimiz $w$'ün değeri nedir? Dikkat ağırlıklarını görselleştirirken ağırlıklı bölgeyi neden daha keskin hale getiriyor?
-1. Daha iyi tahmin etmek için parametrik olmayan Nadaraya-Watson çekirdek regresyonuna nasıl hiperparametre ekleyebiliriz?
-1. Bu bölümün çekirdek regresyonu için başka bir parametrik dikkat havuzu tasarlayın. Bu yeni modeli eğitin ve dikkat ağırlıklarını görselleştirin.
+1. Parametrik dikkat ortaklama deneyinde öğrendiğimiz $w$'nin değeri nedir? Dikkat ağırlıklarını görselleştirirken ağırlıklı bölgeyi neden daha keskin hale getiriyor?
+1. Daha iyi tahmin etmek için parametrik olmayan Nadaraya-Watson çekirdek regresyonuna nasıl hiper parametre ekleyebiliriz?
+1. Bu bölümün çekirdek regresyonu için başka bir parametrik dikkat ortaklama tasarlayın. Bu yeni modeli eğitin ve dikkat ağırlıklarını görselleştirin.
 
 :begin_tab:`mxnet`
 [Discussions](https://discuss.d2l.ai/t/1598)
