@@ -1,25 +1,25 @@
-# Dikkat Iptolar
+# Dikkat İşaretleri
 :label:`sec_attention-cues`
 
-Bu kitaba gösterdiğiniz ilgi için teşekkür ederiz. Dikkat kıt bir kaynaktır: Şu anda bu kitabı okuyor ve gerisini görmezden geliyorsunuz. Böylece, paraya benzer şekilde, dikkatiniz bir fırsat maliyeti ile ödeniyor. Şu anda dikkat yatırımınızın değerli olmasını sağlamak için, güzel bir kitap üretmek için dikkatimizi dikkatli bir şekilde göstermeye son derece motive olduk. Dikkat, hayatın kemerindeki kilit taştır ve herhangi bir işin istisnalizminin anahtarını tutar. 
+Bu kitaba gösterdiğiniz ilgi için teşekkür ederiz. Dikkat kıt bir kaynaktır: Şu anda bu kitabı okuyor ve gerisini görmezden geliyorsunuz. Böylece, paraya benzer şekilde, dikkatiniz bir fırsat maliyeti ile ödeniyor. Şu anda dikkat yatırımınızın değerli olmasını sağlamak için, güzel bir kitap üretmede dikkatimizi itinalı bir şekilde göstermeye son derece motive olduk. Dikkat, hayatın kemerindeki kilit taştır ve herhangi bir işin istisnacılığının anahtarını tutar. 
 
-Ekonomi, kıt kaynakların tahsisini incelediğinden, insanların dikkatinin değiştirilebilecek sınırlı, değerli ve kıt bir mal olarak ele alındığı dikkat ekonomisi çağındayız. Üzerinde yararlanmak için çok sayıda iş modeli geliştirilmiştir. Müzik veya video akışı hizmetlerinde ya reklamlarına dikkat ediyoruz ya da bunları gizlemek için para ödüyoruz. Çevrimiçi oyunlar dünyasında büyüme için, ya yeni oyuncular çeken savaşlara katılmaya dikkat ediyoruz ya da anında güçlü olmak için para ödüyoruz. Hiçbir şey bedavaya gelmez. 
+Ekonomi, kıt kaynakların tahsisini incelediğinden, insanların dikkatinin değiştirilebilecek sınırlı, değerli ve kıt bir hammadde olarak ele alındığı dikkat ekonomisi çağındayız. Yararlanmak için üzerinde çok sayıda iş modeli geliştirilmiştir. Müzik veya video akışı hizmetlerinde ya reklamlarına dikkat ediyoruz ya da bunları gizlemek için para ödüyoruz. Çevrimiçi oyunlar dünyasında büyüme için, ya yeni oyuncular çeken savaşlara katılmaya dikkat ediyoruz ya da anında güçlü olmak için para ödüyoruz. Hiçbir şey bedavaya gelmez. 
 
-Sonuçta, çevremizdeki bilgiler kıt değildir, dikkat edilir. Görsel bir sahneyi incelerken, optik sinirimiz saniyede $10^8$ bit sırasına göre bilgi alır ve beynimizin tam olarak işleyebileceğini çok aşar. Neyse ki, atalarımız deneyimlerimizden (veri olarak da bilinir) öğrenmişlerdi ki, *tüm duyusal girişlerin eşit yaratılmamıştır*. İnsanlık tarihi boyunca, ilgiyi sadece küçük bir bilgiye yöneltme yeteneği, beynimizin kaynakları hayatta kalmak, büyümek ve avcıları, avları ve arkadaşları tespit etmek gibi sosyalleşmek için daha akıllıca tahsis etmesine olanak sağladı. 
+Sonuçta, çevremizdeki bilgiler kıt değildir, dikkat edilir. Görsel bir sahneyi incelerken, gürsel sinirimiz saniyede $10^8$ bit sırasına göre bilgi alır ve bu beynimizin tam olarak işleyebileceğini çok aşar. Neyse ki, atalarımız deneyimlerimizden (veri olarak da bilinir) öğrenmişlerdi ki, *tüm duyusal girdiler eşit yaratılmamıştır*. İnsanlık tarihi boyunca, ilgiyi sadece küçük bir bilgiye yöneltme yeteneği, beynimizin kaynakları hayatta kalmak, büyümek ve avcıları, avları ve arkadaşları tespit etmek gibi sosyalleşmek için daha akıllıca tahsis etmesine olanak sağladı. 
 
-## Biyolojide Dikkat İptaçları
+## Biyolojide Dikkat İşaretleri
 
-Görsel dünyada dikkatimizin nasıl dağıtıldığını açıklamak için iki bileşenli bir çerçeve ortaya çıktı ve yaygındır. Bu fikir 1890'larda “Amerikan psikolojisinin babası” :cite:`James.2007` olarak kabul edilen William James'e dayanmaktadır. Bu çerçevede, konular seçici olarak dikkatin spot ışığını hem *istemsiz işaret* hem de *istemli işaret* kullanarak yönlendirir. 
+Görsel dünyada dikkatimizin nasıl dağıtıldığını açıklamak için iki bileşenli bir çerçeve ortaya çıktı ve yaygın oldu. Bu fikir 1890'larda “Amerikan psikolojisinin babası” :cite:`James.2007` olarak kabul edilen William James'e dayanmaktadır. Bu çerçevede, konular seçici olarak dikkatin sahne ışığını hem *istemsiz işaret* hem de *istemli işaret* kullanarak yönlendirir. 
 
-İsteğe bağlı olmayan işaret, ortamdaki nesnelerin dikkat çekiciliğine ve dikkat çekiciliğine dayanır. Önünüzde beş nesne olduğunu düşünün: bir gazete, bir araştırma kağıdı, bir fincan kahve, bir defter ve :numref:`fig_eye-coffee`'teki gibi bir kitap. Tüm kağıt ürünleri siyah beyaz basılırken kahve fincanı kırmızıdır. Başka bir deyişle, bu kahve, bu görsel ortamda kendiliğinden belirgin ve göze çarpıyor, otomatik ve istemeden dikkat çekiyor. Böylece fovea'yı (görme keskinliğinin en yüksek olduğu makula merkezi) :numref:`fig_eye-coffee`'te gösterildiği gibi kahvenin üzerine getirirsiniz. 
+İstemsiz işaret, ortamdaki nesnelerin belirginliğine ve barizliğine dayanır. Önünüzde beş nesne olduğunu düşünün: Bir gazete, bir araştırma makalesi, bir fincan kahve, bir defter ve :numref:`fig_eye-coffee`'teki gibi bir kitap. Tüm kağıt ürünleri siyah beyaz basılıyken kahve fincanı kırmızıdır. Başka bir deyişle, bu kahve, bu görsel ortamda kendiliğinden belirgin ve bariz, otomatik ve istemsiz dikkat çekiyor. Böylece fovea'yı (görme keskinliğinin en yüksek olduğu makula merkezi) :numref:`fig_eye-coffee`'te gösterildiği gibi kahvenin üzerine getirirsiniz. 
 
-![Using the nonvolitional cue based on saliency (red cup, non-paper), attention is involuntarily directed to the coffee.](../img/eye-coffee.svg)
+![Belirginliğe dayalı istemsiz işareti kullanarak (kırmızı fincan, kağıt olmayan), dikkat istemeden kahveye yönlendirilir.](../img/eye-coffee.svg)
 :width:`400px`
 :label:`fig_eye-coffee`
 
-Kahve içtikten sonra kafeinli olursunuz ve kitap okumak istersiniz. Yani başınızı çevirin, gözlerinizi yeniden odaklayın ve :numref:`fig_eye-book`'te tasvir edildiği gibi kitaba bakın. Kahve, seğilliğe göre seçme konusunda sizi önyargılı :numref:`fig_eye-coffee`'teki durumdan farklı olarak, bu görev bağımlı durumda bilişsel ve istemli kontrol altında kitabı seçersiniz. Değişken seçim kriterlerine dayalı istemli işaret kullanarak, bu dikkat biçimi daha kasıtlıdır. Ayrıca deneğin gönüllü çabaları ile daha güçlü. 
+Kahve içtikten sonra kafeinli olursunuz ve kitap okumak istersiniz. Yani başınızı çevirin, gözlerinizi yeniden odaklayın ve :numref:`fig_eye-book`'te tasvir edildiği gibi kitaba bakın. Kahve, belirginliğe göre seçme konusunda sizi önyargılı, :numref:`fig_eye-coffee`'teki durumdan farklı olarak, bu görev bağımlı durumda bilişsel ve istemli kontrol altında kitabı seçersiniz. Değişken seçim kriterlerine dayalı istemli işaret kullanarak, bu dikkat biçimi daha kasıtlıdır. Ayrıca deneğin gönüllü çabaları ile daha güçlüdür. 
 
-![Using the volitional cue (want to read a book) that is task-dependent, attention is directed to the book under volitional control.](../img/eye-book.svg)
+![Göreve bağlı istemli işaret (kitap okumayı istemek) kullanılarak, dikkat istemli kontrol altındaki kitaba yönlendirilir.](../img/eye-book.svg)
 :width:`400px`
 :label:`fig_eye-book`
 
@@ -27,18 +27,18 @@ Kahve içtikten sonra kafeinli olursunuz ve kitap okumak istersiniz. Yani başı
 
 Dikkatli konuşlandırmayı açıklayan istemsiz ve istemli dikkat işaretlerinden esinlenerek, aşağıda bu iki dikkat işaretini birleştirerek dikkat mekanizmalarını tasarlamak için bir çerçeve anlatacağız. 
 
-Başlangıç olarak, yalnızca istemsiz ibarelerin mevcut olduğu daha basit durumu göz önünde bulundurun. Duyusal girişler üzerinde önyargı seçimi yapmak için, parametreli tam bağlı bir katman veya hatta parameterize edilmemiş maksimum veya ortalama havuzlama kullanabiliriz. 
+Başlangıç olarak, yalnızca istemsiz işaretlerin mevcut olduğu daha basit durumu göz önünde bulundurun. Duyusal girdilerde seçim taraflı olmak için, parametreli tam bağlı bir katman veya hatta parameterleri belirlenmemiş maksimum veya ortalama ortaklama kullanabiliriz.
 
-Bu nedenle, dikkat mekanizmalarını tam bağlı katmanlardan veya havuzlama katmanlarından ayıran şey, istemli işlerin dahil edilmesidir. Dikkat mekanizmaları bağlamında, istemli işaretlere *sorgular* olarak atıfta bulunuyoruz. Herhangi bir sorgu göz önüne alındığında, dikkat mekanizmaları duyusal girişler üzerinde önyargı seçimi (örneğin, ara özellik gösterimleri) *dikkat havuzu* yoluyla. Bu duyusal girişlere dikkat mekanizmaları bağlamında *değerler* denir. Daha genel olarak, her değer bir *anahtar* ile eşleştirilir ve bu durum, bu duyusal girdinin istemsiz işareti olarak düşünülebilir. :numref:`fig_qkv`'te gösterildiği gibi, verilen sorgu (istemli işaret), değerler (duyusal girişler) üzerinde önyargı seçimini yönlendiren anahtarlarla (isteğe bağlı olmayan işaretler) etkileşime girebilmesi için dikkat havuzunu tasarlayabiliriz. 
+Bu nedenle, dikkat mekanizmalarını tam bağlı katmanlardan veya ortaklama katmanlarından ayıran şey, istemli işaretlerin dahil edilmesidir. Dikkat mekanizmaları bağlamında, istemli işaretlere *sorgular* olarak atıfta bulunuyoruz. Herhangi bir sorgu göz önüne alındığında, dikkat mekanizmaları duyusal girdiler üzerinde seçimi (örneğin, ara öznitelik temsilleri) *dikkat ortaklama* yoluyla yönlendirir. Bu duyusal girdilere dikkat mekanizmaları bağlamında *değerler* denir. Daha genel olarak, her değer bir *anahtar* ile eşleştirilir ve bu durum, bu duyusal girdinin istemsiz işareti olarak düşünülebilir. :numref:`fig_qkv`'te gösterildiği gibi, verilen sorgu (istemli işaret), değerler (duyusal girdiler) üzerinde ek girdi seçimini yönlendiren anahtarlarla (istemsiz işaretler) etkileşime girebilmesi için dikkat ortaklamasını tasarlayabiliriz. 
 
-![Attention mechanisms bias selection over values (sensory inputs) via attention pooling, which incorporates queries (volitional cues) and keys (nonvolitional cues).](../img/qkv.svg)
+![Dikkat mekanizmaları, sorguları (istemli işaretleri) ve anahtarları (istemsiz işaretleri) içeren dikkat ortaklama aracılığıyla değerler (duyusal girdiler) üzerinden seçimi önyargılı kılar..](../img/qkv.svg)
 :label:`fig_qkv`
 
-Dikkat mekanizmalarının tasarımı için birçok alternatif olduğunu unutmayın. Örneğin, :cite:`Mnih.Heess.Graves.ea.2014` takviye öğrenme yöntemleri kullanılarak eğitilebilen diferansiyelleştirilemeyen bir dikkat modeli tasarlayabiliriz. :numref:`fig_qkv`'teki çerçevenin hakimiyeti göz önüne alındığında, bu çerçevedeki modeller bu bölümdeki dikkatimizin merkezi olacak. 
+Dikkat mekanizmalarının tasarımı için birçok alternatif olduğunu unutmayın. Örneğin, :cite:`Mnih.Heess.Graves.ea.2014` pekiştirmeli öğrenme yöntemleri kullanılarak eğitilebilen türevlenemeyen bir dikkat modeli tasarlayabiliriz. :numref:`fig_qkv`'teki çerçevenin hakimiyeti göz önüne alındığında, bu çerçevedeki modeller bu bölümdeki dikkatimizin merkezi olacak. 
 
 ## Dikkat Görselleştirme
 
-Ortalama havuzlama ağırlıklarının tekdüze olduğu ağırlıklı bir giriş ortalaması olarak değerlendirilebilir. Pratikte dikkat biriktirme, verilen sorgu ile farklı anahtarlar arasında ağırlıkların hesaplandığı ağırlıklı ortalamayı kullanarak değerleri toplar.
+Ortalama ortaklama ağırlıklarının tekdüze olduğu ağırlıklı bir girdi ortalaması olarak değerlendirilebilir. Pratikte dikkat ortaklama, verilen sorgu ile farklı anahtarlar arasında ağırlıkların hesaplandığı ağırlıklı ortalamayı kullanarak değerleri toplar.
 
 ```{.python .input}
 from d2l import mxnet as d2l
@@ -58,14 +58,14 @@ from d2l import tensorflow as d2l
 import tensorflow as tf
 ```
 
-Dikkat ağırlıklarını görselleştirmek için `show_heatmaps` işlevini tanımlıyoruz. Girişi `matrices` şekle sahiptir (görüntüleme için satır sayısı, ekran için sütun sayısı, sorgu sayısı, anahtar sayısı).
+Dikkat ağırlıklarını görselleştirmek için `show_heatmaps` işlevini tanımlıyoruz. `matrices` girdisi (görüntüleme için satır sayısı, görüntüleme için sütun sayısı, sorgu sayısı, anahtar sayısı) biçimine sahiptir.
 
 ```{.python .input}
 #@tab all
 #@save
 def show_heatmaps(matrices, xlabel, ylabel, titles=None, figsize=(2.5, 2.5),
                   cmap='Reds'):
-    """Show heatmaps of matrices."""
+    """Matrislerin ısı haritalarını gösterir"""
     d2l.use_svg_display()
     num_rows, num_cols = matrices.shape[0], matrices.shape[1]
     fig, axes = d2l.plt.subplots(num_rows, num_cols, figsize=figsize,
@@ -95,15 +95,15 @@ Sonraki bölümlerde, dikkat ağırlıklarını görselleştirmek için sıklık
 ## Özet
 
 * İnsanın dikkati sınırlı, değerli ve kıt bir kaynaktır.
-* Denekler hem istemsiz hem de istemli işaretleri kullanarak dikkati seçici olarak yönlendirir. Birincisi, tükürüğe dayanır ve ikincisi görev bağımlıdır.
-* Dikkat mekanizmaları, istemli uçların eklenmesi nedeniyle tamamen bağlı katmanlardan veya havuzlama katmanlarından farklıdır.
-* Dikkat mekanizmaları, sorguları (istemli ibreler) ve anahtarları (istemli olmayan ibreler) içeren dikkat havuzlama yoluyla değerler (duyusal girişler) üzerinde önyargı seçimi. Anahtarlar ve değerler eşleştirilir.
+* Denekler hem istemsiz hem de istemli işaretleri kullanarak dikkati seçici olarak yönlendirir. Birincisi, belirginliğe dayanır ve ikincisi görev bağımlıdır.
+* Dikkat mekanizmaları, istemli işaretlerin dahil edilmesi nedeniyle tam bağlı katmanlardan veya ortaklama katmanlarından farklıdır.
+* Dikkat mekanizmaları, sorguları (istemli işaretler) ve anahtarları (istemsiz işaretler) içeren dikkat ortaklama aracılığıyla değerler (duyusal girdiler) üzerinden seçimi önyargılı kılar. Anahtarlar ve değerler eşleştirilir.
 * Sorgular ve anahtarlar arasındaki dikkat ağırlıklarını görselleştirebiliriz.
 
-## Egzersizler
+## Alıştırmalar
 
-1. Makine çevirisinde belirteç tarafından bir dizi belirteci kodunu çözerken istemli işaret ne olabilir? İsteğe bağlı olmayan sinyaller ve duyusal girişler nelerdir?
-1. Rastgele bir $10 \times 10$ matrisi oluşturun ve her satırın geçerli bir olasılık dağılımı olduğundan emin olmak için softmax işlemini kullanın. Çıktı dikkat ağırlıklarını görselleştirin.
+1. Makine çevirisinde bir dizinin kodunu andıç andıç çözerken istemli işaret ne olabilir? İsteğe bağlı olmayan sinyaller ve duyusal girişler nelerdir?
+1. Rastgele bir $10 \times 10$'luk bir matris oluşturun ve her satırın geçerli bir olasılık dağılımı olduğundan emin olmak için softmaks işlemini kullanın. Çıktı dikkat ağırlıklarını görselleştirin.
 
 :begin_tab:`mxnet`
 [Discussions](https://discuss.d2l.ai/t/1596)
