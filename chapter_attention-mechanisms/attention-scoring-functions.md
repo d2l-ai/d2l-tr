@@ -1,24 +1,24 @@
 # Dikkat Puanlama Fonksiyonları
 :label:`sec_attention-scoring-functions`
 
-:numref:`sec_nadaraya-watson`'te, sorgular ve anahtarlar arasındaki etkileşimleri modellemek için bir Gauss çekirdeği kullandık. :eqref:`eq_nadaraya-watson-gaussian` yılında Gauss çekirdeğinin üssüne bir *dikkat puanlama fonksiyonu* (veya kısaca *puanlama fonksiyonu*) olarak muamele edilerek, bu fonksiyonun sonuçları temelde bir softmax işlemine beslendi. Sonuç olarak, anahtarlarla eşleştirilmiş değerler üzerinde bir olasılık dağılımı (dikkat ağırlıkları) elde ettik. Sonunda, dikkat havuzunun çıktısı, bu dikkat ağırlıklarına dayanan değerlerin ağırlıklı bir toplamıdır. 
+:numref:`sec_nadaraya-watson`'te, sorgular ve anahtarlar arasındaki etkileşimleri modellemek için bir Gauss çekirdeği kullandık. :eqref:`eq_nadaraya-watson-gaussian`'da Gauss çekirdeğinin üssüne bir *dikkat puanlama fonksiyonu* (veya kısaca *puanlama fonksiyonu*) olarak muamele edilerek, bu fonksiyonun sonuçları temelde bir softmaks işlemine beslendi. Sonuç olarak, anahtarlarla eşleştirilmiş değerler üzerinde bir olasılık dağılımı (dikkat ağırlıkları) elde ettik. Sonunda, dikkat ortaklamasının çıktısı, bu dikkat ağırlıklarına dayanan değerlerin ağırlıklı bir toplamıdır. 
 
-Yüksek düzeyde, :numref:`fig_qkv`'te dikkat mekanizmalarının çerçevesini oluşturmak için yukarıdaki algoritmayı kullanabiliriz. $a$ ile dikkat puanlama işlevini gösteren :numref:`fig_attention_output`, dikkat havuzlama çıktısının ağırlıklı bir değer toplamı olarak nasıl hesaplanabileceğini göstermektedir. Dikkat ağırlıkları bir olasılık dağılımı olduğundan, ağırlıklı toplamı esas olarak ağırlıklı bir ortalamadır. 
+Yüksek düzeyde, :numref:`fig_qkv`'te dikkat mekanizmalarının çerçevesini oluşturmak için yukarıdaki algoritmayı kullanabiliriz. $a$ ile dikkat ortaklama işlevini gösteren :numref:`fig_attention_output`, dikkat havuzlama çıktısının ağırlıklı bir değer toplamı olarak nasıl hesaplanabileceğini göstermektedir. Dikkat ağırlıkları bir olasılık dağılımı olduğundan, ağırlıklı toplamı esas olarak ağırlıklı bir ortalamadır. 
 
-![Computing the output of attention pooling as a weighted average of values.](../img/attention-output.svg)
+![Değerlerin ağırlıklı ortalaması olarak dikkat ortaklamasının çıktısını hesaplama.](../img/attention-output.svg)
 :label:`fig_attention_output`
 
-Matematiksel olarak, bir sorgu olduğunu varsayalım $\mathbf{q} \in \mathbb{R}^q$ ve $m$ anahtar-değer çiftleri $(\mathbf{k}_1, \mathbf{v}_1), \ldots, (\mathbf{k}_m, \mathbf{v}_m)$, nerede herhangi $\mathbf{k}_i \in \mathbb{R}^k$ ve herhangi $\mathbf{v}_i \in \mathbb{R}^v$. Dikkat biriktirme $f$ değerlerin ağırlıklı bir toplamı olarak örneklenir: 
+Matematiksel olarak, $\mathbf{q} \in \mathbb{R}^q$ sorgumuz ve $m$ $(\mathbf{k}_1, \mathbf{v}_1), \ldots, (\mathbf{k}_m, \mathbf{v}_m)$ anahtar-değer çiftlerimiz olduğunu varsayalım, öyle ki $\mathbf{k}_i \in \mathbb{R}^k$ ve $\mathbf{v}_i \in \mathbb{R}^v$. Dikkat ortaklama $f$, değerlerin ağırlıklı bir toplamı olarak örneklendirilir: 
 
 $$f(\mathbf{q}, (\mathbf{k}_1, \mathbf{v}_1), \ldots, (\mathbf{k}_m, \mathbf{v}_m)) = \sum_{i=1}^m \alpha(\mathbf{q}, \mathbf{k}_i) \mathbf{v}_i \in \mathbb{R}^v,$$
 :eqlabel:`eq_attn-pooling`
 
-$\mathbf{q}$ ve anahtar $\mathbf{k}_i$ için dikkat ağırlığı (skaler), iki vektörü bir skalere eşleyen bir dikkat puanlama işlevinin $a$'nın softmax çalışması ile hesaplanır: 
+$\mathbf{q}$ ve anahtar $\mathbf{k}_i$ için dikkat ağırlığı (skaler), iki vektörü bir skalere eşleyen bir dikkat puanlama işlevi $a$'nın softmaks işlemi ile hesaplanır: 
 
 $$\alpha(\mathbf{q}, \mathbf{k}_i) = \mathrm{softmax}(a(\mathbf{q}, \mathbf{k}_i)) = \frac{\exp(a(\mathbf{q}, \mathbf{k}_i))}{\sum_{j=1}^m \exp(a(\mathbf{q}, \mathbf{k}_j))} \in \mathbb{R}.$$
 :eqlabel:`eq_attn-scoring-alpha`
 
-Gördüğümüz gibi, dikkat puanlama fonksiyonunun farklı seçimleri $a$ farklı dikkat havuzlama davranışlarına yol açar. Bu bölümde, daha sonra daha sofistike dikkat mekanizmaları geliştirmek için kullanacağımız iki popüler puanlama fonksiyonunu tanıtıyoruz.
+Gördüğümüz gibi, $a$ dikkat puanlama fonksiyonunun farklı seçimleri  farklı dikkat ortaklama davranışlarına yol açar. Bu bölümde, daha sonra daha gelişmiş dikkat mekanizmaları geliştirmek için kullanacağımız iki popüler puanlama fonksiyonunu tanıtıyoruz.
 
 ```{.python .input}
 import math
@@ -42,9 +42,9 @@ from d2l import tensorflow as d2l
 import tensorflow as tf
 ```
 
-## [**Maskeli Softmax İşlem**]
+## [**Maskeli Softmaks İşlemi**]
 
-Daha önce de belirttiğimiz gibi, dikkat ağırlıkları olarak olasılık dağılımını elde etmek için bir softmax işlemi kullanılır. Bazı durumlarda, tüm değerler dikkat havuzuna beslenmemelidir. Örneğin, :numref:`sec_machine_translation`'te verimli mini toplu işlem için, bazı metin dizileri anlam taşımayan özel belirteçlerle doldurulmuştur. Değerler olarak yalnızca anlamlı belirteçler üzerinde bir dikkat biriktirmek için, softmax hesaplarken bu belirtilen aralığın ötesinde olanları filtrelemek için geçerli bir sıra uzunluğu (belirteç sayısı olarak) belirtebiliriz. Bu şekilde, geçerli uzunluğun ötesinde herhangi bir değerin sıfır olarak maskelendiği aşağıdaki `masked_softmax` işlevinde böyle bir *maskelenmiş softmax işlemi* uygulayabiliriz.
+Daha önce de belirttiğimiz gibi, olasılık dağılımını dikkat ağırlıkları olarak elde etmek için bir softmaks işlemi kullanılır. Bazı durumlarda, tüm değerler dikkat ortaklamasına beslenmemelidir. Örneğin, :numref:`sec_machine_translation`'te verimli minigrup için, bazı metin dizileri anlam taşımayan özel belirteçlerle doldurulmuştur. Değerler olarak yalnızca anlamlı belirteçler üzerinde bir dikkat ortaklamak için, softmaks hesaplarken bu belirtilen aralığın ötesinde olanları filtrelemek için geçerli bir sıra uzunluğu (belirteç sayısı olarak) belirtebiliriz. Bu şekilde, geçerli uzunluğun ötesinde herhangi bir değerin sıfır olarak maskelendiği aşağıdaki `masked_softmax` işlevinde böyle bir *maskelenmiş softmaks işlemi* uygulayabiliriz.
 
 ```{.python .input}
 #@save
@@ -108,7 +108,7 @@ def masked_softmax(X, valid_lens):
         return tf.nn.softmax(tf.reshape(X, shape=shape), axis=-1)
 ```
 
-[**bu işlevin nasıl çalıştığını gösterin**] için, bu iki örnek için geçerli uzunlukların sırasıyla iki ve üç olduğu iki $2 \times 4$ matris örneğinden oluşan bir mini batch düşünün. Maskelenmiş softmax işleminin bir sonucu olarak, geçerli uzunlukların dışındaki değerlerin tümü sıfır olarak maskelenir.
+[**Bu işlevin nasıl çalıştığını göstermek**] için, bu iki örnek için geçerli uzunlukların sırasıyla iki ve üç olduğu iki tane $2 \times 4$ matris örneğinden oluşan bir minigrup düşünün. Maskelenmiş softmaks işleminin bir sonucu olarak, geçerli uzunlukların dışındaki değerlerin tümü sıfır olarak maskelenir.
 
 ```{.python .input}
 masked_softmax(np.random.uniform(size=(2, 2, 4)), d2l.tensor([2, 3]))
@@ -124,7 +124,7 @@ masked_softmax(torch.rand(2, 2, 4), torch.tensor([2, 3]))
 masked_softmax(tf.random.uniform(shape=(2, 2, 4)), tf.constant([2, 3]))
 ```
 
-Benzer şekilde, her matris örneğindeki her satır için geçerli uzunlukları belirtmek için iki boyutlu bir tensör de kullanabiliriz.
+Benzer şekilde, her matris örneğindeki her satır için geçerli uzunlukları belirtmede iki boyutlu bir tensör de kullanabiliriz.
 
 ```{.python .input}
 masked_softmax(np.random.uniform(size=(2, 2, 4)),
@@ -141,15 +141,15 @@ masked_softmax(torch.rand(2, 2, 4), d2l.tensor([[1, 3], [2, 4]]))
 masked_softmax(tf.random.uniform((2, 2, 4)), tf.constant([[1, 3], [2, 4]]))
 ```
 
-## [**Katkı Maddi Dikkat**]
+## [**Toplayıcı Dikkat**]
 :label:`subsec_additive-attention`
 
-Genel olarak, sorgular ve anahtarlar farklı uzunluklarda vektörler olduğunda, puanlama işlevi olarak katkı maddesi dikkat kullanabiliriz. Bir sorgu $\mathbf{q} \in \mathbb{R}^q$ ve bir anahtar $\mathbf{k} \in \mathbb{R}^k$, *katkı dikkat* puanlama fonksiyonu göz önüne alındığında 
+Genel olarak, sorgular ve anahtarlar farklı uzunluklarda vektörler olduğunda, puanlama işlevi olarak toplayıcı dikkat kullanabiliriz. Bir sorgu $\mathbf{q} \in \mathbb{R}^q$ ve bir anahtar $\mathbf{k} \in \mathbb{R}^k$, *toplayıcı dikkat* puanlama fonksiyonu göz önüne alındığında 
 
 $$a(\mathbf q, \mathbf k) = \mathbf w_v^\top \text{tanh}(\mathbf W_q\mathbf q + \mathbf W_k \mathbf k) \in \mathbb{R},$$
 :eqlabel:`eq_additive-attn`
 
-burada öğrenilebilir parametreler $\mathbf W_q\in\mathbb R^{h\times q}$, $\mathbf W_k\in\mathbb R^{h\times k}$ ve $\mathbf w_v\in\mathbb R^{h}$. :eqref:`eq_additive-attn`'e eşdeğer olarak, sorgu ve anahtar birleştirilir ve gizli birim sayısı $h$ olan bir hiper parametre olan tek bir gizli katman ile bir MLP beslenir. Etkinleştirme fonksiyonu olarak $\tanh$'yı kullanarak ve önyargı terimlerini devre dışı bırakarak, aşağıdakilere katkı maddesi dikkat uyguluyoruz.
+burada $\mathbf W_q\in\mathbb R^{h\times q}$, $\mathbf W_k\in\mathbb R^{h\times k}$ ve $\mathbf w_v\in\mathbb R^{h}$  öğrenilebilir parametrelerdir. :eqref:`eq_additive-attn`'e eşdeğer olarak, sorgu ve anahtar bitiştirilir ve gizli birim sayısı $h$ hiper parametresi olan bir tek gizli katmanlı MLP'ye beslenir. Etkinleştirme fonksiyonu olarak $\tanh$'yı kullanarak ve ek girdi terimlerini devre dışı bırakarak, aşağıdakilere toplayıcı dikkat uyguluyoruz.
 
 ```{.python .input}
 #@save
@@ -245,7 +245,7 @@ class AdditiveAttention(tf.keras.layers.Layer):
             self.attention_weights, **kwargs), values)
 ```
 
-[**yukarıdaki `AdditiveAttention` sınıfı gösterelim**], sorguların, anahtarların ve değerlerin şekillerinin ($2$, $1$, $20$), ($2$, $20$), ($2$, $10$, $2$) ve ($2$, $2$, $2$) ve ($2$, $2$, $2$) sırasıyla 32293619, $10$, $4$). Dikkat havuzu çıktısı bir şekle sahiptir (toplu iş boyutu, sorgular için adım sayısı, değerler için özellik boyutu).
+[**Yukarıdaki 'AdditiveAttention' sınıfını**] sorguların, anahtarların ve değerlerin şekillerinin (toplu iş boyutu, adım sayısı veya belirteçlerdeki sıra uzunluğu, öznitelik boyutu) sırasıyla ($2$, $1$, $20$), (2$, 10$, 2$) ve (2$, 10$, 4$) olduğu bir basit örnek ile gösterelim.
 
 ```{.python .input}
 queries, keys = d2l.normal(0, 1, (2, 1, 20)), d2l.ones((2, 10, 2))
@@ -285,7 +285,7 @@ attention = AdditiveAttention(key_size=2, query_size=20, num_hiddens=8,
 attention(queries, keys, values, valid_lens, training=False)
 ```
 
-Her ne kadar katkı maddesi öğrenilebilir parametreler içerse de, bu örnekte her anahtar aynı olduğundan, [**dikkat ağırlıkları**] belirtilen geçerli uzunluklara göre belirlenir.
+Her ne kadar toplayıcı dikkat öğrenilebilir parametreler içerse de, bu örnekte her anahtar aynı olduğundan, önceden düzenlenmiş geçerli uzunluklara göre belirlenen [**dikkat ağırlıkları**] tekdüzedir.
 
 ```{.python .input}
 #@tab all
@@ -293,18 +293,18 @@ d2l.show_heatmaps(d2l.reshape(attention.attention_weights, (1, 1, 2, 10)),
                   xlabel='Keys', ylabel='Queries')
 ```
 
-## [**Ölçekli Nokta Ürün Dikkati**]
+## [**Ölçeklendirilmiş Nokta Çarpımı Dikkati**]
 
-Puanlama fonksiyonu için hesaplama açısından daha verimli bir tasarım sadece nokta ürünü olabilir. Ancak, nokta ürün işlemi hem sorgu hem de anahtarın aynı vektör uzunluğuna sahip olmasını gerektirir, yani $d$. Sorgu ve anahtar tüm öğeleri sıfır ortalama ve birim varyansı ile bağımsız rasgele değişkenler olduğunu varsayalım. Her iki vektörün nokta çarpımının sıfır ortalama ve $d$ varyansı vardır. Nokta ürününün varyansının vektör uzunluğundan bağımsız olarak hala bir kalmasını sağlamak için*ölçeklendirilmiş nokta ürün dikkati* puanlama işlevi 
+Puanlama fonksiyonu için hesaplama açısından daha verimli bir tasarım basitçe nokta çarpımı olabilir. Ancak, nokta çarpımı işlemi hem sorgu hem de anahtarın aynı vektör uzunluğuna sahip olmasını gerektirir, yani $d$. Sorgu ve anahtarın tüm öğelerinin sıfır ortalama ve birim varyanslı bağımsız rasgele değişkenler olduğunu varsayalım. Her iki vektörün nokta çarpımının sıfır ortalama ve $d$ varyansı vardır. Nokta çarpımının varyansının vektör uzunluğundan bağımsız olarak hala bir kalmasını sağlamak için *ölçeklendirilmiş nokta çarpımı dikkati* puanlama işlevi 
 
 $$a(\mathbf q, \mathbf k) = \mathbf{q}^\top \mathbf{k}  /\sqrt{d}$$
 
-nokta ürününü $\sqrt{d}$ ile böler. Uygulamada, çoğu zaman $n$ sorguları ve $m$ anahtar-değer çiftleri için bilgi işlem dikkat gibi verimlilik için minibatch'larda düşünüyoruz, burada sorguların ve anahtarların uzunluğu $d$ ve değerlerin uzunluğu $v$ olduğu. $\mathbf Q\in\mathbb R^{n\times d}$, anahtarlar $\mathbf K\in\mathbb R^{m\times d}$ ve $\mathbf V\in\mathbb R^{m\times v}$ değerlerinin ölçeklendirilmiş nokta ürün dikkatini 
+nokta çarpımını $\sqrt{d}$ ile böler. Uygulamada, genellikle verimlilik için, sorguların ve anahtarların $d$ uzunluğunda ve değerlerin $v$ uzunluğunda olduğu $n$ sorguları ve $m$ anahtar/değer çiftleri için dikkat hesaplama gibi, minigruplar halinde düşünürüz. $\mathbf Q\in\mathbb R^{n\times d}$ sorgularının, $\mathbf K\in\mathbb R^{m\times d}$ anahtarlarının ve $\mathbf V\in\mathbb R^{m\times v}$ değerlerinin ölçeklendirilmiş nokta çarpımı dikkati şöyledir
 
 $$ \mathrm{softmax}\left(\frac{\mathbf Q \mathbf K^\top }{\sqrt{d}}\right) \mathbf V \in \mathbb{R}^{n\times v}.$$
 :eqlabel:`eq_softmax_QK_V`
 
-Ölçeklendirilmiş nokta ürün dikkatini aşağıdaki uygulamada, model düzenlenmesi için bırakma kullanıyoruz.
+Aşağıdaki ölçeklendirilmiş nokta çarpımı dikkati uygulamasında, model düzenlileştirmesi için hattan düşürme kullanıyoruz.
 
 ```{.python .input}
 #@save
@@ -371,7 +371,7 @@ class DotProductAttention(tf.keras.layers.Layer):
         return tf.matmul(self.dropout(self.attention_weights, **kwargs), values)
 ```
 
-[**yukarıdaki `DotProductAttention` sınıfı**] göstermek için, daha önceki oyuncak örneğindeki aynı tuşları, değerleri ve geçerli uzunlukları katkı maddesi için kullanıyoruz. Nokta ürün işlemi için, sorguların özellik boyutunu anahtarlarınkiyle aynı hale getiririz.
+[**Yukarıdaki `DotProductAttention` sınıfını**] göstermek için, toplayıcı dikkat için önceki basit örnekteki aynı anahtarları, değerleri ve geçerli uzunlukları kullanıyoruz. Nokta çarpım işlemi için, sorguların öznitelik boyutunu anahtarlarınkiyle aynı yapıyoruz.
 
 ```{.python .input}
 queries = d2l.normal(0, 1, (2, 1, 2))
@@ -395,7 +395,7 @@ attention = DotProductAttention(dropout=0.5)
 attention(queries, keys, values, valid_lens, training=False)
 ```
 
-Katkı dikkat gösterimindeki gibi, `keys` herhangi bir sorgu ile ayırt edilemeyen aynı elemanı içerdiğinden, [**tekdüze dikkat ağırlıkları**] elde edilir.
+Toplayıcı dikkat gösterimindeki gibi, `keys` herhangi bir sorgu ile ayırt edilemeyen aynı elemanı içerdiğinden, [**tekdüze dikkat ağırlıkları**] elde edilir.
 
 ```{.python .input}
 #@tab all
@@ -405,14 +405,14 @@ d2l.show_heatmaps(d2l.reshape(attention.attention_weights, (1, 1, 2, 10)),
 
 ## Özet
 
-* Dikkat puanlama fonksiyonunun farklı seçeneklerinin dikkat havuzunun farklı davranışlarına yol açtığı ağırlıklı bir değer ortalaması olarak dikkat biriktirme çıktısını hesaplayabiliriz.
-* Sorgular ve anahtarlar farklı uzunluklarda vektörler olduğunda, katkı maddesi dikkat puanlama işlevini kullanabiliriz. Aynı olduklarında, ölçeklendirilmiş nokta ürün dikkat puanlama işlevi hesaplama açısından daha etkilidir.
+* Dikkat puanlama fonksiyonunun farklı seçeneklerinin dikkat ortaklamasının farklı davranışlarına yol açtığı ağırlıklı bir değer ortalaması olarak dikkat ortaklama çıktısını hesaplayabiliriz.
+* Sorgular ve anahtarlar farklı uzunluklarda vektörler olduğunda, toplayıcı dikkat puanlama işlevini kullanabiliriz. Aynı olduklarında, ölçeklendirilmiş nokta çarpımı dikkat puanlama işlevi hesaplama açısından daha verimlidir.
 
-## Egzersizler
+## Alıştırmalar
 
-1. Oyuncak örneğindeki tuşları değiştirin ve dikkat ağırlıklarını görselleştirin. Katkı dikkat ve ölçekli nokta ürün dikkati hala aynı dikkat ağırlıklarını veriyor mu? Neden ya da neden olmasın?
+1. Basit örnekteki anahtarları değiştirin ve dikkat ağırlıklarını görselleştirin. Toplayıcı dikkat ve ölçeklendirilmiş nokta çarpımı dikkati hala aynı dikkat ağırlıklarını veriyor mu? Neden ya da neden değil?
 1. Yalnızca matris çarpımlarını kullanarak, farklı vektör uzunluklarına sahip sorgular ve anahtarlar için yeni bir puanlama işlevi tasarlayabilir misiniz?
-1. Sorgular ve anahtarlar aynı vektör uzunluğuna sahip olduğunda, vektör toplamı puanlama fonksiyonu için nokta ürününden daha iyi bir tasarım mıdır? Neden ya da neden olmasın?
+1. Sorgular ve anahtarlar aynı vektör uzunluğuna sahip olduğunda, vektör toplamı puanlama fonksiyonu için nokta çarpımından daha iyi bir tasarım mıdır? Neden ya da neden değil?
 
 :begin_tab:`mxnet`
 [Discussions](https://discuss.d2l.ai/t/346)

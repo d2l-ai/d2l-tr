@@ -195,7 +195,7 @@ y_hat = tf.matmul(attention_weights, tf.expand_dims(y_train, axis=1))
 plot_kernel_reg(y_hat)
 ```
 
-Şimdi [**dikkat ağırlıkları**na] bir göz atalım. Burada test girdileri sorgulardır, eğitim girdileri ise anahtarlardır. Her iki girdi sıralandığından, sorgu-anahtar çifti ne kadar yakın olursa, dikkat ortaklamasında dikkat ağırlığı o kadar yüksek olur.
+Şimdi [**dikkat ağırlıkları**]na bir göz atalım. Burada test girdileri sorgulardır, eğitim girdileri ise anahtarlardır. Her iki girdi sıralandığından, sorgu-anahtar çifti ne kadar yakın olursa, dikkat ortaklamasında dikkat ağırlığı o kadar yüksek olur.
 
 ```{.python .input}
 d2l.show_heatmaps(np.expand_dims(np.expand_dims(attention_weights, 0), 0),
