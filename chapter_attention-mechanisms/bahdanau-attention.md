@@ -1,22 +1,21 @@
-# Bahdanau'nun Dikkatine
-
+# Bahdanau Dikkati
 :label:`sec_seq2seq_attention` 
 
-:numref:`sec_seq2seq`'te makine çevirisi problemini inceledik, burada sıralı öğrenme için iki RNN temelinde bir kodlayıcı-dekoder mimarisi tasarladık. Özellikle, RNN kodlayıcısı bir değişken uzunluktaki diziyi sabit şekil bağlam değişkenine dönüştürür, daha sonra RNN kod çözücüsü, oluşturulan belirteçlere ve bağlam değişkenine göre belirteç tarafından çıktı (hedef) sırası belirteci oluşturur. Ancak, tüm giriş (kaynak) belirteçleri belirli bir belirteci kodlamak için yararlı olmasa da, giriş sırasının tamamını kodlayan *same* bağlam değişkeni hala her kod çözme adımında kullanılır. 
+:numref:`sec_seq2seq`'te makine çevirisi problemini inceledik, burada diziden diziye öğrenme için iki RNN temelinde bir kodlayıcı-kodçözücü mimarisi tasarladık. Özellikle, RNN kodlayıcısı bir değişken uzunluktaki diziyi sabit şekilli bağlam değişkenine dönüştürür, daha sonra RNN kodçözücüsü, üretilen belirteçlere ve bağlam değişkenine göre belirteç belirteç çıktı (hedef) dizisini oluşturur. Ancak, tüm girdi (kaynak) belirteçleri belirli bir belirteci kodlamak için yararlı olmasa da, girdi dizisinin tamamını kodlayan *aynı* bağlam değişkeni hala her kod çözme adımında kullanılır. 
 
-Graves, belirli bir metin dizisi için el yazısı oluşturmanın ayrı fakat ilgili bir zorluğunda, metin karakterlerini çok daha uzun kalem iziyle hizalamak için farklılaştırılabilir bir dikkat modeli tasarladı. Bu model, hizalamanın yalnızca tek bir yönde hareket ettiği :cite:`Graves.2013`. Hizalamayı öğrenme fikrinden esinlenen Bahdanau vd. :cite:`Bahdanau.Cho.Bengio.2014` ciddi tek yönlü hizalama sınırlaması olmaksızın farklılaştırılabilir bir dikkat modeli önerdi. Bir belirteci tahmin ederken, tüm giriş belirteçleri uygun değilse, model yalnızca giriş sırasının geçerli tahminle ilgili bölümlerine hizalar (veya katılır). Bu, bağlam değişkeninin dikkat havuzunun bir çıktısı olarak ele alınarak elde edilir. 
+Belirli bir metin dizisi için el yazısı oluşturmayla ilgili ayrı ama bağlantılı bir zorlukta Graves, metin karakterlerini çok daha uzun kalem iziyle hizalamak için türevlenebilir bir dikkat modeli tasarladı; burada hizalama yalnızca bir yönde hareket ediyor :cite:`Graves.2013`. Hizalamayı öğrenme fikrinden esinlenen Bahdanau ve ark. :cite:`Bahdanau.Cho.Bengio.2014` keskin bir tek yönlü hizalama sınırlaması olmaksızın türevlenebilir bir dikkat modeli önerdi. Bir belirteci tahmin ederken, tüm girdi belirteçleri ilgili değilse, model yalnızca girdi dizisinin geçerli tahminle ilgili bölümlerine hizalar (veya eşler). Bu, bağlam değişkeninin dikkat ortaklamasının bir çıktısı olarak ele alınarak elde edilir. 
 
 ## Model
 
-Aşağıdaki RNN kodlayıcı-kod çözücüsü için Bahdanau'nun dikkatini açıklarken, :numref:`sec_seq2seq`'te aynı notasyonu takip edeceğiz. Yeni dikkat tabanlı model :numref:`sec_seq2seq`'teki :numref:`sec_seq2seq`'teki $\mathbf{c}$ bağlam değişkeni :eqref:`eq_seq2seq_s_t`'te $\mathbf{c}_{t'}$ herhangi bir kod çözme saati adımında $t'$ ile değiştirildiği dışında aynıdır. Giriş dizisinde $T$ belirteçleri olduğunu varsayalım, kod çözme zamanı adımındaki bağlam değişkeni $t'$ dikkat havuzunun çıktısıdır: 
+Aşağıdaki RNN kodlayıcı-kodçözücüsü için Bahdanau dikkatini açıklarken, :numref:`sec_seq2seq`'te aynı notasyonu takip edeceğiz. Yeni dikkat temelli model, :eqref:`eq_seq2seq_s_t` içindeki $\mathbf{c}$ bağlam değişkeninin herhangi bir $t'$ kod çözme zaman adımında $\mathbf{c}_{t'}$ ile değiştirilmesi dışında :numref:`sec_seq2seq` içindekiyle aynıdır. Girdi dizisinde $T$ belirteçleri olduğunu varsayalım, kod çözme zamanı adımındaki bağlam değişkeni $t'$ dikkat ortaklamasının çıktısıdır: 
 
 $$\mathbf{c}_{t'} = \sum_{t=1}^T \alpha(\mathbf{s}_{t' - 1}, \mathbf{h}_t) \mathbf{h}_t,$$
 
-Burada dekoder gizli durumu $\mathbf{s}_{t' - 1}$ zaman adım $t' - 1$ sorgu ve kodlayıcı gizli durumları $\mathbf{h}_t$ hem anahtarlar hem de değerlerdir ve $\alpha$ dikkat ağırlığı :eqref:`eq_attn-scoring-alpha` ile tanımlanan katkı dikkat puanlama işlevini kullanarak :eqref:`eq_attn-scoring-alpha`'de olduğu gibi hesaplanır. 
+burada zaman adım $t' - 1$'deki kodçözücü gizli durumu $\mathbf{s}_{t' - 1}$ sorgudur ve kodlayıcı gizli durumları $\mathbf{h}_t$ hem anahtarlar hem de değerlerdir ve $\alpha$ dikkat ağırlığı :eqref:`eq_attn-scoring-alpha` ile tanımlanan toplayıcı dikkat puanlama işlevini kullanarak :eqref:`eq_attn-scoring-alpha`'de olduğu gibi hesaplanır. 
 
-:numref:`fig_seq2seq_details`'teki vanilya RNN kodlayıcı-dekoder mimarisinden biraz farklı olan Bahdanau'nun dikkatiyle aynı mimari :numref:`fig_s2s_attention_details`'te tasvir edilmiştir. 
+:numref:`fig_seq2seq_details`'teki sıradan RNN kodlayıcı-kodçözücü mimarisinden biraz farklı olan Bahdanau dikkati ile aynı mimari :numref:`fig_s2s_attention_details`'te tasvir edilmiştir. 
 
-![Layers in an RNN encoder-decoder model with Bahdanau attention.](../img/seq2seq-attention-details.svg)
+![Bahdanau dikkatli bir RNN kodlayıcı-kodçözücü modelindeki katmanlar.](../img/seq2seq-attention-details.svg)
 :label:`fig_s2s_attention_details`
 
 ```{.python .input}
@@ -39,9 +38,9 @@ from d2l import tensorflow as d2l
 import tensorflow as tf
 ```
 
-## Çözücüyü Dikkatle Tanımlama
+## Çözücüyü Dikkat ile Tanımlama
 
-RNN kodlayıcı-kod çözücüyü Bahdanau'nun dikkatiyle uygulamak için, sadece kod çözücüyü yeniden tanımlamamız gerekiyor. Öğrenilen dikkat ağırlıklarını daha rahat görselleştirmek için, aşağıdaki `AttentionDecoder` sınıfı [**dikkat mekanizmalarına sahip kod çözücüler için temel arabirim**] tanımlar.
+RNN kodlayıcı-kodçözücüyü Bahdanau dikkati ile uygulamak için, sadece kodçözücüyü yeniden tanımlamamız gerekiyor. Öğrenilen dikkat ağırlıklarını daha rahat görselleştirmek için, aşağıdaki `AttentionDecoder` sınıfı [**dikkat mekanizmalarına sahip kodçözücüler için temel arabirimi**] tanımlar.
 
 ```{.python .input}
 #@tab all
@@ -56,10 +55,8 @@ class AttentionDecoder(d2l.Decoder):
         raise NotImplementedError
 ```
 
-Now let us [**implement
-the RNN decoder with Bahdanau attention**]
-in the following `Seq2SeqAttentionDecoder` class.
-Kod çözücünün durumu ile başlatılır (i) kodlayıcı son katman gizli durumları her zaman adımlarında (tuşlar ve dikkat değerleri olarak); (ii) son zaman adımında kodlayıcı tüm katmanlı gizli durumu (kod çözücünün gizli durumunu başlatmak için); ve (iii) kodlayıcının geçerli uzunluğu ( dikkat havuzunda dolgu belirteçleri). Her kod çözme zaman adımında, kod çözücü son katman gizli durumu önceki zaman adımında dikkat sorgusu olarak kullanılır. Sonuç olarak, hem dikkat çıkışı hem de giriş gömme RNN kod çözücünün girişi olarak birleştirilir.
+
+Şimdi, aşağıdaki `Seq2SeqAttentionDecoder' sınıfında [**RNN kodçözücüyü Bahdanau dikkatiyle**] uygulayalım. Kodçözücünün durumu, (i) tüm zaman adımlarında kodlayıcı son katman gizli durumları (dikkat anahtarları ve değerleri olarak); (ii) son zaman adımında kodlayıcı tüm katman gizli durumu (kod çözücünün gizli durumunu ilklemek için); ve (iii) geçerli  kodlayıcı uzunluğu (dikkat ortaklamasındaki dolgu belirteçlerini hariç tutmak için) ile ilklenir. Her kod çözme zaman adımında, kod çözücü son katman gizli durumu önceki zaman adımında dikkat sorgusu olarak kullanılır. Sonuç olarak, hem dikkat çıktısı hem de girdi gömmesi RNN kod çözücünün girdisi olarak bitiştirilir.
 
 ```{.python .input}
 class Seq2SeqAttentionDecoder(AttentionDecoder):
@@ -212,10 +209,7 @@ class Seq2SeqAttentionDecoder(AttentionDecoder):
         return self._attention_weights
 ```
 
-In the following, we [**test the implemented
-decoder**] with Bahdanau attention
-using a minibatch of 4 sequence inputs
-of 7 time steps.
+Aşağıda, 7 zaman adımlı 4 dizi girdisinden oluşan bir minigrup kullanarak Bahdanau dikkatiyle [**uygulanan kod çözücüyü**] test ediyoruz.
 
 ```{.python .input}
 encoder = d2l.Seq2SeqEncoder(vocab_size=10, embed_size=8, num_hiddens=16,
@@ -256,9 +250,9 @@ output, state = decoder(X, state, training=False)
 output.shape, len(state), state[0].shape, len(state[1]), state[1][0].shape
 ```
 
-## [**Eğitim**]
+## [**Eğitme**]
 
-:numref:`sec_seq2seq_training`'e benzer şekilde, burada hiperparemetreleri belirtiyoruz, bir kodlayıcı ve Bahdanau'nun dikkatini çeken bir kod çözücü oluşturuyor ve bu modeli makine çevirisi için eğitiyoruz. Yeni eklenen dikkat mekanizması nedeniyle, bu eğitim :numref:`sec_seq2seq_training`'te dikkat mekanizmaları olmadan çok daha yavaştır.
+:numref:`sec_seq2seq_training`'e benzer şekilde, burada hiper parametreleri belirtiyoruz, Bahdanau dikkatli bir kodlayıcı ve bir kodçözücü oluşturuyor ve bu modeli makine çevirisi için eğitiyoruz. Yeni eklenen dikkat mekanizması nedeniyle, bu eğitim :numref:`sec_seq2seq_training`'teki dikkat mekanizmaları olmadan çok daha yavaştır.
 
 ```{.python .input}
 #@tab all
@@ -275,7 +269,7 @@ net = d2l.EncoderDecoder(encoder, decoder)
 d2l.train_seq2seq(net, train_iter, lr, num_epochs, tgt_vocab, device)
 ```
 
-Model eğitildikten sonra, [**birkaç İngilizce cümle**] Fransızca'ya çevirmek ve BLEU puanlarını hesaplamak için kullanıyoruz.
+Model eğitildikten sonra, onu [**birkaç İngilizce cümleyi**] Fransızca'ya çevirmek ve BLEU değerlerini hesaplamak için kullanıyoruz.
 
 ```{.python .input}
 #@tab mxnet, pytorch
@@ -306,7 +300,7 @@ attention_weights = d2l.reshape(
     (1, 1, -1, num_steps))
 ```
 
-Son İngilizce cümleyi çevirirken [****görselleştirme**] ile, her sorgunun anahtar değer çiftleri üzerinde tekdüze olmayan ağırlıklar atadığını görebiliriz. Her kod çözme adımında, girdi dizilerinin farklı bölümlerinin dikkat havuzunda seçici olarak toplandığını gösterir.
+Son İngilizce cümleyi çevirirken [**dikkat ağırlıklarını görselleştirerek**], her sorgunun anahtar değer çiftleri üzerinde tekdüze olmayan ağırlıklar atadığını görebiliriz. Her kod çözme adımında, girdi dizilerinin farklı bölümlerinin dikkat ortaklamasında seçici olarak toplandığını gösterir.
 
 ```{.python .input}
 # Plus one to include the end-of-sequence token
@@ -332,13 +326,13 @@ d2l.show_heatmaps(attention_weights[:, :, :, :len(engs[-1].split()) + 1],
 
 ## Özet
 
-* Bir belirteci tahmin ederken, tüm giriş belirteçleri uygun değilse, Bahdanau dikkatine sahip RNN kodlayıcı-kod çözücü seçici olarak giriş dizisinin farklı bölümlerini toplar. Bu, bağlam değişkeninin katkı maddesi dikkat havuzunun bir çıktısı olarak ele alınarak elde edilir.
-* RNN kodlayıcı-kod çözücüsü Bahdanau dikkat önceki zaman adımında kod çözücü gizli durumunu sorgu olarak ele alır ve kodlayıcı gizli durumları her zaman hem anahtar hem de değerler olarak adımlar.
+* Bir belirteci tahmin ederken, tüm girdi belirteçleri ilgili değilse, Bahdanau dikkatine sahip RNN kodlayıcı-kodçözücü seçici olarak girdi dizisinin farklı bölümlerini toplar. Bu, bağlam değişkeninin toplayıcı dikkat ortaklamasının bir çıktısı olarak ele alınarak elde edilir.
+* RNN kodlayıcı-kodçözücüsünde, Bahdanau dikkati önceki zaman adımındaki kodçözücü gizli durumunu sorgu olarak ve kodlayıcı gizli durumlarını her zaman adımında hem anahtar hem de değerler olarak ele alır.
 
-## Egzersizler
+## Alıştırmalar
 
-1. Deneyde GRU LSTM ile değiştirin.
-1. Katkı dikkat puanlama işlevini ölçekli nokta ürünüyle değiştirmek için deneyi değiştirin. Eğitim verimliliğini nasıl etkiler?
+1. Deneyde GRU'yu LSTM ile değiştirin.
+1. Toplayıcı dikkat puanlama işlevini ölçeklendirilmiş nokta çarpımı ile değiştirerek deneyi tekrarlayın. Eğitim verimliliğini nasıl etkiler?
 
 :begin_tab:`mxnet`
 [Discussions](https://discuss.d2l.ai/t/347)
