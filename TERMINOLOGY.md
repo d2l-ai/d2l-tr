@@ -153,6 +153,8 @@ meta; başkalaşım
 
 minibatch; minigrup
 
+multi-head; çoklu-kafa
+
 nontrivial; apaçık olmayan
 
 objective functions; amaç fonksiyonları
