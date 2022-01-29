@@ -223,6 +223,8 @@ scaler; sayıl, skaler
 
 script; betik
 
+self-attention; özdikkat
+
 semantic segmentation; anlamsal bölünme
 
 sequence; dizi

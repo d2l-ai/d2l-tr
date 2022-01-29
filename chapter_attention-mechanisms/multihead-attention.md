@@ -3,7 +3,7 @@
 
 Pratikte, aynı sorgular, anahtarlar ve değerler kümesi verildiğinde, modelimizin, çeşitli aralıkların bir sıra içinde (örneğin, daha kısa menzile karşı daha uzun menzil) bağımlılıklarını yakalama gibi aynı dikkat mekanizmasının farklı davranışlarından elde edilen bilgileri birleştirmesini isteyebiliriz. Bu nedenle, dikkat mekanizmamızın sorguların, anahtarların ve değerlerin farklı temsil alt alanlarını ortaklaşa kullanmasına izin vermek yararlı olabilir. 
 
-Bu amaçla, tek bir dikkat ortaklaması yerine, sorgular, anahtarlar ve değerler $h$ tane bağımsız olarak öğrenilen doğrusal izdüşümler ile dönüştürülebilir. Daha sonra bu $h$ öngörülen sorgular, anahtarlar ve değerler paralel olarak dikkat ortaklaması içine beslenir. Nihayetinde, $h$ dikkat ortaklama çıktıları bitiştirilir ve son çıktıyı üretmek için başka bir öğrenilmiş doğrusal izdüşüm ile dönüştürülür. Bu tasarıma *çoklu kafalı dikkat* denir, burada $h$ dikkat ortaklama çıktılarının her biri *kafa*dır :cite:`Vaswani.Shazeer.Parmar.ea.2017`. Öğrenilebilir doğrusal dönüşümler gerçekleştirmek için tam bağlı katmanları kullanılarak :numref:`fig_multi-head-attention`'da çoklu kafalı dikkati açıklanır. 
+Bu amaçla, tek bir dikkat ortaklaması yerine, sorgular, anahtarlar ve değerler $h$ tane bağımsız olarak öğrenilen doğrusal izdüşümler ile dönüştürülebilir. Daha sonra bu $h$ öngörülen sorgular, anahtarlar ve değerler paralel olarak dikkat ortaklaması içine beslenir. Nihayetinde, $h$ dikkat ortaklama çıktıları bitiştirilir ve son çıktıyı üretmek için başka bir öğrenilmiş doğrusal izdüşüm ile dönüştürülür. Bu tasarıma *çoklu kafalı dikkat* denir, burada $h$ dikkat ortaklama çıktılarının her biri *kafa*dır :cite:`Vaswani.Shazeer.Parmar.ea.2017`. Öğrenilebilir doğrusal dönüşümler gerçekleştirmek için tam bağlı katmanları kullanan çoklu kafalı dikkat :numref:`fig_multi-head-attention`'da açıklanmıştır. 
 
 ![Çoklu kafanın bir araya getirildiği ve ardından doğrusal olarak dönüştürüldüğü çoklu kafalı dikkat.](../img/multi-head-attention.svg)
 :label:`fig_multi-head-attention`
@@ -329,7 +329,7 @@ attention(X, Y, Y, valid_lens, training=False).shape
 ## Alıştırmalar
 
 1. Bu deneyde çoklu kafanın dikkat ağırlıklarını görselleştirin.
-1. Çoklu kafa dikkatine dayalı eğitimli bir modelimiz olduğunu ve tahmin hızını artırmak için en az önemli dikkat kafalarını budamak istediğimizi varsayalım. Bir dikkat kafasının önemini ölçmek için deneyleri nasıl tasarlayabiliriz?
+1. Çoklu kafa dikkatine dayalı eğitimli bir modelimiz olduğunu ve tahmin hızını artırmak için en az önemli dikkat kafalarını budamak istediğimizi varsayalım. Bir dikkat kafasının önemini ölçmek için deneyleri nasıl tasarlayabiliriz
 
 :begin_tab:`mxnet`
 [Discussions](https://discuss.d2l.ai/t/1634)

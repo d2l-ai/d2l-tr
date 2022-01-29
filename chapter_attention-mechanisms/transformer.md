@@ -1,21 +1,21 @@
-# Trafo
+# Dönüştürücü
 :label:`sec_transformer`
 
-Biz CNNs karşılaştırdık, RNN, ve özdikkat :numref:`subsec_cnn-rnn-self-attention`. Özellikle, özdikkat hem paralel hesaplama hem de en kısa maksimum yol uzunluğuna sahiptir. Bu nedenle doğal olarak, özdikkat kullanarak derin mimariler tasarlamak cazip. :cite:`Cheng.Dong.Lapata.2016,Lin.Feng.Santos.ea.2017,Paulus.Xiong.Socher.2017` giriş temsilleri için RNN'lere güvenen önceki özdikkat modellerinin aksine, transformatör modeli sadece herhangi bir konvolsiyonel veya tekrarlayan tabaka :cite:`Vaswani.Shazeer.Parmar.ea.2017` olmadan dikkat mekanizmalarına dayanmaktadır. Başlangıçta metin verilerinde diziden sıraya öğrenme için önerilmiş olsa da, transformatörler dil, görme, konuşma ve pekiştirme öğrenme alanlarında olduğu gibi çok çeşitli modern derin öğrenme uygulamalarında yaygın olmuştur. 
+:numref:`subsec_cnn-rnn-self-attention` içinde CNN , RNN, ve özdikkati karşılaştırdık. Özellikle, özdikkat hem paralel hesaplamanın hem de en kısa maksimum yol uzunluğunun keyfini sürer. Bu nedenle doğal olarak, özdikkat kullanarak derin mimariler tasarlamak caziptir. :cite:`Cheng.Dong.Lapata.2016,Lin.Feng.Santos.ea.2017,Paulus.Xiong.Socher.2017` girdi temsilleri için RNN'lere güvenen önceki özdikkat modellerinin aksine, dönüştürücü modeli :cite:`Vaswani.Shazeer.Parmar.ea.2017` sadece herhangi bir evrişimli veya yinelemeli tabaka olmadan dikkat mekanizmalarına dayanmaktadır. Başlangıçta metin verilerinde diziden diziye öğrenme için önerilmiş olsa da, dönüştürücüler dil, görme, konuşma ve pekiştirmeli öğrenme alanlarında olduğu gibi çok çeşitli modern derin öğrenme uygulamalarında yaygın olmuştur. 
 
 ## Model
 
-Kodlayıcı-kod çözücü mimarisinin bir örneği olarak, transformatörün genel mimarisi :numref:`fig_transformer`'te sunulmuştur. Gördüğümüz gibi, transformatör bir kodlayıcı ve bir kod çözücüden oluşur. :numref:`fig_s2s_attention_details`'te sıralı öğrenmeye Bahdanau'nun dikkatinden farklı olarak, giriş (kaynak) ve çıkış (hedef) dizisi gömülmeleri, kodlayıcıya beslenmeden önce konumsal kodlama ile eklenir. 
+Kodlayıcı-kodçözücü mimarisinin bir örneği olarak, dönüştürücünün genel mimarisi :numref:`fig_transformer`'te sunulmuştur. Gördüğümüz gibi, dönüştürücü bir kodlayıcı ve bir kodçözücüden oluşur. :numref:`fig_s2s_attention_details` içinde diziden diziye öğrenmede Bahdanau dikkatinden farklı olarak, girdi (kaynak) ve çıktı (hedef) dizi gömmeleri, özdikkate dayalı modülleri istifleyen kodlayıcıya ve kodçözücüye beslenmeden önce, konumsal kodlama ile toplanır.
 
-![The transformer architecture.](../img/transformer.svg)
+![Dönüştürücü mimarisi.](../img/transformer.svg)
 :width:`500px`
 :label:`fig_transformer`
 
-Şimdi :numref:`fig_transformer`'daki transformatör mimarisine genel bir bakış sunuyoruz. Yüksek düzeyde, transformatör kodlayıcısı, her katmanın iki alt katmana sahip olduğu (ya $\mathrm{sublayer}$ olarak gösterilir) birden çok özdeş katmandan oluşan bir yığındır. Birincisi, çok kafalı bir öz-dikkat havuzudur ve ikincisi ise konumsal olarak ileriye doğru ilerleme ağıdır. Özellikle, kodlayıcının özdikkatinde, sorgular, anahtarlar ve değerler tüm önceki kodlayıcı katmanının çıkışlarından gelir. :numref:`sec_resnet`'teki ResNet tasarımından esinlenerek, her iki alt katman etrafında artık bağlantı kullanılır. Transformatörde, dizinin herhangi bir pozisyonunda $\mathbf{x} \in \mathbb{R}^d$ herhangi bir giriş için $\mathrm{sublayer}(\mathbf{x}) \in \mathbb{R}^d$'ye ihtiyaç duyuyoruz, böylece $\mathbf{x} + \mathrm{sublayer}(\mathbf{x}) \in \mathbb{R}^d$ artık bağlantı $\mathbf{x} + \mathrm{sublayer}(\mathbf{x}) \in \mathbb{R}^d$ uygulanabilir. Artık bağlantıdan gelen bu ilavenin hemen ardından katman normalleştirmesi :cite:`Ba.Kiros.Hinton.2016`. Sonuç olarak, transformatör kodlayıcısı, giriş sırasının her konumu için $d$ boyutlu bir vektör temsilini çıkarır. 
+Şimdi :numref:`fig_transformer`'daki dönüştürücü mimarisine genel bir bakış sunuyoruz. Yüksek düzeyde, dönüştürücü kodlayıcısı, her katmanın iki alt katmana sahip olduğu (ya $\mathrm{sublayer}$ olarak gösterilir) çoklu özdeş katmandan oluşan bir yığındır. Birincisi, çoklu kafalı bir özdikkat ortaklamasıdır ve ikincisi ise konumsal olarak ileriye doğru ilerleme ağıdır. Özellikle, özdikkatteki kodlayıcıda, sorgular, anahtarlar ve değerler tüm önceki kodlayıcı katmanının çıktılarından gelir. :numref:`sec_resnet`'teki ResNet tasarımından esinlenerek, her iki alt katman etrafında artık bağlantı kullanılır. Dönüştürücüde, dizinin herhangi bir pozisyonunda $\mathbf{x} \in \mathbb{R}^d$ herhangi bir girdi için $\mathrm{sublayer}(\mathbf{x}) \in \mathbb{R}^d$'ye ihtiyaç duyuyoruz, böylece $\mathbf{x} + \mathrm{sublayer}(\mathbf{x}) \in \mathbb{R}^d$ artık bağlantı $\mathbf{x} + \mathrm{sublayer}(\mathbf{x}) \in \mathbb{R}^d$ mümkündür. Artık bağlantıya bu ilavenin hemen ardından katman normalleştirmesi :cite:`Ba.Kiros.Hinton.2016` gelir. Sonuç olarak, dönüştürücü kodlayıcısı, girdi dizisinin her konumu için $d$ boyutlu bir vektör temsilini çıkarır. 
 
-Transformatör kod çözücü ayrıca artık bağlantılar ve katman normalleştirmeleri ile birden çok özdeş katman yığınıdır. Kodlayıcıda açıklanan iki alt katmanın yanı sıra, kod çözücü bu ikisi arasında kodlayıcı-kod çözücü dikkat olarak bilinen üçüncü bir alt katman ekler. Kodlayıcı-kod çözücü dikkatinde, sorgular önceki kod çözücü katmanının çıkışlarından ve anahtarlar ve değerler transformatör kodlayıcı çıkışlarından kaynaklanır. Kod çözücünün özdikkatinde, sorgular, anahtarlar ve değerler tüm önceki kod çözücü katmanının çıkışlarından gelir. Bununla birlikte, kod çözücüdeki her pozisyonun, yalnızca kod çözücünün bu konuma kadar tüm pozisyonlara katılmasına izin verilir. Bu *maskelenmiş* dikkat, otomatik regressif özelliğini korur ve tahminin yalnızca oluşturulan çıktı belirteçlerine bağlı olmasını sağlar. 
+Dönüştürücü kodçözücü ayrıca artık bağlantılar ve katman normalleştirmeleri ile birden çok özdeş katman yığınıdır. Kodlayıcıda açıklanan iki alt katmanın yanı sıra, kodçözücü bu ikisi arasında kodlayıcı-kodçözücü dikkat olarak bilinen üçüncü bir alt katman ekler. Kodlayıcı-kod özücü dikkatinde, sorgular önceki kodçözücü katmanının çıktılarından ve anahtarlar ve değerler dönüştürücü kodlayıcı çıktılarından kaynaklanır. Kodçözücünün özdikkatinde, sorgular, anahtarlar ve değerler tüm önceki kodçözücü katmanının çıktılarından gelir. Bununla birlikte, kodçözücüdeki her pozisyonun, yalnızca kodçözücünün bu konuma kadar tüm pozisyonlara ilgi göstermesine izin verilir. Bu *maskelenmiş* dikkat, otomatik bağlanım özelliğini korur ve tahminin yalnızca üretilen çıktı belirteçlerine bağlı olmasını sağlar. 
 
-:numref:`sec_multihead-attention`'teki ölçeklendirilmiş nokta ürünlerine ve :numref:`subsec_positional-encoding`'te konumsal kodlamaya dayanan çok kafalı dikkati zaten tanımladık ve uyguladık. Aşağıda, transformatör modelinin geri kalanını uygulayacağız.
+:numref:`sec_multihead-attention`'teki ölçeklendirilmiş nokta çarpımlarına ve :numref:`subsec_positional-encoding`'te konumsal kodlamaya dayanan çoklu kafalı dikkati zaten tanımladık ve uyguladık. Aşağıda, dönüştürücü modelinin geri kalanını uygulayacağız.
 
 ```{.python .input}
 from d2l import mxnet as d2l
@@ -43,7 +43,7 @@ import pandas as pd
 import tensorflow as tf
 ```
 
-## [**Pozisyon Olarak Besleme-İleri Ağlar**]
+## [**Konumsal Olarak İleri Besleme Ağlar**]
 
 Pozisyon yönüyle ileriye doğru ilerleme ağı, aynı MLP kullanarak tüm sıra pozisyonlarındaki gösterimi dönüştürür. Bu yüzden ona “pozisyonbilim*” diyoruz. Aşağıdaki uygulamada, şekle sahip `X` girişi (toplu boyutu, zaman adımlarının sayısı veya belirteçlerdeki sıra uzunluğu, gizli birimlerin sayısı veya özellik boyutu) iki katmanlı bir MLP tarafından şekil çıkış tensörüne dönüştürülecektir (parti boyutu, zaman adımlarının sayısı, `ffn_num_outputs`).
 
@@ -283,7 +283,7 @@ class EncoderBlock(tf.keras.layers.Layer):
         return self.addnorm2(Y, self.ffn(Y), **kwargs)
 ```
 
-Gördüğümüz gibi, [**transformatör kodlayıcısındaki herhangi bir katman girişinin şeklini değiştirmez.**]
+Gördüğümüz gibi, [**dönüştürücü kodlayıcısındaki herhangi bir katman girişinin şeklini değiştirmez.**]
 
 ```{.python .input}
 X = d2l.ones((2, 100, 24))
@@ -311,7 +311,7 @@ encoder_blk = EncoderBlock(24, 24, 24, 24, norm_shape, 48, 8, 0.5)
 encoder_blk(X, valid_lens, training=False).shape
 ```
 
-Aşağıdaki [**transformatör kodlayıcı**] uygulamasında, yukarıdaki `EncoderBlock` sınıflarının `num_layers` örneklerini yığınlıyoruz. Değerleri her zaman -1 ile 1 arasında olan sabit konumsal kodlamayı kullandığımızdan, öğrenilebilir giriş gömme değerlerinin gömme boyutunun karekökü ile çarparak giriş gömme gömme ve konumsal kodlamayı özetlemeden önce yeniden ölçeklenmesini sağlarız.
+Aşağıdaki [**dönüştürücü kodlayıcı**] uygulamasında, yukarıdaki `EncoderBlock` sınıflarının `num_layers` örneklerini yığınlıyoruz. Değerleri her zaman -1 ile 1 arasında olan sabit konumsal kodlamayı kullandığımızdan, öğrenilebilir giriş gömme değerlerinin gömme boyutunun karekökü ile çarparak giriş gömme gömme ve konumsal kodlamayı özetlemeden önce yeniden ölçeklenmesini sağlarız.
 
 ```{.python .input}
 #@save
@@ -405,7 +405,7 @@ class TransformerEncoder(d2l.Encoder):
         return X
 ```
 
-Aşağıda [**iki katmanlı bir transformatör kodlayıcısı** oluşturun**] için hiperparametre belirtiyoruz. Transformatör kodlayıcı çıkışının şekli (parti boyutu, zaman adımlarının sayısı, `num_hiddens`) şeklindedir.
+Aşağıda [**iki katmanlı bir dönüştürücü kodlayıcısı** oluşturun**] için hiperparametre belirtiyoruz. Transformatör kodlayıcı çıkışının şekli (parti boyutu, zaman adımlarının sayısı, `num_hiddens`) şeklindedir.
 
 ```{.python .input}
 encoder = TransformerEncoder(200, 24, 48, 8, 2, 0.5)
@@ -429,7 +429,7 @@ encoder(tf.ones((2, 100)), valid_lens, training=False).shape
 
 ## Kod Çözücü
 
-:numref:`fig_transformer`'te gösterildiği gibi, [**transformatör kod çözücüsü birden çok özdeş katmandan oluşur**]. Her katman, üç alt katman içeren aşağıdaki `DecoderBlock` sınıfında uygulanır: kod çözücü öz-dikkat, kodlayıcı-kod çözücü dikkat ve konumsal ileriye besleme ağları. Bu alt katmanlar çevrelerinde artık bir bağlantı kullanır ve ardından katman normalleştirmesi. 
+:numref:`fig_transformer`'te gösterildiği gibi, [**dönüştürücü kod çözücüsü birden çok özdeş katmandan oluşur**]. Her katman, üç alt katman içeren aşağıdaki `DecoderBlock` sınıfında uygulanır: kod çözücü öz-dikkat, kodlayıcı-kod çözücü dikkat ve konumsal ileriye besleme ağları. Bu alt katmanlar çevrelerinde artık bir bağlantı kullanır ve ardından katman normalleştirmesi. 
 
 Bu bölümde daha önce de açıklandığı gibi, maskelenmiş çok kafalı kod çözücü özdikkatinde (ilk alt katman), sorgular, anahtarlar ve değerler önceki kod çözücü katmanının çıkışlarından gelir. Diziden sıraya modellerini eğitirken, çıktı dizisinin tüm pozisyonlarında (zaman adımları) belirteçleri bilinir. Bununla birlikte, tahmin sırasında çıktı sırası belirteç tarafından belirteç oluşturulur; böylece, herhangi bir kod çözücü zaman adımında yalnızca oluşturulan belirteçler kod çözücünün özdikkatinde kullanılabilir. Kod çözücünün otomatik regresyonunu korumak için, maskeli öz-dikkat `dec_valid_lens`'ü belirtir, böylece herhangi bir sorgu yalnızca kod çözücünün sorgulama konumuna kadar tüm konumlara katılır.
 
@@ -604,7 +604,7 @@ state = [encoder_blk(X, valid_lens), valid_lens, [None]]
 decoder_blk(X, state, training=False)[0].shape
 ```
 
-Şimdi `DecoderBlock` `DecoderBlock` örneklerinden oluşan [****tüm transformatör dekoderi**] oluşturuyoruz. Sonunda, tam bağlı bir katman tüm `vocab_size` olası çıktı belirteçleri için tahmin hesaplar. Hem dekoder öz-dikkat ağırlıkları hem de kodlayıcı-kod çözücü dikkat ağırlıkları daha sonra görselleştirme için saklanır.
+Şimdi `DecoderBlock` `DecoderBlock` örneklerinden oluşan [****tüm dönüştürücü dekoderi**] oluşturuyoruz. Sonunda, tam bağlı bir katman tüm `vocab_size` olası çıktı belirteçleri için tahmin hesaplar. Hem dekoder öz-dikkat ağırlıkları hem de kodlayıcı-kod çözücü dikkat ağırlıkları daha sonra görselleştirme için saklanır.
 
 ```{.python .input}
 class TransformerDecoder(d2l.AttentionDecoder):
@@ -718,7 +718,7 @@ class TransformerDecoder(d2l.AttentionDecoder):
 
 ## [**Eğitim**]
 
-Transformatör mimarisini takip ederek bir kodlayıcı-kod çözücü modeli oluşturalım. Burada hem transformatör kodlayıcının hem de transformatör kod çözücünün 4 başlı dikkat kullanan 2 katmana sahip olduğunu belirtiyoruz. :numref:`sec_seq2seq_training`'e benzer şekilde, transformatör modelini İngilizce-Fransızca-Fransız makine çevirisi veri kümelerinde sıralı öğrenmeye yönelik olarak eğitiyoruz.
+Transformatör mimarisini takip ederek bir kodlayıcı-kod çözücü modeli oluşturalım. Burada hem dönüştürücü kodlayıcının hem de dönüştürücü kod çözücünün 4 başlı dikkat kullanan 2 katmana sahip olduğunu belirtiyoruz. :numref:`sec_seq2seq_training`'e benzer şekilde, dönüştürücü modelini İngilizce-Fransızca-Fransız makine çevirisi veri kümelerinde sıralı öğrenmeye yönelik olarak eğitiyoruz.
 
 ```{.python .input}
 num_hiddens, num_layers, dropout, batch_size, num_steps = 32, 2, 0.1, 64, 10
@@ -778,7 +778,7 @@ net = d2l.EncoderDecoder(encoder, decoder)
 d2l.train_seq2seq(net, train_iter, lr, num_epochs, tgt_vocab, device)
 ```
 
-Eğitimden sonra transformatör modelini [**birkaç İngilizce cümle**] Fransızca'ya çevirmek ve BLEU puanlarını hesaplamak için kullanıyoruz.
+Eğitimden sonra dönüştürücü modelini [**birkaç İngilizce cümle**] Fransızca'ya çevirmek ve BLEU puanlarını hesaplamak için kullanıyoruz.
 
 ```{.python .input}
 #@tab mxnet, pytorch
@@ -802,7 +802,7 @@ for eng, fra in zip(engs, fras):
           f'bleu {d2l.bleu(translation, fra, k=2):.3f}')
 ```
 
-Son İngilizce cümleyi Fransızcaya çevirirken [****transformatör dikkat ağırlıklarını görselleştirmem**] izin verin. Kodlayıcı özdikkat ağırlıklarının şekli (kodlayıcı katmanlarının sayısı, dikkat kafalarının sayısı, `num_steps` veya sorgu sayısı, `num_steps` veya anahtar değer çiftlerinin sayısı) şeklindedir.
+Son İngilizce cümleyi Fransızcaya çevirirken [****dönüştürücü dikkat ağırlıklarını görselleştirmem**] izin verin. Kodlayıcı özdikkat ağırlıklarının şekli (kodlayıcı katmanlarının sayısı, dikkat kafalarının sayısı, `num_steps` veya sorgu sayısı, `num_steps` veya anahtar değer çiftlerinin sayısı) şeklindedir.
 
 ```{.python .input}
 #@tab all
@@ -894,23 +894,23 @@ d2l.show_heatmaps(
     figsize=(7, 3.5))
 ```
 
-Transformatör mimarisi başlangıçta sıraya öğrenme için önerilmiş olsa da, kitapta daha sonra keşfedeceğimiz gibi, transformatör kodlayıcısı ya da transformatör kod çözücü genellikle farklı derin öğrenme görevleri için ayrı ayrı kullanılır. 
+Transformatör mimarisi başlangıçta sıraya öğrenme için önerilmiş olsa da, kitapta daha sonra keşfedeceğimiz gibi, dönüştürücü kodlayıcısı ya da dönüştürücü kod çözücü genellikle farklı derin öğrenme görevleri için ayrı ayrı kullanılır. 
 
 ## Özet
 
 * Transformatör, kodlayıcı-kod çözücü mimarisinin bir örneğidir, ancak kodlayıcı veya kod çözücü uygulamada ayrı ayrı kullanılabilir.
 * Transformatörde, giriş sırasını ve çıkış sırasını temsil etmek için çok kafalı özdikkat kullanılır, ancak kod çözücünün maskelenmiş bir sürüm aracılığıyla otomatik regressif özelliğini korumak zorundadır.
-* Hem artık bağlantılar hem de transformatördeki katman normalleştirmesi, çok derin bir modeli eğitmek için önemlidir.
+* Hem artık bağlantılar hem de dönüştürücüdeki katman normalleştirmesi, çok derin bir modeli eğitmek için önemlidir.
 * Transformatör modelindeki konum yönünde ilerleme ağı, aynı MLP kullanılarak tüm sıra pozisyonlarındaki gösterimi dönüştürür.
 
 ## Egzersizler
 
-1. Deneylerde daha derin bir transformatör eğitin. Eğitim hızını ve çeviri performansını nasıl etkiler?
-1. Ölçekli nokta ürün dikkatini transformatörde katkı maddesi ile değiştirmek iyi bir fikir mi? Neden?
-1. Dil modellemesi için transformatör kodlayıcısını mı, kod çözücüyü veya her ikisini birden mi kullanmalıyız? Bu yöntemi nasıl tasarlayabilirim?
-1. Giriş dizileri çok uzunsa transformatörler için ne zorluklar olabilir? Neden?
+1. Deneylerde daha derin bir dönüştürücü eğitin. Eğitim hızını ve çeviri performansını nasıl etkiler?
+1. Ölçekli nokta ürün dikkatini dönüştürücüde katkı maddesi ile değiştirmek iyi bir fikir mi? Neden?
+1. Dil modellemesi için dönüştürücü kodlayıcısını mı, kod çözücüyü veya her ikisini birden mi kullanmalıyız? Bu yöntemi nasıl tasarlayabilirim?
+1. Giriş dizileri çok uzunsa dönüştürücüler için ne zorluklar olabilir? Neden?
 1. Transformatörlerin hesaplama ve bellek verimliliğini nasıl artırabilirim? Hint: you may refer to the survey paper by Tay et al. :cite:`Tay.Dehghani.Bahri.ea.2020`.
-1. CNN kullanmadan görüntü sınıflandırma görevleri için transformatör tabanlı modelleri nasıl tasarlayabiliriz? Hint: you may refer to the vision transformer :cite:`Dosovitskiy.Beyer.Kolesnikov.ea.2021`.
+1. CNN kullanmadan görüntü sınıflandırma görevleri için dönüştürücü tabanlı modelleri nasıl tasarlayabiliriz? Hint: you may refer to the vision transformer :cite:`Dosovitskiy.Beyer.Kolesnikov.ea.2021`.
 
 :begin_tab:`mxnet`
 [Discussions](https://discuss.d2l.ai/t/348)
