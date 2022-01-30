@@ -1,10 +1,10 @@
-# Optimizasyon ve Derin Öğrenme
+# Eniyileme ve Derin Öğrenme
 
-Bu bölümde, optimizasyon ve derin öğrenme arasındaki ilişkiyi ve derin öğrenmede optimizasyonu kullanmanın zorluklarını tartışacağız. Derin öğrenme problemi için, genellikle önce *kayıp fonksiyonu* tanımlarız. Kayıp işlevini aldığımızda kayıpları en aza indirmek için bir optimizasyon algoritması kullanabiliriz. Optimizasyonda, bir kayıp fonksiyonu genellikle optimizasyon sorununun*objektif fonksiyonu* olarak adlandırılır. Gelenek ve kongreye göre çoğu optimizasyon algoritması, *minimizasyon* ile ilgilidir. Eğer bir hedefi en üst düzeye çıkarmamız gerekirse basit bir çözüm vardır: sadece hedefin üzerindeki işareti çevirin. 
+Bu bölümde, eniyileme ve derin öğrenme arasındaki ilişkiyi ve derin öğrenmede optimizasyonu kullanmanın zorluklarını tartışacağız. Derin öğrenme problemi için, genellikle önce *kayıp fonksiyonu* tanımlarız. Kayıp işlevini aldığımızda kayıpları en aza indirmek için bir optimizasyon algoritması kullanabiliriz. Optimizasyonda, bir kayıp fonksiyonu genellikle optimizasyon sorununun *amaç fonksiyonu* olarak adlandırılır. Geleneksel ve alışılmış olarak çoğu optimizasyon algoritması, *minimizasyon (en aza indirme)* ile ilgilidir. Eğer bir hedefi en üst düzeye çıkarmamız (maximize etmemiz) gerekirse basit bir çözüm vardır: Sadece amaç işlevindeki işareti tersine çevirin. 
 
-## Optimizasyonun Hedefi
+## Eniyilemenin Hedefi
 
-Optimizasyon derin öğrenme için kayıp işlevini en aza indirmenin bir yolunu sağlasa da, özünde optimizasyon ve derin öğrenmenin amaçları temelde farklıdır. Birincisi öncelikle bir hedefi en aza indirmekle ilgiliyken, ikincisi, sınırlı miktarda veri verildiğinde uygun bir model bulmakla ilgilidir. :numref:`sec_model_selection`'te, bu iki hedef arasındaki farkı ayrıntılı olarak tartıştık. Örneğin, eğitim hatası ve genelleme hatası genellikle farklılık gösterir: optimizasyon algoritmasının objektif işlevi genellikle eğitim veri kümesine dayalı bir kayıp fonksiyonu olduğundan, optimizasyonun amacı eğitim hatasını azaltmaktır. Bununla birlikte, derin öğrenmenin amacı (veya daha geniş bir şekilde istatistiksel çıkarım) genelleme hatasını azaltmaktır. İkincisini başarmak için, eğitim hatasını azaltmak için optimizasyon algoritmasını kullanmanın yanı sıra aşırı uydurma işlemine dikkat etmeliyiz.
+Optimizasyon derin öğrenme için kayıp işlevini en aza indirmenin bir yolunu sağlasa da, özünde optimizasyon ve derin öğrenmenin amaçları temelde farklıdır. Birincisi öncelikle bir amaç işlevini en aza indirmekle ilgiliyken, ikincisi, sınırlı miktarda veri verildiğinde uygun bir model bulmakla ilgilidir. :numref:`sec_model_selection`'te, bu iki hedef arasındaki farkı ayrıntılı olarak tartıştık. Örneğin, eğitim hatası ve genelleme hatası genellikle farklılık gösterir: Optimizasyon algoritmasının amaş işlevi genellikle eğitim veri kümesine dayalı bir kayıp fonksiyonu olduğundan, optimizasyonun amacı eğitim hatasını azaltmaktır. Bununla birlikte, derin öğrenmenin amacı (veya daha geniş bir şekilde istatistiksel çıkarımın) genelleme hatasını azaltmaktır. İkincisini başarmak için, eğitim hatasını azaltmada optimizasyon algoritmasını kullanmanın yanı sıra aşırı öğrenme işlemine de dikkat etmeliyiz.
 
 ```{.python .input}
 %matplotlib inline
@@ -32,7 +32,7 @@ from mpl_toolkits import mplot3d
 import tensorflow as tf
 ```
 
-Yukarıda belirtilen farklı hedefleri göstermek için, ampirik riski ve riski ele alalım. :numref:`subsec_empirical-risk-and-risk`'te açıklandığı gibi, ampirik risk, eğitim veri kümesinde ortalama bir kayıptır ve risk veri nüfusunun tamamında beklenen kayıptır. Aşağıda iki fonksiyon tanımlıyoruz: risk fonksiyonu `f` ve ampirik risk fonksiyonu `g`. Sadece sınırlı miktarda eğitim verisi olduğunu varsayalım. Sonuç olarak, burada `g` `f`'den daha az pürüzsüzdür.
+Yukarıda belirtilen farklı hedefleri göstermek için, deneysel riski ve riski ele alalım. :numref:`subsec_empirical-risk-and-risk`'te açıklandığı gibi, deneysel risk, eğitim veri kümesinde ortalama bir kayıptır ve risk veri nüfusunun tamamında beklenen kayıptır. Aşağıda iki fonksiyon tanımlıyoruz: Risk fonksiyonu `f` ve deneysel risk fonksiyonu `g`. Sadece sınırlı miktarda eğitim verisi olduğunu varsayalım. Sonuç olarak, burada `g` `f`'den daha az pürüzsüzdür.
 
 ```{.python .input}
 #@tab all
@@ -43,7 +43,7 @@ def g(x):
     return f(x) + 0.2 * d2l.cos(5 * np.pi * x)
 ```
 
-Aşağıdaki grafik, bir eğitim veri kümesinde ampirik riskin minimum riskinin minimum riskten farklı bir konumda olabileceğini göstermektedir (genelleme hatası).
+Aşağıdaki grafik, bir eğitim veri kümesinde deneysel riskin minimumunun, minimum riskten farklı bir konumda olabileceğini göstermektedir (genelleme hatası).
 
 ```{.python .input}
 #@tab all
@@ -58,21 +58,21 @@ annotate('min of\nempirical risk', (1.0, -1.2), (0.5, -1.1))
 annotate('min of risk', (1.1, -1.05), (0.95, -0.5))
 ```
 
-## Derin Öğrenmede Optimizasyon Zorlukları
+## Derin Öğrenmede Eniyileme Zorlukları
 
-Bu bölümde, bir modelin genelleme hatası yerine objektif işlevi en aza indirmede optimizasyon algoritmalarının performansına özellikle odaklanacağız. :numref:`sec_linear_regression`'te optimizasyon problemlerinde analitik çözümler ve sayısal çözümler arasında ayrım yaptık. Derin öğrenmede, çoğu objektif fonksiyonlar karmaşıktır ve analitik çözümleri yoktur. Bunun yerine, sayısal optimizasyon algoritmaları kullanmalıyız. Bu bölümdeki optimizasyon algoritmaları tüm bu kategoriye girer. 
+Bu bölümde, özellikle bir modelin genelleme hatası yerine amaç işlevi en aza indirmede optimizasyon algoritmalarının başarımına odaklanacağız. :numref:`sec_linear_regression`'te optimizasyon problemlerinde analitik çözümler ve sayısal çözümler arasında ayrım yaptık. Derin öğrenmede, çoğu amaç fonksiyonu karmaşıktır ve analitik çözümleri yoktur. Bunun yerine, sayısal optimizasyon algoritmaları kullanmalıyız. Bu bölümdeki optimizasyon algoritmaları tüm bu kategoriye girer. 
 
-Derin öğrenme optimizasyonunda birçok zorluk vardır. En üzücü olanlardan bazıları yerel minimum, eyer noktaları ve kaybolan degradelerdir. Onlara bir göz atalım. 
+Derin öğrenme optimizasyonunda birçok zorluk vardır. En eziyetli olanlardan bazıları yerel minimum, eyer noktaları ve kaybolan gradyanlardır. Onlara bir göz atalım. 
 
-### Yerel Minima
+### Yerel En Düşüklükler
 
-$f(x)$ herhangi bir objektif işlev için $f(x)$ değerinin $x$ değerinin $x$ civarındaki diğer noktalardaki $f(x)$ değerlerinden daha küçükse, $f(x)$ yerel minimum olabilir. $x$ değerindeki $f(x)$ değeri, tüm etki alanı üzerinde nesnel işlevin minimum değeriyse, $f(x)$ genel minimum değerdir. 
+Herhangi bir $f(x)$ amaç işlevi için $f(x)$ değerinin $x$'teki değeri $x$ civarındaki diğer noktalardaki $f(x)$ değerlerinden daha küçükse, $f(x)$ yerel minimum olabilir. $x$ değerindeki $f(x)$ değeri, tüm etki alanı üzerinde amaç işlevin minimum değeriyse, $f(x)$ genel minimum değerdir. 
 
-Örneğin, fonksiyon göz önüne alındığında 
+Örneğin, aşağıdaki fonksiyon göz önüne alındığında 
 
 $$f(x) = x \cdot \text{cos}(\pi x) \text{ for } -1.0 \leq x \leq 2.0,$$
 
-Bu fonksiyonun yerel minimum ve küresel asgari değerlerini yaklaşık olarak değerlendirebiliriz.
+bu fonksiyonun yerel minimum ve küresel minimum değerlerini yaklaşık olarak değerlendirebiliriz.
 
 ```{.python .input}
 #@tab all
@@ -82,7 +82,7 @@ annotate('local minimum', (-0.3, -0.25), (-0.77, -1.0))
 annotate('global minimum', (1.1, -0.95), (0.6, 0.8))
 ```
 
-Derin öğrenme modellerinin objektif işlevi genellikle birçok yerel optima sahiptir. Bir optimizasyon probleminin sayısal çözümü yerel optimum seviyeye yakın olduğunda, nihai yineleme ile elde edilen sayısal çözüm, objektif fonksiyonun çözümlerinin degradesinin yaklaştığı veya sıfır olduğu için, *küresel* yerine yalnızca objektif işlevi en aza indirebilir. Parametreyi yalnızca bir dereceye kadar gürültü yerel minimum seviyeden çıkarabilir. Aslında bu, minibatch üzerindeki degradelerin doğal varyasyonunun parametreleri yerel minima yerinden çıkarabildiği minibatch stokastik degrade inişinin yararlı özelliklerinden biridir. 
+Derin öğrenme modellerinin amaç işlevi genellikle birçok yerel eniyi değere sahiptir. Bir optimizasyon probleminin sayısal çözümü yerel eniyi seviyesine yakın olduğunda, nihai yineleme ile elde edilen sayısal çözüm, amaç fonksiyonun çözümlerinin gradyanının sıfıra yaklaştığı veya olduğu için, objektif işlevi *küresel* yerine yalnızca *yerel* en aza indirebilir. Parametreyi yalnızca bir dereceye kadar gürültü yerel minimum seviyeden çıkarabilir. Aslında bu, minigrup üzerindeki gradyanların doğal çeşitliliğin parametreleri yerel en düşük yerinden çıkarabildiği minigrup rasgele gradyan inişinin yararlı özelliklerinden biridir. 
 
 ### Eyer Noktaları
 
@@ -142,7 +142,7 @@ Gördüğümüz gibi, derin öğrenme için optimizasyon zorluklarla doludur. Ne
 * Sorunun daha fazla eyer noktası olabilir, genellikle sorunlar dışbükey değildir.
 * Ufuk degradeler en iyi duruma getirmenin durmasına neden olabilir. Genellikle sorunun yeniden parameterizasyonu yardımcı olur. Parametrelerin iyi başlatılması da faydalı olabilir.
 
-## Egzersizler
+## Alıştırmalar
 
 1. Gizli katmandaki $d$ boyutlarının tek bir gizli katmanına ve tek bir çıktıya sahip basit bir MLP düşünün. Herhangi bir yerel minimum için en az $d olduğunu gösterin! $ aynı davranır eşdeğer çözümler.
 1. Biz simetrik rastgele matris olduğunu varsayalım $\mathbf{M}$ girişleri $M_{ij} = M_{ji}$ her bazı olasılık dağılımından çizilir $p_{ij}$. Ayrıca, $p_{ij}(x) = p_{ij}(-x)$'nin, yani dağılımın simetrik olduğunu varsayalım (ayrıntılar için bkz. :cite:`Wigner.1958`).
