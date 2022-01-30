@@ -188,7 +188,7 @@ Kısa olması amacıyla, girdi yüksekliğinin ve genişliğinin her iki tarafı
 ## Özet
 
 * Dolgu, çıktının yüksekliğini ve genişliğini artırabilir. Bu, genellikle çıktıya girdi ile aynı yükseklik ve genişlik vermek için kullanılır.
-* Uzun adım, çıktının çözünürlüğünü azaltabilir, örneğin çıktının yüksekliğini ve genişliğini, girdinin yüksekliğinin ve genişliğinin yalnızca $1/n$'sına düşürür ($n$, $1$'den büyük bir tamsayıdır).
+* Uzun adım, çıktının çözünürlüğünü azaltabilir, örneğin çıktının yüksekliğini ve genişliğini, girdinin yüksekliğinin ve genişliğinin yalnızca $1/n$'sine düşürür ($n$, $1$'den büyük bir tamsayıdır).
 * Dolgu ve uzun adım, verilerin boyutsallığını etkin bir şekilde ayarlamak için kullanılabilir.
 
 ## Alıştırmalar

@@ -2,7 +2,7 @@
 :label:`sec_softmax_scratch`
 
 (**Doğrusal regresyonu sıfırdan uyguladığımız gibi**), (~~softmaks regresyonunun~~) da benzer şekilde temel olduğuna ve onu nasıl uygulayacağınızın detaylı ayrıntılarını bilmeniz gerektiğine inanıyoruz.
-:numref:`sec_fashion_mnist`'de yeni eklenen Fashion-MNIST veri kümesiyle çalışacağız, grup boyutu 256 olan bir veri yineleyicisi kuracağız.
+:numref:`sec_fashion_mnist`'da yeni eklenen Fashion-MNIST veri kümesiyle çalışacağız, grup boyutu 256 olan bir veri yineleyicisi kuracağız.
 
 ```{.python .input}
 from d2l import mxnet as d2l
@@ -423,7 +423,7 @@ class Updater():  #@save
 updater = Updater([W, b], lr=0.1)
 ```
 
-Şimdi [**modeli 10 dönem ile eğitiyoruz**]. Hem dönem sayısının (`num_epochs`) hem de öğrenme oranının (`lr`) ayarlanabilir hiperparametreler olduğuna dikkat edin. Değerlerini değiştirerek modelin sınıflandırma doğruluğunu artırabiliriz.
+Şimdi [**modeli 10 dönem ile eğitiyoruz**]. Hem dönem sayısının (`num_epochs`) hem de öğrenme oranının (`lr`) ayarlanabilir hiper parametreler olduğuna dikkat edin. Değerlerini değiştirerek modelin sınıflandırma doğruluğunu artırabiliriz.
 
 ```{.python .input}
 #@tab all

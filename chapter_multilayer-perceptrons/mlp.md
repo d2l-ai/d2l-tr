@@ -6,7 +6,7 @@
 
 ## Gizli Katmanlar
 
-:numref:`subsec_linear_model` içinde, bir ek girdi eklenen doğrusal bir dönüşüm olan afin dönüşümünü tanımladık. Başlangıç olarak,  :numref:`fig_softmaxreg`'da gösterilen softmaks regresyon örneğimize karşılık gelen model mimarisini hatırlayalım. Bu model, girdilerimizi tek bir afin dönüşüm ve ardından bir softmaks işlemi aracılığıyla doğrudan çıktılarımıza eşledi. Etiketlerimiz gerçekten bir afin dönüşüm yoluyla girdi verilerimizle ilişkili olsaydı, bu yaklaşım yeterli olurdu. Ancak afin dönüşümlerdeki doğrusallık *güçlü* bir varsayımdır.
+:numref:`subsec_linear_model` içinde, bir ek girdi eklenen doğrusal bir dönüşüm olan afin dönüşümünü tanımladık. Başlangıç olarak,  :numref:`fig_softmaxreg`'de gösterilen softmaks regresyon örneğimize karşılık gelen model mimarisini hatırlayalım. Bu model, girdilerimizi tek bir afin dönüşüm ve ardından bir softmaks işlemi aracılığıyla doğrudan çıktılarımıza eşledi. Etiketlerimiz gerçekten bir afin dönüşüm yoluyla girdi verilerimizle ilişkili olsaydı, bu yaklaşım yeterli olurdu. Ancak afin dönüşümlerdeki doğrusallık *güçlü* bir varsayımdır.
 
 
 ### Doğrusal Modeller Ters Gidebilir
@@ -22,18 +22,18 @@ Yine de, burada doğrusallığın aşikar saçmalığına rağmen, önceki örne
 
 ### Gizli Katmanları Birleştirme
 
-Doğrusal modellerin bu sınırlamalarının üstesinden gelebiliriz ve bir veya daha fazla gizli katman ekleyerek daha genel işlev sınıflarıyla başa çıkabiliriz. Bunu yapmanın en kolay yolu, tam-bağlı birçok katmanı birbirinin üzerine yığmaktır. Her katman, biz çıktılar üretene kadar üstündeki katmana beslenir. İlk $L-1$ katmanı temsilimiz ve son katmanı da doğrusal tahmincimiz olarak düşünebiliriz. Bu mimariye genellikle *çok katmanlı algılayıcı (multilayer perceptron)* denir ve genellikle *MLP* olarak kısaltılır. Aşağıda, bir MLP'yi şematik olarak tasvir ediyoruz (:numref:`fig_mlp`).
+Doğrusal modellerin bu sınırlamalarının üstesinden gelebiliriz ve bir veya daha fazla gizli katman ekleyerek daha genel işlev sınıflarıyla başa çıkabiliriz. Bunu yapmanın en kolay yolu, tam bağlı birçok katmanı birbirinin üzerine yığmaktır. Her katman, biz çıktılar üretene kadar üstündeki katmana beslenir. İlk $L-1$ katmanı temsilimiz ve son katmanı da doğrusal tahmincimiz olarak düşünebiliriz. Bu mimariye genellikle *çok katmanlı algılayıcı (multilayer perceptron)* denir ve genellikle *MLP* olarak kısaltılır. Aşağıda, bir MLP'yi şematik olarak tasvir ediyoruz (:numref:`fig_mlp`).
 
 ![5 gizli birimli bir gizli katmana sahip bir MLP ](../img/mlp.svg)
 :label:`fig_mlp`
 
-Bu MLP'nin 4 girdisi, 3 çıktısı vardır ve gizli katmanı 5 gizli birim içerir. Girdi katmanı herhangi bir hesaplama içermediğinden, bu ağ ile çıktıların üretilmesi hem gizli hem de çıktı katmanları için hesaplamaların gerçekleştirilmesini gerektirir; dolayısıyla, bu MLP'deki katman sayısı 2'dir. Bu katmanların her ikisinin de tam-bağlı olduğuna dikkat edin. Her girdi, gizli katmandaki her nöronu etkiler ve bunların her biri de çıktı katmanındaki her nöronu etkiler.
-Ancak, :numref:`subsec_parameterization-cost-fc-layers`'da önerildiği gibi, tam bağlantılı katmanlara sahip MLP'lerin parametreleştirme maliyeti
+Bu MLP'nin 4 girdisi, 3 çıktısı vardır ve gizli katmanı 5 gizli birim içerir. Girdi katmanı herhangi bir hesaplama içermediğinden, bu ağ ile çıktıların üretilmesi hem gizli hem de çıktı katmanları için hesaplamaların gerçekleştirilmesini gerektirir; dolayısıyla, bu MLP'deki katman sayısı 2'dir. Bu katmanların her ikisinin de tam bağlı olduğuna dikkat edin. Her girdi, gizli katmandaki her nöronu etkiler ve bunların her biri de çıktı katmanındaki her nöronu etkiler.
+Ancak, :numref:`subsec_parameterization-cost-fc-layers`'te önerildiği gibi, tam bağlantılı katmanlara sahip MLP'lerin parametreleştirme maliyeti
 girdi veya çıktı boyutunu değiştirmeden bile parametre tasarrufu ve model etkinliği arasındaki ödünleşimi motive edebilecek şekilde yüksek olabilir :cite:`Zhang.Tay.Zhang.ea.2021`.
 
 ### Doğrusaldan Doğrusal Olmayana
 
-Daha önce olduğu gibi, $\mathbf{X} \in \mathbb{R}^{n \times d}$ matrisiyle, her örneğin $d$ girdisine (öznitelikler) sahip olduğu $n$ örneklerden oluşan bir minigrubu gösteriyoruz. Gizli katmanı $h$ gizli birimlere sahip olan tek gizli katmanlı bir MLP için, gizli katmanın çıktılarını, ki bunlar *gizli gösterimler*dir, $\mathbf{H} \in \mathbb{R}^{n \times h}$ ile belirtelim. Matematikte ve kodlamada, $\mathbf{H}$ aynı zamanda *gizli katman değişkeni* veya *gizli değişken* olarak da bilinir. Gizli ve çıktı katmanlarının her ikisi de tam-bağlı olduğundan, $\mathbf{W}^{(1)} \in \mathbb{R}^{d \times h}$ ve  $\mathbf{b}^{(1)} \in \mathbb{R}^{1 \times h}$ içinde sırasıyla gizli katman ağırlıkları ve ek girdileri, $\mathbf{W}^{(2)} \in \mathbb{R}^{h \times q}$ ve $\mathbf{b}^{(2)} \in \mathbb{R}^{1 \times q}$ içinde de çıktı katmanı ağırlıkları ve ek girdileri var. Biçimsel olarak, tek gizli katmanlı MLP'nin $\mathbf{0} \in \mathbb{R}^{n \times q}$ çıktılarını şu şekilde hesaplarız:
+Daha önce olduğu gibi, $\mathbf{X} \in \mathbb{R}^{n \times d}$ matrisiyle, her örneğin $d$ girdisine (öznitelikler) sahip olduğu $n$ örneklerden oluşan bir minigrubu gösteriyoruz. Gizli katmanı $h$ gizli birimlere sahip olan tek gizli katmanlı bir MLP için, gizli katmanın çıktılarını, ki bunlar *gizli gösterimler*dir, $\mathbf{H} \in \mathbb{R}^{n \times h}$ ile belirtelim. Matematikte ve kodlamada, $\mathbf{H}$ aynı zamanda *gizli katman değişkeni* veya *gizli değişken* olarak da bilinir. Gizli ve çıktı katmanlarının her ikisi de tam bağlı olduğundan, $\mathbf{W}^{(1)} \in \mathbb{R}^{d \times h}$ ve  $\mathbf{b}^{(1)} \in \mathbb{R}^{1 \times h}$ içinde sırasıyla gizli katman ağırlıkları ve ek girdileri, $\mathbf{W}^{(2)} \in \mathbb{R}^{h \times q}$ ve $\mathbf{b}^{(2)} \in \mathbb{R}^{1 \times q}$ içinde de çıktı katmanı ağırlıkları ve ek girdileri var. Biçimsel olarak, tek gizli katmanlı MLP'nin $\mathbf{0} \in \mathbb{R}^{n \times q}$ çıktılarını şu şekilde hesaplarız:
 
 
 $$
@@ -270,7 +270,7 @@ d2l.plot(x.numpy(), t.gradient(y, x).numpy(), 'x', 'grad of tanh',
 
 ## Özet
 
-* MLP, çıktı ve girdi katmanları arasına bir veya birden fazla tam-bağlı gizli katman ekler ve gizli katmanın çıktısını bir etkinleştirme işlevi aracılığıyla dönüştürür.
+* MLP, çıktı ve girdi katmanları arasına bir veya birden fazla tam bağlı gizli katman ekler ve gizli katmanın çıktısını bir etkinleştirme işlevi aracılığıyla dönüştürür.
 * Yaygın olarak kullanılan etkinleştirme işlevleri arasında ReLU işlevi, sigmoid işlevi ve tanh işlevi bulunur.
 
 ## Alıştırmalar

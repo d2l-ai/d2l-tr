@@ -12,7 +12,7 @@ Kesin olarak konuşulan, evrişimli katmanların yanlış adlandırıldığını
 ![İki boyutlu çapraz korelasyon işlemi. Gölgeli kısımlar, çıktı hesaplaması için kullanılan girdi ve çekirdek tensör elemanlarının yanı sıra ilk çıktı elemanıdır: $0\times0+1\times1+3\times2+4\times3=19$.](../img/correlation.svg)
 :label:`fig_correlation`
 
-İki boyutlu çapraz korelasyon işleminde, girdi tensörünün sol üst köşesinde konumlandırılmış evrişim penceresi ile başlar ve hem soldan sağa hem de yukarıdan aşağıya doğru girdi tensörü boyunca kaydırırız. Evrişim penceresi belirli bir konuma kaydırıldığında, bu pencerede bulunan girdi alt-tensör ve çekirdek tensör eleman yönlü olarak çarpılır ve elde edilen tensör tek bir sayıl (skaler) değer oluşturacak şekilde toplanır. Bu sonuç, çıktı tensörünün ilgili konumdaki değerini verir. Burada, çıktı tensörünün yüksekliği 2 ve genişliği 2'dir ve dört eleman iki boyutlu çapraz korelasyon işleminden türetilmiştir:
+İki boyutlu çapraz korelasyon işleminde, girdi tensörünün sol üst köşesinde konumlandırılmış evrişim penceresi ile başlar ve hem soldan sağa hem de yukarıdan aşağıya doğru girdi tensörü boyunca kaydırırız. Evrişim penceresi belirli bir konuma kaydırıldığında, bu pencerede bulunan girdi alt-tensör ve çekirdek tensör eleman yönlü olarak çarpılır ve elde edilen tensör tek bir sayıl (skaler) değer oluşturacak şekilde toplanır. Bu sonuç, çıktı tensörünün ilgili konumdaki değerini verir. Burada, çıktı tensörünün yüksekliği ve genişliği 2'dir ve dört eleman iki boyutlu çapraz korelasyon işleminden türetilmiştir:
 
 $$
 0\times0+1\times1+3\times2+4\times3=19,\\
@@ -44,7 +44,7 @@ from torch import nn
 ```{.python .input}
 #@tab mxnet, pytorch
 def corr2d(X, K):  #@save
-    """Compute 2D cross-correlation."""
+    """2 boyutlu çapraz korelasyonu hesapla."""
     h, w = K.shape
     Y = d2l.zeros((X.shape[0] - h + 1, X.shape[1] - w + 1))
     for i in range(Y.shape[0]):
@@ -59,7 +59,7 @@ from d2l import tensorflow as d2l
 import tensorflow as tf
 
 def corr2d(X, K):  #@save
-    """Compute 2D cross-correlation."""
+    """2 boyutlu çapraz korelasyonu hesapla."""
     h, w = K.shape
     Y = tf.Variable(tf.zeros((X.shape[0] - h + 1, X.shape[1] - w + 1)))
     for i in range(Y.shape[0]):
@@ -173,14 +173,14 @@ Sonlu farklar `[1, -1]` ile bir kenar dedektörü tasarlamak, aradığımız şe
 Şimdi `X`'ten `Y`'yi oluşturan çekirdeği yalnızca girdi-çıktı çiftlerine bakarak öğrenip öğrenemeyeceğimizi görelim. Önce bir evrişimli tabaka oluşturup çekirdeğini rastgele bir tensör olarak ilkletiriz. Daha sonra, her yinelemede, `Y`'yi evrişimli tabakanın çıktısıyla karşılaştırmak için kare hatayı kullanacağız. Daha sonra çekirdeği güncellemek için gradyanı hesaplayabiliriz. Basitlik uğruna, aşağıda iki boyutlu evrişimli katmanlar için yerleşik sınıfı kullanıyoruz ve ek girdiyi görmezden geliyoruz.
 
 ```{.python .input}
-# Construct a two-dimensional convolutional layer with 1 output channel and a
-# kernel of shape (1, 2). For the sake of simplicity, we ignore the bias here
+# 1 çıktı kanallı ve (1, 2) şekilli çekirdekli iki boyutlu bir evrişim katmanı 
+# oluşturun. Basitlik adına, burada ek girdiyi görmezden geliyoruz.
 conv2d = nn.Conv2D(1, kernel_size=(1, 2), use_bias=False)
 conv2d.initialize()
 
-# The two-dimensional convolutional layer uses four-dimensional input and
-# output in the format of (example, channel, height, width), where the batch
-# size (number of examples in the batch) and the number of channels are both 1
+# İki boyutlu evrişimli katman, (örnek, kanal, yükseklik, genişlik) biçiminde 
+# dört boyutlu girdi ve çıktı kullanır; burada toplu iş boyutunun (gruptaki örnek sayısı) 
+# ve kanal sayısının her ikisi de 1'dir.
 X = X.reshape(1, 1, 6, 8)
 Y = Y.reshape(1, 1, 6, 7)
 
@@ -189,7 +189,7 @@ for i in range(10):
         Y_hat = conv2d(X)
         l = (Y_hat - Y) ** 2
     l.backward()
-    # Update the kernel
+    # Çekirdeği güncelle
     conv2d.weight.data()[:] -= 3e-2 * conv2d.weight.grad()
     if (i + 1) % 2 == 0:
         print(f'batch {i + 1}, loss {float(l.sum()):.3f}')
@@ -197,13 +197,13 @@ for i in range(10):
 
 ```{.python .input}
 #@tab pytorch
-# Construct a two-dimensional convolutional layer with 1 output channel and a
-# kernel of shape (1, 2). For the sake of simplicity, we ignore the bias here
+# 1 çıktı kanallı ve (1, 2) şekilli çekirdekli iki boyutlu bir evrişim katmanı 
+# oluşturun. Basitlik adına, burada ek girdiyi görmezden geliyoruz.
 conv2d = nn.Conv2d(1,1, kernel_size=(1, 2), bias=False)
 
-# The two-dimensional convolutional layer uses four-dimensional input and
-# output in the format of (example channel, height, width), where the batch
-# size (number of examples in the batch) and the number of channels are both 1
+# İki boyutlu evrişimli katman, (örnek, kanal, yükseklik, genişlik) biçiminde 
+# dört boyutlu girdi ve çıktı kullanır; burada toplu iş boyutunun (gruptaki örnek sayısı) 
+# ve kanal sayısının her ikisi de 1'dir.
 X = X.reshape((1, 1, 6, 8))
 Y = Y.reshape((1, 1, 6, 7))
 
@@ -212,7 +212,7 @@ for i in range(10):
     l = (Y_hat - Y) ** 2
     conv2d.zero_grad()
     l.sum().backward()
-    # Update the kernel
+    # Çekirdeği güncelle
     conv2d.weight.data[:] -= 3e-2 * conv2d.weight.grad
     if (i + 1) % 2 == 0:
         print(f'batch {i + 1}, loss {l.sum():.3f}')
@@ -220,13 +220,13 @@ for i in range(10):
 
 ```{.python .input}
 #@tab tensorflow
-# Construct a two-dimensional convolutional layer with 1 output channel and a
-# kernel of shape (1, 2). For the sake of simplicity, we ignore the bias here
+# 1 çıktı kanallı ve (1, 2) şekilli çekirdekli iki boyutlu bir evrişim katmanı 
+# oluşturun. Basitlik adına, burada ek girdiyi görmezden geliyoruz.
 conv2d = tf.keras.layers.Conv2D(1, (1, 2), use_bias=False)
 
-# The two-dimensional convolutional layer uses four-dimensional input and
-# output in the format of (example channel, height, width), where the batch
-# size (number of examples in the batch) and the number of channels are both 1
+# İki boyutlu evrişimli katman, (örnek, kanal, yükseklik, genişlik) biçiminde 
+# dört boyutlu girdi ve çıktı kullanır; burada toplu iş boyutunun (gruptaki örnek sayısı) 
+# ve kanal sayısının her ikisi de 1'dir.
 X = tf.reshape(X, (1, 6, 8, 1))
 Y = tf.reshape(Y, (1, 6, 7, 1))
 
@@ -236,7 +236,7 @@ for i in range(10):
         g.watch(conv2d.weights[0])
         Y_hat = conv2d(X)
         l = (abs(Y_hat - Y)) ** 2
-        # Update the kernel
+        # Çekirdeği güncelle
         update = tf.multiply(3e-2, g.gradient(l, conv2d.weights[0]))
         weights = conv2d.get_weights()
         weights[0] = conv2d.weights[0] - update

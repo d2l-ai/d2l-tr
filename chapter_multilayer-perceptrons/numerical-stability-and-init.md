@@ -22,7 +22,7 @@ Kararsız gradyanların yarattığı riskler sayısal temsilin ötesine geçer. 
 
 ### (**Kaybolan Gradyanlar**)
 
-Kaybolan gradyan sorununa neden olan sık karşılaşılan bir kabahat, her katmanın doğrusal işlemlerinin ardından eklenen $\sigma$ etkinleştirme işlevinin seçimidir. Tarihsel olarak, sigmoid işlevi $1/(1 + \exp(-x))$ (bakınız :numref:`sec_mlp`), bir eşikleme işlevine benzediği için popülerdi. Erken yapay sinir ağları biyolojik sinir ağlarından ilham aldığından, ya *tamamen* ateşleyen ya da *hiç* ateşlemeyen (biyolojik nöronlar gibi) nöronlar fikri çekici görünüyordu. Neden yok olan gradyanlara neden olabileceğini görmek için sigmoide daha yakından bakalım.
+Kaybolan gradyan sorununa neden olan sık karşılaşılan bir kabahat, her katmanın doğrusal işlemlerinin ardından eklenen $\sigma$ etkinleştirme işlevinin seçimidir. Tarihsel olarak, sigmoid işlevi $1/(1 + \exp(-x))$ (bkz. :numref:`sec_mlp`), bir eşikleme işlevine benzediği için popülerdi. Erken yapay sinir ağları biyolojik sinir ağlarından ilham aldığından, ya *tamamen* ateşleyen ya da *hiç* ateşlemeyen (biyolojik nöronlar gibi) nöronlar fikri çekici görünüyordu. Neden yok olan gradyanlara neden olabileceğini görmek için sigmoide daha yakından bakalım.
 
 ```{.python .input}
 %matplotlib inline

@@ -55,7 +55,7 @@ Bu bölümde, size biraz sezgi vermek için, bir model sınıfının genelleşti
 
 ## Model Seçimi
 
-Makine öğrenmesinde, genellikle birkaç aday modeli değerlendirdikten sonra son modelimizi seçeriz. Bu işleme *model seçimi* denir. Bazen karşılaştırmaya konu olan modeller doğalari gereği temelden farklıdır (örneğin, karar ağaçları ve doğrusal modeller). Diğer zamanlarda, farklı hiperparametre ayarlarıyla eğitilmiş aynı model sınıfının üyelerini karşılaştırıyoruz.
+Makine öğrenmesinde, genellikle birkaç aday modeli değerlendirdikten sonra son modelimizi seçeriz. Bu işleme *model seçimi* denir. Bazen karşılaştırmaya konu olan modeller doğalari gereği temelden farklıdır (örneğin, karar ağaçları ve doğrusal modeller). Diğer zamanlarda, farklı hiper parametre ayarlarıyla eğitilmiş aynı model sınıfının üyelerini karşılaştırıyoruz.
 
 Örneğin, MLP'de, modelleri farklı sayıda gizli katman, farklı sayıda gizli birim ve her gizli katmana uygulanan çeşitli etkinleştirme işlevleri seçenekleriyle karşılaştırma yapmak isteyebiliriz. Aday modellerimiz arasında en iyisini belirlemek için, genellikle bir geçerleme veri kümesi kullanırız.
 
@@ -315,7 +315,7 @@ Daha ileriki bölümlerde, aşırı öğrenme problemlerini ve bunlarla başa ç
 ## Özet
 
 * Genelleme hatası eğitim hatasına dayalı olarak tahmin edilemediğinden, basitçe eğitim hatasını en aza indirmek, genelleme hatasında bir azalma anlamına gelmeyecektir. Makine öğrenmesi modellerinin, genelleme hatasını en aza indirgerken aşırı öğrenmeye karşı koruma sağlamak için dikkatli olması gerekir.
-* Model seçimi için bir geçerleme kümesi,çok serbest kullanılmaması koşuluyla, kullanılabilir.
+* Model seçimi için bir geçerleme kümesi, çok serbest kullanılmaması koşuluyla, kullanılabilir.
 * Eksik öğrenme, modelin eğitim hatasını azaltamadığı anlamına gelir. Model eğitim hatası geçerleme kümesi hatasından çok daha düşük olduğu zaman da aşırı öğrenme vardır.
 * Uygun şekilde karmaşık bir model seçmeli ve yetersiz eğitim örneklemleri kullanmaktan kaçınmalıyız.
 

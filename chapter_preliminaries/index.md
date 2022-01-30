@@ -23,7 +23,7 @@ Bölümü bitirken size gerekli bilgiler için kaynaklara nasıl bakacağınız�
 Bu kitap, derin öğrenmeyi doğru bir şekilde anlamak için gerekli olan matematiksel içeriği en azda tutmuştur.
 Ancak, bu, bu kitabın matematik içermediği anlamına gelmez.
 Bu nedenle, bu bölüm, herhangi bir kişinin, kitabın matematiksel içeriğinin en azından *çoğunu* anlayabilmesi için temel ve sık kullanılan matematiğe hızlı bir giriş yapmasını sağlar.
-Matematiksel içeriğin *tümünü* anlamak istiyorsanız,[matematik üzerine çevrimiçi ek](https://tr.d2l.ai/chapter_appendix-mathematics-for-deep-learning/index.html) derinlemesine gözden geçirmek yeterli olacaktır.
+Matematiksel içeriğin *tümünü* anlamak istiyorsanız, [matematik üzerine çevrimiçi ek](https://tr.d2l.ai/chapter_appendix-mathematics-for-deep-learning/index.html)i derinlemesine gözden geçirmek yeterli olacaktır.
 
 ```toc
 :maxdepth: 2

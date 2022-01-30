@@ -229,7 +229,7 @@ train(lambd=3)
 Ağırlık sönümü sinir ağı optimizasyonunda her yerde mevcut olduğu için, derin öğrenme çerçevesi, herhangi bir kayıp fonksiyonuyla birlikte kolay kullanım için ağırlık sönümü optimizasyon algoritmasını kendisine kaynaştırarak bunu özellikle kullanışlı hale getirir. Dahası, bu kaynaştırma, herhangi bir ek hesaplama yükü olmaksızın, uygulama marifetlerinin algoritmaya ağırlık sönümü eklemesine izin vererek hesaplama avantajı sağlar. Güncellemenin ağırlık sönümü kısmı yalnızca her bir parametrenin mevcut değerine bağlı olduğundan, optimize edicinin herhalükarda her parametreye bir kez dokunması gerekir.
 
 :begin_tab:`mxnet`
-Aşağıdaki kodda, ağırlık sönümü hiper parametresini, `Trainer` (Eğitici) örneğimizi oluştururken doğrudan `wd` aracılığıyla belirtiyoruz. Varsayılan olarak Gluon hem ağırlıkları hem de ek girdileri aynı anda azaltır. Model parametreleri güncellenirken hiperparametre `wd`nin `wd_mult` ile çarpılacağına dikkat edin. Bu nedenle, `wd_mult`'i sıfır olarak ayarlarsak, ek girdi parametresi $b$ sönmeyecektir.
+Aşağıdaki kodda, ağırlık sönümü hiper parametresini, `Trainer` (Eğitici) örneğimizi oluştururken doğrudan `wd` aracılığıyla belirtiyoruz. Varsayılan olarak Gluon hem ağırlıkları hem de ek girdileri aynı anda azaltır. Model parametreleri güncellenirken hiper parametre `wd`nin `wd_mult` ile çarpılacağına dikkat edin. Bu nedenle, `wd_mult`'i sıfır olarak ayarlarsak, ek girdi parametresi $b$ sönmeyecektir.
 :end_tab:
 
 :begin_tab:`pytorch`
@@ -249,7 +249,7 @@ def train_concise(wd):
     num_epochs, lr = 100, 0.003
     trainer = gluon.Trainer(net.collect_params(), 'sgd',
                             {'learning_rate': lr, 'wd': wd})
-    # The bias parameter has not decayed. Bias names generally end with "bias"
+    # Ek girdi parametresi sönümlenmedi. Ey girdi adları genellikle "bias" ile biter
     net.collect_params('.*bias').setattr('wd_mult', 0)
     animator = d2l.Animator(xlabel='epochs', ylabel='loss', yscale='log',
                             xlim=[5, num_epochs], legend=['train', 'test'])
@@ -273,7 +273,7 @@ def train_concise(wd):
         param.data.normal_()
     loss = nn.MSELoss(reduction='none')
     num_epochs, lr = 100, 0.003
-    # The bias parameter has not decayed
+    # Ek girdi parametresi sönümlenmedi
     trainer = torch.optim.SGD([
         {"params":net[0].weight,'weight_decay': wd},
         {"params":net[0].bias}], lr=lr)
@@ -307,8 +307,8 @@ def train_concise(wd):
     for epoch in range(num_epochs):
         for X, y in train_iter:
             with tf.GradientTape() as tape:
-                # `tf.keras` requires retrieving and adding the losses from
-                # layers manually for custom training loop.
+                # `tf.keras`, özel eğitim döngüsü için katmanlardaki kayıpların 
+                # manuel olarak alınmasını ve eklenmesini gerektirir.
                 l = loss(net(X), y) + net.losses
             grads = tape.gradient(l, net.trainable_variables)
             trainer.apply_gradients(zip(grads, net.trainable_variables))

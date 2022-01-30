@@ -54,7 +54,7 @@ Karşılaştırma olarak, GPU'lar $100 \sim 1000$ arasında küçük işleme ele
 
 8 katmanlı CNN kullanan AlexNet, 2012 ImageNet Büyük Ölçekli Görsel Tanıma Yarışması'nı olağanüstü derecede büyük bir farkla kazandı. Bu ağ, ilk kez, öğrenme yoluyla elde edilen özniteliklerin el ile tasarlanmış öznitelikleri aşabildiğini ve bilgisayarla görmede önceki alışılmış kalıpları kırabileceğini gösterdi.
 
-:numref:`fig_alexnet`'ün gösterdiği gibi AlexNet ve LeNet'in mimarileri çok benzerdir. Modelin iki küçük GPU'ya uyması için 2012'de gerekli olan tasarım tuhaflıklarından bazılarını kaldırarak AlexNet'in biraz aerodinamik bir versiyonunu sunduğumuza dikkat edin.
+:numref:`fig_alexnet`'nin gösterdiği gibi AlexNet ve LeNet'in mimarileri çok benzerdir. Modelin iki küçük GPU'ya uyması için 2012'de gerekli olan tasarım tuhaflıklarından bazılarını kaldırarak AlexNet'in biraz aerodinamik bir versiyonunu sunduğumuza dikkat edin.
 
 ![LeNet'ten (sol) AlexNet'e (sağ).](../img/alexnet.svg)
 :label:`fig_alexnet`
@@ -82,32 +82,30 @@ from mxnet.gluon import nn
 npx.set_np()
 
 net = nn.Sequential()
-# Here, we use a larger 11 x 11 window to capture objects. At the same time,
-# we use a stride of 4 to greatly reduce the height and width of the output.
-# Here, the number of output channels is much larger than that in LeNet
+# Burada nesneleri yakalamak için daha büyük bir 11 x 11'lik pencere kullanıyoruz. 
+# Aynı zamanda, çıktının yüksekliğini ve genişliğini büyük ölçüde azaltmak 
+# için 4'lük bir uzun adım kullanıyoruz. Burada, çıktı kanallarının sayısı 
+# LeNet'tekinden çok daha fazladır.
 net.add(nn.Conv2D(96, kernel_size=11, strides=4, activation='relu'),
         nn.MaxPool2D(pool_size=3, strides=2),
-        # Make the convolution window smaller, set padding to 2 for consistent
-        # height and width across the input and output, and increase the
-        # number of output channels
+        # Evrişim penceresini küçült, girdi ve çıktı boyunca tutarlı yükseklik 
+        # ve genişlik için dolguyu 2'ye ayarlayın ve çıktı kanallarının sayısını artırın
         nn.Conv2D(256, kernel_size=5, padding=2, activation='relu'),
         nn.MaxPool2D(pool_size=3, strides=2),
-        # Use three successive convolutional layers and a smaller convolution
-        # window. Except for the final convolutional layer, the number of
-        # output channels is further increased. Pooling layers are not used to
-        # reduce the height and width of input after the first two
-        # convolutional layers
+        # Ardışık üç evrişim katmanı ve daha küçük bir evrişim penceresi kullan. 
+        # Son evrişim katmanı dışında, çıktı kanallarının sayısı daha da artırılır. 
+        # Ortaklama katmanları, ilk iki evrişim katmanından sonra girdinin 
+        # yüksekliğini ve genişliğini azaltmak için kullanılmaz.
         nn.Conv2D(384, kernel_size=3, padding=1, activation='relu'),
         nn.Conv2D(384, kernel_size=3, padding=1, activation='relu'),
         nn.Conv2D(256, kernel_size=3, padding=1, activation='relu'),
         nn.MaxPool2D(pool_size=3, strides=2),
-        # Here, the number of outputs of the fully-connected layer is several
-        # times larger than that in LeNet. Use the dropout layer to mitigate
-        # overfitting
+        # Burada, tam bağlı katmanın çıktı sayısı, LeNet'tekinden birkaç kat 
+        # daha fazladır. Aşırı öğrenmeyi azaltmak için hattan düşürme katmanını kullan
         nn.Dense(4096, activation='relu'), nn.Dropout(0.5),
         nn.Dense(4096, activation='relu'), nn.Dropout(0.5),
-        # Output layer. Since we are using Fashion-MNIST, the number of
-        # classes is 10, instead of 1000 as in the paper
+        # Çıktı katmanı. Fashion-MNIST kullandığımız için sınıf sayısı 
+        # makaledeki gibi 1000 yerine 10'dur.
         nn.Dense(10))
 ```
 
@@ -118,35 +116,37 @@ import torch
 from torch import nn
 
 net = nn.Sequential(
-    # Here, we use a larger 11 x 11 window to capture objects. At the same
-    # time, we use a stride of 4 to greatly reduce the height and width of the
-    # output. Here, the number of output channels is much larger than that in
-    # LeNet
+    # Burada nesneleri yakalamak için daha büyük bir 11 x 11'lik pencere kullanıyoruz. 
+    # Aynı zamanda, çıktının yüksekliğini ve genişliğini büyük ölçüde azaltmak 
+    # için 4'lük bir uzun adım kullanıyoruz. Burada, çıktı kanallarının sayısı 
+    # LeNet'tekinden çok daha fazladır.
     nn.Conv2d(1, 96, kernel_size=11, stride=4, padding=1), nn.ReLU(),
     nn.MaxPool2d(kernel_size=3, stride=2),
-    # Make the convolution window smaller, set padding to 2 for consistent
-    # height and width across the input and output, and increase the number of
-    # output channels
+    # Evrişim penceresini küçült, girdi ve çıktı boyunca tutarlı yükseklik 
+    # ve genişlik için dolguyu 2'ye ayarlayın ve çıktı kanallarının sayısını artırın
     nn.Conv2d(96, 256, kernel_size=5, padding=2), nn.ReLU(),
     nn.MaxPool2d(kernel_size=3, stride=2),
     # Use three successive convolutional layers and a smaller convolution
     # window. Except for the final convolutional layer, the number of output
     # channels is further increased. Pooling layers are not used to reduce the
     # height and width of input after the first two convolutional layers
+    # Ardışık üç evrişim katmanı ve daha küçük bir evrişim penceresi kullan. 
+    # Son evrişim katmanı dışında, çıktı kanallarının sayısı daha da artırılır. 
+    # Ortaklama katmanları, ilk iki evrişim katmanından sonra girdinin 
+    # yüksekliğini ve genişliğini azaltmak için kullanılmaz.
     nn.Conv2d(256, 384, kernel_size=3, padding=1), nn.ReLU(),
     nn.Conv2d(384, 384, kernel_size=3, padding=1), nn.ReLU(),
     nn.Conv2d(384, 256, kernel_size=3, padding=1), nn.ReLU(),
     nn.MaxPool2d(kernel_size=3, stride=2),
     nn.Flatten(),
-    # Here, the number of outputs of the fully-connected layer is several
-    # times larger than that in LeNet. Use the dropout layer to mitigate
-    # overfitting
+    # Burada, tam bağlı katmanın çıktı sayısı, LeNet'tekinden birkaç kat 
+    # daha fazladır. Aşırı öğrenmeyi azaltmak için hattan düşürme katmanını kullan
     nn.Linear(6400, 4096), nn.ReLU(),
     nn.Dropout(p=0.5),
     nn.Linear(4096, 4096), nn.ReLU(),
     nn.Dropout(p=0.5),
-    # Output layer. Since we are using Fashion-MNIST, the number of classes is
-    # 10, instead of 1000 as in the paper
+    # Çıktı katmanı. Fashion-MNIST kullandığımız için sınıf sayısı 
+    # makaledeki gibi 1000 yerine 10'dur.
     nn.Linear(4096, 10))
 ```
 
@@ -157,24 +157,22 @@ import tensorflow as tf
 
 def net():
     return tf.keras.models.Sequential([
-        # Here, we use a larger 11 x 11 window to capture objects. At the same
-        # time, we use a stride of 4 to greatly reduce the height and width of
-        # the output. Here, the number of output channels is much larger than
-        # that in LeNet
+        # Burada nesneleri yakalamak için daha büyük bir 11 x 11'lik pencere kullanıyoruz. 
+        # Aynı zamanda, çıktının yüksekliğini ve genişliğini büyük ölçüde azaltmak 
+        # için 4'lük bir uzun adım kullanıyoruz. Burada, çıktı kanallarının sayısı 
+        # LeNet'tekinden çok daha fazladır.
         tf.keras.layers.Conv2D(filters=96, kernel_size=11, strides=4,
                                activation='relu'),
         tf.keras.layers.MaxPool2D(pool_size=3, strides=2),
-        # Make the convolution window smaller, set padding to 2 for consistent
-        # height and width across the input and output, and increase the
-        # number of output channels
+        # Evrişim penceresini küçült, girdi ve çıktı boyunca tutarlı yükseklik 
+        # ve genişlik için dolguyu 2'ye ayarlayın ve çıktı kanallarının sayısını artırın
         tf.keras.layers.Conv2D(filters=256, kernel_size=5, padding='same',
                                activation='relu'),
         tf.keras.layers.MaxPool2D(pool_size=3, strides=2),
-        # Use three successive convolutional layers and a smaller convolution
-        # window. Except for the final convolutional layer, the number of
-        # output channels is further increased. Pooling layers are not used to
-        # reduce the height and width of input after the first two
-        # convolutional layers
+        # Ardışık üç evrişim katmanı ve daha küçük bir evrişim penceresi kullan. 
+        # Son evrişim katmanı dışında, çıktı kanallarının sayısı daha da artırılır. 
+        # Ortaklama katmanları, ilk iki evrişim katmanından sonra girdinin 
+        # yüksekliğini ve genişliğini azaltmak için kullanılmaz.
         tf.keras.layers.Conv2D(filters=384, kernel_size=3, padding='same',
                                activation='relu'),
         tf.keras.layers.Conv2D(filters=384, kernel_size=3, padding='same',
@@ -183,27 +181,26 @@ def net():
                                activation='relu'),
         tf.keras.layers.MaxPool2D(pool_size=3, strides=2),
         tf.keras.layers.Flatten(),
-        # Here, the number of outputs of the fully-connected layer is several
-        # times larger than that in LeNet. Use the dropout layer to mitigate
-        # overfitting
+        # Burada, tam bağlı katmanın çıktı sayısı, LeNet'tekinden birkaç kat 
+        # daha fazladır. Aşırı öğrenmeyi azaltmak için hattan düşürme katmanını kullan
         tf.keras.layers.Dense(4096, activation='relu'),
         tf.keras.layers.Dropout(0.5),
         tf.keras.layers.Dense(4096, activation='relu'),
         tf.keras.layers.Dropout(0.5),
-        # Output layer. Since we are using Fashion-MNIST, the number of
-        # classes is 10, instead of 1000 as in the paper
+        # Çıktı katmanı. Fashion-MNIST kullandığımız için sınıf sayısı 
+        # makaledeki gibi 1000 yerine 10'dur.
         tf.keras.layers.Dense(10)
     ])
 ```
 
-(**Her katmanın çıktı şeklini gözlemlemek**) için 224 yüksekliğinde ve  genişliğinde [**tek kanallı bir veri örneği oluşturuyoruz**]. :numref:`fig_alexnet`'teki AlexNet mimarisine uyuyor.
+(**Her katmanın çıktı şeklini gözlemlemek**) için 224 yüksekliğinde ve  genişliğinde [**tek kanallı bir veri örneği oluşturuyoruz**]. :numref:`fig_alexnet`'deki AlexNet mimarisine uyuyor.
 
 ```{.python .input}
 X = np.random.uniform(size=(1, 1, 224, 224))
 net.initialize()
 for layer in net:
     X = layer(X)
-    print(layer.name, 'output shape:\t', X.shape)
+    print(layer.name, 'cikli sekli:\t', X.shape)
 ```
 
 ```{.python .input}
@@ -211,7 +208,7 @@ for layer in net:
 X = torch.randn(1, 1, 224, 224)
 for layer in net:
     X=layer(X)
-    print(layer.__class__.__name__,'output shape:\t',X.shape)
+    print(layer.__class__.__name__,'cikli sekli:\t',X.shape)
 ```
 
 ```{.python .input}
@@ -219,7 +216,7 @@ for layer in net:
 X = tf.random.uniform((1, 224, 224, 1))
 for layer in net().layers:
     X = layer(X)
-    print(layer.__class__.__name__, 'output shape:\t', X.shape)
+    print(layer.__class__.__name__, 'cikli sekli:\t', X.shape)
 ```
 
 ## Veri Kümesini Okuma

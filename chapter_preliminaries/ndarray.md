@@ -170,8 +170,7 @@ tf.ones((2, 3, 4))
 
 Genellikle, [**bir tensördeki her eleman için değerleri bir olasılık dağılımından rastgele örneklemek**] isteriz.
 Örneğin, bir sinir ağında parametre görevi görecek dizileri oluşturduğumuzda, değerlerini genellikle rastgele ilkletiriz.
-Aşağıdaki kod parçası (3, 4) şekilli bir tensör oluşturur .
-Elemanlarının her biri ortalaması 0 ve standart sapması 1 olan standart Gauss (normal) dağılımından rastgele örneklenir.
+Aşağıdaki kod parçası (3, 4) şekilli bir tensör oluşturur. Elemanlarının her biri ortalaması 0 ve standart sapması 1 olan standart Gauss (normal) dağılımından rastgele örneklenir.
 
 ```{.python .input}
 np.random.normal(0, 1, size=(3, 4))

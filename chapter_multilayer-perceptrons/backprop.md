@@ -5,7 +5,7 @@
 
 Gradyanların otomatik olarak hesaplanması (otomatik türev alma), derin öğrenme algoritmalarının uygulanmasını büyük ölçüde basitleştirir. Otomatik türev almadan önce, karmaşık modellerde yapılan küçük değişiklikler bile karmaşık türevlerin elle yeniden hesaplanmasını gerektiriyordu. Şaşırtıcı bir şekilde, akademik makaleler güncelleme kurallarını türetmek için çok sayıda sayfa ayırmak zorunda kalırdı. İlginç kısımlara odaklanabilmemiz için otomotik türeve güvenmeye devam etmemiz gerekse de, sığ bir derin öğrenme anlayışının ötesine geçmek istiyorsanız, bu gradyanların kaputun altında nasıl hesaplandığını bilmelisiniz.
 
-Bu bölümde, *geriye doğru yayma*nın (daha yaygın olarak *geri yayma* olarak adlandırılır) ayrıntılarına derinlemesine dalacağız. Hem teknikler hem de uygulamaları hakkında bazı bilgiler vermek için birtakım temel matematik ve hesaplama çizgelerine güveniyoruz. Başlangıç ​​olarak, açıklamamızı ağırlık sönümlü ($L_2$ düzenlileştirme), bir gizli katmanlı MLP'ye odaklıyoruz.
+Bu bölümde, *geriye doğru yayma*nın (daha yaygın olarak *geri yayma* olarak adlandırılır) ayrıntılarına derinlemesine dalacağız. Hem teknikler hem de uygulamaları hakkında bazı bilgiler vermek için birtakım temel matematik ve hesaplama çizgelerine güveniyoruz. Başlangıç olarak, açıklamamızı ağırlık sönümlü ($L_2$ düzenlileştirme), bir gizli katmanlı MLP'ye odaklıyoruz.
 
 
 ## İleri Yayma

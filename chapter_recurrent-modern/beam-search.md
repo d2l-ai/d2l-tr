@@ -35,7 +35,7 @@ En iyi diziyi elde etmek için kapsamlı arama kullanabilsek de, hesaplama maliy
 
 Sıra arama stratejileri ile ilgili kararlar, her iki uç da kolay sorularla birlikte bir spektrumda yatar. Eğer sadece doğruluk önemliyse? Açıkça görülüyor ki, kapsamlı arama. Ya sadece hesaplamalı maliyet önemliyse? Açıkça, açgözlü arama. Gerçek dünya uygulamaları genellikle bu iki uç arasında bir yerde karmaşık bir soru sorar.
 
-*Işın arama* açgözlü aramanın geliştirilmiş bir versiyonudur. *Işın boyutu* adında bir $k$ hiperparametresi vardır.
+*Işın arama* açgözlü aramanın geliştirilmiş bir versiyonudur. *Işın boyutu* adında bir $k$ hiper parametresi vardır.
 Zaman adımında, en yüksek koşullu olasılıklara sahip $k$ tane andıcı seçiyoruz. Her biri sırasıyla $k$ aday çıktı dizilerinin ilk andıcı olacak. Sonraki her zaman adımında, önceki zaman adımındaki $k$ aday çıktı dizilerine dayanarak, $k\left|\mathcal{Y}\right|$ olası seçeneklerden en yüksek koşullu olasılıklara sahip $k$ tane aday çıktı dizisini seçmeye devam ediyoruz.
 
 ![Işın arama süreci (ışın boyutu: 2, bir çıktı dizisinin maksimum uzunluğu: 3). Aday çıktı dizileri $A$, $C$, $AB$, $CE$, $ABD$ ve $CED$ şeklindedir.](../img/beam-search.svg)

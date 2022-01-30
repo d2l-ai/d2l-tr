@@ -1,24 +1,24 @@
-# Çoklu Kafa Dikkat
+# Çoklu-Kafalı Dikkat
 :label:`sec_multihead-attention`
 
-Uygulamada, aynı sorgu, anahtar ve değerler kümesi göz önüne alındığında, modelimizin aynı dikkat mekanizmasının farklı davranışlarından gelen bilgileri bir dizi içinde çeşitli aralıkların (örneğin, daha kısa menzilli ve daha uzun menzilli) yakalama gibi farklı davranışlardan gelen bilgileri birleştirmesini isteyebiliriz. Bu nedenle, dikkat mekanizmamızın sorguların, anahtarların ve değerlerin farklı temsil alt alanlarını ortaklaşa kullanmasına izin vermek yararlı olabilir. 
+Pratikte, aynı sorgular, anahtarlar ve değerler kümesi verildiğinde, modelimizin, çeşitli aralıkların bir sıra içinde (örneğin, daha kısa menzile karşı daha uzun menzil) bağımlılıklarını yakalama gibi aynı dikkat mekanizmasının farklı davranışlarından elde edilen bilgileri birleştirmesini isteyebiliriz. Bu nedenle, dikkat mekanizmamızın sorguların, anahtarların ve değerlerin farklı temsil alt alanlarını ortaklaşa kullanmasına izin vermek yararlı olabilir. 
 
-Bu amaçla, tek bir dikkat havuzu yerine, sorgular, anahtarlar ve değerler $h$ bağımsız olarak öğrenilen doğrusal projeksiyonlar ile dönüştürülebilir. Daha sonra bu $h$ öngörülen sorgular, anahtarlar ve değerler paralel olarak dikkat havuzu içine beslenir. Nihayetinde, $h$ dikkat havuzlama çıktıları birleştirilir ve son çıktıyı üretmek için başka bir öğrenilmiş doğrusal projeksiyon ile dönüştürülür. Bu tasarıma *çoklu kafalı dikkat* denir, burada $h$ dikkat biriktirme çıkışlarının her biri *head* :cite:`Vaswani.Shazeer.Parmar.ea.2017`. Öğrenilebilir doğrusal dönüşümler gerçekleştirmek için tam bağlı katmanları kullanarak :numref:`fig_multi-head-attention`, çok kafalı dikkati açıklar. 
+Bu amaçla, tek bir dikkat ortaklaması yerine, sorgular, anahtarlar ve değerler $h$ tane bağımsız olarak öğrenilen doğrusal izdüşümler ile dönüştürülebilir. Daha sonra bu $h$ öngörülen sorgular, anahtarlar ve değerler paralel olarak dikkat ortaklaması içine beslenir. Nihayetinde, $h$ dikkat ortaklama çıktıları bitiştirilir ve son çıktıyı üretmek için başka bir öğrenilmiş doğrusal izdüşüm ile dönüştürülür. Bu tasarıma *çoklu kafalı dikkat* denir, burada $h$ dikkat ortaklama çıktılarının her biri *kafa*dır :cite:`Vaswani.Shazeer.Parmar.ea.2017`. Öğrenilebilir doğrusal dönüşümler gerçekleştirmek için tam bağlı katmanları kullanan çoklu kafalı dikkat :numref:`fig_multi-head-attention`'da açıklanmıştır. 
 
-![Multi-head attention, where multiple heads are concatenated then linearly transformed.](../img/multi-head-attention.svg)
+![Çoklu kafanın bir araya getirildiği ve ardından doğrusal olarak dönüştürüldüğü çoklu kafalı dikkat.](../img/multi-head-attention.svg)
 :label:`fig_multi-head-attention`
 
 ## Model
 
-Çok kafalı dikkatin uygulanmasını sağlamadan önce, bu modeli matematiksel olarak resmileştirelim. Bir sorgu $\mathbf{q} \in \mathbb{R}^{d_q}$, bir anahtar $\mathbf{k} \in \mathbb{R}^{d_k}$ ve $\mathbf{v} \in \mathbb{R}^{d_v}$ bir değer göz önüne alındığında, her dikkat kafası $\mathbf{h}_i$ ($i = 1, \ldots, h$) olarak hesaplanır 
+Çoklu kafalı dikkatin uygulanmasını sağlamadan önce, bu modeli matematiksel olarak biçimlendirelim. Bir sorgu $\mathbf{q} \in \mathbb{R}^{d_q}$, bir anahtar $\mathbf{k} \in \mathbb{R}^{d_k}$ ve bir değer $\mathbf{v} \in \mathbb{R}^{d_v}$ göz önüne alındığında, her dikkat kafası $\mathbf{h}_i$ ($i = 1, \ldots, h$) aşağıdaki gibi hesaplanır 
 
 $$\mathbf{h}_i = f(\mathbf W_i^{(q)}\mathbf q, \mathbf W_i^{(k)}\mathbf k,\mathbf W_i^{(v)}\mathbf v) \in \mathbb R^{p_v},$$
 
-burada öğrenilebilir parametreler $\mathbf W_i^{(q)}\in\mathbb R^{p_q\times d_q}$, $\mathbf W_i^{(k)}\in\mathbb R^{p_k\times d_k}$ ve $\mathbf W_i^{(v)}\in\mathbb R^{p_v\times d_v}$ ve $f$, :numref:`sec_attention-scoring-functions` yılında katkı dikkat ve ölçekli nokta ürün dikkati gibi dikkat havuzudur. Çok başlı dikkat çıkışı, $h$ kafalarının birleştirilmesinin $\mathbf W_o\in\mathbb R^{p_o\times h p_v}$ öğrenilebilir parametreleri vasıtasıyla başka bir doğrusal dönüşümdür: 
+burada öğrenilebilir parametreler $\mathbf W_i^{(q)}\in\mathbb R^{p_q\times d_q}$, $\mathbf W_i^{(k)}\in\mathbb R^{p_k\times d_k}$ ve $\mathbf W_i^{(v)}\in\mathbb R^{p_v\times d_v}$ ve $f$, :numref:`sec_attention-scoring-functions` içindeki toplayıcı dikkat ve ölçeklendirilmiş nokta çarpımı dikkat gibi dikkat ortaklamasıdır. Çoklu kafalı dikkat çıktısı, $h$ kafalarının bitiştirilmesinin $\mathbf W_o\in\mathbb R^{p_o\times h p_v}$ öğrenilebilir parametreleri vasıtasıyla başka bir doğrusal dönüşümdür: 
 
 $$\mathbf W_o \begin{bmatrix}\mathbf h_1\\\vdots\\\mathbf h_h\end{bmatrix} \in \mathbb{R}^{p_o}.$$
 
-Bu tasarıma dayanarak, her kafa girişin farklı bölümlerine katılabilir. Basit ağırlıklı ortalamadan daha sofistike fonksiyonlar ifade edilebilir.
+Bu tasarıma dayanarak, her kafa girdisinin farklı bölümleriyle ilgilenebilir. Basit ağırlıklı ortalamadan daha gelişmiş fonksiyonlar ifade edilebilir.
 
 ```{.python .input}
 from d2l import mxnet as d2l
@@ -184,7 +184,7 @@ class MultiHeadAttention(tf.keras.layers.Layer):
         return self.W_o(output_concat)
 ```
 
-Birden fazla kafanın [**paralel hesaplanmasına izin vermek için**], yukarıdaki `MultiHeadAttention` sınıfı aşağıda tanımlandığı gibi iki transpozisyon işlevi kullanır. Özellikle, `transpose_output` işlevi `transpose_qkv` işlevinin çalışmasını tersine çevirir.
+Çoklu kafanın [**paralel hesaplanmasına izin vermek için**], yukarıdaki `MultiHeadAttention` sınıfı aşağıda tanımlandığı gibi iki devrinim işlevi kullanır. Özellikle, `transpose_output` işlevi `transpose_qkv` işlevinin çalışmasını tersine çevirir.
 
 ```{.python .input}
 #@save
@@ -323,13 +323,13 @@ attention(X, Y, Y, valid_lens, training=False).shape
 
 ## Özet
 
-* Çok kafalı dikkat, sorguların, anahtarların ve değerlerin farklı temsil alt alanları aracılığıyla aynı dikkat havuzlama bilgisini birleştirir.
-* Birden fazla kafalı dikkati paralel olarak hesaplamak için uygun tensör manipülasyonu gereklidir.
+* Çoklu kafalı dikkat, sorguların, anahtarların ve değerlerin farklı temsil altuzayları aracılığıyla aynı dikkat ortaklama bilgisini birleştirir.
+* Çoklu kafalı dikkati paralel hesaplamak için uygun tensör düzenlemeleri gereklidir.
 
-## Egzersizler
+## Alıştırmalar
 
-1. Bu deneyde birden fazla kafanın dikkat ağırlıklarını görselleştirin.
-1. Çok kafa dikkatine dayalı eğitimli bir modelimiz olduğunu ve tahmin hızını artırmak için en az önemli dikkat kafalarını budamak istediğimizi varsayalım. Bir dikkat kafasının önemini ölçmek için deneyleri nasıl tasarlayabiliriz?
+1. Bu deneyde çoklu kafanın dikkat ağırlıklarını görselleştirin.
+1. Çoklu kafa dikkatine dayalı eğitimli bir modelimiz olduğunu ve tahmin hızını artırmak için en az önemli dikkat kafalarını budamak istediğimizi varsayalım. Bir dikkat kafasının önemini ölçmek için deneyleri nasıl tasarlayabiliriz
 
 :begin_tab:`mxnet`
 [Discussions](https://discuss.d2l.ai/t/1634)

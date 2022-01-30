@@ -3,7 +3,7 @@
 
 Bir çokgenin alanını bulmak, eski Yunanlıların bir çokgeni üçgenlere böldüğü ve alanlarını topladığı en az 2.500 yıl öncesine kadar gizemli kalmıştı.
 Bir daire gibi kavisli şekillerin alanını bulmak için, eski Yunanlılar bu şekillerin içine çokgenler yerleştirdiler.
-:numref:`fig_circle_area`'da gösterildiği gibi, eşit uzunlukta daha fazla kenarı olan çizili bir çokgen daireye bayağı yaklaşır. Bu işlem *tüketme yöntemi* olarak da bilinir.
+:numref:`fig_circle_area`'de gösterildiği gibi, eşit uzunlukta daha fazla kenarı olan çizili bir çokgen daireye bayağı yaklaşır. Bu işlem *tüketme yöntemi* olarak da bilinir.
 
 ![Tüketme yöntemiyle bir dairenin alanını bulun.](../img/polygon-circle.svg)
 :label:`fig_circle_area`
@@ -11,7 +11,7 @@ Bir daire gibi kavisli şekillerin alanını bulmak için, eski Yunanlılar bu �
 Aslında, tüketme yöntemi *integral hesabının* (şurada açıklanacaktır :numref:`sec_integral_calculus`) kaynaklandığı yerdir.
 2.000 yıldan fazla bir müddetten sonra, diğer kalkülüs alanı, *diferansiyel (türevsel) kalkülüs* icat edildi.
 Diferansiyel kalkülüsün en kritik uygulamaları arasındaki optimizasyon problemleri bir şeyin nasıl *en iyi* şekilde yapılacağını düşünür.
-:numref:`subsec_norms_and_objectives`'te tartışıldığı gibi, bu tür sorunlar derin öğrenmede her yerde bulunur.
+:numref:`subsec_norms_and_objectives`'de tartışıldığı gibi, bu tür sorunlar derin öğrenmede her yerde bulunur.
 
 Derin öğrenmede, modelleri daha fazla veri gördükçe daha iyi ve daha iyi olmaları için arka arkaya güncelleyerek *eğitiyoruz*.
 Genellikle, daha iyi olmak, "modelimiz ne kadar *kötü*?" sorusuna cevap veren bir skor olan *kayıp (yitim) fonksiyonunu* en aza indirmek anlamına gelir.
@@ -19,8 +19,8 @@ Bu soru göründüğünden daha zekicedir.
 Sonuçta, gerçekten önemsediğimiz, daha önce hiç görmediğimiz veriler üzerinde iyi performans gösteren bir model üretmektir.
 Ancak modeli yalnızca gerçekten görebildiğimiz verilere uydurabiliriz.
 Böylece modellerin uydurulması görevini iki temel kaygıya ayırabiliriz: 
-(i) *optimizasyon*: modellerimizi gözlemlenen verilere uydurma süreci;
-(ii) *genelleme*: geçerliliği onları eğitmek için kullanılan kesin veri örnekleri kümesinin ötesine geçen modellerin nasıl üretileceğinde bize rehberlik eden matematiksel ilkelerin ve uygulayıcılarının bilgeliği.
+(i) *optimizasyon*: Modellerimizi gözlemlenen verilere uydurma süreci;
+(ii) *genelleme*: Geçerliliği onları eğitmek için kullanılan kesin veri örnekleri kümesinin ötesine geçen modellerin nasıl üretileceğinde bize rehberlik eden matematiksel ilkelerin ve uygulayıcılarının bilgeliği.
 
 Daha sonraki bölümlerde optimizasyon problemlerini ve yöntemlerini anlamanıza yardımcı olmak için burada, derin öğrenmede yaygın olarak kullanılan diferansiyel hesaplama hakkında bir tutam bilgi veriyoruz.
 
@@ -31,13 +31,13 @@ Derin öğrenmede, tipik olarak modelimizin parametrelerine göre türevi alına
 Basitçe ifade etmek gerekirse, bu, her parametre için, o parametreyi sonsuz derecede küçük bir miktarda *arttırırsak* veya *azaltırsak* kaybın ne kadar hızlı artacağını veya azalacağını belirleyebileceğimiz anlamına gelir.
 
 Girdi ve çıktıların her ikisi de skaler olan $f: \mathbb {R} \rightarrow \mathbb{R}$ fonksiyonumuz olduğunu varsayalım.
-[**$f$'in *türevi* şöyle tanımlanır**]:
+[**$f$'nin *türevi* şöyle tanımlanır**]:
 
 (**$$f'(x) = \lim_{h \rightarrow 0} \frac{f(x+h) - f(x)}{h},$$**)
 :eqlabel:`eq_derivative`
 
 eğer bu limit varsa.
-$f'(a)$ varsa, $f$'in $a$'da *türevlenebilir* olduğu söylenir.
+$f'(a)$ varsa, $f$'nin $a$'da *türevlenebilir* olduğu söylenir.
 $f$, bir aralığın her sayısında türevlenebilirse, o zaman bu fonksiyon bu aralıkta türevlenebilir.
 $f'(x)$'in :eqref:`eq_derivative`'deki türevini $f(x)$'in $x$'e göre *anlık* değişim oranı olarak yorumlayabiliriz.
 Sözde anlık değişim oranı, $x$ cinsinden $h$ $0$'a yaklaşırken değişimini temel alır.
@@ -78,7 +78,7 @@ def f(x):
     return 3 * x ** 2 - 4 * x
 ```
 
-[**$x = 1$ diye ayarlayıp $h$ değerinin $0$ değerine yaklaşmasına izin verince $\frac{f(x+h) - f(x)}{h}$**]:eqref:`eq_derivative`'in sayısal sonucu (**$2$'ye yaklaşır.**)
+[**$x = 1$ diye ayarlayıp $h$ değerinin $0$ değerine yaklaşmasına izin verince $\frac{f(x+h) - f(x)}{h}$**] :eqref:`eq_derivative`'in sayısal sonucu (**$2$'ye yaklaşır.**)
 Bu deney matematiksel bir kanıt olmasa da, daha sonra $u'$ türevinin $x=1$ olduğunda $2$ olduğunu göreceğiz.
 
 ```{.python .input}
@@ -134,7 +134,7 @@ Aşağıdaki `use_svg_display` işlevi, daha keskin görüntülü svg şekilleri
 ```{.python .input}
 #@tab all
 def use_svg_display():  #@save
-    """Use the svg format to display a plot in Jupyter."""
+    """Jupyter içinde şekli göstermek için svg formatı kullan"""
     display.set_matplotlib_formats('svg')
 ```
 
@@ -143,7 +143,7 @@ def use_svg_display():  #@save
 ```{.python .input}
 #@tab all
 def set_figsize(figsize=(3.5, 2.5)):  #@save
-    """Set the figure size for matplotlib."""
+    """Şekil ebatını matplotlib için ayarla"""
     use_svg_display()
     d2l.plt.rcParams['figure.figsize'] = figsize
 ```
@@ -154,7 +154,7 @@ Aşağıdaki `set_axes` işlevi, `matplotlib` tarafından üretilen şekillerin 
 #@tab all
 #@save
 def set_axes(axes, xlabel, ylabel, xlim, ylim, xscale, yscale, legend):
-    """Set the axes for matplotlib."""
+    """Eksenleri matplotlib için ayarla."""
     axes.set_xlabel(xlabel)
     axes.set_ylabel(ylabel)
     axes.set_xscale(xscale)
@@ -181,7 +181,7 @@ def plot(X, Y=None, xlabel=None, ylabel=None, legend=None, xlim=None,
     set_figsize(figsize)
     axes = axes if axes else d2l.plt.gca()
 
-    # Return True if `X` (tensor or list) has 1 axis
+    # `X` (tensor veya liste) 1 eksenli ise True değeri döndür
     def has_one_axis(X):
         return (hasattr(X, "ndim") and X.ndim == 1 or isinstance(X, list)
                 and not hasattr(X[0], "__len__"))
@@ -208,7 +208,7 @@ def plot(X, Y=None, xlabel=None, ylabel=None, legend=None, xlim=None,
 ```{.python .input}
 #@tab all
 x = np.arange(0, 3, 0.1)
-plot(x, [f(x), 2 * x - 3], 'x', 'f(x)', legend=['f(x)', 'Tangent line (x=1)'])
+plot(x, [f(x), 2 * x - 3], 'x', 'f(x)', legend=['f(x)', 'Teget dogrusu (x=1)'])
 ```
 
 ## Kısmi Türevler

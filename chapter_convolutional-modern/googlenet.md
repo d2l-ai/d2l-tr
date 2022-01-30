@@ -19,23 +19,23 @@ from mxnet.gluon import nn
 npx.set_np()
 
 class Inception(nn.Block):
-    # `c1`--`c4` are the number of output channels for each path
+    # `c1`--`c4` her yoldaki çıktı kanallarının sayısıdır
     def __init__(self, c1, c2, c3, c4, **kwargs):
         super(Inception, self).__init__(**kwargs)
-        # Path 1 is a single 1 x 1 convolutional layer
+        # Yol 1, tek bir 1 x 1 evrişimli katmandır
         self.p1_1 = nn.Conv2D(c1, kernel_size=1, activation='relu')
-        # Path 2 is a 1 x 1 convolutional layer followed by a 3 x 3
-        # convolutional layer
+        # Yol 2, 1 x 1 evrişimli katmanı ve ardından 
+        # 3 x 3 evrişimli katmandır
         self.p2_1 = nn.Conv2D(c2[0], kernel_size=1, activation='relu')
         self.p2_2 = nn.Conv2D(c2[1], kernel_size=3, padding=1,
                               activation='relu')
-        # Path 3 is a 1 x 1 convolutional layer followed by a 5 x 5
-        # convolutional layer
+        # Yol 3, 1 x 1 evrişimli katmanı ve ardından 
+        # 5 x 5 evrişimli katmandır
         self.p3_1 = nn.Conv2D(c3[0], kernel_size=1, activation='relu')
         self.p3_2 = nn.Conv2D(c3[1], kernel_size=5, padding=2,
                               activation='relu')
-        # Path 4 is a 3 x 3 maximum pooling layer followed by a 1 x 1
-        # convolutional layer
+        # Yol 4, 3 x 3 maksimum ortaklama katmanı ve 
+        # ardından 1 x 1 evrişimli katmandır
         self.p4_1 = nn.MaxPool2D(pool_size=3, strides=1, padding=1)
         self.p4_2 = nn.Conv2D(c4, kernel_size=1, activation='relu')
 
@@ -56,21 +56,21 @@ from torch import nn
 from torch.nn import functional as F
 
 class Inception(nn.Module):
-    # `c1`--`c4` are the number of output channels for each path
+    # `c1`--`c4` her yoldaki çıktı kanallarının sayısıdır
     def __init__(self, in_channels, c1, c2, c3, c4, **kwargs):
         super(Inception, self).__init__(**kwargs)
-        # Path 1 is a single 1 x 1 convolutional layer
+        # Yol 1, tek bir 1 x 1 evrişimli katmandır
         self.p1_1 = nn.Conv2d(in_channels, c1, kernel_size=1)
-        # Path 2 is a 1 x 1 convolutional layer followed by a 3 x 3
-        # convolutional layer
+        # Yol 2, 1 x 1 evrişimli katmanı ve ardından 
+        # 3 x 3 evrişimli katmandır
         self.p2_1 = nn.Conv2d(in_channels, c2[0], kernel_size=1)
         self.p2_2 = nn.Conv2d(c2[0], c2[1], kernel_size=3, padding=1)
-        # Path 3 is a 1 x 1 convolutional layer followed by a 5 x 5
-        # convolutional layer
+        # Yol 3, 1 x 1 evrişimli katmanı ve ardından 
+        # 5 x 5 evrişimli katmandır
         self.p3_1 = nn.Conv2d(in_channels, c3[0], kernel_size=1)
         self.p3_2 = nn.Conv2d(c3[0], c3[1], kernel_size=5, padding=2)
-        # Path 4 is a 3 x 3 maximum pooling layer followed by a 1 x 1
-        # convolutional layer
+        # Yol 4, 3 x 3 maksimum ortaklama katmanı ve 
+        # ardından 1 x 1 evrişimli katmandır
         self.p4_1 = nn.MaxPool2d(kernel_size=3, stride=1, padding=1)
         self.p4_2 = nn.Conv2d(in_channels, c4, kernel_size=1)
 
@@ -89,23 +89,23 @@ from d2l import tensorflow as d2l
 import tensorflow as tf
 
 class Inception(tf.keras.Model):
-    # `c1`--`c4` are the number of output channels for each path
+    # `c1`--`c4` her yoldaki çıktı kanallarının sayısıdır
     def __init__(self, c1, c2, c3, c4):
         super().__init__()
-        # Path 1 is a single 1 x 1 convolutional layer
+        # Yol 1, tek bir 1 x 1 evrişimli katmandır
         self.p1_1 = tf.keras.layers.Conv2D(c1, 1, activation='relu')
-        # Path 2 is a 1 x 1 convolutional layer followed by a 3 x 3
-        # convolutional layer
+        # Yol 2, 1 x 1 evrişimli katmanı ve ardından 
+        # 3 x 3 evrişimli katmandır
         self.p2_1 = tf.keras.layers.Conv2D(c2[0], 1, activation='relu')
         self.p2_2 = tf.keras.layers.Conv2D(c2[1], 3, padding='same',
                                            activation='relu')
-        # Path 3 is a 1 x 1 convolutional layer followed by a 5 x 5
-        # convolutional layer
+        # Yol 3, 1 x 1 evrişimli katmanı ve ardından 
+        # 5 x 5 evrişimli katmandır
         self.p3_1 = tf.keras.layers.Conv2D(c3[0], 1, activation='relu')
         self.p3_2 = tf.keras.layers.Conv2D(c3[1], 5, padding='same',
                                            activation='relu')
-        # Path 4 is a 3 x 3 maximum pooling layer followed by a 1 x 1
-        # convolutional layer
+        # Yol 4, 3 x 3 maksimum ortaklama katmanı ve 
+        # ardından 1 x 1 evrişimli katmandır
         self.p4_1 = tf.keras.layers.MaxPool2D(3, 1, padding='same')
         self.p4_2 = tf.keras.layers.Conv2D(c4, 1, activation='relu')
 
@@ -179,7 +179,7 @@ def b2():
         tf.keras.layers.MaxPool2D(pool_size=3, strides=2, padding='same')])
 ```
 
-Üçüncü modül, iki bütün başlangıç bloğunu seri olarak bağlar. İlk başlangıç bloğunun çıktı kanallarının sayısı $64+128+32+32=256$'dir ve dört yol arasındaki çıktı kanalı oranı $64:128:32:32=2:4:1:1$'dir. İkinci ve üçüncü yollar önce girdi kanallarının sayısını sırasıyla $96/192=1/2$ ve $16/192=1/12$'ye düşürür ve daha sonra ikinci evrişimli tabakayı bağlar. İkinci başlangıç bloğunun çıktı kanallarının sayısı $128+192+96+64=480$'e yükseltilir ve dört yol arasındaki çıktı kanalı oranı $128:192:96:64 = 4:6:3:2$'dur. İkinci ve üçüncü yollar önce girdi kanalı sayısını sırasıyla $128/256=1/2$ ve $32/256=1/8$'e düşürür.
+Üçüncü modül, iki bütün başlangıç bloğunu seri olarak bağlar. İlk başlangıç bloğunun çıktı kanallarının sayısı $64+128+32+32=256$'dır ve dört yol arasındaki çıktı kanalı oranı $64:128:32:32=2:4:1:1$'dir. İkinci ve üçüncü yollar önce girdi kanallarının sayısını sırasıyla $96/192=1/2$ ve $16/192=1/12$'ye düşürür ve daha sonra ikinci evrişimli tabakayı bağlar. İkinci başlangıç bloğunun çıktı kanallarının sayısı $128+192+96+64=480$'e yükseltilir ve dört yol arasındaki çıktı kanalı oranı $128:192:96:64 = 4:6:3:2$'dir. İkinci ve üçüncü yollar önce girdi kanalı sayısını sırasıyla $128/256=1/2$ ve $32/256=1/8$'e düşürür.
 
 ```{.python .input}
 b3 = nn.Sequential()

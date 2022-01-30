@@ -1,9 +1,9 @@
 # Doğrusal Regresyonunun Kısa Uygulaması
 :label:`sec_linear_concise`
 
-Son birkaç yıldır derin öğrenmeye olan geniş ve yoğun ilgi, gradyan tabanlı öğrenme algoritmalarını uygulamanın tekrarlayan işyükünü otomatikleştirmek için şirketler, akademisyenler ve amatör geliştiricilere çeşitli olgun açık kaynak çerçeveleri geliştirmeleri için ilham verdi. :numref:`sec_linear_scratch`'de, biz sadece (i) veri depolama ve doğrusal cebir için tensörlere; ve (ii) gradyanları hesaplamak için otomatik türev almaya güvendik. Pratikte, veri yineleyiciler, kayıp işlevleri, optimize ediciler ve sinir ağı katmanları çok yaygın olduğu için, modern kütüphaneler bu bileşenleri bizim için de uygular.
+Son birkaç yıldır derin öğrenmeye olan geniş ve yoğun ilgi, gradyan tabanlı öğrenme algoritmalarını uygulamanın tekrarlayan iş yükünü otomatikleştirmek için şirketler, akademisyenler ve amatör geliştiricilere çeşitli olgun açık kaynak çerçeveleri geliştirmeleri için ilham verdi. :numref:`sec_linear_scratch`'de, biz sadece (i) veri depolama ve doğrusal cebir için tensörlere; ve (ii) gradyanları hesaplamak için otomatik türev almaya güvendik. Pratikte, veri yineleyiciler, kayıp işlevleri, optimize ediciler ve sinir ağı katmanları çok yaygın olduğu için, modern kütüphaneler bu bileşenleri bizim için de uygular.
 
-Bu bölümde, derin öğrenme çerçevelerinin (**üst düzey API'lerini kullanarak :numref:`sec_linear_scratch`'daki doğrusal regresyon modelini kısaca nasıl uygulayacağınızı göstereceğiz**).
+Bu bölümde, derin öğrenme çerçevelerinin (**üst düzey API'lerini kullanarak :numref:`sec_linear_scratch`'deki doğrusal regresyon modelini kısaca nasıl uygulayacağınızı göstereceğiz**).
 
 ## Veri Kümesini Oluşturma
 
@@ -82,7 +82,7 @@ next(iter(data_iter))
 
 ## Modeli Tanımlama
 
-Doğrusal regresyonu :numref:`sec_linear_scratch`'da sıfırdan uyguladığımızda, model parametrelerimizi açık bir şekilde tanımladık ve temel doğrusal cebir işlemlerini kullanarak çıktı üretmek için hesaplamalarımızı kodladık. Bunu nasıl yapacağınızı *bilmelisiniz*. Ancak modelleriniz daha karmaşık hale geldiğinde ve bunu neredeyse her gün yapmanız gerektiğinde, bu yardım için memnun olacaksınız. Durum, kendi blogunuzu sıfırdan kodlamaya benzer. Bunu bir veya iki kez yapmak ödüllendirici ve öğreticidir, ancak bir bloga her ihtiyaç duyduğunuzda tekerleği yeniden icat etmek için bir ay harcarsanız kötü bir web geliştiricisi olursunuz.
+Doğrusal regresyonu :numref:`sec_linear_scratch`'de sıfırdan uyguladığımızda, model parametrelerimizi açık bir şekilde tanımladık ve temel doğrusal cebir işlemlerini kullanarak çıktı üretmek için hesaplamalarımızı kodladık. Bunu nasıl yapacağınızı *bilmelisiniz*. Ancak modelleriniz daha karmaşık hale geldiğinde ve bunu neredeyse her gün yapmanız gerektiğinde, bu yardım için memnun olacaksınız. Durum, kendi blogunuzu sıfırdan kodlamaya benzer. Bunu bir veya iki kez yapmak ödüllendirici ve öğreticidir, ancak bir bloga her ihtiyaç duyduğunuzda tekerleği yeniden icat etmek için bir ay harcarsanız kötü bir web geliştiricisi olursunuz.
 
 Standart işlemler için, uygulamaya (kodlamaya) odaklanmak yerine özellikle modeli oluşturmak için kullanılan katmanlara odaklanmamızı sağlayan [**bir çerçevenin önceden tanımlanmış katmanlarını**] kullanabiliriz. Önce, `Sequential` (ardışık, sıralı) sınıfının bir örneğini ifade edecek `net` (ağ) model değişkenini tanımlayacağız. `Sequential` sınıfı, birbirine zincirlenecek birkaç katman için bir kapsayıcı (container) tanımlar. Girdi verileri verildiğinde, `Sequential` bir örnek, bunu birinci katmandan geçirir, ardından onun çıktısını ikinci katmanın girdisi olarak geçirir ve böyle devam eder. Aşağıdaki örnekte, modelimiz yalnızca bir katmandan oluşuyor, bu nedenle gerçekten `Sequential` örneğe ihtiyacımız yok. Ancak, gelecekteki modellerimizin neredeyse tamamı birden fazla katman içereceği için, sizi en standart iş akışına alıştırmak için yine de kullanacağız.
 
@@ -202,11 +202,11 @@ loss = tf.keras.losses.MeanSquaredError()
 ## Optimizasyon Algoritmasını Tanımlama
 
 :begin_tab:`mxnet`
-Minigrup rasgele gradyan inişi, sinir ağlarını optimize etmek için standart bir araçtır ve bu nedenle Gluon, bunu `Trainer` sınıfı aracılığıyla bu algoritmadaki bir dizi varyasyonla birlikte destekler. `Trainer`'den örnek yarattığımızda, optimize edilecek parametreleri (`net.collect_params()` aracılığıyla `net` modelimizden elde edilebilir), kullanmak istediğimiz optimizasyon algoritması (`sgd`) ve optimizasyon algoritmamızın gerektirdiği hiperparametreleri bir sözlük ile (dictionary veri yapısı) belirleyeceğiz. Minigrup rasgele gradyan inişi, burada 0.03 olarak ayarlanan `learning_rate` (öğrenme oranı) değerini ayarlamamızı gerektirir.
+Minigrup rasgele gradyan inişi, sinir ağlarını optimize etmek için standart bir araçtır ve bu nedenle Gluon, bunu `Trainer` sınıfı aracılığıyla bu algoritmadaki bir dizi varyasyonla birlikte destekler. `Trainer`'den örnek yarattığımızda, optimize edilecek parametreleri (`net.collect_params()` aracılığıyla `net` modelimizden elde edilebilir), kullanmak istediğimiz optimizasyon algoritması (`sgd`) ve optimizasyon algoritmamızın gerektirdiği hiper parametreleri bir sözlük ile (dictionary veri yapısı) belirleyeceğiz. Minigrup rasgele gradyan inişi, burada 0.03 olarak ayarlanan `learning_rate` (öğrenme oranı) değerini ayarlamamızı gerektirir.
 :end_tab:
 
 :begin_tab:`pytorch`
-Minigrup rasgele gradyan inişi, sinir ağlarını optimize etmek için standart bir araçtır ve bu nedenle PyTorch, bunu `Trainer` sınıfı aracılığıyla bu algoritmadaki bir dizi varyasyonla birlikte destekler. (**`SGD`'den örnek yarattığımızda**), optimize edilecek parametreleri (`net.collect_params()` aracılığıyla `net` modelimizden elde edilebilir) ve optimizasyon algoritmamızın gerektirdiği hiperparametreleri bir sözlük ile (dictionary veri yapısı) belirteceğiz.
+Minigrup rasgele gradyan inişi, sinir ağlarını optimize etmek için standart bir araçtır ve bu nedenle PyTorch, bunu `Trainer` sınıfı aracılığıyla bu algoritmadaki bir dizi varyasyonla birlikte destekler. (**`SGD`'den örnek yarattığımızda**), optimize edilecek parametreleri (`net.collect_params()` aracılığıyla `net` modelimizden elde edilebilir) ve optimizasyon algoritmamızın gerektirdiği hiper parametreleri bir sözlük ile (dictionary veri yapısı) belirteceğiz.
 Minigrup rasgele gradyan inişi, burada 0.03 olarak ayarlanan `lr` (öğrenme oranı) değerini ayarlamamızı gerektirir.
 :end_tab:
 

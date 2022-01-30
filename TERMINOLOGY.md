@@ -91,7 +91,7 @@ frame; çerçeve
 
 full rank; tam kerteli
 
-fully-connected; tam-bağlı
+fully-connected; tam bağlı
 
 gate; geçit
 
@@ -152,6 +152,8 @@ message passing; mesaj geçişi
 meta; başkalaşım
 
 minibatch; minigrup
+
+multi-head; çoklu-kafa
 
 nontrivial; apaçık olmayan
 
@@ -220,6 +222,8 @@ sanity check; makulluk kontrolü
 scaler; sayıl, skaler
 
 script; betik
+
+self-attention; özdikkat
 
 semantic segmentation; anlamsal bölünme
 

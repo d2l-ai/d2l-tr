@@ -14,7 +14,7 @@ Bu kitap boyunca, aşağıdaki gösterim kurallarına bağlı kalacağız. Bu se
 * $\mathsf{X}$: bir genel tensör (Gerey)
 * $\mathbf{I}$: birim dizeyi -- köşegen girdileri $1$ köşegen-olmayan girdileri $0$ olan kare dizey
 * $x_i$, $[\mathbf{x}]_i$: $\mathbf{x}$ dizeyinin $i$'inci elemanı
-* $x_{ij}$, $x_{i,j}$,$[\mathbf{X}]_{ij}$, $[\mathbf{X}]_{i,j}$: $\mathbf{X}$ dizeyinin $i$'inci satır $j$'inci sütundaki elemanı
+* $x_{ij}$, $x_{i,j}$,$[\mathbf{X}]_{ij}$, $[\mathbf{X}]_{i,j}$: $\mathbf{X}$ dizeyinin $i.$ satır $j.$ sütundaki elemanı
 
 
 
