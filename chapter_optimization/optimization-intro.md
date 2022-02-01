@@ -86,7 +86,7 @@ Derin öğrenme modellerinin amaç işlevi genellikle birçok yerel eniyi değer
 
 ### Eyer Noktaları
 
-Yerel minimmanın yanı sıra eyer noktaları degradelerin kaybolmasının bir başka nedenidir. *eyer noktası*, bir işlevin tüm degradelerinin kaybolduğu ancak ne global ne de yerel minimum olmayan herhangi bir konumdur. $f(x) = x^3$ işlevini düşünün. Onun birinci ve ikinci türevi $x=0$ için kaybolur. Optimizasyon en az olmasa bile, bu noktada durabilir.
+Yerel minimumun yanı sıra eyer noktaları gradyanların kaybolmasının bir başka nedenidir. *Eyer noktası*, bir işlevin tüm gradyanların kaybolduğu ancak ne küresel ne de yerel minimum olmayan herhangi bir konumdur. $f(x) = x^3$ işlevini düşünün. Onun birinci ve ikinci türevi $x=0$ için kaybolur. Eniyileme minimum olmasa bile, bu noktada durabilir.
 
 ```{.python .input}
 #@tab all
@@ -95,7 +95,7 @@ d2l.plot(x, [x**3], 'x', 'f(x)')
 annotate('saddle point', (0, -0.2), (-0.52, -5.0))
 ```
 
-Aşağıdaki örnekte gösterildiği gibi, daha yüksek boyutlardaki eyer noktaları daha da sinsidir. $f(x, y) = x^2 - y^2$ işlevini düşünün. Bu onun eyer noktası vardır $(0, 0)$. Bu, $y$'e göre maksimum ve $x$ ile ilgili minimum değerdir. Dahası, bu matematiksel mülkün adını aldığı bir eyer gibi görünüyor*.
+Aşağıdaki örnekte gösterildiği gibi, daha yüksek boyutlardaki eyer noktaları daha da gizli tehlikedir. $f(x, y) = x^2 - y^2$ işlevini düşünün. $(0, 0)$ onun eyer noktası vardır. Bu, $y$'e göre maksimum ve $x$'e göre minimum değerdir. Dahası, bu, matematiksel özelliğin adını aldığı bir eyer gibi *görünür*.
 
 ```{.python .input}
 #@tab all
@@ -114,17 +114,17 @@ d2l.plt.xlabel('x')
 d2l.plt.ylabel('y');
 ```
 
-Bir fonksiyonun girişinin $k$ boyutlu bir vektör olduğunu ve çıkışının bir skaler olduğunu varsayıyoruz, bu nedenle Hessian matrisinin $k$ özdeğerlerine sahip olacağını varsayıyoruz ([online appendix on eigendecompositions](https://d2l.ai/chapter_appendix-mathematics-for-deep-learning/eigendecomposition.html)'e bakın). Fonksiyonun çözümü yerel minimum, yerel maksimum veya işlev degradesinin sıfır olduğu bir konumda eyer noktası olabilir: 
+Bir fonksiyonun girdisinin $k$ boyutlu bir vektör olduğunu ve çıktısının bir skaler olduğunu varsayıyoruz, bu nedenle Hessian matrisinin $k$ tane özdeğere sahip olacağını varsayıyoruz ([özayrışımlar üzerine çevrimiçi ek](https://d2l.ai/chapter_appendix-mathematics-for-deep-learning/eigendecomposition.html)'e bakın). Fonksiyonun çözümü yerel minimum, yerel maksimum veya işlev gradyanının sıfır olduğu bir konumda eyer noktası olabilir: 
 
-* Sıfır-degrade konumundaki fonksiyonun Hessian matrisinin özdeğerleri pozitif olduğunda, işlev için yerel minimum değerlere sahibiz.
-* Sıfır-degrade konumundaki fonksiyonun Hessian matrisinin özdeğerleri negatif olduğunda, işlev için yerel maksimum değerlere sahibiz.
-* Sıfır-degrade konumundaki fonksiyonun Hessian matrisinin özdeğerleri negatif ve pozitif olduğunda, fonksiyon için bir eyer noktamız vardır.
+* Sıfır-gradyan konumundaki fonksiyonun Hessian matrisinin özdeğerleri pozitif olduğunda, işlev için yerel minimum değerlere sahibiz.
+* Sıfır-gradyan konumundaki fonksiyonun Hessian matrisinin özdeğerleri negatif olduğunda, işlev için yerel maksimum değerlere sahibiz.
+* Sıfır-gradyan konumundaki fonksiyonun Hessian matrisinin özdeğerleri negatif ve pozitif olduğunda, fonksiyon için bir eyer noktamız vardır.
 
-Yüksek boyutlu problemler için özdeğerlerin en azından*bazı* negatif olma olasılığı oldukça yüksektir. Bu eyer noktaları yerel minima daha olasıdır yapar. Dışbükeyliği tanıtırken bir sonraki bölümde bu durumun bazı istisnalarını tartışacağız. Kısacası, dışbükey fonksiyonlar Hessian'ın özdeğerlerinin asla negatif olmadığı yerlerdir. Ne yazık ki, yine de, çoğu derin öğrenme problemi bu kategoriye girmiyor. Yine de optimizasyon algoritmaları incelemek için harika bir araçtır. 
+Yüksek boyutlu problemler için özdeğerlerin en azından *bazılarının* negatif olma olasılığı oldukça yüksektir. Bu eyer noktalarını yerel minimumlardan daha olasıdır yapar. Dışbükeyliği tanıtırken bir sonraki bölümde bu durumun bazı istisnalarını tartışacağız. Kısacası, dışbükey fonksiyonlar Hessian'ın özdeğerlerinin asla negatif olmadığı yerlerdir. Ne yazık ki, yine de, çoğu derin öğrenme problemi bu kategoriye girmiyor. Yine de optimizasyon algoritmaları incelemek için harika bir araçtır. 
 
-### Ufuk Degradeleri
+### Kaybolan Gradyanlar
 
-Muhtemelen karşılaşılması gereken en sinsi sorun kaybolan degradedir. :numref:`subsec_activation-functions`'te yaygın olarak kullanılan aktivasyon fonksiyonlarımızı ve türevlerini hatırlayın. Örneğin, $f(x) = \tanh(x)$ işlevini en aza indirmek istediğimizi ve $x = 4$'da başladığımızı varsayalım. Gördüğümüz gibi, $f$'in gradyan sıfır yakın. Daha spesifik olarak, $f'(x) = 1 - \tanh^2(x)$ ve böylece $f'(4) = 0.0013$. Sonuç olarak, ilerleme kaydetmeden önce optimizasyon uzun süre sıkışacak. Bu, derin öğrenme modellerinin, ReLU aktivasyon işlevinin tanıtılmasından önce oldukça zor olmasının nedenlerinden biri olduğu ortaya çıkıyor.
+Muhtemelen karşılaşılması gereken en sinsi sorun kaybolan gradyanlardır. :numref:`subsec_activation-functions`'te yaygın olarak kullanılan etkinleştirme fonksiyonlarımızı ve türevlerini hatırlayın. Örneğin, $f(x) = \tanh(x)$ işlevini en aza indirmek istediğimizi ve $x = 4$'te başladığımızı varsayalım. Gördüğümüz gibi, $f$'nin gradyanı sıfıra yakındır. Daha özel durum olarak, $f'(x) = 1 - \tanh^2(x)$ ve böylece $f'(4) = 0.0013$. Sonuç olarak, ilerleme kaydetmeden önce optimizasyon uzun süre takılıp kalacak. Bunun, derin öğrenme modellerinin, ReLU etkinleştirme işlevinin tanıtılmasından önce oldukça zor olmasının nedenlerinden biri olduğu ortaya çıkıyor.
 
 ```{.python .input}
 #@tab all
@@ -133,25 +133,25 @@ d2l.plot(x, [d2l.tanh(x)], 'x', 'f(x)')
 annotate('vanishing gradient', (4, 1), (2, 0.0))
 ```
 
-Gördüğümüz gibi, derin öğrenme için optimizasyon zorluklarla doludur. Neyse ki iyi performans ve yeni başlayanlar için bile kullanımı kolay algoritmalar sağlam bir dizi var. Ayrıca, ** en iyi çözümü bulmak gerçekten gerekli değildir. Yerel optima veya hatta yaklaşık çözümler hala çok faydalıdır. 
+Gördüğümüz gibi, derin öğrenme için optimizasyon zorluklarla doludur. Neyse ki iyi performans ve yeni başlayanlar için bile kullanımı kolay bir dizi gürbüz algoritma var. Ayrıca, en iyi çözümü bulmak gerçekten gerekli değildir. Yerel en iyi veya hatta yaklaşık çözümler hala çok faydalıdır. 
 
 ## Özet
 
 * Eğitim hatasının en aza indirilmesi, genelleme hatasını en aza indirmek için en iyi parametre kümesini bulduğumuzu garanti etmez.
-* Optimizasyon sorunları birçok yerel minima olabilir.
-* Sorunun daha fazla eyer noktası olabilir, genellikle sorunlar dışbükey değildir.
-* Ufuk degradeler en iyi duruma getirmenin durmasına neden olabilir. Genellikle sorunun yeniden parameterizasyonu yardımcı olur. Parametrelerin iyi başlatılması da faydalı olabilir.
+* Optimizasyon sorunlarının birçok yerel minimumu olabilir.
+* Problemlerin daha fazla eyer noktası olabilir, genellikle problemler dışbükey değildir.
+* Kaybolan gradyanlar eniyilemenin durmasına neden olabilir. Genellikle sorunun yeniden parametrelendirilmesi yardımcı olur. Parametrelerin iyi ilklenmesi de faydalı olabilir.
 
 ## Alıştırmalar
 
-1. Gizli katmandaki $d$ boyutlarının tek bir gizli katmanına ve tek bir çıktıya sahip basit bir MLP düşünün. Herhangi bir yerel minimum için en az $d olduğunu gösterin! $ aynı davranır eşdeğer çözümler.
-1. Biz simetrik rastgele matris olduğunu varsayalım $\mathbf{M}$ girişleri $M_{ij} = M_{ji}$ her bazı olasılık dağılımından çizilir $p_{ij}$. Ayrıca, $p_{ij}(x) = p_{ij}(-x)$'nin, yani dağılımın simetrik olduğunu varsayalım (ayrıntılar için bkz. :cite:`Wigner.1958`).
-    1. Özdeğerler üzerindeki dağılımın da simetrik olduğunu kanıtlayın. Yani, herhangi bir özvektör için $\mathbf{v}$, ilişkili özdeğer $\lambda$'ün $P(\lambda > 0) = P(\lambda < 0)$'i karşılama olasılığı.
-    1. Yukarıdaki*değil* neden $P(\lambda > 0) = 0.5$ anlamına geliyor?
+1. Gizli katmanında $d$ boyutlu tek bir gizli katmanına ve tek bir çıktıya sahip basit bir MLP düşünün. Herhangi bir yerel minimum için en az $d!$ tane aynı davranan eşdeğer çözüm olduğunu gösterin.
+1. Simetrik bir rastgele $\mathbf{M}$ matrisimiz olduğunu varsayalım, burada $M_{ij} = M_{ji}$ girdilerinin her biri $p_{ij}$ olasılık dağılımından çekilir. Ayrıca, $p_{ij}(x) = p_{ij}(-x)$'nin, yani dağılımın simetrik olduğunu varsayalım (ayrıntılar için bkz. :cite:`Wigner.1958`).
+    1. Özdeğerler üzerindeki dağılımın da simetrik olduğunu kanıtlayın. Yani, herhangi bir özvektör $\mathbf{v}$ için, ilişkili özdeğer $\lambda$'nin $P(\lambda > 0) = P(\lambda < 0)$'i karşılama olasılığı.
+    1. Yukarıdaki ifade neden $P(\lambda > 0) = 0.5$ anlamına *gelmez*?
 1. Derin öğrenme optimizasyonunda yer alan diğer zorlukları düşünebilirsiniz?
 1. Bir (gerçek) topu (gerçek) bir eyer üzerinde dengelemek istediğinizi varsayalım.
     1. Neden bu kadar zor?
-    1. Eğer optimizasyon algoritmaları için de bu etkiyi kullanabilir miyim?
+    1. Optimizasyon algoritmaları için de bu etkiyi kullanabilir misiniz?
 
 :begin_tab:`mxnet`
 [Discussions](https://discuss.d2l.ai/t/349)

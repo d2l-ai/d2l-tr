@@ -1,7 +1,7 @@
-# Dışdışeylik
+# Dışbükeylik
 :label:`sec_convexity`
 
-Konveksite optimizasyon algoritmalarının tasarımında hayati bir rol oynamaktadır. Bunun nedeni, algoritmaları böyle bir bağlamda analiz etmek ve test etmek çok daha kolay olmasından kaynaklanmaktadır. Başka bir deyişle, algoritma dışbükey ayarda bile kötü performans gösteriyorsa, genellikle başka türlü harika sonuçlar görmeyi ummamalıyız. Dahası, derin öğrenmedeki optimizasyon problemleri genellikle dışbükey olmamasına rağmen, genellikle yerel minima yakın dışbükey olanların bazı özelliklerini sergiliyorlar. Bu, :cite:`Izmailov.Podoprikhin.Garipov.ea.2018` gibi heyecan verici yeni optimizasyon varyantlarına yol açabilir.
+Dışbükeylik optimizasyon algoritmalarının tasarımında hayati bir rol oynamaktadır. Bunun nedeni, algoritmaları böyle bir bağlamda analiz etmenin ve test etmenin çok daha kolay olmasından kaynaklanmaktadır. Başka bir deyişle, algoritma dışbükey ayarda bile kötü başarım gösteriyorsa, genellikle başka türlü harika sonuçlar görmeyi ummamalıyız. Dahası, derin öğrenmedeki optimizasyon problemleri çoğunlukla dışbükey olmamasına rağmen, genellikle yerel minimumun yakınında dışbükey olanların bazı özelliklerini sergilerler. Bu, :cite:`Izmailov.Podoprikhin.Garipov.ea.2018` gibi heyecan verici yeni optimizasyon türlerine yol açabilir.
 
 ```{.python .input}
 %matplotlib inline
@@ -31,35 +31,34 @@ import tensorflow as tf
 
 ## Tanımlar
 
-Dışbükey analizden önce, *dışbükey setler* ve *dışbükey fonksiyonları* tanımlamamız gerekir. Makine öğrenimine yaygın olarak uygulanan matematiksel araçlara yol açarlar. 
+Dışbükey analizden önce, *dışbükey kümeleri* ve *dışbükey fonksiyonları* tanımlamamız gerekir. Makine öğrenmesinde yaygın olarak uygulanan matematiksel araçlara yol açarlar. 
 
-### Dışbükey Setler
+### Dışbükey Kümeler
 
-Setler dışbükeyliğin temelini oluşturur. Basitçe söylemek gerekirse, bir vektör uzayında bir set $\mathcal{X}$ $a, b \in \mathcal{X}$ için $a$ ve $b$'yi bağlayan hat segmenti de $\mathcal{X}$'de ise $\mathcal{X}$'de* dışbüküm* olur. Matematiksel anlamda bu, tüm $\lambda \in [0, 1]$ için sahip olduğumuz anlamına gelir 
+Kümeler dışbükeyliğin temelini oluşturur. Basitçe söylemek gerekirse, bir vektör uzayında bir $\mathcal{X}$ kümesi,  $a, b \in \mathcal{X}$ için $a$ ve $b$'yi bağlayan doğru parçası da $\mathcal{X}$'de ise *dışbüküm* olur. Matematiksel anlamda bu, tüm $\lambda \in [0, 1]$ için aşağıdaki ifadeye sahip olduğumuz anlamına gelir 
 
 $$\lambda  a + (1-\lambda)  b \in \mathcal{X} \text{ whenever } a, b \in \mathcal{X}.$$
 
-Kulağa biraz soyut geliyor. :numref:`fig_pacman`'ü düşünün. İçinde bulunmayan çizgi segmentleri bulunduğundan ilk set dışbükey değildir. Diğer iki takım böyle bir sorun yaşamaz. 
+Kulağa biraz soyut geliyor. :numref:`fig_pacman`'ü düşünün. İçinde tamamı kapsamadıkları doğru parçaları bulunduğundan ilk kümesi dışbükey değildir. Diğer iki kümede böyle bir sorun yaşanmaz. 
 
-![The first set is nonconvex and the other two are convex.](../img/pacman.svg)
+![İlk küme dışbükey değildir ve diğer ikisi dışbükeydir.](../img/pacman.svg)
 :label:`fig_pacman`
 
-Onlarla bir şeyler yapamazsanız, kendi başlarına tanımlar özellikle yararlı değildir. Bu durumda :numref:`fig_convex_intersect`'te gösterildiği gibi kavşaklara bakabiliriz. $\mathcal{X}$ ve $\mathcal{Y}$ dışbükey kümeler olduğunu varsayalım. Sonra $\mathcal{X} \cap \mathcal{Y}$ de dışbükey. Bunu görmek için herhangi bir $a, b \in \mathcal{X} \cap \mathcal{Y}$'yi düşünün. $\mathcal{X}$ ve $\mathcal{Y}$ dışbükey olduğundan $a$ ve $b$'u bağlayan hat segmentleri hem $\mathcal{X}$ hem de $\mathcal{Y}$'da bulunur. Bu göz önüne alındığında, $\mathcal{X} \cap \mathcal{Y}$'te de yer almaları gerekiyor, böylece teoremimizi kanıtlıyor. 
+Onlarla bir şeyler yapamazsanız, kendi başlarına tanımlar özellikle yararlı değildir. Bu durumda :numref:`fig_convex_intersect`'te gösterildiği gibi kesişimlere bakabiliriz. $\mathcal{X}$ ve $\mathcal{Y}$'nin dışbükey kümeler olduğunu varsayalım. O halde $\mathcal{X} \cap \mathcal{Y}$ de dışbükeydir. Bunu görmek için herhangi bir $a, b \in \mathcal{X} \cap \mathcal{Y}$'yi düşünün. $\mathcal{X}$ ve $\mathcal{Y}$ dışbükey olduğundan $a$ ve $b$'yi bağlayan doğru parçaları hem $\mathcal{X}$ hem de $\mathcal{Y}$'de bulunur. Bu göz önüne alındığında, $\mathcal{X} \cap \mathcal{Y}$'de de yer almaları gerekiyor, böylece teoremimizi kanıtlıyor. 
 
-![The intersection between two convex sets is convex.](../img/convex-intersect.svg)
+![İki dışbükey kümenin kesişimi dışbükeydir.](../img/convex-intersect.svg)
 :label:`fig_convex_intersect`
 
-Bu sonucu az çaba ile güçlendirebiliriz: dışbükey setler $\mathcal{X}_i$ göz önüne alındığında, kesişme $\cap_{i} \mathcal{X}_i$ dışbükey. Converse doğru olmadığını görmek için, iki ayrık kümesi düşünün $\mathcal{X} \cap \mathcal{Y} = \emptyset$. Şimdi $a \in \mathcal{X}$ ve $b \in \mathcal{Y}$'yı seçin. $a$ ve $b$ bağlayan :numref:`fig_nonconvex`'teki hat segmenti $\mathcal{X}$'te ne de $\mathcal{Y}$'de $\mathcal{Y}$'de $\mathcal{Y}$'de $\mathcal{Y}$'yi kabul ettiğimiz için $\mathcal{X} \cap \mathcal{Y} = \emptyset$'yi kabul ettiğimiz bir kısmı içermelidir. Dolayısıyla hat segmenti $\mathcal{X} \cup \mathcal{Y}$ ya da değil, böylece dışbükey kümelerin genel birlikleri dışbükey olması gerekmez kanıtlayan. 
+Bu sonucu az çaba ile güçlendirebiliriz: Dışbükey kümeler $\mathcal{X}_i$ göz önüne alındığında, kesişmeleri $\cap_{i} \mathcal{X}_i$ dışbükeydir. Tersinin doğru olmadığını görmek için, iki ayrık küme $\mathcal{X} \cap \mathcal{Y} = \emptyset$ düşünün. Şimdi $a \in \mathcal{X}$ ve $b \in \mathcal{Y}$'yi seçin. $a$ ve $b$'ı birbirine bağlayan :numref:`fig_nonconvex` içindeki doğru parçasının, $\mathcal{X}$'da veya $\mathcal{Y}$'da olmayan bir kısım içermesi gerekir, çünkü $\mathcal{X} \cap \mathcal{Y} = \emptyset$ olduğunu varsaydık. Dolayısıyla doğru parçası $\mathcal{X} \cup \mathcal{Y}$'da da değildir, bu da genel olarak dışbükey kümelerin birleşimlerinin dışbükey olması gerekmediğini kanıtlar.
 
-![The union of two convex sets need not be convex.](../img/nonconvex.svg)
+![İki dışbükey kümenin birleşiminin dışbükey olması gerekmez.](../img/nonconvex.svg)
 :label:`fig_nonconvex`
 
-Derin öğrenmedeki problemler genellikle dışbükey kümeler üzerinde tanımlanır. Örneğin, 73229363617, reel sayıların $d$ boyutlu vektörleri kümesi dışbükey bir kümedir (sonuçta, $\mathbb{R}^d$'de iki nokta arasındaki çizgi $\mathbb{R}^d$'de kalır). Bazı durumlarda $\{\mathbf{x} | \mathbf{x} \in \mathbb{R}^d \text{ and } \|\mathbf{x}\| \leq r\}$ tarafından tanımlanan yarıçap $r$ topları gibi sınırlanmış uzunlukta değişkenlerle çalışırız. 
+Derin öğrenmedeki problemler genellikle dışbükey kümeler üzerinde tanımlanır. Örneğin, $\mathbb{R}^d$, gerçek sayıların $d$ boyutlu vektörleri kümesi, bir dışbükey kümedir (sonuçta, $\mathbb{R}^d$ içindeki herhangi iki nokta arasındaki çizgi $\mathbb{R}^d$ içinde kalır). Bazı durumlarda $\{\mathbf{x} | \mathbf{x} \in \mathbb{R}^d \text{ ve } \|\mathbf{x}\| \leq r\}$ tarafından tanımlanan $r$ yarıçap topları gibi sınırlanmış uzunlukta değişkenlerle çalışırız. 
 
-### Dışbükey Fonksiyonlar
+### Dışbükey İşlevler
 
-Artık dışbükey setlere sahip olduğumuza*dışbükey fonksiyonları* $f$'ü tanıtabiliriz. Bir dışbükey set $\mathcal{X}$ göz önüne alındığında, $f: \mathcal{X} \to \mathbb{R}$ bir işlev $f: \mathcal{X} \to \mathbb{R}$, tüm $x, x' \in \mathcal{X}$ için ve tüm $\lambda \in [0, 1]$ için 
-
+Artık dışbükey kümelere sahip olduğumuza göre *dışbükey fonksiyonları* $f$'ü tanıtabiliriz. Bir dışbükey $\mathcal{X}$ kümesi verildiğinde, eğer tüm $x, x' \in \mathcal{X}$ için ve elimizdeki tüm $\lambda \in [0, 1]$ için aşağıdaki ifade tutarsa $f: \mathcal{X} \to \mathbb{R}$ işlevi *dışbükeydir*:
 $$\lambda f(x) + (1-\lambda) f(x') \geq f(\lambda x + (1-\lambda) x').$$
 
 Bunu göstermek için birkaç işlev çizelim ve hangilerinin gereksinimi karşıladığını kontrol edelim. Aşağıda hem dışbükey hem de dışbükey olmayan birkaç fonksiyon tanımlıyoruz.
@@ -77,34 +76,34 @@ for ax, func in zip(axes, [f, g, h]):
     d2l.plot([x, segment], [func(x), func(segment)], axes=ax)
 ```
 
-Beklendiği gibi kosinüs fonksiyonu*dışbükey* olmayan*, parabol ve üstel fonksiyon ise. $\mathcal{X}$'in dışbükey bir set olması koşulunun mantıklı olması için gerekli olduğunu unutmayın. Aksi takdirde $f(\lambda x + (1-\lambda) x')$'ün sonucu iyi tanımlanmış olmayabilir. 
+Beklendiği gibi kosinüs fonksiyonu *dışbükey* olmayan*, parabol ve üstel fonksiyon ise dışbükeydir. $\mathcal{X}$'in dışbükey bir küme olması koşulunun mantıklı olması için gerekli olduğunu unutmayın. Aksi takdirde $f(\lambda x + (1-\lambda) x')$'in sonucu iyi tanımlanmış olmayabilir. 
 
 ### Jensen'ın Eşitsizliği
 
-Bir dışbükey fonksiyon $f$ göz önüne alındığında, en kullanışlı matematiksel araçlardan biri *Jensen eşitsizliği*. Dışbükeylik tanımının genelleştirilmesi anlamına gelir: 
+Bir dışbükey $f$ fonksiyonu göz önüne alındığında, en kullanışlı matematiksel araçlardan biri *Jensen eşitsizliği*dir. Dışbükeylik tanımının genelleştirilmesi anlamına gelir: 
 
 $$\sum_i \alpha_i f(x_i)  \geq f\left(\sum_i \alpha_i x_i\right)    \text{ and }    E_X[f(X)]  \geq f\left(E_X[X]\right),$$
 :eqlabel:`eq_jensens-inequality`
 
-burada $\alpha_i$ negatif olmayan reel sayılar $\sum_i \alpha_i = 1$ ve $X$ rasgele bir değişkendir. Başka bir deyişle, dışbükey bir fonksiyonun beklentisi, ikincisinin genellikle daha basit bir ifade olduğu bir beklentinin dışbükey işlevinden daha az değildir. İlk eşitsizliği kanıtlamak için dışbükeylik tanımını defalarca bir defada toplamda bir terime uygularız. 
+burada $\alpha_i$ negatif olmayan reel sayılar $\sum_i \alpha_i = 1$ ve $X$ rasgele bir değişkenlerdir. Başka bir deyişle, dışbükey bir fonksiyonun beklentisi, ikincisinin genellikle daha basit bir ifade olduğu bir beklentinin dışbükey işlevinden daha az değildir. İlk eşitsizliği kanıtlamak için dışbükeylik tanımını defalarca toplamda bir terime uygularız. 
 
-Jensen'ın eşitsizliğinin yaygın uygulamalarından biri daha karmaşık bir ifadeyi daha basit bir ifadeyle bağlamaktır. Örneğin, uygulaması kısmen gözlenen rastgele değişkenlerin günlük olasılığı ile ilgili olabilir. Yani, kullandığımız 
+Jensen'ın eşitsizliğinin yaygın uygulamalarından biri daha karmaşık bir ifadeyi daha basit bir ifadeyle bağlamaktır. Örneğin, uygulaması kısmen gözlenen rastgele değişkenlerin log olabilirliği ile ilgili olabilir. Yani, kullandığımız 
 
 $$E_{Y \sim P(Y)}[-\log P(X \mid Y)] \geq -\log P(X),$$
 
-beri $\int P(Y) P(X \mid Y) dY = P(X)$. Bu, varyasyonel yöntemlerde kullanılabilir. Burada $Y$ genellikle gözlenmeyen rastgele değişkendir, $P(Y)$ dağıtılabilir nasıl en iyi tahmindir, ve $P(X)$ ile dağıtımıdır $Y$ entegre. Örneğin, kümeleme $Y$ küme etiketleri olabilir ve $P(X \mid Y)$ küme etiketleri uygularken oluşturucu modeldir. 
+çünkü $\int P(Y) P(X \mid Y) dY = P(X)$. Bu, varyasyonel yöntemlerde kullanılabilir. Burada $Y$ tipik olarak gözlemlenmeyen rastgele değişkendir, $P(Y)$ bunun nasıl dağılabileceğine dair en iyi tahmindir ve $P(X)$, $Y$'nin integral uygulandığı dağılımdır. Örneğin, öbeklemede $Y$ küme etiketleri olabilir ve $P(X \mid Y)$ öbek etiketleri uygularken üretici modeldir. 
 
 ## Özellikler
 
 Dışbükey işlevler birçok yararlı özelliğe sahiptir. Aşağıda yaygın olarak kullanılan birkaç tanesini tanımlıyoruz. 
 
-### Yerel Minima Global Minima
+### Yerel Minimum Küresel Minimum Olduğunda
 
-Her şeyden önce, dışbükey işlevlerin yerel minimumu da küresel minimadır. Bunu aşağıdaki gibi çelişkilerle kanıtlayabiliriz. 
+Her şeyden önce, dışbükey işlevlerin yerel minimumu da küresel minimumdur. Bunu aşağıdaki gibi tezatlıklarla kanıtlayabiliriz. 
 
-Bir dışbükey fonksiyon düşünün $f$ dışbükey bir küme üzerinde tanımlanan $\mathcal{X}$. $x^{\ast} \in \mathcal{X}$'ün yerel bir minimum olduğunu varsayalım: $p$ için $0 < |x - x^{\ast}| \leq p$'u tatmin eden $x \in \mathcal{X}$ için $f(x^{\ast}) < f(x)$'ye sahip olmak için küçük bir pozitif değer vardır. 
+Bir dışbükey küme $\mathcal{X}$ üzerinde tanımlanmış bir dışbükey fonksiyon $f$ düşünün. $x^{\ast} \in \mathcal{X}$'ın yerel bir minimum olduğunu varsayalım: Küçük bir pozitif $p$ değeri vardır, öyle ki $x \in \mathcal{X}$ için $0 < |x' - x^{\ast}| \leq p$ elimizde $f(x^{\ast}) < f(x)$.
 
-Yerel minimum $x^{\ast}$ $x^{\ast}$ küresel en az $f$ olmadığını varsayalım: $x' \in \mathcal{X}$ hangi $f(x') < f(x^{\ast})$ için var. Ayrıca var $\lambda \in [0, 1)$ gibi $\lambda = 1 - \frac{p}{|x^{\ast} - x'|}$ $\lambda = 1 - \frac{p}{|x^{\ast} - x'|}$ böylece $0 < |\lambda x^{\ast} + (1-\lambda) x' - x^{\ast}| \leq p$.  
+Yerel minimum $x^{\ast}$ $x^{\ast}$'in $f$'nin küresel minimumu olmadığını varsayalım: $f(x') < f(x^{\ast})$ için $x' \in \mathcal{X}$ vardır. Ayrıca $\lambda \in [0, 1)$ vardır, örneğin $\lambda = 1 - \frac{p}{|x^{\ast} - x'|}$ öyle ki $0 < |\lambda x^ {\ast} + (1-\lambda) x' - x^{\ast}| \leq p$.
 
 Ancak, dışbükey fonksiyonların tanımına göre, 
 
@@ -114,7 +113,7 @@ $$\begin{aligned}
     &= f(x^{\ast}),
 \end{aligned}$$
 
-hangi $x^{\ast}$ yerel bir asgari olduğu ifadesinde çelişmektedir. Bu nedenle, $x' \in \mathcal{X}$ için $f(x') < f(x^{\ast})$ yok. Yerel minimum $x^{\ast}$ da küresel asgari değerdir. 
+bu $x^{\ast}$'in yerel bir minimum olduğu ifadesinde çelişmektedir. Bu nedenle, $x' \in \mathcal{X}$ için $f(x') < f(x^{\ast})$ yok. Yerel minimum $x^{\ast}$ da küresel minimum değerdir. 
 
 Örneğin, dışbükey işlev $f(x) = (x-1)^2$ yerel minimum $x=1$ değerine sahiptir ve bu da küresel minimum değerdir.
 
@@ -125,9 +124,9 @@ d2l.set_figsize()
 d2l.plot([x, segment], [f(x), f(segment)], 'x', 'f(x)')
 ```
 
-Dışbükey fonksiyonlar için yerel minima da küresel minima olması çok uygundur. Fonksiyonları en aza indirirsek “sıkışamayız” anlamına gelir. Bununla birlikte, bunun birden fazla küresel minimum olamayacağı veya bir tane bile var olabileceği anlamına gelmediğini unutmayın. Örneğin, $f(x) = \mathrm{max}(|x|-1, 0)$ işlevi $[-1, 1]$ aralığında minimum değerini alır. Tersine, $f(x) = \exp(x)$ işlevi $\mathbb{R}$ üzerinde minimum bir değere ulaşmaz: $x \to -\infty$ için $0$ için asimtotlar, ancak $x$ için $f(x) = 0$ yoktur. 
+Dışbükey fonksiyonlar için yerel minimum da küresel minimum olması çok uygundur. Fonksiyonları en aza indirirsek “takılıp kalmayız” anlamına gelir. Bununla birlikte, bunun birden fazla küresel minimum olamayacağı veya bir tane bile var olabileceği anlamına gelmediğini unutmayın. Örneğin, $f(x) = \mathrm{max}(|x|-1, 0)$ işlevi $[-1, 1]$ aralığında minimum değerini alır. Tersine, $f(x) = \exp(x)$ işlevi $\mathbb{R}$ üzerinde minimum bir değere ulaşmaz: $x \to -\infty$ için $0$'da asimtota dönüşür, ancak $x$ için $f(x) = 0$ yoktur. 
 
-### Dışbükey Fonksiyonların Altında Dışbükey Fonksiyonlar
+### Dışbükey Fonksiyonların Altındaki Dışbükey Fonksiyonlar
 
 Dışbükey fonksiyonların *aşağıdaki setleri* aracılığıyla dışbükey setleri rahatça tanımlayabiliriz. Beton, dışbükey bir fonksiyon verilen $f$ dışbükey bir set üzerinde tanımlanan $\mathcal{X}$, herhangi bir aşağıdaki set 
 
