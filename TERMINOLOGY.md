@@ -137,6 +137,8 @@ latent; saklı
 
 leaky; sızıntılı
 
+lemma; önsav
+
 likelihood; olabilirlik
 
 long short-term memory; uzun ömürlü kısa-dönem belleği
@@ -226,6 +228,8 @@ script; betik
 self-attention; özdikkat
 
 semantic segmentation; anlamsal bölünme
+
+semidefinite; yarı-kesin
 
 sequence; dizi
 
