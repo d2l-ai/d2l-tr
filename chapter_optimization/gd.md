@@ -1,16 +1,16 @@
-# Degrade İniş
+# Gradyan İnişi
 :label:`sec_gd`
 
-Bu bölümde temel kavramları tanıtacağız *degrade descent*. Derin öğrenmede nadiren kullanılmasına rağmen, degrade iniş anlayışı stokastik degrade iniş algoritmalarını anlamak için anahtardır. Örneğin, optimizasyon sorunu aşırı büyük bir öğrenme oranı nedeniyle farklılaşabilir. Bu fenomen zaten degrade inişinde görülebilir. Benzer şekilde, ön şartlandırma degrade inişinde yaygın bir tekniktir ve daha gelişmiş algoritmalara taşır. Basit bir özel durumla başlayalım. 
+Bu bölümde *gradyan inişi*nin altında yatan temel kavramları tanıtacağız . Derin öğrenmede nadiren kullanılmasına rağmen, gradyan inişi anlamak rasgele gradyan iniş algoritmalarını anlamak için anahtardır. Örneğin, optimizasyon problemi aşırı büyük bir öğrenme oranı nedeniyle ıraksayabilir. Bu olay halihazırda gradyan inişinde görülebilir. Benzer şekilde, ön şartlandırma gradyan inişinde yaygın bir tekniktir ve daha gelişmiş algoritmalara taşır. Basit bir özel durumla başlayalım. 
 
-## Tek Boyutlu Degrade İniş
+## Tek Boyutlu Gradyan İnişi
 
-Bir boyuttaki degrade iniş, degrade iniş algoritmasının nesnel işlevin değerini neden azaltabileceğini açıklamak için mükemmel bir örnektir. Bazı sürekli diferansiyellenebilir gerçek değerli fonksiyon düşünün $f: \mathbb{R} \rightarrow \mathbb{R}$. Elde ettiğimiz bir Taylor genişleme kullanarak 
+Bir boyuttaki gradyan iniş, gradyan iniş algoritmasının nesnel işlevin değerini neden azaltabileceğini açıklamak için mükemmel bir örnektir. Bazı sürekli diferansiyellenebilir gerçek değerli fonksiyon düşünün $f: \mathbb{R} \rightarrow \mathbb{R}$. Elde ettiğimiz bir Taylor genişleme kullanarak 
 
 $$f(x + \epsilon) = f(x) + \epsilon f'(x) + \mathcal{O}(\epsilon^2).$$
 :eqlabel:`gd-taylor`
 
-Yani, birinci dereceden yaklaşımda $f(x+\epsilon)$ fonksiyon değeri $f(x)$ ve $x$'de $x$'de birinci türev $f'(x)$ ile verilir. Küçük $\epsilon$ için negatif degrade yönünde hareket etmenin $f$'nın azalacağını varsaymak mantıksız değildir. İşleri basit tutmak için sabit bir adım boyutu $\eta > 0$ seçip $\epsilon = -\eta f'(x)$'i seçiyoruz. Bunu yukarıdaki Taylor genişleme içine takarak 
+Yani, birinci dereceden yaklaşımda $f(x+\epsilon)$ fonksiyon değeri $f(x)$ ve $x$'de $x$'de birinci türev $f'(x)$ ile verilir. Küçük $\epsilon$ için negatif gradyan yönünde hareket etmenin $f$'nın azalacağını varsaymak mantıksız değildir. İşleri basit tutmak için sabit bir adım boyutu $\eta > 0$ seçip $\epsilon = -\eta f'(x)$'i seçiyoruz. Bunu yukarıdaki Taylor genişleme içine takarak 
 
 $$f(x - \eta f'(x)) = f(x) - \eta f'^2(x) + \mathcal{O}(\eta^2 f'^2(x)).$$
 :eqlabel:`gd-taylor-2`
@@ -23,9 +23,9 @@ Bu demektir ki, biz kullanırsanız
 
 $$x \leftarrow x - \eta f'(x)$$
 
-$x$ yinelemek için $f(x)$ işlevinin değeri azalabilir. Bu nedenle, degrade inişinde ilk olarak $x$ ve sabit bir $\eta > 0$ başlangıç değeri seçiyoruz ve daha sonra durdurma koşuluna ulaşılana kadar $x$'i sürekli yinelemek için kullanıyoruz, örneğin $|f'(x)|$'ün büyüklüğü yeterince küçük olduğunda veya yineleme sayısı belirli bir değeri. 
+$x$ yinelemek için $f(x)$ işlevinin değeri azalabilir. Bu nedenle, gradyan inişinde ilk olarak $x$ ve sabit bir $\eta > 0$ başlangıç değeri seçiyoruz ve daha sonra durdurma koşuluna ulaşılana kadar $x$'i sürekli yinelemek için kullanıyoruz, örneğin $|f'(x)|$'ün büyüklüğü yeterince küçük olduğunda veya yineleme sayısı belirli bir değeri. 
 
-Basitlik için, degrade inişinin nasıl uygulanacağını göstermek için $f(x)=x^2$ nesnel işlevini seçiyoruz. $x=0$'ün $f(x)$'yi en aza indirmek için çözüm olduğunu bilmemize rağmen, $x$'nin nasıl değiştiğini gözlemlemek için hala bu basit işlevi kullanıyoruz.
+Basitlik için, gradyan inişinin nasıl uygulanacağını göstermek için $f(x)=x^2$ nesnel işlevini seçiyoruz. $x=0$'ün $f(x)$'yi en aza indirmek için çözüm olduğunu bilmemize rağmen, $x$'nin nasıl değiştiğini gözlemlemek için hala bu basit işlevi kullanıyoruz.
 
 ```{.python .input}
 %matplotlib inline
@@ -59,7 +59,7 @@ def f_grad(x):  # Gradient (derivative) of the objective function
     return 2 * x
 ```
 
-Ardından, başlangıç değeri olarak $x=10$'i kullanıyoruz ve $\eta=0.2$'ü varsayıyoruz. $x$'yı 10 kez yinelemek için degrade iniş kullanarak, sonunda $x$ değerinin en uygun çözüme yaklaştığını görebiliriz.
+Ardından, başlangıç değeri olarak $x=10$'i kullanıyoruz ve $\eta=0.2$'ü varsayıyoruz. $x$'yı 10 kez yinelemek için gradyan iniş kullanarak, sonunda $x$ değerinin en uygun çözüme yaklaştığını görebiliriz.
 
 ```{.python .input}
 #@tab all
@@ -125,7 +125,7 @@ show_trace(gd(2, f_grad), f)
 
 ## Çok Değişkenli Degrade İniş
 
-Artık tek değişkenli davanın daha iyi bir sezgiye sahip olduğumuza göre, $\mathbf{x} = [x_1, x_2, \ldots, x_d]^\top$'nın bulunduğu durumu ele alalım. Yani, objektif fonksiyon $f: \mathbb{R}^d \to \mathbb{R}$ vektörleri skalerlere haritalar. Buna göre degrade çok değişkenli. $d$ kısmi türevlerinden oluşan bir vektördür: 
+Artık tek değişkenli davanın daha iyi bir sezgiye sahip olduğumuza göre, $\mathbf{x} = [x_1, x_2, \ldots, x_d]^\top$'nın bulunduğu durumu ele alalım. Yani, objektif fonksiyon $f: \mathbb{R}^d \to \mathbb{R}$ vektörleri skalerlere haritalar. Buna göre gradyan çok değişkenli. $d$ kısmi türevlerinden oluşan bir vektördür: 
 
 $$\nabla f(\mathbf{x}) = \bigg[\frac{\partial f(\mathbf{x})}{\partial x_1}, \frac{\partial f(\mathbf{x})}{\partial x_2}, \ldots, \frac{\partial f(\mathbf{x})}{\partial x_d}\bigg]^\top.$$
 
@@ -134,11 +134,11 @@ Degradedeki her kısmi türev eleman $\partial f(\mathbf{x})/\partial x_i$ $x_i$
 $$f(\mathbf{x} + \boldsymbol{\epsilon}) = f(\mathbf{x}) + \mathbf{\boldsymbol{\epsilon}}^\top \nabla f(\mathbf{x}) + \mathcal{O}(\|\boldsymbol{\epsilon}\|^2).$$
 :eqlabel:`gd-multi-taylor`
 
-Başka bir deyişle, $\boldsymbol{\epsilon}$'te ikinci dereceden terimlere kadar en dik iniş yönü $-\nabla f(\mathbf{x})$ negatif degrade ile verilir. Uygun bir öğrenme hızı $\eta > 0$ seçilmesi, prototipik degrade iniş algoritmasını sağlar: 
+Başka bir deyişle, $\boldsymbol{\epsilon}$'te ikinci dereceden terimlere kadar en dik iniş yönü $-\nabla f(\mathbf{x})$ negatif gradyan ile verilir. Uygun bir öğrenme hızı $\eta > 0$ seçilmesi, prototipik gradyan iniş algoritmasını sağlar: 
 
 $$\mathbf{x} \leftarrow \mathbf{x} - \eta \nabla f(\mathbf{x}).$$
 
-Algoritmanın pratikte nasıl davrandığını görmek için $f(\mathbf{x})=x_1^2+2x_2^2$ giriş olarak iki boyutlu vektör $\mathbf{x} = [x_1, x_2]^\top$ ve çıktı olarak bir skaler ile objektif bir fonksiyon oluşturalım. Degrade $\nabla f(\mathbf{x}) = [2x_1, 4x_2]^\top$ tarafından verilir. $\mathbf{x}$ yörüngesini ilk konumdan degrade iniş ile $[-5, -2]$ yörüngesini gözlemleyeceğiz.  
+Algoritmanın pratikte nasıl davrandığını görmek için $f(\mathbf{x})=x_1^2+2x_2^2$ giriş olarak iki boyutlu vektör $\mathbf{x} = [x_1, x_2]^\top$ ve çıktı olarak bir skaler ile objektif bir fonksiyon oluşturalım. Degrade $\nabla f(\mathbf{x}) = [2x_1, 4x_2]^\top$ tarafından verilir. $\mathbf{x}$ yörüngesini ilk konumdan gradyan iniş ile $[-5, -2]$ yörüngesini gözlemleyeceğiz.  
 
 Başlangıç olarak, iki yardımcı fonksiyona daha ihtiyacımız var. Birincisi bir güncelleme işlevi kullanır ve ilk değere 20 kez uygular. İkinci yardımcı $\mathbf{x}$'ün yörüngesini görselleştirir.
 
@@ -189,7 +189,7 @@ show_trace_2d(f_2d, train_2d(gd_2d, f_grad=f_2d_grad))
 
 ## Adaptif Yöntemler
 
-:numref:`subsec_gd-learningrate`'te görebildiğimiz gibi, $\eta$ “doğru” öğrenme oranını elde etmek zor. Eğer çok küçük seçersek, çok az ilerleme kaydederiz. Eğer çok büyük seçersek, çözelti salınır ve en kötü ihtimalle ayrışabilir. $\eta$'i otomatik olarak belirleyebilirsek veya bir öğrenme oranı seçmek zorunda kalmaktan kurtulsak ne olur? Bu durumda sadece objektif fonksiyonun değerine ve degradelerine değil, aynı zamanda *eğrisi* değerine de bakan ikinci dereceden yöntemler yardımcı olabilir. Bu yöntemler, hesaplama maliyeti nedeniyle doğrudan derin öğrenmeye uygulanamamakla birlikte, aşağıda belirtilen algoritmaların arzu edilen özelliklerinin çoğunu taklit eden gelişmiş optimizasyon algoritmalarının nasıl tasarlanacağına dair yararlı önseziler sağlarlar. 
+:numref:`subsec_gd-learningrate`'te görebildiğimiz gibi, $\eta$ “doğru” öğrenme oranını elde etmek zor. Eğer çok küçük seçersek, çok az ilerleme kaydederiz. Eğer çok büyük seçersek, çözelti salınır ve en kötü ihtimalle ayrışabilir. $\eta$'i otomatik olarak belirleyebilirsek veya bir öğrenme oranı seçmek zorunda kalmaktan kurtulsak ne olur? Bu durumda sadece objektif fonksiyonun değerine ve gradyanlerine değil, aynı zamanda *eğrisi* değerine de bakan ikinci dereceden yöntemler yardımcı olabilir. Bu yöntemler, hesaplama maliyeti nedeniyle doğrudan derin öğrenmeye uygulanamamakla birlikte, aşağıda belirtilen algoritmaların arzu edilen özelliklerinin çoğunu taklit eden gelişmiş optimizasyon algoritmalarının nasıl tasarlanacağına dair yararlı önseziler sağlarlar. 
 
 ### Newton Yöntemi
 
@@ -289,11 +289,11 @@ Oldukça şaşırtıcı bir şekilde hesaplamak ve tam Hessian'ı saklamak çok 
 
 $$\mathbf{x} \leftarrow \mathbf{x} - \eta \mathrm{diag}(\mathbf{H})^{-1} \nabla f(\mathbf{x}).$$
 
-Bu tam Newton'un yöntemi kadar iyi olmasa da, onu kullanmamaktan çok daha iyidir. Bunun neden iyi bir fikir olabileceğini görmek için bir değişkenin milimetre cinsinden yüksekliği ve diğeri kilometre cinsinden yüksekliği belirten bir durum göz önünde bulundurun. Her iki doğal ölçeğin de metre olarak olduğunu varsayarsak, parametrelemelerde korkunç bir uyumsuzluğumuz var. Neyse ki, ön şartlandırma kullanmak bunu ortadan kaldırır. Her değişken için farklı bir öğrenme hızı (vektör $\mathbf{x}$ koordinatı) seçmek için degrade iniş miktarlarıyla etkili bir şekilde ön koşullandırma. Daha sonra göreceğimiz gibi ön şartlandırma, stokastik degrade iniş optimizasyon algoritmalarındaki bazı yeniliği yönlendiriyor.  
+Bu tam Newton'un yöntemi kadar iyi olmasa da, onu kullanmamaktan çok daha iyidir. Bunun neden iyi bir fikir olabileceğini görmek için bir değişkenin milimetre cinsinden yüksekliği ve diğeri kilometre cinsinden yüksekliği belirten bir durum göz önünde bulundurun. Her iki doğal ölçeğin de metre olarak olduğunu varsayarsak, parametrelemelerde korkunç bir uyumsuzluğumuz var. Neyse ki, ön şartlandırma kullanmak bunu ortadan kaldırır. Her değişken için farklı bir öğrenme hızı (vektör $\mathbf{x}$ koordinatı) seçmek için gradyan iniş miktarlarıyla etkili bir şekilde ön koşullandırma. Daha sonra göreceğimiz gibi ön şartlandırma, rasgele gradyan iniş optimizasyon algoritmalarındaki bazı yeniliği yönlendiriyor.  
 
 ### Satır Araması ile Degrade İniş
 
-Degrade inişindeki en önemli sorunlardan biri, hedefi aşabilir veya yetersiz ilerleme kaydedebilmemizdir. Sorun için basit bir düzeltme, degrade iniş ile birlikte satır aramasını kullanmaktır. Yani, $\nabla f(\mathbf{x})$ tarafından verilen yönü kullanıyoruz ve daha sonra $\eta$'nin $f(\mathbf{x} - \eta \nabla f(\mathbf{x}))$'i en aza indirdiği öğrenme oranının en aza indirildiği için ikili arama gerçekleştiriyoruz. 
+Degrade inişindeki en önemli sorunlardan biri, hedefi aşabilir veya yetersiz ilerleme kaydedebilmemizdir. Sorun için basit bir düzeltme, gradyan iniş ile birlikte satır aramasını kullanmaktır. Yani, $\nabla f(\mathbf{x})$ tarafından verilen yönü kullanıyoruz ve daha sonra $\eta$'nin $f(\mathbf{x} - \eta \nabla f(\mathbf{x}))$'i en aza indirdiği öğrenme oranının en aza indirildiği için ikili arama gerçekleştiriyoruz. 
 
 Bu algoritma hızla yakınlaşır (analiz ve kanıt için bkz., :cite:`Boyd.Vandenberghe.2004`). Bununla birlikte, derin öğrenme amacıyla bu oldukça mümkün değildir, çünkü satır aramasının her adımı, tüm veri kümesinde objektif işlevi değerlendirmemizi gerektirecektir. Bunu başarmak için çok pahalıya mal oluyor. 
 

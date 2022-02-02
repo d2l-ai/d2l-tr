@@ -63,6 +63,8 @@ discriminator; ayrımcı
 
 distribution shift; dağılım kayması
 
+divergent; ıraksayıcı, ıraksayan
+
 domain; etki alanı
 
 downsampling; altörnekleme
@@ -171,7 +173,7 @@ overfitting; aşırı öğrenme
 
 padding; dolgu
 
-parse; ayrıştırmak
+parsing; ayrıştırma
 
 permutation; devrişim
 
