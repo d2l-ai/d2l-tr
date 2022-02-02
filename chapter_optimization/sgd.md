@@ -1,8 +1,7 @@
-# Stokastik Degrade İniş
+# Rasgele Gradyan İnişi
 :label:`sec_sgd`
 
-Daha önceki bölümlerde, eğitim prosedürümüzde stokastik degrade iniş kullanmaya devam ettik, ancak, neden çalıştığını açıklamadan. Üzerine biraz ışık tutmak için, :numref:`sec_gd`'te degrade inişinin temel prensiplerini tanımladık. Bu bölümde, tartışmak için devam
-*daha ayrıntılı olarak stokastik degrade iniş*.
+Daha önceki bölümlerde, eğitim prosedürümüzde rasgele gradyan inişi kullanmaya devam ettik, ancak, neden çalıştığını açıklamadık. Üzerine biraz ışık tutmak için, :numref:`sec_gd`'te gradyan inişinin temel prensiplerini tanımladık. Bu bölümde, *rasgele gradyan iniş*i daha ayrıntılı olarak tartışmaya devam ediyoruz.
 
 ```{.python .input}
 %matplotlib inline
@@ -28,29 +27,29 @@ import math
 import tensorflow as tf
 ```
 
-## Stokastik Degrade Güncellemeleri
+## Rasgele Gradyan Güncellemeleri
 
-Derin öğrenmede, objektif işlev genellikle eğitim veri kümelerindeki her örnek için kayıp fonksiyonlarının ortalamasıdır. $n$ örneklerinden oluşan bir eğitim veri kümesi göz önüne alındığında, $f_i(\mathbf{x})$'in $\mathbf{x}$'nin parametre vektörü olduğu endeks $i$'nın eğitim örneğine göre kayıp fonksiyonu olduğunu varsayıyoruz. Sonra objektif fonksiyona varıyoruz 
+Derin öğrenmede, amaç işlevi genellikle eğitim veri kümelerindeki her örnek için kayıp fonksiyonlarının ortalamasıdır. $n$ örnekten oluşan bir eğitim veri kümesi verildiğinde, $f_i(\mathbf{x})$'in  $i.$ dizindeki eğitim örneğine göre kayıp işlevi olduğunu varsayarız, burada $\mathbf{x}$ parametre vektörüdür. Sonra şu amaç fonksiyonuna varırız
 
 $$f(\mathbf{x}) = \frac{1}{n} \sum_{i = 1}^n f_i(\mathbf{x}).$$
 
-$\mathbf{x}$'teki objektif fonksiyonun degrade olarak hesaplanır 
+$\mathbf{x}$'teki amaç fonksiyonunun gradyanı böyle hesaplanır:
 
 $$\nabla f(\mathbf{x}) = \frac{1}{n} \sum_{i = 1}^n \nabla f_i(\mathbf{x}).$$
 
-Degrade iniş kullanılıyorsa, her bağımsız değişken yineleme için hesaplama maliyeti $\mathcal{O}(n)$'tir ve $n$ ile doğrusal olarak büyür. Bu nedenle, eğitim veri kümesi daha büyük olduğunda, her yineleme için degrade iniş maliyeti daha yüksek olacaktır. 
+Gradyan inişi kullanılıyorsa, her bağımsız değişken yineleme için hesaplama maliyeti $\mathcal{O}(n)$'dir ve $n$ ile doğrusal olarak büyür. Bu nedenle, eğitim veri kümesi daha büyük olduğunda, her yineleme için gradyan iniş maliyeti daha yüksek olacaktır. 
 
-Stokastik degrade iniş (SGD), her yinelemede hesaplama maliyetini düşürür. Stokastik degrade iniş her yinelemesinde, rastgele veri örnekleri için $i\in\{1,\ldots, n\}$ dizini eşit olarak örnekleriz ve $\mathbf{x}$'yı güncelleştirmek için $\nabla f_i(\mathbf{x})$ degradeyi hesaplarız: 
+Rasgele gradyan iniş (SGD), her yinelemede hesaplama maliyetini düşürür. Rasgele gradyan inişin her yinelemesinde, rastgele veri örnekleri için $i\in\{1,\ldots, n\}$ dizinden eşit olarak örnekleriz ve $\mathbf{x}$'i güncelleştirmek için $\nabla f_i(\mathbf{x})$ gradyanını hesaplarız: 
 
 $$\mathbf{x} \leftarrow \mathbf{x} - \eta \nabla f_i(\mathbf{x}),$$
 
-burada $\eta$ öğrenme oranıdır. Her yineleme için hesaplama maliyetinin $\mathcal{O}(n)$'ten degrade inişinin $\mathcal{O}(n)$'ten $\mathcal{O}(1)$ sabitine düştüğünü görebiliriz. Dahası, stokastik degrade $\nabla f_i(\mathbf{x})$'ün $\nabla f(\mathbf{x})$'nın tam degradenin tarafsız bir tahmini olduğunu vurgulamak istiyoruz, çünkü 
+burada $\eta$ öğrenme oranıdır. Her yineleme için hesaplama maliyetinin $\mathcal{O}(n)$'den gradyan inişinin $\mathcal{O}(n)$'ten $\mathcal{O}(1)$ sabitine düştüğünü görebiliriz. Dahası, rasgele gradyan $\nabla f_i(\mathbf{x})$'in $\nabla f(\mathbf{x})$'in tam gradyanının tarafsız bir tahmini olduğunu vurgulamak istiyoruz, çünkü 
 
 $$\mathbb{E}_i \nabla f_i(\mathbf{x}) = \frac{1}{n} \sum_{i = 1}^n \nabla f_i(\mathbf{x}) = \nabla f(\mathbf{x}).$$
 
-Bu, ortalama olarak stokastik degradenin degradenin iyi bir tahmini olduğu anlamına gelir. 
+Bu, ortalama olarak rasgele gradyanın, gradyanın iyi bir tahmini olduğu anlamına gelir. 
 
-Şimdi, stokastik degrade inişi simüle etmek için degradeye 0 ortalamalı rastgele gürültü ve 1 varyansı ekleyerek degrade iniş ile karşılaştıracağız.
+Şimdi, bir rasgele gradyan inişini benzetmek için gradyana ortalaması 0 ve varyansı 1 olan rastgele gürültü ekleyerek gradyan inişiyle karşılaştıracağız.
 
 ```{.python .input}
 #@tab all
@@ -93,13 +92,13 @@ lr = constant_lr  # Constant learning rate
 d2l.show_trace_2d(f, d2l.train_2d(sgd, steps=50, f_grad=f_grad))
 ```
 
-Gördüğümüz gibi, stokastik degrade inişindeki değişkenlerin yörüngesi, :numref:`sec_gd`'te degrade inişinde gözlemlediğimizden çok daha gürültülü. Bunun nedeni, degradenin stokastik doğasından kaynaklanmaktadır. Yani, asgari seviyeye yaklaştığımızda bile, $\eta \nabla f_i(\mathbf{x})$ aracılığıyla anlık gradyan tarafından enjekte edilen belirsizliğe hala tabiyiz. 50 adımdan sonra bile kalite hala o kadar iyi değil. Daha da kötüsü, ek adımlardan sonra iyileşmeyecektir (bunu onaylamak için daha fazla sayıda adım denemenizi öneririz). Bu bize tek alternatif bırakır: öğrenme oranını değiştirmek $\eta$. Ancak, bunu çok küçük seçersek, başlangıçta anlamlı bir ilerleme kaydetmeyeceğiz. Öte yandan, eğer çok büyük alırsak, yukarıda görüldüğü gibi iyi bir çözüm elde edemeyiz. Bu çelişkili hedefleri çözmenin tek yolu, optimizasyon ilerledikçe öğrenme oranını*dinamik* azaltmaktır. 
+Gördüğümüz gibi, rasgele gradyan inişindeki değişkenlerin yörüngesi, :numref:`sec_gd`'te gradyan inişinde gözlemlediğimizden çok daha gürültülü. Bunun nedeni, gradyanın rasgele doğasından kaynaklanmaktadır. Yani, en düşük seviyeye yaklaştığımızda bile, $\eta \nabla f_i(\mathbf{x})$ aracılığıyla anlık gradyan tarafından aşılanan belirsizliğe hala tabiyiz. 50 adımdan sonra bile kalite hala o kadar iyi değil. Daha da kötüsü, ek adımlardan sonra iyileşmeyecektir (bunu onaylamak için daha fazla sayıda adım denemenizi öneririz). Bu bize tek alternatif bırakır: Öğrenme oranı  $\eta$'yı değiştirmek. Ancak, bunu çok küçük seçersek, ilkin bir ilerleme kaydetmeyeceğiz. Öte yandan, eğer çok büyük alırsak, yukarıda görüldüğü gibi iyi bir çözüm elde edemeyiz. Bu çelişkili hedefleri çözmenin tek yolu, optimizasyon ilerledikçe öğrenme oranını *dinamik* azaltmaktır. 
 
-Bu aynı zamanda `sgd` adım işlevine `lr` öğrenme hızı işlevinin eklenmesinin de sebebidir. Yukarıdaki örnekte, ilişkili `lr` işlevini sabit olarak ayarladığımız için, öğrenme hızı zamanlaması için herhangi bir işlevsellik uykuda yatmaktadır. 
+Bu aynı zamanda `sgd` adım işlevine `lr` öğrenme hızı işlevinin eklenmesinin de sebebidir. Yukarıdaki örnekte, ilişkili 'lr' işlevini sabit olarak ayarladığımız için öğrenme hızı planlaması için herhangi bir işlevsellik uykuda kalmaktadır.
 
-## Dinamik Öğrenme Hızı
+## Dinamik Öğrenme Oranı
 
-$\eta$'in zamana bağlı öğrenme hızı $\eta(t)$ ile değiştirilmesi, optimizasyon algoritmasının yakınsamasını kontrol etmenin karmaşıklığını arttırır. Özellikle, $\eta$'in ne kadar hızlı çürümesi gerektiğini bulmamız gerekiyor. Çok hızlıysa, erken optimize etmeyi bırakacağız. Eğer çok yavaş azaltırsak, optimizasyon için çok fazla zaman harcıyoruz. Aşağıdakiler, $\eta$'in zamanla ayarlanmasında kullanılan birkaç temel stratejidir (daha sonra daha gelişmiş stratejileri tartışacağız): 
+$\eta$'nın zamana bağlı öğrenme hızı $\eta(t)$ ile değiştirilmesi, optimizasyon algoritmasının yakınsamasını kontrol etmenin karmaşıklığını arttırır. Özellikle, $\eta$'nın ne kadar hızlı sönmesi gerektiğini bulmamız gerekiyor. Çok hızlıysa, eniyilemeyi erken bırakacağız. Eğer çok yavaş azaltırsak, optimizasyon için çok fazla zaman harcarız. Aşağıdakiler, $\eta$'nın zamanla ayarlanmasında kullanılan birkaç temel stratejidir (daha sonra daha gelişmiş stratejileri tartışacağız): 
 
 $$
 \begin{aligned}
@@ -109,9 +108,9 @@ $$
 \end{aligned}
 $$
 
-İlk *parça sabit* senaryosunda, örneğin optimizasyondaki ilerleme durduğunda öğrenme oranını düşürüyoruz. Bu, derin ağları eğitmek için ortak bir stratejidir. Alternatif olarak çok daha agresif bir *üstel çürüme ile azaltabiliriz. Ne yazık ki bu genellikle algoritma birleşmeden önce erken durdurmaya yol açar. Popüler bir seçim, $\alpha = 0.5$ ile*polinom çürümesi*. Dışbükey optimizasyon durumunda, bu oranın iyi davrandığını gösteren bir dizi kanıt vardır. 
+İlk *parçalı sabit* senaryosunda, öğrenme oranını düşürüyoruz, mesela optimizasyondaki ilerleme durduğunda. Bu, derin ağları eğitmek için yaygın bir stratejidir. Alternatif olarak çok daha saldırgan bir *üstel sönme* ile azaltabiliriz. Ne yazık ki bu genellikle algoritma yakınsamadan önce erken durmaya yol açar. Popüler bir seçim, $\alpha = 0.5$ ile *polinom sönmesi*dir. Dışbükey optimizasyon durumunda, bu oranın iyi davrandığını gösteren bir dizi kanıt vardır. 
 
-Üstel çürümenin pratikte neye benzediğini görelim.
+Üstel sönmenin pratikte neye benzediğini görelim.
 
 ```{.python .input}
 #@tab all
@@ -126,7 +125,7 @@ lr = exponential_lr
 d2l.show_trace_2d(f, d2l.train_2d(sgd, steps=1000, f_grad=f_grad))
 ```
 
-Beklendiği gibi, parametrelerdeki varyans önemli ölçüde azaltılır. Bununla birlikte, bu, $\mathbf{x} = (0, 0)$'ün optimal çözümüne yakınsamamanın pahasına gelir. Hatta sonra 1000 yineleme adımlar biz çok uzakta optimal çözümden hala vardır. Gerçekten de, algoritma hiç yakınsama başarısız. Öte yandan, öğrenme hızının adım sayısının ters karekökü ile bozunduğu polinom çürümesi kullanırsak yakınsama sadece 50 adımdan sonra daha iyi olur.
+Beklendiği gibi, parametrelerdeki varyans önemli ölçüde azaltılır. Bununla birlikte, bu, $\mathbf{x} = (0, 0)$ eniyi çözümüne yakınsamama pahasına gelir. Hatta sonra 1000 yineleme adımında sonra bile eniyi çözümden hala çok uzaktayız. Gerçekten de, algoritmada yakınsamada tam anlamıyla başarısız. Öte yandan, öğrenme oranının adım sayısının ters karekökü ile söndüğü polinom sönmesi kullanırsak yakınsama sadece 50 adımdan sonra daha iyi olur.
 
 ```{.python .input}
 #@tab all
@@ -141,13 +140,13 @@ lr = polynomial_lr
 d2l.show_trace_2d(f, d2l.train_2d(sgd, steps=50, f_grad=f_grad))
 ```
 
-Öğrenme oranının nasıl ayarlanacağı konusunda çok daha fazla seçenek var. Örneğin, küçük bir hızla başlayabilir, sonra hızlıca yükseltebilir ve daha yavaş da olsa tekrar azaltabiliriz. Hatta daha küçük ve daha büyük öğrenme oranları arasında geçiş yapabiliriz. Bu tür programların çok çeşitli var. Şimdilik kapsamlı bir teorik analizin mümkün olduğu öğrenme oranı programlarına odaklanalım, yani dışbükey bir ortamda öğrenme hızları üzerinde. Genel dışbükey olmayan problemler için anlamlı yakınsama garantileri elde etmek çok zordur, çünkü genel olarak doğrusal olmayan dışbükey problemlerin en aza indirilmesi NP zordur. Bir anket için örneğin, Tibshirani 2015'in mükemmel [ders notları](https://www.stat.cmu.edu/~ryantibs/convexopt-F15/lectures/26-nonconvex.pdf) bakın. 
+Öğrenme oranının nasıl ayarlanacağı konusunda çok daha fazla seçenek var. Örneğin, küçük bir hızla başlayabilir, sonra hızlıca yükseltebilir ve daha yavaş da olsa tekrar azaltabiliriz. Hatta daha küçük ve daha büyük öğrenme oranları arasında geçiş yapabiliriz. Bu tür ayarlamaların çok çeşitlisi vardır. Şimdilik kapsamlı bir teorik analizin mümkün olduğu öğrenme oranı ayarlamalarına odaklanalım, yani dışbükey bir ortamda öğrenme oranları üzerine. Genel dışbükey olmayan problemler için anlamlı yakınsama garantileri elde etmek çok zordur, çünkü genel olarak doğrusal olmayan dışbükey problemlerin en aza indirilmesi NP zorludur. Bir araştırma için örneğin, Tibshirani 2015'in mükemmel [ders notları](https://www.stat.cmu.edu/~ryantibs/convexopt-F15/lectures/26-nonconvex.pdf)na bakınız. 
 
-## Konveks Amaçlar için Yakınsaklık Analizi
+## Dışbükey Amaç İşlevleri için Yakınsaklık Analizi
 
-Dışbükey objektif fonksiyonlar için stokastik degrade iniş aşağıdaki yakınsama analizi isteğe bağlıdır ve öncelikle sorun hakkında daha fazla sezgi iletmek için hizmet vermektedir. Kendimizi en basit kanıtlardan biriyle sınırlıyoruz :cite:`Nesterov.Vial.2000`. Önemli ölçüde daha gelişmiş ispat teknikleri mevcuttur, örn. objektif fonksiyon özellikle iyi davranıldığında. 
+Dışbükey objektif fonksiyonlar için rasgele gradyan iniş aşağıdaki yakınsama analizi isteğe bağlıdır ve öncelikle sorun hakkında daha fazla sezgi iletmek için hizmet vermektedir. Kendimizi en basit kanıtlardan biriyle sınırlıyoruz :cite:`Nesterov.Vial.2000`. Önemli ölçüde daha gelişmiş ispat teknikleri mevcuttur, örn. objektif fonksiyon özellikle iyi davranıldığında. 
 
-$f(\boldsymbol{\xi}, \mathbf{x})$'ün nesnel işlevinin $\boldsymbol{\xi}$ tümü için $\mathbf{x}$'da dışbükey olduğunu varsayalım. Daha somut olarak, stokastik degrade iniş güncellemesini göz önünde bulunduruyoruz: 
+$f(\boldsymbol{\xi}, \mathbf{x})$'ün nesnel işlevinin $\boldsymbol{\xi}$ tümü için $\mathbf{x}$'da dışbükey olduğunu varsayalım. Daha somut olarak, rasgele gradyan iniş güncellemesini göz önünde bulunduruyoruz: 
 
 $$\mathbf{x}_{t+1} = \mathbf{x}_{t} - \eta_t \partial_\mathbf{x} f(\boldsymbol{\xi}_t, \mathbf{x}),$$
 
@@ -160,7 +159,7 @@ beklenen risk ve $R^*$ ile ilgili olarak en az $\mathbf{x}$. Son izin $\mathbf{x
 $$\begin{aligned}    &\|\mathbf{x}_{t+1} - \mathbf{x}^*\|^2 \\ =& \|\mathbf{x}_{t} - \eta_t \partial_\mathbf{x} f(\boldsymbol{\xi}_t, \mathbf{x}) - \mathbf{x}^*\|^2 \\    =& \|\mathbf{x}_{t} - \mathbf{x}^*\|^2 + \eta_t^2 \|\partial_\mathbf{x} f(\boldsymbol{\xi}_t, \mathbf{x})\|^2 - 2 \eta_t    \left\langle \mathbf{x}_t - \mathbf{x}^*, \partial_\mathbf{x} f(\boldsymbol{\xi}_t, \mathbf{x})\right\rangle.   \end{aligned}$$
 :eqlabel:`eq_sgd-xt+1-xstar`
 
-$L_2$ stokastik degrade $\partial_\mathbf{x} f(\boldsymbol{\xi}_t, \mathbf{x})$'in $\partial_\mathbf{x} f(\boldsymbol{\xi}_t, \mathbf{x})$ normunun bazı sabit $L$ ile sınırlandırıldığını varsayıyoruz, dolayısıyla 
+$L_2$ rasgele gradyan $\partial_\mathbf{x} f(\boldsymbol{\xi}_t, \mathbf{x})$'in $\partial_\mathbf{x} f(\boldsymbol{\xi}_t, \mathbf{x})$ normunun bazı sabit $L$ ile sınırlandırıldığını varsayıyoruz, dolayısıyla 
 
 $$\eta_t^2 \|\partial_\mathbf{x} f(\boldsymbol{\xi}_t, \mathbf{x})\|^2 \leq \eta_t^2 L^2.$$
 :eqlabel:`eq_sgd-L`
@@ -204,13 +203,13 @@ $$
 \left[E[\bar{\mathbf{x}}]\right] - R^* \leq \frac{r^2 + L^2 \sum_{t=1}^T \eta_t^2}{2 \sum_{t=1}^T \eta_t},
 $$
 
-burada $r^2 \stackrel{\mathrm{def}}{=} \|\mathbf{x}_1 - \mathbf{x}^*\|^2$, parametrelerin ilk seçimi ile nihai sonuç arasındaki mesafeye bağlıdır. Kısacası, yakınsama hızı, stokastik degradenin normunun nasıl sınırlandığına ($L$) ve başlangıç parametre değerinin optimaliteden ne kadar uzakta olduğuna bağlıdır ($r$). Bağlı $\mathbf{x}_T$ yerine $\bar{\mathbf{x}}$ açısından olduğunu unutmayın. $\bar{\mathbf{x}}$'nin optimizasyon yolunun yumuşatılmış bir sürümü olduğu için bu durum böyledir. $r, L$ ve $T$ bilindiğinde $\eta = r/(L \sqrt{T})$ öğrenme oranını alabiliriz. Bu, üst sınır $rL/\sqrt{T}$ olarak verir. Yani, $\mathcal{O}(1/\sqrt{T})$ oranıyla optimal çözüme yakınlaşıyoruz. 
+burada $r^2 \stackrel{\mathrm{def}}{=} \|\mathbf{x}_1 - \mathbf{x}^*\|^2$, parametrelerin ilk seçimi ile nihai sonuç arasındaki mesafeye bağlıdır. Kısacası, yakınsama hızı, rasgele gradyannin normunun nasıl sınırlandığına ($L$) ve başlangıç parametre değerinin optimaliteden ne kadar uzakta olduğuna bağlıdır ($r$). Bağlı $\mathbf{x}_T$ yerine $\bar{\mathbf{x}}$ açısından olduğunu unutmayın. $\bar{\mathbf{x}}$'nin optimizasyon yolunun yumuşatılmış bir sürümü olduğu için bu durum böyledir. $r, L$ ve $T$ bilindiğinde $\eta = r/(L \sqrt{T})$ öğrenme oranını alabiliriz. Bu, üst sınır $rL/\sqrt{T}$ olarak verir. Yani, $\mathcal{O}(1/\sqrt{T})$ oranıyla optimal çözüme yakınlaşıyoruz. 
 
 ## Stokastik Gradyanlar ve Sonlu Örnekler
 
-Bu stokastik degrade iniş söz konusu olduğunda Şimdiye kadar biraz hızlı ve gevşek oynadık. $x_i$ örneklerini çizdiğimizi, tipik olarak $y_i$ etiketleriyle $y_i$ bazı dağıtımlardan $p(x, y)$ ve bunu model parametrelerini bir şekilde güncellemek için kullandığımızı belirttik. Özellikle, sonlu bir örnek boyutu için, $\delta_{x_i}$ ve $\delta_{y_i}$ bazı fonksiyonlar için ayrık dağılımın $p(x, y) = \frac{1}{n} \sum_{i=1}^n \delta_{x_i}(x) \delta_{y_i}(y)$ ve $\delta_{y_i}$ üzerinde stokastik degrade iniş gerçekleştirmemize izin verdiğini savunduk. 
+Bu rasgele gradyan iniş söz konusu olduğunda Şimdiye kadar biraz hızlı ve gevşek oynadık. $x_i$ örneklerini çizdiğimizi, tipik olarak $y_i$ etiketleriyle $y_i$ bazı dağıtımlardan $p(x, y)$ ve bunu model parametrelerini bir şekilde güncellemek için kullandığımızı belirttik. Özellikle, sonlu bir örnek boyutu için, $\delta_{x_i}$ ve $\delta_{y_i}$ bazı fonksiyonlar için ayrık dağılımın $p(x, y) = \frac{1}{n} \sum_{i=1}^n \delta_{x_i}(x) \delta_{y_i}(y)$ ve $\delta_{y_i}$ üzerinde rasgele gradyan iniş gerçekleştirmemize izin verdiğini savunduk. 
 
-Ancak, gerçekten yaptığımız şey bu değildi. Mevcut bölümdeki oyuncak örneklerinde, aksi takdirde stokastik olmayan bir degradeye gürültü ekledik, yani $(x_i, y_i)$ çiftleri varmış gibi davrandık. Bunun burada haklı olduğu ortaya çıkıyor (ayrıntılı bir tartışma için alıştırmalara bakın). Daha rahatsız edici olan, önceki tüm tartışmalarda bunu açıkça yapmadığımızdır. Bunun yerine tüm örneklerde yineledik, *tam bir defa*. Bunun neden tercih edildiğini görmek için, yani biz örnekleme olduğunu $n$ ayrı dağılımdan gözlemler* değiştirile*. Rastgele $i$ öğesi seçme olasılığı $1/n$'dır. Böylece seçmek*en azından* bir kez 
+Ancak, gerçekten yaptığımız şey bu değildi. Mevcut bölümdeki oyuncak örneklerinde, aksi takdirde rasgele olmayan bir gradyanye gürültü ekledik, yani $(x_i, y_i)$ çiftleri varmış gibi davrandık. Bunun burada haklı olduğu ortaya çıkıyor (ayrıntılı bir tartışma için alıştırmalara bakın). Daha rahatsız edici olan, önceki tüm tartışmalarda bunu açıkça yapmadığımızdır. Bunun yerine tüm örneklerde yineledik, *tam bir defa*. Bunun neden tercih edildiğini görmek için, yani biz örnekleme olduğunu $n$ ayrı dağılımdan gözlemler* değiştirile*. Rastgele $i$ öğesi seçme olasılığı $1/n$'dır. Böylece seçmek*en azından* bir kez 
 
 $$P(\mathrm{choose~} i) = 1 - P(\mathrm{omit~} i) = 1 - (1-1/n)^n \approx 1-e^{-1} \approx 0.63.$$
 
@@ -222,18 +221,18 @@ Bu, değişimsiz* örneklemesine göreli* oranla artan bir varyans ve veri verim
 
 ## Özet
 
-* Dışbükey problemler için, geniş bir öğrenme oranları seçeneği için stokastik degrade iniş optimal çözüme yakınsama olacağını kanıtlayabiliriz.
+* Dışbükey problemler için, geniş bir öğrenme oranları seçeneği için rasgele gradyan iniş optimal çözüme yakınsama olacağını kanıtlayabiliriz.
 * Derin öğrenme için bu genellikle böyle değildir. Bununla birlikte, dışbükey problemlerin analizi, optimizasyona nasıl yaklaşılacağına dair yararlı bilgiler verir, yani öğrenme hızını aşamalı olarak azaltma, çok hızlı olmasa da.
 * Öğrenme oranı çok küçük veya çok büyük olduğunda sorunlar ortaya çıkar. Pratikte uygun bir öğrenme oranı genellikle sadece birden fazla deneyden sonra bulunur.
-* Eğitim veri kümesinde daha fazla örnek olduğunda, degrade iniş için her yineleme hesaplamak daha pahalıya mal olur, bu nedenle bu durumlarda stokastik degrade iniş tercih edilir.
-* Stokastik degrade iniş için optimizasyon garantileri genel olarak dışbükey olmayan durumlarda mevcut değildir, çünkü kontrol gerektiren yerel minimum sayısı da üstel olabilir.
+* Eğitim veri kümesinde daha fazla örnek olduğunda, gradyan iniş için her yineleme hesaplamak daha pahalıya mal olur, bu nedenle bu durumlarda rasgele gradyan iniş tercih edilir.
+* Stokastik gradyan iniş için optimizasyon garantileri genel olarak dışbükey olmayan durumlarda mevcut değildir, çünkü kontrol gerektiren yerel minimum sayısı da üstel olabilir.
 
 ## Egzersizler
 
-1. Stokastik degrade iniş ve farklı sayıda yineleme ile farklı öğrenme oranı programları ile deney yapın. Özellikle, yineleme sayısının bir fonksiyonu olarak optimal çözümden $(0, 0)$'ten uzaklığı çizin.
-1. $f(x_1, x_2) = x_1^2 + 2 x_2^2$ işlev için degradeye normal gürültü ekleyerek $\mathbf{x}$'in normal dağılımdan çekildiği $f(\mathbf{x}, \mathbf{w}) = (x_1 - w_1)^2 + 2 (x_2 - w_2)^2$ kayıp fonksiyonunun en aza indirilmesine eşdeğer olduğunu kanıtlayın.
-1. $\{(x_1, y_1), \ldots, (x_n, y_n)\}$'ten örnek aldığınızda stokastik degrade iniş yakınsamasını karşılaştırın ve yerine geçmeden örnek aldığınızda.
-1. Bazı degrade (veya onunla ilişkili bir koordinat) tüm diğer degradelerden tutarlı bir şekilde daha büyükse stokastik degrade iniş çözücüsünü nasıl değiştirirsiniz?
+1. Stokastik gradyan iniş ve farklı sayıda yineleme ile farklı öğrenme oranı programları ile deney yapın. Özellikle, yineleme sayısının bir fonksiyonu olarak optimal çözümden $(0, 0)$'ten uzaklığı çizin.
+1. $f(x_1, x_2) = x_1^2 + 2 x_2^2$ işlev için gradyanye normal gürültü ekleyerek $\mathbf{x}$'in normal dağılımdan çekildiği $f(\mathbf{x}, \mathbf{w}) = (x_1 - w_1)^2 + 2 (x_2 - w_2)^2$ kayıp fonksiyonunun en aza indirilmesine eşdeğer olduğunu kanıtlayın.
+1. $\{(x_1, y_1), \ldots, (x_n, y_n)\}$'ten örnek aldığınızda rasgele gradyan iniş yakınsamasını karşılaştırın ve yerine geçmeden örnek aldığınızda.
+1. Bazı gradyan (veya onunla ilişkili bir koordinat) tüm diğer gradyanlerden tutarlı bir şekilde daha büyükse rasgele gradyan iniş çözücüsünü nasıl değiştirirsiniz?
 1. Bunu varsayalım $f(x) = x^2 (1 + \sin x)$. $f$'te kaç tane yerel minima var? $f$'ü en aza indirgemek için tüm yerel minimamı değerlendirmek için ihtiyaç duyacak şekilde değiştirebilir misiniz?
 
 :begin_tab:`mxnet`
