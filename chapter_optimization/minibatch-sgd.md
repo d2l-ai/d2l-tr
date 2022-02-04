@@ -176,7 +176,7 @@ $$\mathbf{g}_t = \partial_{\mathbf{w}} \frac{1}{|\mathcal{B}_t|} \sum_{i \in \ma
 
 Bunun $\mathbf{g}_t$'nin istatistiksel özelliklerine ne yaptığını görelim: Hem $\mathbf{x}_t$ hem de minigrup $\mathcal{B}_t$'nin tüm elemanları eğitim kümesinden tekdüze rastgele bir şekilde çekildiğinden, gradyanın beklentisi değişmeden kalır. Öte yandan varyans önemli ölçüde azaltılır. Minigrup gradyanı, ortalaması alınan $b := |\mathcal{B}_t|$ bağımsız gradyanlardan oluştuğu için, standart sapması $b^{-\frac{1}{2}}$ faktörü kadar azaltılır. Bu, tek başına, iyi bir şeydir, çünkü güncellemelerin tam gradyan ile daha güvenilir bir şekilde hizalandığı anlamına gelir. 
 
-Naively bu, büyük bir minibatch $\mathcal{B}_t$ seçmenin evrensel olarak arzu edileceğini gösterir. Ne yazık ki, bir noktadan sonra, standart sapmadaki ek azalma, hesaplama maliyetindeki doğrusal artışa kıyasla minimumdur. Pratikte, bir GPU belleğine uyurken iyi hesaplama verimliliği sunacak kadar büyük bir mini batch seçiyoruz. Tasarrufları göstermek için bize bazı kodlara bir göz atalım. İçinde aynı matris matris çarpımını gerçekleştiriyoruz, ancak bu sefer bir seferde 64 sütunlu “minibatches” a bölündü.
+Safça bu, büyük bir minigrup $\mathcal{B}_t$ seçmenin evrensel olarak arzu edileceğini gösterir. Ne yazık ki, bir noktadan sonra, standart sapmadaki ek azalma, hesaplama maliyetindeki doğrusal artışa kıyasla minimumdur. Pratikte, bir GPU belleğine uyarken iyi hesaplama verimliliği sunacak kadar büyük bir minigrup seçiyoruz. Tasarrufları göstermek için koda biraz göz atalım. İçerisinde aynı matris matris çarpımını gerçekleştiriyoruz, ancak bu sefer bir seferde 64 sütunlu “minigruplar”a parçaladık.
 
 ```{.python .input}
 timer.start()
@@ -204,11 +204,11 @@ timer.stop()
 print(f'performance in Gigaflops: block {2 / timer.times[3]:.3f}')
 ```
 
-Gördüğümüz gibi, minibatch üzerindeki hesaplama aslında tam matris kadar etkilidir. Bir uyarı sözcüğü sırayla. :numref:`sec_batch_norm`'te bir minibatch içindeki varyans miktarına büyük ölçüde bağımlı olan bir düzenlilik türü kullandık. İkincisini arttırdıkça, varyans azalır ve bununla birlikte parti normalleşmesi nedeniyle gürültü enjeksiyonunun faydası olur. Uygun şartların nasıl yeniden ölçekleneceği ve hesaplanacağı ile ilgili ayrıntılar için bkz. :cite:`Ioffe.2017`. 
+Gördüğümüz gibi, minigrup üzerindeki hesaplama aslında tam matris kadar etkilidir. Dikkat edilmesi gereken unsur şudur: :numref:`sec_batch_norm`'te bir minigrup içindeki varyans miktarına büyük ölçüde bağımlı olan bir düzenlilik türü kullandık. İkincisini arttırdıkça, varyans azalır ve bununla birlikte toplu normalleşme nedeniyle gürültü aşılamanın faydası olur. Uygun şartların nasıl yeniden ölçekleneceği ve hesaplanacağı ile ilgili ayrıntılar için bkz. :cite:`Ioffe.2017`. 
 
 ## Veri Kümesini Okuma
 
-Minibüslerin verilerden nasıl verimli bir şekilde üretildiğine bir göz atalım. Aşağıda bu optimizasyon algoritmaları karşılaştırmak için kanat [noise from different aircraft](https://archive.ics.uci.edu/ml/datasets/Airfoil+Self-Noise) test etmek için NASA tarafından geliştirilen bir veri kümesi kullanın. Kolaylık sağlamak için sadece ilk $1,500$ örneklerini kullanıyoruz. Veriler ön işleme için beyazlatılır, yani ortalamaları kaldırır ve varyansı koordinat başına $1$'e yeniden ölçeklendiririz.
+Minigrupların verilerden nasıl verimli bir şekilde üretildiğine bir göz atalım. Aşağıda bu optimizasyon algoritmaları karşılaştırmak için [farklı uçakların kanat gürültüsü](https://archive.ics.uci.edu/ml/datasets/Airfoil+Self-Noise)nü test etmek için NASA tarafından geliştirilmiş bir veri kümesi kullanıyoruz. Kolaylık olsun diye sadece ilk $1,500$ örneği kullanıyoruz. Veriler ön işleme için beyazlatılır, yani ortalamaları kaldırır ve varyansı koordinat başına $1$'e yeniden ölçeklendiririz.
 
 ```{.python .input}
 #@save
@@ -257,7 +257,7 @@ def get_data_ch11(batch_size=10, n=1500):
     return data_iter, data.shape[1]-1
 ```
 
-## Çizilmelerden Uygulama
+## Karalamalardan Uygulamaya
 
 :numref:`sec_linear_scratch` den minibatch stokastik gradyan iniş uygulamasını hatırlayın. Aşağıda biraz daha genel bir uygulama sağlıyoruz. Kolaylık sağlamak için, bu bölümde daha sonra tanıtılan diğer optimizasyon algoritmalarıyla aynı çağrı imzasına sahiptir. Özellikle, `states` durum girişini ekliyoruz ve hiperparametreyi `hyperparams` sözlüğüne yerleştiriyoruz. Buna ek olarak, eğitim işlevindeki her minibatch örneğinin kaybını ortalayacağız, bu nedenle optimizasyon algoritmasındaki gradyannin toplu boyutuna bölünmesi gerekmez.
 
