@@ -1,27 +1,27 @@
-# Minibatch Stokastik Degrade İniş
+# Minigrup Rasgele Gradyan İnişi
 :label:`sec_minibatch_sgd`
 
-Şimdiye kadar degrade tabanlı learning: :numref:`sec_gd` yaklaşımında iki uç noktaya rastladık, degradeleri hesaplamak ve parametreleri güncellemek için her seferinde bir geçiş yapmak için tam veri kümesini kullanır. Tersine :numref:`sec_sgd` ilerleme kaydetmek için bir seferde bir gözlem işler. Her birinin kendi dezavantajları vardır. Degrade Descent, veriler çok benzer olduğunda özellikle *veri verimliliği* değildir. Stokastik Gradyan Descent, işlemciler ve GPU'lar vektörleştirmenin tam gücünden yararlanamayacağından, bilhase*hesaplama açısından verimli değildir. Bu, mutlu bir ortam olabileceğini gösteriyor ve aslında, şimdiye kadar tartıştığımız örneklerde bunu kullanıyorduk. 
+Şimdiye kadar gradyan tabanlı öğrenme: :numref:`sec_gd` yaklaşımında iki uç noktaya rastladık, gradyanları hesaplamak ve parametreleri güncellemek için her seferinde bir geçiş yaparak tüm veri kümesini kullanır. Tersine :numref:`sec_sgd` ilerleme kaydetmek için bir seferde bir gözlem işler. Her birinin kendi dezavantajları vardır. Gradyan inişi, özellikle veriler çok benzer olduğunda  *veri verimli* değildir. Rasgele gradyan inişi, işlemciler ve GPU'lar vektörleştirmenin tam gücünden yararlanamayacağından, bilhassa *hesaplama açısından verimli* değildir. Bu, mutlu bir ortam olabileceğini gösteriyor ve aslında, şimdiye kadar tartıştığımız örneklerde bunu kullanıyorduk. 
 
-## Vektorizasyon ve Önbellekler
+## Vektörleştirme ve Önbellekler
 
-Minibatches kullanma kararının merkezinde hesaplama verimliliği vardır. Bu, birden çok GPU ve birden çok sunucuya paralelleştirme düşünüldüğünde en kolay şekilde anlaşılır. Bu durumda, her GPU'ya en az bir görüntü göndermemiz gerekiyor. Sunucu başına 8 GPU ve 16 sunucu ile zaten 128 minibatch boyutuna ulaşıyoruz. 
+Minigruplar kullanma kararının merkezinde hesaplama verimliliği vardır. Bu, en kolay şekilde birden çok GPU ve birden çok sunucuya paralelleştirme düşünüldüğünde anlaşılır. Bu durumda, her GPU'ya en az bir görüntü göndermemiz gerekiyor. 16 sunucu ve sunucu başına 8 GPU ile zaten 128'lik minigrup boyutuna ulaşıyoruz. 
 
-Tek GPU'lar ve hatta CPU'lar söz konusu olduğunda işler biraz daha inceliktir. Bu aygıtların birden çok bellek türü, genellikle birden fazla işlem birimi türü ve aralarında farklı bant genişliği kısıtlamaları vardır. Örneğin, bir CPU az sayıda kayıt ve daha sonra L1, L2 ve hatta bazı durumlarda L3 önbellek (farklı işlemci çekirdekleri arasında paylaşılır) vardır. Bu önbellekler boyut ve gecikme süresini artırmaktadır (ve aynı zamanda bant genişliğini azaltmaktadır). Diyelim ki, işlemci ana bellek arayüzünün sağlayabildiğinden çok daha fazla işlem gerçekleştirebilir. 
+Tek GPU'lar ve hatta CPU'lar söz konusu olduğunda işler biraz daha inceliktir. Bu cihazların birden çok bellek türü, genellikle birden fazla işlem birimi türü ve aralarında farklı bant genişliği kısıtlamaları vardır. Örneğin, bir CPU az sayıda yazmaç (register) ve daha sonra L1, L2 ve hatta bazı durumlarda L3 önbellek (farklı işlemci çekirdekleri arasında paylaşılır) vardır. Bu önbellekler boyut ve gecikme süresini artırmaktadır (ve aynı zamanda bant genişliğini azaltmaktadır). Diyelim ki, işlemci ana bellek arayüzünün sağlayabildiğinden çok daha fazla işlem gerçekleştirebilir. 
 
-* 16 çekirdeğe ve AVX-512 vektorizasyonuna sahip 2 GHz CPU, saniyede $2 \cdot 10^9 \cdot 16 \cdot 32 = 10^{12}$ bayta kadar işleyebilir. GPU'ların kapasitesi bu sayıyı 100 faktörle kolayca aşar. Öte yandan, orta düzey bir sunucu işlemcisi 100 GB/s'den fazla bant genişliğine sahip olmayabilir, yani işlemcinin beslenmesini sağlamak için gerekenlerin onda birinden azı olabilir. İşleri daha da kötüleştirmek için, tüm bellek erişimi eşit oluşturulmaz: Birincisi, bellek arabirimleri genellikle 64 bit genişliğinde veya daha geniştir (örneğin, 384 bit'e kadar GPU'larda), bu nedenle tek bir bayt okumak çok daha geniş bir erişim maliyetini doğurur.
-* İlk erişim için önemli bir yük varken sıralı erişim nispeten ucuzdur (buna genellikle bir patlama okuma denir). Birden fazla soket, yonga ve diğer yapılara sahip olduğumuzda önbelleğe alma gibi akılda tutulması gereken çok daha fazla şey vardır. Bunun ayrıntılı bir tartışması, bu bölümün kapsamı dışındadır. Daha ayrıntılı bir tartışma için bu [Wikipedia article](https://en.wikipedia.org/wiki/Cache_hierarchy)'e bakın.
+* 16 çekirdeğe ve AVX-512 vektörleştirmesine sahip 2 GHz CPU, saniyede $2 \cdot 10^9 \cdot 16 \cdot 32 = 10^{12}$ bayta kadar işleyebilir. GPU'ların kapasitesi bu sayının 100 katını kolayca aşar. Öte yandan, orta düzey bir sunucu işlemcisi 100 GB/s'den fazla bant genişliğine sahip olmayabilir, yani işlemcinin beslenmesini sağlamak için gerekenlerin onda birinden azı olabilir. İşleri daha da kötüleştirmek adına, tüm bellek erişimi eşit oluşturulmaz: Öncelikle, bellek arabirimleri genellikle 64 bit genişliğinde veya daha geniştir (örneğin, 384 bit'e kadar GPU'larda), bu nedenle tek bir bayt okumak çok daha geniş bir erişim maliyetini doğurur.
+* İlk erişim için önemli bir yük varken sıralı erişim nispeten ucuzdur (buna genellikle çoğuşma denir). Birden fazla soket, yonga ve diğer yapılara sahip olduğumuzda önbelleğe alma gibi akılda tutulması gereken çok daha fazla şey vardır. Bunun ayrıntılı bir tartışması, bu bölümün kapsamı dışındadır. Daha ayrıntılı bir tartışma için bu [Wikipedia makalesi](https://en.wikipedia.org/wiki/Cache_hierarchy)'ne bakın.
 
-Bu kısıtlamaları hafifletmenin yolu, işlemciye veri sağlamak için yeterince hızlı olan CPU önbellekleri hiyerarşisini kullanmaktır. Bu, derin öğrenmede toplu işlemenin arkasında* itici güçtür. Konuları basit tutmak için, matris matris çarpımını düşünün, $\mathbf{A} = \mathbf{B}\mathbf{C}$ diyelim. $\mathbf{A}$ hesaplamak için bir dizi seçeneğimiz var. Örneğin aşağıdakileri deneyebiliriz: 
+Bu kısıtlamaları hafifletmenin yolu, işlemciye veri sağlamak için yeterince hızlı olan CPU önbellekleri hiyerarşisini kullanmaktır. Bu, derin öğrenmede toplu işlemenin arkasındaki itici güçtür. Konuları basit tutmak için, matris ile matris çarpımını düşünün, $\mathbf{A} = \mathbf{B}\mathbf{C}$ diyelim. $\mathbf{A}$'yı hesaplamak için bir dizi seçeneğimiz var. Örneğin aşağıdakileri deneyebiliriz: 
 
-1. $\mathbf{A}_{ij} = \mathbf{B}_{i,:} \mathbf{C}_{:,j}^\top$'ü hesaplayabiliriz, yani noktalı ürünler vasıtasıyla elemente hesaplayabiliriz.
-1. $\mathbf{A}_{:,j} = \mathbf{B} \mathbf{C}_{:,j}^\top$'yı hesaplayabiliriz, yani, her seferinde bir sütun hesaplayabiliriz. Aynı şekilde biz hesaplamak olabilir $\mathbf{A}$ bir satır $\mathbf{A}_{i,:}$ bir seferde.
-1. Sadece $\mathbf{A} = \mathbf{B} \mathbf{C}$'ü hesaplayabiliriz.
-1. Biz daha küçük blok matrisleri içine $\mathbf{B}$ ve $\mathbf{C}$ kırmak ve aynı anda bir blok $\mathbf{A}$ hesaplamak olabilir.
+1. $\mathbf{A}_{ij} = \mathbf{B}_{i,:} \mathbf{C}_{:,j}^\top$'ü hesaplayabiliriz, yani nokta çarpımları vasıtasıyla eleman yönlü hesaplayabiliriz.
+1. $\mathbf{A}_{:,j} = \mathbf{B} \mathbf{C}_{:,j}^\top$'yi hesaplayabiliriz, yani, her seferinde bir sütun hesaplayabiliriz. Aynı şekilde $\mathbf{A}$'yı bir seferde bir satır, $\mathbf{A}_{i,:}$, hesaplamak da olabilir.
+1. Sadece $\mathbf{A} = \mathbf{B} \mathbf{C}$'yi hesaplayabiliriz.
+1. $\mathbf{B}$ ve $\mathbf{C}$'yi daha küçük blok matrislerine parçalayıp  $\mathbf{A}$'yı her seferde bir blok hesaplayabiliriz.
 
-İlk seçeneği izlersek, $\mathbf{A}_{ij}$ öğesini hesaplamak istediğimiz her seferinde bir satır ve bir sütun vektörünü CPU'ya kopyalamalıyız. Daha da kötüsü, matris elemanlarının sıralı olarak hizalanması nedeniyle, bellekten okurken iki vektörden biri için birçok ayrık konuma erişmemiz gerekiyor. İkinci seçenek çok daha elverişlidir. İçinde $B$ üzerinden geçiş yapmaya devam ederken sütun vektörünü $\mathbf{C}_{:,j}$'ü CPU önbelleğinde tutabiliyoruz. Bu, daha hızlı erişim ile bellek bant genişliği gereksinimini yarıya indirir. Tabii ki, seçenek 3 en çok arzu edilir. Ne yazık ki, çoğu matris önbelleğe tamamen sığmayabilir (sonuçta tartıştığımız şey budur). Bununla birlikte, seçenek 4 pratik olarak kullanışlı bir alternatif sunar: matrisin bloklarını önbelleğe taşıyabilir ve yerel olarak çoğaltabiliriz. Optimize edilmiş kütüphaneler bunu bizim için halledeceklerdir. Bu operasyonların pratikte ne kadar verimli olduğuna bir göz atalım. 
+İlk seçeneği izlersek, $\mathbf{A}_{ij}$ öğesini hesaplamak istediğimiz her seferinde bir satır ve bir sütun vektörünü CPU'ya kopyalamalıyız. Daha da kötüsü, matris elemanlarının sıralı olarak hizalanması nedeniyle, bellekten okurken iki vektörden biri için birçok ayrık konuma erişmemiz gerekiyor. İkinci seçenek çok daha elverişlidir. İçinde $B$ üzerinden geçiş yapmaya devam ederken sütun vektörünü $\mathbf{C}_{:,j}$'ü CPU önbelleğinde tutabiliyoruz. Bu, daha hızlı erişim ile bellek bant genişliği gereksinimini yarıya indirir. Tabii ki, seçenek 3 en çok arzu edilir. Ne yazık ki, çoğu matris önbelleğe tamamen sığmayabilir (sonuçta tartıştığımız şey budur). Bununla birlikte, seçenek 4 pratik olarak kullanışlı bir alternatif sunar: Matrisin bloklarını önbelleğe taşıyabilir ve yerel olarak çoğaltabiliriz. Optimize edilmiş kütüphaneler bunu bizim için halledeceklerdir. Bu operasyonların pratikte ne kadar verimli olduğuna bir göz atalım. 
 
-Hesaplama verimliliğinin ötesinde, Python ve derin öğrenme çerçevesinin kendisi tarafından getirilen yükü önemli ölçüde. Python yorumlayıcısı her komutu çalıştırdığımızda MXNet motoruna, hesaplama grafiğine eklemesi ve zamanlama sırasında onunla ilgilenmesi gereken bir komut gönderdiğini hatırlayın. Bu tür yükler oldukça zararlı olabilir. Kısacası, mümkün olduğunca vektorizasyon (ve matrisler) kullanılması şiddetle tavsiye edilir.
+Hesaplama verimliliğinin ötesinde, Python ve derin öğrenme çerçevesinin kendisi tarafından getirilen yük de düşündürücüdür. Python yorumlayıcısı her komutu çalıştırdığımızda MXNet motoruna, hesaplamalı çizgeye eklemesi ve zamanlama sırasında onunla ilgilenmesi gereken bir komut gönderdiğini hatırlayın. Bu tür yükler oldukça zararlı olabilir. Kısacası, mümkün olduğunca vektörleştirme (ve matrisler) kullanılması şiddetle tavsiye edilir.
 
 ```{.python .input}
 %matplotlib inline
@@ -63,7 +63,7 @@ B = tf.Variable(d2l.normal([256, 256], 0, 1))
 C = tf.Variable(d2l.normal([256, 256], 0, 1))
 ```
 
-Öğe bilge atama, değeri $\mathbf{A}$ olarak atamak için sırasıyla $\mathbf{B}$ ve $\mathbf{C}$'in tüm satır ve sütunlarını yineleyir.
+Eleman yönlü değer atama, $\mathbf{A}$'ya değer atamak için sırasıyla $\mathbf{B}$ ve $\mathbf{C}$'nin tüm satır ve sütunlarını yineler.
 
 ```{.python .input}
 # Compute A = BC one element at a time
@@ -95,7 +95,7 @@ for i in range(256):
 timer.stop()
 ```
 
-Daha hızlı bir strateji sütun olarak atama gerçekleştirmektir.
+Daha hızlı bir strateji sütun yönlü atama gerçekleştirmektir.
 
 ```{.python .input}
 # Compute A = BC one column at a time
@@ -123,7 +123,7 @@ for j in range(256):
 timer.stop()
 ```
 
-Son olarak, en etkili yol, tüm işlemi bir blokta gerçekleştirmektir. Operasyonların ilgili hızının ne olduğunu görelim.
+Son olarak, en etkili yol, tüm işlemi bir blokta gerçekleştirmektir. İşlemlerin göreceli hızının ne olduğunu görelim.
 
 ```{.python .input}
 # Compute A = BC in one go
@@ -163,19 +163,18 @@ print(f'performance in Gigaflops: element {gigaflops[0]:.3f}, '
       f'column {gigaflops[1]:.3f}, full {gigaflops[2]:.3f}')
 ```
 
-## Minibatchler
-
+## Minigruplar
 :label:`sec_minibatches` 
 
-Geçmişte, parametreleri güncellemek için tek gözlemler yerine verilerin*minibatches* okuyacağımızı kabul ettik. Şimdi bunun için kısa bir gerekçe veriyoruz. Tek gözlemlerin işlenmesi, oldukça pahalıdır ve altta yatan derin öğrenme çerçevesi adına önemli bir yük oluşturan birçok tek matris vektör (hatta vektör-vektör) çarpımı gerçekleştirmemizi gerektirir. Bu, hem verilere uygulandığında bir ağın değerlendirilmesi (genellikle çıkarım olarak adlandırılır) hem de parametreleri güncellemek için degradeleri hesaplarken geçerlidir. Yani, bu $\mathbf{w} \leftarrow \mathbf{w} - \eta_t \mathbf{g}_t$ gerçekleştirdiğimiz her zaman geçerlidir 
+Geçmişte, parametreleri güncellemek için tek gözlemler yerine verilerin *minigruplar*ı okuyacağımızı düşünmeden kabul ettik. Şimdi bunun için kısa bir gerekçe veriyoruz. Tek gözlemlerin işlenmesi, oldukça pahalıdır ve altta yatan derin öğrenme çerçevesi adına önemli bir yük oluşturan birçok tek matris ile vektör (hatta vektör ile vektör) çarpımı gerçekleştirmemizi gerektirir. Bu, hem verilere uygulandığında bir ağın değerlendirilmesi (genellikle çıkarım olarak adlandırılır) hem de parametreleri güncellemek için gradyanları hesaplarken geçerlidir. Yani, bu $\mathbf{w} \leftarrow \mathbf{w} - \eta_t \mathbf{g}_t$ uyguladığımız her zaman geçerlidir:
 
 $$\mathbf{g}_t = \partial_{\mathbf{w}} f(\mathbf{x}_{t}, \mathbf{w})$$
 
-Bu işlemin*hesaplama verimliliğini bir seferde bir mini toplu gözlem alanına uygulayarak artırabiliriz. Yani, $\mathbf{g}_t$'ü küçük bir parti üzerinden tek bir gözlem üzerine degradeyi değiştiriyoruz 
+Bu işlemin *hesaplama* verimliliğini bir seferde bir minigrup gözlem uygulayarak artırabiliriz. Yani, $\mathbf{g}_t$'yi tek bir gözlem yerine minigrup üzerinden gradyan ile değiştiriyoruz:
 
 $$\mathbf{g}_t = \partial_{\mathbf{w}} \frac{1}{|\mathcal{B}_t|} \sum_{i \in \mathcal{B}_t} f(\mathbf{x}_{i}, \mathbf{w})$$
 
-Bunun $\mathbf{g}_t$'in istatistiksel özelliklerine ne yaptığını görelim: hem $\mathbf{x}_t$ hem de minibatch $\mathcal{B}_t$'ün tüm unsurları eğitim setinden rastgele düzgün bir şekilde çizildiğinden, degradenin beklentisi değişmeden kalır. Öte yandan varyans önemli ölçüde azaltılır. Minibatch degradesinin ortalama alınmakta olan $b := |\mathcal{B}_t|$ bağımsız degradelerinden oluştuğundan standart sapması $b^{-\frac{1}{2}}$ faktörü azaltılır. Bu, tek başına, iyi bir şeydir, çünkü güncellemelerin tam degradeyle daha güvenilir bir şekilde hizalandığı anlamına gelir. 
+Bunun $\mathbf{g}_t$'nin istatistiksel özelliklerine ne yaptığını görelim: Hem $\mathbf{x}_t$ hem de minigrup $\mathcal{B}_t$'nin tüm elemanları eğitim kümesinden tekdüze rastgele bir şekilde çekildiğinden, gradyanın beklentisi değişmeden kalır. Öte yandan varyans önemli ölçüde azaltılır. Minigrup gradyanı, ortalaması alınan $b := |\mathcal{B}_t|$ bağımsız gradyanlardan oluştuğu için, standart sapması $b^{-\frac{1}{2}}$ faktörü kadar azaltılır. Bu, tek başına, iyi bir şeydir, çünkü güncellemelerin tam gradyan ile daha güvenilir bir şekilde hizalandığı anlamına gelir. 
 
 Naively bu, büyük bir minibatch $\mathcal{B}_t$ seçmenin evrensel olarak arzu edileceğini gösterir. Ne yazık ki, bir noktadan sonra, standart sapmadaki ek azalma, hesaplama maliyetindeki doğrusal artışa kıyasla minimumdur. Pratikte, bir GPU belleğine uyurken iyi hesaplama verimliliği sunacak kadar büyük bir mini batch seçiyoruz. Tasarrufları göstermek için bize bazı kodlara bir göz atalım. İçinde aynı matris matris çarpımını gerçekleştiriyoruz, ancak bu sefer bir seferde 64 sütunlu “minibatches” a bölündü.
 
@@ -260,7 +259,7 @@ def get_data_ch11(batch_size=10, n=1500):
 
 ## Çizilmelerden Uygulama
 
-:numref:`sec_linear_scratch` den minibatch stokastik degrade iniş uygulamasını hatırlayın. Aşağıda biraz daha genel bir uygulama sağlıyoruz. Kolaylık sağlamak için, bu bölümde daha sonra tanıtılan diğer optimizasyon algoritmalarıyla aynı çağrı imzasına sahiptir. Özellikle, `states` durum girişini ekliyoruz ve hiperparametreyi `hyperparams` sözlüğüne yerleştiriyoruz. Buna ek olarak, eğitim işlevindeki her minibatch örneğinin kaybını ortalayacağız, bu nedenle optimizasyon algoritmasındaki degradenin toplu boyutuna bölünmesi gerekmez.
+:numref:`sec_linear_scratch` den minibatch stokastik gradyan iniş uygulamasını hatırlayın. Aşağıda biraz daha genel bir uygulama sağlıyoruz. Kolaylık sağlamak için, bu bölümde daha sonra tanıtılan diğer optimizasyon algoritmalarıyla aynı çağrı imzasına sahiptir. Özellikle, `states` durum girişini ekliyoruz ve hiperparametreyi `hyperparams` sözlüğüne yerleştiriyoruz. Buna ek olarak, eğitim işlevindeki her minibatch örneğinin kaybını ortalayacağız, bu nedenle optimizasyon algoritmasındaki gradyannin toplu boyutuna bölünmesi gerekmez.
 
 ```{.python .input}
 def sgd(params, states, hyperparams):
@@ -283,7 +282,7 @@ def sgd(params, grads, states, hyperparams):
         param.assign_sub(hyperparams['lr']*grad)
 ```
 
-Daha sonra, bu bölümün ilerleyen bölümlerinde tanıtılan diğer optimizasyon algoritmalarının kullanımını kolaylaştırmak için genel bir eğitim işlevi uyguluyoruz. Doğrusal regresyon modelini başlatır ve modeli minibatch stokastik degrade iniş ve daha sonra tanıtılan diğer algoritmalarla eğitmek için kullanılabilir.
+Daha sonra, bu bölümün ilerleyen bölümlerinde tanıtılan diğer optimizasyon algoritmalarının kullanımını kolaylaştırmak için genel bir eğitim işlevi uyguluyoruz. Doğrusal regresyon modelini başlatır ve modeli minibatch stokastik gradyan iniş ve daha sonra tanıtılan diğer algoritmalarla eğitmek için kullanılabilir.
 
 ```{.python .input}
 #@save
@@ -379,7 +378,7 @@ def train_ch11(trainer_fn, states, hyperparams, data_iter,
     return timer.cumsum(), animator.Y[0]
 ```
 
-Toplu degrade iniş için optimizasyonun nasıl ilerlediğini görelim. Bu, minibatch boyutunu 1500'e (yani toplam örnek sayısına) ayarlayarak elde edilebilir. Sonuç olarak model parametreleri çağı başına yalnızca bir kez güncellenir. Çok az ilerleme var. Aslında, 6 adım ilerleme tezgahları sonra.
+Toplu gradyan iniş için optimizasyonun nasıl ilerlediğini görelim. Bu, minibatch boyutunu 1500'e (yani toplam örnek sayısına) ayarlayarak elde edilebilir. Sonuç olarak model parametreleri çağı başına yalnızca bir kez güncellenir. Çok az ilerleme var. Aslında, 6 adım ilerleme tezgahları sonra.
 
 ```{.python .input}
 #@tab all
@@ -391,14 +390,14 @@ def train_sgd(lr, batch_size, num_epochs=2):
 gd_res = train_sgd(1, 1500, 10)
 ```
 
-Toplu boyut 1'e eşit olduğunda, optimizasyon için stokastik degrade iniş kullanıyoruz. Uygulamanın basitliği için sabit (küçük olsa da) bir öğrenme oranı seçtik. Stokastik degrade inişinde, örnek her işlendiğinde model parametreleri güncelleştirilir. Bizim durumumuzda bu, çak başına 1500 güncellemedir. Gördüğümüz gibi, objektif fonksiyonun değerindeki düşüş bir devirden sonra yavaşlar. Her iki prosedür de bir dönem içinde 1500 örnek işlenmiş olsa da, stokastik degrade iniş bizim deneyde degrade iniş daha fazla zaman tüketir. Bunun nedeni, stokastik degrade iniş parametreleri daha sık güncellenir ve tek bir gözlemleri teker teker işlemek daha az verimli olduğu için.
+Toplu boyut 1'e eşit olduğunda, optimizasyon için stokastik gradyan iniş kullanıyoruz. Uygulamanın basitliği için sabit (küçük olsa da) bir öğrenme oranı seçtik. Rasgele gradyan inişinde, örnek her işlendiğinde model parametreleri güncelleştirilir. Bizim durumumuzda bu, çak başına 1500 güncellemedir. Gördüğümüz gibi, objektif fonksiyonun değerindeki düşüş bir devirden sonra yavaşlar. Her iki prosedür de bir dönem içinde 1500 örnek işlenmiş olsa da, stokastik gradyan iniş bizim deneyde gradyan iniş daha fazla zaman tüketir. Bunun nedeni, stokastik gradyan iniş parametreleri daha sık güncellenir ve tek bir gözlemleri teker teker işlemek daha az verimli olduğu için.
 
 ```{.python .input}
 #@tab all
 sgd_res = train_sgd(0.005, 1)
 ```
 
-Son olarak, parti boyutu 100'e eşit olduğunda, optimizasyon için minibatch stokastik degrade iniş kullanıyoruz. Çak başına gereken süre, stokastik degrade iniş için gereken süreden ve toplu degrade iniş süresinden daha kısadır.
+Son olarak, parti boyutu 100'e eşit olduğunda, optimizasyon için minibatch stokastik gradyan iniş kullanıyoruz. Çak başına gereken süre, stokastik gradyan iniş için gereken süreden ve toplu gradyan iniş süresinden daha kısadır.
 
 ```{.python .input}
 #@tab all
@@ -412,7 +411,7 @@ Toplu iş boyutunu 10'a düşürülerek, her bir parti için iş yükünün yür
 mini2_res = train_sgd(.05, 10)
 ```
 
-Şimdi önceki dört deney için zaman ve kaybını karşılaştırabiliriz. Görüldüğü gibi, stokastik degrade iniş, işlenen örneklerin sayısı açısından GD'den daha hızlı yakınsa da, örneğin degrade örneğinin hesaplanması o kadar verimli olmadığından, GD'den aynı kayba ulaşmak için daha fazla zaman kullanır. Minibatch stokastik degrade iniş yakınsama hızını ve hesaplama verimliliğini değiştirebilir. 10 minibatch boyutu, stokastik degrade inişinden daha etkilidir; 100 mini batch boyutu çalışma zamanı açısından GD'den daha iyi performans gösterir.
+Şimdi önceki dört deney için zaman ve kaybını karşılaştırabiliriz. Görüldüğü gibi, stokastik gradyan iniş, işlenen örneklerin sayısı açısından GD'den daha hızlı yakınsa da, örneğin gradyan örneğinin hesaplanması o kadar verimli olmadığından, GD'den aynı kayba ulaşmak için daha fazla zaman kullanır. Minibatch stokastik gradyan iniş yakınsama hızını ve hesaplama verimliliğini değiştirebilir. 10 minibatch boyutu, stokastik gradyan inişinden daha etkilidir; 100 mini batch boyutu çalışma zamanı açısından GD'den daha iyi performans gösterir.
 
 ```{.python .input}
 #@tab all
@@ -546,18 +545,18 @@ train_concise_ch11(trainer, {'learning_rate': 0.05}, data_iter)
 ## Özet
 
 * Vektorizasyon, derin öğrenme çerçevesinden kaynaklanan azaltılmış ek yükü ve CPU ve GPU'larda daha iyi bellek yerelliği ve önbelleğe alma nedeniyle kodu daha verimli hale getirir.
-* Stokastik degrade inişinden kaynaklanan istatistiksel verimlilik ile aynı anda büyük veri yığınlarının işlenmesinden kaynaklanan hesaplama verimliliği arasında bir işlem vardır.
-* Minibatch stokastik degrade iniş her iki dünyanın en iyisini sunar: hesaplama ve istatistiksel verimlilik.
-* Mini batch stokastik degrade inişinde, eğitim verilerinin rastgele bir permütasyonu ile elde edilen veri yığınlarını işleriz (yani, her gözlem, rastgele sırada da olsa, her bir gözlem sadece bir kez işlenir).
+* Rasgele gradyan inişinden kaynaklanan istatistiksel verimlilik ile aynı anda büyük veri yığınlarının işlenmesinden kaynaklanan hesaplama verimliliği arasında bir işlem vardır.
+* Minibatch stokastik gradyan iniş her iki dünyanın en iyisini sunar: hesaplama ve istatistiksel verimlilik.
+* Mini batch stokastik gradyan inişinde, eğitim verilerinin rastgele bir permütasyonu ile elde edilen veri yığınlarını işleriz (yani, her gözlem, rastgele sırada da olsa, her bir gözlem sadece bir kez işlenir).
 * Eğitim sırasında öğrenme oranlarının bozulması tavsiye edilir.
-* Genel olarak, mini batch stokastik degrade iniş, saat süresi açısından ölçüldüğünde, daha küçük bir riske yakınsama için stokastik degrade iniş ve degrade inişinden daha hızlıdır.
+* Genel olarak, mini batch stokastik gradyan iniş, saat süresi açısından ölçüldüğünde, daha küçük bir riske yakınsama için stokastik gradyan iniş ve gradyan inişinden daha hızlıdır.
 
-## Egzersizler
+## Alıştırmalar
 
 1. Toplu iş boyutunu ve öğrenme oranını değiştirin ve objektif fonksiyonun değeri ve her dönemde tüketilen süreye ilişkin düşüş oranını gözlemleyin.
-1. MXNet belgelerini okuyun ve `Trainer` sınıfı `set_learning_rate` işlevini kullanarak mini batch stokastik degrade inişinin öğrenme hızını her dönemden sonraki önceki değerinin 1/10'una düşürün.
-1. Mini batch stokastik degrade iniş aslında bir varyant ile karşılaştırın*değiştirile* eğitim kümesinden* örnekleri. Ne oluyor?
-1. Kötü bir cin size söylemeden veri kümenizi çoğaltır (yani, her gözlem iki kez gerçekleşir ve veri kümeniz orijinal boyutunun iki katına çıkar, ancak kimse size söylemedi). Stokastik degrade iniş, minibatch stokastik degrade iniş ve degrade iniş davranışları nasıl değişir?
+1. MXNet belgelerini okuyun ve `Trainer` sınıfı `set_learning_rate` işlevini kullanarak mini batch stokastik gradyan inişinin öğrenme hızını her dönemden sonraki önceki değerinin 1/10'una düşürün.
+1. Mini batch stokastik gradyan iniş aslında bir varyant ile karşılaştırın*değiştirile* eğitim kümesinden* örnekleri. Ne oluyor?
+1. Kötü bir cin size söylemeden veri kümenizi çoğaltır (yani, her gözlem iki kez gerçekleşir ve veri kümeniz orijinal boyutunun iki katına çıkar, ancak kimse size söylemedi). Rasgele gradyan iniş, minibatch stokastik gradyan iniş ve gradyan iniş davranışları nasıl değişir?
 
 :begin_tab:`mxnet`
 [Discussions](https://discuss.d2l.ai/t/353)

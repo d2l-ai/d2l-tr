@@ -27,6 +27,8 @@ bias; algoritmalardaki yanlılık
 
 built-in; yerleşik, gömülü
 
+burst read; çoğuşma
+
 bus; veriyolu
 
 broadcast; yayınlama
@@ -202,6 +204,8 @@ receptive field; alım alanı
 recurrent neural network; yinelemeli sinir ağı
 
 recursion; özyineleme
+
+register; yazmaç
 
 regression; bağlanım veya regresyon
 
