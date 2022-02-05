@@ -259,7 +259,7 @@ def get_data_ch11(batch_size=10, n=1500):
 
 ## Karalamalardan Uygulamaya
 
-:numref:`sec_linear_scratch` den minibatch stokastik gradyan iniş uygulamasını hatırlayın. Aşağıda biraz daha genel bir uygulama sağlıyoruz. Kolaylık sağlamak için, bu bölümde daha sonra tanıtılan diğer optimizasyon algoritmalarıyla aynı çağrı imzasına sahiptir. Özellikle, `states` durum girişini ekliyoruz ve hiperparametreyi `hyperparams` sözlüğüne yerleştiriyoruz. Buna ek olarak, eğitim işlevindeki her minibatch örneğinin kaybını ortalayacağız, bu nedenle optimizasyon algoritmasındaki gradyannin toplu boyutuna bölünmesi gerekmez.
+:numref:`sec_linear_scratch`'ten minigrup rasgele gradyan inişi uygulamasını hatırlayın. Aşağıda biraz daha genel bir uygulama sağlıyoruz. Kolaylık sağlamak için, bu bölümde daha sonra tanıtılan diğer optimizasyon algoritmalarıyla aynı çağrı imzasına sahiptir. Özellikle, `states` durum girdisini ekliyoruz ve hiperparametreyi `hyperparams` sözlüğüne yerleştiriyoruz. Buna ek olarak, eğitim işlevindeki her minigrup örneğinin kaybını ortalayacağız, böylece optimizasyon algoritmasındaki gradyanın iş boyutuna bölünmesi gerekmez.
 
 ```{.python .input}
 def sgd(params, states, hyperparams):
@@ -282,7 +282,7 @@ def sgd(params, grads, states, hyperparams):
         param.assign_sub(hyperparams['lr']*grad)
 ```
 
-Daha sonra, bu bölümün ilerleyen bölümlerinde tanıtılan diğer optimizasyon algoritmalarının kullanımını kolaylaştırmak için genel bir eğitim işlevi uyguluyoruz. Doğrusal regresyon modelini başlatır ve modeli minibatch stokastik gradyan iniş ve daha sonra tanıtılan diğer algoritmalarla eğitmek için kullanılabilir.
+Daha sonra, bu bölümün ilerleyen bölümlerinde tanıtılan diğer optimizasyon algoritmalarının kullanımını kolaylaştırmak için genel bir eğitim işlevi uyguluyoruz. Doğrusal regresyon modelini ilkletir ve modeli minigrup rasgele gradyan inişi ve daha sonra tanıtılan diğer algoritmalarla eğitmek için kullanılabilir.
 
 ```{.python .input}
 #@save
@@ -378,7 +378,7 @@ def train_ch11(trainer_fn, states, hyperparams, data_iter,
     return timer.cumsum(), animator.Y[0]
 ```
 
-Toplu gradyan iniş için optimizasyonun nasıl ilerlediğini görelim. Bu, minibatch boyutunu 1500'e (yani toplam örnek sayısına) ayarlayarak elde edilebilir. Sonuç olarak model parametreleri çağı başına yalnızca bir kez güncellenir. Çok az ilerleme var. Aslında, 6 adım ilerleme tezgahları sonra.
+Toplu iş gradyan inişi için optimizasyonun nasıl ilerlediğini görelim. Bu, minigrup boyutunu 1500'e (yani toplam örnek sayısına) ayarlayarak elde edilebilir. Sonuç olarak model parametreleri dönem başına yalnızca bir kez güncellenir. Çok az ilerleme var. Aslında 6 adımdan sonra ilerleme durur.
 
 ```{.python .input}
 #@tab all
@@ -390,28 +390,27 @@ def train_sgd(lr, batch_size, num_epochs=2):
 gd_res = train_sgd(1, 1500, 10)
 ```
 
-Toplu boyut 1'e eşit olduğunda, optimizasyon için stokastik gradyan iniş kullanıyoruz. Uygulamanın basitliği için sabit (küçük olsa da) bir öğrenme oranı seçtik. Rasgele gradyan inişinde, örnek her işlendiğinde model parametreleri güncelleştirilir. Bizim durumumuzda bu, çak başına 1500 güncellemedir. Gördüğümüz gibi, objektif fonksiyonun değerindeki düşüş bir devirden sonra yavaşlar. Her iki prosedür de bir dönem içinde 1500 örnek işlenmiş olsa da, stokastik gradyan iniş bizim deneyde gradyan iniş daha fazla zaman tüketir. Bunun nedeni, stokastik gradyan iniş parametreleri daha sık güncellenir ve tek bir gözlemleri teker teker işlemek daha az verimli olduğu için.
-
+Toplu iş boyutu 1'e eşit olduğunda, optimizasyon için rasgele gradyan inişi kullanıyoruz. Uygulamanın basitliği için sabit (küçük olsa da) bir öğrenme oranı seçtik. Rasgele gradyan inişinde, örnek her işlendiğinde model parametreleri güncelleştirilir. Bizim durumumuzda bu, dönem başına 1500 güncellemedir. Gördüğümüz gibi, amaç fonksiyonunun değerindeki düşüş bir dönemden sonra yavaşlar. Her iki yöntem de bir dönem içinde 1500 örnek işlemiş olsa da, rasgele gradyan inişi bizim deneyde gradyan inişinden daha fazla zaman tüketir. Bunun nedeni, rasgele gradyan inişinin parametreleri daha sık güncellemesi ve tek tek gözlemleri birer birer işlemenin daha az verimli olmasıdır.
 ```{.python .input}
 #@tab all
 sgd_res = train_sgd(0.005, 1)
 ```
 
-Son olarak, parti boyutu 100'e eşit olduğunda, optimizasyon için minibatch stokastik gradyan iniş kullanıyoruz. Çak başına gereken süre, stokastik gradyan iniş için gereken süreden ve toplu gradyan iniş süresinden daha kısadır.
+Son olarak, toplu iş boyutu 100'e eşit olduğunda, optimizasyon için minigrup rasgele gradyan inişi kullanıyoruz. Dönem başına gereken süre, rasgele gradyan inişi için gereken süreden ve toplu gradyan inişi için gereken süreden daha kısadır.
 
 ```{.python .input}
 #@tab all
 mini1_res = train_sgd(.4, 100)
 ```
 
-Toplu iş boyutunu 10'a düşürülerek, her bir parti için iş yükünün yürütülmesi daha az verimli olduğundan, her dönem için zaman artar.
+Topl iş boyutu 10'a düşürüldüğünde, her toplu iş yükünün yürütülmesi daha az verimli olduğundan, her dönemin süresi artar.
 
 ```{.python .input}
 #@tab all
 mini2_res = train_sgd(.05, 10)
 ```
 
-Şimdi önceki dört deney için zaman ve kaybını karşılaştırabiliriz. Görüldüğü gibi, stokastik gradyan iniş, işlenen örneklerin sayısı açısından GD'den daha hızlı yakınsa da, örneğin gradyan örneğinin hesaplanması o kadar verimli olmadığından, GD'den aynı kayba ulaşmak için daha fazla zaman kullanır. Minibatch stokastik gradyan iniş yakınsama hızını ve hesaplama verimliliğini değiştirebilir. 10 minibatch boyutu, stokastik gradyan inişinden daha etkilidir; 100 mini batch boyutu çalışma zamanı açısından GD'den daha iyi performans gösterir.
+Şimdi önceki dört deney için zamanı ve kaybı karşılaştırabiliriz. Görüldüğü gibi, rasgele gradyan inişi, işlenen örneklerin sayısı açısından GD'den daha hızlı yakınsasa da, gradyanın her örnek için hesaplanması o kadar verimli olmadığından, GD'ye görece aynı kayba ulaşmak için daha fazla zaman kullanır. Minigrup rasgele gradyan inişi yakınsama hızını ve hesaplama verimliliğini değiştirebilir. 10 'luk minigrup boyutu, rasgele gradyan inişinden daha etkilidir; 100'luk minigrup boyutu çalışma zamanı açısından GD'den daha iyi performans gösterir.
 
 ```{.python .input}
 #@tab all
@@ -521,7 +520,7 @@ def train_concise_ch11(trainer_fn, hyperparams, data_iter, num_epochs=2):
     print(f'loss: {animator.Y[0][-1]:.3f}, {timer.avg():.3f} sec/epoch')
 ```
 
-Son deneyi tekrarlamak için Gluon'u kullanmak aynı davranışı gösterir.
+Son deneyi tekrarlarken Gluon'u kullanmak aynı davranışı gösterir.
 
 ```{.python .input}
 data_iter, _ = get_data_ch11(10)
@@ -544,19 +543,19 @@ train_concise_ch11(trainer, {'learning_rate': 0.05}, data_iter)
 
 ## Özet
 
-* Vektorizasyon, derin öğrenme çerçevesinden kaynaklanan azaltılmış ek yükü ve CPU ve GPU'larda daha iyi bellek yerelliği ve önbelleğe alma nedeniyle kodu daha verimli hale getirir.
-* Rasgele gradyan inişinden kaynaklanan istatistiksel verimlilik ile aynı anda büyük veri yığınlarının işlenmesinden kaynaklanan hesaplama verimliliği arasında bir işlem vardır.
-* Minibatch stokastik gradyan iniş her iki dünyanın en iyisini sunar: hesaplama ve istatistiksel verimlilik.
-* Mini batch stokastik gradyan inişinde, eğitim verilerinin rastgele bir permütasyonu ile elde edilen veri yığınlarını işleriz (yani, her gözlem, rastgele sırada da olsa, her bir gözlem sadece bir kez işlenir).
-* Eğitim sırasında öğrenme oranlarının bozulması tavsiye edilir.
-* Genel olarak, mini batch stokastik gradyan iniş, saat süresi açısından ölçüldüğünde, daha küçük bir riske yakınsama için stokastik gradyan iniş ve gradyan inişinden daha hızlıdır.
+* Vektorleştirme, derin öğrenme çerçevesinden kaynaklanan azaltılmış ek yükü ve CPU ve GPU'larda daha iyi bellek yerelliği ve önbelleğe alma nedeniyle kodu daha verimli hale getirir.
+* Rasgele gradyan inişinden kaynaklanan istatistiksel verimlilik ile aynı anda büyük veri yığınlarının işlenmesinden kaynaklanan hesaplama verimliliği arasında bir ödün verme vardır.
+* Minigrup rasgele gradyan inişi her iki dünyanın en iyisini sunar: Hesaplama ve istatistiksel verimlilik.
+* Minigrup rasgele gradyan inişinde, eğitim verilerinin rastgele bir permütasyonu ile elde edilen veri yığınlarını işleriz (yani, her gözlem, rastgele sırada da olsa, her dönemde sadece bir kez işlenir).
+* Eğitim sırasında öğrenme oranlarının sönümlenmesi tavsiye edilir.
+* Genel olarak, minigrup rasgele gradyan inişi, saat süresi açısından ölçüldüğünde, daha küçük bir riske yakınsama için rasgele gradyan inişi ve gradyan inişinden daha hızlıdır.
 
 ## Alıştırmalar
 
-1. Toplu iş boyutunu ve öğrenme oranını değiştirin ve objektif fonksiyonun değeri ve her dönemde tüketilen süreye ilişkin düşüş oranını gözlemleyin.
-1. MXNet belgelerini okuyun ve `Trainer` sınıfı `set_learning_rate` işlevini kullanarak mini batch stokastik gradyan inişinin öğrenme hızını her dönemden sonraki önceki değerinin 1/10'una düşürün.
-1. Mini batch stokastik gradyan iniş aslında bir varyant ile karşılaştırın*değiştirile* eğitim kümesinden* örnekleri. Ne oluyor?
-1. Kötü bir cin size söylemeden veri kümenizi çoğaltır (yani, her gözlem iki kez gerçekleşir ve veri kümeniz orijinal boyutunun iki katına çıkar, ancak kimse size söylemedi). Rasgele gradyan iniş, minibatch stokastik gradyan iniş ve gradyan iniş davranışları nasıl değişir?
+1. Toplu iş boyutunu ve öğrenme oranını değiştirin ve amaç fonksiyonun değeri ve her dönemde tüketilen süreye ilişkin düşüş oranını gözlemleyin.
+1. MXNet belgelerini okuyun ve `Trainer` sınıfı `set_learning_rate` işlevini kullanarak minigrup rasgele gradyan inişinin öğrenme hızını her dönemden sonraki önceki değerinin 1/10'una düşürün.
+1. Minigrup rasgele gradyan inişini, eğitim kümesinden *değiştirmeli örneklemler* kullanan bir sürümle karşılaştırın. Ne olur?
+1. Kötü bir cin, size haber vermeden veri kümenizi çoğaltıyor (yani, her gözlem iki kez gerçekleşir ve veri kümeniz orijinal boyutunun iki katına çıkar, ancak size söylenmedi). Rasgele gradyan inişi, minigrup rasgele gradyan inişi ve gradyan inişinin davranışı nasıl değişir?
 
 :begin_tab:`mxnet`
 [Discussions](https://discuss.d2l.ai/t/353)
