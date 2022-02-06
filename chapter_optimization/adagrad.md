@@ -1,19 +1,19 @@
 # Adagrad
 :label:`sec_adagrad`
 
-Seyrek olarak ortaya çıkan özelliklerle öğrenme problemlerini göz önünde bulundurarak başlayalım. 
+Seyrek olarak ortaya çıkan özniteliklerle öğrenme problemlerini göz önünde bulundurarak başlayalım. 
 
-## Seyrek Özellikler ve Öğrenme Oranları
+## Seyrek Öznitelikler ve Öğrenme Oranları
 
-Bir dil modelini eğittiğimizi hayal edin. İyi bir doğruluk elde etmek için genellikle eğitime devam ettiğimizde, genellikle $\mathcal{O}(t^{-\frac{1}{2}})$ veya daha yavaş bir hızda öğrenme oranını düşürmek isteriz. Şimdi seyrek özellikler üzerinde bir model eğitimi düşünün, yani, sadece seyrek olarak ortaya çıkan özellikler. Bu doğal dil için yaygındır, örn. *öğrenme* kelimesini görmemiz çok daha az olasıdır. Bununla birlikte, hesaplamalı reklamcılık ve kişiselleştirilmiş işbirlikçi filtreleme gibi diğer alanlarda da yaygındır. Sonuçta, sadece az sayıda insan için ilgi çeken birçok şey var. 
+Bir dil modelini eğittiğimizi hayal edin. İyi bir doğruluk oranı elde etmek için genellikle eğitime devam ettiğimizde, çoğunlukla $\mathcal{O}(t^{-\frac{1}{2}})$ veya daha yavaş bir hızda öğrenme oranını düşürmek isteriz. Şimdi seyrek öznitelikler üzerinde bir model eğitimi düşünün, yani, sadece ender olarak ortaya çıkan öznitelikler. Bu doğal dil için yaygındır, örn. *ön şartlandırma* kelimesini görmemiz *öğrenme* kelimesini görmemizden çok daha az olasıdır. Bununla birlikte, hesaplamalı reklamcılık ve kişiselleştirilmiş işbirlikçi filtreleme gibi diğer alanlarda da yaygındır. Sonuçta, sadece az sayıda insan için ilgi çeken birçok şey vardır. 
 
-Sık görülen özelliklerle ilişkili parametreler yalnızca bu özellikler ortaya çıktığında anlamlı güncellemeler alır. Azalan bir öğrenme oranı göz önüne alındığında, ortak özelliklerin parametrelerinin optimal değerlerine oldukça hızlı bir şekilde yakınlaştığı bir duruma düşebiliriz, oysa seyrek özellikler için en uygun değerler belirlenmeden önce onları yeterince sık gözlemlemekten sıkız durumdayız. Başka bir deyişle, öğrenme hızı ya sık görülen özellikler için çok yavaş ya da seyrek olanlar için çok hızlı bir şekilde azalır. 
+Sık görülen özniteliklerle ilişkili parametreler yalnızca bu öznitelikler ortaya çıktığında anlamlı güncellemeler alır. Azalan bir öğrenme oranı göz önüne alındığında, yaygın özniteliklerin parametrelerinin optimal değerlerine oldukça hızlı bir şekilde yakınlaştığı bir duruma düşebiliriz, oysa seyrek öznitelikler için en uygun değerler belirlenmeden önce onları yeterince sık gözlemlemekten kıt durumdayız. Başka bir deyişle, öğrenme oranı ya sık görülen öznitelikler için çok yavaş ya da seyrek olanlar için çok hızlı bir şekilde azalır. 
 
-Bu sorunu gidermek için olası bir kesmek, belirli bir özelliği gördüğümüz sayısını saymak ve bunu öğrenme oranlarını ayarlamak için bir saat olarak kullanmak olacaktır. Yani, $\eta = \frac{\eta_0}{\sqrt{t + c}}$ formunun bir öğrenme oranını seçmek yerine $\eta_i = \frac{\eta_0}{\sqrt{s(i, t) + c}}$ kullanabiliriz. Burada $s(i, t)$ $t$ zamana kadar gözlemlediğimiz özellik $i$ için sıfır olmayan sayısını sayar. Bu aslında hiçbir anlamlı yükü uygulamak oldukça kolaydır. Ancak, oldukça seyrek değil, degradelerin genellikle çok küçük ve sadece nadiren büyük olduğu verilere sahip olmadığımızda başarısız olur. Sonuçta, gözlenen bir özellik olarak nitelendirilen ya da olmayan bir şey arasındaki çizgiyi çizmek nerede belli değildir. 
+Bu sorunu çözmenin olası bir yolu, belirli bir özniteliği kaç kez gördüğümüzü saymak ve bunu öğrenme oranlarını ayarlamak için bir taksimetre gibi kullanmak olabilir. Yani, $\eta = \frac{\eta_0}{\sqrt{t + c}}$ formunun bir öğrenme oranını seçmek yerine $\eta_i = \frac{\eta_0}{\sqrt{s(i, t) + c}}$ kullanabiliriz. Burada $s(i, t)$ $t$ zamana kadar gözlemlediğimiz öznitelik $i$ için sıfır olmayanların sayısını sayar. Bunun aslında anlamlı bir ek yük olmadan uygulanması oldukça kolaydır. Bununla birlikte, oldukça seyrekliğe sahip olmadığımızda, bunun yerine sadece gradyanların genellikle çok küçük ve nadiren büyük olduğu veriye sahip olduğumuzda başarısız olur. Ne de olsa, gözlemlenen bir şeyin bir özellik olarak nitelendirmek veya nitelendirmemek arasındaki çizginin nerede çekileceği belirsizdir. 
 
-:cite:`Duchi.Hazan.Singer.2011`'e göre Adagrad, daha önce gözlenen gradyanların karelerinin bir araya gelmesiyle oldukça ham sayaç $s(i, t)$'i değiştirerek bunu ele alır. Özellikle, öğrenme oranını ayarlamak için bir araç olarak $s(i, t+1) = s(i, t) + \left(\partial_i f(\mathbf{x})\right)^2$'yı kullanır. Bunun iki avantajı vardır: Birincisi, artık bir degradenin ne zaman yeterince büyük olduğuna karar vermemiz gerekmiyor. İkincisi, degradelerin büyüklüğü ile otomatik olarak ölçeklenir. Rutin olarak büyük gradyanlara karşılık gelen koordinatlar önemli ölçüde küçültülürken, küçük gradyanlara sahip diğerleri çok daha nazik bir muamele görür. Uygulamada bu, hesaplamalı reklamcılık ve ilgili sorunlar için çok etkili bir optimizasyon prosedürüne yol açar. Ancak bu, Adagrad'da önkoşullandırma bağlamında en iyi anlaşılan ek avantajlardan bazılarını gizler. 
+Adagrad, :cite:`Duchi.Hazan.Singer.2011` tarafından, oldukça kaba olan $s(i, t)$ sayacını daha önce gözlemlenen gradyanların karelerinin bir toplamı ile değiştirerek bu sorunu giderir. Özellikle, öğrenme oranını ayarlamak için bir araç olarak $s(i, t+1) = s(i, t) + \left(\partial_i f(\mathbf{x})\right)^2$'yı kullanır. Bunun iki yararı vardır: Birincisi, artık bir gradyanın ne zaman yeterince büyük olduğuna karar vermemiz gerekmiyor. İkincisi, gradyanların büyüklüğü ile otomatik olarak ölçeklenir. Rutin olarak büyük gradyanlara karşılık gelen koordinatlar önemli ölçüde küçültülürken, küçük gradyanlara sahip diğerleri çok daha nazik bir muamele görür. Uygulamada bu, hesaplamalı reklamcılık ve ilgili problemler için çok etkili bir optimizasyon yöntemine yol açar. Ancak bu, Adagrad'da ön şartlandırma bağlamında en iyi anlaşılan ek faydalardan bazılarını gizler. 
 
-## Ön şartlandırma
+## Ön Şartlandırma
 
 Dışbükey optimizasyon problemleri algoritmaların özelliklerini analiz etmek için iyidir. Sonuçta, dışbükey olmayan sorunların çoğunda anlamlı teorik garantiler elde etmek zordur, ancak *sezgisition* ve *anlayış* genellikle devrilir. $f(\mathbf{x}) = \frac{1}{2} \mathbf{x}^\top \mathbf{Q} \mathbf{x} + \mathbf{c}^\top \mathbf{x} + b$'ü en aza indirme sorununa bakalım. 
 
@@ -113,7 +113,7 @@ eta = 2
 d2l.show_trace_2d(f_2d, d2l.train_2d(adagrad_2d))
 ```
 
-## Çizilmelerden Uygulama
+## Sıfırdan Uygulama
 
 Tıpkı momentum yöntemi gibi, Adagrad'ın parametrelerle aynı şekle sahip bir durum değişkenini koruması gerekiyor.
 
@@ -198,14 +198,14 @@ d2l.train_concise_ch11(trainer, {'learning_rate' : 0.1}, data_iter)
 * Adagrad, seyrek görülen terimler için öğrenme oranının daha yavaş azalması gereken seyrek özellikler için özellikle etkilidir.
 * Derin öğrenme problemleri üzerine Adagrad bazen öğrenme oranlarını düşürmede çok agresif olabilir. :numref:`sec_adam` bağlamında bunu hafifletmek için stratejileri tartışacağız.
 
-## Egzersizler
+## Alıştırmalar
 
 1. Bir ortogonal matris $\mathbf{U}$ ve bir vektör $\mathbf{c}$ için aşağıdaki tutar kanıtlayın: $\|\mathbf{c} - \mathbf{\delta}\|_2 = \|\mathbf{U} \mathbf{c} - \mathbf{U} \mathbf{\delta}\|_2$. Bu neden, değişkenlerin dikdörtgen değişiminden sonra pertürbasyonların büyüklüğünün değişmediği anlamına geliyor?
 1. $f(\mathbf{x}) = 0.1 x_1^2 + 2 x_2^2$ için Adagrad'ı deneyin ve ayrıca objektif fonksiyon için 45 derece, yani $f(\mathbf{x}) = 0.1 (x_1 + x_2)^2 + 2 (x_1 - x_2)^2$ ile döndürüldü. Farklı davranıyor mu?
 1. Kanıtlayın [Gerschgorin çember teoremi](https://en.wikipedia.org/wiki/Gershgorin_circle_theorem) bir matrisin $\lambda_i$ özdeğerleri $\mathbf{M}$ $\mathbf{M}$ en az bir seçim için $|\lambda_i - \mathbf{M}_{jj}| \leq \sum_{k \neq j} |\mathbf{M}_{jk}|$ tatmin olduğunu belirtir.
 1. Gerschgorin teoremi, çapraz olarak önceden koşullandırılmış matrisin $\mathrm{diag}^{-\frac{1}{2}}(\mathbf{M}) \mathbf{M} \mathrm{diag}^{-\frac{1}{2}}(\mathbf{M})$'ün özdeğerleri hakkında bize ne anlatıyor?
 1. Moda MNIST'e uygulandığında :numref:`sec_lenet` gibi uygun bir derin ağ için Adagrad'ı deneyin.
-1. Öğrenme hızında daha az agresif bir bozulma elde etmek için Adagrad'ı nasıl değiştirmeniz gerekir?
+1. Öğrenme hızında daha az saldırgan bir bozulma elde etmek için Adagrad'ı nasıl değiştirmeniz gerekir?
 
 :begin_tab:`mxnet`
 [Discussions](https://discuss.d2l.ai/t/355)

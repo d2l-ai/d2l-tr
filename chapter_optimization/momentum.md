@@ -317,7 +317,7 @@ $\mathbf{R}$ yöneten yakınsama davranışını göstermek için $\mathbf{R}$ k
 1. Momentum hiper parametre ve öğrenme hızlarının diğer kombinasyonlarını kullanın ve farklı deneysel sonuçları gözlemleyip analiz edin.
 1. Birden fazla özdeğeriniz olduğu, yani $f(x) = \frac{1}{2} \sum_i \lambda_i x_i^2$, örn. $\lambda_i = 2^{-i}$ gibi bir ikinci derece polinom sorun için GD ve momentum deneyin. $x$ değerlerinin ilk $x_i = 1$ için nasıl azaldığını çizin.
 1. $h(\mathbf{x}) = \frac{1}{2} \mathbf{x}^\top \mathbf{Q} \mathbf{x} + \mathbf{x}^\top \mathbf{c} + b$ için minimum değeri ve küçültücüyü türetin.
-1. Biz momentumlu rasgele gradyan inişi gerçekleştirdiğinizde ne değişir? Momentumlu minigrup rasgele gradyan inişi kullandığımızda ne olur? Ya parametrelerle deney mi yaparsak?
+1. Biz momentumlu rasgele gradyan inişi gerçekleştirdiğinizde ne değişir? Momentumlu minigrup rasgele gradyan inişi kullandığımızda ne olur? Ya parametrelerle deney yaparsak?
 
 :begin_tab:`mxnet`
 [Discussions](https://discuss.d2l.ai/t/354)
