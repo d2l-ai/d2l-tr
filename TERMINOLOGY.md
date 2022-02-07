@@ -41,6 +41,8 @@ computer vision; bilgisayarla görme
 
 concatenation; bitiştirme
 
+condition number; (matrisin) sağlamlık sayısı
+
 confusion-matrix; hata matrisi
 
 container; kapsayıcı
