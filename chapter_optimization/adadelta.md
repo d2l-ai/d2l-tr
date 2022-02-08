@@ -1,41 +1,40 @@
 # Adadelta
 :label:`sec_adadelta`
 
-Adadelta, AdaGrad'ın başka bir çeşididir (:numref:`sec_adagrad`). Temel fark, öğrenme oranının koordinatlara uyarlanabilir olduğu miktarı azaltmasıdır. Dahası, geleneksel olarak değişim miktarını gelecekteki değişim için kalibrasyon olarak kullandığı için öğrenme oranına sahip olmamak olarak adlandırılır. Algoritma :cite:`Zeiler.2012`'te önerildi. Şimdiye kadar önceki algoritmaların tartışılması göz önüne alındığında oldukça basittir.  
+Adadelta, AdaGrad'ın başka bir çeşididir (:numref:`sec_adagrad`). Temel fark, öğrenme oranının koordinatlara uyarlanabilir olduğu miktarı azaltmasıdır. Ayrıca, gelecekteki değişim için kalibrasyon olarak değişiklik miktarını kullandığından, geleneksel olarak bir öğrenme oranına sahip olmamak olarak adlandırılır. Algoritma :cite:`Zeiler.2012`'te önerildi. Şimdiye kadar önceki algoritmaların tartışılması göz önüne alındığında oldukça basittir.  
 
 ## Algoritma
 
-Özetle, Adadelta, degradenin ikinci anının sızıntılı ortalamasını depolamak için $\mathbf{s}_t$ ve modeldeki parametrelerin değişiminin ikinci anının sızıntılı ortalamasını depolamak için iki durum değişkeni kullanır. Yazarların orijinal gösterimini ve adlandırmalarını diğer yayınlarla ve uygulamalarla uyumluluk için kullandığımızı unutmayın (momentum, Adagrad, RMSProp ve Adadelta, Adagrad, RMSProp ve Adadelta'da aynı amaca hizmet eden bir parametreyi belirtmek için farklı Yunan değişkenleri kullanmasının başka bir gerçek nedeni yoktur).  
+Özetle, Adadelta, gradyanın ikinci momentinin sızıntılı ortalamasını depolamak için $\mathbf{s}_t$ ve modeldeki parametrelerin değişiminin ikinci momentinin sızıntılı ortalamasını depolamak için iki durum değişkeni kullanır. Yazarların orijinal gösterimini ve adlandırmalarını diğer yayınlarla ve uygulamalarla uyumluluk için kullandığımızı unutmayın (momentum, Adagrad, RMSProp ve Adadelta, Adagrad, RMSProp ve Adadelta'da aynı amaca hizmet eden bir parametreyi belirtmek için farklı Yunan değişkenleri kullanmasının başka bir gerçek nedeni yoktur).  
 
-İşte Adadelta'nın teknik detayları. Parametre du jour $\rho$ olduğu göz önüne alındığında, :numref:`sec_rmsprop` benzer şekilde aşağıdaki sızdıran güncellemeleri elde ediyoruz: 
+İşte Adadelta'nın teknik detayları verelim. Servis edilen parametre $\rho$ olduğu göz önüne alındığında, :numref:`sec_rmsprop`'a benzer şekilde aşağıdaki sızdıran güncellemeleri elde ediyoruz: 
 
 $$\begin{aligned}
     \mathbf{s}_t & = \rho \mathbf{s}_{t-1} + (1 - \rho) \mathbf{g}_t^2.
 \end{aligned}$$
 
-:numref:`sec_rmsprop`'ün farkı, yeniden ölçeklendirilmiş degrade $\mathbf{g}_t'$, yani, 
+:numref:`sec_rmsprop` ile arasındaki fark, güncellemeleri yeniden ölçeklendirilmiş $\mathbf{g}_t'$ gradyanı ile gerçekleştirmemizdir, yani
 
 $$\begin{aligned}
     \mathbf{x}_t  & = \mathbf{x}_{t-1} - \mathbf{g}_t'. \\
 \end{aligned}$$
 
-Peki yeniden ölçeklendirilmiş degrade $\mathbf{g}_t'$ nedir? Bunu aşağıdaki gibi hesaplayabiliriz: 
+Peki yeniden ölçeklendirilmiş gradyan $\mathbf{g}_t'$ nedir? Bunu aşağıdaki gibi hesaplayabiliriz: 
 
 $$\begin{aligned}
     \mathbf{g}_t' & = \frac{\sqrt{\Delta\mathbf{x}_{t-1} + \epsilon}}{\sqrt{{\mathbf{s}_t + \epsilon}}} \odot \mathbf{g}_t, \\
 \end{aligned}$$
 
-burada $\Delta \mathbf{x}_{t-1}$, kareli yeniden ölçeklendirilmiş degradelerin sızan ortalamasıdır $\mathbf{g}_t'$. $\Delta \mathbf{x}_{0}$'yi $0$ olarak başlatıyoruz ve her adımda $\mathbf{g}_t'$ ile güncelliyoruz, yani 
-
+burada $\Delta \mathbf{x}_{t-1}$ karesi yeniden ölçeklendirilmiş gradyanların sızdıran ortalaması $\mathbf{g}_t'$ dir. $\Delta \mathbf{x}_{0}$'ı $0$ olacak şekilde ilkleriz ve her adımda $\mathbf{g}_t'$ ile güncelleriz, yani,
 $$\begin{aligned}
     \Delta \mathbf{x}_t & = \rho \Delta\mathbf{x}_{t-1} + (1 - \rho) {\mathbf{g}_t'}^2,
 \end{aligned}$$
 
-ve $\epsilon$ ($10^{-5}$ gibi küçük bir değer) sayısal kararlılığı korumak için eklenir. 
+ve $\epsilon$ ($10^{-5}$ gibi küçük bir değerdir) sayısal kararlılığı korumak için eklenir. 
 
 ## Uygulama
 
-Adadelta, $\mathbf{s}_t$ ve $\Delta\mathbf{x}_t$ değişken için her değişken için iki durum değişkenini korumalıdır. Bu, aşağıdaki uygulamayı verir.
+Adadelta, her değişken için iki durum değişkenini, $\mathbf{s}_t$ ve $\Delta\mathbf{x}_t$, korumalıdır. Bu, aşağıdaki uygulamayı verir.
 
 ```{.python .input}
 %matplotlib inline
@@ -103,7 +102,7 @@ def adadelta(params, grads, states, hyperparams):
         delta[:].assign(rho * delta + (1 - rho) * g * g)
 ```
 
-$\rho = 0.9$ seçilmesi, her parametre güncelleştirmesi için 10 yarı ömür süresine ulaşır. Bu oldukça iyi çalışma eğilimindedir. Aşağıdaki davranışları alırız.
+$\rho = 0.9$ seçilmesi, her parametre güncelleştirmesi için 10'luk yarı ömür süresine ulaşır. Bu oldukça iyi çalışma eğilimindedir. Aşağıdaki davranışları görürüz.
 
 ```{.python .input}
 #@tab all
@@ -112,7 +111,7 @@ d2l.train_ch11(adadelta, init_adadelta_states(feature_dim),
                {'rho': 0.9}, data_iter, feature_dim);
 ```
 
-Kısa bir uygulama için `Trainer` sınıfından `adadelta` algoritmasını kullanıyoruz. Bu, çok daha kompakt bir çağırma için aşağıdaki tek astarı verir.
+Kısa bir uygulama için `Trainer` sınıfından `adadelta` algoritmasını kullanıyoruz. Bu, çok daha sıkılmıştır bir çağırma için aşağıdaki tek-satırlık kodu verir.
 
 ```{.python .input}
 d2l.train_concise_ch11('adadelta', {'rho': 0.9}, data_iter)
@@ -135,15 +134,15 @@ d2l.train_concise_ch11(trainer, {'learning_rate':5.0, 'rho': 0.9}, data_iter)
 ## Özet
 
 * Adadelta'nın öğrenme oranı parametresi yoktur. Bunun yerine, öğrenme oranını uyarlamak için parametrelerin kendisindeki değişim oranını kullanır. 
-* Adadelta, degradenin ikinci anlarını ve parametrelerdeki değişikliği depolamak için iki durum değişkeni gerektirir. 
-* Adadelta, uygun istatistiklerin çalışan bir tahmini tutmak için sızdıran ortalamaları kullanır. 
+* Adadelta, gradyanın ikinci momentleri ve parametrelerdeki değişikliği depolamak için iki durum değişkeni gerektirir. 
+* Adadelta, uygun istatistiklerin işleyen bir tahminini tutmak için sızdıran ortalamaları kullanır. 
 
-## Egzersizler
+## Alıştırmalar
 
-1. $\rho$ değerini ayarlayın. Ne oluyor?
-1. $\mathbf{g}_t'$ kullanılmadan algoritmanın nasıl uygulanacağını gösterin. Bu neden iyi bir fikir olabilir ki?
-1. Adadelta gerçekten öğrenme oranı ücretsiz mi? Adadelta'yı kıran optimizasyon problemlerini bulabilir misin?
-1. Yakınsama davranışlarını tartışmak için Adadelta'yı Adagrad ve RMS prop ile karşılaştırın.
+1. $\rho$ değerini ayarlayın. Ne olur?
+1. $\mathbf{g}_t'$ kullanmadan algoritmanın nasıl uygulanacağını gösterin. Bu neden iyi bir fikir olabilir?
+1. Adadelta gerçekten oranı bedava mı öğreniyor? Adadelta'yı bozan optimizasyon problemlerini bulabilir misin?
+1. Yakınsama davranışlarını tartışmak için Adadelta'yı Adagrad ve RMSprop ile karşılaştırın.
 
 :begin_tab:`mxnet`
 [Discussions](https://discuss.d2l.ai/t/357)
