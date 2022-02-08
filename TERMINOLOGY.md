@@ -49,6 +49,8 @@ container; kapsayıcı
 
 convex; dışbükey
 
+coordinate-wise; koordinat yönlü
+
 corpus; külliyat
 
 covariate; ortak değişken
