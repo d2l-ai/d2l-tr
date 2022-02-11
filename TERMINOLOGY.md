@@ -27,6 +27,8 @@ bias; algoritmalardaki yanlılık
 
 built-in; yerleşik, gömülü
 
+burst read; çoğuşma
+
 bus; veriyolu
 
 broadcast; yayınlama
@@ -39,11 +41,15 @@ computer vision; bilgisayarla görme
 
 concatenation; bitiştirme
 
+condition number; (matrisin) sağlamlık sayısı
+
 confusion-matrix; hata matrisi
 
 container; kapsayıcı
 
 convex; dışbükey
+
+coordinate-wise; koordinat yönlü
 
 corpus; külliyat
 
@@ -62,6 +68,8 @@ deterministic; gerekirci
 discriminator; ayrımcı
 
 distribution shift; dağılım kayması
+
+divergent; ıraksayıcı, ıraksayan
 
 domain; etki alanı
 
@@ -137,6 +145,8 @@ latent; saklı
 
 leaky; sızıntılı
 
+lemma; önsav
+
 likelihood; olabilirlik
 
 long short-term memory; uzun ömürlü kısa-dönem belleği
@@ -169,7 +179,7 @@ overfitting; aşırı öğrenme
 
 padding; dolgu
 
-parse; ayrıştırmak
+parsing; ayrıştırma
 
 permutation; devrişim
 
@@ -199,6 +209,8 @@ recurrent neural network; yinelemeli sinir ağı
 
 recursion; özyineleme
 
+register; yazmaç
+
 regression; bağlanım veya regresyon
 
 regressor; bağlanımcı
@@ -226,6 +238,8 @@ script; betik
 self-attention; özdikkat
 
 semantic segmentation; anlamsal bölünme
+
+semidefinite; yarı-kesin
 
 sequence; dizi
 
