@@ -1,7 +1,7 @@
-# Derleyiciler ve Tercümanlar
+# Derleyiciler ve Yorumlayıcılar
 :label:`sec_hybridize`
 
-Şimdiye kadar, bu kitap bir programın durumunu değiştirmek için `print`, `+` ve `if` gibi ifadeleri kullanan zorunlu programlamaya odaklanmıştır. Basit bir zorunlu programın aşağıdaki örneğini göz önünde bulundurun.
+Şimdiye kadar, bu kitap bir programın durumunu değiştirmek için `print`, `+` ve `if` gibi ifadeleri kullanan buyuru programlamaya odaklanmıştır. Basit bir buyuru programın aşağıdaki örneğini göz önünde bulundurun.
 
 ```{.python .input}
 #@tab all
@@ -17,22 +17,22 @@ def fancy_func(a, b, c, d):
 print(fancy_func(1, 2, 3, 4))
 ```
 
-Python bir *yorumlanmış dil*. Yukarıdaki `fancy_func` işlevini değerlendirirken fonksiyonun gövdesini sırala* sırala* oluşturan işlemleri gerçekleştirir. Yani, `e = add(a, b)`'yi değerlendirecek ve sonuçları `e` değişken olarak saklayacak ve böylece programın durumunu değiştirecektir. Sonraki iki ifade `f = add(c, d)` ve `g = add(e, f)` benzer şekilde yürütülecek, eklemeler gerçekleştirilecek ve sonuçları değişken olarak depolayacaktır. :numref:`fig_compute_graph`, veri akışını göstermektedir. 
+Python bir *yorumlanan dil*dir. Yukarıdaki `fancy_func` işlevini değerlendirirken fonksiyonun gövdesini oluşturan işlemleri *sıra* ile gerçekleştirir. Yani, `e = add(a, b)`'yi değerlendirecek ve sonuçları `e` değişken olarak saklayacak ve böylece programın durumunu değiştirecektir. Sonraki iki ifade `f = add(c, d)` ve `g = add(e, f)` benzer şekilde yürütülecek, toplamalar gerçekleştirilecek ve sonuçları değişken olarak depolayacaktır. :numref:`fig_compute_graph`, veri akışını göstermektedir. 
 
 ![Data flow in an imperative program.](../img/computegraph.svg)
 :label:`fig_compute_graph`
 
-Her ne kadar zorunlu programlama uygun olsa da, verimsiz olabilir. Bir yandan, `add` işlevi `fancy_func` boyunca tekrar tekrar çağrılsa bile, Python üç işlev çağrılarını tek tek yürütür. Bunlar, örneğin, bir GPU'da (veya birden fazla GPU'da) yürütülürse, Python yorumlayıcısından kaynaklanan yükü ezici hale gelebilir. Ayrıca, `fancy_func` içindeki tüm ifadeler yürütülünceye kadar `e` ve `f` değişken değerlerini kaydetmesi gerekecektir. Bunun nedeni, `e = add(a, b)` ve `f = add(c, d)` ifadeleri yürütüldükten sonra `e` ve `f` değişkenlerinin programın diğer bölümleri tarafından kullanılacağını bilmememizdir. 
+Her ne kadar buyuru programlama uygun olsa da, verimsiz olabilir. Bir yandan, `add` işlevi `fancy_func` boyunca tekrar tekrar çağrılsa bile, Python üç işlevin çağrılarını tek tek yürütür. Bunlar, örneğin, bir GPU'da (veya birden fazla GPU'da) yürütülürse, Python yorumlayıcısından kaynaklanan yükü ezici hale gelebilir. Ayrıca, `fancy_func` içindeki tüm ifadeler yürütülünceye kadar `e` ve `f` değişken değerlerini kaydetmesi gerekecektir. Bunun nedeni, `e = add(a, b)` ve `f = add(c, d)` ifadeleri yürütüldükten sonra `e` ve `f` değişkenlerinin programın diğer bölümleri tarafından kullanılacağını bilmememizdir. 
 
 ## Sembolik Programlama
 
-Hesaplamanın genellikle süreç tam olarak tanımlandıktan sonra gerçekleştirildiği alternatif, *sembolik programlama* göz önünde bulundurun. Bu strateji, Theano ve TensorFlow da dahil olmak üzere birden fazla derin öğrenme çerçevesi tarafından kullanılır (ikincisi zorunlu uzantıları kazanmıştır). Genellikle aşağıdaki adımları içerir: 
+Hesaplamanın genellikle süreç tam olarak tanımlandıktan sonra gerçekleştirildiği alternatifi, *sembolik programlama*yı, göz önünde bulundurun. Bu strateji, Theano ve TensorFlow da dahil olmak üzere birden fazla derin öğrenme çerçevesi tarafından kullanılır (ikincisi buyuru uzantıları kazanmıştır). Genellikle aşağıdaki adımları içerir: 
 
-1. Yürütülecek işlemleri tanımlar.
+1. Yürütülecek işlemleri tanımlayın.
 1. İşlemleri yürütülebilir bir programa derleyin.
-1. Gerekli girdileri sağlayın ve yürütme için derlenmiş programı arayın.
+1. Gerekli girdileri sağlayın ve yürütme için derlenmiş programı çağırın.
 
-Bu, önemli miktarda optimizasyona izin verir. İlk olarak, birçok durumda Python yorumlayıcısını atlayabiliriz, böylece bir CPU üzerinde tek bir Python iş parçacığı ile eşleştirilmiş birden çok hızlı GPU'larda önemli hale gelebilecek bir performans darboğazını kaldırabiliriz. İkincisi, bir derleyici optimize edebilir ve yukarıdaki kodu `print((1 + 2) + (3 + 4))` veya hatta `print(10)` içine yeniden yazabilir. Bu, bir derleyici makine talimatlarına dönüştürmeden önce tam kodu görebildiği için mümkündür. Örneğin, artık bir değişken gerekmediğinde belleği serbest bırakabilir (veya asla ayıramaz). Ya da kodu tamamen eşdeğer bir parçaya dönüştürebilir. Daha iyi bir fikir edinmek için aşağıdaki zorunlu programlama simülasyonunu (sonuçta Python) aşağıda düşünün.
+Bu, önemli miktarda optimizasyona izin verir. İlk olarak, birçok durumda Python yorumlayıcısını atlayabiliriz, böylece bir CPU üzerinde tek bir Python iş parçacığı ile eşleştirilmiş birden çok hızlı GPU'larda önemli hale gelebilecek bir performans darboğazını kaldırabiliriz. İkincisi, bir derleyici optimize edebilir ve yukarıdaki kodu `print((1 + 2) + (3 + 4))` veya hatta `print(10)` içine yeniden yazabilir. Bu, bir derleyici makine talimatlarına dönüştürmeden önce tam kodu görebildiği için mümkündür. Örneğin, artık bir değişken gerekmediğinde belleği serbest bırakabilir (veya asla tahsis etmez). Ya da kodu tamamen eşdeğer bir parçaya dönüştürebilir. Daha iyi bir fikir edinmek için aşağıdaki buyuru programlama benzetimini (sonuçta hepsi Python) düşünün.
 
 ```{.python .input}
 #@tab all
@@ -60,27 +60,27 @@ y = compile(prog, '', 'exec')
 exec(y)
 ```
 
-zorunlu (yorumlanmış) programlama ve sembolik programlama arasındaki farklar şunlardır: 
+Buyuru (yorumlanan) programlama ve sembolik programlama arasındaki farklar şunlardır: 
 
-* Zorunsuz programlama daha kolaydır. Python'da zorunlu programlama kullanıldığında, kodun çoğunluğu basittir ve yazması kolaydır. Ayrıca zorunlu programlama kodunda hata ayıklamak daha kolaydır. Bunun nedeni, ilgili tüm ara değişken değerlerini elde etmek ve yazdırmak veya Python'un yerleşik hata ayıklama araçlarını kullanmak daha kolay olmasıdır.
-* Sembolik programlama daha verimli ve bağlantı noktası daha kolaydır. Sembolik programlama, derleme sırasında kodu optimize etmeyi kolaylaştırırken, programı Python'dan bağımsız bir formata bağlama yeteneğine sahipken. Bu, programın Python olmayan bir ortamda çalıştırılmasını sağlar, böylece Python yorumlayıcısı ile ilgili olası performans sorunlarından kaçınır.
+* Buyuru programlama daha kolaydır. Python'da buyuru programlama kullanıldığında, kodun çoğunluğu basittir ve yazması kolaydır. Ayrıca buyuru programlama kodunda hata ayıklamak daha kolaydır. Bunun nedeni, ilgili tüm ara değişken değerlerini elde etmenin ve yazdırmanın veya Python'un yerleşik hata ayıklama araçlarını kullanmanın daha kolay olmasıdır.
+* Sembolik programlama daha verimli ve aktarması daha kolaydır. Sembolik programlama, derleme sırasında kodu optimize etmeyi kolaylaştırırken, programı Python'dan bağımsız bir formata aktarma yeteneğine de sahiptir. Bu, programın Python olmayan bir ortamda çalıştırılmasını sağlar, böylece Python yorumlayıcısı ile ilgili olası performans sorunlarından kaçınır.
 
-## Hibrit Programlama
+## Melez Programlama
 
-Tarihsel olarak en derin öğrenme çerçeveleri zorunlu veya sembolik bir yaklaşım arasında seçim yapar. Örneğin, Theano, TensorFlow (eskiden esinlenerek), Keras ve CNTK modelleri sembolik olarak formüle eder. Tersine, Chainer ve PyTorch zorunlu bir yaklaşım benimsemektedir. TensorFlow 2.0 ve Keras'a sonraki düzeltmelerde zorunlu mod eklendi.
+Tarihsel olarak çoğu derin öğrenme çerçeveleri buyuru veya sembolik yaklaşım arasında seçim yapar. Örneğin, Theano, TensorFlow (ilkinden esinlenerek), Keras ve CNTK modelleri sembolik olarak formüle eder. Tersine, Chainer ve PyTorch buyuru bir yaklaşım benimsemektedir. TensorFlow 2.0 ve Keras'a sonraki düzeltmelerde buyuru modu eklendi.
 
 :begin_tab:`mxnet`
-Gluon'ı tasarlarken, geliştiriciler her iki programlama paradigmasının faydalarını birleştirmenin mümkün olup olmayacağını düşündü. Bu, kullanıcıların çoğunu ürün düzeyinde bilgi işlem performansı ve dağıtım gerektiğinde çalıştırılacak sembolik programlara dönüştürme yeteneğine sahipken, kullanıcıların saf zorunlu programlama ile geliştirmelerine ve hata ayıklamasına olanak tanıyan bir karma modele yol açtı. 
+Gluon'ı tasarlarken, geliştiriciler her iki programlama paradigmasının faydalarını birleştirmenin mümkün olup olmayacağını düşündü. Bu, kullanıcıların çoğunu ürün düzeyinde bilgi işlem performansı ve dağıtım gerektiğinde çalıştırılacak sembolik programlara dönüştürme yeteneğine sahipken, kullanıcıların saf buyuru programlama ile geliştirmelerine ve hata ayıklamasına olanak tanıyan bir karma modele yol açtı. 
 
-Pratikte bu, `HybridBlock` veya `HybridSequential` sınıfını kullanarak modeller oluşturduğumuz anlamına gelir. Varsayılan olarak, bunlardan biri, `Block` veya `Sequential` sınıfının zorunlu programlamada yürütüldüğü şekilde yürütülür. `HybridSequential` sınıfı `HybridBlock` (`Sequential` alt sınıfları `Block` gibi) bir alt sınıftır. `hybridize` işlevi çağrıldığında, Gluon modeli sembolik programlamada kullanılan forma derler. Bu, bir modelin uygulandığı şekilde fedakarlık yapmadan hesaplama yoğun bileşenlerin optimize edilmesine olanak tanır. Sıralı modellere ve bloklara odaklanarak aşağıdaki faydaları göstereceğiz.
+Pratikte bu, `HybridBlock` veya `HybridSequential` sınıfını kullanarak modeller oluşturduğumuz anlamına gelir. Varsayılan olarak, bunlardan biri, `Block` veya `Sequential` sınıfının buyuru programlamada yürütüldüğü şekilde yürütülür. `HybridSequential` sınıfı `HybridBlock` (`Sequential` alt sınıfları `Block` gibi) bir alt sınıftır. `hybridize` işlevi çağrıldığında, Gluon modeli sembolik programlamada kullanılan forma derler. Bu, bir modelin uygulandığı şekilde fedakarlık yapmadan hesaplama yoğun bileşenlerin optimize edilmesine olanak tanır. Sıralı modellere ve bloklara odaklanarak aşağıdaki faydaları göstereceğiz.
 :end_tab:
 
 :begin_tab:`pytorch`
-Yukarıda belirtildiği gibi, PyTorch zorunlu programlamaya dayanır ve dinamik hesaplama grafikleri kullanır. Geliştiriciler, sembolik programlamanın taşınabilirliğini ve verimliliğini artırmak amacıyla, her iki programlama modelinin faydalarını birleştirmenin mümkün olup olmayacağını düşündü. Bu, kullanıcıların, ürün düzeyinde bilgi işlem performansı ve dağıtımı gerektiğinde çalıştırılacak sembolik programlara çoğu programı dönüştürme yeteneğine sahipken, kullanıcıların saf zorunlu programlama kullanarak geliştirmelerine ve hata ayıklamasına olanak tanıyan bir torchscript oluşturdu.
+Yukarıda belirtildiği gibi, PyTorch buyuru programlamaya dayanır ve dinamik hesaplama grafikleri kullanır. Geliştiriciler, sembolik programlamanın taşınabilirliğini ve verimliliğini artırmak amacıyla, her iki programlama modelinin faydalarını birleştirmenin mümkün olup olmayacağını düşündü. Bu, kullanıcıların, ürün düzeyinde bilgi işlem performansı ve dağıtımı gerektiğinde çalıştırılacak sembolik programlara çoğu programı dönüştürme yeteneğine sahipken, kullanıcıların saf buyuru programlama kullanarak geliştirmelerine ve hata ayıklamasına olanak tanıyan bir torchscript oluşturdu.
 :end_tab:
 
 :begin_tab:`tensorflow`
-Zorunlu programlama paradigması artık Tensorflow 2'de varsayılan değerdir, bu yeni dilde yeniler için hoş bir değişiklik. Ancak aynı sembolik programlama teknikleri ve sonraki hesaplama grafikleri TensorFlow'da hala mevcuttur ve kullanımı kolay `tf.function` dekoratörü tarafından erişilebilir. Bu, zorunlu programlama paradigmasını TensorFlow'a getirdi, kullanıcıların daha sezgisel fonksiyonlar tanımlamalarına, ardından bunları sarmalarına ve TensorFlow ekibinin [autograph](https://www.tensorflow.org/api_docs/python/tf/autograph) olarak ifade ettiği bir özelliği kullanarak otomatik olarak hesaplamalı grafiklere derlemelerine olanak sağladı.
+Zorunlu programlama paradigması artık Tensorflow 2'de varsayılan değerdir, bu yeni dilde yeniler için hoş bir değişiklik. Ancak aynı sembolik programlama teknikleri ve sonraki hesaplama grafikleri TensorFlow'da hala mevcuttur ve kullanımı kolay `tf.function` dekoratörü tarafından erişilebilir. Bu, buyuru programlama paradigmasını TensorFlow'a getirdi, kullanıcıların daha sezgisel fonksiyonlar tanımlamalarına, ardından bunları sarmalarına ve TensorFlow ekibinin [autograph](https://www.tensorflow.org/api_docs/python/tf/autograph) olarak ifade ettiği bir özelliği kullanarak otomatik olarak hesaplamalı grafiklere derlemelerine olanak sağladı.
 :end_tab:
 
 ## `Sequential` Sınıfını Melezleme
@@ -268,15 +268,15 @@ Yukarıdaki sonuçlarda görüldüğü gibi, `tf.keras.Sequential` örneği `tf.
 ### Seri hale getirme
 
 :begin_tab:`mxnet`
-Modelleri derlemenin faydalarından biri, modeli ve parametrelerini diske seri hale getirebilmemizdir (kaydedebiliriz). Bu, bir modeli seçtiğiniz ön uç dilinden bağımsız bir şekilde saklamamızı sağlar. Bu, eğitimli modelleri diğer cihazlara dağıtmamıza ve diğer ön uç programlama dillerini kolayca kullanmamıza olanak tanır. Aynı zamanda kod genellikle zorunlu programlamada elde edilebileceğinden daha hızlıdır. `export` işlevini hareket halinde görelim.
+Modelleri derlemenin faydalarından biri, modeli ve parametrelerini diske seri hale getirebilmemizdir (kaydedebiliriz). Bu, bir modeli seçtiğiniz ön uç dilinden bağımsız bir şekilde saklamamızı sağlar. Bu, eğitimli modelleri diğer cihazlara dağıtmamıza ve diğer ön uç programlama dillerini kolayca kullanmamıza olanak tanır. Aynı zamanda kod genellikle buyuru programlamada elde edilebileceğinden daha hızlıdır. `export` işlevini hareket halinde görelim.
 :end_tab:
 
 :begin_tab:`pytorch`
-Modelleri derlemenin faydalarından biri, modeli ve parametrelerini diske seri hale getirebilmemizdir (kaydedebiliriz). Bu, bir modeli seçtiğiniz ön uç dilinden bağımsız bir şekilde saklamamızı sağlar. Bu, eğitimli modelleri diğer cihazlara dağıtmamıza ve diğer ön uç programlama dillerini kolayca kullanmamıza olanak tanır. Aynı zamanda kod genellikle zorunlu programlamada elde edilebileceğinden daha hızlıdır. `save` işlevini hareket halinde görelim.
+Modelleri derlemenin faydalarından biri, modeli ve parametrelerini diske seri hale getirebilmemizdir (kaydedebiliriz). Bu, bir modeli seçtiğiniz ön uç dilinden bağımsız bir şekilde saklamamızı sağlar. Bu, eğitimli modelleri diğer cihazlara dağıtmamıza ve diğer ön uç programlama dillerini kolayca kullanmamıza olanak tanır. Aynı zamanda kod genellikle buyuru programlamada elde edilebileceğinden daha hızlıdır. `save` işlevini hareket halinde görelim.
 :end_tab:
 
 :begin_tab:`tensorflow`
-Modelleri derlemenin faydalarından biri, modeli ve parametrelerini diske seri hale getirebilmemizdir (kaydedebiliriz). Bu, bir modeli seçtiğiniz ön uç dilinden bağımsız bir şekilde saklamamızı sağlar. Bu, eğitimli modelleri diğer cihazlara dağıtmamıza ve diğer ön uç programlama dillerini kolayca kullanmamıza veya bir sunucuda eğitimli bir model yürütmemize olanak tanır. Aynı zamanda kod genellikle zorunlu programlamada elde edilebileceğinden daha hızlıdır. Tensorflow'ta tasarruf etmemizi sağlayan düşük seviyeli API `tf.saved_model`'tir. `saved_model` örneğini iş başında görelim.
+Modelleri derlemenin faydalarından biri, modeli ve parametrelerini diske seri hale getirebilmemizdir (kaydedebiliriz). Bu, bir modeli seçtiğiniz ön uç dilinden bağımsız bir şekilde saklamamızı sağlar. Bu, eğitimli modelleri diğer cihazlara dağıtmamıza ve diğer ön uç programlama dillerini kolayca kullanmamıza veya bir sunucuda eğitimli bir model yürütmemize olanak tanır. Aynı zamanda kod genellikle buyuru programlamada elde edilebileceğinden daha hızlıdır. Tensorflow'ta tasarruf etmemizi sağlayan düşük seviyeli API `tf.saved_model`'tir. `saved_model` örneğini iş başında görelim.
 :end_tab:
 
 ```{.python .input}
@@ -365,7 +365,7 @@ Bu daha önce gördüğümüzden oldukça farklı. `hybrid_forward`'de tanımlan
 
 :begin_tab:`mxnet`
 * MXNet gerektiğinde her iki yaklaşımın avantajlarını birleştirebilir.
-* `HybridSequential` ve `HybridBlock` sınıfları tarafından oluşturulan modeller, `hybridize` işlevini çağırarak zorunlu programları sembolik programlara dönüştürebilir.
+* `HybridSequential` ve `HybridBlock` sınıfları tarafından oluşturulan modeller, `hybridize` işlevini çağırarak buyuru programları sembolik programlara dönüştürebilir.
 :end_tab:
 
 ## Egzersizler

@@ -11,6 +11,8 @@ api (application programming interface); uygulama programlama arayüzü
 
 array; dizilim
 
+asynchronous; eşzamansız
+
 autoregressive; özbağlanımlı
 
 backprop; geriyay
@@ -121,6 +123,8 @@ holdout; harici tutulan
 
 hybridization; melezleştirme
 
+imperative; buyuru
+
 imputation; itham
 
 indicator; gösterge, belirteç
@@ -132,6 +136,8 @@ initialization; ilkleme
 internal covariate shift; dahili eşdeğişken kayması
 
 interpolation; aradeğerleme
+
+interpreter; yorumlayıcı
 
 invariance; değişmezlik
 
