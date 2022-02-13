@@ -67,25 +67,25 @@ Buyuru (yorumlanan) programlama ve sembolik programlama arasındaki farklar şun
 
 ## Melez Programlama
 
-Tarihsel olarak çoğu derin öğrenme çerçeveleri buyuru veya sembolik yaklaşım arasında seçim yapar. Örneğin, Theano, TensorFlow (ilkinden esinlenerek), Keras ve CNTK modelleri sembolik olarak formüle eder. Tersine, Chainer ve PyTorch buyuru bir yaklaşım benimsemektedir. TensorFlow 2.0 ve Keras'a sonraki düzeltmelerde buyuru modu eklendi.
+Tarihsel olarak çoğu derin öğrenme çerçevesi buyuru veya sembolik yaklaşım arasında seçim yapar. Örneğin, Theano, TensorFlow (ilkinden esinlenerek), Keras ve CNTK modelleri sembolik olarak formüle eder. Tersine, Chainer ve PyTorch buyuru yaklaşımını benimsemektedir. TensorFlow 2.0 ve Keras'a sonraki düzeltmelerde buyuru modu eklendi.
 
 :begin_tab:`mxnet`
-Gluon'ı tasarlarken, geliştiriciler her iki programlama paradigmasının faydalarını birleştirmenin mümkün olup olmayacağını düşündü. Bu, kullanıcıların çoğunu ürün düzeyinde bilgi işlem performansı ve dağıtım gerektiğinde çalıştırılacak sembolik programlara dönüştürme yeteneğine sahipken, kullanıcıların saf buyuru programlama ile geliştirmelerine ve hata ayıklamasına olanak tanıyan bir karma modele yol açtı. 
+Gluon'ı tasarlarken, geliştiriciler her iki programlama kiplerinin faydalarını birleştirmenin mümkün olup olmayacağını düşündü. Bu, kullanıcıların çoğunu ürün düzeyinde bilgi işlem performansı ve dağıtım gerektiğinde çalıştırılacak sembolik programlara dönüştürme yeteneğine sahipken, kullanıcıların saf buyuru programlama ile geliştirmelerine ve hata ayıklamasına olanak tanıyan bir karma modele yol açtı. 
 
-Pratikte bu, `HybridBlock` veya `HybridSequential` sınıfını kullanarak modeller oluşturduğumuz anlamına gelir. Varsayılan olarak, bunlardan biri, `Block` veya `Sequential` sınıfının buyuru programlamada yürütüldüğü şekilde yürütülür. `HybridSequential` sınıfı `HybridBlock` (`Sequential` alt sınıfları `Block` gibi) bir alt sınıftır. `hybridize` işlevi çağrıldığında, Gluon modeli sembolik programlamada kullanılan forma derler. Bu, bir modelin uygulandığı şekilde fedakarlık yapmadan hesaplama yoğun bileşenlerin optimize edilmesine olanak tanır. Sıralı modellere ve bloklara odaklanarak aşağıdaki faydaları göstereceğiz.
+Pratikte bu, `HybridBlock` veya `HybridSequential` sınıfını kullanarak modeller oluşturduğumuz anlamına gelir. Varsayılan olarak, ikisinden herhangi biri, `Block` veya `Sequential` sınıfının buyuru programlamada yürütüldüğü şekilde yürütülür. `HybridSequential` sınıfı `HybridBlock` (`Sequential` alt sınıfları `Block` gibi) bir alt sınıftır. `hybridize` işlevi çağrıldığında, Gluon modeli sembolik programlamada kullanılan biçime derler. Bu, bir modelin uygulanma biçiminden ödün vermeden hesaplama yoğun bileşenlerin optimize edilmesini sağlar. Dizili modellere ve bloklara odaklanarak aşağıdaki faydaları göstereceğiz.
 :end_tab:
 
 :begin_tab:`pytorch`
-Yukarıda belirtildiği gibi, PyTorch buyuru programlamaya dayanır ve dinamik hesaplama grafikleri kullanır. Geliştiriciler, sembolik programlamanın taşınabilirliğini ve verimliliğini artırmak amacıyla, her iki programlama modelinin faydalarını birleştirmenin mümkün olup olmayacağını düşündü. Bu, kullanıcıların, ürün düzeyinde bilgi işlem performansı ve dağıtımı gerektiğinde çalıştırılacak sembolik programlara çoğu programı dönüştürme yeteneğine sahipken, kullanıcıların saf buyuru programlama kullanarak geliştirmelerine ve hata ayıklamasına olanak tanıyan bir torchscript oluşturdu.
+Yukarıda belirtildiği gibi, PyTorch buyuru programlamaya dayanır ve dinamik hesaplama çizgeleri kullanır. Geliştiriciler, sembolik programlamanın taşınabilirliğini ve verimliliğini artırmak amacıyla, her iki programlama modelinin faydalarını birleştirmenin mümkün olup olmayacağını düşündü. Bu, kullanıcıların çoğu programı ürün düzeyinde bilgi işlem performansı ve konuşlandırma gerektiğinde çalıştırılmak üzere sembolik programlara dönüştürme yeteneğine sahipken, yalnızca buyuru programlama kullanarak geliştirmelerine ve hata ayıklamalarına olanak tanıyan bir meşale betiğine yol açtı.
 :end_tab:
 
 :begin_tab:`tensorflow`
-Zorunlu programlama paradigması artık Tensorflow 2'de varsayılan değerdir, bu yeni dilde yeniler için hoş bir değişiklik. Ancak aynı sembolik programlama teknikleri ve sonraki hesaplama grafikleri TensorFlow'da hala mevcuttur ve kullanımı kolay `tf.function` dekoratörü tarafından erişilebilir. Bu, buyuru programlama paradigmasını TensorFlow'a getirdi, kullanıcıların daha sezgisel fonksiyonlar tanımlamalarına, ardından bunları sarmalarına ve TensorFlow ekibinin [autograph](https://www.tensorflow.org/api_docs/python/tf/autograph) olarak ifade ettiği bir özelliği kullanarak otomatik olarak hesaplamalı grafiklere derlemelerine olanak sağladı.
+Buyuru programlama kipi artık Tensorflow 2'de varsayılan değerdir, bu dile yeni olanlar için hoş bir değişiklik. Ancak aynı sembolik programlama teknikleri ve sonraki hesaplama çizgeleri TensorFlow'da hala mevcuttur ve kullanımı kolay `tf.function` dekoratörü tarafından erişilebilir. Bu, buyuru programlama kipini TensorFlow'a getirdi, kullanıcıların daha sezgisel fonksiyonlar tanımlamalarına, ardından bunları sarmalamalarına ve TensorFlow ekibinin [autograph](https://www.tensorflow.org/api_docs/python/tf/autograph) olarak ifade ettiği bir özelliği kullanarak otomatik olarak hesaplamalı çizgelere derlemelerine olanak sağladı.
 :end_tab:
 
 ## `Sequential` Sınıfını Melezleme
 
-Hibridizasyonun nasıl çalıştığını hissetmenin en kolay yolu, birden çok katmanlı derin ağları düşünmektir. Geleneksel olarak Python yorumlayıcısı, daha sonra bir CPU'ya veya GPU'ya iletilebilecek bir talimat oluşturmak için tüm katmanlar için kodu yürütmesi gerekir. Tek (hızlı) bir bilgi işlem aygıtı için bu herhangi bir önemli soruna neden olmaz. Öte yandan, AWS P3dn.24xlarge örneği gibi gelişmiş bir 8 GPU sunucusu kullanırsak Python tüm GPU'ları meşgul tutmaya çalışacaktır. Tek iş parçacıklı Python tercümanı burada darboğaz olur. `Sequential`'i `HybridSequential` ile değiştirerek kodun önemli bölümleri için bunu nasıl ele alabileceğimizi görelim. Basit bir MLP tanımlayarak başlıyoruz.
+Melezleştirmenin nasıl çalıştığını hissetmenin en kolay yolu, birden çok katmanlı derin ağları düşünmektir. Geleneksel olarak Python yorumlayıcısı, daha sonra bir CPU'ya veya GPU'ya iletilebilecek bir komut oluştururken tüm katmanlar için kodu yürütmesi gerekir. Tek (hızlı) bir bilgi işlem aygıtı için bu herhangi bir önemli soruna neden olmaz. Öte yandan, AWS P3dn.24xlarge örneği gibi gelişmiş bir 8 GPU'lu sunucusu kullanırsak Python tüm GPU'ları meşgul tutmaya çalışacaktır. Tek iş parçacıklı Python yorumlayıcısı burada darboğaz olur. `Sequential`'i `HybridSequential` ile değiştirerek kodun önemli bölümleri için bunu nasıl ele alabileceğimizi görelim. Basit bir MLP tanımlayarak başlıyoruz.
 
 ```{.python .input}
 from d2l import mxnet as d2l
@@ -147,15 +147,15 @@ net(x)
 ```
 
 :begin_tab:`mxnet`
-`hybridize` işlevini çağırarak, MLP'deki hesaplamayı derleyebilir ve optimize edebiliyoruz. Modelin hesaplama sonucu değişmeden kalır.
+`hybridize` işlevini çağırarak, MLP'deki hesaplamayı derleyebiliyoruz ve optimize edebiliyoruz. Modelin hesaplama sonucu değişmeden kalır.
 :end_tab:
 
 :begin_tab:`pytorch`
-Modeli `torch.jit.script` işlevini kullanarak dönüştürerek, MLP'deki hesaplamayı derleyebilir ve optimize edebiliyoruz. Modelin hesaplama sonucu değişmeden kalır.
+Modeli `torch.jit.script` işlevini kullanarak dönüştürerek, MLP'deki hesaplamayı derleyebiliyoruz ve optimize edebiliyoruz. Modelin hesaplama sonucu değişmeden kalır.
 :end_tab:
 
 :begin_tab:`tensorflow`
-Eskiden, TensorFlow'da yerleşik olan tüm işlevler bir hesaplama grafiği olarak oluşturuldu ve bu nedenle JIT varsayılan olarak derlenmiştir. Bununla birlikte, TensorFlow 2.X ve EagerTensor'un piyasaya sürülmesiyle, bu artık varsayılan davranış değildir. Bu işlevselliği tf.function ile yeniden etkinleştiririz. tf.function daha yaygın bir işlev dekoratörü olarak kullanılır, ancak bunu aşağıda gösterilen normal bir python fonksiyonu olarak doğrudan çağırmak mümkündür. Modelin hesaplama sonucu değişmeden kalır.
+Önceden, TensorFlow'da yerleşik olan tüm işlevler bir hesaplama çizgesi olarak oluşturulurdu ve bu nedenle JIT varsayılan olarak derlenmiştir. Bununla birlikte, TensorFlow 2.X ve EagerTensor'un piyasaya sürülmesiyle, bu artık varsayılan davranış değildir. Bu işlevselliği tf.function ile yeniden etkinleştiririz. tf.function daha yaygın bir işlev dekoratörü olarak kullanılır, ancak bunu aşağıda gösterilen normal bir python fonksiyonu olarak doğrudan çağırmak mümkündür. Modelin hesaplama sonucu değişmeden kalır.
 :end_tab:
 
 ```{.python .input}
@@ -176,20 +176,20 @@ net(x)
 ```
 
 :begin_tab:`mxnet`
-Bu gerçek olamayacak kadar iyi görünüyor: `HybridSequential` olarak bir blok belirleyin, daha önce olduğu gibi aynı kodu yazın ve `hybridize`'yı çağırın. Bu gerçekleştiğinde ağ optimize edilir (aşağıdaki performansı karşılaştıracağız). Ne yazık ki bu her katman için sihirli bir şekilde çalışmıyor. Yani, `HybridBlock` sınıfı yerine `Block` sınıfından miras alırsa bir katman optimize edilmeyecektir.
+Bu gerçek olamayacak kadar iyi görünüyor: `HybridSequential` olarak bir blok belirleyin, daha önce olduğu gibi aynı kodu yazın ve `hybridize`'yı çağırın. Bu gerçekleştiğinde ağ optimize edilir (aşağıda performansı karşılaştıracağız). Ne yazık ki bu her katman için sihirli bir şekilde çalışmıyor. Yani, `HybridBlock` sınıfı yerine `Block` sınıfından kalıtım ile çoğalırsa, katman optimize edilmeyecektir.
 :end_tab:
 
 :begin_tab:`pytorch`
-Bu gerçek olamayacak kadar iyi görünüyor: daha önce olduğu gibi aynı kodu yazın ve modeli `torch.jit.script`'ü kullanarak dönüştürün. Bu gerçekleştiğinde ağ optimize edilir (aşağıdaki performansı karşılaştıracağız).
+Bu gerçek olamayacak kadar iyi görünüyor: Daha önce olduğu gibi aynı kodu yazın ve modeli `torch.jit.script`'ü kullanarak dönüştürün. Bu gerçekleştiğinde ağ optimize edilir (aşağıda performansı karşılaştıracağız).
 :end_tab:
 
 :begin_tab:`tensorflow`
-Bu gerçek olamayacak kadar iyi görünüyor: daha önce olduğu gibi aynı kodu yazın ve modeli `tf.function` kullanarak dönüştürün. Bu gerçekleştiğinde ağ TensorFlow'un MLIR ara temsilinde bir hesaplama grafiği olarak oluşturulur ve hızlı yürütme için derleyici düzeyinde büyük ölçüde optimize edilir (aşağıdaki performansı karşılaştıracağız). `tf.function()` çağrısına açıkça `jit_compile = True` bayrağının eklenmesi TensorFlow'da XLA (Hızlandırılmış Doğrusal Cebir) işlevini etkinleştirir. XLA, JIT derlenmiş kodu belirli durumlarda daha da optimize edebilir. Grafik modunda yürütme, bu açık tanım olmadan etkinleştirilir, ancak XLA, özellikle GPU ortamında, belirli büyük doğrusal cebir işlemlerini (derin öğrenme uygulamalarında gördüğümüz damarlarda) çok daha hızlı yapabilir.
+Bu gerçek olamayacak kadar iyi görünüyor: Daha önce olduğu gibi aynı kodu yazın ve modeli `tf.function` kullanarak dönüştürün. Bu gerçekleştiğinde ağ TensorFlow'un MLIR ara temsilinde bir hesaplama çizgesi olarak oluşturulur ve hızlı yürütme için derleyici düzeyinde büyük ölçüde optimize edilir (aşağıda performansı karşılaştıracağız). `tf.function()` çağrısına açıkça `jit_compile = True` bayrağının eklenmesi TensorFlow'da XLA (Hızlandırılmış Doğrusal Cebir) işlevini etkinleştirir. XLA, JIT derlenmiş kodu belirli durumlarda daha da optimize edebilir. Çizge modunda yürütme, bu açık tanım olmadan etkinleştirilir, ancak XLA, özellikle GPU ortamında, belirli büyük doğrusal cebir işlemlerini (derin öğrenme uygulamalarında gördüğümüz mizaçta) çok daha hızlı yapabilir.
 :end_tab:
 
-### Hibridizasyon ile ivme
+### Melezleştirme ile İvme
 
-Derleme yoluyla elde edilen performans iyileştirmesini göstermek için `net(x)`'ü hibridizasyondan önce ve sonra değerlendirmek için gereken süreyi karşılaştırıyoruz. Önce bu zamanı ölçmek için bir sınıf tanımlayalım. Performansı ölçmek (ve iyileştirmek) için yola çıktığımız bölüm boyunca kullanışlı olacaktır.
+Derleme yoluyla elde edilen performans iyileştirmesini göstermek için `net(x)`'i melezleştirmeden önce ve sonra değerlendirmek için gereken süreyi karşılaştırıyoruz. Önce bu zamanı ölçmek için bir sınıf tanımlayalım. Performansı ölçmek (ve geliştirmek) için yola çıktığımızda bu, bölüm boyunca kullanışlı olacaktır.
 
 ```{.python .input}
 #@tab all
@@ -208,15 +208,15 @@ class Benchmark:
 ```
 
 :begin_tab:`mxnet`
-Şimdi şebekeyi iki kez, bir kez melezleme olmadan ve bir kez çağırabiliriz.
+Şimdi ağı bir kez melezleştirmeli ve bir kez de melezleştirme olmadan iki kez çağırabiliriz.
 :end_tab:
 
 :begin_tab:`pytorch`
-Şimdi ağı iki kez çağırabiliriz, bir kez torchscript olmadan ve bir kez.
+Artık ağı bir kez meşale betikli ve bir kez de meşale betiği olmadan iki kez çağırabiliriz.
 :end_tab:
 
 :begin_tab:`tensorflow`
-Şimdi ağı üç kez çağırabiliriz, bir kez hevesle yürütülen, bir kez grafik modu yürütme ile ve tekrar JIT derlenmiş XLA kullanarak.
+Şimdi ağı, bir kez sabırsız yürütülen, bir kez çizge modu yürütme ile ve tekrar JIT derlenmiş XLA kullanarak olmak üzere üç kez çağırabiliriz.
 :end_tab:
 
 ```{.python .input}
@@ -262,13 +262,13 @@ Yukarıdaki sonuçlarda görüldüğü gibi, `nn.Sequential` örneği `torch.jit
 :end_tab:
 
 :begin_tab:`tensorflow`
-Yukarıdaki sonuçlarda görüldüğü gibi, `tf.keras.Sequential` örneği `tf.function` işlevi kullanılarak komut dosyası oluşturulduktan sonra, bilgi işlem performansı tensorflow içinde grafik modu yürütme yoluyla sembolik programlama kullanılarak geliştirilir.
+Yukarıdaki sonuçlarda görüldüğü gibi, `tf.keras.Sequential` örneği `tf.function` işlevi kullanılarak komut dosyası oluşturulduktan sonra, bilgi işlem performansı tensorflow içinde çizge modu yürütme yoluyla sembolik programlama kullanılarak geliştirilir.
 :end_tab:
 
-### Seri hale getirme
+### Seri Hale Getirme
 
 :begin_tab:`mxnet`
-Modelleri derlemenin faydalarından biri, modeli ve parametrelerini diske seri hale getirebilmemizdir (kaydedebiliriz). Bu, bir modeli seçtiğiniz ön uç dilinden bağımsız bir şekilde saklamamızı sağlar. Bu, eğitimli modelleri diğer cihazlara dağıtmamıza ve diğer ön uç programlama dillerini kolayca kullanmamıza olanak tanır. Aynı zamanda kod genellikle buyuru programlamada elde edilebileceğinden daha hızlıdır. `export` işlevini hareket halinde görelim.
+Modelleri derlemenin faydalarından biri, modeli ve parametrelerini diskte seri hale getirebilmemizdir (kaydedebiliriz). Bu, bir modeli seçtiğiniz ön uç dilinden bağımsız bir şekilde saklamamızı sağlar. Bu, eğitimli modelleri diğer cihazlara dağıtmamıza ve diğer ön uç programlama dillerini kolayca kullanmamıza olanak tanır. Aynı zamanda kod genellikle buyuru programlamada elde edilebileceğinden daha hızlıdır. `export` işlevini hareket halinde görelim.
 :end_tab:
 
 :begin_tab:`pytorch`
