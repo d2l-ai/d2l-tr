@@ -1,9 +1,9 @@
-# Asenkron Hesaplama
+# Eşzamansız Hesaplama
 :label:`sec_async`
 
-Günümüzün bilgisayarları, birden fazla CPU çekirdeği (genellikle çekirdek başına birden fazla iş parçacığı), GPU başına birden çok işlem öğesi ve genellikle cihaz başına birden çok GPU'dan oluşan son derece paralel sistemlerdir. Kısacası, birçok farklı şeyi aynı anda, genellikle farklı cihazlarda işleyebiliriz. Ne yazık ki Python, en azından ekstra yardım almadan paralel ve asenkron kod yazmanın harika bir yolu değildir. Sonuçta, Python tek dişlidir ve gelecekte değişmesi pek olası değildir. MXNet ve TensorFlow gibi derin öğrenme çerçeveleri, performansı artırmak için*asenkron bir programlama* modeli benimser, PyTorch ise Python'un kendi zamanlayıcısını kullanarak farklı bir performans değişimine yol açar. PyTorch için varsayılan olarak GPU işlemleri eşzamansızdır. GPU kullanan bir işlev çağırdığınızda, işlemler belirli bir aygıta sıralanır, ancak daha sonra kadar zorunlu olarak yürütülmez. Bu, CPU veya diğer GPU'lardaki işlemler de dahil olmak üzere paralel olarak daha fazla hesaplama yürütmemize olanak tanır. 
+Günümüzün bilgisayarları, birden fazla CPU çekirdeği (genellikle çekirdek başına birden fazla iş parçacığı), GPU başına birden çok işlem öğesi ve genellikle cihaz başına birden çok GPU'dan oluşan son derece paralel sistemlerdir. Kısacası, birçok farklı şeyi aynı anda, genellikle farklı cihazlarda işleyebiliriz. Ne yazık ki Python, en azından ekstra yardım almadan paralel ve eşzamansız kod yazmanın harika bir yolu değildir. Sonuçta, Python tek iş parşacıklıdır ve bunun gelecekte değişmesi pek olası değil. MXNet ve TensorFlow gibi derin öğrenme çerçeveleri, performansı artırmak için *eşzamansız programlama* modeli benimser, PyTorch ise Python'un kendi zamanlayıcısını kullanarak farklı bir performans değişimine yol açar. PyTorch için varsayılan olarak GPU işlemleri eşzamansızdır. GPU kullanan bir işlev çağırdığınızda, işlemler belirli bir aygıta sıralanır, ancak daha sonrasına kadar zorunlu olarak yürütülmez. Bu, CPU veya diğer GPU'lardaki işlemler de dahil olmak üzere paralel olarak daha fazla hesaplama yürütmemize olanak tanır. 
 
-Bu nedenle, zaman uyumsuz programlamanın nasıl çalıştığını anlamak, hesaplama gereksinimlerini ve karşılıklı bağımlılıkları proaktif olarak azaltarak daha verimli programlar geliştirmemize yardımcı olur. Bu, bellek yükünü azaltmamıza ve işlemci kullanımını artırmamıza olanak tanır.
+Bu nedenle, eşzamansız programlamanın nasıl çalıştığını anlamak, hesaplama gereksinimlerini ve karşılıklı bağımlılıkları proaktif azaltarak daha verimli programlar geliştirmemize yardımcı olur. Bu, bellek yükünü azaltmamıza ve işlemci kullanımını artırmamıza olanak tanır.
 
 ```{.python .input}
 from d2l import mxnet as d2l
@@ -21,14 +21,14 @@ import torch
 from torch import nn
 ```
 
-## Arka Uç üzerinden eşzamanzamanlama
+## Arka İşlemci Üzerinden Eşzamanlama
 
 :begin_tab:`mxnet`
-Bir ısınma için aşağıdaki oyuncak sorununu göz önünde bulundurun: rastgele bir matris oluşturmak ve çarpmak istiyoruz. Farkı görmek için NumPy ve `mxnet.np`'te bunu yapalım.
+Isınmak için aşağıdaki basit örnek problemi göz önünde bulundurun: Rastgele bir matris oluşturmak ve çarpmak istiyoruz. Farkı görmek için NumPy ve `mxnet.np`'te bunu yapalım.
 :end_tab:
 
 :begin_tab:`pytorch`
-Bir ısınma için aşağıdaki oyuncak sorununu göz önünde bulundurun: rastgele bir matris oluşturmak ve çarpmak istiyoruz. Farkı görmek için bunu hem NumPy hem de PyTorch tensorunda yapalım. PyTorch `tensor`'ün bir GPU'da tanımlandığını unutmayın.
+Isınmak için aşağıdaki basit örnek problemi göz önünde bulundurun: Rastgele bir matris oluşturmak ve çarpmak istiyoruz. Farkı görmek için bunu hem NumPy hem de PyTorch tensorunda yapalım. PyTorch `tensor`'ün bir GPU'da tanımlandığını unutmayın.
 :end_tab:
 
 ```{.python .input}

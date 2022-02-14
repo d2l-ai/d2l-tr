@@ -279,6 +279,8 @@ teacher forcing; öğretici zorlama
 
 tensor; gerey
 
+thread; iş parçacığı
+
 tutorial; öğreticiler
 
 token; andıç, belirteç
