@@ -99,6 +99,8 @@ floating number; kayan virgüllü sayılar (gerçel sayı gösterimi)
 
 frame; çerçeve
 
+front-end; önişlemci
+
 full rank; tam kerteli
 
 fully-connected; tam bağlı

@@ -268,15 +268,15 @@ Yukarıdaki sonuçlarda görüldüğü gibi, `tf.keras.Sequential` örneği `tf.
 ### Seri Hale Getirme
 
 :begin_tab:`mxnet`
-Modelleri derlemenin faydalarından biri, modeli ve parametrelerini diskte seri hale getirebilmemizdir (kaydedebiliriz). Bu, bir modeli seçtiğiniz ön uç dilinden bağımsız bir şekilde saklamamızı sağlar. Bu, eğitimli modelleri diğer cihazlara dağıtmamıza ve diğer ön uç programlama dillerini kolayca kullanmamıza olanak tanır. Aynı zamanda kod genellikle buyuru programlamada elde edilebileceğinden daha hızlıdır. `export` işlevini hareket halinde görelim.
+Modelleri derlemenin faydalarından biri, modeli ve parametrelerini diskte seri hale getirebilmemizdir (kaydedebiliriz). Bu, bir modeli seçtiğiniz önişlemci dilinden bağımsız bir şekilde saklamamızı sağlar. Bu, eğitilmiş modelleri diğer cihazlara konuşlandırmamıza ve diğer önişlemci programlama dillerini kolayca kullanmamıza olanak tanır. Aynı zamanda kod genellikle buyuru programlamadan elde edilebileceğinden daha hızlıdır. `export` işlevini iş başında görelim.
 :end_tab:
 
 :begin_tab:`pytorch`
-Modelleri derlemenin faydalarından biri, modeli ve parametrelerini diske seri hale getirebilmemizdir (kaydedebiliriz). Bu, bir modeli seçtiğiniz ön uç dilinden bağımsız bir şekilde saklamamızı sağlar. Bu, eğitimli modelleri diğer cihazlara dağıtmamıza ve diğer ön uç programlama dillerini kolayca kullanmamıza olanak tanır. Aynı zamanda kod genellikle buyuru programlamada elde edilebileceğinden daha hızlıdır. `save` işlevini hareket halinde görelim.
+Modelleri derlemenin faydalarından biri, modeli ve parametrelerini diske seri hale getirebilmemizdir (kaydedebiliriz). Bu, bir modeli seçtiğiniz önişlemci dilinden bağımsız bir şekilde saklamamızı sağlar. Bu, eğitilmiş modelleri diğer cihazlara konuşlandırmamıza ve diğer önişlemci programlama dillerini kolayca kullanmamıza olanak tanır. Aynı zamanda kod genellikle buyuru programlamadan elde edilebileceğinden daha hızlıdır. `save` işlevini iş başında görelim.
 :end_tab:
 
 :begin_tab:`tensorflow`
-Modelleri derlemenin faydalarından biri, modeli ve parametrelerini diske seri hale getirebilmemizdir (kaydedebiliriz). Bu, bir modeli seçtiğiniz ön uç dilinden bağımsız bir şekilde saklamamızı sağlar. Bu, eğitimli modelleri diğer cihazlara dağıtmamıza ve diğer ön uç programlama dillerini kolayca kullanmamıza veya bir sunucuda eğitimli bir model yürütmemize olanak tanır. Aynı zamanda kod genellikle buyuru programlamada elde edilebileceğinden daha hızlıdır. Tensorflow'ta tasarruf etmemizi sağlayan düşük seviyeli API `tf.saved_model`'tir. `saved_model` örneğini iş başında görelim.
+Modelleri derlemenin faydalarından biri, modeli ve parametrelerini diske seri hale getirebilmemizdir (kaydedebiliriz). Bu, bir modeli seçtiğiniz önişlemci dilinden bağımsız bir şekilde saklamamızı sağlar. Bu, eğitilmiş modelleri diğer cihazlara konuşlandırmamıza ve diğer önişlemci programlama dillerini kolayca kullanmamıza veya bir sunucuda eğitilmiş bir model yürütmemize olanak tanır. Aynı zamanda kod genellikle buyuru programlamadan elde edilebileceğinden daha hızlıdır. Tensorflow'ta tasarruf etmemizi sağlayan düşük seviyeli API `tf.saved_model`'tir. `saved_model` örneğini iş başında görelim.
 :end_tab:
 
 ```{.python .input}
@@ -298,7 +298,7 @@ tf.saved_model.save(net, 'my_mlp')
 ```
 
 :begin_tab:`mxnet`
-Model, model hesaplamasını yürütmek için gereken programın bir (büyük ikili) parametre dosyasına ve JSON açıklamasına ayrıştırılır. Dosyalar C++, R, Scala ve Perl gibi Python veya MXNet tarafından desteklenen diğer ön uç dilleri tarafından okunabilir. Model açıklamasındaki ilk birkaç satıra bir göz atalım.
+Model, bir (büyük ikili) parametre dosyasına ve model hesaplamasını yürütmek için gereken programın bir JSON açıklamasına ayrıştırılır. Dosyalar C++, R, Scala ve Perl gibi Python veya MXNet tarafından desteklenen diğer önişlemci dilleri tarafından okunabilir. Model tanımlamasındaki ilk birkaç satıra bir göz atalım.
 :end_tab:
 
 ```{.python .input}
@@ -306,7 +306,7 @@ Model, model hesaplamasını yürütmek için gereken programın bir (büyük ik
 ```
 
 :begin_tab:`mxnet`
-Daha önce, `hybridize` işlevini çağırdıktan sonra modelin üstün bilgi işlem performansı ve taşınabilirlik elde edebildiğini gösterdik. Bu melezleme, özellikle kontrol akışı açısından model esnekliğini etkileyebileceğini unutmayın.  
+Daha önce, `hybridize` işlevini çağırdıktan sonra modelin üstün bilgi işlem performansı ve taşınabilirlik elde edebildiğini gösterdik. Bu melezlemenin, özellikle kontrol akışı açısından model esnekliğini etkileyebileceğini unutmayın.  
 
 Ayrıca, `forward` işlevini kullanması gereken `Block` örneğinin aksine, `HybridBlock` örneği için `hybrid_forward` işlevini kullanmamız gerekiyor.
 :end_tab:
@@ -327,7 +327,7 @@ class HybridNet(nn.HybridBlock):
 ```
 
 :begin_tab:`mxnet`
-Yukarıdaki kod, 4 gizli ünite ve 2 çıkışa sahip basit bir ağ uygular. `hybrid_forward` işlevi ek bir argüman `F` alır. Bu, kodun karma olup olmadığına bağlı olarak, işleme için biraz farklı bir kütüphane (`ndarray` veya `symbol`) kullanacağı için gereklidir. Her iki sınıf da çok benzer işlevler gerçekleştirir ve MXNet bağımsız değişkeni otomatik olarak belirler. Neler olup bittiğini anlamak için argümanları işlev çağırmasının bir parçası olarak yazdırıyoruz.
+Yukarıdaki kod, 4 gizli birime ve 2 çıktıya sahip basit bir ağ uygular. `hybrid_forward` işlevi ek bir argüman `F` alır. Kodun melezleştirilmiş olup olmamasına bağlı olarak, işlemek için biraz farklı bir kütüphane ("ndarray" veya "sembol") kullanacağından bu gereklidir. Her iki sınıf da çok benzer işlevler gerçekleştirir ve MXNet, bağımsız değişkeni otomatik olarak belirler. Neler olup bittiğini anlamak için argümanları işlev çağırısının bir parçası olarak yazdırıyoruz.
 :end_tab:
 
 ```{.python .input}
@@ -338,7 +338,7 @@ net(x)
 ```
 
 :begin_tab:`mxnet`
-İleri hesaplamayı tekrarlamak aynı çıktıya yol açacaktır (ayrıntıları atlarız). Şimdi `hybridize` işlevini çağırırsak ne olacağını görelim.
+İleri hesaplamayı tekrarlamak aynı çıktıya yol açacaktır (ayrıntıları atlıyoruz). Şimdi `hybridize` işlevini çağırırsak ne olacağını görelim.
 :end_tab:
 
 ```{.python .input}
@@ -347,7 +347,7 @@ net(x)
 ```
 
 :begin_tab:`mxnet`
-`ndarray` kullanmak yerine artık `F` için `symbol` modülünü kullanıyoruz. Ayrıca, giriş `ndarray` türünde olsa da, ağ üzerinden akan veriler artık derleme işleminin bir parçası olarak `symbol` türüne dönüştürülür. İşlev çağrısını tekrarlamak şaşırtıcı bir sonuca yol açar:
+`ndarray` kullanmak yerine artık `F` için `symbol` modülünü kullanıyoruz. Ayrıca, girdi `ndarray` türünde olsa da, ağ üzerinden akan veriler artık derleme işleminin bir parçası olarak `symbol` türüne dönüştürülür. İşlev çağrısını tekrarlamak şaşırtıcı bir sonuca yol açar:
 :end_tab:
 
 ```{.python .input}
@@ -355,24 +355,24 @@ net(x)
 ```
 
 :begin_tab:`mxnet`
-Bu daha önce gördüğümüzden oldukça farklı. `hybrid_forward`'de tanımlandığı gibi tüm yazdırma deyimleri atlanır. Gerçekten de, hibridizasyondan sonra `net(x)`'un yürütülmesi artık Python tercümanı içermez. Bu, herhangi bir sahte Python kodunun (yazdırma ifadeleri gibi) çok daha akıcı bir yürütme ve daha iyi performans lehine atlandığı anlamına gelir. Bunun yerine, MXNet doğrudan C++ arka ucunu çağırır. Ayrıca bazı işlevlerin `symbol` modülünde desteklenmediğini (örn. `asnumpy`) ve `a += b` ve `a[:] = a + b` gibi yerinde işlemlerin `a = a + b` olarak yeniden yazılması gerektiğini unutmayın. Bununla birlikte, hız önemli olduğunda modellerin derlenmesi çabaya değer. Fayda, modelin karmaşıklığına, CPU'nun hızına ve GPU'ların hızına ve sayısına bağlı olarak, küçük yüzdelerden iki kattan fazla hıza kadar değişebilir.
+Bu daha önce gördüğümüzden oldukça farklı. `hybrid_forward`'de tanımlandığı gibi tüm yazdırma ifadeleri atlanır. Gerçekten de, melezleştirmeden sonra `net(x)`'in yürütülmesi artık Python yorumlayıcısı içermez. Bu, herhangi bir sahte Python kodunun (yazdırma ifadeleri gibi) çok daha akıcı bir yürütme ve daha iyi bir başarım lehine atlandığı anlamına gelir. Bunun yerine, MXNet doğrudan C++ arka işlemcisini çağırır. Ayrıca bazı işlevlerin `symbol` modülünde desteklenmediğini (örn. `asnumpy`) ve `a += b` ve `a[:] = a + b` gibi yerinde işlemlerin `a = a + b` olarak yeniden yazılması gerektiğini unutmayın. Bununla birlikte, hız önemli olduğunda modellerin derlenmesi çabaya değer. Fayda, modelin karmaşıklığına, CPU'nun hızına ve GPU'ların hızına ve sayısına bağlı olarak, küçük yüzdelerden iki kattan fazla hıza kadar değişebilir.
 :end_tab:
 
 ## Özet
 
-* Zorunlu programlama, kontrol akışı ve çok miktarda Python yazılım ekosistemi kullanma yeteneği ile kod yazmak mümkün olduğundan, yeni modeller tasarlamayı kolaylaştırır.
-* Sembolik programlama, programı belirtmemizi ve çalıştırmadan önce derlemenizi gerektirir. Faydası performans artırıldı.
+* Buyuru programlama, kontrol akışı ve çok miktarda Python yazılım ekosistemi kullanma yeteneği ile kod yazmak mümkün olduğundan, yeni modeller tasarlamayı kolaylaştırır.
+* Sembolik programlama, programı belirtmemizi ve çalıştırmadan önce derlemenizi gerektirir. Faydası arttırılmış performanstır.
 
 :begin_tab:`mxnet`
 * MXNet gerektiğinde her iki yaklaşımın avantajlarını birleştirebilir.
-* `HybridSequential` ve `HybridBlock` sınıfları tarafından oluşturulan modeller, `hybridize` işlevini çağırarak buyuru programları sembolik programlara dönüştürebilir.
+* `HybridSequential` ve `HybridBlock` sınıfları tarafından oluşturulan modeller, `hybridize` işlevini çağırarak buyuru programlarını sembolik programlara dönüştürebilir.
 :end_tab:
 
-## Egzersizler
+## Alıştırmalar
 
 :begin_tab:`mxnet`
-1. `x.asnumpy()` bu bölümdeki `HybridNet` sınıfının `hybrid_forward` işlevinin ilk satırına ekleyin. Kodu çalıştırın ve karşılaştığınız hataları gözlemleyin. Neden oluyorlar?
-1. Kontrol akışını eklersek, yani `hybrid_forward` işlevinde Python ifadeleri `if` ve `for`'yı eklersek ne olur?
+1. `x.asnumpy()` bu bölümdeki `HybridNet` sınıfının `hybrid_forward` işlevinin ilk satırına ekleyin. Kodu çalıştırın ve karşılaştığınız hataları gözlemleyin. Neden büyle oluyorlar?
+1. Kontrol akışını eklersek, yani `hybrid_forward` işlevinde `if` ve `for` Python ifadelerini eklersek ne olur?
 1. Önceki bölümlerde ilginizi çeken modelleri gözden geçirin. Onları yeniden uygulayarak hesaplama performanslarını artırabilir misiniz?
 :end_tab:
 
