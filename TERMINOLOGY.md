@@ -15,6 +15,8 @@ asynchronous; eşzamansız
 
 autoregressive; özbağlanımlı
 
+backend; arka işlemci
+
 backprop; geriyay
 
 backpropagation; geri yayma
