@@ -320,4 +320,4 @@ Bu algoritma hızla yakınsar (analiz ve kanıt için bkz., :cite:`Boyd.Vandenbe
     1. Bunu yukarıdaki probaleme uygulayın.
 1. Yukarıdaki algoritmayı bir takım amaç fonksiyonuna uygulayın (dışbükey veya değil). Koordinatları $45$ derece döndürürseniz ne olur?
 
-[Discussions](https://discuss.d2l.ai/t/351)
+[Tartışmalar](https://discuss.d2l.ai/t/351)

@@ -208,9 +208,9 @@ Bu üç aşamanın sürelerinin sırasıyla $t_1, t_2$ ve $t_3$ olduğunu varsay
 :end_tab:
 
 :begin_tab:`mxnet`
-[Discussions](https://discuss.d2l.ai/t/361)
+[Tartışmalar](https://discuss.d2l.ai/t/361)
 :end_tab:
 
 :begin_tab:`pytorch`
-[Discussions](https://discuss.d2l.ai/t/2564)
+[Tartışmalar](https://discuss.d2l.ai/t/2564)
 :end_tab:

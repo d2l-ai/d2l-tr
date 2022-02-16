@@ -558,13 +558,13 @@ train_concise_ch11(trainer, {'learning_rate': 0.05}, data_iter)
 1. Kötü bir cin, size haber vermeden veri kümenizi çoğaltıyor (yani, her gözlem iki kez gerçekleşir ve veri kümeniz orijinal boyutunun iki katına çıkar, ancak size söylenmedi). Rasgele gradyan inişi, minigrup rasgele gradyan inişi ve gradyan inişinin davranışı nasıl değişir?
 
 :begin_tab:`mxnet`
-[Discussions](https://discuss.d2l.ai/t/353)
+[Tartışmalar](https://discuss.d2l.ai/t/353)
 :end_tab:
 
 :begin_tab:`pytorch`
-[Discussions](https://discuss.d2l.ai/t/1068)
+[Tartışmalar](https://discuss.d2l.ai/t/1068)
 :end_tab:
 
 :begin_tab:`tensorflow`
-[Discussions](https://discuss.d2l.ai/t/1069)
+[Tartışmalar](https://discuss.d2l.ai/t/1069)
 :end_tab:

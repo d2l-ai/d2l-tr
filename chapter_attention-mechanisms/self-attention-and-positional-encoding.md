@@ -254,9 +254,9 @@ $2\times 2$ izdüşüm matrisi herhangi bir $i$ konum endeksine bağlı değildi
 1. Öğrenilebilir bir konumsal kodlama yöntemi tasarlayabilir misiniz?
 
 :begin_tab:`mxnet`
-[Discussions](https://discuss.d2l.ai/t/1651)
+[Tartışmalar](https://discuss.d2l.ai/t/1651)
 :end_tab:
 
 :begin_tab:`pytorch`
-[Discussions](https://discuss.d2l.ai/t/1652)
+[Tartışmalar](https://discuss.d2l.ai/t/1652)
 :end_tab:

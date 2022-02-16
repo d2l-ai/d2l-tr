@@ -381,13 +381,13 @@ Bu daha önce gördüğümüzden oldukça farklı. `hybrid_forward`'de tanımlan
 :end_tab:
 
 :begin_tab:`mxnet`
-[Discussions](https://discuss.d2l.ai/t/360)
+[Tartışmalar](https://discuss.d2l.ai/t/360)
 :end_tab:
 
 :begin_tab:`pytorch`
-[Discussions](https://discuss.d2l.ai/t/2490)
+[Tartışmalar](https://discuss.d2l.ai/t/2490)
 :end_tab:
 
 :begin_tab:`tensorflow`
-[Discussions](https://discuss.d2l.ai/t/2492)
+[Tartışmalar](https://discuss.d2l.ai/t/2492)
 :end_tab:

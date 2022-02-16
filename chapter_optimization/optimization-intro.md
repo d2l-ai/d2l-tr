@@ -154,13 +154,13 @@ Gördüğümüz gibi, derin öğrenme için optimizasyon zorluklarla doludur. Ne
     1. Optimizasyon algoritmaları için de bu etkiyi kullanabilir misiniz?
 
 :begin_tab:`mxnet`
-[Discussions](https://discuss.d2l.ai/t/349)
+[Tartışmalar](https://discuss.d2l.ai/t/349)
 :end_tab:
 
 :begin_tab:`pytorch`
-[Discussions](https://discuss.d2l.ai/t/487)
+[Tartışmalar](https://discuss.d2l.ai/t/487)
 :end_tab:
 
 :begin_tab:`tensorflow`
-[Discussions](https://discuss.d2l.ai/t/489)
+[Tartışmalar](https://discuss.d2l.ai/t/489)
 :end_tab:
