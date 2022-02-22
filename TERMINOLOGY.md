@@ -97,6 +97,10 @@ extrapolation; dışdeğerleme
 
 feature; öznitelik
 
+firmware; bellenim
+
+flag; bayrak
+
 floating number; kayan virgüllü sayılar (gerçel sayı gösterimi)
 
 frame; çerçeve
