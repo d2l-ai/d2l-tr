@@ -55,34 +55,33 @@ Katı hal sürücüleri (SSD'ler) bilgileri kalıcı olarak depolamak için flas
 
 ### Bulut Depolama
 
-Bulut depolama, yapılandırılabilir bir performans aralığı sağlar. Yani, sanal makinelere depolama ataması, kullanıcılar tarafından seçilen miktar ve hız açısından hem dinamiktir. Kullanıcıların gecikme süresi çok yüksek olduğunda, örneğin birçok küçük kayıtla eğitim sırasında sağlanan IOPs sayısını artırmalarını öneririz. 
+Bulut depolama, yapılandırılabilir bir performans aralığı sağlar. Yani, sanal makinelere depolama ataması, kullanıcılar tarafından seçildiği üzere hem miktar hem de hız açısından dinamiktir. Kullanıcıların, gecikme süresi çok yüksek olduğunda, örneğin birçok küçük kaydın olduğu eğitim sırasında, sağlanan IOP sayısını artırmalarını öneririz.
 
 ## CPU'lar
 
-Merkezi işlem birimleri (CPU'lar) herhangi bir bilgisayarın merkezidir. Bunlar bir dizi temel bileşenden oluşur: makine kodunu yürütebilen *işlemci çekirdekleri*, bunları bağlayan bir *veri yolu (belirli topoloji işlemci modelleri, nesiller ve satıcılar arasında önemli ölçüde farklılık gösterir) ve *önbellekler* daha yüksek bant genişliği ve daha düşük gecikme süresi bellek erişimine izin vermek için ana bellekten okumaları ile mümkün. Son olarak, neredeyse tüm modern CPU'lar, medya işleme ve makine öğreniminde yaygın oldukları için yüksek performanslı doğrusal cebir ve kıvrımlara yardımcı olmak için*vektör işleme birimleri* içerir. 
+Merkezi işlem birimleri (CPU'lar), herhangi bir bilgisayarın en önemli parçasıdır. Bir dizi temel bileşenden oluşurlar: Makine kodunu yürütebilen *işlemci çekirdekleri*, bunları birbirine bağlayan bir *veriyolu* (belirli topoloji işlemci modelleri, nesiller ve satıcılar arasında önemli ölçüde farklılık gösterir) ve  ana bellekten okumalarla mümkün olandan daha yüksek bant genişliği ve daha düşük gecikmeli bellek erişimine izin vermek için *önbellekler*. Son olarak, neredeyse tüm modern CPU'lar, medya işleme ve makine öğrenmesinde yaygın oldukları için yüksek performanslı doğrusal cebire ve evrişimlere yardımcı olmak için *vektör işleme birimleri* içerir. 
 
-![Intel Skylake consumer quad-core CPU.](../img/skylake.svg)
+![Tüketiciler için Intel Skylake dört çekirdekli CPU.](../img/skylake.svg)
 :label:`fig_skylake`
 
-:numref:`fig_skylake` Intel Skylake tüketici sınıfı dört çekirdekli CPU'yu tasvir eder. Entegre bir GPU, önbellekleri ve dört çekirdeği bağlayan bir ringbus vardır. Ethernet, WiFi, Bluetooth, SSD denetleyicisi ve USB gibi çevre birimleri yonga setinin bir parçasıdır ya da CPU'ya doğrudan takılır (PCIe). 
+:numref:`fig_skylake` Intel Skylake tüketici sınıfı dört çekirdekli CPU'yu tasvir eder. Tümleşik bir GPU, önbellekleri ve dört çekirdeği bağlayan bir çember veriyolu vardır. Ethernet, WiFi, Bluetooth, SSD denetleyicisi ve USB gibi çevre birimleri yonga setinin bir parçasıdır ya da CPU'ya doğrudan takılıdır (PCIe). 
 
 ### Mikromimari
 
-İşlemci çekirdeklerinin her biri oldukça sofistike bir bileşen setinden oluşur. Ayrıntılar nesiller ve satıcılar arasında farklılık gösterse de, temel işlevsellik oldukça standarttır. Ön uç talimatları yükler ve hangi yolun alınacağını tahmin etmeye çalışır (örn. kontrol akışı için). Talimatlar daha sonra montaj kodundan mikro talimatlara çözülür. Derleme kodu genellikle bir işlemcinin yürüttüğü en düşük düzey kod değildir. Bunun yerine, karmaşık yönergeler daha alt düzey işlemler kümesine çözülebilir. Bunlar daha sonra gerçek yürütme çekirdeği tarafından işlenir. Genellikle ikincisi aynı anda birçok işlemi gerçekleştirebilir. Örneğin, :numref:`fig_cortexa77`'ün ARM Cortex A77 çekirdeği aynı anda 8 adede kadar işlem gerçekleştirebilir. 
+İşlemci çekirdeklerinin her biri oldukça gelişmiş bir bileşen kümesinden oluşur. Ayrıntılar nesiller ve satıcılar arasında farklılık gösterse de, temel işlevsellik oldukça standarttır. Ön işlmeci talimatları yükler ve hangi yolun alınacağını tahmin etmeye çalışır (örn. kontrol akışı için). Talimatlar daha sonra birleştirici kodundan mikro talimatlara çevrilir. Birleştirici kodu genellikle bir işlemcinin yürüttüğü en düşük düzey kod değildir. Bunun yerine, karmaşık talimatlar daha alt düzey işlemler kümesine çözülebilir. Bunlar daha sonra gerçek yürütme çekirdeği tarafından işlenir. Genellikle sonraki, aynı anda birçok işlemi gerçekleştirebilir. Örneğin, :numref:`fig_cortexa77`'ün ARM Cortex A77 çekirdeği aynı anda 8 adede kadar işlem gerçekleştirebilir. 
 
-![ARM Cortex A77 Microarchitecture.](../img/a77.svg)
+![ARM Cortex A77 Mikromimarisi.](../img/a77.svg)
 :label:`fig_cortexa77`
 
 Bu, verimli programların bağımsız olarak gerçekleştirilebilmesi şartıyla saat döngüsü başına birden fazla talimat gerçekleştirebileceği anlamına gelir. Tüm birimler eşit oluşturulmaz. Bazıları tamsayı talimatlarında uzmanlaşırken diğerleri kayan nokta performansı için optimize edilmiştir. Verimi artırmak için işlemci aynı anda bir dallanma talimatında birden fazla kod yolunu izleyebilir ve ardından alınmayan dalların sonuçlarını atabilir. Bu nedenle şube tahmin birimleri (ön uçta) sadece en umut verici yolların takip edileceği şekilde önemlidir. 
 
-### Vektorizasyon
+### Vektörleştirme
 
-Derin öğrenme aşırı derecede bilgisayar açlığı. Bu nedenle, işlemcileri makine öğrenimine uygun hale getirmek için, bir saat döngüsünde birçok işlemi gerçekleştirmesi gerekir. Bu vektör birimleri vasıtasıyla elde edilir. Onlar farklı adları : on ARM they are called NEON, on x86 they (a recent generation) are referred to as [AVX2](https://en.wikipedia.org/wiki/Advanced_Vector_Extensions) units. A common aspect is that they are able to perform SIMD (single instruction multiple data) operations. :numref:`fig_neon128` nasıl gösterir 8 kısa tamsayılar ARM üzerinde bir saat döngüsünde eklenebilir. 
-
-![128 bit NEON vectorization.](../img/neon128.svg)
+Derin öğrenme aşırı derecede hesaplamaya açtır. Bu nedenle, işlemcileri makine öğrenmesine uygun hale getirmek için, bir saat döngüsünde birçok işlemi gerçekleştirmesi gerekir. Bu vektör birimleri vasıtasıyla elde edilir. Farklı isimleri vardır: ARM'de bunlara NEON denir, x86'da bunlara (yeni nesil) [AVX2](https://en.wikipedia.org/wiki/Advanced_Vector_Extensions) birimleri denir. Ortak bir yönü, SIMD (tek komut çoklu veri) işlemlerini gerçekleştirebilmeleridir. :numref:`fig_neon128`, ARM'de bir saat döngüsünde 8 kısa tamsayının nasıl eklenebileceğini gösterir.
+![128 bit NEON vektörleştirmesi.](../img/neon128.svg)
 :label:`fig_neon128`
 
-Mimari seçeneklere bağlı olarak, bu tür kayıtlar 512 bit'e kadar uzunluğa sahiptir ve 64 çifte kadar sayının birleşimine izin verir. Örneğin, iki sayıyı çarpıp üçüncüye ekliyor olabiliriz, ki bu da erimiş çoğalmalı ekleme olarak da bilinir. Intel'in [OpenVino](https://01.org/openvinotoolkit)'ü, sunucu sınıfı CPU'larda derin öğrenme için saygın aktarım hızı elde etmek için bunları kullanır. Yine de, bu sayının GPU'ların başarabilecekleri şey tarafından tamamen cüce olduğunu unutmayın. Örneğin, NVIDIA'nın RTX 2080 Ti'si 4,352 CUDA çekirdeğine sahiptir ve her biri böyle bir işlemi herhangi bir zamanda işleyebilir. 
+Mimari seçeneklere bağlı olarak, bu tür yazmaçlar 512 bit'e kadar uzunluğa sahiptir ve 64 çifte kadar sayının katışımına izin verir. Örneğin, iki sayıyı çarpıp üçüncüye ekliyor olabiliriz, ki bu da kaynaşmış çarpma-toplama olarak da bilinir. Intel'in [OpenVino](https://01.org/openvinotoolkit), sunucu sınıfı CPU'larda derin öğrenme için hatrı sayılır verim elde etmek için bunları kullanır. Yine de, bu sayının GPU'ların başarabilecekleri tarafından tamamen gölgede kaldığını unutmayın. Örneğin, NVIDIA'nın RTX 2080 Ti'sinde her biri herhangi bir zamanda böyle bir işlemi işleyebilen 4.352 CUDA çekirdeği vardır.
 
 ### Önbellek
 

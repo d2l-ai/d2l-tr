@@ -11,6 +11,8 @@ api (application programming interface); uygulama programlama arayüzü
 
 array; dizilim
 
+assembly code; birleştirici kodu
+
 asynchronous; eşzamansız
 
 autoregressive; özbağlanımlı
@@ -40,6 +42,8 @@ broadcast; yayınlama
 checksum; sağlama toplamı
 
 co-adaptation; birlikte-uyarlama
+
+combination; katışım
 
 computer vision; bilgisayarla görme
 
@@ -236,6 +240,8 @@ reinforcement learning; pekiştirmeli öğrenme
 residual networks; artık ağlar
 
 ridge regression; sırt regresyon
+
+ringbus; çember veriyolu
 
 robust; gürbüz
 
