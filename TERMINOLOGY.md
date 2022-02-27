@@ -39,6 +39,8 @@ bus; veriyolu
 
 broadcast; yayınlama
 
+cache; ön bellek
+
 checksum; sağlama toplamı
 
 co-adaptation; birlikte-uyarlama
@@ -105,7 +107,7 @@ firmware; bellenim
 
 flag; bayrak
 
-floating number; kayan virgüllü sayılar (gerçel sayı gösterimi)
+floating number; kayan virgüllü sayı (gerçel sayı gösterimi)
 
 frame; çerçeve
 
@@ -150,6 +152,8 @@ internal covariate shift; dahili eşdeğişken kayması
 interpolation; aradeğerleme
 
 interpreter; yorumlayıcı
+
+interrupt; işkesme
 
 invariance; değişmezlik
 
@@ -280,6 +284,8 @@ string; dizgi
 stochastic; rasgele
 
 surrogate; vekil
+
+switch; anahtar
 
 symmetry; bakışım
 
