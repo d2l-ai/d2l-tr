@@ -1,7 +1,7 @@
-# Birden Çok GPU için Özlü Uygulama
+# Çoklu GPU için Özlü Uygulama
 :label:`sec_multi_gpu_concise`
 
-Her yeni model için sıfırdan paralellik uygulanması eğlenceli değil. Ayrıca, yüksek performans için senkronizasyon araçlarının optimize edilmesinde önemli fayda vardır. Aşağıda, derin öğrenme çerçevelerinin üst düzey API'lerini kullanarak bunun nasıl yapılacağını göstereceğiz. Matematik ve algoritmalar :numref:`sec_multi_gpu`'teki ile aynıdır. Oldukça şaşırtıcı bir şekilde, bu bölümün kodunu çalıştırmak için en az iki GPU'ya ihtiyacınız olacaktır.
+Her yeni model için sıfırdan paralellik uygulamak eğlenceli değildir. Ayrıca, yüksek performans için eşzamanlama araçlarının optimize edilmesinde önemli fayda vardır. Aşağıda, derin öğrenme çerçevelerinin üst düzey API'lerini kullanarak bunun nasıl yapılacağını göstereceğiz. Matematik ve algoritmalar :numref:`sec_multi_gpu`'teki ile aynıdır. Şaşırtıcı olmayan bir şekilde, bu bölümün kodunu çalıştırmak için en az iki GPU'ya ihtiyacınız olacaktır.
 
 ```{.python .input}
 from d2l import mxnet as d2l
@@ -17,9 +17,9 @@ import torch
 from torch import nn
 ```
 
-## [**Bir Oyuncak Ağı**]
+## [**Basit Örnek Bir Ağ**]
 
-Bize hala yeterince kolay ve hızlı eğitmek için :numref:`sec_multi_gpu` LeNet biraz daha anlamlı bir ağ kullanalım. Bir ResNet-18 varyantı :cite:`He.Zhang.Ren.ea.2016` seçiyoruz. Giriş görüntüleri küçük olduğundan biraz değiştiriyoruz. Özellikle, :numref:`sec_resnet` arasındaki fark, başlangıçta daha küçük bir evrişim çekirdeği, adım ve dolgu kullanmamızdır. Dahası, maksimum havuzlama katmanını kaldırıyoruz.
+Hala yeterince kolay ve hızlı eğitilen :numref:`sec_multi_gpu`'teki LeNet'ten biraz daha anlamlı bir ağ kullanalım. Bir ResNet-18 varyantı :cite:`He.Zhang.Ren.ea.2016` seçiyoruz. Girdi imgeleri küçük olduğundan onu biraz değiştiriyoruz. Özellikle, :numref:`sec_resnet`ten farkı, başlangıçta daha küçük bir evrişim çekirdeği, uzun adım ve dolgu kullanmamızdır. Ayrıca, maksimum ortaklama katmanını kaldırıyoruz.
 
 ```{.python .input}
 #@save
@@ -80,14 +80,14 @@ def resnet18(num_classes, in_channels=1):
     return net
 ```
 
-## Ağ Başlatma
+## Ağ İlkleme
 
 :begin_tab:`mxnet`
-`initialize` işlevi, seçeceğimiz bir cihazda parametreleri başlatmamızı sağlar. Başlatma yöntemleri üzerinde bir yeniletici için bkz. :numref:`sec_numerical_stability`. Özellikle uygun olan şey, aynı zamanda şebekeyi aynı anda *çok* cihazlarda başlatmamıza izin vermesidir. Bunun pratikte nasıl çalıştığını deneyelim.
+`initialize` işlevi, seçeceğimiz bir cihazda parametreleri ilklememizi sağlar. İlkleme yöntemleri üzerinde bir tazeleme için bkz. :numref:`sec_numerical_stability`. Özellikle kullanışlı olan şey, ağı aynı anda *birden çok* cihazda ilklememize de izin vermesidir. Bunun pratikte nasıl çalıştığını deneyelim.
 :end_tab:
 
 :begin_tab:`pytorch`
-Eğitim döngüsünün içindeki ağı başlatacağız. Başlatma yöntemleri üzerinde bir yeniletici için bkz. :numref:`sec_numerical_stability`.
+Eğitim döngüsünün içindeki ağı ilkleteceğiz. İlkleme yöntemleri üzerinde bir tazeleme için bkz. :numref:`sec_numerical_stability`.
 :end_tab:
 
 ```{.python .input}
@@ -107,7 +107,7 @@ devices = d2l.try_all_gpus()
 ```
 
 :begin_tab:`mxnet`
-:numref:`sec_multi_gpu`'te tanıtılan `split_and_load` işlevini kullanarak, bir minibatch veriyi bölebilir ve bölümleri `devices` değişkeni tarafından sağlanan cihazlar listesine kopyalayabiliriz. *otomatik olarak ağ örneği, ileri yayılma değerini hesaplamak için uygun GPU'yu kullanır. Burada 4 gözlem oluşturuyoruz ve bunları GPU'lar üzerinden bölüyoruz.
+:numref:`sec_multi_gpu`'te tanıtılan `split_and_load` işlevini kullanarak, bir minigrup veriyi bölebilir ve bölümleri `devices` değişkeni tarafından sağlanan cihazlar listesine kopyalayabiliriz. Ağ örneği *otomatik olarak*, ileri yayılmanın değerini hesaplamak için uygun GPU'yu kullanır. Burada 4 gözlem oluşturuyoruz ve bunları GPU'lara bölüyoruz.
 :end_tab:
 
 ```{.python .input}
@@ -117,7 +117,7 @@ net(x_shards[0]), net(x_shards[1])
 ```
 
 :begin_tab:`mxnet`
-Veri ağdan geçtikten sonra, ilgili parametreler başlatılır*cihazda* veri aktarılır*. Bu, başlatma işlemi cihaz başına temelinde gerçekleştiği anlamına gelir. Başlatma için GPU 0 ve GPU 1'i seçtiğimizden, ağ yalnızca CPU'da değil, orada başlatılır. Aslında, parametreler CPU'da bile mevcut değildir. Parametreleri yazdırarak ve ortaya çıkabilecek hataları gözlemleyerek bunu doğrulayabiliriz.
+Veriler ağdan geçtiğinde, ilgili parametreler *verilerin geçtiği cihazda* ilkletilir. Bu, ilkleme işleminin cihaz başı temelinde gerçekleştiği anlamına gelir. İlkleme için GPU 0 ve GPU 1'i seçtiğimizden, ağ CPU'da değil, yalnızca orada ilkletilir. Aslında, parametreler CPU'da mevcut bile değildir. Parametreleri yazdırarak ve ortaya çıkabilecek hataları gözlemleyerek bunu doğrulayabiliriz.
 :end_tab:
 
 ```{.python .input}
@@ -131,7 +131,7 @@ weight.data(devices[0])[0], weight.data(devices[1])[0]
 ```
 
 :begin_tab:`mxnet`
-Next, let us replace the code to [**evaluate the accuracy**] by one that works (**in parallel across multiple devices**). This serves as a replacement of the `evaluate_accuracy_gpu` function from :numref:`sec_lenet`. The main difference is that we split a minibatch before invoking the network. All else is essentially identical.
+Ardından, [**doğruluğu değerlendirme**] kodunu (**birden çok cihazda paralel olarak**) çalışan bir kodla değiştirelim. Bu, :numref:`sec_lenet`'ten gelen `evaluate_accuracy_gpu` işlevinin yerini alır. Temel fark, ağı çağırmadan önce bir minigrubu bölmemizdir. Diğer her şey temelde aynıdır.
 :end_tab:
 
 ```{.python .input}
@@ -156,12 +156,12 @@ def evaluate_accuracy_gpus(net, data_iter, split_f=d2l.split_batch):
 
 Daha önce olduğu gibi, eğitim kodunun verimli paralellik için birkaç temel işlevi yerine getirmesi gerekir: 
 
-* Ağ parametrelerinin tüm cihazlarda başlatılması gerekir.
-* Veri kümesi üzerinde yineleme yaparken minibatches tüm cihazlara bölünmelidir.
-* Kaybı ve degradeyi cihazlar arasında paralel olarak hesaplıyoruz.
-* Degradeler toplanır ve parametreler buna göre güncellenir.
+* Ağ parametrelerinin tüm cihazlarda ilklenemsi gerekir.
+* Veri kümesi üzerinde yineleme yaparken minigruplar tüm cihazlara bölünmelidir.
+* Kaybı ve gradyanı cihazlar arasında paralel olarak hesaplarız.
+* Gradyanlar toplanır ve parametreler buna göre güncellenir.
 
-Sonunda, ağın nihai performansını bildirmek için doğruluğu (yine paralel olarak) hesaplıyoruz. Eğitim rutini, verileri bölmemiz ve toplamamız gerekmediği dışında, önceki bölümlerdeki uygulamalara oldukça benzer.
+Sonunda, ağın nihai performansını bildirmek için doğruluğu (yine paralel olarak) hesaplıyoruz. Eğitim rutini, verileri bölmemiz ve toplamamız gerekmesi dışında, önceki bölümlerdeki uygulamalara oldukça benzer.
 
 ```{.python .input}
 def train(num_gpus, batch_size, lr):
@@ -220,7 +220,7 @@ def train(net, num_gpus, batch_size, lr):
           f'on {str(devices)}')
 ```
 
-Bunun pratikte nasıl çalıştığını görelim. Isınma olarak [**ağı tek bir GPU'da eğitiyoruz**]
+Bunun pratikte nasıl çalıştığını görelim. Isınma olarak [**ağı tek bir GPU'da eğitelim.**]
 
 ```{.python .input}
 train(num_gpus=1, batch_size=256, lr=0.1)
@@ -231,7 +231,7 @@ train(num_gpus=1, batch_size=256, lr=0.1)
 train(net, num_gpus=1, batch_size=256, lr=0.1)
 ```
 
-Sonra [**eğitim için 2 GPU kullanıyoruz**]. :numref:`sec_multi_gpu`'te değerlendirilen LeNet ile karşılaştırıldığında, ResNet-18 modeli oldukça daha karmaşıktır. Paralelleşmenin avantajını gösterdiği yer burası. Hesaplama zamanı, parametreleri senkronize etme zamanından anlamlı bir şekilde daha büyüktür. Bu, paralelleştirme için ek yükü daha az alakalı olduğundan ölçeklenebilirliği artırır.
+Sonra [**eğitim için 2 GPU kullanıyoruz**]. :numref:`sec_multi_gpu`'te değerlendirilen LeNet ile karşılaştırıldığında, ResNet-18 modeli oldukça daha karmaşıktır. Paralelleşmenin avantajını gösterdiği yer burasıdır. Hesaplama zamanı, parametreleri senkronize etme zamanından anlamlı bir şekilde daha büyüktür. Paralelleştirme için ek yük daha az alakalı olduğundan, bu ölçeklenebilirliği artırır.
 
 ```{.python .input}
 train(num_gpus=2, batch_size=512, lr=0.2)
@@ -245,30 +245,30 @@ train(net, num_gpus=2, batch_size=512, lr=0.2)
 ## Özet
 
 :begin_tab:`mxnet`
-* Gluon, bir bağlam listesi sağlayarak birden çok cihazda model başlatma için ilkel özellikleri sağlar.
+* Gluon, bir bağlam listesi sağlayarak birden çok cihazda model ilkleme için en temel özellikleri sağlar.
 :end_tab:
 
 * Veriler, verilerin bulunabileceği cihazlarda otomatik olarak değerlendirilir.
-* Bu cihazdaki parametrelere erişmeye çalışmadan önce her cihazdaki ağları başlatmaya özen gösterin. Aksi takdirde bir hatayla karşılaşırsınız.
+* O cihazdaki parametrelere erişmeye çalışmadan önce her cihazdaki ağları ilklemeye özen gösterin. Aksi takdirde bir hatayla karşılaşırsınız.
 * Optimizasyon algoritmaları otomatik olarak birden fazla GPU üzerinde toplanır.
 
-## Egzersizler
+## Alıştırmalar
 
 :begin_tab:`mxnet`
-1. Bu bölümde ResNet-18 kullanılır. Farklı çemleri, toplu iş boyutlarını ve öğrenme oranlarını deneyin. Hesaplama için daha fazla GPU kullanın. Bunu 16 GPU (örn. bir AWS p2.16xlarge örneğinde) denerseniz ne olur?
+1. Bu bölümde ResNet-18 kullanılıyor. Farklı dönemleri, toplu iş boyutlarını ve öğrenme oranlarını deneyin. Hesaplama için daha fazla GPU kullanın. Bunu 16 GPU ile (örn. bir AWS p2.16xlarge örneğinde) denerseniz ne olur?
 1. Bazen, farklı cihazlar farklı bilgi işlem gücü sağlar. GPU'ları ve CPU'yu aynı anda kullanabiliriz. İşi nasıl bölmeliyiz? Çabaya değer mi? Neden? Neden olmasın?
-1. `npx.waitall()`'ü bırakırsak ne olur? Paralellik için iki adıma kadar çakışacak şekilde eğitimi nasıl değiştirirsiniz?
+1. `npx.waitall()`'ü bırakırsak ne olur? Paralellik için iki adıma kadar örtüşecek şekilde eğitimi nasıl değiştirirsiniz?
 :end_tab:
 
 :begin_tab:`pytorch`
-1. Bu bölümde ResNet-18 kullanılır. Farklı çemleri, toplu iş boyutlarını ve öğrenme oranlarını deneyin. Hesaplama için daha fazla GPU kullanın. Bunu 16 GPU (örn. bir AWS p2.16xlarge örneğinde) denerseniz ne olur?
+1. Bu bölümde ResNet-18 kullanılıyor. Farklı dönemleri, toplu iş boyutlarını ve öğrenme oranlarını deneyin. Hesaplama için daha fazla GPU kullanın. Bunu 16 GPU ile (örn. bir AWS p2.16xlarge örneğinde) denerseniz ne olur?
 1. Bazen, farklı cihazlar farklı bilgi işlem gücü sağlar. GPU'ları ve CPU'yu aynı anda kullanabiliriz. İşi nasıl bölmeliyiz? Çabaya değer mi? Neden? Neden olmasın?
 :end_tab:
 
 :begin_tab:`mxnet`
-[Discussions](https://discuss.d2l.ai/t/365)
+[Tartışmalar](https://discuss.d2l.ai/t/365)
 :end_tab:
 
 :begin_tab:`pytorch`
-[Discussions](https://discuss.d2l.ai/t/1403)
+[Tartışmalar](https://discuss.d2l.ai/t/1403)
 :end_tab:
