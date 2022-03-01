@@ -187,6 +187,8 @@ minibatch; minigrup
 
 multi-head; çoklu-kafa
 
+multiplexer; çoklayıcı
+
 nontrivial; apaçık olmayan
 
 objective functions; amaç fonksiyonları
