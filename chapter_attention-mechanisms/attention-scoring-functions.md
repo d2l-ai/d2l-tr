@@ -415,9 +415,9 @@ d2l.show_heatmaps(d2l.reshape(attention.attention_weights, (1, 1, 2, 10)),
 1. Sorgular ve anahtarlar aynı vektör uzunluğuna sahip olduğunda, vektör toplamı puanlama fonksiyonu için nokta çarpımından daha iyi bir tasarım mıdır? Neden ya da neden değil?
 
 :begin_tab:`mxnet`
-[Discussions](https://discuss.d2l.ai/t/346)
+[Tartışmalar](https://discuss.d2l.ai/t/346)
 :end_tab:
 
 :begin_tab:`pytorch`
-[Discussions](https://discuss.d2l.ai/t/1064)
+[Tartışmalar](https://discuss.d2l.ai/t/1064)
 :end_tab:

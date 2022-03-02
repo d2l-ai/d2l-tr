@@ -506,9 +506,9 @@ d2l.show_heatmaps(tf.expand_dims(tf.expand_dims(net.attention_weights, axis=0), 
 1. Bu bölümün çekirdek regresyonu için başka bir parametrik dikkat ortaklama tasarlayın. Bu yeni modeli eğitin ve dikkat ağırlıklarını görselleştirin.
 
 :begin_tab:`mxnet`
-[Discussions](https://discuss.d2l.ai/t/1598)
+[Tartışmalar](https://discuss.d2l.ai/t/1598)
 :end_tab:
 
 :begin_tab:`pytorch`
-[Discussions](https://discuss.d2l.ai/t/1599)
+[Tartışmalar](https://discuss.d2l.ai/t/1599)
 :end_tab:

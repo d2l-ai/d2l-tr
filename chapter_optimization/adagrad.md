@@ -208,13 +208,13 @@ d2l.train_concise_ch11(trainer, {'learning_rate' : 0.1}, data_iter)
 1. Öğrenme hızında daha az saldırgan bir sönme elde etmek için Adagrad'ı nasıl değiştirmeniz gerekir?
 
 :begin_tab:`mxnet`
-[Discussions](https://discuss.d2l.ai/t/355)
+[Tartışmalar](https://discuss.d2l.ai/t/355)
 :end_tab:
 
 :begin_tab:`pytorch`
-[Discussions](https://discuss.d2l.ai/t/1072)
+[Tartışmalar](https://discuss.d2l.ai/t/1072)
 :end_tab:
 
 :begin_tab:`tensorflow`
-[Discussions](https://discuss.d2l.ai/t/1073)
+[Tartışmalar](https://discuss.d2l.ai/t/1073)
 :end_tab:

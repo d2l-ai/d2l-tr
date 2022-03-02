@@ -11,7 +11,13 @@ api (application programming interface); uygulama programlama arayüzü
 
 array; dizilim
 
+assembly code; birleştirici kodu
+
+asynchronous; eşzamansız
+
 autoregressive; özbağlanımlı
+
+backend; arka işlemci
 
 backprop; geriyay
 
@@ -33,9 +39,13 @@ bus; veriyolu
 
 broadcast; yayınlama
 
+cache; ön bellek
+
 checksum; sağlama toplamı
 
 co-adaptation; birlikte-uyarlama
+
+combination; katışım
 
 computer vision; bilgisayarla görme
 
@@ -93,9 +103,15 @@ extrapolation; dışdeğerleme
 
 feature; öznitelik
 
-floating number; kayan virgüllü sayılar (gerçel sayı gösterimi)
+firmware; bellenim
+
+flag; bayrak
+
+floating number; kayan virgüllü sayı (gerçel sayı gösterimi)
 
 frame; çerçeve
+
+front-end; önişlemci
 
 full rank; tam kerteli
 
@@ -121,6 +137,8 @@ holdout; harici tutulan
 
 hybridization; melezleştirme
 
+imperative; buyuru
+
 imputation; itham
 
 indicator; gösterge, belirteç
@@ -132,6 +150,10 @@ initialization; ilkleme
 internal covariate shift; dahili eşdeğişken kayması
 
 interpolation; aradeğerleme
+
+interpreter; yorumlayıcı
+
+interrupt; işkesme
 
 invariance; değişmezlik
 
@@ -164,6 +186,8 @@ meta; başkalaşım
 minibatch; minigrup
 
 multi-head; çoklu-kafa
+
+multiplexer; çoklayıcı
 
 nontrivial; apaçık olmayan
 
@@ -223,6 +247,8 @@ residual networks; artık ağlar
 
 ridge regression; sırt regresyon
 
+ringbus; çember veriyolu
+
 robust; gürbüz
 
 quantization; nicemleme
@@ -261,6 +287,8 @@ stochastic; rasgele
 
 surrogate; vekil
 
+switch; anahtar
+
 symmetry; bakışım
 
 tabular; çizelge halindeki
@@ -270,6 +298,8 @@ tagging; etiketleme
 teacher forcing; öğretici zorlama
 
 tensor; gerey
+
+thread; iş parçacığı
 
 tutorial; öğreticiler
 

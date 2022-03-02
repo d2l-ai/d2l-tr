@@ -335,9 +335,9 @@ d2l.show_heatmaps(attention_weights[:, :, :, :len(engs[-1].split()) + 1],
 1. Toplayıcı dikkat puanlama işlevini ölçeklendirilmiş nokta çarpımı ile değiştirerek deneyi tekrarlayın. Eğitim verimliliğini nasıl etkiler?
 
 :begin_tab:`mxnet`
-[Discussions](https://discuss.d2l.ai/t/347)
+[Tartışmalar](https://discuss.d2l.ai/t/347)
 :end_tab:
 
 :begin_tab:`pytorch`
-[Discussions](https://discuss.d2l.ai/t/1065)
+[Tartışmalar](https://discuss.d2l.ai/t/1065)
 :end_tab:

@@ -332,9 +332,9 @@ attention(X, Y, Y, valid_lens, training=False).shape
 1. Çoklu kafa dikkatine dayalı eğitimli bir modelimiz olduğunu ve tahmin hızını artırmak için en az önemli dikkat kafalarını budamak istediğimizi varsayalım. Bir dikkat kafasının önemini ölçmek için deneyleri nasıl tasarlayabiliriz
 
 :begin_tab:`mxnet`
-[Discussions](https://discuss.d2l.ai/t/1634)
+[Tartışmalar](https://discuss.d2l.ai/t/1634)
 :end_tab:
 
 :begin_tab:`pytorch`
-[Discussions](https://discuss.d2l.ai/t/1635)
+[Tartışmalar](https://discuss.d2l.ai/t/1635)
 :end_tab:

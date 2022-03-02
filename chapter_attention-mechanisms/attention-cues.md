@@ -106,13 +106,13 @@ Sonraki bölümlerde, dikkat ağırlıklarını görselleştirmek için sıklık
 1. Rastgele bir $10 \times 10$'luk bir matris oluşturun ve her satırın geçerli bir olasılık dağılımı olduğundan emin olmak için softmaks işlemini kullanın. Çıktı dikkat ağırlıklarını görselleştirin.
 
 :begin_tab:`mxnet`
-[Discussions](https://discuss.d2l.ai/t/1596)
+[Tartışmalar](https://discuss.d2l.ai/t/1596)
 :end_tab:
 
 :begin_tab:`pytorch`
-[Discussions](https://discuss.d2l.ai/t/1592)
+[Tartışmalar](https://discuss.d2l.ai/t/1592)
 :end_tab:
 
 :begin_tab:`tensorflow`
-[Discussions](https://discuss.d2l.ai/t/1710)
+[Tartışmalar](https://discuss.d2l.ai/t/1710)
 :end_tab:

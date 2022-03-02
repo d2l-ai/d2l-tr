@@ -264,4 +264,4 @@ Derin öğrenme bağlamında dışbükey fonksiyonların temel amacı optimizasy
     1. $\lambda$'nin “doğru” değerini çok fazla deneme yanılma olmadan bulabilir misiniz?
 1. Bir dışbükey küme $\mathcal{X}$ ve iki vektör $\mathbf{x}$ ve $\mathbf{y}$ göz önüne alındığında, izdüşümlrin mesafeleri asla artırmadığını kanıtlayın, yani $\|\mathbf{x} - \mathbf{y}\| \geq \|\mathrm{Proj}_\mathcal{X}(\mathbf{x}) - \mathrm{Proj}_\mathcal{X}(\mathbf{y})\|$.
 
-[Discussions](https://discuss.d2l.ai/t/350)
+[Tartışmalar](https://discuss.d2l.ai/t/350)

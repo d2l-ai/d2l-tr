@@ -236,13 +236,13 @@ Bu, *değiştirmesiz* örneklemeye göreceli oranla artan bir varyansa ve azalan
 1. Bunu varsayalım: $f(x) = x^2 (1 + \sin x)$. $f$'te kaç tane yerel minimum vardır? $f$', en aza indirgemek için tüm yerel minimumları değerlendirmek zorunda kalacak şekilde değiştirebilir misiniz?
 
 :begin_tab:`mxnet`
-[Discussions](https://discuss.d2l.ai/t/352)
+[Tartışmalar](https://discuss.d2l.ai/t/352)
 :end_tab:
 
 :begin_tab:`pytorch`
-[Discussions](https://discuss.d2l.ai/t/497)
+[Tartışmalar](https://discuss.d2l.ai/t/497)
 :end_tab:
 
 :begin_tab:`tensorflow`
-[Discussions](https://discuss.d2l.ai/t/1067)
+[Tartışmalar](https://discuss.d2l.ai/t/1067)
 :end_tab:

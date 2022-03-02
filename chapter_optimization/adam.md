@@ -222,13 +222,13 @@ d2l.train_ch11(yogi, init_adam_states(feature_dim),
 1. Adam'ın ıraksadığında ve Yogi'nin yakınsadığı bir durum oluşturmaya mı çalışın?
 
 :begin_tab:`mxnet`
-[Discussions](https://discuss.d2l.ai/t/358)
+[Tartışmalar](https://discuss.d2l.ai/t/358)
 :end_tab:
 
 :begin_tab:`pytorch`
-[Discussions](https://discuss.d2l.ai/t/1078)
+[Tartışmalar](https://discuss.d2l.ai/t/1078)
 :end_tab:
 
 :begin_tab:`tensorflow`
-[Discussions](https://discuss.d2l.ai/t/1079)
+[Tartışmalar](https://discuss.d2l.ai/t/1079)
 :end_tab:

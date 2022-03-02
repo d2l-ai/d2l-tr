@@ -320,13 +320,13 @@ $\mathbf{R}$ yöneten yakınsama davranışını göstermek için $\mathbf{R}$ k
 1. Biz momentumlu rasgele gradyan inişi gerçekleştirdiğinizde ne değişir? Momentumlu minigrup rasgele gradyan inişi kullandığımızda ne olur? Ya parametrelerle deney yaparsak?
 
 :begin_tab:`mxnet`
-[Discussions](https://discuss.d2l.ai/t/354)
+[Tartışmalar](https://discuss.d2l.ai/t/354)
 :end_tab:
 
 :begin_tab:`pytorch`
-[Discussions](https://discuss.d2l.ai/t/1070)
+[Tartışmalar](https://discuss.d2l.ai/t/1070)
 :end_tab:
 
 :begin_tab:`tensorflow`
-[Discussions](https://discuss.d2l.ai/t/1071)
+[Tartışmalar](https://discuss.d2l.ai/t/1071)
 :end_tab:

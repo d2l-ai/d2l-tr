@@ -487,13 +487,13 @@ Isınma herhangi bir zamanlayıcıya uygulanabilir (sadece kosinüs değil). Ö�
 1. Optimizasyon ve örneklemeyi ilişkilendirebilir misiniz? :cite:`Welling.Teh.2011`'ten Rasgele Gradyan Langevin Dinamik sonuçlarını kullanarak başlayın.
 
 :begin_tab:`mxnet`
-[Discussions](https://discuss.d2l.ai/t/359)
+[Tartışmalar](https://discuss.d2l.ai/t/359)
 :end_tab:
 
 :begin_tab:`pytorch`
-[Discussions](https://discuss.d2l.ai/t/1080)
+[Tartışmalar](https://discuss.d2l.ai/t/1080)
 :end_tab:
 
 :begin_tab:`tensorflow`
-[Discussions](https://discuss.d2l.ai/t/1081)
+[Tartışmalar](https://discuss.d2l.ai/t/1081)
 :end_tab:

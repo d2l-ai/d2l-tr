@@ -1,46 +1,46 @@
-# Birden Fazla GPU Eğitimi
+# Birden Fazla GPU Eğitmek
 :label:`sec_multi_gpu`
 
-Şimdiye kadar modellerin CPU'lar ve GPU'lar üzerinde nasıl verimli bir şekilde eğitileceğini tartıştık. Hatta derin öğrenme çerçevelerinin :numref:`sec_auto_para`'da hesaplama ve iletişimi otomatik olarak nasıl paralelleştirmesine izin verdiğini gösterdik. Ayrıca :numref:`sec_use_gpu`'te `nvidia-smi` komutunu kullanarak bir bilgisayardaki mevcut tüm GPU'ların nasıl listeleneceğini de gösterdik. Konuşmadığımız şey derin öğrenme eğitiminin nasıl paralelleştirileceğidir. Bunun yerine, bir şekilde verileri birden fazla cihaza böleceğini ve çalışmasını sağlayacağını ima ettik. Mevcut bölüm ayrıntıları doldurur ve sıfırdan başladığınızda bir ağın paralel olarak nasıl eğitileceğini gösterir. Üst düzey API'ler işlevselliğinden nasıl yararlanılacağı ile ilgili ayrıntılar :numref:`sec_multi_gpu_concise` için kümelenir. :numref:`sec_minibatch_sgd`'te açıklananlar gibi minibatch stokastik degrade iniş algoritmalarına aşina olduğunuzu varsayıyoruz. 
+Şimdiye kadar modellerin CPU'lar ve GPU'lar üzerinde nasıl verimli bir şekilde eğitileceğini tartıştık. Hatta derin öğrenme çerçevelerinin :numref:`sec_auto_para`'da hesaplama ve iletişimi otomatik olarak nasıl paralelleştirmesine izin verdiğini gösterdik. Ayrıca :numref:`sec_use_gpu`'te `nvidia-smi` komutunu kullanarak bir bilgisayardaki mevcut tüm GPU'ların nasıl listeleneceğini de gösterdik. Konuşmadığımız şey derin öğrenme eğitiminin nasıl paralelleştirileceğidir. Bunun yerine, bir şekilde verilerin birden fazla cihaza bölüneceğini ve çalışmasının sağlanacağını ima ettik. Mevcut bölüm ayrıntıları doldurur ve sıfırdan başladığınızda bir ağın paralel olarak nasıl eğitileceğini gösterir. Üst düzey API'lerde işlevsellikten nasıl yararlanılacağına ilişkin ayrıntılar :numref:`sec_multi_gpu_concise`'te kümelendirilmiştir. :numref:`sec_minigrup_sgd`'te açıklananlar gibi minigrup rasgele gradyan iniş algoritmalarına aşina olduğunuzu varsayıyoruz. 
 
 ## Sorunu Bölmek
 
-Basit bir bilgisayar görme sorunu ve biraz arkaik bir ağ ile başlayalım, örn. birden fazla katman kıvrım, havuzlama ve sonunda muhtemelen birkaç tamamen bağlı katmanla. Yani, LeNet :cite:`LeCun.Bottou.Bengio.ea.1998` veya AlexNet :cite:`Krizhevsky.Sutskever.Hinton.2012`'e oldukça benzeyen bir ağ ile başlayalım. Birden fazla GPU (eğer bir masaüstü sunucusu ise 2, AWS g4dn.12xlarge örneğinde 4, p3.16xlarge üzerinde 8 veya p2.16xlarge üzerinde 16), aynı anda basit ve tekrarlanabilir tasarım seçimlerinden yararlanarak iyi bir hız elde edecek şekilde eğitimi bölümlemek istiyoruz. Sonuçta birden fazla GPU hem *bellek* hem de *hesaplama* yeteneğini artırır. Özetle, sınıflandırmak istediğimiz bir mini grup eğitim verisi göz önüne alındığında aşağıdaki seçeneklere sahibiz. 
+Basit bir bilgisayarla görme problemi ve biraz modası geçmiş bir ağ ile başlayalım, örn. birden fazla evrişim katmanı, ortaklama ve sonunda muhtemelen birkaç tam bağlı katman. Yani, LeNet :cite:`LeCun.Bottou.Bengio.ea.1998` veya AlexNet :cite:`Krizhevsky.Sutskever.Hinton.2012`'e oldukça benzeyen bir ağ ile başlayalım. Birden fazla GPU (eğer bir masaüstü sunucusu ise 2, AWS g4dn.12xlarge üzerinde 4, p3.16xlarge üzerinde 8 veya p2.16xlarge üzerinde 16), aynı anda basit ve tekrarlanabilir tasarım seçimlerinden yararlanarak iyi bir hız elde edecek şekilde eğitimi parçalara bölmek istiyoruz. Sonuçta birden fazla GPU hem *bellek* hem de *hesaplama* yeteneğini artırır. Özetle, sınıflandırmak istediğimiz bir minigrup eğitim verisi göz önüne alındığında aşağıdaki seçeneklere sahibiz. 
 
-İlk olarak, ağı birden fazla GPU arasında bölümleyebiliriz. Yani, her GPU belirli bir katmana akan verileri girdi olarak alır, verileri bir dizi sonraki katmanda işler ve daha sonra verileri bir sonraki GPU'ya gönderir. Bu, tek bir GPU'nun işleyebileceği şeylerle karşılaştırıldığında verileri daha büyük ağlarla işlememize olanak tanır. Ayrıca, GPU başına bellek ayak izi iyi kontrol edilebilir (toplam ağ ayak izinin bir kısmıdır). 
+İlk olarak, ağı birden fazla GPU arasında bölümleyebiliriz.Yani, her GPU belirli bir katmana akan verileri girdi olarak alır, sonraki birkaç katmanda verileri işler ve ardından verileri bir sonraki GPU'ya gönderir. Bu, tek bir GPU'nun işleyebileceği şeylerle karşılaştırıldığında verileri daha büyük ağlarla işlememize olanak tanır. Ayrıca, GPU başına bellek ayak izi iyi kontrol edilebilir (toplam ağ ayak izinin bir kısmıdır). 
 
-Ancak, katmanlar arasındaki arabirim (ve dolayısıyla GPU'lar) sıkı senkronizasyon gerektirir. Bu, özellikle hesaplamalı iş yükleri katmanlar arasında düzgün bir şekilde eşleştirilmemişse zor olabilir. Sorun çok sayıda GPU için daha da şiddetlenir. Katmanlar arasındaki arabirim, etkinleştirme ve degradeler gibi büyük miktarda veri aktarımı gerektirir. Bu, GPU veri yollarının bant genişliğini bunaltabilir. Ayrıca, bilgi işlem yoğun, ancak sıralı işlemler bölümleme için önemsiz değildir. Bu konuda en iyi çaba için örneğin :cite:`Mirhoseini.Pham.Le.ea.2017`'e bakın. Zor bir sorun olmaya devam ediyor ve önemsiz olmayan problemlerde iyi (doğrusal) ölçekleme elde etmenin mümkün olup olmadığı belirsizdir. Birden fazla GPU'ları birbirine zincirlemek için mükemmel çerçeve veya işletim sistemi desteği olmadığı sürece bunu önermiyoruz. 
+Ancak, katmanlar arasındaki arayüz (ve dolayısıyla GPU'lar) sıkı eşzamanlama gerektirir. Bu, özellikle hesaplamalı iş yükleri katmanlar arasında düzgün bir şekilde eşleştirilmemişse zor olabilir. Sorun çok sayıda GPU için daha da şiddetlenir. Katmanlar arasındaki arayüz, etkinleştirme ve gradyanlar gibi büyük miktarda veri aktarımı gerektirir. Bu, GPU veri yollarının bant genişliğini bunaltabilir. Ayrıca, yoğun işlem gerektiren ancak sıralı işlemler, bölümleme açısından önemsizdir. Bu konuda en iyi girişim için örneğin :cite:`Mirhoseini.Pham.Le.ea.2017`'e bakın. Zor bir sorun olmaya devam ediyor ve önemsiz olmayan problemlerde iyi (doğrusal) ölçeklendirme elde etmenin mümkün olup olmadığı belirsizdir. Birden fazla GPU'ları birbirine zincirlemek için mükemmel bir çerçeve veya işletim sistemi desteği olmadığı sürece bunu önermiyoruz. 
 
-İkincisi, işi katman olarak bölüşebiliriz. Örneğin, tek bir GPU'da 64 kanalı hesaplamak yerine, sorunu her biri 16 kanal için veri üreten 4 GPU'ya bölebiliriz. Aynı şekilde, tam bağlı bir katman için çıkış birimlerinin sayısını bölebiliriz. :numref:`fig_alexnet_original` (:cite:`Krizhevsky.Sutskever.Hinton.2012`'ten alınmıştır), bu stratejinin çok küçük bir bellek ayak izine sahip GPU'larla uğraşmak için kullanıldığı bu tasarımı göstermektedir (aynı anda 2 GB). Bu, kanalların (veya birim) sayısının çok küçük olmaması koşuluyla hesaplama açısından iyi ölçeklendirmeye izin verir. Ayrıca, kullanılabilir bellek doğrusal ölçeklendiğinden, birden fazla GPU giderek daha büyük ağları işleyebilir. 
+İkincisi, işi katmanlara bölüşebiliriz. Örneğin, tek bir GPU'da 64 kanalı hesaplamak yerine, sorunu her biri 16 kanal için veri üreten 4 GPU'ya bölebiliriz. Aynı şekilde, tam bağlı bir katman için çıktı birimlerinin sayısını bölebiliriz. :numref:`fig_alexnet_original` (:cite:`Krizhevsky.Sutskever.Hinton.2012`'ten alınmıştır), bu stratejinin çok küçük bir bellek ayak izine sahip GPU'larla uğraşmak için kullanıldığı bu tasarımı göstermektedir (aynı anda 2 GB). Bu, kanalların (veya birimlerin) sayısının çok küçük olmaması koşuluyla hesaplama açısından iyi ölçeklendirmeye izin verir. Ayrıca, kullanılabilir bellek doğrusal ölçeklendiğinden, birden fazla GPU gitgide artan daha büyük ağları işleyebilir. 
 
-![Model parallelism in the original AlexNet design due to limited GPU memory.](../img/alexnet-original.svg)
+![Sınırlı GPU belleği nedeniyle orijinal AlexNet tasarımında model paralelliği.](../img/alexnet-original.svg)
 :label:`fig_alexnet_original`
 
-Bununla birlikte, her katman diğer tüm katmanların sonuçlarına bağlı olduğundan, çok büyük* senkronizasyon veya bariyer işlemlerine ihtiyacımız var. Dahası, aktarılması gereken veri miktarı, katmanları GPU'lara dağıtırken potansiyel olarak daha büyüktür. Bu nedenle, bant genişliği maliyeti ve karmaşıklığı nedeniyle bu yaklaşımı önermiyoruz. 
+Bununla birlikte, her katman diğer tüm katmanların sonuçlarına bağlı olduğundan, *çok büyük* eşzamanlama veya bariyer işlemlerine ihtiyacımız var. Ayrıca, aktarılması gereken veri miktarı, GPU'lar arasındaki katmanlara dağıtırken olduğundan daha büyük olabilir. Bu nedenle, bant genişliği maliyeti ve karmaşıklığı nedeniyle bu yaklaşımı önermiyoruz. 
 
-Son olarak, verileri birden fazla GPU arasında bölümlendirebiliriz. Bu şekilde tüm GPU'lar farklı gözlemlerde de olsa aynı tür çalışmaları gerçekleştirir. Degradeler, eğitim verilerinin her mini toplu işleminden sonra GPU'lar arasında toplanır. Bu en basit yaklaşımdır ve her durumda uygulanabilir. Sadece her minibatch işleminden sonra senkronize etmemiz gerekiyor. Yani, diğerleri hala hesaplanırken degrade parametreleri alışverişinde başlamak son derece arzu edilir. Dahası, daha fazla sayıda GPU daha büyük mini batch boyutlarına yol açarak eğitim verimliliğini arttırır. Ancak, daha fazla GPU eklemek daha büyük modeller eğitmemize izin vermez. 
+Son olarak, verileri birden fazla GPU arasında bölümlendirebiliriz. Bu şekilde tüm GPU'lar farklı gözlemlerde de olsa aynı tür çalışmaları gerçekleştirir. Gradyanlar, eğitim verilerinin her minigrup işleminden sonra GPU'lar arasında toplanır. Bu en basit yaklaşımdır ve her durumda uygulanabilir. Sadece her minigrup işleminden sonra eşzamanlı hale getirmemiz gerekiyor. Yani, diğerleri hala hesaplanırken gradyan parametreleri alışverişine başlamak son derece arzu edilir. Dahası, daha fazla sayıda GPU daha büyük minigrup boyutlarına yol açarak eğitim verimliliğini arttırır. Ancak, daha fazla GPU eklemek daha büyük modeller eğitmemize izin vermez. 
 
-![Parallelization on multiple GPUs. From left to right: original problem, network partitioning, layerwise partitioning, data parallelism.](../img/splitting.svg)
+![Çoklu GPU'larda paralelleştirme. Soldan sağa: orijinal problem, ağ bölümleme, katman bazında bölümleme, veri paralelliği.](../img/splitting.svg)
 :label:`fig_splitting`
 
-Birden fazla GPU üzerinde farklı paralelleştirme yollarının karşılaştırılması :numref:`fig_splitting`'te tasvir edilmiştir. Büyük ve büyük, veri paralelliği, yeterince büyük belleğe sahip GPU'lara erişebilmemiz koşuluyla devam etmenin en uygun yoludur. Dağıtılmış eğitim için bölümleme ayrıntılı bir açıklaması için :cite:`Li.Andersen.Park.ea.2014` ayrıca bkz. GPU belleği derin öğrenmenin ilk günlerinde bir sorundu. Şimdiye kadar bu sorun en sıradışı durumlar dışında herkes için çözülmüştür. Biz aşağıdaki veri paralellik odaklanmak. 
+Birden fazla GPU üzerinde farklı paralelleştirme yollarının karşılaştırılması :numref:`fig_splitting`'te tasvir edilmiştir. Yeterince büyük belleğe sahip GPU'lara erişimimiz olması koşuluyla, genel olarak veri paralelliği ilerlemenin en uygun yoludur. Dağıtılmış eğitim için bölümleme ayrıntılı bir açıklaması için  ayrıca bkz. :cite:`Li.Andersen.Park.ea.2014`. GPU belleği derin öğrenmenin ilk günlerinde bir sorundu. Şimdiye kadar bu sorun en sıradışı durumlar dışında herkes için çözülmüştür. Aşağıda veri paralelliğine odaklanıyoruz. 
 
-## Veri Paralelliği
+## Veri Paralelleştirme
 
-Bir makinede $k$ GPU olduğunu varsayalım. Eğitimli model göz önüne alındığında, her GPU, GPU'larda parametre değerleri aynı ve senkronize olmasına rağmen, bağımsız olarak tam bir model parametresi kümesini koruyacaktır. Örnek olarak, :numref:`fig_data_parallel` $k=2$ olduğunda veri paralelliği ile eğitim göstermektedir. 
+Bir makinede $k$ tane GPU olduğunu varsayalım. Eğitilecek model göz önüne alındığında, GPU'lardaki parametre değerleri aynı ve eşzamanlı olsa da, her GPU bağımsız olarak eksiksiz bir model parametreleri kümesini koruyacaktır. Örnek olarak, :numref:`fig_data_parallel` $k=2$ olduğunda veri paralelleştirme ile eğitimi göstermektedir. 
 
-![Calculation of minibatch stochastic gradient descent using data parallelism on two GPUs.](../img/data-parallel.svg)
+![İki GPU'da veri paralelliği kullanılarak minigrup rasgele gradyan inişinin hesaplanması.](../img/data-parallel.svg)
 :label:`fig_data_parallel`
 
 Genel olarak, eğitim aşağıdaki gibi devam eder: 
 
-* Eğitimin herhangi bir yinelemesinde, rastgele bir minibatch verildiğinde, partideki örnekleri $k$ bölüme ayırır ve GPU'lara eşit olarak dağıtırız.
-* Her GPU, atandığı minibatch alt kümesine göre model parametrelerinin kaybını ve degradelerini hesaplar.
-* $k$ GPU'larının her birinin yerel degradeleri, geçerli mini toplu iş stokastik degradeyi elde etmek için toplanır.
-* Toplam degrade her GPU'ya yeniden dağıtılır.
-* Her GPU, koruduğu model parametrelerinin tamamını güncelleştirmek için bu minibatch stokastik degradeyi kullanır.
+* Eğitimin herhangi bir yinelemesinde, rastgele bir minigrup verildiğinde, partideki örnekleri $k$ tane bölüme ayırır ve GPU'lara eşit olarak dağıtırız.
+* Her GPU, atandığı minigrup altkümesine göre model parametrelerinin kaybını ve gradyanlarını hesaplar.
+* $k$ tane GPU'nun her birinin yerel gradyanları, geçerli minigrup rasgele gradyanı elde etmek için toplanır.
+* Toplam gradyan her GPU'ya yeniden dağıtılır.
+* Her GPU, koruduğu model parametrelerinin tamamını güncelleştirmek için bu minigrup rasgele gradyanı kullanır.
 
-Uygulamada $k$ GPU'larda antrenman yaparken minibatch boyutunu $k$ kat artırdığımızı* her GPU'nun sadece tek bir GPU üzerinde eğitim yapıyormuşuz gibi aynı miktarda iş yapmasını sağlar. 16 GPU sunucuda bu minibatch boyutunu önemli ölçüde artırabilir ve öğrenme oranını buna göre artırmamız gerekebilir. Ayrıca, :numref:`sec_batch_norm`'teki toplu normalleştirmenin, örneğin GPU başına ayrı bir toplu normalleştirme katsayısı tutarak ayarlanması gerektiğini unutmayın. Aşağıda, çoklu GPU eğitimini göstermek için bir oyuncak ağı kullanacağız.
+Pratikte, $k$ tane GPU üzerinde eğitim yaparken minigrup boyutunu $k$-kat *artırdığımızı*, böylece her GPU'nun yalnızca tek bir GPU üzerinde eğitim yapıyormuşuz gibi aynı miktarda iş yapması gerektiğini unutmayın. 16 GPU'lu bir sunucuda bu, minigrup boyutunu önemli ölçüde artırabilir ve buna göre öğrenme oranını artırmamız gerekebilir. Ayrıca, :numref:`sec_batch_norm` içindeki toplu normalleştirmenin, örneğin GPU başına ayrı bir toplu normalleştirme katsayısı tutularak ayarlanması gerektiğini unutmayın. Aşağıda, çoklu GPU eğitimini göstermek için basit bir ağ kullanacağız.
 
 ```{.python .input}
 %matplotlib inline
@@ -58,9 +58,9 @@ from torch import nn
 from torch.nn import functional as F
 ```
 
-## [**Bir Oyuncak Ağı**]
+## [**Basit Bir Örnek Ağ**]
 
-LeNet'i :numref:`sec_lenet`'te tanıtıldığı gibi kullanıyoruz (hafif modifikasyonlar ile). Parametre değişimini ve senkronizasyonu ayrıntılı olarak göstermek için sıfırdan tanımlıyoruz.
+LeNet'i :numref:`sec_lenet`'te tanıtıldığı gibi kullanıyoruz (hafif değiştirmeler ile). Parametre değişimini ve eşzamanlılığı ayrıntılı olarak göstermek için sıfırdan tanımlıyoruz.
 
 ```{.python .input}
 # Initialize model parameters
@@ -129,9 +129,9 @@ def lenet(X, params):
 loss = nn.CrossEntropyLoss(reduction='none')
 ```
 
-## Veri Senkronizasyonu
+## Veri Eşzamanlama
 
-Verimli çoklu GPU eğitimi için iki temel operasyona ihtiyacımız var. Öncelikle [**birden fazla cihaza parametre listesini dağıtabilir**] ve degradeleri (`get_params`) ekleme yeteneğine sahip olmamız gerekir. Parametreler olmadan ağı bir GPU üzerinde değerlendirmek imkansızdır. İkincisi, birden fazla cihazda parametreleri toplama yeteneğine ihtiyacımız var, yani bir `allreduce` işlevine ihtiyacımız var.
+Verimli çoklu GPU eğitimi için iki temel işleme ihtiyacımız var. Öncelikle [**birden fazla cihaza parametre listesini dağıtabilme**] ve gradyanları (`get_params`) ekleme yeteneğine sahip olmamız gerekir. Parametreler olmadan ağı bir GPU üzerinde değerlendirmek imkansızdır. İkincisi, birden fazla cihazda parametreleri toplama yeteneğine ihtiyacımız var, yani bir `allreduce` işlevine ihtiyacımız var.
 
 ```{.python .input}
 def get_params(params, device):
@@ -159,7 +159,7 @@ print('b1 weight:', new_params[1])
 print('b1 grad:', new_params[1].grad)
 ```
 
-Henüz herhangi bir hesaplama yapmadığımız için, önyargı parametresi ile ilgili degrade hala sıfırdır. Şimdi birden fazla GPU arasında dağıtılmış bir vektör olduğunu varsayalım. Aşağıdaki [**`allreduce` işlevi tüm vektörleri ekler ve sonucu tüm GPU'lara geri gönderir**]. Bunun işe yaraması için verileri sonuçları toplayan cihaza kopyalamamız gerektiğini unutmayın.
+Henüz herhangi bir hesaplama yapmadığımız için, ek girdi parametresi ile ilgili gradyan hala sıfırdır. Şimdi birden fazla GPU arasında dağıtılmış bir vektör olduğunu varsayalım. Aşağıdaki [**`allreduce` işlevi tüm vektörleri toplar ve sonucu tüm GPU'lara geri gönderir**]. Bunun işe yaraması için verileri sonuçları toplayan cihaza kopyalamamız gerektiğini unutmayın.
 
 ```{.python .input}
 def allreduce(data):
@@ -197,7 +197,7 @@ print('after allreduce:\n', data[0], '\n', data[1])
 
 ## Veri Dağıtımı
 
-[**Bir minibatch birden çok GPU boyunca eşit olarak dağıtmak için**] basit bir yardımcı program işlevine ihtiyacımız var. Örneğin, iki GPU'da verilerin yarısının GPU'lardan birine kopyalanmasını istiyoruz. Daha kullanışlı ve daha özlü olduğu için, $4 \times 5$ matrisinde denemek için derin öğrenme çerçevesinden yerleşik işlevi kullanıyoruz.
+[**Bir minigrubu birden çok GPU boyunca eşit olarak dağıtmak için**] basit bir yardımcı işleve ihtiyacımız vardır. Örneğin, iki GPU'da verilerin yarısının GPU'lardan birine kopyalanmasını istiyoruz. Daha kullanışlı ve daha özlü olduğu için, $4 \times 5$ matrisinde denemek için derin öğrenme çerçevesindeki yerleşik işlevi kullanıyoruz.
 
 ```{.python .input}
 data = np.arange(20).reshape(4, 5)
@@ -218,7 +218,7 @@ print('load into', devices)
 print('output:', split)
 ```
 
-Daha sonra yeniden kullanım için hem verileri hem de etiketleri bölen bir `split_batch` işlevi tanımlıyoruz.
+Daha sonra yeniden kullanım için hem verileri hem de etiketleri parçalara bölen bir `split_batch` işlevi tanımlıyoruz.
 
 ```{.python .input}
 #@save
@@ -241,7 +241,7 @@ def split_batch(X, y, devices):
 
 ## Eğitim
 
-Artık [**multi-GPU eğitimini tek bir minibatch'da**] uygulayabiliriz. Uygulaması öncelikle bu bölümde açıklanan veri paralellik yaklaşımına dayanmaktadır. Verileri birden fazla GPU arasında senkronize etmek için az önce tartıştığımız `allreduce` ve `split_and_load` yardımcı fonksiyonlarını kullanacağız. Paralellik elde etmek için herhangi bir özel kod yazmamıza gerek olmadığını unutmayın. Hesaplamalı grafiğin bir minibatch içindeki cihazlar arasında herhangi bir bağımlılığı olmadığından, paralel olarak *otomatik* yürütülür.
+Artık [**çoklu-GPU eğitimini tek bir minigrupta**] uygulayabiliriz. Uygulaması öncelikle bu bölümde açıklanan veriyi paralelleştirme yaklaşımına dayanmaktadır. Verileri birden fazla GPU arasında senkronize etmek için az önce tartıştığımız `allreduce` ve `split_and_load` yardımcı fonksiyonlarını kullanacağız. Paralellik elde etmek için herhangi bir özel kod yazmamıza gerek olmadığını unutmayın. Hesaplama çizgesinin bir minigrup içindeki cihazlar arasında herhangi bir bağımlılığı olmadığından, paralel olarak *otomatik* yürütülür.
 
 ```{.python .input}
 def train_batch(X, y, device_params, devices, lr):
@@ -279,7 +279,7 @@ def train_batch(X, y, device_params, devices, lr):
         d2l.sgd(param, lr, X.shape[0]) # Here, we use a full-size batch
 ```
 
-Şimdi [**eğitim fonksiyonu**] tanımlayabiliriz. Önceki bölümlerde kullanılanlardan biraz farklıdır: GPU'ları tahsis etmemiz ve tüm model parametrelerini tüm cihazlara kopyalamalıyız. Açıkçası her parti birden çok GPU ile başa çıkmak için `train_batch` işlevi kullanılarak işlenir. Kolaylık sağlamak (ve kodun özlü olması) için doğruluğu tek bir GPU üzerinde hesaplıyoruz, ancak diğer GPU'lar boşta olduğundan bu *verimsiz*.
+Şimdi [**eğitim fonksiyonunu**] tanımlayabiliriz. Önceki bölümlerde kullanılanlardan biraz farklıdır: GPU'ları tahsis etmeliyiz ve tüm model parametrelerini tüm cihazlara kopyalamalıyız. Açıkçası her grup birden çok GPU ile başa çıkmak için `train_batch` işlevi kullanılarak işlenir. Kolaylık sağlamak (ve kodun özlü olması) için doğruluğu tek bir GPU üzerinde hesaplıyoruz, ancak diğer GPU'lar boşta olduğundan bu *verimsiz*dir.
 
 ```{.python .input}
 def train(num_gpus, batch_size, lr):
@@ -328,14 +328,14 @@ def train(num_gpus, batch_size, lr):
           f'on {str(devices)}')
 ```
 
-Bunun ne kadar iyi çalıştığını görelim [**tek bir GPU**]. İlk olarak 256 toplu boyutunu ve 0,2 öğrenme oranını kullanıyoruz.
+Bunun [**tek bir GPU**] üzerinde ne kadar iyi çalıştığını görelim. İlk olarak 256'lık iş boyutunu ve 0.2 öğrenme oranını kullanıyoruz.
 
 ```{.python .input}
 #@tab all
 train(num_gpus=1, batch_size=256, lr=0.2)
 ```
 
-Toplu iş boyutunu ve öğrenme oranını değişmeden tutarak ve [**GPU sayısını 2 olarak artırarak**], test doğruluğunun önceki deneye kıyasla kabaca aynı kaldığını görebiliriz. Optimizasyon algoritmaları açısından aynıdır. Ne yazık ki burada kazanılacak anlamlı bir hız yok: model sadece çok küçük; dahası, çoklu GPU eğitimini uygulamaya yönelik biraz sofistike yaklaşımımızın önemli Python yükünden muzdarip olduğu küçük bir veri kümesine sahibiz. Daha karmaşık modellerle ve daha gelişmiş paralelleşme yollarıyla karşılaşacağız. Bize Moda-MNIST için yine ne olacağını görelim.
+Toplu iş boyutunu ve öğrenme oranını değişmeden tutarak ve [**GPU sayısını 2'ye artırarak**], test doğruluğunun önceki deneye kıyasla kabaca aynı kaldığını görebiliriz. Optimizasyon algoritmaları açısından aynıdırlar. Ne yazık ki burada kazanılacak anlamlı bir hız yok: Model basitçe çok küçük; dahası, çoklu GPU eğitimini uygulamaya yönelik biraz gelişmiş yaklaşımımızın önemli Python ek yükünden muzdarip olduğu küçük bir veri kümesine sahibiz. Daha karmaşık modellerle ve daha gelişmiş paralelleşme yollarıyla karşılaşacağız. Fashion-MNIST için yine ne olacağını görelim.
 
 ```{.python .input}
 #@tab all
@@ -344,22 +344,22 @@ train(num_gpus=2, batch_size=256, lr=0.2)
 
 ## Özet
 
-* Derin ağ eğitimini birden fazla GPU üzerinden bölmenin birden çok yolu vardır. Katmanlar arasında, katmanlar arasında veya veriler arasında bölebiliriz. Eski ikisi sıkı bir şekilde koreografiye edilmiş veri aktarımlarına ihtiyaç duyar. Veri paralelliği en basit stratejidir.
-* Veri paralel eğitimi basittir. Bununla birlikte, verimli olması için etkili mini batch boyutunu artırır.
-* Veri paralelliğinde veriler birden çok GPU'ya bölünür; burada her GPU'nun kendi ileri ve geri çalışmasını yürütür ve daha sonra degradeler toplanır ve sonuçlar GPU'lara geri yayınlanır.
-* Daha büyük minibüsler için biraz daha yüksek öğrenme oranları kullanabiliriz.
+* Derin ağ eğitimini birden fazla GPU üzerinden bölmenin birden çok yolu vardır. Katmanlar arasında, karşılıklı katmanlar arasında veya veriler arasında bölebiliriz. İlk ikisi, sıkı bir şekilde koreografisi yapılmış veri aktarımları gerektirir. Veri paralelliği en basit stratejidir.
+* Veri paralel eğitimi basittir. Bununla birlikte, bu, verimli olması için etkili minigrup boyutunu artırır.
+* Veri paralelliğinde veriler birden çok GPU'ya bölünür; burada her GPU'nun kendi ileri ve geri işlemlerini yürütür ve daha sonra gradyanlar toplanır ve sonuçlar GPU'lara geri yayınlanır.
+* Daha büyük minigruplar için biraz daha yüksek öğrenme oranları kullanabiliriz.
 
-## Egzersizler
+## Alıştırmalar
 
-1. $k$ GPU'larda eğitim yaparken, minibatch boyutunu $b$'dan $k \cdot b$'e değiştirin, yani GPU sayısına göre ölçeklendirin.
+1. $k$ tane GPU'da eğitim yaparken, minigrup boyutunu $b$'den $k \cdot b$'e değiştirin, yani GPU sayısına göre ölçeklendirin.
 1. Farklı öğrenme oranları için doğruluğu karşılaştırın. GPU sayısıyla nasıl ölçeklenir?
-1. Farklı GPU'larda farklı parametreleri toplayan daha verimli bir `allreduce` işlevini uygulamak? Neden daha verimli?
+1. Farklı GPU'larda farklı parametreleri toplayan daha verimli bir `allreduce` işlevini uygulayın. Neden daha verimlidir?
 1. Çoklu GPU test doğruluğu hesaplamasını gerçekleştirin.
 
 :begin_tab:`mxnet`
-[Discussions](https://discuss.d2l.ai/t/364)
+[Tartışmalar](https://discuss.d2l.ai/t/364)
 :end_tab:
 
 :begin_tab:`pytorch`
-[Discussions](https://discuss.d2l.ai/t/1669)
+[Tartışmalar](https://discuss.d2l.ai/t/1669)
 :end_tab:

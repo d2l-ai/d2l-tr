@@ -907,9 +907,9 @@ Dönüştürücü mimarisi başlangıçta diziden-diziye öğrenme için öneril
 1. CNN kullanmadan imge sınıflandırma işleri için dönüştürücü tabanlı modelleri nasıl tasarlayabiliriz? İpucu: Görüntü dönüştürücüye başvurabilirsiniz :cite:`Dosovitskiy.Beyer.Kolesnikov.ea.2021`
 
 :begin_tab:`mxnet`
-[Discussions](https://discuss.d2l.ai/t/348)
+[Tartışmalar](https://discuss.d2l.ai/t/348)
 :end_tab:
 
 :begin_tab:`pytorch`
-[Discussions](https://discuss.d2l.ai/t/1066)
+[Tartışmalar](https://discuss.d2l.ai/t/1066)
 :end_tab:
