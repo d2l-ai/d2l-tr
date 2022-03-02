@@ -36,67 +36,67 @@ Modern derin öğrenme donanımı üzerinde eşzamanlama söz konusu olduğunda 
 En uygun eşzamanlama stratejisinin ağı iki halkaya ayırmak ve bunları doğrudan verileri senkronize etmek için kullanmak olduğu ortaya çıkıyor :cite:`Wang.Li.Liberty.ea.2018`. :numref:`fig_nvlink_twoloop`, ağın çift NVLink bant genişliği ile bir (1-2-3-4-5-6-7-8-1) halkasına ve düzenli bant genişliği ile bir (1-4-6-3-5-8-2-7-1) halkasına ayrılabileceğini gösterir. Bu durumda verimli bir eşzamanlama protokolü tasarlamak önemsizdir. 
 
 
-![Decomposition of the NVLink network into two rings.](../img/nvlink-twoloop.svg)
+![NVLink ağının iki halkaya ayrıştırılması.](../img/nvlink-twoloop.svg)
 :label:`fig_nvlink_twoloop`
 
-Aşağıdaki düşünce deneyini düşünün: $n$ bilgi işlem düğümlerinin (veya GPU'ların) bir halka göz önüne alındığında, ilk düğümden ikinci düğüme degradeler gönderebiliriz. Orada yerel degradeye eklenir ve üçüncü düğüme gönderilir, vb. $n-1$ adımından sonra toplam degrade son ziyaret edilen düğümde bulunabilir. Yani, degradeleri toplama zamanı, düğüm sayısı ile doğrusal olarak büyür. Ama bunu yaparsak algoritma oldukça verimsiz olur. Sonuçta, herhangi bir zamanda iletişim kuran düğümlerden sadece biri vardır. Eğer degradeleri $n$ parçalarına ayırırsak ve $i$ numaralı düğümden başlayarak $i$ yığın senkronize etmeye başladıysak ne olur? Her yığın boyutu $1/n$ olduğundan toplam süre artık $(n-1)/n \approx 1$'dir. Başka bir deyişle, degradeleri birleştirmek için harcanan süre*, yüzüğün boyutunu arttırdığımızdan* büyümez. Bu oldukça şaşırtıcı bir sonuçtur. :numref:`fig_ringsync`, $n=4$ düğümlerinde adımların sırasını göstermektedir. 
+Aşağıdaki düşünce deneyini düşünün: $n$ tane bilgi işlem düğümlü (veya GPU'lu) bir halka göz önüne alındığında, ilk düğümden ikinci düğüme gradyanlar gönderebiliriz. Orada yerel gradyana eklenir ve üçüncü düğüme gönderilir, vb. $n-1$ adımından sonra toplam gradyan son ziyaret edilen düğümde bulunabilir. Yani, gradyanları toplama zamanı, düğüm sayısı ile doğrusal olarak büyür. Ama bunu yaparsak algoritma oldukça verimsiz olur. Sonuçta, herhangi bir zamanda iletişim kuran sadece bir düğüm vardır. Gradyanları $n$ parçaya bölersek ve $i$ düğümünden başlayarak $i$ öbeğini senkronize etmeye başlarsak ne olur? Her yığın boyutu $1/n$ olduğundan toplam süre artık $(n-1)/n \approx 1$'dir. Başka bir deyişle, gradyanları birleştirmek için harcanan süre, halkanın boyutunu arttırdığımızdan *büyümez*. Bu oldukça şaşırtıcı bir sonuçtur. :numref:`fig_ringsync`, $n=4$ düğümün adımların sırasını göstermektedir. 
 
-![Ring synchronization across 4 nodes. Each node starts transmitting parts of gradients to its left neighbor until the assembled gradient can be found in its right neighbor.](../img/ringsync.svg)
+![4 düğüm arasında halka senkronizasyonu. Her düğüm, birleştirilmiş gradyan sağ komşusunda bulunana kadar gradyan parçalarını sol komşusuna iletmeye başlar.](../img/ringsync.svg)
 :label:`fig_ringsync`
 
-8 V100 GPU'da 160 MB senkronize etme örneğini kullanırsak yaklaşık $2 \cdot 160 \mathrm{MB} / (3 \cdot 18 \mathrm{GB/s}) \approx 6 \mathrm{ms}$'e ulaşırız. Bu, şu anda 8 GPU kullanıyor olsak da PCIe veri yolu kullanmaktan daha iyidir. Pratikte bu sayıların biraz daha kötü olduğunu unutmayın, çünkü derin öğrenme çerçeveleri genellikle iletişimi büyük patlama transferlerine monte edememektedir.  
+8 V100 GPU'da 160 MB senkronize etme örneğini kullanırsak yaklaşık $2 \cdot 160 \mathrm{MB} / (3 \cdot 18 \mathrm{GB/s}) \approx 6 \mathrm{ms}$'e ulaşırız. Bu, şu anda 8 GPU kullanıyor olsak da PCIe veri yolu kullanmaktan daha iyidir. Pratikte bu sayıların biraz daha kötü olduğunu unutmayın, çünkü derin öğrenme çerçeveleri genellikle iletişimi büyük çoğuşma transferlerinde birleştirmeyi başaramaz.
 
-Halka senkronizasyonunun diğer eşitleme algoritmalarından temelde farklı olduğu ortak bir yanlış anlaşılma olduğunu unutmayın. Tek fark, senkronizasyon yolunun basit bir ağaçla karşılaştırıldığında biraz daha ayrıntılı olmasıdır. 
+Halka eşzamanlama diğer eşzamanlama algoritmalarından temelde farklı olmasının yaygın bir yanlış anlaşılma olduğunu unutmayın. Tek fark, eşzamanlama yolunun basit bir ağaçla karşılaştırıldığında biraz daha ayrıntılı olmasıdır. 
 
 ## Çoklu Makine Eğitimi
 
-Birden fazla makinede dağıtılmış eğitim daha da zorluk getirir: Bazı durumlarda daha yavaş bir büyüklük sırası üzerinde olabilen nispeten daha düşük bant genişliğindeki bir yapıya bağlı sunucularla iletişim kurmamız gerekir. Cihazlar arasında senkronizasyon zor. Sonuçta, eğitim kodunu çalıştıran farklı makineler ustaca farklı bir hıza sahip olacaktır. Bu nedenle senkron dağıtılmış optimizasyonu kullanmak istiyorsak bunları senkronize etmeliyiz. :numref:`fig_ps_multimachine` dağıtılmış paralel eğitimin nasıl gerçekleştiğini göstermektedir. 
+Birden fazla makinede dağıtılmış eğitim ek bir zorluk getirir: Yalnızca, bazı durumlarda çok daha yavaş olabilen, nispeten daha düşük bant genişliğine sahip bir yapı üzerinden bağlanan sunucularla iletişim kurmamız gerekiyor. Cihazlar arasında eşzamanlama çetrefillidir. Sonuçta, eğitim kodu çalıştıran farklı makineler çok farklı hızlara sahip olacaktır. Bu nedenle eşzamanlı dağıtılmış optimizasyonu kullanmak istiyorsak bunları senkronize etmeliyiz. :numref:`fig_ps_multimachine` dağıtılmış paralel eğitimin nasıl gerçekleştiğini göstermektedir. 
 
-1. Her makinede bir (farklı) veri grubu okunur, birden fazla GPU'ya bölünür ve GPU belleğine aktarılır. Tahminler ve degradeler her GPU toplu işleminde ayrı ayrı hesaplanır.
-2. Tüm yerel GPU'lardan gelen degradeler tek bir GPU'da toplanır (veya bunların bir kısmı farklı GPU'lar üzerinde toplanır).
-3. Degradeler CPU'lara gönderilir.
-4. CPU'lar degradeleri tüm degradeleri toplayan bir merkezi parametre sunucusuna gönderir.
-5. Toplam degradeler daha sonra parametreleri güncelleştirmek için kullanılır ve güncelleştirilmiş parametreler tek tek CPU'lara geri yayınlanır.
+1. Her makinede bir (farklı) veri grubu okunur, birden fazla GPU'ya bölünür ve GPU belleğine aktarılır. Tahminler ve gradyanlar her GPU toplu işleminde ayrı ayrı hesaplanır.
+2. Tüm yerel GPU'lardan gelen gradyanlar tek bir GPU'da toplanır (veya bunların bir kısmı farklı GPU'lar üzerinde toplanır).
+3. Gradyanlar CPU'lara gönderilir.
+4. CPU'lar gradyanları tüm gradyanları toplayan bir merkezi parametre sunucusuna gönderir.
+5. Toplanan gradyanlar daha sonra parametreleri güncelleştirmek için kullanılır ve güncelleştirilmiş parametreler tek tek CPU'lara geri yayınlanır.
 6. Bilgiler bir (veya birden çok) GPU'ya gönderilir.
 7. Güncelleştirilmiş parametreler tüm GPU'lara yayılır.
 
-![Multi-machine multi-GPU distributed parallel training.](../img/ps-multimachine.svg)
+![Çoklu makine çoklu GPU dağıtılmış paralel eğitim.](../img/ps-multimachine.svg)
 :label:`fig_ps_multimachine`
 
-Bu operasyonların her biri oldukça basit görünüyor. Ve aslında, tek bir makine ile* verimli bir şekilde gerçekleştirilebilirler. Birden fazla makineye baktığımızda, merkezi parametre sunucusunun darboğaz olduğunu görebiliriz. Sonuçta, sunucu başına bant genişliği sınırlıdır, bu nedenle $m$ işçi için tüm degradeleri sunucuya göndermek için gereken süre $\mathcal{O}(m)$'dir. Sunucu sayısını $n$'e yükselterek bu engeli aşabiliriz. Bu noktada her sunucunun yalnızca parametrelerin $\mathcal{O}(1/n)$'unu depolaması gerekir, bu nedenle güncellemeler ve optimizasyon için toplam süre $\mathcal{O}(m/n)$ olur. Her iki sayının da eşleştirilmesi, kaç işçi ile uğraştığımıza bakılmaksızın sürekli ölçeklendirme sağlar. Uygulamada, *aynı* makineleri hem işçi hem de sunucu olarak kullanıyoruz. :numref:`fig_ps_multips` tasarımı göstermektedir (ayrıntılar için ayrıca bkz. :cite:`Li.Andersen.Park.ea.2014`). Özellikle, birden fazla makinenin makul olmayan gecikmeler olmadan çalışmasını sağlamak önemsizdir. Engellerle ilgili ayrıntıları atlıyoruz ve aşağıda senkronize olmayan ve senkronize olmayan güncellemelere kısa bir süre değineceğiz. 
+Bu operasyonların her biri oldukça basit görünüyor. Aslında, tek bir makinede verimli bir şekilde gerçekleştirilebilirler. Birden fazla makineye baktığımızda, merkezi parametre sunucusunun darboğaz haline geldiğini görebiliriz. Sonuçta, sunucu başına bant genişliği sınırlıdır, bu nedenle $m$ işçi makine için tüm gradyanları sunucuya göndermek için gereken süre $\mathcal{O}(m)$'dir. Sunucu sayısını $n$'e yükselterek bu engeli aşabiliriz. Bu noktada her sunucunun yalnızca parametrelerin $\mathcal{O}(1/n)$'unu depolaması gerekir, bu nedenle güncellemeler ve optimizasyon için toplam süre $\mathcal{O}(m/n)$ olur. Her iki sayının da eşleştirilmesi, kaç işçi makine ile uğraştığımıza bakılmaksızın sürekli ölçeklendirme sağlar. Uygulamada, *aynı* makineleri hem işçi makine hem de sunucu olarak kullanıyoruz. :numref:`fig_ps_multips` tasarımı göstermektedir (ayrıntılar için ayrıca bkz. :cite:`Li.Andersen.Park.ea.2014`). Özellikle, birden fazla makinenin makul olmayan gecikmeler olmadan çalışmasını sağlamak önemsizdir. Engellerle ilgili ayrıntıları atlıyoruz ve aşağıda eşzamanlı olan ve olmayan güncellemelere kısaca değineceğiz. 
 
-![Top: a single parameter server is a bottleneck since its bandwidth is finite. Bottom: multiple parameter servers store parts of the parameters with aggregate bandwidth.](../img/ps-multips.svg)
+![Üst: Bant genişliği sınırlı olduğundan tek parametreli bir sunucu bir darboğazdır. Alt: Birden çok parametre sunucusu, toplam bant genişliğine sahip parametrelerin bölümlerini depolar.](../img/ps-multips.svg)
 :label:`fig_ps_multips`
 
-## Anahtar-Değerli Mağazalar
+## Anahtar--Değer Depoları
 
-Dağıtılmış çoklu GPU eğitimi için gerekli adımları uygulamada uygulamak önemsiz değildir. Bu nedenle, yeniden tanımlanmış güncelleme semantiği olan bir *anahtar-değer deposunun* ortak bir soyutlama kullanmak için ödeme yapar.  
+Pratikte dağıtılmış çoklu GPU eğitimi için gerekli adımların uygulanması önemsiz değildir. Bu nedenle, yeniden tanımlanmış güncelleme semantiğine sahip bir *anahtar-değer deposu* gibi ortak bir soyutlama kullanmak faydalı olur. 
 
-Birçok işçi ve birçok GPU arasında $i$ degrade hesaplaması 
+Birçok işçi makine ve birçok GPU arasında $i$ gradyan hesaplaması aşağıdadır:
 
 $$\mathbf{g}_{i} = \sum_{k \in \text{workers}} \sum_{j \in \text{GPUs}} \mathbf{g}_{ijk},$$
 
-nerede $\mathbf{g}_{ijk}$ degrade parçasıdır $i$ GPU bölünmüş $j$ işçi $k$. Bu işlemdeki en önemli husus, bir *değişken indirgeme*, yani birçok vektörü bir hale getirmesi ve işlemin uygulandığı sıranın önemli olmadığıdır. Hangi degradenin alındığı zaman üzerinde ince taneli kontrole sahip olmadığımız için bu, amaçlarımız için mükemmeldir. Ayrıca, bu işlemin farklı $i$ arasında bağımsız olduğunu unutmayın. 
+burada $\mathbf{g}_{ijk}$, işçi $k$ GPU $j$'da bölünmüş $i$ gradyanının bir parçasıdır. Bu işlemdeki kilit nokta, bunun bir *değişken indirgeme* olmasıdır, yani birçok vektörü bire çevirir ve işlemin uygulanma sırası önemli değildir. Hangi gradyanın ne zaman alındığı üzerinde hassas kontrole sahip olmadığımızdan bu, amaçlarımız için mükemmeldir. Ayrıca, bu işlemin farklı $i$'ler arasında bağımsız olduğunu unutmayın. 
 
-Bu, aşağıdaki iki işlemi tanımlamamıza olanak sağlar: degradeleri biriken *itme* ve toplam degradeleri alan *pull*. Birçok farklı degrade kümesine sahip olduğumuzdan (sonuçta birçok katmana sahibiz), degradeleri bir anahtarla endekslememiz gerekiyor $i$. Dynamo :cite:`DeCandia.Hastorun.Jampani.ea.2007`'te tanıtılan anahtar değerli depolarla olan bu benzerlik tesadüf eseri değildir. Bunlar da, özellikle parametreleri birden çok sunucuya dağıtmak söz konusu olduğunda birçok benzer özelliği tatmin ederler. 
+Bu, aşağıdaki iki işlemi tanımlamamıza olanak sağlar: Gradyanlari biriken *itme* ve toplam gradyanları alan *çekme*. Birçok farklı gradyan kümesine sahip olduğumuzdan (sonuçta birçok katmana sahibiz), gradyanları bir $i$ anahtarı ile indekslememiz gerekiyor. Dynamo'da :cite:`DeCandia.Hastorun.Jampani.ea.2007` tanıtıldığı gibi, anahtar--değer depolarına olan bu benzerlik tesadüf değildir. Bunlar da, özellikle parametreleri birden çok sunucuya dağıtmak söz konusu olduğunda birçok benzer özelliği karşılar. 
 
-Anahtar değer depoları için itme ve çekme işlemleri aşağıdaki gibi açıklanmıştır: 
+Anahtar-değer depoları için itme ve çekme işlemleri aşağıdaki gibi açıklanır: 
 
-* **push (anahtar, değer) ** bir worker (işçi) öğesinden ortak bir depolamaya belirli bir degrade (değer) gönderir. Orada değer toplanır, örneğin, özetlenerek.
-* **pull (anahtar, değer) ** ortak depolamadan, örneğin tüm işçi öğelerinin degradelerini birleştirdikten sonra toplam bir değer alır.
+* **itme (anahtar, değer)** bir işçiden ortak bir depolamaya belirli bir gradyan (değer) gönderir. Orada değer biriktirilir, örneğin, toplanarak.
+* **çekme (anahtar, değer)** ortak depolamadan, örneğin tüm işçi öğelerinin gradyanlarini birleştirdikten sonra toplam bir değer alır.
 
-Basit bir itme ve çekme işleminin arkasındaki senkronizasyonla ilgili tüm karmaşıklığı gizleyerek, optimizasyonu basit terimlerle ifade edebilmek isteyen istatistiksel modelleyicilerin endişelerini ve dağıtılmış senkronizasyonun doğasında olan karmaşıklıkla başa çıkması gereken sistem mühendislerinin endişelerini ayırabiliriz. 
+Basit bir itme ve çekme işleminin arkasındaki eşzamanlama ile ilgili tüm karmaşıklığı gizleyerek, optimizasyonu basit terimlerle ifade edebilmek isteyen istatistiksel modelleyicilerin endişelerini ve dağıtılmış senkronizasyonun doğasında olan karmaşıklıkla başa çıkması gereken sistem mühendislerinin endişelerini ayırabiliriz. 
 
 ## Özet
 
-* Senkronizasyonun, bir sunucu içindeki belirli ağ altyapısına ve bağlantısına son derece uyarlanabilir olması gerekir. Bu, senkronize etmek için gereken süreye göre önemli bir fark yaratabilir.
-* Halka senkronizasyonu p3 ve DGX-2 sunucuları için en uygun olabilir. Diğerleri için muhtemelen o kadar değil.
-* Artırılmış bant genişliği için birden fazla parametre sunucusu eklerken hiyerarşik eşitleme stratejisi iyi çalışır.
+* Eşzamanlamanın, bir sunucu içindeki belirli ağ altyapısına ve bağlantısına son derece uyarlanabilir olması gerekir. Bu, senkronize etmek için gereken sürede önemli bir fark yaratabilir.
+* Halka senkronizasyonu p3 ve DGX-2 sunucuları için en uygun olabilir. Diğerleri için muhtemelen o kadar değildir.
+* Artırılmış bant genişliği için birden fazla parametre sunucusu eklerken hiyerarşik eşzamanlama stratejisi iyi çalışır.
 
-## Egzersizler
+## Alıştırmalar
 
-1. Halka senkronizasyonunu daha da artırabilir misin? İpucu: Her iki yönde de mesaj gönderebilirsiniz.
-1. Asenkron iletişime izin vermek mümkün mü (hesaplama hala devam ederken)? Performansı nasıl etkiler?
-1. Uzun süren bir hesaplama sırasında bir sunucuyu kaybedersek ne olur? Hesaplamanın tamamen yeniden başlatılmasını önlemek için bir *hata toleransı* mekanizması nasıl tasarlayabiliriz?
+1. Halka eşzamanlamasını daha da artırabilir misin? İpucu: Her iki yönde de mesaj gönderebilirsiniz.
+1. Eşzamansız iletişime izin vermek mümkün mü (hesaplama hala devam ederken)? Performansı nasıl etkiler?
+1. Uzun süren bir hesaplama sırasında bir sunucuyu kaybedersek ne olur? Hesaplamanın tamamen yeniden başlatılmasını önlemek için bir *hata toleransı* mekanizmasını nasıl tasarlayabiliriz?
 
 [Tartışmalar](https://discuss.d2l.ai/t/366)
