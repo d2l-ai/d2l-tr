@@ -1,9 +1,9 @@
-# Görüntü Artırması
+# İmge Artırması
 :label:`sec_image_augmentation`
 
 :numref:`sec_alexnet`'te, büyük veri kümelerinin çeşitli uygulamalarda derin sinir ağlarının başarısı için bir ön koşul olduğunu belirttik.
-*Görüntü artırma* 
-eğitim görüntülerinde bir dizi rastgele değişiklikten sonra benzer ama farklı eğitim örnekleri üretir ve böylece eğitim setinin boyutunu genişletir. Alternatif olarak, görüntü büyütme, eğitim örneklerinin rastgele düzenlemelerinin modellerin belirli niteliklere daha az güvenmesine izin vermesi ve böylece genelleme yeteneklerini geliştirmesi nedeniyle motive edilebilir. Örneğin, bir görüntüyü, ilgi nesnesinin farklı pozisyonlarda görünmesini sağlamak için farklı şekillerde kırpabiliriz, böylece bir modelin nesnenin konumuna bağımlılığını azaltabiliriz. Ayrıca, modelin renge duyarlılığını azaltmak için parlaklık ve renk gibi faktörleri de ayarlayabiliriz. Muhtemelen görüntü büyütme o zaman AlexNet'in başarısı için vazgeçilmez olduğu doğrudur. Bu bölümde bilgisayar görüşünde yaygın olarak kullanılan bu tekniği tartışacağız.
+*İmge artırma* 
+eğitim imgelerinde bir dizi rastgele değişiklikten sonra benzer ama farklı eğitim örnekleri üretir ve böylece eğitim kümesinin boyutunu genişletir. Alternatif olarak, imge artırma, eğitim örneklerinin rastgele ayarlanması modellerin belirli niteliklere daha az güvenmesine ve böylece genelleme yeteneklerini geliştirmesine izin vermesi gerçeğiyle motive edilebilir. Örneğin, bir imgeyi, ilgi nesnesinin farklı pozisyonlarda görünmesini sağlamak için farklı şekillerde kırpabiliriz, böylece bir modelin nesnenin konumuna bağımlılığını azaltabiliriz. Ayrıca, modelin renge duyarlılığını azaltmak için parlaklık ve renk gibi faktörleri de ayarlayabiliriz. Muhtemelen imge artırma o zaman AlexNet'in başarısı için vazgeçilmez olduğu doğrudur. Bu bölümde bilgisayarla görmede yaygın olarak kullanılan bu tekniği tartışacağız.
 
 ```{.python .input}
 %matplotlib inline
@@ -23,9 +23,9 @@ import torchvision
 from torch import nn
 ```
 
-## Ortak Görüntü Artırma Yöntemleri
+## Yaygın İmge Artırma Yöntemleri
 
-Ortak görüntü büyütme yöntemlerini incelememizde, aşağıdaki $400\times 500$ resmini bir örnek olarak kullanacağız.
+Yaygın imge artırma yöntemlerini incelememizde, aşağıdaki $400\times 500$ imgesini bir örnek olarak kullanacağız.
 
 ```{.python .input}
 d2l.set_figsize()
@@ -40,7 +40,7 @@ img = d2l.Image.open('../img/cat1.jpg')
 d2l.plt.imshow(img);
 ```
 
-Çoğu görüntü büyütme yöntemi belirli bir dereceye sahiptir. Görüntü büyütmesinin etkisini gözlemlememizi kolaylaştırmak için, daha sonra `apply` yardımcı bir işlev tanımlıyoruz. Bu işlev `img` giriş görüntüsünde `aug` görüntü büyütme yöntemini birden çok kez çalıştırır ve tüm sonuçları gösterir.
+Çoğu imge artırma yönteminin belirli bir rastgelelik derecesi vardır. İmge artırmanın etkisini gözlemlememizi kolaylaştırmak için, sonraki adımda `apply` yardımcı bir işlev tanımlıyoruz. Bu işlev `img` girdi imgesinde `aug` imge artırma yöntemini birden çok kez çalıştırır ve tüm sonuçları gösterir.
 
 ```{.python .input}
 #@tab all
@@ -49,14 +49,14 @@ def apply(img, aug, num_rows=2, num_cols=4, scale=1.5):
     d2l.show_images(Y, num_rows, num_cols, scale=scale)
 ```
 
-### Flipping ve Kırpma
+### Döndürme ve Kırpma
 
 :begin_tab:`mxnet`
-[**Resmin sola ve sağa doğru döndürülmesi**] genellikle nesnenin kategorisini değiştirmez. Bu, en eski ve en yaygın kullanılan görüntü büyütme yöntemlerinden biridir. Daha sonra, `transforms` modülünü `RandomFlipLeftRight` örneğini oluşturmak için kullanıyoruz ve görüntüyü sola ve sağa döndürebilir.
+[**Resmin sola ve sağa doğru döndürülmesi**] genellikle nesnenin kategorisini değiştirmez. Bu, en eski ve en yaygın kullanılan imge artırma yöntemlerinden biridir. Daha sonra, `transforms` modülünü `RandomFlipLeftRight` örneğini oluşturmak için kullanıyoruz, ki imgeyi sola ve sağa döndürebiliriz.
 :end_tab:
 
 :begin_tab:`pytorch`
-[**Resmin sola ve sağa doğru döndürülmesi**] genellikle nesnenin kategorisini değiştirmez. Bu, en eski ve en yaygın kullanılan görüntü büyütme yöntemlerinden biridir. Daha sonra, `transforms` modülünü `RandomHorizontalFlip` örneğini oluşturmak için kullanıyoruz ve görüntüyü sağa ve sola döndürebilir.
+[**Resmin sola ve sağa doğru döndürülmesi**] genellikle nesnenin kategorisini değiştirmez. Bu, en eski ve en yaygın kullanılan imge artırma yöntemlerinden biridir. Daha sonra, `transforms` modülünü `RandomHorizontalFlip` örneğini oluşturmak için kullanıyoruz, ki imgeyi sola ve sağa döndürebiliriz.
 :end_tab:
 
 ```{.python .input}
@@ -69,11 +69,11 @@ apply(img, torchvision.transforms.RandomHorizontalFlip())
 ```
 
 :begin_tab:`mxnet`
-[**Yukarı ve aşağı çevirme**] sola ve sağa çevirmek kadar yaygın değildir. Ancak en azından bu örnek görüntü için, yukarı ve aşağı çevirmek tanıma engellemez. Ardından, bir görüntüyü %50 şansla yukarı ve aşağı çevirmek için `RandomFlipTopBottom` örneği oluşturuyoruz.
+[**Yukarı ve aşağı döndürme**] sola ve sağa döndürmek kadar yaygın değildir. Ancak en azından bu örnek imge için, yukarı ve aşağı döndürmek tanımayı engellemez. Ardından, bir imgeyi %50 şansla yukarı ve aşağı döndürmek için `RandomFlipTopBottom` örneği oluşturuyoruz.
 :end_tab:
 
 :begin_tab:`pytorch`
-[**Yukarı ve aşağı çevirme**] sola ve sağa çevirmek kadar yaygın değildir. Ancak en azından bu örnek görüntü için, yukarı ve aşağı çevirmek tanıma engellemez. Ardından, bir görüntüyü %50 şansla yukarı ve aşağı çevirmek için `RandomVerticalFlip` örneği oluşturuyoruz.
+[**Yukarı ve aşağı döndürme**] sola ve sağa döndürmek kadar yaygın değildir. Ancak en azından bu örnek imge için, yukarı ve aşağı döndürmek tanımayı engellemez. Ardından, bir imgeyi %50 şansla yukarı ve aşağı döndürmek için `RandomVerticalFlip` örneği oluşturuyoruz.
 :end_tab:
 
 ```{.python .input}
@@ -85,10 +85,9 @@ apply(img, gluon.data.vision.transforms.RandomFlipTopBottom())
 apply(img, torchvision.transforms.RandomVerticalFlip())
 ```
 
-Kullandığımız örnek görüntüde, kedi görüntünün ortasındadır, ancak bu genel olarak böyle olmayabilir. :numref:`sec_pooling`'te, havuzlama katmanının konvolüsyonel bir tabakanın hedef konuma duyarlılığını azaltabileceğini açıkladık. Buna ek olarak, nesnelerin görüntüdeki farklı ölçeklerde farklı konumlarda görünmesini sağlamak için görüntüyü rastgele kırpabiliriz, bu da bir modelin hedef konuma duyarlılığını da azaltabilir. 
+Kullandığımız örnek imgede, kedi imgenin ortasındadır, ancak bu genel olarak böyle olmayabilir. :numref:`sec_pooling`'te, ortaklama katmanının evrişimli bir katmanın hedef konuma duyarlılığını azaltabileceğini açıkladık. Buna ek olarak, nesnelerin imgedeki farklı ölçeklerde farklı konumlarda görünmesini sağlamak için imgeyi rastgele kırpabiliriz, bu da bir modelin hedef konuma duyarlılığını da azaltabilir. 
 
-In the code below, we [**randomly crop**] an area with an area of $10\% \sim 100\%$ of the original area each time, and the ratio of width to height of this area is randomly selected from $0.5 \sim 2$. Then, the width and height of the region are both scaled to 200 pixels. 
-Unless otherwise specified, the random number between $a$ and $b$ in this section refers to a continuous value obtained by random and uniform sampling from the interval $[a, b]$.
+Aşağıdaki kodda, her seferinde orijinal alanın $\%10 \sim \%100$ alanı olan bir alanı [**rastgele kırpıyoruz**] ve bu alanın genişliğinin yüksekliğine oranı $0.5 \sim 2$'den rastgele seçilir. Ardından, bölgenin genişliği ve yüksekliği 200 piksele ölçeklenir. Aksi belirtilmedikçe, bu bölümdeki $a$ ile $b$ arasındaki rastgele sayı, $[a, b]$ aralığından rastgele ve tek biçimli örneklemeyle elde edilen sürekli bir değeri ifade eder.
 
 ```{.python .input}
 shape_aug = gluon.data.vision.transforms.RandomResizedCrop(
@@ -105,7 +104,7 @@ apply(img, shape_aug)
 
 ### Renkleri Değiştirme
 
-Another augmentation method is changing colors. We can change four aspects of the image color: brightness, contrast, saturation, and hue. In the example below, we [**randomly change the brightness**] of the image to a value between 50% ($1-0.5$) and 150% ($1+0.5$) of the original image.
+Diğer bir artırma yöntemi ise renkleri değiştirmektir. İmge renginin dört cephedeb değiştirebiliriz: Parlaklık, zıtlık, doygunluk ve renk tonu. Aşağıdaki örnekte, imgenin [**parlaklığını**] orijinal imgenin %50'si ($1-0.5$) ile %150'si ($1+0.5$) arasında bir değere değiştiriyoruz.
 
 ```{.python .input}
 apply(img, gluon.data.vision.transforms.RandomBrightness(0.5))
@@ -117,7 +116,7 @@ apply(img, torchvision.transforms.ColorJitter(
     brightness=0.5, contrast=0, saturation=0, hue=0))
 ```
 
-Benzer şekilde, görüntünün [**rastgele tonu**] değiştirebiliriz.
+Benzer şekilde, imgenin [**tonunu rastgele**] değiştirebiliriz.
 
 ```{.python .input}
 apply(img, gluon.data.vision.transforms.RandomHue(0.5))
@@ -129,7 +128,7 @@ apply(img, torchvision.transforms.ColorJitter(
     brightness=0, contrast=0, saturation=0, hue=0.5))
 ```
 
-Ayrıca bir `RandomColorJitter` örneği oluşturabilir ve [**görüntünün `brightness`, `contrast`, `saturation` ve `hue`'ini aynı anda rastgele değiştirir**] nasıl ayarlayabiliriz.
+Ayrıca bir `RandomColorJitter` örneği oluşturabilir ve nasıl [**imgenin `brightness`, `contrast`, `saturation` ve `hue`'ini aynı anda rastgele değiştirebileceğimizi**] ayarlayabiliriz.
 
 ```{.python .input}
 color_aug = gluon.data.vision.transforms.RandomColorJitter(
@@ -144,9 +143,9 @@ color_aug = torchvision.transforms.ColorJitter(
 apply(img, color_aug)
 ```
 
-### Çoklu Görüntü Büyütme Yöntemlerini Birleştirme
+### Çoklu İmge Artırma Yöntemlerini Birleştirme
 
-Pratikte, [**birden fazla görüntü büyütme yöntemleri**] birleştireceğiz. Örneğin, yukarıda tanımlanan farklı görüntü büyütme yöntemlerini birleştirebilir ve bunları bir `Compose` örneği aracılığıyla her görüntüye uygulayabiliriz.
+Pratikte, [**birden fazla imge artırma yöntemini**] birleştireceğiz. Örneğin, yukarıda tanımlanan farklı imge artırma yöntemlerini birleştirebilir ve bunları bir `Compose` örneği aracılığıyla her imgeye uygulayabiliriz.
 
 ```{.python .input}
 augs = gluon.data.vision.transforms.Compose([
@@ -161,9 +160,9 @@ augs = torchvision.transforms.Compose([
 apply(img, augs)
 ```
 
-## [**Görüntü Artırması ile Eğitim**]
+## [**İmge Artırması ile Eğitim**]
 
-Görüntü büyütme ile bir model eğitelim. Burada daha önce kullandığımız Moda-MNIST veri kümesi yerine CIFAR-10 veri kümesini kullanıyoruz. Bunun nedeni, Moda-MNIST veri kümesindeki nesnelerin konumu ve boyutu normalleştirilirken, CIFAR-10 veri kümesindeki nesnelerin rengi ve boyutunun daha önemli farklılıklara sahip olmasıdır. CIFAR-10 veri kümelerindeki ilk 32 eğitim görüntüsü aşağıda gösterilmiştir.
+İmge artırma ile bir model eğitelim. Burada daha önce kullandığımız Fashion-MNIST veri kümesi yerine CIFAR-10 veri kümesini kullanıyoruz. Bunun nedeni, Fashion-MNIST veri kümesindeki nesnelerin konumu ve boyutu normalleştirilirken, CIFAR-10 veri kümesindeki nesnelerin rengi ve boyutunun daha önemli farklılıklara sahip olmasıdır. CIFAR-10 veri kümelerindeki ilk 32 eğitim imgesi aşağıda gösterilmiştir.
 
 ```{.python .input}
 d2l.show_images(gluon.data.vision.CIFAR10(
@@ -177,7 +176,7 @@ all_images = torchvision.datasets.CIFAR10(train=True, root="../data",
 d2l.show_images([all_images[i][0] for i in range(32)], 4, 8, scale=0.8);
 ```
 
-Tahmin sırasında kesin sonuçlar elde etmek için genellikle sadece eğitim örneklerine görüntü büyütme uygularız ve tahmin sırasında rastgele işlemlerle görüntü büyütme kullanmayız. [**Burada sadece en basit rastgele sol-sağ çevirme yöntemini kullanıyoruz**]. Buna ek olarak, bir minibatch görüntüyü derin öğrenme çerçevesinin gerektirdiği biçime dönüştürmek için `ToTensor` örneğini kullanıyoruz, yani 0 ile 1 arasında 32 bit kayan nokta sayıları (toplu boyutu, kanal sayısı, yükseklik, genişlik) şeklindedir.
+Tahmin sırasında kesin sonuçlar elde etmek için genellikle sadece eğitim örneklerine imge artırma uygularız ve tahmin sırasında rastgele işlemlerle imge artırma kullanmayız. [**Burada sadece en basit rastgele sol-sağ dçndürme yöntemini kullanıyoruz**]. Buna ek olarak, bir minigrup imgeyi derin öğrenme çerçevesinin gerektirdiği biçime dönüştürmek için `ToTensor` örneğini kullanıyoruz, yani 0 ile 1 arasında 32 bit kayan virgüllü sayıları (toplu iş boyutu, kanal sayısı, yükseklik, genişlik) şeklindedir.
 
 ```{.python .input}
 train_augs = gluon.data.vision.transforms.Compose([
@@ -199,11 +198,11 @@ test_augs = torchvision.transforms.Compose([
 ```
 
 :begin_tab:`mxnet`
-Ardından, görüntüyü okumayı ve görüntü büyütmesini uygulamayı kolaylaştırmak için yardımcı bir işlev tanımlıyoruz. Gluon'un veri kümeleri tarafından sağlanan `transform_first` işlevi, her eğitim örneğinin (görüntü ve etiket) ilk öğesine (resim ve etiket) görüntü büyütme işlemini uygular. `DataLoader`'ya ayrıntılı bir giriş için lütfen :numref:`sec_fashion_mnist`'e bakın.
+Ardından, imgeyi okumayı ve imge artırmasını uygulamayı kolaylaştırmak için yardımcı bir işlev tanımlıyoruz. Gluon'un veri kümeleri tarafından sağlanan `transform_first` işlevi, her eğitim örneğinin (imge ve etiket) ilk öğesine (resim ve etiket) imge artırma işlemini uygular. `DataLoader`'ya ayrıntılı bir giriş için lütfen :numref:`sec_fashion_mnist`'e bakın.
 :end_tab:
 
 :begin_tab:`pytorch`
-Ardından, [**görüntüyü okumayı ve görüntü büytmesini uygulamayı kolaylaştırmak için yardımcı bir işlev tanımlar**]. PyTorch'un veri kümesi tarafından sağlanan `transform` bağımsız değişkeni, görüntüleri dönüştürmek için büyütme uygular. `DataLoader`'ya ayrıntılı bir giriş için lütfen :numref:`sec_fashion_mnist`'e bakın.
+Ardından, [**imgeyi okumayı ve imge artırmasını uygulamayı kolaylaştırmak için yardımcı bir işlev tanımlar**]. PyTorch'un veri kümesi tarafından sağlanan `transform` bağımsız değişkeni, imgeleri döndürmek için artırma uygular. `DataLoader`'ya ayrıntılı bir giriş için lütfen :numref:`sec_fashion_mnist`'e bakın.
 :end_tab:
 
 ```{.python .input}
@@ -224,9 +223,9 @@ def load_cifar10(is_train, augs, batch_size):
     return dataloader
 ```
 
-### Çoklu GPU Eğitimi
+### Çoklu-GPU Eğitimi
 
-ResNet-18 modelini CIFAR-10 veri setinde :numref:`sec_resnet`'ten eğitiyoruz. :numref:`sec_multi_gpu_concise`'te çoklu GPU eğitimine giriş hatırlayın. Aşağıda, [**birden çok GPU kullanarak modeli eğitmek ve değerlendirmek için bir işlev tanımlar**].
+ResNet-18 modelini :numref:`sec_resnet`'ten CIFAR-10 veri kümesi üzerinde eğitiyoruz. :numref:`sec_multi_gpu_concise`'te çoklu GPU eğitimine girişi hatırlayın. Aşağıda, [**birden çok GPU kullanarak modeli eğitmek ve değerlendirmek için bir işlev tanımlıyoruz**].
 
 ```{.python .input}
 #@save
@@ -333,7 +332,7 @@ def train_ch13(net, train_iter, test_iter, loss, trainer, num_epochs,
           f'{str(devices)}')
 ```
 
-Şimdi modeli görüntü artırma ile eğitmek için [**`train_with_data_aug` işlevini tanımlayabiliriz**]. Bu işlev mevcut tüm GPU'ları alır, optimizasyon algoritması olarak Adam'ı kullanır, eğitim veri kümesine görüntü büyütme uygular ve son olarak modeli eğitmek ve değerlendirmek için tanımlanmış `train_ch13` işlevini çağırır.
+Şimdi modeli imge artırma ile eğitmek için [**`train_with_data_aug` işlevini tanımlayabiliriz**]. Bu işlev mevcut tüm GPU'ları alır, optimizasyon algoritması olarak Adam'ı kullanır, eğitim veri kümesine imge artırma uygular ve son olarak modeli eğitmek ve değerlendirmek için tanımlanmış `train_ch13` işlevini çağırır.
 
 ```{.python .input}
 batch_size, devices, net = 256, d2l.try_all_gpus(), d2l.resnet18(10)
@@ -366,7 +365,7 @@ def train_with_data_aug(train_augs, test_augs, net, lr=0.001):
     train_ch13(net, train_iter, test_iter, loss, trainer, 10, devices)
 ```
 
-Rastgele sol-sağ çevirmeye dayalı görüntü büyütme kullanarak [**modeli eğitelim**] izin verin.
+Rastgele sol-sağ döndürmeye dayalı imge artırma kullanarak [**modeli eğitelim**].
 
 ```{.python .input}
 #@tab all
@@ -375,20 +374,20 @@ train_with_data_aug(train_augs, test_augs, net)
 
 ## Özet
 
-* Görüntü büyütme, modellerin genelleme yeteneğini geliştirmek için mevcut eğitim verilerine dayanan rastgele görüntüler üretir.
-* Tahmin sırasında kesin sonuçlar elde etmek için genellikle sadece eğitim örneklerine görüntü büyütme uygularız ve tahmin sırasında rastgele işlemlerle görüntü büyütme kullanmayız.
-* Derin öğrenme çerçeveleri, aynı anda uygulanabilen birçok farklı görüntü büyütme yöntemi sağlar.
+* İmge artırma, modellerin genelleme yeteneğini geliştirmek için mevcut eğitim verilerine dayanan rastgele imgeler üretir.
+* Tahmin sırasında kesin sonuçlar elde etmek için genellikle sadece eğitim örneklerine imge artırma uygularız ve tahmin sırasında rastgele işlemlerle imge artırma kullanmayız.
+* Derin öğrenme çerçeveleri, aynı anda uygulanabilen birçok farklı imge artırma yöntemi sağlar.
 
-## Egzersizler
+## Alıştırmalar
 
-1. Görüntü büyütme özelliğini kullanmadan modeli eğitin: `train_with_data_aug(test_augs, test_augs)`. Görüntü büyütmesini kullanırken ve kullanmaırken eğitim ve test doğruluğunu karşılaştırın. Bu karşılaştırmalı deney, görüntü büyütmenin aşırı uyumu azaltabileceği argümanını destekleyebilir mi? Neden?
-1. CIFAR-10 veri kümesinde model eğitiminde birden çok farklı görüntü büyütme yöntemini birleştirin. Test doğruluğunu arttırıyor mu? 
-1. Derin öğrenme çerçevesinin çevrimiçi dokümantasyonuna bakın. Başka hangi görüntü büyütme yöntemlerini de sağlar?
+1. İmge artırma özelliğini, `train_with_data_aug(test_augs, test_augs)`, kullanmadan modeli eğitin. İmge artırmasını kullanırken ve kullanmazken eğitim ve test doğruluğunu karşılaştırın. Bu karşılaştırmalı deney, imge artırmanin aşırı uyumu azaltabileceği argümanını destekleyebilir mi? Neden?
+1. CIFAR-10 veri kümesinde model eğitiminde birden çok farklı imge artırma yöntemini birleştirin. Test doğruluğunu arttırıyor mu? 
+1. Derin öğrenme çerçevesinin çevrimiçi dokümantasyonuna bakın. Başka hangi imge artırma yöntemlerini de sağlar?
 
 :begin_tab:`mxnet`
-[Discussions](https://discuss.d2l.ai/t/367)
+[Tartışmalar](https://discuss.d2l.ai/t/367)
 :end_tab:
 
 :begin_tab:`pytorch`
-[Discussions](https://discuss.d2l.ai/t/1404)
+[Tartışmalar](https://discuss.d2l.ai/t/1404)
 :end_tab:
