@@ -1,11 +1,11 @@
-# Nesne Algılama ve Sınırlama Kutuları
+# Nesne Algılama ve Kuşatan Kutular
 :label:`sec_bbox`
 
-Önceki bölümlerde (örn. :numref:`sec_alexnet`—:numref:`sec_googlenet`), görüntü sınıflandırması için çeşitli modeller tanıttık. Görüntü sınıflandırma görevlerinde, resimde sadece bir* ana nesne olduğunu varsayıyoruz ve sadece kategorisini nasıl tanıyacağımıza odaklanıyoruz. Bununla birlikte, ilgi görüntüsünde sıklıkla *çok* nesne vardır. Sadece kategorilerini değil, aynı zamanda görüntüdeki belirli konumlarını da bilmek istiyoruz. Bilgisayar görüşünde, *nesne algılama* (veya *nesne tanıma) gibi görevlere atıfta bulunuyoruz. 
+Önceki bölümlerde (örn. :numref:`sec_alexnet`—-:numref:`sec_googlenet`), imge sınıflandırma için çeşitli modeller tanıttık. İmge sınıflandırma görevlerinde, resimde sadece *bir* ana nesne olduğunu varsayıyoruz ve sadece kategorisini nasıl tanıyacağımıza odaklanıyoruz. Bununla birlikte, ilgili imgede sıklıkla *çok* nesne vardır. Sadece kategorilerini değil, aynı zamanda imgedeki belirli konumlarını da bilmek istiyoruz. Bilgisayarla görmede, *nesne algılama* (veya *nesne tanıma*) gibi görevlere atıfta bulunuyoruz. 
 
-Nesne algılama birçok alanda yaygın olarak uygulanmıştır. Örneğin, çekilen video görüntülerindeki araçların, yayaların, yolların ve engellerin konumlarını tespit ederek seyahat rotalarını planlaması gerekir. Ayrıca, robotlar bu tekniği, bir ortamdaki gezinti boyunca ilgilenen nesneleri tespit etmek ve yerelleştirmek için kullanabilir. Ayrıca, güvenlik sistemlerinin davetsiz misafir veya bomba gibi anormal nesneleri algılaması gerekebilir. 
+Nesne algılama birçok alanda yaygın olarak uygulanmıştır. Örneğin, kendi kendine sürüş, çekilen video görüntülerinde araçların, yayaların, yolların ve engellerin konumlarını tespit ederek seyahat rotalarını planlamalıdır. Ayrıca, robotlar bu tekniği, bir ortamdaki gezinti boyunca ilgilenen nesneleri tespit etmek ve yerini belirlemek için kullanabilir. Ayrıca, güvenlik sistemlerinin davetsiz misafir veya bomba gibi sıradışı nesneleri algılaması gerekebilir. 
 
-Sonraki birkaç bölümde, nesne algılama için çeşitli derin öğrenme yöntemlerini tanıtacağız. Nesnelerin*konumların* (veya *konumlar*) bir giriş ile başlayacağız.
+Sonraki birkaç bölümde, nesne algılama için çeşitli derin öğrenme yöntemlerini tanıtacağız. Nesnelerin *konumlarına* bir giriş ile başlayacağız.
 
 ```{.python .input}
 %matplotlib inline
@@ -29,7 +29,7 @@ from d2l import tensorflow as d2l
 import tensorflow as tf
 ```
 
-Bu bölümde kullanılacak örnek görüntüyü yükleyeceğiz. Görüntünün sol tarafında bir köpek ve sağda bir kedi olduğunu görebiliriz. Bu görüntüdeki iki ana nesne bunlar.
+Bu bölümde kullanılacak örnek imgeyi yükleyeceğiz. Görüntünün sol tarafında bir köpek ve sağda bir kedi olduğunu görebiliriz. Bu imgedeki iki ana nesne bunlardır.
 
 ```{.python .input}
 d2l.set_figsize()
@@ -44,11 +44,12 @@ img = d2l.plt.imread('../img/catdog.jpg')
 d2l.plt.imshow(img);
 ```
 
-## Sınırlayıcı Kutular
+## Kuşatan Kutular
 
-Nesne algılamada, genellikle bir nesnenin uzamsal konumunu tanımlamak için bir *sınırlayıcı kutu* kullanırız. Sınırlayıcı kutu dikdörtgen olup, dikdörtgenin sol üst köşesinin $x$ ve $y$ koordinatları ve sağ alt köşenin koordinatları ile belirlenir. Yaygın olarak kullanılan bir diğer sınırlayıcı kutu gösterimi, sınırlayıcı kutu merkezinin $(x, y)$ eksen koordinatları ve kutunun genişliği ve yüksekliğidir. 
+Nesne algılamada, genellikle bir nesnenin uzamsal konumunu tanımlamak için bir *kuşatan kutu* kullanırız. Kuşatan kutu dikdörtgen olup, dikdörtgenin sol üst köşesinin $x$ ve $y$ koordinatları ve sağ alt köşenin koordinatları ile belirlenir. Yaygın olarak kullanılan bir diğer kuşatan kutu gösterimi, kuşatan kutu merkezinin $(x, y)$ eksen koordinatları ve kutunun genişliği ve yüksekliğidir. 
 
-[**Burada arasında dönüştürmek için işlevleri tanımlıyoruz**] bunlar (**iki gösterim**): `box_corner_to_center` iki köşeli temsilden merkez-genişlik yüksekliği sunumuna dönüştürür ve `box_center_to_corner` tersi. `boxes` giriş argümanı, $n$ sınırlayıcı kutuların sayısıdır burada iki boyutlu bir şekil tenörü ($n$, 4) olmalıdır.
+[**Burada**] (**iki temsil**) arasında dönüştürecek işlevleri tanımlıyoruz : 
+`box_corner_to_center` iki köşeli temsilden merkez-genişlik yüksekliği temsiline dönüştürür ve `box_center_to_corner` tersini yapar. `boxes` girdi argümanı, iki boyutlu ($n$, 4) şekilli bir tensör olmalıdır, burada $n$ sınırlayıcı kutuların sayısıdır.
 
 ```{.python .input}
 #@tab all
@@ -87,7 +88,7 @@ positive directions of the $x$ and $y$ axes, respectively.
 dog_bbox, cat_bbox = [60.0, 45.0, 378.0, 516.0], [400.0, 112.0, 655.0, 493.0]
 ```
 
-İki sınırlayıcı kutu dönüştürme işlevinin doğruluğunu iki kez dönüştürerek doğrulayabiliriz.
+İki kuşatan kutu dönüştürme işlevinin doğruluğunu iki kez dönüştürerek doğrulayabiliriz.
 
 ```{.python .input}
 #@tab all
@@ -95,7 +96,7 @@ boxes = d2l.tensor((dog_bbox, cat_bbox))
 box_center_to_corner(box_corner_to_center(boxes)) == boxes
 ```
 
-Doğru olup olmadıklarını kontrol etmek için [**resimdeki sınırlayıcı kutuları çizim**] izin verin. Çizmeden önce, `bbox_to_rect` bir yardımcı işlevi tanımlayacağız. `matplotlib` paketinin sınırlayıcı kutu biçimindeki sınırlayıcı kutuyu temsil eder.
+Doğru olup olmadıklarını kontrol etmek için [**resimdeki kuşatan kutuları çizelim**]. Çizmeden önce, `bbox_to_rect` yardımcı işlevini tanımlayacağız. `matplotlib` paketinin sınırlayıcı kutu biçimindeki sınırlayıcı kutusunu temsil eder.
 
 ```{.python .input}
 #@tab all
@@ -110,7 +111,7 @@ def bbox_to_rect(bbox, color):
         fill=False, edgecolor=color, linewidth=2)
 ```
 
-Görüntüye sınırlayıcı kutuları ekledikten sonra, iki nesnenin ana hatlarının temelde iki kutunun içinde olduğunu görebiliriz.
+İmgeye kuşatan kutuları ekledikten sonra, iki nesnenin ana hatlarının temelde iki kutunun içinde olduğunu görebiliriz.
 
 ```{.python .input}
 #@tab all
@@ -121,18 +122,18 @@ fig.axes.add_patch(bbox_to_rect(cat_bbox, 'red'));
 
 ## Özet
 
-* Nesne algılaması sadece görüntüde ilgilenen tüm nesneleri değil, aynı zamanda konumlarını da tanır. Pozisyon genellikle dikdörtgen bir sınırlama kutusu ile temsil edilir.
-* Yaygın olarak kullanılan iki sınırlayıcı kutu temsilleri arasında dönüştürebiliriz.
+* Nesne algılama sadece imgede ilgilenen tüm nesneleri değil, aynı zamanda konumlarını da tanır. Pozisyon genellikle dikdörtgen bir kuşatan kutu ile temsil edilir.
+* Yaygın olarak kullanılan iki kuşatan kutu temsili arasında dönüşüm yapabiliriz.
 
-## Egzersizler
+## Alıştırmalar
 
-1. Başka bir görüntü bulun ve nesneyi içeren bir sınırlayıcı kutuyu etiketlemeyi deneyin. Etiketleme sınırlayıcı kutuları ve kategorileri karşılaştırın: hangi genellikle daha uzun sürer?
-1. Neden giriş argümanı `boxes` arasında `box_corner_to_center` ve `box_center_to_corner` en içteki boyutu her zaman 4?
+1. Başka bir imge bulun ve nesneyi içeren bir kuşatan kutuyu etiketlemeyi deneyin. Kuşatan kutuları ve kategorileri etiketlemeyi karşılaştırın: hangisi genellikle daha uzun sürer?
+1. Neden `box_center_to_corner` ve `box_corner_to_center` girdi bağımsız değişkeninin "kutuları"nın en içteki boyutu her zaman 4'tür?
 
 :begin_tab:`mxnet`
-[Discussions](https://discuss.d2l.ai/t/369)
+[Tartışmalar](https://discuss.d2l.ai/t/369)
 :end_tab:
 
 :begin_tab:`pytorch`
-[Discussions](https://discuss.d2l.ai/t/1527)
+[Tartışmalar](https://discuss.d2l.ai/t/1527)
 :end_tab:

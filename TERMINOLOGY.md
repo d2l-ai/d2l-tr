@@ -37,6 +37,8 @@ burst read; çoğuşma
 
 bus; veriyolu
 
+bounding box; kuşatan kutu
+
 broadcast; yayınlama
 
 cache; ön bellek
