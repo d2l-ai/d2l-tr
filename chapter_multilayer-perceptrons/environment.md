@@ -226,7 +226,7 @@ $$
 ### Kontrol
 
 Çoğu durumda ortam ne yaptığımızı hatırlar. Mutlaka düşmanca bir şekilde değil, ancak sadece hatırlayacak ve yanıt daha önce ne olduğuna bağlı olacaktır. Örneğin, bir kahve kaynatıcı kontrolörü, kaynatıcıyı önceden ısıtıp ısıtmadığına bağlı olarak farklı sıcaklıklar gözlemleyecektir. PID (orantılı integral türev) kontrolcü algoritmaları burada popüler bir seçimdir. Benzer şekilde, bir kullanıcının bir haber sitesindeki davranışı, ona daha önce ne gösterdiğimize bağlı olacaktır (örneğin, çoğu haberi yalnızca bir kez okuyacaktır). Bu tür birçok algoritma, kararlarının daha az rastgele görünmesini sağlamak gibi hareket ettikleri ortamın bir modelini oluşturur.
-Son zamanlarda, kontrol teorisi (örneğin, PID varyantları), daha iyi çözme ve geri çatma kalitesi elde etmek ve oluşturulan metnin çeşitliliğini ve oluşturulan görüntülerin geri çatma kalitesini iyileştirmek için hiper parametreleri otomatik olarak ayarlamak için de kullanıldı :cite:`Shao.Yao.Sun. ea.2020`.
+Son zamanlarda, kontrol teorisi (örneğin, PID varyantları), daha iyi çözme ve geri çatma kalitesi elde etmek ve oluşturulan metnin çeşitliliğini ve oluşturulan görüntülerin geri çatma kalitesini iyileştirmek için hiper parametreleri otomatik olarak ayarlamak için de kullanıldı :cite:`Shao.Yao.Sun.ea.2020`.
 
 ### Pekiştirmeli Öğrenme
 
