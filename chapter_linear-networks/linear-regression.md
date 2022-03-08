@@ -113,7 +113,7 @@ Modellerimizi eğitirken, tipik olarak tüm minigrup örneklerini aynı anda iş
 %matplotlib inline
 from d2l import mxnet as d2l
 import math
-from mxnet import np
+import numpy as np
 import time
 ```
 

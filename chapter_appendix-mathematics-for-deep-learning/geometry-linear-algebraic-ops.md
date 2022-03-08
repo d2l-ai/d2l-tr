@@ -282,7 +282,7 @@ w = (ave_1 - ave_0).T
 predictions = X_test.reshape(2000, -1) @ (w.flatten()) > -1500000
 
 # Accuracy
-torch.mean(predictions.type(y_test.dtype) == y_test, dtype=torch.float64)
+torch.mean((predictions.type(y_test.dtype) == y_test).float(), dtype=torch.float64)
 ```
 
 
@@ -326,7 +326,7 @@ $$
 \end{bmatrix}.
 $$
 
-Belirli $\mathbf{v} = [2, -1]^\top$ vektörüne bakarsak, bunun $2\cdot[1,0]^\top + -1\cdot[0,1]^\top$ olduğunu görürüz, dolayısıyla $A$ matrisinin bunu $$2(\mathbf{A}[1,0]^\top) + -1(\mathbf{A}[0,1])^\top = 2[1, -1]^\top - [2,3]^\top = [0, -5]^\top$'e göndereceğini biliyoruz.
+Belirli $\mathbf{v} = [2, -1]^\top$ vektörüne bakarsak, bunun $2\cdot[1,0]^\top + -1\cdot[0,1]^\top$ olduğunu görürüz, dolayısıyla $A$ matrisinin bunu $2(\mathbf{A}[1,0]^\top) + -1(\mathbf{A}[0,1])^\top = 2[1, -1]^\top - [2,3]^\top = [0, -5]^\top$'e göndereceğini biliyoruz.
 Bu mantığı dikkatlice takip edersek, diyelim ki tüm tamsayı nokta çiftlerinin ızgarasını (grid) göz önünde bulundurarak, matris çarpımının ızgarayı eğriltebileceğini, döndürebileceğini ve ölçekleyebileceğini görürüz, ancak ızgara yapısı aşağıda gördüğünüz gibi kalmalıdır :numref:`fig_grid-transform`.
 
 ![Verilen temel vektörlere göre hareket eden $\mathbf {A}$ matrisi. Tüm ızgaranın onunla birlikte nasıl taşındığına dikkat edin.](../img/grid-transform.svg)
