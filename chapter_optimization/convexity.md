@@ -37,7 +37,7 @@ Dışbükey analizden önce, *dışbükey kümeleri* ve *dışbükey fonksiyonla
 
 Kümeler dışbükeyliğin temelini oluşturur. Basitçe söylemek gerekirse, bir vektör uzayında bir $\mathcal{X}$ kümesi,  $a, b \in \mathcal{X}$ için $a$ ve $b$'yi bağlayan doğru parçası da $\mathcal{X}$'de ise *dışbüküm* olur. Matematiksel anlamda bu, tüm $\lambda \in [0, 1]$ için aşağıdaki ifadeye sahip olduğumuz anlamına gelir 
 
-$$\lambda  a + (1-\lambda)  b \in \mathcal{X} \text{ whenever } a, b \in \mathcal{X}.$$
+$$\lambda  a + (1-\lambda)  b \in \mathcal{X} \text{ ne zaman ki } a, b \in \mathcal{X}.$$
 
 Kulağa biraz soyut geliyor. :numref:`fig_pacman`'ü düşünün. İçinde tamamı kapsamadıkları doğru parçaları bulunduğundan ilk kümesi dışbükey değildir. Diğer iki kümede böyle bir sorun yaşanmaz. 
 
@@ -101,9 +101,9 @@ Dışbükey işlevler birçok yararlı özelliğe sahiptir. Aşağıda yaygın o
 
 Her şeyden önce, dışbükey işlevlerin yerel minimumu da küresel minimumdur. Bunu aşağıdaki gibi tezatlıklarla kanıtlayabiliriz. 
 
-Bir dışbükey küme $\mathcal{X}$ üzerinde tanımlanmış bir dışbükey fonksiyon $f$ düşünün. $x^{\ast} \in \mathcal{X}$'ın yerel bir minimum olduğunu varsayalım: Küçük bir pozitif $p$ değeri vardır, öyle ki $x \in \mathcal{X}$ için $0 < |x' - x^{\ast}| \leq p$ elimizde $f(x^{\ast}) < f(x)$.
+Bir dışbükey küme $\mathcal{X}$ üzerinde tanımlanmış bir dışbükey fonksiyon $f$ düşünün. $x^{\ast} \in \mathcal{X}$'ın yerel bir minimum olduğunu varsayalım: Küçük bir pozitif $p$ değeri vardır, öyle ki $x \in \mathcal{X}$ için $0 < |x - x^{\ast}| \leq p$ elimizde $f(x^{\ast}) < f(x)$.
 
-Yerel minimum $x^{\ast}$ $x^{\ast}$'in $f$'nin küresel minimumu olmadığını varsayalım: $f(x') < f(x^{\ast})$ için $x' \in \mathcal{X}$ vardır. Ayrıca $\lambda \in [0, 1)$ vardır, örneğin $\lambda = 1 - \frac{p}{|x^{\ast} - x'|}$ öyle ki $0 < |\lambda x^ {\ast} + (1-\lambda) x' - x^{\ast}| \leq p$.
+Yerel minimum $x^{\ast}$'in $f$'nin küresel minimumu olmadığını varsayalım: $f(x') < f(x^{\ast})$ için $x' \in \mathcal{X}$ vardır. Ayrıca $\lambda \in [0, 1)$ vardır, örneğin $\lambda = 1 - \frac{p}{|x^{\ast} - x'|}$ öyle ki $0 < |\lambda x^ {\ast} + (1-\lambda) x' - x^{\ast}| \leq p$.
 
 Ancak, dışbükey fonksiyonların tanımına göre, 
 
