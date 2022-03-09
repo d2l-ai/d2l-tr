@@ -265,7 +265,7 @@ show_trace(newton(0.5), f)
 
 Biz sadece bazı dışbükey ve üç kez türevlenebilir amaç fonksiyonu $f$ için Newton yönteminin yakınsama oranını analiz ediyoruz, burada ikinci türev sıfırdan farklı, yani $f'' > 0$. Çok değişkenli kanıt, aşağıdaki tek boyutlu argümanın basit bir uzantısıdır ve sezgi açısından bize pek yardımcı olmadığından ihmal edilir. 
 
-$k^\mathrm{th}$ yinelemesinde $x$ değerini $x^{(k)}$ ile belirtin ve $e^{(k)} \stackrel{\mathrm{def}}{=} x^{(k)} - x^*$ yinelemesinde eniyilikten uzaklık olmasına izin verin. Taylor açılımı ile $f'(x^*) = 0$ durumu aşağıdaki gibi yazılabilir:
+$k.$ yinelemesinde $x$ değerini $x^{(k)}$ ile belirtin ve $e^{(k)} \stackrel{\mathrm{def}}{=} x^{(k)} - x^*$ yinelemesinde eniyilikten uzaklık olmasına izin verin. Taylor açılımı ile $f'(x^*) = 0$ durumu aşağıdaki gibi yazılabilir:
 
 $$0 = f'(x^{(k)} - e^{(k)}) = f'(x^{(k)}) - e^{(k)} f''(x^{(k)}) + \frac{1}{2} (e^{(k)})^2 f'''(\xi^{(k)}),$$
 

@@ -10,13 +10,13 @@ AutoRec iki çeşidi vardır: kullanıcı tabanlı ve öğe tabanlı. Kısalık 
 
 ## Model
 
-$\mathbf{R}_{*i}$'in, bilinmeyen derecelendirmelerin varsayılan olarak sıfıra ayarlandığı derecelendirme matrisinin $i^\mathrm{th}$ sütununu göstermesine izin verin. Sinir mimarisi şu şekilde tanımlanır: 
+$\mathbf{R}_{*i}$'in, bilinmeyen derecelendirmelerin varsayılan olarak sıfıra ayarlandığı derecelendirme matrisinin $i.$ sütununu göstermesine izin verin. Sinir mimarisi şu şekilde tanımlanır: 
 
 $$
 h(\mathbf{R}_{*i}) = f(\mathbf{W} \cdot g(\mathbf{V} \mathbf{R}_{*i} + \mu) + b)
 $$
 
-burada $f(\cdot)$ ve $g(\cdot)$ aktivasyon fonksiyonlarını temsil eder, $\mathbf{W}$ ve $\mathbf{V}$ ağırlık matrisleri, $\mu$ ve $b$ önyargılardır. $h( \cdot )$ AutoRec tüm ağını göstersin. $h(\mathbf{R}_{*i})$ çıkışı, derecelendirme matrisinin $i^\mathrm{th}$ sütununun yeniden yapılandırılmasıdır. 
+burada $f(\cdot)$ ve $g(\cdot)$ aktivasyon fonksiyonlarını temsil eder, $\mathbf{W}$ ve $\mathbf{V}$ ağırlık matrisleri, $\mu$ ve $b$ önyargılardır. $h( \cdot )$ AutoRec tüm ağını göstersin. $h(\mathbf{R}_{*i})$ çıkışı, derecelendirme matrisinin $i.$ sütununun yeniden yapılandırılmasıdır. 
 
 Aşağıdaki objektif işlevi yeniden yapılanma hatasının en aza indirilmesini amaçlamaktadır: 
 

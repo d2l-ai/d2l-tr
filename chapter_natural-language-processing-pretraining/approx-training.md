@@ -61,7 +61,7 @@ Alternatif bir yaklaşık eğitim yöntemi olarak,
 ![Hierarchical softmax for approximate training, where each leaf node of the tree represents a word in the dictionary.](../img/hi-softmax.svg)
 :label:`fig_hi_softmax`
 
-Kök düğümünden ikili ağacın $w$ sözcüğünü temsil eden yaprak düğümüne giden yol üzerindeki düğüm sayısını $L(w)$ ile belirtin. $n(w,j)$, bağlam sözcük vektörü $\mathbf{u}_{n(w, j)}$ olan bu yoldaki $j^\mathrm{th}$ düğümü olsun. Örneğin, :numref:`fig_hi_softmax`'te $L(w_3) = 4$. Hiyerarşik softmax koşullu olasılık yaklaşır :eqref:`eq_skip-gram-softmax` olarak 
+Kök düğümünden ikili ağacın $w$ sözcüğünü temsil eden yaprak düğümüne giden yol üzerindeki düğüm sayısını $L(w)$ ile belirtin. $n(w,j)$, bağlam sözcük vektörü $\mathbf{u}_{n(w, j)}$ olan bu yoldaki $j.$ düğümü olsun. Örneğin, :numref:`fig_hi_softmax`'te $L(w_3) = 4$. Hiyerarşik softmax koşullu olasılık yaklaşır :eqref:`eq_skip-gram-softmax` olarak 
 
 $$P(w_o \mid w_c) = \prod_{j=1}^{L(w_o)-1} \sigma\left( [\![  n(w_o, j+1) = \text{leftChild}(n(w_o, j)) ]\!] \cdot \mathbf{u}_{n(w_o, j)}^\top \mathbf{v}_c\right),$$
 

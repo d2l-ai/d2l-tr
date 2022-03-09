@@ -82,7 +82,7 @@ Beklendiği gibi kosinüs fonksiyonu *dışbükey* olmayan*, parabol ve üstel f
 
 Bir dışbükey $f$ fonksiyonu göz önüne alındığında, en kullanışlı matematiksel araçlardan biri *Jensen eşitsizliği*dir. Dışbükeylik tanımının genelleştirilmesi anlamına gelir: 
 
-$$\sum_i \alpha_i f(x_i)  \geq f\left(\sum_i \alpha_i x_i\right)    \text{ and }    E_X[f(X)]  \geq f\left(E_X[X]\right),$$
+$$\sum_i \alpha_i f(x_i)  \geq f\left(\sum_i \alpha_i x_i\right)    \text{ ve }    E_X[f(X)]  \geq f\left(E_X[X]\right),$$
 :eqlabel:`eq_jensens-inequality`
 
 burada $\alpha_i$ negatif olmayan reel sayılar $\sum_i \alpha_i = 1$ ve $X$ rasgele bir değişkenlerdir. Başka bir deyişle, dışbükey bir fonksiyonun beklentisi, ikincisinin genellikle daha basit bir ifade olduğu bir beklentinin dışbükey işlevinden daha az değildir. İlk eşitsizliği kanıtlamak için dışbükeylik tanımını defalarca toplamda bir terime uygularız. 
@@ -130,7 +130,7 @@ Dışbükey fonksiyonlar için yerel minimum da küresel minimum olması çok uy
 
 Dışbükey fonksiyonların *aşağıdaki kümeleri* aracılığıyla dışbükey kümeleri rahatça tanımlayabiliriz. Somut olarak, dışbükey bir $\mathcal{X}$ kümesi üzerinde tanımlanan dışbükey bir $f$  fonksiyonu verildiğinde, herhangi bir aşağıda küme 
 
-$$\mathcal{S}_b := \{x | x \in \mathcal{X} \text{ and } f(x) \leq b\}$$
+$$\mathcal{S}_b := \{x | x \in \mathcal{X} \text{ ve } f(x) \leq b\}$$
 
 dışbükeydir.  
 
@@ -140,7 +140,7 @@ $$f(\lambda x + (1-\lambda) x') \leq \lambda f(x) + (1-\lambda) f(x') \leq b.$$
 
 ### Dışbükeylik ve İkinci Türevler
 
-$f: \mathbb{R}^n \rightarrow \mathbb{R}$ fonksiyonunun ikinci türevi varsa, $f$'in dışbükey olup olmadığını kontrol etmek çok kolaydır. Tek yapmamız gereken $f$'ın Hessian'ının pozitif yarı-kesin olup olmadığını kontrol etmektir: $\nabla^2f \succeq 0$, yani, $\nabla^2f$ Hessian matrisini $\mathbf{H}$ $ ile ifade edersek \mathbf{x}^\top \mathbf{H} \mathbf{x} \geq 0$ $\mathbf{x} \in \mathbb{R}^n$. Örneğin, $f(\mathbf{x}) = \frac{1}{2} \|\mathbf{x}\|^2$ işlevi $\nabla^2 f = \mathbf{1}$'ten dolayı dışbükeydir, yani Hessian bir birim matrisdir. 
+$f: \mathbb{R}^n \rightarrow \mathbb{R}$ fonksiyonunun ikinci türevi varsa, $f$'in dışbükey olup olmadığını kontrol etmek çok kolaydır. Tek yapmamız gereken $f$'ın Hessian'ının pozitif yarı-kesin olup olmadığını kontrol etmektir: $\nabla^2f \succeq 0$, yani, $\nabla^2f$ Hessian matrisini $\mathbf{H}$ ile ifade edersek $\mathbf{x}^\top \mathbf{H} \mathbf{x} \geq 0$ $\mathbf{x} \in \mathbb{R}^n$. Örneğin, $f(\mathbf{x}) = \frac{1}{2} \|\mathbf{x}\|^2$ işlevi $\nabla^2 f = \mathbf{1}$'ten dolayı dışbükeydir, yani Hessian bir birim matrisdir. 
 
 Biçimsel olarak, çift türevlenebilen tek boyutlu bir fonksiyon $f: \mathbb{R} \rightarrow \mathbb{R}$, sadece ve sadece ikinci türevi $f'' \geq 0$ ise dışbükeydir. Herhangi bir çift türevlenebilen çok boyutlu fonksiyon $f: \mathbb{R}^{n} \rightarrow \mathbb{R}$, sadece ve sadece Hessian $\nabla^2f \succeq 0$ ise dışbükey olur. 
 
@@ -168,7 +168,7 @@ böylece dışbükeyliği kanıtlıyoruz.
 
 İkincisi, çok boyutlu davayı kanıtlamadan önce bir önsava (lemma) ihtiyacımız var: $f: \mathbb{R}^n \rightarrow \mathbb{R}$, sadece ve sadece $\mathbf{x}, \mathbf{y} \in \mathbb{R}^n$ 
 
-$$g(z) \stackrel{\mathrm{def}}{=} f(z \mathbf{x} + (1-z)  \mathbf{y}) \text{ öyleki } z \in [0,1]$$ 
+$$g(z) \stackrel{\mathrm{def}}{=} f(z \mathbf{x} + (1-z)  \mathbf{y}) \text{ öyle ki } z \in [0,1]$$ 
 
 dışbükey ise dışbükeydir. 
 
@@ -195,8 +195,8 @@ Son olarak, yukarıdaki önsav ve tek boyutlu durumun sonucunu kullanarak, çok 
 
 Dışbükey optimizasyonun güzel özelliklerinden biri, kısıtlamaları verimli bir şekilde ele almamıza izin vermesidir. Yani, *kısıtlı optimizasyon* biçimdeki sorunlarını çözmemize izin verir: 
 
-$$\begin{aligned} \mathop{\mathrm{minimize~}}_{\mathbf{x}} & f(\mathbf{x}) \\
-    \text{ subject to } & c_i(\mathbf{x}) \leq 0 \text{ for all } i \in \{1, \ldots, n\},
+$$\begin{aligned} \mathop{\mathrm{minimize~et~}}_{\mathbf{x}} & f(\mathbf{x}) \\
+    \text{ tabi } & c_i(\mathbf{x}) \leq 0 \text{ her } i \in \{1, \ldots, n\},
 \end{aligned}$$
 
 burada $f$ amaç işlevi ve $c_i$ fonksiyonları kısıtlama işlevleridir. Bunun ne yaptığını görmek için $c_1(\mathbf{x}) = \|\mathbf{x}\|_2 - 1$ durumunu düşünün. Bu durumda $\mathbf{x}$ parametreleri birim topla sınırlıdır. İkinci bir kısıtlama $c_2(\mathbf{x}) = \mathbf{v}^\top \mathbf{x} + b$ ise, bu yarı uzayda yatan $\mathbf{x}$'lerin tümüne karşılık gelir. Her iki kısıtlama da aynı anda tatmin etmek, bir topun bir diliminin seçilmesi anlamına gelir. 
@@ -207,7 +207,7 @@ Genel olarak, kısıtlı bir optimizasyon problemini çözmek zordur. Bunu ele a
 
 *Lagrangian* $L$'nin türetilmesi es geçersek, yukarıdaki akıl yürütme, aşağıdaki eyer noktası optimizasyonu problemi ile ifade edilebilir: 
 
-$$L(\mathbf{x}, \alpha_1, \ldots, \alpha_n) = f(\mathbf{x}) + \sum_{i=1}^n \alpha_i c_i(\mathbf{x}) \text{ where } \alpha_i \geq 0.$$
+$$L(\mathbf{x}, \alpha_1, \ldots, \alpha_n) = f(\mathbf{x}) + \sum_{i=1}^n \alpha_i c_i(\mathbf{x}) \text{ burada } \alpha_i \geq 0.$$
 
 Burada $\alpha_i$ ($i=1,\ldots,n$) değişkenleri, kısıtlamaların doğru şekilde uygulanmasını sağlayan *Lagrange çarpanları* olarak adlandırılır. Tüm $i$'lerde $c_i(\mathbf{x}) \leq 0$  sağlamak için yeterince büyük seçilir. Örneğin, $c_i(\mathbf{x}) < 0$'in doğal olarak $c_i(\mathbf{x}) < 0$'in $\alpha_i = 0$'i seçtiği herhangi bir $\mathbf{x}$ için. Üstelik, bu, $L$'nin tüm $\alpha_i$'ya göre *maksimize edilmek* ve aynı anda $\mathbf{x}$'a göre *minimize edilmek* istendiği bir eyer noktası optimizasyon problemidir. $L(\mathbf{x}, \alpha_1, \ldots, \alpha_n)$ fonksiyonuna nasıl ulaşılacağını açıklayan zengin bir edebiyat birikimi vardır. Amacımız için, asıl kısıtlı optimizasyon probleminin en iyi şekilde çözüldüğü $L$ eyer noktasının nerede olduğunu bilmek yeterlidir. 
 

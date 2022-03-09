@@ -252,16 +252,16 @@ Bildiğimiz gibi, bir nesne algılama eğitim kümesi, *gerçek referans değeri
 
 ### [**Çapa Kutularına Gerçek Referans Değeri Kuşatan Kutuları Atama**]
 
-Bir imge göz önüne alındığında, çapa kutularının $A_1, A_2, \ldots, A_{n_a}$ ve zemin gerçeği kuşatan kutuların $B_1, B_2, \ldots, B_{n_b}$ olduğunu varsayalım, burada $n_a \geq n_b$. $i^\mathrm{th}$ satırında $x_{ij}$ elemanı ve $j^\mathrm{th}$ sütununda $j^\mathrm{th}$ olan bir matris $\mathbf{X} \in \mathbb{R}^{n_a \times n_b}$, ankraj kutusunun IoU $A_i$ ve zemin gerçeği kuşatan kutunun $B_j$ olan bir matris tanımlayalım. Algoritma aşağıdaki adımlardan oluşur: 
+Bir imge göz önüne alındığında, çapa kutularının $A_1, A_2, \ldots, A_{n_a}$ ve gerçek referans değeri kuşatan kutuların $B_1, B_2, \ldots, B_{n_b}$ olduğunu varsayalım, burada $n_a \geq n_b$. $i.$ satırında ve $j.$ sütununda $x_{ij}$ elemanı, $A_i$ çapa kutusunun ve $B_j$ gerçek referans değer kuşatan kutusunun IoU değeri olan bir $\mathbf{X} \in \mathbb{R}^{n_a \times n_b}$ matrisini tanımlayalım. Algoritma aşağıdaki adımlardan oluşur: 
 
-1. $\mathbf{X}$ matrisindeki en büyük elemanı bulun ve satır ve sütun indekslerini sırasıyla $i_1$ ve $j_1$ olarak belirtin. Daha sonra $B_{j_1}$ zemin gerçeği kuşatan kutu $A_{i_1}$ çapa kutusuna atanır. Bu oldukça sezgiseldir, çünkü $A_{i_1}$ ve $B_{j_1}$, tüm çapa kutuları ve zemin gerçeği kuşatan kutular arasında en yakın olanlardır. İlk atamadan sonra, ${i_1}^\mathrm{th}$ satırındaki tüm öğeleri ve ${j_1}^\mathrm{th}$ sütunundaki ${j_1}^\mathrm{th}$ matrisindeki $\mathbf{X}$ sütununu atın. 
-1. $\mathbf{X}$ matrisinde kalan elemanların en büyüğünü bulun ve satır ve sütun indekslerini sırasıyla $i_2$ ve $j_2$ olarak belirtin. $A_{i_2}$'yi çapa kutusuna $B_{j_2}$'yi atayın ve ${i_2}^\mathrm{th}$ satırındaki tüm öğeleri ve ${j_2}^\mathrm{th}$ matrisindeki ${j_2}^\mathrm{th}$ sütununda $\mathbf{X}$ sütununu atıyoruz.
-1. Bu noktada, iki satırdaki elemanlar ve $\mathbf{X}$ matrisindeki iki sütun atılmıştır. $\mathbf{X}$ matrisindeki $n_b$ sütunlarındaki tüm elemanlar atılana kadar devam ediyoruz. Şu anda, $n_b$ çapa kutularının her birine bir zemin gerçeği kuşatan kutu atadık.
-1. Sadece kalan $n_a - n_b$ çapa kutularından geçiş yapın. Örneğin, $A_i$ herhangi bir çapa kutusu göz önüne alındığında $A_i$ numaralı matrisin $\mathbf{X}$ sırası boyunca $A_i$ ile en büyük IoU içeren $B_j$'yi $B_j$'yi bulun ve yalnızca bu IoU önceden tanımlanmış bir eşikten büyükse $A_i$'e $A_i$'i atayın.
+1. $\mathbf{X}$ matrisindeki en büyük elemanı bulun ve satır ve sütun indekslerini sırasıyla $i_1$ ve $j_1$ olarak belirtin. Daha sonra $B_{j_1}$ gerçek referans değeri kuşatan kutu $A_{i_1}$ çapa kutusuna atanır. Bu oldukça sezgiseldir, çünkü $A_{i_1}$ ve $B_{j_1}$, tüm çapa kutuları ve gerçek referans değeri kuşatan kutular arasında en yakın olanlardır. İlk atamadan sonra, $\mathbf{X}$ matrisindeki ${i_1}.$ satırındaki ve ${j_1}.$ sütunundaki tüm öğeleri atın.
+1. $\mathbf{X}$ matrisinde kalan elemanların en büyüğünü bulun ve satır ve sütun indekslerini sırasıyla $i_2$ ve $j_2$ olarak belirtin. $B_{j_2}$ gerçek referans değeri kuşatan kutusunu $A_{i_2}$ çapa kutusuna atarız ve $\mathbf{X}$ matrisindeki ${i_2}.$ satırındaki ve ${j_2}.$ sütunundaki tüm öğeleri atarız.
+1. Bu noktada, $\mathbf{X}$ matrisindeki iki satır ve iki sütundaki öğeler atılmıştır. $\mathbf{X}$ matrisindeki $n_b$ sütunundaki tüm öğeler atılana kadar devam ederiz. Şu anda, $n_b$ çapa kutusunun her birine bir gerçek referans değeri kuşatan kutu atadık.
+1. Sadece kalan $n_a - n_b$ tane çapa kutusundan geçiş yapın. Örneğin, herhangi bir $A_i$ çapa kutusu verildiğinde, $i.$ matrisinin $\mathbf{X}$ satırı boyunca $A_i$ ile en büyük IoU'ya sahip $B_j$ gerçek referans değeri kuşatan kutusunu bulun ve yalnızca bu IoU önceden tanımlanmış bir eşikten büyükse $B_j$ öğesini $A_i$ öğesine atayın.
 
-Yukarıdaki algoritmayı somut bir örnek kullanarak gösterelim. :numref:`fig_anchor_label`'te (solda) gösterildiği gibi, $\mathbf{X}$ matrisindeki maksimum değerin $x_{23}$ olduğunu varsayarak $x_{23}$, $B_3$ numaralı çapa kutusuna $B_3$ numaralı çapa kutusuna atarız. Daha sonra, matrisin satır 2 ve sütun 3'teki tüm unsurları atıyoruz, kalan elemanlarda (gölgeli alan) en büyük $x_{71}$'i bulun ve $A_7$ ankraj kutusuna $B_1$ numaralı zemin gerçeği kuşatan kutuyu atayın. Daha sonra, :numref:`fig_anchor_label` (orta) gösterildiği gibi, matrisin satır 7 ve sütun 1'deki tüm öğeleri atın, kalan elemanlarda (gölgeli alan) en büyük $x_{54}$'ü bulun ve $B_4$ numaralı çapa kutusuna $B_4$ numaralı çapa kutusuna atayın. Son olarak, :numref:`fig_anchor_label` (sağda) gösterildiği gibi, matrisin satır 5 ve sütun 4'teki tüm öğeleri atın, kalan elemanlarda (gölgeli alan) en büyük $x_{92}$'i bulun ve $B_2$'yı çapa kutusuna $B_2$ numaralı çapa kutusuna atayın. Bundan sonra, sadece kalan çapa kutularından $A_1, A_3, A_4, A_6, A_8$'a geçmemiz ve eşiğe göre toprak-hakikat kuşatan kutuların atanıp atanmayacağını belirlemeliyiz. 
+Yukarıdaki algoritmayı somut bir örnek kullanarak gösterelim. :numref:`fig_anchor_label`'te (solda) gösterildiği gibi, $\mathbf{X}$ matrisindeki maksimum değerin $x_{23}$ olduğunu varsayarak $x_{23}$, $B_3$ numaralı gerçek referans değeri kuşatan kutusunu $A_2$ numaralı çapa kutusuna atarız. Daha sonra, matrisin satır 2 ve sütun 3'teki tüm elemanlarını atırız, kalan elemanlarda (gölgeli alan) en büyük $x_{71}$'i buluruz ve $A_7$ çapa kutusuna $B_1$ numaralı gerçek referans değeri kuşatan kutuyu atarız. Daha sonra, :numref:`fig_anchor_label` (ortada) içinde gösterildiği gibi, matrisin 7. satırı ve 1. sütunundaki tüm öğeleri atın, kalan elemanlardaki (gölgeli alan) en büyük $x_{54}$ öğesini bulun ve $B_4$ gerçek referans değeri kuşatan kutusunu $A_5$ çapa kutusuna atayın. Son olarak, :numref:`fig_anchor_label`de (sağda) gösterildiği gibi, matrisin 5. satırı ve 4. sütunundaki tüm elemanları atın, kalan elemanlardaki (gölgeli alan) en büyük $x_{92}$ değerini bulun ve $B_2$ gerçek referans değeri kuşatan kutusunu $A_9$ çapa kutusuna atayın. Bundan sonra, yalnızca geri kalan $A_1, A_3, A_4, A_6, A_8$ çapa kutularından geçmemiz ve eşiğe göre gerçek referans değeri kuşatan kutular atanıp atanmayacağına karar vermemiz gerekiyor.
 
-![Assigning ground-truth bounding boxes to anchor boxes.](../img/anchor-label.svg)
+![Çapa kutularına gerçek referans değeri kuşatan kutular atama.](../img/anchor-label.svg)
 :label:`fig_anchor_label`
 
 Bu algoritma aşağıdaki `assign_anchor_to_bbox` işlevinde uygulanır.
@@ -324,9 +324,9 @@ def assign_anchor_to_bbox(ground_truth, anchors, device, iou_threshold=0.5):
     return anchors_bbox_map
 ```
 
-### Etiketleme Sınıfları ve Ofsetler
+### Etiketleme Sınıfları ve Uzaklıklar
 
-Artık her çapa kutusu için sınıfı etiketleyebilir ve ofset yapabiliriz. Bir çapa kutusu $A$ bir zemin gerçeği kuşatan kutu $B$ atandığını varsayalım. Bir yandan, çapa kutusu $A$ sınıfı $B$ olarak etiketlenecektir. Öte yandan, $A$ ankraj kutusunun ofseti, $B$ ve $A$ arasındaki merkezi koordinatlar arasındaki göreli konuma göre bu iki kutu arasındaki göreli boyutla birlikte etiketlenecektir. Veri kümesindeki farklı kutuların farklı konumları ve boyutları göz önüne alındığında, bu göreceli konumlara ve boyutlara dönüşümler uygulayarak sığması daha kolay olan daha düzgün dağıtılmış uzaklıklara yol açabiliriz. Burada ortak bir dönüşümü tanımlıyoruz. [**$A$ ve $B$ olarak $B$ olarak $(x_a, y_a)$ ve $(x_b, y_b)$, genişlikleri $w_a$ ve $w_b$ ve $w_b$ olarak sırasıyla $h_a$ ve $h_b$ gibi yükseklikleri göz önüne alındığında. Biz $A$ ofset olarak etiketleyebilirsiniz 
+Artık her çapa kutusu için sınıfı ve uzaklığı etiketleyebiliriz. Bir $A$ çapa kutusunun bir $B$ gerçek referans değer kuşatan kutuna atandığını varsayalım. Bir yandan, $A$ çapa kutusu sınıfı $B$'ninkiyle aynı olarak etiketlenecektir. Öte yandan, $A$ çapa kutusunun uzaklığı, $B$ ve $A$ arasındaki merkezi koordinatlar arasındaki göreli konuma göre bu iki kutu arasındaki göreli boyutla birlikte etiketlenecektir. Veri kümesindeki farklı kutuların değişen konumları ve boyutları verildiğinde, sığdırılması daha kolay olan daha düzgün dağıtılmış ofsetlere yol açabilecek bu göreli konumlara ve boyutlara dönüşümler uygulayabiliriz. Burada genel bir dönüşümü tanımlıyoruz. [**$A$ ve $B$'inn merkezi koordinatları $(x_a, y_a)$ ve $(x_b, y_b)$ olarak verildiğinde, sırasıyla genişlikleri $w_a$ ve $w_b$ ve yükseklikleri $h_a$ ve $h_b$ olarak verilir. $A$ ofsetini şu şekilde etiketleyebiliriz:
 
 $$\left( \frac{ \frac{x_b - x_a}{w_a} - \mu_x }{\sigma_x},
 \frac{ \frac{y_b - y_a}{h_a} - \mu_y }{\sigma_y},
@@ -349,7 +349,7 @@ def offset_boxes(anchors, assigned_bb, eps=1e-6):
     return offset
 ```
 
-Bir çapa kutusuna bir zemin gerçeği kuşatan kutu atanmamışsa, sadece çapa kutusunun sınıfını “arka plan” olarak etiketleriz. Sınıfları arka plan olan bağlantı kutuları genellikle *negative* bağlantı kutuları olarak adlandırılır ve geri kalanı ise *pozitive* bağlantı kutuları olarak adlandırılır. Aşağıdaki `multibox_target` işlevini temel doğruluk kuşatan kutuları (`labels` bağımsız değişkeni) kullanarak [**label sınıfları ve bağlantı kutuları için uzaklıklar**](`anchors` bağımsız değişkeni) için uyguluyoruz. Bu işlev, arka plan sınıfını sıfıra ayarlar ve yeni bir sınıfın tamsayı dizinini tek artırır.
+Bir çapa kutusuna bir gerçek referans değeri kuşatan kutu atanmamışsa, sadece çapa kutusunun sınıfını “arka plan” olarak etiketleriz. Sınıfları arka plan olan çapa kutuları genellikle *negatif* çapa kutuları olarak adlandırılır ve geri kalanı ise *pozitif* çapa kutuları olarak adlandırılır. Aşağıdaki `multibox_target` işlevini gerçek referans değeri kuşatan kutuları (`labels` bağımsız değişkeni) kullanarak [**sınıfları ve çapa kutuları için uzaklıkları etiketlemek**](`anchors` bağımsız değişkeni) için uyguluyoruz. Bu işlev, arka plan sınıfını sıfıra ayarlar ve yeni bir sınıfın tamsayı dizinini bir artırır.
 
 ```{.python .input}
 #@save
@@ -427,7 +427,7 @@ def multibox_target(anchors, labels):
 
 ### Bir Örnek
 
-Çapa kutusu etiketlemesini somut bir örnekle gösterelim. İlk eleman sınıftır (köpek için 0 ve kedi için 1) ve kalan dört öğe - sol üst köşede ve sağ alt köşede $(x, y)$ eksen koordinatlarıdır (aralık 0 ile 1 arasındadır) yüklenen imgede köpek ve kedi için zemin gerçeği kuşatan kutuları tanımlıyoruz. Ayrıca, sol üst köşenin ve sağ alt köşenin koordinatlarını kullanarak etiketlenecek beş çapa kutusu oluşturuyoruz: $A_0, \ldots, A_4$ (indeks 0'dan başlar). Sonra [**resimdeki bu temel doğruluk kuşatan kutuları ve çapa kutularını çiziyoruz.**]
+Çapa kutusu etiketlemeyi somut bir örnekle gösterelim. İlk öğenin sınıf olduğu (köpek için 0 ve kedi için 1) ve kalan dört öğenin sol üst köşede ve sağ alt köşedeki $(x, y)$-ekseni koordinatlarının (aralık 0 ile 1 arasındadır) olduğu, yüklenen imgedeki köpek ve kedi için gerçek referans değeri kuşatan kutular tanımlarız. Ayrıca sol üst köşenin ve sağ alt köşenin koordinatlarını kullanarak etiketlenecek beş çapa kutusu oluşturuyoruz: $A_0, \ldots, A_4$ (indeks 0'dan başlar). Sonra [**resimdeki bu gerçek referans değeri kuşatan kutuları ve çapa kutularını çiziyoruz.**]
 
 ```{.python .input}
 #@tab all
@@ -442,7 +442,7 @@ show_bboxes(fig.axes, ground_truth[:, 1:] * bbox_scale, ['dog', 'cat'], 'k')
 show_bboxes(fig.axes, anchors * bbox_scale, ['0', '1', '2', '3', '4']);
 ```
 
-Yukarıda tanımlanan `multibox_target` işlevini kullanarak, köpek ve kedi için bu çapa kutularının sınıflarını ve ofsetlerini zemin hakikati kuşatan kutulara dayanarak etiketleyebiliriz. Bu örnekte, arka plan, köpek ve kedi sınıflarının indeksleri sırasıyla 0, 1 ve 2'dir. Aşağıda, çapa kutuları ve zemin gerçeği kuşatan kutular örnekleri için bir boyut ekliyoruz.
+Yukarıda tanımlanan `multibox_target` işlevini kullanarak, köpek ve kedi için bu [**çapa kutularının sınıflarını ve ofsetlerini gerçek referans değeri kuşatan kutulara dayanarak etiketleyebiliriz**]. Bu örnekte, arka plan, köpek ve kedi sınıflarının indeksleri sırasıyla 0, 1 ve 2'dir. Aşağıda, çapa kutularının ve gerçek referans değeri kuşatan kutuların örnekleri için bir boyut ekliyoruz.
 
 ```{.python .input}
 labels = multibox_target(np.expand_dims(anchors, axis=0),
@@ -455,30 +455,30 @@ labels = multibox_target(anchors.unsqueeze(dim=0),
                          ground_truth.unsqueeze(dim=0))
 ```
 
-İade edilen sonuçta, hepsi tensör formatında olan üç öğe vardır. Üçüncü öğe, giriş bağlantı kutularının etiketli sınıflarını içerir. 
+Döndürülen sonuçta, hepsi tensör formatında olan üç öğe vardır. Üçüncü öğe, girdi çapa kutularının etiketli sınıflarını içerir. 
 
-Aşağıdaki döndürülen sınıf etiketlerini, çapa kutusu ve resimdeki zemin hakikati kuşatan kutu konumlarına göre analiz edelim. İlk olarak, çapa kutuları ve zemin gerçeği kuşatan kutuların tüm çiftleri arasında, $A_4$ çapa kutusunun IoU ve kedinin zemin gerçeği kuşatan kutusu en büyüğüdür. Böylece, $A_4$ sınıfı kedi olarak etiketlenmiştir. $A_4$ veya kedinin zemin gerçeği kuşatan kutusunu içeren çiftleri çıkarmak, geri kalanlar arasında $A_1$ ankraj kutusunun çifti ve köpeğin zemin gerçeği kuşatan kutusu en büyük IoU'ya sahiptir. Yani $A_1$ sınıfı köpek olarak etiketlenmiştir. Ardından, kalan üç etiketlenmemiş çapa kutusundan geçmemiz gerekiyor: $A_0$, $A_2$ ve $A_3$. $A_0$ için, en büyük IoU ile zemin gerçeği kuşatan kutunun sınıfı köpektir, ancak IoU önceden tanımlanmış eşiğin (0.5) altındadır, bu nedenle sınıf arka plan olarak etiketlenir; $A_2$ için, en büyük IoU ile zemin gerçeği sınırlama kutusunun sınıfı kedi ve IoU eşiği aşar, bu nedenle sınıfı kedi olarak etiketlenir; $A_3$ için, en büyük IoU'ya sahip zemin gerçeği kuşatan kutunun sınıfı kedidir, ancak değer eşiğin altındadır, bu nedenle sınıf arka plan olarak etiketlenir.
+Aşağıdaki döndürülen sınıf etiketlerini, çapa kutusu ve resimdeki gerçek referans değeri kuşatan kutu konumlarına göre analiz edelim. İlk olarak, tüm çapa kutuları ve gerçek referans değeri kuşatan kutu çiftleri arasında, $A_4$ bağlantı kutusunun ve kedinin gerçek referans değeri kuşatan kutusunun IoU'su en büyüğüdür. Böylece, $A_4$'nın sınıfı kedi olarak etiketlenmiştir. $A_4$ veya kedinin gerçek referans değeri kuşatan kutusunu içeren çiftleri çıkarırken, geri kalanlar arasında $A_1$ çapa kutusunun ve köpeğin gerçek referans değeri kuşatan kutusunun çifti en büyük IoU'ya sahiptir. Büylece $A_1$ sınıfı köpek olarak etiketlenir. Ardından, kalan üç etiketlenmemiş çapa kutusundan geçmemiz gerekiyor: $A_0$, $A_2$ ve $A_3$. $A_0$ için, en büyük IoU'ya sahip gerçek referans değeri kuşatan kutunun sınıfı köpektir, ancak IoU önceden tanımlanmış eşiğin (0.5) altındadır, bu nedenle sınıf arka plan olarak etiketlenir; $A_2$ için, en büyük IoU'ya sahip gerçek referans değeri kuşatan kutunun sınıfı kedidir ve IoU eşiği aştığından sınıf kedi olarak etiketlenir; $A_3$ için, en büyük IoU'ya sahip gerçek referans değeri kuşatan kutunun sınıfı kedidir, ancak değer eşiğin altındadır, bu nedenle sınıf arka plan olarak etiketlenir.
 
 ```{.python .input}
 #@tab all
 labels[2]
 ```
 
-Döndürülen ikinci öğe şeklin bir maske değişkenidir (toplu iş boyutu, çapa kutularının dört katı). Maske değişkenindeki her dört öğe, her bir çapa kutusunun dört uzaklık değerine karşılık gelir. Arka plan algılama umurumda olmadığından, bu negatif sınıfın ofsetleri objektif işlevi etkilememelidir. Elementwise çarpımları sayesinde, maske değişkenindeki sıfırlar, objektif işlevi hesaplamadan önce negatif sınıf uzaklıklarını filtreler.
+Döndürülen ikinci öğe şeklin bir maske değişkenidir (toplu iş boyutu, çapa kutularının sayısının dört katı). Maske değişkenindeki her dört öğe, her bir çapa kutusunun dört ofset değerine karşılık gelir. Arka plan algılama umurumuzda olmadığından, bu negatif sınıfın ofsetleri amaç işlevini etkilememelidir. Eleman yönlü çarpımlar sayesinde, maske değişkenindeki sıfırlar, amaç işlevini hesaplamadan önce negatif sınıf ofsetlerini filtreler.
 
 ```{.python .input}
 #@tab all
 labels[1]
 ```
 
-İlk döndürülen öğe, her bağlantı kutusu için etiketlenmiş dört uzaklık değeri içerir. Negatif sınıf bağlantı kutularının uzaklıklarının sıfır olarak etiketlendiğini unutmayın.
+İlk döndürülen öğe, her çapa kutusu için etiketlenmiş dört ofset değeri içerir. Negatif sınıf çapa kutularının ofsetlerinin sıfır olarak etiketlendiğini unutmayın.
 
 ```{.python .input}
 #@tab all
 labels[0]
 ```
 
-## Maksimum Olmayan Bastırma ile Sınırlayıcı Kutuları Tahmin Edileme
+## Maksimum Olmayan Bastırma ile Kuşatan Kutuları Tahmin Etme
 :label:`subsec_predicting-bounding-boxes-nms`
 
 During prediction,
@@ -683,7 +683,7 @@ Pratikte, maksimum olmayan bastırmayı gerçekleştirmeden önce bile daha dü�
 
 * Görüntünün her pikselinde ortalanmış farklı şekillere sahip çapa kutuları oluşturuyoruz.
 * Jakar indeksi olarak da bilinen birleşme (IoU) üzerindeki kesişme, iki kuşatan kutunun benzerliğini ölçer. Kesişme alanlarının sendika alanlarına oranıdır.
-* Bir eğitim setinde, her bir çapa kutusu için iki tip etikete ihtiyacımız var. Biri, çapa kutusuyla ilgili nesnenin sınıfıdır ve diğeri ise çapa kutusuna göre zemin gerçeği kuşatan kutunun ofsetidir.
+* Bir eğitim setinde, her bir çapa kutusu için iki tip etikete ihtiyacımız var. Biri, çapa kutusuyla ilgili nesnenin sınıfıdır ve diğeri ise çapa kutusuna göre gerçek referans değer kuşatan kutunun ofsetidir.
 * Tahmin sırasında, benzer öngörülen sınırlama kutularını kaldırmak için maksimum olmayan bastırma (NMS) kullanabiliriz ve böylece çıktıyı basitleştiririz.
 
 ## Alıştırmalar
