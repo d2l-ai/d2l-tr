@@ -478,18 +478,10 @@ labels[1]
 labels[0]
 ```
 
-## Maksimum Olmayan Bastırma ile Kuşatan Kutuları Tahmin Etme
+## Maksimum Olmayanı Bastırma ile Kuşatan Kutuları Tahmin Etme
 :label:`subsec_predicting-bounding-boxes-nms`
 
-During prediction,
-we generate multiple anchor boxes for the image and predict classes and offsets for each of them.
-A *predicted bounding box*
-is thus obtained according to 
-an anchor box with its predicted offset.
-Below we implement the `offset_inverse` function
-that takes in anchors and
-offset predictions as inputs and [**applies inverse offset transformations to
-return the predicted bounding box coordinates**].
+Tahmin esnasında, imge için birden çok çapa kutusu oluşturur ve her biri için sınıfları ve ofsetleri tahmin ederiz. Bir *tahmin edilen kuşatan kutu* böylece, tahmin edilen ofseti olan bir çapa kutusuna göre elde edilir. Aşağıda, girdiler olarak çapaları ve ofset tahminlerini alan ve [**tahmin edilen kuşatan kutu koordinatlarını döndürmek için ters ofset dönüşümleri uygulayan**] `offset_inverse` işlevini uyguluyoruz.
 
 ```{.python .input}
 #@tab all
@@ -504,16 +496,16 @@ def offset_inverse(anchors, offset_preds):
     return predicted_bbox
 ```
 
-Çok sayıda çapa kutusu olduğunda, benzer (önemli örtüşme ile) tahmin edilen sınırlama kutuları aynı nesneyi çevreleyen için potansiyel olarak çıktı olabilir. Çıktıyı basitleştirmek için, aynı nesneye ait benzer öngörülen sınırlama kutularını *maksimum olmayan bastırma* (NMS) kullanarak birleştirebiliriz. 
+Çok sayıda çapa kutusu olduğunda, benzer (önemli örtüşme ile) tahmin edilen kuşatan kutular aynı nesneyi çevreleyen için potansiyel çıktı olabilir. Çıktıyı basitleştirmek için, aynı nesneye ait benzer tahmin edilen kuşatan kutuları *maksimum olmayanı bastırma (non-maximum suppression)* (NMS) kullanarak birleştirebiliriz. 
 
-İşte maksimum olmayan bastırma nasıl çalışır. Tahmin edilen bir sınırlama kutusu $B$ için nesne algılama modeli her sınıf için tahmin edilen olasılığı hesaplar. $p$ tarafından tahmin edilen en büyük olasılığın belirlenmesi, bu olasılığa karşılık gelen sınıf $B$ için tahmin edilen sınıftır. Özellikle, $p$'yı öngörülen sınırlama kutusu $B$'un*güven* (skor) olarak adlandırıyoruz. Aynı imgede, öngörülen tüm arka plan dışı sınırlama kutuları $L$ liste oluşturmak için azalan sıraya göre sıralanır. Ardından aşağıdaki adımlarda sıralanmış listeyi $L$'yi manipüle ediyoruz: 
+Şimdi maksimum olmayanı bastırma nasıl çalışır anlayalım. Tahmin edilen bir kuşatan kutu $B$ için nesne algılama modeli her sınıf için tahmin edilen olasılığı hesaplar. $p$ ile tahmin edilen en büyük olasılığı ifade edersek, bu olasılığa karşılık gelen sınıf, $B$ için tahmin edilen sınıftır. Daha özel belirtirsek, $p$'yi tahmini kuşatan kutu $B$'nin *güveni* (skoru) olarak adlandırıyoruz. Aynı imgede, tahmin edilen tüm arka plan olmayan kuşatan kutular, bir $L$ listesi oluşturmak için azalan düzende güvene göre sıralanır. Ardından, aşağıdaki adımlarda sıralanmış listeyi $L$'yi değiştiriyoruz.: 
 
-1. Tahmin edilen sınırlama kutusunu $B_1$ temel olarak $L$'ten en yüksek güvenle seçin ve $B_1$ ile IoU $L$'ten önceden tanımlanmış bir eşiği $\epsilon$'ü aşan temel olmayan öngörülen tüm sınırlama kutularını kaldırın. Bu noktada, $L$ öngörülen kuşatan kutuyu en yüksek güvenle tutar, ancak buna çok benzer olan başkalarını bırakır. Özetle, *maksimum* olmayan* güven puanı olanlar*bastırılır*.
-1. Başka bir temel olarak $L$'dan ikinci en yüksek güvenle öngörülen sınırlama kutusunu $B_2$'ü seçin ve $B_2$ ile IoU $L$'dan $\epsilon$'i aşan temel olmayan tüm öngörülen sınırlama kutularını kaldırın.
-1. $L$'teki tüm öngörülen sınırlama kutuları temel olarak kullanılıncaya kadar yukarıdaki işlemi yineleyin. Şu anda, $L$'teki öngörülen kuşatan kutuların herhangi bir çiftinin IoU $\epsilon$ eşiğinin altındadır; bu nedenle, hiçbir çift birbiriyle çok benzer değildir. 
-1. Listedeki tüm öngörülen kuşatan kutuları çıktısı $L$.
+1. $L$'ten en yüksek güvenle tahmin edilen kuşatan kutu $B_1$'yi temel olarak seçin ve $L$'den $B_1$ ile IoU'su önceden tanımlanmış $\epsilon$ eşiğini aşan temel dışı tahmin edilen tüm kuşatan kutuları kaldırın. Bu noktada, $L$ tahmin edilen kuşatan kutuyu en yüksek güvenle tutar, ancak buna çok benzer olan başkalarını atar. Özetle, *maksimum olmayan* güven puanı olanlar *bastırılır*.
+1. Başka bir temel olarak $L$'dan ikinci en yüksek güvenle tahmin edilen kuşatan kutu $B_2$'yi seçin ve $L$'dan  $B_2$ ile IoU $\epsilon$'u aşan temel olmayan tüm tahmini kuşatan kutuları kaldırın.
+1. $L$'deki tüm tahmini kuşatan kutuları temel olarak kullanılıncaya kadar yukarıdaki işlemi yineleyin. Şu anda, $L$'deki tahmini kuşatan kutuların herhangi bir çiftinin IoU'su $\epsilon$ eşiğinin altındadır; bu nedenle, hiçbir çift birbiriyle çok benzer değildir. 
+1. $L$ listedeki tüm tahmini kuşatan kutuları çıktı olarak verin.
 
-[**Aşağıdaki `nms` işlevi, güven puanlarını azalan sırada sıralar ve indekslerini döndürür.**]
+[**Aşağıdaki `nms` işlevi, güven skorlarını azalan sırada sıralar ve indekslerini döndürür.**]
 
 ```{.python .input}
 #@save
@@ -550,7 +542,7 @@ def nms(boxes, scores, iou_threshold):
     return d2l.tensor(keep, device=boxes.device)
 ```
 
-Aşağıdaki `multibox_detection`'ü [**kuşatan kutuları tahmin etmek için maksimum olmayan bastırma uygulamak**] için tanımlıyoruz. Uygulamanın biraz karmaşık olduğunu görürseniz endişelenmeyin: uygulamadan hemen sonra somut bir örnekle nasıl çalıştığını göstereceğiz.
+Aşağıdaki `multibox_detection`'ü [**kuşatan kutuları tahmin ederken maksimum olmayanı bastırmayı uygulamak**] için tanımlıyoruz. Uygulamanın biraz karmaşık olduğunu görürseniz endişelenmeyin: Usygulamadan hemen sonra somut bir örnekle nasıl çalıştığını göstereceğiz.
 
 ```{.python .input}
 #@save
@@ -623,7 +615,7 @@ def multibox_detection(cls_probs, offset_preds, anchors, nms_threshold=0.5,
     return d2l.stack(out)
 ```
 
-Şimdi [**yukarıdaki uygulamaları dört çapa kutusuna sahip somut bir örneğe uygulayalım**]. Basitlik için, tahmin edilen ofsetlerin tümünün sıfırlar olduğunu varsayıyoruz. Bu, tahmin edilen kuşatan kutuların çapa kutuları olduğu anlamına gelir. Arka plan, köpek ve kedi arasındaki her sınıf için, öngörülen olasılığını da tanımlıyoruz.
+Şimdi [**yukarıdaki uygulamaları dört çapa kutusuna sahip somut bir örneğe uygulayalım**]. Basitlik için, tahmin edilen ofsetlerin tümünün sıfır olduğunu varsayıyoruz. Bu, tahmin edilen kuşatan kutuların çapa kutuları olduğu anlamına gelir. Arka plan, köpek ve kedi arasındaki her sınıf için, tahmin edilen olasılığını da tanımlıyoruz.
 
 ```{.python .input}
 #@tab all
@@ -635,7 +627,7 @@ cls_probs = d2l.tensor([[0] * 4,  # Predicted background likelihood
                       [0.1, 0.2, 0.3, 0.9]])  # Predicted cat likelihood
 ```
 
-Bu öngörülen kuşatan kutuları resme güvenleriyle çizebiliriz.
+Bu tahmini kuşatan kutuları resimdeki güvenleriyle çizebiliriz.
 
 ```{.python .input}
 #@tab all
@@ -644,9 +636,9 @@ show_bboxes(fig.axes, anchors * bbox_scale,
             ['dog=0.9', 'dog=0.8', 'dog=0.7', 'cat=0.9'])
 ```
 
-Şimdi, eşiğin 0.5'e ayarlandığı maksimum olmayan bastırmayı gerçekleştirmek için `multibox_detection` işlevini çağırabiliriz. Tensör girişinde örnekler için bir boyut eklediğimizi unutmayın. 
+Şimdi, eşiğin 0.5'e ayarlandığı maksimum olmayanı bastırmayı gerçekleştirmek için `multibox_detection` işlevini çağırabiliriz. Tensör girdideki örnekler için bir boyut eklediğimizi unutmayın. 
 
-[**döndürülen sonuç şekli**] olduğunu görebiliriz (toplu boyut, çapa kutusu sayısı, 6). En iç boyuttaki altı öğe, aynı öngörülen sınırlama kutusunun çıkış bilgilerini verir. İlk öğe, 0'dan başlayan tahmin edilen sınıf dizinidir (0 köpek ve 1 kedi). -1 değeri, maksimum olmayan bastırmada arka planı veya kaldırmayı gösterir. İkinci unsur, tahmin edilen sınırlama kutusunun güvenidir. Kalan dört öğe, sırasıyla sol üst köşenin $(x, y)$ eksen koordinatlarıdır ve öngörülen sınırlama kutusunun sağ alt köşesidir (aralık 0 ile 1 arasındadır).
+[**Döndürülen sonucun şeklinin**] (parti boyutu, çapa kutusu sayısı, 6) olduğunu görebiliriz. En iç boyuttaki altı eleman, aynı tahmini kuşatan kutunun çıktı bilgilerini verir. İlk eleman, 0'dan başlayan tahmini sınıf dizinidir (0 köpektir ve 1 kedidir). -1 değeri, arka planı veya maksimum olmayanı bastırmada kaldırmayı gösterir. İkinci eleman, tahmin edilen kuşatan kutunun güvenidir. Kalan dört öğe, tahmini kuşatan kutunun sırasıyla sol üst köşesinin ve sağ alt köşesinın $(x, y)$ eksen koordinatlarıdır (aralık 0 ile 1 arasındadır).
 
 ```{.python .input}
 output = multibox_detection(np.expand_dims(cls_probs, axis=0),
@@ -665,7 +657,7 @@ output = multibox_detection(cls_probs.unsqueeze(dim=0),
 output
 ```
 
-Sınıf -1 olan bu öngörülen kuşatan kutuları kaldırdıktan sonra [**maksimum olmayan bastırma ile tutulan son öngörülen sınırlama kutusundan çıktı**] yapabiliriz.
+Sınıfı -1 olan bu tahmini kuşatan kutuları kaldırdıktan sonra [**maksimum olmayanı bastırma ile tutulan son tahmini kuşatan kutuyu çıktı**] yapabiliriz.
 
 ```{.python .input}
 #@tab all
@@ -677,22 +669,22 @@ for i in d2l.numpy(output[0]):
     show_bboxes(fig.axes, [d2l.tensor(i[2:]) * bbox_scale], label)
 ```
 
-Pratikte, maksimum olmayan bastırmayı gerçekleştirmeden önce bile daha düşük güvenle öngörülen kuşatan kutuları kaldırabilir, böylece bu algoritmadaki hesaplamayı azaltabiliriz. Aynı zamanda maksimum olmayan bastırmanın çıktısını da sonradan işleyebiliriz, örneğin, sonuçları yalnızca nihai çıktıda daha yüksek bir güvenle tutarak. 
+Pratikte, maksimum olmayanı bastırmayı gerçekleştirmeden önce bile daha düşük güvenli tahmini kuşatan kutuları kaldırabilir, böylece bu algoritmadaki hesaplamayı azaltabiliriz. Aynı zamanda maksimum olmayanı bastırmanın çıktısını da sonradan işleyebiliriz, örneğin, nihai çıktıda yalnızca daha yüksek güvenli sonuçları tutarabiliriz. 
 
 ## Özet
 
-* Görüntünün her pikselinde ortalanmış farklı şekillere sahip çapa kutuları oluşturuyoruz.
-* Jakar indeksi olarak da bilinen birleşme (IoU) üzerindeki kesişme, iki kuşatan kutunun benzerliğini ölçer. Kesişme alanlarının sendika alanlarına oranıdır.
-* Bir eğitim setinde, her bir çapa kutusu için iki tip etikete ihtiyacımız var. Biri, çapa kutusuyla ilgili nesnenin sınıfıdır ve diğeri ise çapa kutusuna göre gerçek referans değer kuşatan kutunun ofsetidir.
-* Tahmin sırasında, benzer öngörülen sınırlama kutularını kaldırmak için maksimum olmayan bastırma (NMS) kullanabiliriz ve böylece çıktıyı basitleştiririz.
+* İmgenin her pikselinde ortalanmış farklı şekillere sahip çapa kutuları oluşturuyoruz.
+* Jaccard indeksi olarak da bilinen birleşme (IoU) üzerindeki kesişme, iki kuşatan kutunun benzerliğini ölçer. Kesişme alanlarının birleşme alanlarına oranıdır.
+* Bir eğitim kümesinde, her bir çapa kutusu için iki tip etikete ihtiyacımız vardır. Biri, çapa kutusundaki ilgili nesnenin sınıfıdır ve diğeri ise çapa kutusuna göre gerçek referans değeri kuşatan kutunun ofsetidir.
+* Tahmin sırasında, benzer tahmini kuşatan kutuları kaldırmak için maksimum olmayanı bastırma (NMS) kullanabiliriz ve böylece çıktıyı basitleştiririz.
 
 ## Alıştırmalar
 
 1. `multibox_prior` işlevinde `sizes` ve `ratios` değerlerini değiştirin. Oluşturulan çapa kutularındaki değişiklikler nelerdir?
-1. 0,5 IoU ile iki kuşatan kutu oluşturun ve görselleştirin. Birbirleriyle nasıl örtüşürler?
-1. :numref:`subsec_labeling-anchor-boxes` ve :numref:`subsec_predicting-bounding-boxes-nms` değişkeni `anchors` değiştirin. Sonuçlar nasıl değişir?
-1. Maksimum olmayan bastırma, öngörülen kuşatan kutuları kaldırarak* kaldırarak bastıran açgözlü bir algoritmadır. Bu kaldırılmış olanlardan bazılarının gerçekten yararlı olması mümkün mü? * yumuşak* bastırmak için bu algoritma nasıl değiştirilebilir? Soft-NMS :cite:`Bodla.Singh.Chellappa.ea.2017`'e başvurabilirsiniz.
-1. El yapımı olmaktan ziyade, maksimum olmayan bastırma öğrenilebilir mi?
+1. 0.5 IoU ile iki kuşatan kutu oluşturun ve görselleştirin. Birbirleriyle nasıl örtüşürler?
+1. :numref:`subsec_labeling-anchor-boxes` ve :numref:`subsec_predicting-bounding-boxes-nms` içindeki `anchors` değişkenini değiştirin. Sonuçlar nasıl değişir?
+1. Maksimum olmayanı bastırma, tahmini kuşatan kutuları *kaldırarak* bastıran açgözlü bir algoritmadır. Bu kaldırılmış olanlardan bazılarının gerçekten yararlı olması mümkün mü? *Yumuşak* bastırma için bu algoritma nasıl değiştirilebilir? Soft-NMS :cite:`Bodla.Singh.Chellappa.ea.2017`'e başvurabilirsiniz.
+1. El yapımı olmaktan ziyade, maksimum olmayanı bastırma öğrenilebilir mi?
 
 :begin_tab:`mxnet`
 [Tartışmalar](https://discuss.d2l.ai/t/370)
