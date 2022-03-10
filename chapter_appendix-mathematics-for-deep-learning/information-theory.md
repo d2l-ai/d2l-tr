@@ -136,13 +136,13 @@ Yukarıdaki örnekler ve yorumlarla, entropinin şu özelliklerini türetebiliri
 
 * Bir o.y.f veya o.k.f. $p(x)$ ile $X \sim P$ ise ve o.y.f veya o.k.f. $q(x)$'ya sahip yeni bir olasılık dağılımı $Q$ ile $P$'yi tahmin etmeye çalışıyoruz,  o zaman $$H(X) = - E_{x \sim P} [\log p(x)] \leq - E_{x \sim P} [\log q(x)], \text {eşitlikle ancak ve ancak eğer} P = Q.$$ Alternatif olarak, $H(X)$, $P$'den çekilen sembolleri kodlamak için gereken ortalama bit sayısının alt sınırını verir.
 
-* $X \sim P$ ise, $x$ tüm olası sonuçlar arasında eşit olarak yayılırsa maksimum bilgi miktarını iletir. Özel olarak, $P$  $k$-sınıflı ayrık olasılık dağılımı $\{p_1, \ldots, p_k \} ise, o halde $$H(X) \leq \log(k), \text {eşitlikle ancak ve ancak eğer} p_i = \frac{1}{k}, \forall x_i.$$ Eğer $P$ sürekli bir rastgele değişkene, öykü çok daha karmaşık hale gelir. Bununla birlikte, ek olarak $P$'nin sonlu bir aralıkta (tüm değerler $0$ ile $1$ arasında) desteklenmesini zorlarsak, bu aralıkta tekdüze dağılım varsa $P$ en yüksek entropiye sahip olur.
+* $X \sim P$ ise, $x$ tüm olası sonuçlar arasında eşit olarak yayılırsa maksimum bilgi miktarını iletir. Özel olarak, $P$  $k$-sınıflı ayrık olasılık dağılımı $\{p_1, \ldots, p_k \}$ ise, o halde $$H(X) \leq \log(k), \text {eşitlikle ancak ve ancak eğer} p_i = \frac{1}{k}, \forall x_i.$$ Eğer $P$ sürekli bir rastgele değişkene, öykü çok daha karmaşık hale gelir. Bununla birlikte, ek olarak $P$'nin sonlu bir aralıkta (tüm değerler $0$ ile $1$ arasında) desteklenmesini zorlarsak, bu aralıkta tekdüze dağılım varsa $P$ en yüksek entropiye sahip olur.
 
 ## Ortak Bilgi
 
 Daha önce tek bir rastgele değişken $X$ entropisini tanımlamıştık, bir çift rastgele değişken $(X, Y)$ entropisine ne dersiniz? Bu teknikleri şu soru tipini yanıtlamaya çalışırken düşünebiliriz: "$X$ ve $Y$'de her biri ayrı ayrı olması bir arada olmalarıyla karşılaştırıldığında ne tür bilgi bulunur? Gereksiz bilgi var mı, yoksa hepsi tek mi?"
 
-Aşağıdaki tartışma için, her zaman $(X, Y)$'yi, bir o.y.f veya o.k.f. olan $p_{X, Y}(x, y)$ ile bileşik olasılık dağılımı $P$'yi izleyen bir çift rastgele değişken olarak kullanıyoruz, aynı zamanda da $X$ ve $Y$ sırasıyla $p_X(x) $ ve $p_Y(y) $ olasılık dağılımlarını takip eder.
+Aşağıdaki tartışma için, her zaman $(X, Y)$'yi, bir o.y.f veya o.k.f. olan $p_{X, Y}(x, y)$ ile bileşik olasılık dağılımı $P$'yi izleyen bir çift rastgele değişken olarak kullanıyoruz, aynı zamanda da $X$ ve $Y$ sırasıyla $p_X(x)$ ve $p_Y(y)$ olasılık dağılımlarını takip eder.
 
 ### Bileşik Entropi 
 
@@ -298,7 +298,7 @@ Karşılıklı bilginin tanımını, :eqref:`eq_mut_ent_def`, ezberlemek yerine 
 
 * Karşılıklı bilgi simetriktir (bakışımlı), yani $I(X, Y) = I(Y, X)$.
 * Karşılıklı bilgi negatif olamaz, yani $I(X, Y) \ geq 0$.
-* $ I(X, Y) = 0$ ancak ve ancak $X$ ve $Y$ bağımsızsa olur. Örneğin, $X$ ve $Y$ bağımsızsa, $Y$'yi bilmek $X$ hakkında herhangi bir bilgi vermez ve bunun tersi de geçerlidir, dolayısıyla karşılıklı bilgileri sıfırdır.
+* $I(X, Y) = 0$ ancak ve ancak $X$ ve $Y$ bağımsızsa olur. Örneğin, $X$ ve $Y$ bağımsızsa, $Y$'yi bilmek $X$ hakkında herhangi bir bilgi vermez ve bunun tersi de geçerlidir, dolayısıyla karşılıklı bilgileri sıfırdır.
 * Alternatif olarak, $X$, $Y$ değerinin ters çevrilebilir bir işleviyse, $Y$ ve $X$ tüm bilgiyi paylaşır ve $$I(X, Y) = H(Y) = H(X)$$.
 
 ### Noktasal Karşılıklı Bilgi
@@ -435,7 +435,7 @@ kl_q2p, differ_percentage
 
 Bilgi teorisinin derin öğrenmedeki uygulamalarını merak ediyorsanız, işte size hızlı bir örnek. $P$ gerçek dağılımını $p(x)$ olasılık dağılımıyla ve tahmini $Q$ dağılımını $q(x)$ olasılık dağılımıyla tanımlıyoruz ve bunları bu bölümün geri kalanında kullanacağız.
 
-Verilen $n$ veri noktasına, {$ x_1, \ldots, x_n$}, ait bir ikili sınıflandırma problemini çözmemiz gerektiğini varsayalım. Sırasıyla $1$ ve $0$'ı pozitif ve negatif sınıf etiketi $y_i$ olarak kodladığımızı ve sinir ağımızın $\theta$ parametresi ile ifade edildiğini varsayalım. $\hat{y}_i = p_{\theta}(y_i \mid x_i)$ için en iyi $\theta$'yı bulmayı hedeflersek, maksimum log-olabilirlik yaklaşımını şurada görüldüğü gibi uygulamak doğaldır :numref:`sec_maximum_likelihood`. Daha belirleyici olmak gerekirse, $y_i$ gerçek etiketleri ve $\hat{y}_i= p_{\theta}(y_i \mid x_i)$ tahminleri için pozitif olarak sınıflandırılma olasılığı $\pi_i= p_{\theta}(y_i = 1 \mid x_i)$'dir. Bu nedenle, log-olabilirlik işlevi şöyle olacaktır:
+Verilen $n$ veri noktasına, {$x_1, \ldots, x_n$}, ait bir ikili sınıflandırma problemini çözmemiz gerektiğini varsayalım. Sırasıyla $1$ ve $0$'ı pozitif ve negatif sınıf etiketi $y_i$ olarak kodladığımızı ve sinir ağımızın $\theta$ parametresi ile ifade edildiğini varsayalım. $\hat{y}_i = p_{\theta}(y_i \mid x_i)$ için en iyi $\theta$'yı bulmayı hedeflersek, maksimum log-olabilirlik yaklaşımını şurada görüldüğü gibi uygulamak doğaldır :numref:`sec_maximum_likelihood`. Daha belirleyici olmak gerekirse, $y_i$ gerçek etiketleri ve $\hat{y}_i= p_{\theta}(y_i \mid x_i)$ tahminleri için pozitif olarak sınıflandırılma olasılığı $\pi_i= p_{\theta}(y_i = 1 \mid x_i)$'dir. Bu nedenle, log-olabilirlik işlevi şöyle olacaktır:
 
 $$
 \begin{aligned}
@@ -445,7 +445,7 @@ l(\theta) &= \log L(\theta) \\
 \end{aligned}
 $$
 
-$l(\theta)$ log-olabilirlik fonksiyonunu maksimize etmek, $ -l(\theta)$'yı küçültmekle aynıdır ve bu nedenle en iyi $\theta$'yı buradan bulabiliriz. Yukarıdaki kaybı herhangi bir dağılımda genelleştirmek için $-l(\theta)$'yı *çapraz entropi kaybı*, $\mathrm{CE}(y, \hat{y})$ olarak adlandırdık, burada $y$ doğru dağılımı, $P$'yi izler ve $\hat{y}$ tahmini dağılım $Q$'yu izler.
+$l(\theta)$ log-olabilirlik fonksiyonunu maksimize etmek, $- l(\theta)$'yı küçültmekle aynıdır ve bu nedenle en iyi $\theta$'yı buradan bulabiliriz. Yukarıdaki kaybı herhangi bir dağılımda genelleştirmek için $-l(\theta)$'yı *çapraz entropi kaybı*, $\mathrm{CE}(y, \hat{y})$ olarak adlandırdık, burada $y$ doğru dağılımı, $P$'yi izler ve $\hat{y}$ tahmini dağılım $Q$'yu izler.
 
 Tüm bunlar, maksimum olabilirlik üzerinde çalışılarak elde edildi. Bununla birlikte, yakından bakarsak, $\log(\pi_i)$ gibi terimlerin bizim hesaplamamıza girdiğini görebiliriz ki bu, ifadeyi bilgi teorik bakış açısıyla anlayabileceğimizin sağlam bir göstergesidir.
 
@@ -510,7 +510,7 @@ Başlangıç olarak, $n$ örnekli bir veri kümesi verildiğini ve bunun $k$ sı
 
 $$ y_{ij} = \begin{cases}1 & j \in J; \\ 0 &\text{aksi takdirde.}\end{cases}$$
 
-Örneğin, çok sınıflı bir sınıflandırma problemi $A$, $B$ ve $C$ olmak üzere üç sınıf içeriyorsa, $\mathbf{y}_i$ etiketleri {$A: (1, 0, 0); B: (0, 1, 0); C: (0, 0, 1) $}'dir.
+Örneğin, çok sınıflı bir sınıflandırma problemi $A$, $B$ ve $C$ olmak üzere üç sınıf içeriyorsa, $\mathbf{y}_i$ etiketleri {$A: (1, 0, 0); B: (0, 1, 0); C: (0, 0, 1)$}'dir.
 
 Sinir ağımızın $\theta$ parametresi ifade edildiğini varsayalım. Doğru etiket vektörleri $\mathbf{y}_i$ ve tahminleri için: $$\hat{\mathbf{y}}_i= p_{\theta}(\mathbf{y}_i \mid \mathbf{x}_i) = \sum_{j=1}^k y_{ij} p_{\theta} (y_{ij}  \mid  \mathbf{x}_i).$$
 

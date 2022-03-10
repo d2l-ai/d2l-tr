@@ -212,11 +212,11 @@ Yararlı oldukları için birkaç özelliği özetleyelim.
 * Herhangi bir rastgele değişken $X$ ve $a$ ve $b$ sayıları için, $\mu_{aX + b} = a\mu_X + b$ var.
 * İki rastgele değişkenimiz varsa $X$ ve $Y$, $\mu_{X + Y} = \mu_X + \mu_Y$ olur.
 
-Ortalamalar, rastgele bir değişkenin ortalama davranışını anlamak için yararlıdır, ancak ortalama, tam bir sezgisel anlayışa sahip olmak için bile yeterli değildir. Satış başına $10\$ \pm 1\$$ kar etmek, aynı ortalama değere sahip olmasına rağmen satış başına $10\$ \pm 15\$$ kar etmekten çok farklıdır. İkincisi çok daha büyük bir dalgalanma derecesine sahiptir ve bu nedenle çok daha büyük bir riski temsil eder. Bu nedenle, rastgele bir değişkenin davranışını anlamak için en az bir ölçüye daha ihtiyacımız olacak: Bir rasgele değişkenin ne kadar geniş dalgalandığına dair bir ölçü.
+Ortalamalar, rastgele bir değişkenin ortalama davranışını anlamak için yararlıdır, ancak ortalama, tam bir sezgisel anlayışa sahip olmak için bile yeterli değildir. Satış başına $\$10 \pm \$1$ kar etmek, aynı ortalama değere sahip olmasına rağmen satış başına $\$10 \pm \$15$ kar etmekten çok farklıdır. İkincisi çok daha büyük bir dalgalanma derecesine sahiptir ve bu nedenle çok daha büyük bir riski temsil eder. Bu nedenle, rastgele bir değişkenin davranışını anlamak için en az bir ölçüye daha ihtiyacımız olacak: Bir rasgele değişkenin ne kadar geniş dalgalandığına dair bir ölçü.
 
 ### Varyanslar
 
-Bu bizi rastgele bir değişkenin *varyansını* düşünmeye götürür. Bu, rastgele bir değişkenin ortalamadan ne kadar saptığının nicel bir ölçüsüdür. $X - \mu_X $ifadesini düşünün. Bu, rastgele değişkenin ortalamasından sapmasıdır. Bu değer pozitif ya da negatif olabilir, bu yüzden onu pozitif yapmak için bir şeyler yapmalıyız ki böylece sapmanın büyüklüğünü ölçebilelim.
+Bu bizi rastgele bir değişkenin *varyansını* düşünmeye götürür. Bu, rastgele bir değişkenin ortalamadan ne kadar saptığının nicel bir ölçüsüdür. $X - \mu_X$ ifadesini düşünün. Bu, rastgele değişkenin ortalamasından sapmasıdır. Bu değer pozitif ya da negatif olabilir, bu yüzden onu pozitif yapmak için bir şeyler yapmalıyız ki böylece sapmanın büyüklüğünü ölçebilelim.
 
 Denenecek makul bir şey, $\left|X-\mu_X\right|$'a bakmaktır ve bu gerçekten de *ortalama mutlak sapma* olarak adlandırılan faydalı bir miktara yol açar, ancak diğer matematik ve istatistik alanlarıyla olan bağlantılarından dolayı, insanlar genellikle farklı bir çözüm kullanır.
 
@@ -243,7 +243,7 @@ Bu sonuç yine mantıklıdır. $p$ en büyük  $1/2$ olabilir ve bu da yazı tur
 
 Aşağıda varyansın birkaç özelliğini listeleyeceğiz:
 
-* Herhangi bir rastgele değişken için $X$, $\mathrm{Var}(X) \ ge 0$, ancak ve ancak $X$ bir sabitse $\mathrm {Var}(X) = 0 $'dır.
+* Herhangi bir rastgele değişken için $X$, $\mathrm{Var}(X) \ge 0$, ancak ve ancak $X$ bir sabitse $\mathrm {Var}(X) = 0$'dır.
 * Herhangi bir rastgele değişken $X$ ve $a$ ve $b$ sayıları için, $\mathrm{Var}(aX + b) = a^2 \mathrm{Var}(X)$'dır.
 * İki *bağımsız* rastgele değişkenimiz varsa, $X$ ve $Y$, $\mathrm{Var}(X + Y) = \mathrm{Var}(X) + \mathrm{Var}(Y)$'dir.
 
@@ -263,7 +263,7 @@ Varyans için sahip olduğumuz özellikler, standart sapma için yeniden ifade e
 
 * Herhangi bir rastgele değişken $X$ için , $\sigma_{X} \ge 0$'dır.
 * Herhangi bir rastgele değişken $X$ ve $a$ ve $b$ sayıları için, $\sigma_{aX+b} = |a|\sigma_{X}$'dır.
-* İki *bağımsız* rastgele değişkenimiz, $ X$ ve $Y$, varsa, $\sigma_{X+Y} = \sqrt{\sigma_{X}^2 + \sigma_{Y}^2}$ olur.
+* İki *bağımsız* rastgele değişkenimiz, $X$ ve $Y$, varsa, $\sigma_{X+Y} = \sqrt{\sigma_{X}^2 + \sigma_{Y}^2}$ olur.
 
 Şu anda şunu sormak doğaldır, "Eğer standart sapma orijinal rasgele değişkenimizin birimlerindeyse, bu rasgele değişkenle ilgili olarak çizebileceğimiz bir şeyi temsil eder mi?" Cevap yankılanan bir evettir! Aslında ortalamanın bize rastgele değişkenimizin tipik konumunu söylediğine benzer şekilde, standart sapma o rastgele değişkenin tipik varyasyon aralığını verir. Bunu, Chebyshev eşitsizliği olarak bilinen şeyle sıkı hale getirebiliriz:
 
@@ -272,7 +272,7 @@ $$P\left(X \not\in [\mu_X - \alpha\sigma_X, \mu_X + \alpha\sigma_X]\right) \le \
 
 Veya sözlü olarak ifade etmek gerekirse, $\alpha = 10$ durumunda, herhangi bir rasgele değişkenden alınan örneklerin $\%99$'u, ortalamadan $10$ standart sapmalık aralığa düşer. Bu, standart özet istatistiklerimize anında bir anlam sağlar.
 
-Bu ifadenin ne kadar ince olduğunu görmek için, $X$'in $p$ olasılıkla $a-2$, $p$ olasılıkla $a+2$ ve $1-2p$ olasılıkla $a$ değerini alan rastgele değişken olduğu, mevcut örneğimize tekrar bakalım. $. Ortalamanın $a$ ve standart sapmanın $2\sqrt{2p}$ olduğunu gördük. Bu demektir ki, Chebyshev'in eşitsizliğini, :eqref:`eq_chebyshev`, $\alpha = 2$ ile alırsak, ifadenin şöyle olduğunu görürüz:
+Bu ifadenin ne kadar ince olduğunu görmek için, $X$'in $p$ olasılıkla $a-2$, $p$ olasılıkla $a+2$ ve $1-2p$ olasılıkla $a$ değerini alan rastgele değişken olduğu, mevcut örneğimize tekrar bakalım. Ortalamanın $a$ ve standart sapmanın $2\sqrt{2p}$ olduğunu gördük. Bu demektir ki, Chebyshev'in eşitsizliğini, :eqref:`eq_chebyshev`, $\alpha = 2$ ile alırsak, ifadenin şöyle olduğunu görürüz:
 
 $$
 P\left(X \not\in [a - 4\sqrt{2p}, a + 4\sqrt{2p}]\right) \le \frac{1}{4}.
@@ -490,7 +490,7 @@ Bu şekilde, birden çok, potansiyel olarak ilişkili rastgele değişkenlerle b
 ### Marjinal Dağılımlar
 Birden çok değişkenle uğraşırken, çoğu zaman ilişkileri görmezden gelmek ve "Bu tek değişken nasıl dağıtılır?" diye sormak isteriz. Böyle bir dağılım, *marjinal dağılım* olarak adlandırılır.
 
-Somut olmak gerekirse, bileşik yoğunluğu $ p_{X, Y}(x, y)$ ile verilen iki rastgele değişkenimiz, $X, Y$, olduğunu varsayalım. Yoğunluğun hangi rastgele değişkenler için olduğunu belirtmek için alt indis kullanacağız. Marjinal dağılımı bulma sorusu bu işlevi alıp $ p_X(x)$ bulmak için kullanmaktır.
+Somut olmak gerekirse, bileşik yoğunluğu $p_{X, Y}(x, y)$ ile verilen iki rastgele değişkenimiz, $X, Y$, olduğunu varsayalım. Yoğunluğun hangi rastgele değişkenler için olduğunu belirtmek için alt indis kullanacağız. Marjinal dağılımı bulma sorusu bu işlevi alıp $p_X(x)$ bulmak için kullanmaktır.
 
 Çoğu şeyde olduğu gibi, neyin doğru olması gerektiğini anlamak için sezgisel resmimize dönmek en iyisidir. Yoğunluğun $p_X$ işlevi olduğunu hatırlayın, böylece
 
@@ -730,7 +730,7 @@ Aslında, normların standart sapmalarla ilişkili olduğunu ve korelasyonların
 
 ## Alıştırmalar
 1. $x \ge 1$ için yoğunluğu $p(x) = \frac{1}{x ^ 2}$ ve aksi takdirde $p(x) = 0$ ile verilen rastgele değişkenimiz olduğunu varsayalım. $P(X> 2)$ nedir?
-2. Laplace dağılımı, yoğunluğu $p(x = \frac{1}{2}e^{-|x|} ile verilen rastgele bir değişkendir. Bu fonksiyonun ortalaması ve standart sapması nedir? Bir ipucu, $\int_0^\infty xe^{-x} \; dx = 1$ ve $\int_0^\infty x^2e^{-x} \; dx = 2$.
+2. Laplace dağılımı, yoğunluğu $p(x = \frac{1}{2}e^{-|x|}$ ile verilen rastgele bir değişkendir. Bu fonksiyonun ortalaması ve standart sapması nedir? Bir ipucu, $\int_0^\infty xe^{-x} \; dx = 1$ ve $\int_0^\infty x^2e^{-x} \; dx = 2$.
 3. Sokakta size doğru yürüyorum ve "Ortalaması $1 $, standart sapması $2$ olan rastgele bir değişkenim var ve örneklerimin $\% 25$'inin $9$'dan daha büyük bir değer aldığını gözlemledim." dedim. Bana inanır mısınız? Neden evet ya da neden hayır?
 4. $x, y \in [0,1]$ için $p_{XY}(x, y) = 4xy$ ve aksi takdirde $p_{XY}(x, y) = 0$ ile bileşik yoğunlukları verilen iki rastgele değişkenimizin $X, Y$ olduğunu varsayalım. $X$ ve $Y$'nin kovaryansı nedir?
 

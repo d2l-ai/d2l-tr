@@ -238,7 +238,7 @@ $$\int_{u(0)}^{u(x)} f(y) \; dy = \int_0^x f(u(y))\cdot \frac{du}{dy} \;dy.$$
 
 Bu, *değişkenlerin değişimi* formülüdür.
 
-Daha sezgisel bir türetme için, $x$ ile $x+\epsilon$ arasında bir $f(u(x))$ integralini aldığımızda ne olacağını düşünün. Küçük bir $\epsilon$ için, bu integral, yaklaşık olarak $\epsilon f(u(x))$, yani ilişkili dikdörtgenin alanıdır. Şimdi bunu $u(x) $ ile $u(x+\epsilon)$ arasındaki $f(y)$ integraliyle karşılaştıralım. $u(x+\epsilon) \approx u(x) + \epsilon \frac{du}{dx}(x)$ olduğunu biliyoruz, bu nedenle bu dikdörtgenin alanı yaklaşık $\epsilon \frac{du}{dx}(x)f(u(x))$'dir. Bu nedenle, bu iki dikdörtgenin alanını uyuşacak hale getirmek için, ilkini $\frac{du}{dx}(x)$ ile çarpmamız gerekiyor :numref:`fig_rect-transform`.
+Daha sezgisel bir türetme için, $x$ ile $x+\epsilon$ arasında bir $f(u(x))$ integralini aldığımızda ne olacağını düşünün. Küçük bir $\epsilon$ için, bu integral, yaklaşık olarak $\epsilon f(u(x))$, yani ilişkili dikdörtgenin alanıdır. Şimdi bunu $u(x)$ ile $u(x+\epsilon)$ arasındaki $f(y)$ integraliyle karşılaştıralım. $u(x+\epsilon) \approx u(x) + \epsilon \frac{du}{dx}(x)$ olduğunu biliyoruz, bu nedenle bu dikdörtgenin alanı yaklaşık $\epsilon \frac{du}{dx}(x)f(u(x))$'dir. Bu nedenle, bu iki dikdörtgenin alanını uyuşacak hale getirmek için, ilkini $\frac{du}{dx}(x)$ ile çarpmamız gerekiyor :numref:`fig_rect-transform`.
 
 ![Değişkenlerin değişimi altında tek bir ince dikdörtgenin dönüşümünü görselleştirelim.](../img/rect-trans.svg)
 :label:`fig_rect-transform`

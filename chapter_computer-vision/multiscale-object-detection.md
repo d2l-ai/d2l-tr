@@ -1,4 +1,4 @@
-# Çok ölçekli Nesne Algılama
+# Çok Ölçekli Nesne Algılama
 :label:`sec_multiscale-object-detection`
 
 :numref:`sec_anchor`'te, bir girdi görüntüsünün her pikselinde ortalanmış birden çok çapa kutusu oluşturduk. Esasen bu çapa kutuları görüntünün farklı bölgelerinin örneklerini temsil eder. Bununla birlikte, *herşey* piksel için oluşturulmuşsa hesaplamak için çok fazla bağlantı kutusu ile sonuçlanabiliriz. Bir $561 \times 728$ giriş görüntüsü düşünün. Her piksel için merkezi olarak değişen şekillere sahip beş bağlantı kutusu oluşturulursa, görüntü üzerinde iki milyondan fazla bağlantı kutusu ($561 \times 728 \times 5$) etiketlenmeli ve tahmin edilmelidir. 
