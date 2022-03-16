@@ -10,7 +10,7 @@ Blokları kullanma fikri ilk olarak Oxford Üniversitesi'ndeki [Görsel Geometri
 ## (**VGG Blokları**)
 :label:`subsec_vgg-blocks`
 
-Klasik CNN'lerin temel yapı taşı aşağıdakilerin bir dizisidir: (i) Çözünürlüğü korumak için dolgulu bir evrişimli katman, (ii) ReLU gibi bir doğrusal olmayan işlev, (iii) Maksimum ortaklama katmanı gibi bir ortaklama katmanı. Bir VGG bloğu, uzamsal altörnekleme için bir maksimum ortaklama katmanı izleyen bir evrişimli katman dizisinden oluşur. Orijinal VGG makalesinde :cite:`Simonyan.Zisserman.2014`, yazarlar $3\times3$ çekirdeklerle evrişim (yüksekliği ve genişliği aynı tutarak) ve 2 birim uzun adımlı $2 \times 2$ maksimum ortaklama (her bloktan sonra çözünürlüğü yarıya indirerek) kullandılar. Aşağıdaki kodda, bir VGG bloğu uygulamak için `vgg_block` adlı bir işlev tanımlıyoruz. 
+Klasik CNN'lerin temel yapı taşı aşağıdakilerin bir dizisidir: (i) Çözünürlüğü korumak için dolgulu bir evrişimli katman, (ii) ReLU gibi bir doğrusal olmayan işlev, (iii) Maksimum ortaklama katmanı gibi bir ortaklama katmanı. Bir VGG bloğu, uzamsal örnek seyreltme için bir maksimum ortaklama katmanı izleyen bir evrişimli katman dizisinden oluşur. Orijinal VGG makalesinde :cite:`Simonyan.Zisserman.2014`, yazarlar $3\times3$ çekirdeklerle evrişim (yüksekliği ve genişliği aynı tutarak) ve 2 birim uzun adımlı $2 \times 2$ maksimum ortaklama (her bloktan sonra çözünürlüğü yarıya indirerek) kullandılar. Aşağıdaki kodda, bir VGG bloğu uygulamak için `vgg_block` adlı bir işlev tanımlıyoruz. 
 
 :begin_tab:`mxnet,tensorflow`
 İşlev, evrişimli katmanların sayısına `num_convs` ve çıktı kanalı sayısına `num_channels` karşılık gelen iki argüman alır.

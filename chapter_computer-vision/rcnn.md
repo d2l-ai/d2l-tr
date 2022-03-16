@@ -1,37 +1,37 @@
 # Bölge tabanlı CNN'ler (R-CNN'ler)
 :label:`sec_rcnn`
 
-:numref:`sec_ssd`'te açıklanan tek atışlı çoklu kutu algılamanın yanı sıra, bölge tabanlı CNN'ler veya CNN özelliklerine (R-CNN) sahip bölgeler de nesne algılama :cite:`Girshick.Donahue.Darrell.ea.2014`'ya derin öğrenmeyi uygulamanın öncü yaklaşımları arasında yer almaktadır. Bu bölümde R-CNN ve iyileştirme serisini tanıtacağız: hızlı R-CNN :cite:`Girshick.2015`, daha hızlı R-CNN :cite:`Ren.He.Girshick.ea.2015` ve maske R-CNN :cite:`He.Gkioxari.Dollar.ea.2017`. Sınırlı alan nedeniyle, sadece bu modellerin tasarımına odaklanacağız. 
+:numref:`sec_ssd`'te açıklanan tek atışta çoklu kutu algılamanın yanı sıra, bölge tabanlı CNN'ler veya CNN özniteliklerine (R-CNN) sahip bölgeler de nesne algılama :cite:`Girshick.Donahue.Darrell.ea.2014`'ya derin öğrenmeyi uygulamanın öncü yaklaşımları arasında yer almaktadır. Bu bölümde R-CNN ve onun iyileştirilmiş serilerini tanıtacağız: Hızlı R-CNN :cite:`Girshick.2015`, daha hızlı R-CNN :cite:`Ren.He.Girshick.ea.2015` ve maske R-CNN :cite:`He.Gkioxari.Dollar.ea.2017`. Sınırlı alan nedeniyle, sadece bu modellerin tasarımına odaklanacağız. 
 
 ## R-CNN'ler
 
-*R-CNN* ilk olarak giriş görüntüsünden birçok (örneğin, 2000) * bölge teklifleri* ayıklar (örneğin, çapa kutuları bölge önerileri olarak da kabul edilebilir), sınıflarını ve sınırlayıcı kutuları etiketleyerek (örneğin, ofsetler). :cite:`Girshick.Donahue.Darrell.ea.2014` Sonra bir CNN, her bölge önerisi üzerinde ileriye yayılmasını gerçekleştirmek için kullanılır özellikleri. Daha sonra, her bölge önerisinin özellikleri, bu bölge teklifinin sınıfını ve sınırlayıcı kutuyu tahmin etmek için kullanılır. 
+*R-CNN* ilk olarak girdi imgesinden birçok (örneğin, 2000) *bölge önerisi* ayıklar (örneğin, çapa kutuları bölge önerileri olarak da kabul edilebilir), sınıflarını ve kuşatan kutuları (örneğin, ofsetler) etiketler :cite:`Girshick.Donahue.Darrell.ea.2014`. Sonra bir CNN, her bölge önerisi üzerinde ileri yaymayı gerçekleştirmek için öznitelikleri kullanır. Sonrasında, her bölge önerisinin öznitelikleri, bu bölge önerisinin sınıfını ve kuşatan kutusunu tahmin etmek için kullanılır. 
 
-![The R-CNN model.](../img/r-cnn.svg)
+![R-CNN modeli.](../img/r-cnn.svg)
 :label:`fig_r-cnn`
 
 :numref:`fig_r-cnn` R-CNN modelini gösterir. Daha somut olarak, R-CNN aşağıdaki dört adımdan oluşur: 
 
-1. :cite:`Uijlings.Van-De-Sande.Gevers.ea.2013` giriş görüntüsünde birden fazla yüksek kaliteli bölge teklifini çıkarmak için*seçici arama* gerçekleştirin. Önerilen bu bölgeler genellikle farklı şekil ve boyutlarda birden çok ölçekte seçilir. Her bölge önerisi bir sınıf ve bir zemin gerçeği sınırlayıcı kutu ile etiketlenecektir.
-1. Önceden eğitilmiş bir CNN seçin ve çıktı katmanından önce kesin. Her bölge önerisini ağın gerektirdiği girdi boyutuna yeniden boyutlandırın ve bölge önerisi için ayıklanan özellikleri ileri yayma yoluyla çıktılayın. 
-1. Her bölge önerisinin çıkarılan özelliklerini ve etiketlenmiş sınıfını örnek olarak ele alın. Her destek vektör makinesinin, örneğin belirli bir sınıf içerip içermediğini ayrı ayrı belirlediği nesneleri sınıflandırmak için birden fazla destek vektör makinesini eğitin.
-1. Örnek olarak her bölge önerisinin çıkarılan özellikleri ve etiketli sınırlama kutusunu alın. Zemin gerçeği sınırlayıcı kutuyu tahmin etmek için doğrusal regresyon modelini eğitin.
+1. :cite:`Uijlings.Van-De-Sande.Gevers.ea.2013` girdi imgesinden birden fazla yüksek kaliteli bölge önerisi ayıklamak için *seçici arama* gerçekleştirin. Önerilen bu bölgeler genellikle farklı şekil ve boyutlarda çoklu ölçeklerde seçilir. Her bölge önerisi bir sınıf ve bir gerçek referans değeri kuşatan kutu ile etiketlenecektir.
+1. Önceden eğitilmiş bir CNN seçin ve çıktı katmanından önce budayın. Her bölge önerisini ağın gerektirdiği girdi boyutuna yeniden boyutlandırın ve bölge önerisi için ayıklanan öznitelikleri ileri yayma yoluyla çıktılayın. 
+1. Her bölge önerisinin çıkarılan özniteliklerini ve etiketlenmiş sınıfını örnek olarak ele alın. Her destek vektör makinesinin, örneğin belirli bir sınıfı içerip içermediğini ayrı ayrı belirlediği nesneleri sınıflandırmak için birden fazla destek vektör makinesini eğitin.
+1. Örnek olarak her bölge önerisinin ayıklanan öznitelikleri ve etiketli kuşatan kutusunu alın. Gerçek referans değer kuşatan kutuyu tahmin etmek için doğrusal bağlanım modelini eğitin.
 
-R-CNN modeli görüntü özelliklerini etkili bir şekilde ayıklamak için önceden eğitilmiş CNN'ler kullansa da yavaştır. Tek bir giriş görüntüsünden binlerce bölge teklifini seçtiğimizi düşünün: bu nesne algılama gerçekleştirmek için binlerce CNN ileri yayılmasını gerektirir. Bu devasa bilgi işlem yükü, R-CNN'lerin gerçek dünyadaki uygulamalarda yaygın olarak kullanılmasını mümkün değildir. 
+R-CNN modeli imge özniteliklerini etkili bir şekilde ayıklamak için önceden eğitilmiş CNN'ler kullansa da yavaştır. Tek bir girdi imgesinden binlerce bölge önerisini seçtiğimizi düşünün: Bu nesne algılamayı gerçekleştirmek için binlerce CNN ileri yaymasını gerektirir. Bu devasa bilgi işlem yükünden dolayı, R-CNN'lerin gerçek dünyadaki uygulamalarda yaygın olarak kullanılmasını mümkün değildir. 
 
 ## Hızlı R-CNN
 
-Bir R-CNN ana performans darboğaz her bölge önerisi için bağımsız CNN ileri yayılma yatıyor, hesaplama paylaşmadan. Bu bölgelerde genellikle çakışmalar olduğundan, bağımsız özellik ekstraksiyonları çok tekrarlanan hesaplamaya yol açar. *hızlı R-CNN'nin R-CNN'deki en önemli gelişmelerinden biri de CNN ileri yayılımının sadece tüm görüntü :cite:`Girshick.2015` üzerinde gerçekleştirilmeleridir.  
+Bir R-CNN'nin ana performans darboğazı, her bölge önerisi için hesaplamayı paylaşmadan bağımsız CNN ileri yaymasında yatmaktadır. Bu bölgelerde genellikle çakışmalar olduğundan, bağımsız öznitelik ayıklamaları çok fazla tekrarlanan hesaplamaya yol açar. *Hızlı R-CNN*'nin R-CNN'den sağladığı en önemli iyileştirmelerden biri, CNN ileri yaymasının yalnızca tüm imge üzerinde :cite:`Girshick.2015` gerçekleştirilmesidir.
 
-![The fast R-CNN model.](../img/fast-rcnn.svg)
+![Hızlı R-CNN modeli.](../img/fast-rcnn.svg)
 :label:`fig_fast_r-cnn`
 
 :numref:`fig_fast_r-cnn` hızlı R-CNN modelini açıklar. Başlıca hesaplamaları şöyledir: 
 
-1. R-CNN ile karşılaştırıldığında, hızlı R-CNN'de, özellik çıkarma için CNN'nin girişi, bireysel bölge tekliflerinden ziyade tüm görüntüdür. Dahası, bu CNN eğitimli. Bir giriş görüntüsü göz önüne alındığında, CNN çıktısının şeklinin $1 \times c \times h_1  \times w_1$ olmasına izin verin.
-1. Seçici aramanın $n$ bölge önerileri oluşturduğunu varsayalım. Bu bölge önerileri (farklı şekillerde) CNN çıktısındaki ilgi alanlarını (farklı şekillerde) işaretler. Daha sonra ilgi bu bölgeler aynı şekle sahip özelliklerini ayıklamak (yükseklik $h_2$ ve genişlik $w_2$ belirtilir) kolayca birleştirilebilmesi için. Bunu başarmak için hızlı R-CNN, *bölge ilgi alanı (RoI) havuzlama* katmanı sunar: CNN çıktı ve bölge önerileri bu katmana girilir ve tüm bölge önerileri için daha da çıkarılan $n \times c \times h_2 \times w_2$ şeklinin birleştirilmiş özelliklerini ortaya çıkarır.
-1. Tam bağlı bir katman kullanarak, birleştirilmiş özellikleri $n \times d$'ün model tasarımına bağlı olduğu $n \times d$ şeklindeki bir çıktıya dönüştürün.
-1. $n$ bölge tekliflerinin her biri için sınıf ve sınırlayıcı kutuyu tahmin edin. Daha somut olarak, sınıf ve sınırlayıcı kutu tahmininde, tam bağlı katman çıktısını şekil $n \times q$ ($q$ sınıf sayısıdır) ve şekil $n \times 4$ çıktısına dönüştürün. Sınıf tahmini softmax regresyon kullanır.
+1. R-CNN ile karşılaştırıldığında, hızlı R-CNN'de, öznitelik ayıklama için CNN'nin girdisi, bireysel bölge önerilerinden ziyade tüm imgedir. Dahası, bu CNN eğitilebilir. Bir girdi imgesi göz önüne alındığında, CNN çıktısının şekli $1 \times c \times h_1  \times w_1$ olsun.
+1. Seçici aramanın $n$ bölge önerileri oluşturduğunu varsayalım. Bu bölge önerileri (farklı şekillerde) CNN çıktısındaki ilgi alanlarını (farklı şekillerdeki) işaretler. Daha sonra kolayca birleştirilebilmesi için ilgili bu bölgelerin aynı şekle sahip öznitelikleri ayıklanır (yükseklik $h_2$ ve genişlik $w_2$ diye belirtilir). Bunu başarmak için hızlı R-CNN, *ilgili bölge alanı (RoI) ortaklama* katmanı sunar: CNN çıktısı ve bölge önerileri bu katmana girilir ve tüm bölge önerileri için daha da ayıklanmış $n \times c \times h_2 \times w_2$ şekilli bitiştirilmiş öznitelikleri ortaya çıkarır.
+1. Tam bağlı bir katman kullanarak, bitiştirilmiş öznitelikleri $n \times d$'ün model tasarımına bağlı olduğu $n \times d$ şeklindeki bir çıktıya dönüştürün.
+1. $n$ bölge önerilerinin her biri için sınıfı ve kuşatan kutuyu tahmin edin. Daha somut olarak, sınıf ve kuşatan kutu tahmininde, tam bağlı katman çıktısını $n \times q$ şeklinde ($q$ sınıf sayısıdır) ve $n \times 4$ şeklinde çıktıya dönüştürün. Sınıf tahmini softmaks bağlanım kullanır.
 
 Hızlı R-CNN'de önerilen ilgi havuzlama katmanı bölgesi :numref:`sec_pooling`'te tanıtılan havuzlama katmanından farklıdır. Havuzlama katmanında, havuzlama penceresinin, dolgunun ve adımın boyutlarını belirterek çıkış şeklini dolaylı olarak kontrol ediyoruz. Buna karşılık, doğrudan ilgi havuzlama katmanı bölgesinde çıkış şeklini belirtebilirsiniz. 
 

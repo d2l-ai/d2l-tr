@@ -85,7 +85,7 @@ divergent; ıraksayıcı, ıraksayan
 
 domain; etki alanı
 
-downsampling; altörnekleme
+downsampling; örnek seyreltme
 
 dropout;  hattan düşme
 
