@@ -1,21 +1,21 @@
 # Anlamsal Bölümleme ve Veri Kümesi
 :label:`sec_semantic_segmentation`
 
-:numref:`sec_bbox`—:numref:`sec_rcnn`'te nesne algılama görevleri tartışılırken, görüntülerdeki nesneleri etiketlemek ve tahmin etmek için dikdörtgen sınırlayıcı kutular kullanılır. Bu bölümde, bir görüntünün farklı semantik sınıflara ait bölgelere nasıl bölüleceğine odaklanan *semantik segmentasyon* sorununu tartışacaktır. Nesne algılamasından farklı olarak, semantik segmentasyon piksel düzeyinde görüntülerde ne olduğunu tanır ve anlar: anlamsal bölgelerin etiketlenmesi ve tahmini piksel düzeydedir. :numref:`fig_segmentation`, anlamsal bölümlemede görüntünün köpek, kedi ve arka planının etiketlerini gösterir. Nesne algılama ile karşılaştırıldığında, anlamsal segmentasyonda etiketlenmiş piksel düzeyinde kenarlıklar açıkça daha ince taneli. 
+:numref:`sec_bbox`—:numref:`sec_rcnn`'te nesne algılama görevleri tartışılırken, imgelerdeki nesneleri etiketlemek ve tahmin etmek için dikdörtgen kuşatan kutular kullanıldı. Bu bölümde, bir imgenin farklı anlamsal sınıflara ait bölgelere nasıl bölüneceğine odaklanan *anlamsal bölümleme* sorununu tartışacaktır. Nesne algılamasından farklı olarak, anlamsal bölümleme piksel düzeyinde imgelerde ne olduğunu tanır ve anlar: Anlamsal bölgelerin etiketlenmesi ve tahmini piksel düzeydedir. :numref:`fig_segmentation`, anlamsal bölümlemede imgenin köpek, kedi ve arkaplanının etiketlerini gösterir. Nesne algılama ile karşılaştırıldığında, anlamsal bölümlemede etiketlenmiş piksel düzeyinde sınırlar açıkça daha ince tanelidir. 
 
-![Labels of the dog, cat, and background of the image in semantic segmentation.](../img/segmentation.svg)
+![Anlamsal bölümlemede köpek, kedi ve görüntünün arka planının etiketleri.](../img/segmentation.svg)
 :label:`fig_segmentation`
 
 ## Görüntü Bölümleme ve Örnek Bölümleme
 
-Bilgisayar görme alanında anlamsal segmentasyona benzer iki önemli görev vardır, yani görüntü segmentasyonu ve örnek segmentasyonu. Onları kısaca semantik segmentasyondan aşağıdaki gibi ayırt edeceğiz. 
+Bilgisayarla görme alanında anlamsal bölümlemeye benzer iki önemli görev vardır, yani imge bölümleme ve örnek bölümleme. Onları anlamsal bölümlemeden kısaca aşağıdaki gibi ayırt edeceğiz. 
 
-* *Görüntü segmentasyonu* bir görüntüyü birkaç kurucu bölgeye böler. Bu tür bir soruna yönelik yöntemler genellikle görüntüdeki pikseller arasındaki korelasyonu kullanır. Eğitim sırasında görüntü pikselleri hakkında etiket bilgisine ihtiyaç duymaz ve bölümlere ayrılmış bölgelerin tahmin sırasında elde etmeyi umduğumuz anlamsal bilgilere sahip olacağını garanti edemez. Görüntüyü :numref:`fig_segmentation`'te giriş olarak alarak, görüntü segmentasyonu köpeği iki bölgeye bölebilir: biri ağırlıklı olarak siyah olan ağız ve gözleri kaplar, diğeri ise esas olarak sarı olan vücudun geri kalanını kaplar.
-* *Örnek segmentasyonu* aynı zamanda *eşzamanlı algılama ve segmentasyon* olarak da adlandırılır. Görüntüdeki her nesne örneğinin piksel düzeyinde bölgelerinin nasıl tanınacağını inceler. Anlamsal segmentasyondan farklı olarak, örnek segmentasyonunun yalnızca anlambilimi değil, aynı zamanda farklı nesne örneklerini de ayırt etmesi gerekir. Örneğin, görüntüde iki köpek varsa, örnek segmentasyonunun bir pikselin ait olduğu iki köpeğin hangisinin ayırt edilmesi gerekir.
+* *İmge bölümleme* bir imgeyi birkaç kurucu bölgeye böler. Bu tür bir soruna yönelik yöntemler genellikle imgedeki pikseller arasındaki korelasyonu kullanır. Eğitim sırasında imge pikselleri hakkında etiket bilgisine ihtiyaç duymaz ve bölümlere ayrılmış bölgelerin tahmin sırasında elde etmeyi umduğumuz anlamsal bilgilere sahip olacağını garanti edemez. İmgeyi :numref:`fig_segmentation`'te girdi olarak alarak, imge bölümleme köpeği iki bölgeye bölebilir: Biri ağırlıklı olarak siyah olan ağız ve gözleri kaplar, diğeri ise esas olarak sarı olan vücudun geri kalanını kaplar.
+* *Örnek bölümleme* aynı zamanda *eşzamanlı algılama ve bölümleme* olarak da adlandırılır. İmgedeki her nesne örneğinin piksel düzeyinde bölgelerinin nasıl tanınacağını inceler. Anlamsal bölümlemeden farklı olarak, örnek bölümlemenin yalnızca anlamı değil, aynı zamanda farklı nesne örneklerini de ayırt etmesi gerekir.Örneğin, görüntüde iki köpek varsa, örnek bölümlemenin bir pikselin iki köpekten hangisine ait olduğunu ayırt etmesi gerekir.
 
 ## Pascal VOC2012 Semantik Segmentasyon Veri Kümesi
 
-[**En önemli anlamsal segmentasyon veri kümesinin üzerinde [Pascal VOC2012](http://host.robots.ox.ac.uk/pascal/VOC/voc2012/).**] Aşağıda, bu veri kümesine bir göz atacağız.
+[**En önemli anlamsal bölümleme veri kümesinin üzerinde [Pascal VOC2012](http://host.robots.ox.ac.uk/pascal/VOC/voc2012/).**] Aşağıda, bu veri kümesine bir göz atacağız.
 
 ```{.python .input}
 %matplotlib inline
@@ -46,7 +46,7 @@ d2l.DATA_HUB['voc2012'] = (d2l.DATA_URL + 'VOCtrainval_11-May-2012.tar',
 voc_dir = d2l.download_extract('voc2012', 'VOCdevkit/VOC2012')
 ```
 
-`../data/VOCdevkit/VOC2012` yoluna girdikten sonra, veri kümesinin farklı bileşenlerini görebiliriz. `ImageSets/Segmentation` yolu, eğitim ve test örneklerini belirten metin dosyaları içerirken, `JPEGImages` ve `SegmentationClass` yolları sırasıyla her örnek için giriş görüntüsünü ve etiketini depolar. Buradaki etiket aynı zamanda etiketlenmiş giriş görüntüsüyle aynı boyutta görüntü biçimindedir. Ayrıca, herhangi bir etiket görüntüsünde aynı renge sahip pikseller aynı semantik sınıfa aittir. Aşağıdakiler, `read_voc_images` işlevini [**tüm giriş görüntülerini ve etiketlerini belleğe okuyun**] için tanımlar.
+`../data/VOCdevkit/VOC2012` yoluna girdikten sonra, veri kümesinin farklı bileşenlerini görebiliriz. `ImageSets/Segmentation` yolu, eğitim ve test örneklerini belirten metin dosyaları içerirken, `JPEGImages` ve `SegmentationClass` yolları sırasıyla her örnek için giriş imgesünü ve etiketini depolar. Buradaki etiket aynı zamanda etiketlenmiş giriş imgesüyle aynı boyutta imge biçimindedir. Ayrıca, herhangi bir etiket imgesünde aynı renge sahip pikseller aynı anlamsal sınıfa aittir. Aşağıdakiler, `read_voc_images` işlevini [**tüm giriş imgelerini ve etiketlerini belleğe okuyun**] için tanımlar.
 
 ```{.python .input}
 #@save
@@ -88,7 +88,7 @@ def read_voc_images(voc_dir, is_train=True):
 train_features, train_labels = read_voc_images(voc_dir, True)
 ```
 
-We [**draw the first five input images and their labels**]. Etiket görüntülerinde, beyaz ve siyah sırasıyla kenarlıkları ve arka planı temsil ederken, diğer renkler farklı sınıflara karşılık gelir.
+We [**draw the first five input images and their labels**]. Etiket imgelerinde, beyaz ve siyah sırasıyla kenarlıkları ve arka planı temsil ederken, diğer renkler farklı sınıflara karşılık gelir.
 
 ```{.python .input}
 n = 5
@@ -164,7 +164,7 @@ def voc_label_indices(colormap, colormap2label):
     return colormap2label[idx]
 ```
 
-[**Örnek**], ilk örnek görüntüde, uçağın ön kısmının sınıf indeksi 1 iken arka plan indeksi 0 olur.
+[**Örnek**], ilk örnek imgede, uçağın ön kısmının sınıf indeksi 1 iken arka plan indeksi 0 olur.
 
 ```{.python .input}
 #@tab all
@@ -174,7 +174,7 @@ y[105:115, 130:140], VOC_CLASSES[1]
 
 ### Veri Önişleme
 
-:numref:`sec_alexnet`—:numref:`sec_googlenet`'te olduğu gibi önceki deneylerde görüntüler modelin gerekli giriş şekline uyacak şekilde yeniden ölçeklendirilir. Ancak, anlamsal segmentasyonda, bunun yapılması, öngörülen piksel sınıflarının giriş görüntüsünün orijinal şekline geri ölçeklenmesini gerektirir. Bu tür yeniden ölçeklendirme, özellikle farklı sınıflara sahip segmentli bölgeler için yanlış olabilir. Bu sorunu önlemek için, görüntüyü yeniden ölçekleme yerine *sabit* şekle kırpıyoruz. Özellikle, [**görüntü büyütme rasgele kırpma kullanarak, giriş görüntüsünün ve etiketinin aynı alanını keseriz**].
+:numref:`sec_alexnet`—:numref:`sec_googlenet`'te olduğu gibi önceki deneylerde imgeler modelin gerekli giriş şekline uyacak şekilde yeniden ölçeklendirilir. Ancak, anlamsal bölümlemeda, bunun yapılması, öngörülen piksel sınıflarının giriş imgesünün orijinal şekline geri ölçeklenmesini gerektirir. Bu tür yeniden ölçeklendirme, özellikle farklı sınıflara sahip segmentli bölgeler için yanlış olabilir. Bu sorunu önlemek için, imgeyü yeniden ölçekleme yerine *sabit* şekle kırpıyoruz. Özellikle, [**imge büyütme rasgele kırpma kullanarak, giriş imgesünün ve etiketinin aynı alanını keseriz**].
 
 ```{.python .input}
 #@save
@@ -216,7 +216,7 @@ d2l.show_images(imgs[::2] + imgs[1::2], 2, n);
 
 ### [**Özel Anlamsal Segmentasyon Veri Kümesi Sınıfı**]
 
-Yüksek düzey API'ler tarafından sağlanan `Dataset` sınıfını devralarak özel bir anlamsal segmentasyon veri kümesi sınıfı `VOCSegDataset` tanımlıyoruz. `__getitem__` işlevini uygulayarak, veri kümesindeki `idx` olarak dizinlenmiş giriş görüntüsüne ve bu görüntüdeki her pikselin sınıf dizinine keyfi olarak erişebiliriz. Veri kümelerindeki bazı görüntüler rasgele kırpma çıktı boyutundan daha küçük bir boyuta sahip olduğundan, bu örnekler özel bir `filter` işlevi tarafından filtrelenir. Buna ek olarak, giriş görüntülerinin üç RGB kanalının değerlerini standartlaştırmak için `normalize_image` işlevini de tanımlıyoruz.
+Yüksek düzey API'ler tarafından sağlanan `Dataset` sınıfını devralarak özel bir anlamsal bölümleme veri kümesi sınıfı `VOCSegDataset` tanımlıyoruz. `__getitem__` işlevini uygulayarak, veri kümesindeki `idx` olarak dizinlenmiş giriş imgesüne ve bu imgedeki her pikselin sınıf dizinine keyfi olarak erişebiliriz. Veri kümelerindeki bazı imgeler rasgele kırpma çıktı boyutundan daha küçük bir boyuta sahip olduğundan, bu örnekler özel bir `filter` işlevi tarafından filtrelenir. Buna ek olarak, giriş imgelerinin üç RGB kanalının değerlerini standartlaştırmak için `normalize_image` işlevini de tanımlıyoruz.
 
 ```{.python .input}
 #@save
@@ -287,7 +287,7 @@ class VOCSegDataset(torch.utils.data.Dataset):
 
 ### [**Veri Kümesi Okuma**]
 
-Eğitim seti ve test setinin örneklerini oluşturmak için özel `VOCSegDatase`t sınıfını kullanıyoruz. Rastgele kırpılmış görüntülerin çıkış şeklinin $320\times 480$ olduğunu belirttiğimizi varsayalım. Aşağıda, eğitim setinde ve test setinde tutulan örneklerin sayısını görüntüleyebiliriz.
+Eğitim seti ve test setinin örneklerini oluşturmak için özel `VOCSegDatase`t sınıfını kullanıyoruz. Rastgele kırpılmış imgelerin çıkış şeklinin $320\times 480$ olduğunu belirttiğimizi varsayalım. Aşağıda, eğitim setinde ve test setinde tutulan örneklerin sayısını imgeleyebiliriz.
 
 ```{.python .input}
 #@tab all
@@ -323,7 +323,7 @@ for X, Y in train_iter:
 
 ### [**Her Şeyleri Bir Arada Yapıyor**]
 
-Son olarak, Pascal VOC2012 semantik segmentasyon veri kümesini indirmek ve okumak için aşağıdaki `load_data_voc` işlevini tanımlıyoruz. Hem eğitim hem de test veri kümeleri için veri yineleyicileri döndürür.
+Son olarak, Pascal VOC2012 anlamsal bölümleme veri kümesini indirmek ve okumak için aşağıdaki `load_data_voc` işlevini tanımlıyoruz. Hem eğitim hem de test veri kümeleri için veri yineleyicileri döndürür.
 
 ```{.python .input}
 #@save
@@ -360,14 +360,14 @@ def load_data_voc(batch_size, crop_size):
 
 ## Özet
 
-* Anlamsal segmentasyon, görüntüyü farklı anlamsal sınıflara ait bölgelere bölerek piksel düzeyinde bir görüntüde ne olduğunu tanır ve anlar.
-* On en önemli anlamsal segmentasyon veri kümesi Pascal VOC2012 olduğunu.
-* Anlamsal segmentasyonda, girdi görüntüsü ve etiketi piksel üzerinde bire bir karşılık geldiğinden, girdi görüntüsü yeniden ölçeklenmek yerine rastgele sabit bir şekle kırpılır.
+* Anlamsal bölümleme, imgeyü farklı anlamsal sınıflara ait bölgelere bölerek piksel düzeyinde bir imgede ne olduğunu tanır ve anlar.
+* On en önemli anlamsal bölümleme veri kümesi Pascal VOC2012 olduğunu.
+* Anlamsal bölümlemeda, girdi imgesü ve etiketi piksel üzerinde bire bir karşılık geldiğinden, girdi imgesü yeniden ölçeklenmek yerine rastgele sabit bir şekle kırpılır.
 
 ## Egzersizler
 
-1. Özerk araçlarda ve tıbbi görüntü teşhislerinde semantik segmentasyon nasıl uygulanabilir? Başka uygulamalar düşünebiliyor musun?
-1. :numref:`sec_image_augmentation`'teki veri büyütme açıklamalarını hatırlayın. Görüntü sınıflandırmasında kullanılan görüntü büyütme yöntemlerinden hangisinin anlamsal segmentasyonda uygulanması mümkün olmayacaktır?
+1. Özerk araçlarda ve tıbbi imge teşhislerinde anlamsal bölümleme nasıl uygulanabilir? Başka uygulamalar düşünebiliyor musun?
+1. :numref:`sec_image_augmentation`'teki veri büyütme açıklamalarını hatırlayın. Görüntü sınıflandırmasında kullanılan imge büyütme yöntemlerinden hangisinin anlamsal bölümlemeda uygulanması mümkün olmayacaktır?
 
 :begin_tab:`mxnet`
 [Discussions](https://discuss.d2l.ai/t/375)
