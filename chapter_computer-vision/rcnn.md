@@ -73,7 +73,7 @@ rois = np.array([[0, 0, 0, 20, 20], [0, 0, 10, 30, 30]])
 rois = torch.Tensor([[0, 0, 0, 20, 20], [0, 0, 10, 30, 30]])
 ```
 
-`X`'in yüksekliği ve genişliği, girdi imgesinin yüksekliğinin ve genişliğinin $1/10$ olduğu için, iki bölge önerisinin koordinatları belirtilen `spatial_scale`argümanına göre 0.1 ile çarpılır. Böylece iki ilgi bölgesi `X` üzerinde sırasıyla `X[:, :, 0:3, 0:3]` ve `X[:, :, 1:4, 0:4]` olarak işaretlenmiştir. Son olarak $2\times 2$'lık ilgi bölgesi ortaklamasında, her bir ilgi bölgesi, aynı şekilde $2\x 2$ olan öznitelikleri daha fazla çıkarmak için bir alt pencere ızgarasına bölünür. 
+`X`'in yüksekliği ve genişliği, girdi imgesinin yüksekliğinin ve genişliğinin $1/10$ olduğu için, iki bölge önerisinin koordinatları belirtilen `spatial_scale`argümanına göre 0.1 ile çarpılır. Böylece iki ilgi bölgesi `X` üzerinde sırasıyla `X[:, :, 0:3, 0:3]` ve `X[:, :, 1:4, 0:4]` olarak işaretlenmiştir. Son olarak $2\times 2$'lık ilgi bölgesi ortaklamasında, her bir ilgi bölgesi, aynı şekilde $2\times 2$ olan öznitelikleri daha fazla çıkarmak için bir alt pencere ızgarasına bölünür. 
 
 ```{.python .input}
 npx.roi_pooling(X, rois, pooled_size=(2, 2), spatial_scale=0.1)

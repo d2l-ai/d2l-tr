@@ -3,7 +3,7 @@
 
 Şimdiye kadar, doğrudan tensör formatında görüntü veri kümelerini elde etmek için derin öğrenme çerçevelerinin üst düzey API'lerini kullanıyoruz. Ancak, özel görüntü veri kümeleri genellikle görüntü dosyaları şeklinde gelir. Bu bölümde, ham görüntü dosyalarından başlayacağız ve düzenleyeceğiz, okuyacağız, ardından bunları adım adım tensör formatına dönüştüreceğiz. 
 
-Bilgisayar görüşünde önemli bir veri kümesi olan :numref:`sec_image_augmentation`'te CIFAR-10 veri kümesi ile deney yaptık. Bu bölümde, CIFAR-10 görüntü sınıflandırmasının Kaggle yarışmasını uygulamak için önceki bölümlerde öğrendiğimiz bilgileri uygulayacağız. (**Yarışmanın web adresi https://www.kaggle.com/c/cifar-10 **) 
+Bilgisayar görüşünde önemli bir veri kümesi olan :numref:`sec_image_augmentation`'te CIFAR-10 veri kümesi ile deney yaptık. Bu bölümde, CIFAR-10 görüntü sınıflandırmasının Kaggle yarışmasını uygulamak için önceki bölümlerde öğrendiğimiz bilgileri uygulayacağız. (**Yarışmanın web adresi https://www.kaggle.com/c/cifar-10**) 
 
 :numref:`fig_kaggle_cifar10` yarışmanın web sayfasındaki bilgileri gösterir. Sonuçları göndermek için bir Kaggle hesabı kaydettirmeniz gerekir. 
 
