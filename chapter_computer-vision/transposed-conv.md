@@ -1,11 +1,9 @@
-# Transpoze Konvolüsyon
+# Devrik Evrişim
 :label:`sec_transposed_conv`
 
-Bugüne kadar gördüğümüz CNN katmanları, evrimsel katmanlar (:numref:`sec_conv_layer`) ve havuzlama katmanları (:numref:`sec_pooling`) gibi, genellikle girdinin uzamsal boyutlarını (yükseklik ve genişlik) azaltır (azaltma) veya değişmeden tutar. Piksel düzeyinde sınıflandırılan semantik segmentasyonda, girdi ve çıktının mekansal boyutları aynı ise uygun olacaktır. Örneğin, bir çıkış pikselindeki kanal boyutu, girdi pikselinin sınıflandırma sonuçlarını aynı uzamsal konumda tutabilir. 
+Bugüne kadar gördüğümüz CNN katmanları, evrişimli katmanlar (:numref:`sec_conv_layer`) ve ortaklama katmanları (:numref:`sec_pooling`) gibi, genellikle girdinin uzamsal boyutlarını (yükseklik ve genişlik) azaltır (örnek seyreltme) veya değişmeden tutar. Piksel düzeyinde sınıflandırılan anlamsal bölümlemede, girdi ve çıktının mekansal boyutları aynı ise uygun olacaktır. Örneğin, bir çıktı pikselindeki kanal boyutu, girdi pikselinin sınıflandırma sonuçlarını aynı uzamsal konumda tutabilir. 
 
-Bunu başarmak için, özellikle uzamsal boyutlar CNN katmanları tarafından azaltıldıktan sonra, ara özellik haritalarının mekansal boyutlarını artırabilecek (upsample) yapabilen başka bir CNN katmanlarını kullanabiliriz. Bu bölümde, tanıtacağız 
-*de* kesirli kıvrımlı kıvrım* olarak da adlandırılan dönüşüm* :cite:`Dumoulin.Visin.2016`, 
-evrişim ile aşağı örnekleme işlemlerini tersine çevirmek için.
+Bunu başarmak için, özellikle uzamsal boyutlar CNN katmanları tarafından azaltıldıktan sonra, ara öznitelik haritalarının mekansal boyutlarını artırabilecek (örnek sıklaştırma) yapabilen başka bir CNN katmanlarını kullanabiliriz. Bu bölümde, evrişim tarafından örnek seyreltme işlemlerini tersine çevirmek için *kesirli adımlı evrişim* :cite:`Dumoulin.Visin.2016` olarak da adlandırılan *devrik evrişimi* tanıtacağız.
 
 ```{.python .input}
 from mxnet import np, npx, init
@@ -24,14 +22,14 @@ from d2l import torch as d2l
 
 ## Temel İşlem
 
-Şimdilik kanalları görmezden gelerek, 1 adım ve dolgu olmadan temel transpoze edilmiş evrişim işlemiyle başlayalım. Bir $n_h \times n_w$ giriş tensör ve bir $k_h \times k_w$ çekirdeği verildiğini varsayalım. Çekirdek penceresini her satırda $n_w$ kez ve her sütundaki $n_h$ kez 1 adımıyla kaydırılması toplam $n_h n_w$ ara sonuç verir. Her ara sonuç sıfır olarak başlatılan bir $(n_h + k_h - 1) \times (n_w + k_w - 1)$ tensördür. Her ara tensörün hesaplanması için, giriş tensöründe bulunan her eleman çekirdek ile çarpılır, böylece sonuçta ortaya çıkan $k_h \times k_w$ tensör her ara tensörde bir bölümün yerini alır. Her ara tensördeki değiştirilen bölümün konumunun, hesaplama için kullanılan giriş tensöründe elemanın konumuna karşılık geldiğini unutmayın. Sonunda, çıktı üretmek için tüm ara sonuçlar toplanır. 
+Şimdilik kanalları görmezden gelerek, 1 adımlı ve dolgusuz temel devrik evrişim işlemiyle başlayalım. Bir $n_h \times n_w$ girdi tensörü ve bir $k_h \times k_w$ çekirdeği verildiğini varsayalım. Çekirdek penceresini her satırda $n_w$ kez ve her sütundaki $n_h$ kez 1 adımıyla kaydırılması toplam $n_h n_w$ ara sonuç verir. Her ara sonuç sıfır olarak ilklenen bir $(n_h + k_h - 1) \times (n_w + k_w - 1)$ tensördür. Her ara tensörün hesaplanması için, girdi tensöründe bulunan her eleman çekirdek ile çarpılır, böylece sonuçta ortaya çıkan $k_h \times k_w$ tensörü her ara tensörde bir kısmın yerini alır. Her ara tensördeki değiştirilen kısmın konumunun, hesaplama için kullanılan girdi tensöründe elemanın konumuna karşılık geldiğini unutmayın. Sonunda, çıktı üretmek için tüm ara sonuçlar toplanır. 
 
-Örnek olarak, :numref:`fig_trans_conv`, $2\times 2$ giriş tensör için $2\times 2$ çekirdeği ile dönüştürülmüş evrimin nasıl hesaplandığını göstermektedir. 
+Örneğin, :numref:`fig_trans_conv`, $2\times 2$ girdi tensörü için $2\times 2$ çekirdeği ile dervik evrişimin nasıl hesaplandığını göstermektedir. 
 
-![Transposed convolution with a $2\times 2$ kernel. The shaded portions are a portion of an intermediate tensor as well as the input and kernel tensor elements used for the  computation.](../img/trans_conv.svg)
+![$2\times 2$ çekirdek ile devrik evrişim. Gölgeli kısımlar, bir ara tensörün bir kısmı ile hesaplama için kullanılan girdi ve çekirdek tensör elemanlarıdır.](../img/trans_conv.svg)
 :label:`fig_trans_conv`
 
-Biz (**Bu temel transposed evrişim operasyonu uygulamak**) `trans_conv` Bir giriş matrisi için `X` ve bir çekirdek matrisi `K`.
+Bir girdi matrisi `X` ve bir çekirdek matrisi `K` için (**bu temel devrik evrişim işlemi**)  `trans_conv`'u uygulayabiliriz.
 
 ```{.python .input}
 #@tab all
@@ -44,9 +42,8 @@ def trans_conv(X, K):
     return Y
 ```
 
-Düzenli konvolüsyonun aksine (:numref:`sec_conv_layer`'te) bu *reduces* giriş elemanları çekirdek üzerinden, transpoze edilmiş konvolüsyon
-*yayınlar* giriş elemanları 
-çekirdek aracılığıyla, böylece girişten daha büyük bir çıktı üretir. :numref:`fig_trans_conv`'ten :numref:`fig_trans_conv`'ten `X` giriş tensörünü ve çekirdek tensörünü :numref:`fig_trans_conv`'ten temel iki boyutlu transpoze edilmiş evrişim işleminin [**doğrulamak**] için inşa edebiliriz.
+Çekirdek yoluyla girdi öğelerini *azaltan* olağan evrişimin (:numref:`sec_conv_layer`) aksine, devrik evrişim, girdi öğelerini çekirdek yoluyla *yayınlar*, böylece girdiden daha büyük bir çıktı üretir.
+:numref:`fig_trans_conv`'ten :numref:`fig_trans_conv`'ten `X` girdi. Temel iki boyutlu devrik evrişim işleminin [**yukarıdaki uygulamasının çıktısını doğrulamak**] için :numref:`fig_trans_conv`'dan girdi tensörü `X` ve çekirdek tensörü `K` oluşturabiliriz.
 
 ```{.python .input}
 #@tab all
@@ -55,7 +52,7 @@ K = d2l.tensor([[0.0, 1.0], [2.0, 3.0]])
 trans_conv(X, K)
 ```
 
-Alternatif olarak, `X` ve çekirdek `K` girişi dört boyutlu tensör olduğunda, [**aynı sonuçlar elde etmek için yüksek seviyeli API'leri kullanabiliriz**].
+Alternatif olarak, girdi `X` ve çekirdek `K` dört boyutlu tensörler olduğunda, [**aynı sonuçları elde etmek için üst seviye API'leri kullanabiliriz**].
 
 ```{.python .input}
 X, K = X.reshape(1, 1, 2, 2), K.reshape(1, 1, 2, 2)
@@ -72,9 +69,9 @@ tconv.weight.data = K
 tconv(X)
 ```
 
-## [**Dolgu, Adım ve Çoklu Kanal**]
+## [**Dolgu, Adım ve Çoklu Kanallar**]
 
-Dolgunun girişe uygulandığı düzenli konvolüsiyondan farklı olarak, transpoze edilmiş konvolüsyon içindeki çıkışa uygulanır. Örneğin, yükseklik ve genişliğin her iki tarafındaki dolgu numarasını 1 olarak belirtirken, ilk ve son satırlar ve sütunlar aktarılan konvolüsyon çıkışından kaldırılır.
+Dolgunun girdiye uygulandığı düzenli evrisimden farklı olarak, devrik evrişim içindeki çıktıya uygulanır. Örneğin, yükseklik ve genişliğin her iki tarafındaki dolgu sayısı 1 olarak belirtilirken, ilk ve son satırlar ve sütunlar devrik evrişim çıktısından kaldırılır.
 
 ```{.python .input}
 tconv = nn.Conv2DTranspose(1, kernel_size=2, padding=1)
@@ -89,12 +86,12 @@ tconv.weight.data = K
 tconv(X)
 ```
 
-Transpoze edilen konvolüsyonda, giriş için değil, ara sonuçlar için adımlar belirtilir (böylece çıkış). :numref:`fig_trans_conv`'ten itibaren aynı giriş ve çekirdek tensörlerinin kullanılması, adımın 1'den 2'ye değiştirilmesi, ara tensörlerin hem yüksekliğini hem de ağırlığını arttırır, dolayısıyla :numref:`fig_trans_conv_stride2`'teki çıkış tensörünü artırır. 
+Devrik evrişimde, girdi için değil, ara sonuçlar (böylece çıktı) için adımlar belirtilir. :numref:`fig_trans_conv`'ten itibaren aynı girdi ve çekirdek tensörleri kullanılırken, adımın 1'den 2'ye değiştirilmesi, ara tensörlerin, dolayısıyla :numref:`fig_trans_conv_stride2`'teki çıktı tensörünün, hem yüksekliğini hem de ağırlığını artırır. 
 
-![Transposed convolution with a $2\times 2$ kernel with stride of 2. The shaded portions are a portion of an intermediate tensor as well as the input and kernel tensor elements used for the  computation.](../img/trans_conv_stride2.svg)
+![2 uzun adımlı $2\times 2$ çekirdekli devrik evrişim. Gölgeli kısımlar, hesaplama için kullanılan girdi ve çekirdek tensör elemanlarının yanı sıra bir ara tensörün bir kısmıdır.](../img/trans_conv_stride2.svg)
 :label:`fig_trans_conv_stride2`
 
-Aşağıdaki kod parçacığı, :numref:`fig_trans_conv_stride2`'te 2 adım için dönüştürülmüş evrişim çıktısını doğrulayabilir.
+Aşağıdaki kod parçacığı, :numref:`fig_trans_conv_stride2`'te 2 uzun adım için devrik evrişim çıktısını doğrulayabilir.
 
 ```{.python .input}
 tconv = nn.Conv2DTranspose(1, kernel_size=2, strides=2)
@@ -109,10 +106,10 @@ tconv.weight.data = K
 tconv(X)
 ```
 
-Birden fazla giriş ve çıkış kanalı için, dönüştürülmüş evrişim normal konvolüsyon ile aynı şekilde çalışır. Girdinin $c_i$ kanallara sahip olduğunu ve dönüştürülmüş evrimin her giriş kanalına bir $k_h\times k_w$ çekirdek tensör atadığını varsayalım. Birden fazla çıkış kanalı belirtildiğinde, her çıkış kanalı için bir $c_i\times k_h\times k_w$ çekirdeğine sahip olacağız. 
+Çoklu girdi ve çıktı kanalı için, devrik evrişim normal evrişim ile aynı şekilde çalışır. Girdinin $c_i$ kanallara sahip olduğunu ve devrik evrimin her girdi kanalına bir $k_h\times k_w$ çekirdek tensörü atadığını varsayalım. Birden fazla çıktı kanalı belirtildiğinde, her çıktı kanalı için bir $c_i\times k_h\times k_w$ çekirdeğine sahip olacağız. 
 
-Tüm olarak, $\mathsf{X}$'yi $\mathsf{X}$'yi $f$ çıkış yapmak için $f$ çıktısını $f$ olarak beslersek ve $f$ ile aynı hiperparametrelere sahip transpoze edilmiş bir evrimsel katman oluşturursak, $\mathsf{X}$'deki kanal sayısı hariç, $\mathsf{X}$'deki kanal sayısı hariç, $g(Y)$ ile aynı şekle sahip olacaktır $\mathsf{X}$. Bu, aşağıdaki örnekte gösterilebilir.
 
+Her durumda, $\mathsf{X}$'ı $\mathsf{Y}=f(\mathsf{X})$ çıktısı almak için bir $f$ evrişim katmanına beslersek ve $\mathsf{X}$ içindeki kanalların sayısı olan çıktı kanallarının sayısı dışında $f$ ile aynı hiperparametrelere sahip bir $g$ devrik evrimsel katman oluşturursak, o zaman $g(Y)$ $\mathsf{X}$ ile aynı şekle sahip olacaktır. Bu, aşağıdaki örnekte gösterilebilir.
 ```{.python .input}
 X = np.random.uniform(size=(1, 10, 16, 16))
 conv = nn.Conv2D(20, kernel_size=5, padding=2, strides=3)
@@ -130,10 +127,10 @@ tconv = nn.ConvTranspose2d(20, 10, kernel_size=5, padding=2, stride=3)
 tconv(conv(X)).shape == X.shape
 ```
 
-## [**Matris Transposition'a Bağlantı**]
+## [**Matris Devirme ile Bağlantı**]
 :label:`subsec-connection-to-mat-transposition`
 
-Transpoze edilen evrişim, matris transpozisyonundan sonra adlandırılır. Açıklamak için, önce matris çarpımlarını kullanarak kıvrımların nasıl uygulanacağını görelim. Aşağıdaki örnekte, $3\times 3$ giriş `X` ve $2\times 2$ evrişim çekirdeği `K` tanımlıyoruz ve `Y` evrişim çıktısını hesaplamak için `corr2d` işlevini kullanıyoruz.
+Devrik evrişim, matris devirmeden sonra adlandırılmıştsır. Açıklamak için, önce matris çarpımlarını kullanarak evrisimlerin nasıl uygulanacağını görelim. Aşağıdaki örnekte, $3\times 3$'lük girdi `X` ve $2\times 2$'lik evrişim çekirdeği `K` tanımlıyoruz ve `Y` evrişim çıktısını hesaplamak için `corr2d` işlevini kullanıyoruz.
 
 ```{.python .input}
 #@tab all
@@ -143,7 +140,7 @@ Y = d2l.corr2d(X, K)
 Y
 ```
 
-Daha sonra, `K`'i, çok sayıda sıfır içeren seyrek ağırlık matrisi `W` olarak konvolüsyon çekirdeğini yeniden yazıyoruz. Ağırlık matrisinin şekli ($4$, $9$) olup, sıfır olmayan elemanların evrişim çekirdeği `K`'den geldiği yerdir.
+Daha sonra, çok sayıda sıfır içeren seyrek ağırlık matrisi `W` olarak evrişim çekirdeği `K`'yi yeniden yazıyoruz. Ağırlık matrisinin şekli ($4$, $9$) olup sıfır olmayan elemanlar evrişim çekirdeği `K`'den gelmektedir.
 
 ```{.python .input}
 #@tab all
@@ -157,14 +154,14 @@ W = kernel2matrix(K)
 W
 ```
 
-9 uzunluğunda bir vektör elde etmek için giriş `X` satırını satır birleştirin. Daha sonra `W`'in matris çarpımı ve vektörleştirilmiş `X`, 4 uzunluğunda bir vektör verir. Yeniden şekillendirdikten sonra, yukarıdaki orijinal evrişim işleminden aynı sonucu `Y`'ü elde edebiliriz: matris çarpımlarını kullanarak kıvrımları uyguladık.
+9 uzunluğunda bir vektör elde etmek için girdi `X`'i satır satır bitiştirin. Daha sonra `W` ve vektörleştirilmiş `X`'in matris çarpımı, 4 uzunluğunda bir vektör verir. Yeniden şekillendirdikten sonra, yukarıdaki orijinal evrişim işlemindeki aynı `Y` sonucunu elde edebiliriz: Matris çarpımlarını kullanarak evrişimleri uyguladık.
 
 ```{.python .input}
 #@tab all
 Y == d2l.matmul(W, d2l.reshape(X, -1)).reshape(2, 2)
 ```
 
-Aynı şekilde, matris çarpımlarını kullanarak transpoze edilmiş kıvrımları da uygulayabiliriz. Aşağıdaki örnekte, $2 \times 2$ çıkış `Y`'ü yukarıdaki düzenli konvolüsyondan aktarılan evrime giriş olarak alıyoruz. Bu işlemi matrisleri çarparak uygulamak için, `W` ağırlık matrisini yeni şekil $(9, 4)$ ile aktarmamız yeterlidir.
+Aynı şekilde, matris çarpımlarını kullanarak devrik evrişimleri de uygulayabiliriz. Aşağıdaki örnekte, yukarıdaki olağan evrişimin $2 \times 2$ çıktısı `Y`'yi devrik evrişime girdi olarak alıyoruz. Bu işlemi matrisleri çarparak uygulamak için, `W` ağırlık matrisini yeni şekli $(9, 4)$ ile devirmemiz yeterlidir.
 
 ```{.python .input}
 #@tab all
@@ -172,23 +169,23 @@ Z = trans_conv(Y, K)
 Z == d2l.matmul(W.T, d2l.reshape(Y, -1)).reshape(3, 3)
 ```
 
-Matrisleri çarparak evrimi uygulamayı düşünün. Bir giriş vektörü $\mathbf{x}$ ve bir ağırlık matrisi $\mathbf{W}$ göz önüne alındığında, evrimin ileri yayılma fonksiyonu, giriş ağırlık matrisi ile çarpılarak ve bir vektör $\mathbf{y}=\mathbf{W}\mathbf{x}$ çıktısıyla uygulanabilir. Geri yayılma zincir kuralını ve $\nabla_{\mathbf{x}}\mathbf{y}=\mathbf{W}^\top$'i izlediğinden, konvolüsiyonun geri yayılma fonksiyonu, girişini transpoze ağırlık matrisi $\mathbf{W}^\top$ ile çarpılarak uygulanabilir. Bu nedenle, transpoze edilmiş konvolüsyonel tabaka sadece ileri yayılma fonksiyonunu ve dönme tabakasının geri yayılma fonksiyonunu değiştirebilir: ileri yayılma ve geri yayılma fonksiyonları sırasıyla $\mathbf{W}^\top$ ve $\mathbf{W}$ ile giriş vektörünü çarpar. 
+Matrisleri çarparak evrişimi uygulamayı düşünün. Bir girdi vektörü $\mathbf{x}$ ve bir ağırlık matrisi $\mathbf{W}$ göz önüne alındığında, evrişimin ileri yayma fonksiyonu, girdi ağırlık matrisi ile çarpımından bir $\mathbf{y}=\mathbf{W}\mathbf{x}$ vektör çıktısı verilerek uygulanabilir. Geriye yayma zincir kuralını ve $\nabla_{\mathbf{x}}\mathbf{y}=\mathbf{W}^\top$'i izlediğinden, evrişimin geriye yayma fonksiyonu, girdisini devrik ağırlık matrisi $\mathbf{W}^\top$ ile çarparak uygulanabilir. Bu nedenle, devrik evrişim katmanı sadece ileri yayma fonksiyonunu ve evrişim tabakasının geri yayma fonksiyonunu değiştirebilir: İleri yayma ve geri yayma fonksiyonları sırasıyla $\mathbf{W}^\top$ ve $\mathbf{W}$ ile girdi vektörünü çarpar. 
 
 ## Özet
 
-* Çekirdek üzerinden giriş elemanlarını azaltan düzenli evrimin aksine, dönüştürülmüş evrişim çekirdek üzerinden giriş öğelerini yayınlar ve böylece girişten daha büyük bir çıktı üretir.
-* $\mathsf{X}$'yi $\mathsf{X}$ çıkış yapmak için $f$ çıktısını $f$ ile evrimsel bir katmana beslersek ve $f$ ile aynı hiperparametrelere sahip bir transpoze evrimsel katman oluşturursak, $\mathsf{X}$'deki kanal sayısı olan çıkış kanallarının sayısı haricinde $\mathsf{X}$, $\mathsf{X}$ ile aynı şekle sahip olacaktır.
-* Matris çarpımlarını kullanarak kıvrımları gerçekleştirebiliriz. Transpoze edilmiş evrimsel tabaka sadece ileri yayılma fonksiyonunu ve kıvrımlı tabakanın geri yayılma işlevini değiştirebilir.
+* Çekirdek üzerinden girdi elemanlarını azaltan olağan evrişimin aksine, devrik evrişim çekirdek üzerinden girdi öğelerini yayınlar ve böylece girdiden daha büyük bir çıktı üretir.
+* $\mathsf{X}$'i $\mathsf{Y}=f(\mathsf{X})$ çıktısı almak için bir $f$ evrişim katmanına beslersek ve çıktı kanallarının sayısının $\mathsf{X}$ içindeki kanalların sayısı olması dışında $f$ ile aynı hiperparametrelere sahip bir devrik evrişim katmanı $g$ oluşturursak,  $g(Y)$ $\mathsf{X}$ ile aynı şekle sahip olacaktır.
+* Matris çarpımlarını kullanarak evrişimleri gerçekleştirebiliriz. Devrik evrişimli katman sadece ileri yayma fonksiyonunu ve evrişimli katmanın geri yayma işlevini değiştirebilir.
 
-## Egzersizler
+## Alıştırmalar
 
-1. :numref:`subsec-connection-to-mat-transposition`'te, `X` konvolüsyon girişi ve transpoze edilmiş konvolüsyon çıkışı `Z` aynı şekle sahiptir. Aynı değere sahipler mi? Neden?
-1. Kıvrımları uygulamak için matris çarpımlarını kullanmak etkili midir? Neden?
+1. :numref:`subsec-connection-to-mat-transposition`'te, `X` evrişim girişi ve devrik evrişim çıktısı `Z` aynı şekle sahiptir. Aynı değere sahipler mi? Neden?
+1. Evrişimleri uygulamak için matris çarpımlarını kullanmak verimli midir? Neden?
 
 :begin_tab:`mxnet`
-[Discussions](https://discuss.d2l.ai/t/376)
+[Tartışmalar](https://discuss.d2l.ai/t/376)
 :end_tab:
 
 :begin_tab:`pytorch`
-[Discussions](https://discuss.d2l.ai/t/1450)
+[Tartışmalar](https://discuss.d2l.ai/t/1450)
 :end_tab:

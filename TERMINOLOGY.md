@@ -321,6 +321,8 @@ underflow; küçümenlik
 
 uniform; tekdüze
 
+upsampling; örnek sıklaştırma
+
 validation set; geçerleme kümesi
 
 variance; değişinti
