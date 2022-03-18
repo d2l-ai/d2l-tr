@@ -71,6 +71,8 @@ crowdsourcing; kitle kaynak kullanımı
 
 decoder; kodçözücü
 
+denoising; gürültü arındırma
+
 deployment; konuşlandırma
 
 descent; iniş

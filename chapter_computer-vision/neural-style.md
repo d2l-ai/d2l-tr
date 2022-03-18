@@ -1,26 +1,26 @@
-# Sinir Tarzı Transfer
+# Sinir Stil Transferi
 
-Eğer bir fotoğraf meraklısı iseniz, filtreye aşina olabilirsiniz. Fotoğrafların renk stilini değiştirebilir, böylece manzara fotoğraflarının daha keskin hale gelmesi veya portre fotoğraflarının beyazlatılmış derileri vardır. Ancak, bir filtre genellikle fotoğrafın yalnızca bir yönünü değiştirir. Bir fotoğrafa ideal bir stil uygulamak için muhtemelen birçok farklı filtre kombinasyonunu denemeniz gerekir. Bu işlem, bir modelin hiperparametrelerini ayarlamak kadar karmaşıktır. 
+Eğer bir fotoğraf meraklısı iseniz, filtreye aşina olabilirsiniz. Fotoğrafların renk stilini değiştirebilir, böylece manzara fotoğrafları daha keskin hale gelir veya portre fotoğrafları beyaz tonlara sahip olur. Ancak, bir filtre genellikle fotoğrafın yalnızca bir yönünü değiştirir. Bir fotoğrafa ideal bir stil uygulamak için muhtemelen birçok farklı filtre kombinasyonunu denemeniz gerekir. Bu işlem, bir modelin hiperparametrelerini ayarlamak kadar karmaşıktır. 
 
-Bu bölümde, bir görüntünün stilini otomatik olarak başka bir görüntüye (örn. stil aktarımı* :cite:`Gatys.Ecker.Bethge.2016`) uygulamak için CNN'nin katmanlı temsillerinden yararlanacağız. Bu görevin iki girdi görüntüsü gerekir: biri*içerik görüntüsü*, diğeri ise *stil görüntüsü*. İçerik görüntüsünü stil görüntüsüne yakın hale getirmek için sinir ağlarını kullanacağız. Örneğin, :numref:`fig_style_transfer`'teki içerik görüntüsü Seattle'ın banliyölerindeki Rainier Milli Parkı'nda tarafımızdan çekilen bir manzara fotoğrafıdır ve stil görüntüsü sonbahar meşe ağaçları temalı bir yağlı boya tablosudur. Çıktı sentezlenen görüntüde, stil görüntüsünün yağ fırçası darbeleri uygulanır ve içerik görüntüsünde nesnelerin ana şeklini korurken daha canlı renklere yol açar. 
+Bu bölümde, bir imgenin stilini otomatik olarak başka bir imgeye (örn. *stil aktarımı* :cite:`Gatys.Ecker.Bethge.2016`) uygulamak için CNN'nin katmanlı temsillerinden yararlanacağız. Bu görevde iki girdi imgesi gerekir: Biri *içerik imgesi*, diğeri ise *stil imgesi*. İçerik imgesini stil imgesine yakın hale getirmek için sinir ağlarını kullanacağız. Örneğin, :numref:`fig_style_transfer`'teki içerik imgesi Seattle'ın banliyölerindeki Rainier Milli Parkı'nda tarafımızdan çekilen bir manzara fotoğrafıdır ve stil imgesi sonbahar meşe ağaçları temalı bir yağlı boya tablosudur. Sentezlenmiş çıktı imgesinde, stil imgesinin yağlı fırça darbeleri uygulanarak, içerik imgesindeki nesnelerin ana şekli korunurken daha canlı renkler elde edilir. 
 
-![Given content and style images, style transfer outputs a synthesized image.](../img/style-transfer.svg)
+![Verilen içerik ve stil görüntüleri, stil aktarımı sentezlenmiş bir görüntü verir.](../img/style-transfer.svg)
 :label:`fig_style_transfer`
 
 ## Yöntem
 
-:numref:`fig_style_transfer_model`, CNN tabanlı stil aktarım yöntemini basitleştirilmiş bir örnekle gösterir. İlk olarak, sentezlenen görüntüyü, örneğin içerik görüntüsüne başlatırız. Bu sentezlenen görüntü, stil aktarımı işlemi sırasında güncellenmesi gereken tek değişkendir, yani eğitim sırasında güncellenecek model parametreleri. Daha sonra görüntü özelliklerini ayıklamak ve eğitim sırasında model parametrelerini dondurmak için önceden eğitilmiş bir CNN seçiyoruz. Bu derin CNN görüntüler için hiyerarşik özellikleri ayıklamak için birden çok katman kullanır. İçerik özellikleri veya stil özellikleri olarak bu katmanlardan bazılarının çıktısını seçebiliriz. Örnek olarak :numref:`fig_style_transfer_model`'ü ele alın. Buradaki önceden eğitilmiş sinir ağı, ikinci katmanın içerik özelliklerini çıkardığı ve birinci ve üçüncü katmanlar stil özelliklerini çıkardığı 3 kıvrımlı katmana sahiptir. 
+:numref:`fig_style_transfer_model`, CNN tabanlı stil aktarım yöntemini basitleştirilmiş bir örnekle gösterir. İlk olarak, sentezlenen imgeyi, örneğin içerik imgesine ilkleriz. Bu sentezlenen imge, stil aktarımı işlemi sırasında güncellenmesi gereken tek değişkendir, yani eğitim sırasında güncellenecek model parametreleri. Daha sonra imge özniteliklerini ayıklamak için önceden eğitilmiş bir CNN seçiyoruz ve eğitim sırasında model parametrelerini donduruyoruz. Bu derin CNN imgeler için hiyerarşik öznitelikleri ayıklamak için çoklu katman kullanır. İçerik öznitelikleri veya stil öznitelikleri olarak bu katmanlardan bazılarının çıktısını seçebiliriz. Örnek olarak :numref:`fig_style_transfer_model`'ü ele alın. Buradaki önceden eğitilmiş sinir ağı, ikinci katmanın içerik özniteliklerini çıkardığı ve birinci ve üçüncü katmanlar stil özniteliklerini çıkardığı 3 evrişimli katmana sahiptir. 
 
-![CNN-based style transfer process. Solid lines show the direction of forward propagation and dotted lines show backward propagation. ](../img/neural-style.svg)
+![CNN tabanlı stil aktarım süreci. Düz çizgiler ileri yayma yönünü ve noktalı çizgiler geriye yaymayı gösterir. ](../img/neural-style.svg)
 :label:`fig_style_transfer_model`
 
-Daha sonra, ileriye yayılma yoluyla stil aktarımının kayıp işlevini hesaplıyoruz (katı okların yönü) ve model parametrelerini (çıktı için sentezlenmiş görüntü) geri yayılma (kesikli okların yönü) ile güncelleriz. Stil aktarımında yaygın olarak kullanılan kayıp fonksiyonu üç bölümden oluşur: (i) *içerik kaybı* sentezlenen görüntüyü ve içerik görüntüsünü içerik özelliklerinde yakınlaştırır; (ii) *stil kaybı* sentezlenen görüntü ve stil görüntüsünü stil özelliklerinde yakınlaştırır; ve (iii) *toplam varyasyon kaybı* sentezlenen görüntüde gürültü. Son olarak, model eğitimi bittiğinde, son sentezlenmiş görüntüyü oluşturmak için stil aktarımının model parametrelerini çıkarırız. 
+Daha sonra, ileri yayma yoluyla stil aktarımının kayıp işlevini hesaplarız (katı okların yönü) ve model parametrelerini (çıktı için sentezlenmiş imge) geri yayma (kesikli okların yönü) ile güncelleriz. Stil aktarımında yaygın olarak kullanılan kayıp fonksiyonu üç bölümden oluşur: (i) *içerik kaybı* sentezlenen imgeyi ve içerik imgesini içerik özniteliklerinde yakınlaştırır; (ii) *stil kaybı* sentezlenen imge ve stil imgesini stil özniteliklerinde yakınlaştırır; ve (iii) *toplam değişim kaybı* sentezlenen imgede gürültü azaltmaya yardım eder. Son olarak, model eğitimi bittiğinde, son sentezlenmiş imgeyi oluşturmak için stil aktarımının model parametrelerini çıktı olarak veririz. 
 
-Aşağıda, somut bir deney yoluyla stil transferinin teknik detaylarını açıklayacağız. 
+Aşağıda, somut bir deney yoluyla stil aktarımının teknik detaylarını açıklayacağız. 
 
-## [**İçerik ve Stil Görüntüleri Okunma**]
+## [**İçerik ve Stil İmgelerini Okuma**]
 
-İlk olarak, içeriği ve stil görüntülerini okuyoruz. Basılı koordinat eksenlerinden, bu görüntülerin farklı boyutlarda olduğunu söyleyebiliriz.
+İlk olarak, içerik ve stil imgelerini okuyoruz. Basılı koordinat eksenlerinden, bu imgelerin farklı boyutlarda olduğunu söyleyebiliriz.
 
 ```{.python .input}
 %matplotlib inline
@@ -59,9 +59,9 @@ style_img = d2l.Image.open('../img/autumn-oak.jpg')
 d2l.plt.imshow(style_img);
 ```
 
-## [**Önişleme ve Sonrası İşleme Sonrası**]
+## [**Ön İşleme ve Sonradan İşleme**]
 
-Aşağıda, önişleme ve postprocessing görüntüleri için iki işlev tanımlıyoruz. `preprocess` işlevi, giriş görüntüsünün üç RGB kanalının her birini standartlaştırır ve sonuçları CNN giriş biçimine dönüştürür. `postprocess` işlevi, standardizasyondan önce çıktı görüntüsünde piksel değerlerini orijinal değerlerine geri yükler. Görüntü yazdırma işlevi, her pikselin 0'dan 1'e kadar kayan nokta değerine sahip olmasını gerektirdiğinden, 0'dan küçük veya 1'den büyük herhangi bir değeri sırasıyla 0 veya 1 ile değiştiririz.
+Aşağıda, ön işleme ve sonradan işleme imgeleri için iki işlev tanımlıyoruz. `preprocess` işlevi, girdi imgesinin üç RGB kanalının her birini standartlaştırır ve sonuçları CNN girdi biçimine dönüştürür. `postprocess` işlevi, standartlaştırmadan önce çıktı imgesinde piksel değerlerini orijinal değerlerine geri yükler. İmge yazdırma işlevi, her pikselin 0'dan 1'e kadar kayan virgüllü sayı değerine sahip olmasını gerektirdiğinden, 0'dan küçük veya 1'den büyük herhangi bir değeri sırasıyla 0 veya 1 ile değiştiririz.
 
 ```{.python .input}
 rgb_mean = np.array([0.485, 0.456, 0.406])
@@ -95,9 +95,9 @@ def postprocess(img):
     return torchvision.transforms.ToPILImage()(img.permute(2, 0, 1))
 ```
 
-## [**Özellik Çıkarma**]
+## [**Öznitelik Ayıklama**]
 
-Görüntü özelliklerini :cite:`Gatys.Ecker.Bethge.2016` ayıklamak için ImageNet veri setinde önceden eğitilmiş VGG-19 modelini kullanıyoruz.
+İmge özniteliklerini :cite:`Gatys.Ecker.Bethge.2016` ayıklamak için ImageNet veri kümesinde önceden eğitilmiş VGG-19 modelini kullanıyoruz.
 
 ```{.python .input}
 pretrained_net = gluon.model_zoo.vision.vgg19(pretrained=True)
@@ -108,14 +108,14 @@ pretrained_net = gluon.model_zoo.vision.vgg19(pretrained=True)
 pretrained_net = torchvision.models.vgg19(pretrained=True)
 ```
 
-Görüntünün içerik özelliklerini ve stil özelliklerini ayıklamak için, VGG ağındaki belirli katmanların çıktısını seçebiliriz. Genel olarak, giriş katmanına ne kadar yakın olursa, görüntünün ayrıntılarını çıkarmak daha kolay olur ve tersi de, görüntünün küresel bilgilerini çıkarmak daha kolay olur. Sentezlenen görüntüdeki içerik görüntüsünün ayrıntılarını aşırı derecede korumaktan kaçınmak için, görüntünün içerik özelliklerini çıkarmak için çıktıya *içerik katmanı* olarak daha yakın bir VGG katmanı seçiyoruz. Yerel ve küresel stil özelliklerini ayıklamak için farklı VGG katmanlarının çıktısını da seçiyoruz. Bu katmanlar*stil katmanları* olarak da adlandırılır. :numref:`sec_vgg`'te belirtildiği gibi, VGG ağı 5 konvolüsyonel blok kullanır. Deneyde, dördüncü kıvrımlı bloğun içerik katmanı olarak son kıvrımlı tabakasını ve stil katmanı olarak her bir kıvrımsal bloğun ilk kıvrımlı katmanını seçiyoruz. Bu katmanların indeksleri `pretrained_net` örneğini yazdırarak elde edilebilir.
+İmgenin içerik özniteliklerini ve stil özniteliklerini ayıklamak için, VGG ağındaki belirli katmanların çıktısını seçebiliriz. Genel olarak, girdi katmanına ne kadar yakın olursa, imgenin ayrıntılarını çıkarmak daha kolay olur ve tersi yönde de, imgenin küresel bilgilerini çıkarmak daha kolay olur. Sentezlenen imgede içerik imgesinin ayrıntılarını aşırı derecede tutmaktan kaçınmak için imgenin içerik özniteliklerinin çıktısını almak için *içerik katmanı* olarak çıktıya daha yakın bir VGG katmanı seçiyoruz. Yerel ve küresel stil özniteliklerini ayıklamak için farklı VGG katmanlarının çıktısını da seçiyoruz. Bu katmanlar *stil katmanları* olarak da adlandırılır. :numref:`sec_vgg`'te belirtildiği gibi, VGG ağı 5 evrişimli blok kullanır. Deneyde, dördüncü evrişimli bloğun  son evrişimli katmanını içerik katmanı olarak ve her bir evrişimli bloğun ilk evrişimli katmanını stil katmanı olarak seçiyoruz. Bu katmanların indeksleri `pretrained_net` örneğini yazdırarak elde edilebilir.
 
 ```{.python .input}
 #@tab all
 style_layers, content_layers = [0, 5, 10, 19, 28], [25]
 ```
 
-VGG katmanlarını kullanarak özellikleri ayıklarken, yalnızca giriş katmanından içerik katmanına veya çıktı katmanına en yakın stil katmanına kadar tüm bunları kullanmamız gerekir. Yeni bir ağ örneği oluşturalım `net`, yalnızca özellik ayıklama için kullanılacak tüm VGG katmanlarını korur.
+VGG katmanlarını kullanarak öznitelikleri ayıklarken, yalnızca girdi katmanından içerik katmanına veya çıktı katmanına en yakın stil katmanına kadar tüm bunları kullanmamız gerekir. Yalnızca öznitelik ayıklama için kullanılacak tüm VGG katmanlarını koruyan yeni bir ağ örneği, `net`, oluşturalım.
 
 ```{.python .input}
 net = nn.Sequential()
@@ -129,7 +129,7 @@ net = nn.Sequential(*[pretrained_net.features[i] for i in
                       range(max(content_layers + style_layers) + 1)])
 ```
 
-`X` girişi göz önüne alındığında, sadece ileriye yayılmasını `net(X)`'i çağırırsak, yalnızca son katmanın çıktısını alabiliriz. Ara katmanların çıktılarına da ihtiyacımız olduğundan, katman bazında hesaplama yapmamız ve içeriği ve stil katmanı çıkışlarını korumalıyız.
+`X` girdisi göz önüne alındığında, sadece ileri yayma `net(X)`'i çağırırsak, yalnızca son katmanın çıktısını alabiliriz. Ara katmanların çıktılarına da ihtiyacımız olduğundan, katman bazında hesaplama yapmalı, içerik ve stil katmanı çıktılarını korumalıyız.
 
 ```{.python .input}
 #@tab all
@@ -145,7 +145,7 @@ def extract_features(X, content_layers, style_layers):
     return contents, styles
 ```
 
-Aşağıda iki işlev tanımlanmıştır: `get_contents` işlevi içerik görüntüsünden içerik özelliklerini çıkarır ve `get_styles` işlevi stil görüntüsünden stil özelliklerini çıkarır. Eğitim sırasında önceden eğitilmiş VGG'nin model parametrelerini güncellemeye gerek olmadığından, eğitim başlamadan bile içeriği ve stil özelliklerini çıkarabiliriz. Sentezlenen görüntü, stil aktarımı için güncellenecek bir model parametreleri kümesi olduğundan, yalnızca sentezlenen görüntünün içerik ve stil özelliklerini eğitim sırasında `extract_features` işlevini çağırarak ayıklayabiliriz.
+Aşağıda iki işlev tanımlanmıştır: `get_contents` işlevi içerik imgesinden içerik özniteliklerini ayıklar ve `get_styles` işlevi stil imgesinden stil özniteliklerini ayıklar. Eğitim sırasında önceden eğitilmiş VGG'nin model parametrelerini güncellemeye gerek olmadığından, eğitim başlamadan bile içerik ve stil özniteliklerini ayıklayabiliriz. Sentezlenen imge, stil aktarımı için güncellenecek bir model parametreleri kümesi olduğundan, yalnızca sentezlenen imgenin içerik ve stil özniteliklerini eğitim sırasında `extract_features` işlevini çağırarak ayıklayabiliriz.
 
 ```{.python .input}
 def get_contents(image_shape, device):
@@ -174,11 +174,11 @@ def get_styles(image_shape, device):
 
 ## [**Kayıp Fonksiyonunu Tanımlama**]
 
-Şimdi stil transferi için kayıp işlevini açıklayacağız. Kayıp fonksiyonu içerik kaybı, stil kaybı ve toplam varyasyon kaybından oluşur. 
+Şimdi stil aktarımı için kayıp işlevini açıklayacağız. Kayıp fonksiyonu içerik kaybı, stil kaybı ve toplam değişim kaybından oluşur. 
 
 ### İçerik Kaybı
 
-Doğrusal regresyondaki kayıp işlevine benzer şekilde, içerik kaybı, kareli kayıp fonksiyonu aracılığıyla sentezlenen görüntü ile içerik görüntüsü arasındaki içerik özelliklerindeki farkı ölçer. Kare kayıp fonksiyonunun iki girişi, `extract_features` işlevi tarafından hesaplanan içerik katmanının her iki çıkışıdır.
+Doğrusal bağlanımdaki kayıp işlevine benzer şekilde, içerik kaybı, kare kayıp fonksiyonu aracılığıyla, sentezlenen imge ile içerik imgesi arasındaki içerik özniteliklerindeki farkı ölçer. Kare kayıp fonksiyonunun iki girdisi, `extract_features` fonksiyonu tarafından hesaplanan içerik katmanının çıktılarıdır.
 
 ```{.python .input}
 def content_loss(Y_hat, Y):
@@ -196,9 +196,9 @@ def content_loss(Y_hat, Y):
 
 ### Stil Kaybı
 
-İçerik kaybına benzer şekilde stil kaybı, aynı zamanda sentezlenen görüntü ile stil görüntüsü arasındaki stil farkını ölçmek için kare kaybı işlevini kullanır. Herhangi bir stil katmanının stil çıktısını ifade etmek için önce stil katmanı çıktısını hesaplamak için `extract_features` işlevini kullanırız. Çıktının 1 örnek, $c$ kanal, yükseklik $h$ ve genişlik $w$ olduğunu varsayalım, bu çıktıyı $c$ satır ve $hw$ sütunlarla matris $\mathbf{X}$'a dönüştürebiliriz. Bu matris $hw$ uzunluğuna sahip her biri $c$ vektörlerinin $\mathbf{x}_1, \ldots, \mathbf{x}_c$'in birleştirilmesi olarak düşünülebilir. Burada vektör $\mathbf{x}_i$, $i$ kanalının stil özelliğini temsil eder. 
+İçerik kaybına benzer şekilde stil kaybı, aynı zamanda sentezlenen imge ile stil imgesi arasındaki stil farkını ölçmek için kare kaybı işlevini kullanır. Herhangi bir stil katmanının stil çıktısını ifade etmeden önce stil katmanı çıktısını hesaplamak için `extract_features` işlevini kullanırız.Çıktının 1 örneği, $c$ kanalları, yüksekliği $h$ ve genişliği $w$ olduğunu varsayalım, bu çıktıyı $c$ satırları ve $hw$ sütunlarıyla $\mathbf{X}$ matrisine dönüştürebiliriz. Bu matris, her birinin uzunluğu $hw$ olan $c$  adet $\mathbf{x}_1, \ldots, \mathbf{x}_c$ vektörlerinin birleşimi olarak düşünülebilir. Burada $\mathbf{x}_i$ vektörü, $i$ kanalının stil özniteliğini temsil eder.
 
-Bu vektörlerin*Gram matrisinde* $\mathbf{X}\mathbf{X}^\top \in \mathbb{R}^{c \times c}$, $i$ satırında $x_{ij}$ ve sütun $j$ numaralı öğe $\mathbf{x}_j$ vektörlerinin nokta çarpımıdır. $i$ ve $j$ kanallarının stil özelliklerinin korelasyonunu temsil eder. Bu Gram matrisini herhangi bir stil katmanının stil çıktısını temsil etmek için kullanırız. $hw$ değeri daha büyük olduğunda, büyük olasılıkla Gram matrisinde daha büyük değerlere yol açtığını unutmayın. Gram matrisinin yüksekliği ve genişliğinin hem kanal sayısı $c$ olduğunu da unutmayın. Stil kaybının bu değerlerden etkilenmemesine izin vermek için, aşağıdaki `gram` işlevi Gram matrisini öğelerinin sayısına (yani $chw$) böler.
+Bu vektörlerin *Gram matrisinde* $\mathbf{X}\mathbf{X}^\top \in \mathbb{R}^{c \times c}$, $i$ satırındaki ve $j$ sütunundaki $x_{ij}$ öğesi $\mathbf{x}_j$ vektörlerinin nokta çarpımıdır. $i$ ve $j$ kanallarının stil özniteliklerinin korelasyonunu temsil eder. Bu Gram matrisini herhangi bir stil katmanının stil çıktısını temsil etmek için kullanırız. $hw$ değeri daha büyük olduğunda, büyük olasılıkla Gram matrisinde daha büyük değerlere yol açtığını unutmayın. Gram matrisinin yüksekliği ve genişliğinin ikisinin de kanal sayısının $c$ olduğunu da unutmayın. Stil kaybının bu değerlerden etkilenmemesine izin vermek için, aşağıdaki `gram` işlevi Gram matrisini elemanlarının sayısına (yani $chw$) böler.
 
 ```{.python .input}
 #@tab all
@@ -208,7 +208,7 @@ def gram(X):
     return d2l.matmul(X, X.T) / (num_channels * n)
 ```
 
-Açıkçası, stil kaybı için kare kayıp fonksiyonunun iki Gram matris girişi, sentezlenen görüntü ve stil görüntüsü için stil katmanı çıkışlarına dayanır. Burada stil görüntüsüne dayanan Gram matrisi `gram_Y`'ün önceden hesaplandığı varsayılmaktadır.
+Açıkçası, stil kaybı için kare kayıp fonksiyonunun iki Gram matris girdisi, sentezlenen imge ve stil imgesi için stil katmanı çıktılarına dayanır. Burada stil imgesine dayanan Gram matrisi `gram_Y`'nin önceden hesaplandığı varsayılmaktadır.
 
 ```{.python .input}
 def style_loss(Y_hat, gram_Y):
@@ -221,15 +221,14 @@ def style_loss(Y_hat, gram_Y):
     return torch.square(gram(Y_hat) - gram_Y.detach()).mean()
 ```
 
-### Toplam Varyasyon Kaybı
+### Toplam Değişim Kaybı
 
-Bazen, öğrenilen sentezlenen görüntü çok yüksek frekanslı gürültüye, yani özellikle parlak veya koyu piksellere sahiptir. Bir yaygın gürültü azaltma yöntemi
-*toplam varyasyon*.
-$(i, j)$ koordinatında piksel değerini $x_{i, j}$ ile belirtin. Toplam varyasyon kaybının azaltılması 
+Bazen, öğrenilen sentezlenen imge çok yüksek frekanslı gürültüye, yani özellikle parlak veya koyu piksellere sahiptir. Bir yaygın gürültü azaltma yöntemi *toplam değişim gürültü arındırma*dır.
+$(i, j)$ koordinatında piksel değerini $x_{i, j}$ ile belirtin. Toplam değişim kaybının azaltma 
 
 $$\sum_{i, j} \left|x_{i, j} - x_{i+1, j}\right| + \left|x_{i, j} - x_{i, j+1}\right|$$
 
-, sentezlenen görüntüdeki komşu piksellerin değerlerini yakınlaştırır.
+, sentezlenen imgedeki komşu piksellerin değerlerini yakınlaştırır.
 
 ```{.python .input}
 #@tab all
@@ -240,7 +239,7 @@ def tv_loss(Y_hat):
 
 ### Kayıp Fonksiyonu
 
-[**Stil aktarımının kayıp fonksiyonu, içerik kaybı, stil kaybı ve toplam varyasyon kaybının ağırlıklı toplamı**]. Bu ağırlık hiperparametrelerini ayarlayarak, sentezlenen görüntüdeki içerik tutma, stil aktarımı ve parazit azaltma arasında denge kurabiliriz.
+[**Stil aktarımının kayıp fonksiyonu, içerik kaybı, stil kaybı ve toplam değişim kaybının ağırlıklı toplamıdır**]. Bu ağırlık hiperparametrelerini ayarlayarak sentezlenen imgede, içerik tutma, stil aktarma ve gürültü azaltma arasında denge kurabiliriz.
 
 ```{.python .input}
 #@tab all
@@ -258,9 +257,9 @@ def compute_loss(X, contents_Y_hat, styles_Y_hat, contents_Y, styles_Y_gram):
     return contents_l, styles_l, tv_l, l
 ```
 
-## [**Sentezlenmiş Görüntü Başlatılıyor**]
+## [**Sentezlenmiş İmgeyi İlkleme**]
 
-Stil transferinde, sentezlenen görüntü, eğitim sırasında güncellenmesi gereken tek değişkendir. Böylece, basit bir model, `SynthesizedImage` tanımlayabilir ve sentezlenen görüntüyü model parametreleri olarak ele alabiliriz. Bu modelde, ileriye yayılma sadece model parametrelerini döndürür.
+Stil transferinde, sentezlenen imge, eğitim sırasında güncellenmesi gereken tek değişkendir. Böylece, basit bir model, `SynthesizedImage` tanımlayabilir ve sentezlenen imgeyi model parametreleri olarak ele alabiliriz. Bu modelde, ileri yayma sadece model parametrelerini döndürür.
 
 ```{.python .input}
 class SynthesizedImage(nn.Block):
@@ -283,7 +282,7 @@ class SynthesizedImage(nn.Module):
         return self.weight
 ```
 
-Ardından, `get_inits` işlevini tanımlıyoruz. Bu işlev, sentezlenmiş bir görüntü modeli örneği oluşturur ve `X` görüntüsüne başlatır. Çeşitli stil katmanlarındaki stil görüntüsü için Gram matrisleri, `styles_Y_gram`, eğitimden önce hesaplanır.
+Sonrasında, `get_inits` işlevini tanımlıyoruz. Bu işlev, sentezlenmiş bir imge modeli örneği oluşturur ve `X` imgesine ilkler. Çeşitli stil katmanlarındaki stil imgesi için Gram matrisleri, `styles_Y_gram`, eğitimden önce hesaplanır.
 
 ```{.python .input}
 def get_inits(X, device, lr, styles_Y):
@@ -307,7 +306,7 @@ def get_inits(X, device, lr, styles_Y):
 
 ## [**Eğitim**]
 
-Modeli stil aktarımı için eğitirken, sentezlenen görüntünün içerik özelliklerini ve stil özelliklerini sürekli olarak çıkarır ve kayıp işlevini hesaplarız. Aşağıda eğitim döngüsünü tanımlar.
+Modeli stil aktarımı için eğitirken, sentezlenen imgenin içerik özniteliklerini ve stil özniteliklerini sürekli olarak ayıklarız ve kayıp işlevini hesaplarız. Aşağıda eğitim döngüsünü tanımlıyoruz.
 
 ```{.python .input}
 def train(X, contents_Y, styles_Y, device, lr, num_epochs, lr_decay_epoch):
@@ -358,7 +357,7 @@ def train(X, contents_Y, styles_Y, device, lr, num_epochs, lr_decay_epoch):
     return X
 ```
 
-Şimdi [**modeli eğitmeye başlıyoruz **]. İçerik ve stil görüntülerinin yüksekliğini ve genişliğini 300 x 450 piksele yeniden ölçeklendiriyoruz. Sentezlenen görüntüyü başlatmak için içerik görüntüsünü kullanırız.
+Şimdi [**modeli eğitmeye başlıyoruz**]. İçerik ve stil imgelerinin yüksekliğini ve genişliğini 300 x 450 piksele yeniden ölçeklendiriyoruz. Sentezlenen imgeyi ilklemek için içerik imgesini kullanırız.
 
 ```{.python .input}
 device, image_shape = d2l.try_gpu(), (450, 300)
@@ -377,25 +376,25 @@ _, styles_Y = get_styles(image_shape, device)
 output = train(content_X, contents_Y, styles_Y, device, 0.3, 500, 50)
 ```
 
-Sentezlenen görüntünün içerik görüntüsünün manzarasını ve nesnelerini koruduğunu ve stil görüntüsünün rengini aynı anda aktardığını görebiliriz. Örneğin, sentezlenen görüntünün stil görüntüsünde olduğu gibi renk blokları vardır. Bu blokların bazıları fırça darbelerinin ince dokusuna bile sahiptir. 
+Sentezlenen imgenin içerik imgesinin manzarasını ve nesnelerini koruduğunu ve aynı zamanda stil imgesinin rengini aktardığını görebiliriz. Örneğin, sentezlenen imgenin stil imgesinde olduğu gibi renk blokları vardır. Bu blokların bazıları fırça darbelerinin ince dokusuna bile sahiptir. 
 
 ## Özet
 
-* Stil aktarımında yaygın olarak kullanılan kayıp fonksiyonu üç bölümden oluşur: (i) içerik kaybı, sentezlenen görüntüyü ve içerik görüntüsünü içerik özelliklerinde yakınlaştırır; (ii) stil kaybı, sentezlenen görüntü ve stil görüntüsünü stil özelliklerinde yakınlaştırır; ve (iii) toplam varyasyon kaybı sentezlenmiş görüntü.
-* Antrenman sırasında sentezlenen görüntüyü sürekli olarak model parametreleri olarak güncellemek için görüntü özelliklerini ayıklamak ve kayıp işlevini en aza indirmek için önceden eğitilmiş bir CNN kullanabiliriz.
+* Stil aktarımında yaygın olarak kullanılan kayıp fonksiyonu üç bölümden oluşur: (i) içerik kaybı, sentezlenen imgeyi ve içerik imgesini içerik özniteliklerinde yakınlaştırır; (ii) stil kaybı, sentezlenen imge ve stil imgesini stil özniteliklerinde yakınlaştırır; ve (iii) toplam değişim kaybı sentezlenmiş imgedeki gürültüyü azaltmayı sağlar.
+* Eğitim sırasında sentezlenen imgeyi sürekli olarak model parametreleri olarak güncellemek için imge özniteliklerini ayıklamak ve kayıp işlevini en aza indirmek için önceden eğitilmiş bir CNN kullanabiliriz.
 * Stil katmanlarından stil çıktılarını temsil etmek için Gram matrisleri kullanırız.
 
-## Egzersizler
+## Alıştırmalar
 
 1. Farklı içerik ve stil katmanları seçtiğinizde çıktı nasıl değişir?
 1. Kayıp işlevindeki ağırlık hiperparametrelerini ayarlayın. Çıktıda daha fazla içerik mi yoksa daha az gürültü mü var?
-1. Farklı içerik ve stil görüntüleri kullanın. Sentezlenmiş daha ilginç görüntüler oluşturabilir misiniz?
-1. Metin için stil aktarımı uygulayabilir miyiz? Hint: you may refer to the survey paper by Hu et al. :cite:`Hu.Lee.Aggarwal.ea.2020`.
+1. Farklı içerik ve stil imgeleri kullanın. Sentezlenmiş daha ilginç imgeler oluşturabilir misiniz?
+1. Metin için stil aktarımı uygulayabilir miyiz? İpucu: Hu ve arkadaşlarının araştırma makalesine başvurabilirsiniz :cite:`Hu.Lee.Aggarwal.ea.2020`.
 
 :begin_tab:`mxnet`
-[Discussions](https://discuss.d2l.ai/t/378)
+[Tartışmalar](https://discuss.d2l.ai/t/378)
 :end_tab:
 
 :begin_tab:`pytorch`
-[Discussions](https://discuss.d2l.ai/t/1476)
+[Tartışmalar](https://discuss.d2l.ai/t/1476)
 :end_tab:

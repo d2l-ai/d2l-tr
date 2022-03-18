@@ -306,7 +306,7 @@ class TinySSD(nn.Module):
         return anchors, cls_preds, bbox_preds
 ```
 
-$256 \times 256$2'lik imgelerden oluşan `X` minigrubundan [**bir model örneği oluşturup ileri yaymayı gerçekleştirmek için kullanıyoruz**]. 
+$256 \times 256$'lik imgelerden oluşan `X` minigrubundan [**bir model örneği oluşturup ileri yaymayı gerçekleştirmek için kullanıyoruz**]. 
 
 Bu bölümde daha önce gösterildiği gibi, ilk blok $32 \times 32$ öznitelik haritalarını çıkarır. İkinci ila dördüncü örnek seyreltme bloklarının yükseklik ve genişliği yarıya indirdiğini ve beşinci bloğun genel ortaklama kullandığını hatırlayın. Özellik haritalarının uzamsal boyutları boyunca her birim için 4 çapa kutusu oluşturulduğundan, beş ölçekli her imge için toplam $(32^2 + 16^2 + 8^2 + 4^2 + 1)\times 4 = 5444$ çapa kutusu oluşturulur.
 
