@@ -1,7 +1,7 @@
-# Tam Konvolsiyonel Ağlar
+# Tam Evrişimli Ağlar
 :label:`sec_fcn`
 
-:numref:`sec_semantic_segmentation`'te tartışıldığı gibi, anlamsal segmentasyon görüntüleri piksel düzeyinde sınıflandırır. Tam bir evrimsel ağ (FCN), görüntü piksellerini :cite:`Long.Shelhamer.Darrell.2015` piksel sınıflarına dönüştürmek için bir evrimsel sinir ağı kullanır. Görüntü sınıflandırması veya nesne algılama için daha önce karşılaştığımız CNN'lerden farklı olarak, tam evrimsel bir ağ, ara özellik haritalarının yüksekliğini ve genişliğini girdi görüntüsüne geri dönüştürür: bu, :numref:`sec_transposed_conv`'da tanıtılan dönüştürülmüş evrimsel katman ile elde edilir. Sonuç olarak, sınıflandırma çıktısı ve girdi görüntüsü piksel düzeyinde bire bir yazışmaya sahiptir: herhangi bir çıkış pikselindeki kanal boyutu, girdi pikselinin sınıflandırma sonuçlarını aynı uzamsal konumda tutar.
+:numref:`sec_semantic_segmentation`'te tartışıldığı gibi, anlamsal bölümleme imgeleri piksel düzeyinde sınıflandırır. Bir tam evrişimli ağ (FCN), imge piksellerini :cite:`Long.Shelhamer.Darrell.2015` piksel sınıflarına dönüştürmek için bir evrişimli sinir ağı kullanır. İmge sınıflandırması veya nesne algılama için daha önce karşılaştığımız CNN'lerden farklı olarak, tam evrişimli bir ağ, ara öznitelik haritalarının yüksekliğini ve genişliğini girdi imgesindekine geri dönüştürür: bu, :numref:`sec_transposed_conv`'da tanıtılan devrik evrişimli katman ile elde edilir. Sonuç olarak, sınıflandırma çıktısı ve girdi imgesi, piksel düzeyinde bire bir karşılığa sahiptir: Herhangi bir çıktı pikselindeki kanal boyutu, girdi pikseli için sınıflandırma sonuçlarını aynı uzamsal konumda tutar.
 
 ```{.python .input}
 %matplotlib inline
@@ -24,12 +24,12 @@ from torch.nn import functional as F
 
 ## Model
 
-Burada tam evrimsel ağ modelinin temel tasarımını açıklıyoruz. :numref:`fig_fcn`'te gösterildiği gibi, bu model ilk olarak görüntü özelliklerini ayıklamak için bir CNN kullanır, daha sonra $1\times 1$ evrimsel katman aracılığıyla kanal sayısını sınıf sayısına dönüştürür ve son olarak özellik haritalarının yüksekliğini ve genişliğini tanıtılan dönüştürülmüş evrişim yoluyla giriş görüntüsüne dönüştürür içinde :numref:`sec_transposed_conv`. Sonuç olarak, model çıktısı girdi görüntüsüyle aynı yükseklik ve genişliğe sahiptir; burada çıktı kanalının giriş pikseli için öngörülen sınıfları aynı uzamsal konumda içerdiği yer alır. 
+Burada tam evrişimli ağ modelinin temel tasarımını açıklıyoruz. :numref:`fig_fcn`'te gösterildiği gibi, bu model ilk olarak imge özniteliklerini ayıklamak için bir CNN kullanır, daha sonra $1\times 1$ evrişimli katman aracılığıyla kanal sayısını sınıf sayısına dönüştürür ve son olarak öznitelik haritalarının yüksekliğini ve genişliğini :numref:`sec_transposed_conv` içinde tanıtılan devrik evrişim yoluyla girdi imgesine dönüştürür. Sonuç olarak, model çıktısı, girdi imgesi ile aynı yüksekliğe ve genişliğe sahiptir; burada çıktı kanalı, aynı uzaysal konumda girdi pikseli için tahmin edilen sınıfları içerir. 
 
-![Fully convolutional network.](../img/fcn.svg)
+![Tam evrişimli ağ.](../img/fcn.svg)
 :label:`fig_fcn`
 
-Aşağıda, [**görüntü özelliklerini ayıklamak için ImageNet veri kümesi üzerinde önceden eğitilmiş bir ResNet-18 modeli kullanıyor**] ve model örneğini `pretrained_net` olarak belirtiyoruz. Bu modelin son birkaç katmanı küresel ortalama havuzlama katmanı ve tam bağlı bir katman içerir: bunlar tamamen evrimsel ağda gerekli değildir.
+Aşağıda, [**imge özelliklerini ayıklamak için ImageNet veri kümesi üzerinde önceden eğitilmiş bir ResNet-18 modeli kullanıyor**] ve model örneğini `pretrained_net` olarak belirtiyoruz. Bu modelin son birkaç katmanı küresel ortalama ortaklama katmanı ve tam bağlı bir katman içerir: Bunlar tamamen evrişimli ağda gerekli değildir.
 
 ```{.python .input}
 pretrained_net = gluon.model_zoo.vision.resnet18_v2(pretrained=True)
@@ -42,7 +42,7 @@ pretrained_net = torchvision.models.resnet18(pretrained=True)
 list(pretrained_net.children())[-3:]
 ```
 
-Ardından, [**tamamen evrimsel ağ örneği `net`**] oluşturuyoruz. Son genel ortalama havuzlama katmanı ve çıktıya en yakın tam bağlı katman dışında ResNet-18'deki tüm önceden eğitilmiş katmanları kopyalar.
+Ardından, [**tam evrişimli ağ örneği `net`**]'i oluşturuyoruz. Son global ortalama ortaklama katmanı ve çıktıya en yakın tam bağlı katman dışında ResNet-18'deki tüm önceden eğitilmiş katmanları kopyalar.
 
 ```{.python .input}
 net = nn.HybridSequential()
@@ -55,7 +55,7 @@ for layer in pretrained_net.features[:-2]:
 net = nn.Sequential(*list(pretrained_net.children())[:-2])
 ```
 
-Yüksekliği ve genişliği sırasıyla 320 ve 480 olan bir girdi göz önüne alındığında, `net`'ün ileri yayılımı giriş yüksekliğini ve genişliğini orijinalin 1/32'ine, yani 10 ve 15'e düşürür.
+Yüksekliği ve genişliği sırasıyla 320 ve 480 olan bir girdi göz önüne alındığında, `net`'in ileri yayması girdi yüksekliğini ve genişliğini orijinalin 1/32'sine, yani 10 ve 15'e düşürür.
 
 ```{.python .input}
 X = np.random.uniform(size=(1, 3, 320, 480))
@@ -68,7 +68,7 @@ X = torch.rand(size=(1, 3, 320, 480))
 net(X).shape
 ```
 
-Ardından, [**çıkış kanallarının sayısını Pascal VOC2012 veri setinin sınıf sayısına (21) dönüştürmek için bir $1\times 1$ evrimsel katman kullanıyoruz.**] Son olarak, giriş görüntüsünün yüksekliğine ve genişliğine geri döndürmek için (**özellik haritalarının yüksekliğini ve genişliğini 32 kat artırma**) ihtiyacımız var. :numref:`sec_padding`'te bir kıvrımsal tabakanın çıkış şeklini nasıl hesaplayacağınızı hatırlayın. $(320-64+16\times2+32)/32=10$ ve $(480-64+16\times2+32)/32=15$'den bu yana, $(480-64+16\times2+32)/32=15$'den beri, $16$'a kadar çekirdeğin yüksekliğini ve genişliğini $64$'ya, dolgu $16$'a ayarlayarak $32$ adımıyla transpoze edilmiş bir kıvrımsal tabaka oluşturuyoruz. Genel olarak, $s$, $s$ dolgu $s/2$ ($s/2$ bir tamsayı varsayarak) ve çekirdeğin yüksekliği ve genişliği $2s$, dönüştürülmüş konvolüsyon $s$ kez giriş yüksekliğini ve genişliğini artıracağını görebilirsiniz.
+Ardından, [**çıktı kanallarının sayısını Pascal VOC2012 veri kümesinin sınıf sayısına (21) dönüştürmek için bir $1\times 1$ evrişimli katman kullanıyoruz.**] Son olarak, girdi imgesinin yüksekliğine ve genişliğine geri döndürmek için (**öznitelik haritalarının yüksekliğini ve genişliğini 32 kat artırmaya**) ihtiyacımız var. :numref:`sec_padding`'te bir evrişimli katmanının çıktı şeklini nasıl hesaplayacağınızı hatırlayın. $(320-64+16\times2+32)/32=10$ ve $(480-64+16\times2+32)/32=15$ olduğundan, çekirdeğin yüksekliği ve genişliği $64$'e, dolguyu ise $16$'ya ayarlayarak $32$ uzun adımlı olan devrik bir evrişim katmanı oluşturuyoruz. Genel olarak, $s$ uzun adımı için, dolgu $s/2$ ($s/2$ bir tam sayı olduğu varsayılarak) ve çekirdek yüksekliği ve genişliği $2s$'dir, devrik evrişimin girdi yüksekliğini ve genişliğini $s$ kat artıracağını görebilirsiniz.
 
 ```{.python .input}
 num_classes = 21
@@ -85,15 +85,13 @@ net.add_module('transpose_conv', nn.ConvTranspose2d(num_classes, num_classes,
                                     kernel_size=64, padding=16, stride=32))
 ```
 
-## [**Transposed Konvolsyonel Katmanları Başlatılıyor**]
+## [**Devrik Evrişimli Katmanları İlkleme**]
 
-Dönüştürülmüş kıvrımlı katmanların özellik haritalarının yüksekliğini ve genişliğini artırabileceğini zaten biliyoruz. Görüntü işlemede, bir görüntüyü büyütmemiz gerekebilir, yani, *upsampling*.
-*Bilineer enterpolasyon*
-yaygın olarak kullanılan upsampling tekniklerinden biridir. Ayrıca, transpoze edilmiş kıvrımlı tabakaların başlatılması için de sıklıkla kullanılır. 
+Devrik evrişimli katmanların öznitelik haritalarının yüksekliğini ve genişliğini artırabileceğini zaten biliyoruz. İmge işlemede, bir imgeyi büyütmemiz gerekebilir, yani, *örnek sıklaştırma*. *Çift doğrusal aradeğerleme* yaygın olarak kullanılan örnek sıklaştırma tekniklerinden biridir. Ayrıca, devrik evrişimli tabakaların ilklenmesi için de sıklıkla kullanılır. 
 
-Bilineer enterpolasyonu açıklamak için, bir giriş görüntüsü göz önüne alındığında, yukarı örneklenen çıktı görüntüsünün her pikselini hesaplamak istediğimizi söyleyin. $(x, y)$ koordinatında çıktı görüntüsünün pikselini hesaplamak için, ilk harita $(x, y)$, giriş görüntüsünde $(x', y')$'yı koordine etmek için, örneğin giriş boyutunun çıkış boyutuna oranına göre. Eşlenen $x′$ and $y′$ gerçek sayılar olduğunu unutmayın. Ardından, giriş görüntüsünde $(x', y')$'yı koordine etmek için en yakın dört pikseli bulun. Son olarak, $(x, y)$ koordinatındaki çıktı görüntüsünün pikseli, giriş görüntüsündeki bu dört en yakın piksele ve $(x', y')$'dan göreli mesafelerine dayanarak hesaplanır.  
+Çift doğrusal aradeğerlemeyi açıklamak için, bir girdi imgesi göz önüne alındığında, örnek sıklaştırılan çıktı imgesinin her pikselini hesaplamak istediğimizi varsayalım. Çıktı imgesinin pikselini $(x, y)$ koordinatında hesaplamak için, ilk önce $(x, y)$ ile girdi imgesindeki $(x', y')$ koordinatını eşleyin, örneğin, girdi boyutunun çıktı boyutuna oranı. Eşlenen $x′$ ve $y′$'nin gerçek sayılar olduğuna dikkat edin. Ardından, girdi imgesinde $(x', y')$ koordinatına en yakın dört pikseli bulun. Son olarak, $(x, y)$ koordinatındaki çıktı imgesinin pikseli, girdi imgesindeki bu dört en yakın piksele ve onların $(x', y')$'dan göreli mesafelerine dayanarak hesaplanır.  
 
-Bilineer enterpolasyonun örneklenmesi, aşağıdaki `bilinear_kernel` işlevi ile oluşturulmuş çekirdek ile transpolasyonel konvolüsyonel tabaka tarafından uygulanabilir. Alan sınırlamaları nedeniyle, algoritma tasarımı hakkında tartışılmadan sadece aşağıdaki `bilinear_kernel` işlevinin uygulanmasını sağlıyoruz.
+Çift doğrusal aradeğerleme örnek sıklaştırması, aşağıdaki `bilinear_kernel` işlevi tarafından oluşturulan çekirdek ile devrik evrişimli katman tarafından gerçekleştirilebilir. Alan kısıtlamaları nedeniyle, algoritma tasarımı hakkında tartışmadan sadece aşağıdaki `bilinear_kernel` işlevinin uygulanmasını sağlıyoruz.
 
 ```{.python .input}
 def bilinear_kernel(in_channels, out_channels, kernel_size):
@@ -129,11 +127,7 @@ def bilinear_kernel(in_channels, out_channels, kernel_size):
     return weight
 ```
 
-Let us [**experiment with upsampling of bilinear interpolation**] 
-that is implemented by a transposed convolutional layer. 
-We construct a transposed convolutional layer that 
-doubles the height and weight,
-and initialize its kernel with the `bilinear_kernel` function.
+Bir devrik evrişimli katman tarafından uygulanan [**çift doğrusal aradeğerleme örnek sıklaştırmasını**] deneyelim. Yüksekliği ve ağırlığı iki katına çıkaran ve çekirdeğini `bilinear_kernel` işleviyle ilkleten bir devrik evrişimli katman oluşturuyoruz.
 
 ```{.python .input}
 conv_trans = nn.Conv2DTranspose(3, kernel_size=4, padding=1, strides=2)
@@ -147,7 +141,7 @@ conv_trans = nn.ConvTranspose2d(3, 3, kernel_size=4, padding=1, stride=2,
 conv_trans.weight.data.copy_(bilinear_kernel(3, 3, 4));
 ```
 
-`X` görüntüsünü okuyun ve yukarı örnekleme çıktısını `Y`'e atayın. Görüntüyü yazdırmak için kanal boyutunun konumunu ayarlamamız gerekiyor.
+`X` imgesini okuyun ve örnekleme sıklaştırma çıktısını `Y`'ye atayın. İmgeyi yazdırmak için kanal boyutunun konumunu ayarlamamız gerekiyor.
 
 ```{.python .input}
 img = image.imread('../img/catdog.jpg')
@@ -164,7 +158,7 @@ Y = conv_trans(X)
 out_img = Y[0].permute(1, 2, 0).detach()
 ```
 
-Gördüğümüz gibi, dönüştürülmüş kıvrımlı tabaka, görüntünün yüksekliğini ve genişliğini iki kat arttırır. Koordinatlardaki farklı ölçekler haricinde, ikili enterpolasyon ile büyütülmüş görüntü ve :numref:`sec_bbox`'te basılan orijinal görüntü aynı görünüyor.
+Gördüğümüz gibi, devrik evrişimli tabaka, imgenin yüksekliğini ve genişliğini iki kat arttırır. Koordinatlardaki farklı ölçekler haricinde, çift doğrusal aradeğerleme ile büyütülmüş imge ve :numref:`sec_bbox`'te basılan orijinal imge aynı görünüyor.
 
 ```{.python .input}
 d2l.set_figsize()
@@ -183,7 +177,7 @@ print('output image shape:', out_img.shape)
 d2l.plt.imshow(out_img);
 ```
 
-[**Tamamen evrimsel bir ağda, ikili enterpolasyonun örneklenmesi ile dönüştürülmüş evrimsel tabakayı başlatırız. $1\times 1$ konvolsiyonel katman için Xavier başlatma kullanıyoruz.**]
+[**Bir tam evrişimli ağda, çift doğrusal aradeğerleme örnek sıklaştırma ile devrik evrişimli katmanı ilkliyoruz. $1\times 1$ evrişimli katman için Xavier ilkleme kullanıyoruz.**]
 
 ```{.python .input}
 W = bilinear_kernel(num_classes, num_classes, 64)
@@ -197,9 +191,9 @@ W = bilinear_kernel(num_classes, num_classes, 64)
 net.transpose_conv.weight.data.copy_(W);
 ```
 
-## [**Veri Kümesi Okuma**]
+## [**Veri Kümesini Okuma**]
 
-:numref:`sec_semantic_segmentation`'te tanıtıldığı gibi anlamsal segmentasyon veri kümesini okuduk. Rastgele kırpmanın çıktı görüntüsü şekli $320\times 480$ olarak belirtilir: hem yükseklik hem de genişlik $32$ ile bölünebilir.
+:numref:`sec_semantic_segmentation`'te tanıtıldığı gibi anlamsal bölümleme veri kümesini okuduk. Rastgele kırpmanın çıktı imgesi şekli $320\times 480$ olarak belirtilir: Hem yükseklik hem de genişlik $32$ ile bölünebilir.
 
 ```{.python .input}
 #@tab all
@@ -209,7 +203,7 @@ train_iter, test_iter = d2l.load_data_voc(batch_size, crop_size)
 
 ## [**Eğitim**]
 
-Şimdi inşa edilmiş tamamen evrimsel ağımızı eğitebiliriz. Buradaki kayıp fonksiyonu ve doğruluk hesaplaması, önceki bölümlerin görüntü sınıflandırılmasındakilerden farklı değildir. Her piksel için sınıfı tahmin etmek için dönüştürülmüş evrimsel katmanın çıkış kanalını kullandığımızdan, kanal boyutu kayıp hesaplamasında belirtilir. Buna ek olarak, doğruluk, tüm pikseller için tahmin edilen sınıfın doğruluğuna göre hesaplanır.
+Şimdi oluşturduğumuz tam evrişimli ağımızı eğitebiliriz. Buradaki kayıp fonksiyonu ve doğruluk hesaplaması, önceki bölümlerin imge sınıflandırılmasındakilerden farklı değildir. Her piksel için sınıfı tahmin etmek için devrik evrişimli katmanın çıktı kanalını kullandığımızdan, kanal boyutu kayıp hesaplamasında belirtilir. Buna ek olarak, doğruluk, tüm pikseller için tahmin edilen sınıfın doğruluğuna göre hesaplanır.
 
 ```{.python .input}
 num_epochs, lr, wd, devices = 5, 0.1, 1e-3, d2l.try_all_gpus()
@@ -230,9 +224,9 @@ trainer = torch.optim.SGD(net.parameters(), lr=lr, weight_decay=wd)
 d2l.train_ch13(net, train_iter, test_iter, loss, trainer, num_epochs, devices)
 ```
 
-## [**Prediction**]
+## [**Tahminleme**]
 
-Tahmin ederken, her kanaldaki giriş görüntüsünü standartlaştırmamız ve görüntüyü CNN'nin gerektirdiği dört boyutlu giriş formatına dönüştürmemiz gerekir.
+Tahmin ederken, her kanaldaki girdi imgesini standartlaştırmamız ve imgeyi CNN'nin gerek duyduğu dört boyutlu girdi formatına dönüştürmemiz gerekir.
 
 ```{.python .input}
 def predict(img):
@@ -250,7 +244,7 @@ def predict(img):
     return pred.reshape(pred.shape[1], pred.shape[2])
 ```
 
-Her pikselin [**tahmin edilen sınıfı**] görselleştirmek için, tahmin edilen sınıfı veri kümesindeki etiket rengine geri eşleriz.
+Her pikselin [**tahmin edilen sınıfını**] görselleştirmek için, tahmini sınıfı veri kümesindeki etiket rengine geri eşleriz.
 
 ```{.python .input}
 def label2image(pred):
@@ -267,9 +261,9 @@ def label2image(pred):
     return colormap[X, :]
 ```
 
-Test veri kümelerindeki görüntüler boyut ve şekil bakımından farklılık gösterir. Model, bir giriş görüntüsünün yüksekliği veya genişliği 32 ile bölünmez olduğunda, 32 adımla transpoze edilmiş bir kıvrımlı katman kullandığından, dönüştürülmüş kıvrımlı katmanın çıkış yüksekliği veya genişliği giriş görüntüsünün şeklinden sapacaktır. Bu sorunu gidermek için, görüntüdeki 32 tamsayı katları olan yükseklik ve genişliğe sahip birden çok dikdörtgen alanı kırpabilir ve bu alanlardaki piksellerde ayrı ayrı ileriye yayılmasını gerçekleştirebiliriz. Bu dikdörtgen alanların birleşmesinin giriş görüntüsünü tamamen örtmesi gerektiğini unutmayın. Bir piksel birden fazla dikdörtgen alanla kaplandığında, aynı piksel için ayrı alanlardaki dönüştürülmüş evrişim çıktılarının ortalaması sınıfı tahmin etmek için softmax işlemine girilebilir. 
+Test veri kümelerindeki imgeler boyut ve şekil bakımından farklılık gösterir. Model, bir girdi imgesinin yüksekliği veya genişliği 32 ile bölünmez olduğunda, 32 adımlı bir devrik evrişimli katman kullandığından, devrik evrişimli katmanın çıktı yüksekliği veya genişliği girdi imgesinin şeklinden sapacaktır. Bu sorunu gidermek için, imgedeki 32 tamsayı katları olan yükseklik ve genişliğe sahip çoklu dikdörtgen alanı kırpabilir ve bu alanlardaki piksellerde ileri yaymayı ayrı ayrı gerçekleştirebiliriz. Bu dikdörtgen alanların birleşmesinin girdi imgesini tamamen örtmesi gerektiğini unutmayın. Bir piksel birden fazla dikdörtgen alanla kaplandığında, aynı piksel için ayrı alanlardaki devrik evrişim çıktılarının ortalaması sınıfı tahmin etmek için softmaks işlemine girilebilir. 
 
-Basitlik açısından, sadece birkaç büyük test görüntüsü okuruz ve görüntünün sol üst köşesinden başlayarak tahmin için $320\times480$ alan kırpıyoruz. Bu test görüntüleri için kırpılmış alanlarını, tahmin sonuçlarını ve temel doğruluk satırını satır satır yazdırıyoruz.
+Basitlik açısından, sadece birkaç büyük test imgesi okuruz ve imgenin sol üst köşesinden başlayarak tahmin için $320\times480$'lik bir alan kırpıyoruz. Bu test imgeleri için kırpılmış alanlarını, tahmin sonuçlarını ve gerçek referans değeri satır satır yazdırıyoruz.
 
 ```{.python .input}
 voc_dir = d2l.download_extract('voc2012', 'VOCdevkit/VOC2012')
@@ -300,20 +294,20 @@ d2l.show_images(imgs[::3] + imgs[1::3] + imgs[2::3], 3, n, scale=2);
 
 ## Özet
 
-* Tam evrimsel ağ önce görüntü özelliklerini ayıklamak için bir CNN kullanır, daha sonra $1\times 1$ bir evrimsel katman aracılığıyla kanal sayısını sınıf sayısına dönüştürür ve son olarak özellik haritalarının yüksekliğini ve genişliğini dönüştürülmüş evrişim yoluyla girdi görüntüsüne dönüştürür.
-* Tamamen evrimsel bir ağda, dönüştürülmüş evrimsel tabakayı başlatmak için ikili enterpolasyonun çoğaltılmasını kullanabiliriz.
+* Tam evrişimli ağ önce imge özniteliklerini ayıklamak için bir CNN kullanır, daha sonra $1\times 1$'lik bir evrişimli katman aracılığıyla kanal sayısını sınıf sayısına dönüştürür ve son olarak öznitelik haritalarının yüksekliğini ve genişliğini devrik evrişim yoluyla girdi imgesine dönüştürür.
+* Tam evrişimli bir ağda, devrik evrişimli tabakayı ilklemek için çift doğrusal aradeğerlendirme örnek sıklaştırmayı kullanabiliriz.
 
-## Egzersizler
+## Alıştırmalar
 
-1. Deneyde dönüştürülmüş evrimsel katman için Xavier başlatma kullanırsak, sonuç nasıl değişir?
-1. Hiperparametreleri ayarlayarak modelin doğruluğunu daha da geliştirebilir misiniz?
-1. Test görüntülerindeki tüm piksellerin sınıflarını tahmin edin.
-1. Orijinal tamamen evrimsel ağ kağıdı, bazı ara CNN katmanlarının :cite:`Long.Shelhamer.Darrell.2015` çıkışlarını da kullanır. Bu fikri uygulamaya çalışın.
+1. Deneyde devrik evrişimli katman için Xavier ilkleme kullanırsak, sonuç nasıl değişir?
+1. Hiperparametreleri ayarlayarak modelin doğruluğunu daha da iyileştirebilir misiniz?
+1. Test imgelerindeki tüm piksellerin sınıflarını tahmin edin.
+1. Orijinal tam evrişimli ağ makalesi, bazı ara CNN katmanlarının :cite:`Long.Shelhamer.Darrell.2015` çıktılarını da kullanır. Bu fikri uygulamaya çalışın.
 
 :begin_tab:`mxnet`
-[Discussions](https://discuss.d2l.ai/t/377)
+[Tartışmalar](https://discuss.d2l.ai/t/377)
 :end_tab:
 
 :begin_tab:`pytorch`
-[Discussions](https://discuss.d2l.ai/t/1582)
+[Tartışmalar](https://discuss.d2l.ai/t/1582)
 :end_tab:
