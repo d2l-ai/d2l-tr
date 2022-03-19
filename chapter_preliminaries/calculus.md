@@ -48,7 +48,7 @@ Türevleri açıklamayı için bir örnekle deneyelim.
 ```{.python .input}
 %matplotlib inline
 from d2l import mxnet as d2l
-from IPython import display
+from matplotlib_inline import backend_inline
 from mxnet import np, npx
 npx.set_np()
 
@@ -60,7 +60,7 @@ def f(x):
 #@tab pytorch
 %matplotlib inline
 from d2l import torch as d2l
-from IPython import display
+from matplotlib_inline import backend_inline
 import numpy as np
 
 def f(x):
@@ -71,7 +71,7 @@ def f(x):
 #@tab tensorflow
 %matplotlib inline
 from d2l import tensorflow as d2l
-from IPython import display
+from matplotlib_inline import backend_inline
 import numpy as np
 
 def f(x):
@@ -135,7 +135,7 @@ Aşağıdaki `use_svg_display` işlevi, daha keskin görüntülü svg şekilleri
 #@tab all
 def use_svg_display():  #@save
     """Jupyter içinde şekli göstermek için svg formatı kullan"""
-    display.set_matplotlib_formats('svg')
+    backend_inline.set_matplotlib_formats('svg')
 ```
 
 Şekil boyutlarını belirtmek için `set_figsize` fonksiyonunu tanımlarız. Burada doğrudan `d2l.plt`yi kullandığımıza dikkat edin, çünkü içe aktarma komutu, `from matplotlib import pyplot as plt`, önsöz bölumündeki `d2l` paketine kaydedilmek üzere işaretlenmişti.
