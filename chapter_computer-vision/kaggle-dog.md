@@ -1,8 +1,8 @@
-# Kaggle üzerinde Köpek Irk Tanımlama (ImageNet Köpekler)
+# Kaggle Üzerinde Köpek Irkı Tanımlama (ImageNet Köpekler)
 
-Bu bölümde, Kaggle'da köpek ırkı tanımlama problemini uygulayacağız. (**Bu yarışmanın web adresi https://www.kaggle.com/c/dog-breed-identification **) 
+Bu bölümde, Kaggle'da köpek ırkı tanımlama problemini uygulayacağız. (**Bu yarışmanın web adresi: https://www.kaggle.com/c/dog-breed-identification**) 
 
-Bu yarışmada 120 farklı köpek ırkı tanınacak. Aslında, bu yarışma için veri kümesi ImageNet veri kümesinin bir alt kümesidir. :numref:`sec_kaggle_cifar10`'teki CIFAR-10 veri kümesindeki görüntülerin aksine, ImageNet veri kümesindeki görüntüler farklı boyutlarda hem daha yüksek hem de daha geniştir. :numref:`fig_kaggle_dog`, yarışmanın web sayfasındaki bilgileri gösterir. Sonuçlarınızı göndermek için bir Kaggle hesabına ihtiyacınız var. 
+Bu yarışmada 120 farklı köpek ırkı tanınacak. Aslında, bu yarışma için veri kümesi ImageNet veri kümesinin bir alt kümesidir. :numref:`sec_kaggle_cifar10`'teki CIFAR-10 veri kümesindeki imgelerin aksine, ImageNet veri kümesindeki imgeler hem daha yüksek hem de daha geniş farklı boyutlardadır. :numref:`fig_kaggle_dog`, yarışmanın web sayfasındaki bilgileri gösterir. Sonuçlarınızı göndermek için bir Kaggle hesabına ihtiyacınız var. 
 
 ![The dog breed identification competition website. The competition dataset can be obtained by clicking the "Data" tab.](../img/kaggle-dog.jpg)
 :width:`400px`
@@ -28,18 +28,18 @@ import os
 
 ## Veri Kümesini Elde Etme ve Düzenleme
 
-Yarışma veri kümesi, sırasıyla üç RGB (renkli) kanalın 10222 ve 10357 JPEG görüntüsünü içeren bir eğitim seti ve bir test setine ayrılmıştır. Eğitim veri kümesi arasında Labradors, Kaniş, Dachshunds, Samoyeds, Huskies, Chihuahuas ve Yorkshire Terriers gibi 120 köpek ırkı vardır. 
+Yarışma veri kümesi, sırasıyla üç RGB (renkli) kanalın 10222 ve 10357 JPEG ,imgelerini içeren bires eğitim kümesine ve test kümesine ayrılmıştır. Eğitim veri kümesinde Labradors, Kaniş, Dachshunds, Samoyeds, Huskies, Chihuahuas ve Yorkshire Terriers gibi 120 köpek ırkı vardır. 
 
 ### Veri Kümesini İndirme
 
-Kaggle'a giriş yaptıktan sonra, :numref:`fig_kaggle_dog`'te gösterilen yarışma web sayfasındaki “Veriler” sekmesine tıklayabilir ve “Tümünü İndir” düğmesine tıklayarak veri kümesini indirebilirsiniz. İndirilen dosyayı `../data`'te açtıktan sonra, tüm veri kümesini aşağıdaki yollarda bulacaksınız: 
+Kaggle'a giriş yaptıktan sonra, :numref:`fig_kaggle_dog`'te gösterilen yarışma web sayfasındaki “Veri (Data)” sekmesine tıklayabilir ve “Tümünü İndir (Download All)” düğmesine tıklayarak veri kümesini indirebilirsiniz. İndirilen dosyayı `../data`'da açtıktan sonra, tüm veri kümesini aşağıdaki yollarda bulacaksınız: 
 
-* .. /data/dog-breed-identification/labels.csv
-* .. /data/dog-breed-identification/sample_submission.csv
-* .. /data/köpek ırkı tanımlama/tren
-* .. /data/köpek ırkı tanımlama/test
+* ../data/dog-breed-identification/labels.csv
+* ../data/dog-breed-identification/sample_submission.csv
+* ../data/dog-breed-identification/train
+* ../data/dog-breed-identification/test
 
-Yukarıdaki yapının `train/` ve `test/` klasörleri sırasıyla eğitim ve test köpek görüntüleri içeren :numref:`sec_kaggle_cifar10` yılında CIFAR-10 yarışmasına benzer olduğunu fark etmiş olabilirsiniz ve `labels.csv` eğitim görüntüleri için etiketler içerir. Benzer şekilde, başlamayı kolaylaştırmak için, [**veri kümesinin küçük bir örneğini sağlıyoruz**] yukarıda belirtilen: `train_valid_test_tiny.zip`. Kaggle yarışması için tam veri kümesini kullanacaksanız, aşağıdaki `demo` değişkenini `False` olarak değiştirmeniz gerekir.
+Yukarıdaki yapının `train/` ve `test/` klasörlerinin sırasıyla eğitim ve test köpek imgeleri içeren :numref:`sec_kaggle_cifar10`'deki CIFAR-10 yarışmasına benzer olduğunu fark etmiş olabilirsiniz ve `labels.csv` eğitim imgeleri için etiketler içerir. Benzer şekilde, başlamayı kolaylaştırmak için, yukarıda belirtilen: `train_valid_test_tiny.zip` [**veri kümesinin küçük bir örneklemini sağlıyoruz**]. Kaggle yarışması için tam veri kümesini kullanacaksanız, aşağıdaki `demo` değişkenini `False` olarak değiştirmeniz gerekir.
 
 ```{.python .input}
 #@tab all
@@ -56,11 +56,11 @@ else:
     data_dir = os.path.join('..', 'data', 'dog-breed-identification')
 ```
 
-### [**Veri Kümesini Düzenliyor**]
+### [**Veri Kümesini Düzenleme**]
 
-Veri kümesini :numref:`sec_kaggle_cifar10`'te yaptığımız şeye benzer şekilde düzenleyebiliriz, yani orijinal eğitim kümesindeki bir doğrulama kümesini ayırabilir ve görüntüleri etiketlere göre gruplandırılmış alt klasörlere taşıyabiliriz. 
+Veri kümesini :numref:`sec_kaggle_cifar10`'te yaptığımız şeye benzer şekilde düzenleyebiliriz, yani esas eğitim kümesindeki bir geçerleme kümesini ayırabilir ve imgeleri etiketlere göre gruplandırılmış alt klasörlere taşıyabiliriz. 
 
-Aşağıdaki `reorg_dog_data` işlevi eğitim veri etiketlerini okur, doğrulama kümesini böler ve eğitim setini düzenler.
+Aşağıdaki `reorg_dog_data` işlevi eğitim veri etiketlerini okur, geçerleme kümesini böler ve eğitim kümesini düzenler.
 
 ```{.python .input}
 #@tab all
@@ -75,9 +75,9 @@ valid_ratio = 0.1
 reorg_dog_data(data_dir, valid_ratio)
 ```
 
-## [**Görüntü Artırma**]
+## [**İmge Artırma**]
 
-Bu köpek cins veri kümesinin, görüntüleri :numref:`sec_kaggle_cifar10`'teki CIFAR-10 veri kümesinden daha büyük olan ImageNet veri kümesinin bir alt kümesi olduğunu hatırlayın. Aşağıda, nispeten daha büyük görüntüler için yararlı olabilecek birkaç görüntü büyütme işlemi listelenmektedir.
+Bu köpek cins veri kümesinin, imgeleri :numref:`sec_kaggle_cifar10`'teki CIFAR-10 veri kümesinden daha büyük olan ImageNet veri kümesinin bir alt kümesi olduğunu hatırlayın. Aşağıda, nispeten daha büyük imgeler için yararlı olabilecek birkaç imge artırma işlemi listelenmektedir.
 
 ```{.python .input}
 transform_train = gluon.data.vision.transforms.Compose([
@@ -119,7 +119,7 @@ transform_train = torchvision.transforms.Compose([
                                      [0.229, 0.224, 0.225])])
 ```
 
-Tahmin sırasında yalnızca görüntü önişleme işlemlerini rastgelelik olmadan kullanıyoruz.
+Tahmin sırasında yalnızca imge ön işleme işlemlerini rastgelelik olmadan kullanıyoruz.
 
 ```{.python .input}
 transform_test = gluon.data.vision.transforms.Compose([
@@ -144,7 +144,7 @@ transform_test = torchvision.transforms.Compose([
 
 ## [**Veri Kümesi Okuma**]
 
-:numref:`sec_kaggle_cifar10`'te olduğu gibi, ham görüntü dosyalarından oluşan organize veri kümesini okuyabiliriz.
+:numref:`sec_kaggle_cifar10`'te olduğu gibi, ham imge dosyalarından oluşan düzenlenmiş veri kümesini okuyabiliriz.
 
 ```{.python .input}
 train_ds, valid_ds, train_valid_ds, test_ds = [
@@ -193,11 +193,11 @@ test_iter = torch.utils.data.DataLoader(test_ds, batch_size, shuffle=False,
                                         drop_last=False)
 ```
 
-## [**Önceden Eğitimli Modelleri İnce Ayarlama**]
+## [**Önceden Eğitilmiş Modelleri İnce Ayarlama**]
 
-Yine, bu yarışma için veri kümesi ImageNet veri kümesinin bir alt kümedir. Bu nedenle, tam ImageNet veri kümesinde önceden eğitilmiş bir model seçmek için :numref:`sec_fine_tuning`'te tartışılan yaklaşımı kullanabilir ve bunu özel bir küçük ölçekli çıktı ağına beslenecek görüntü özelliklerini ayıklamak için kullanabiliriz. Derin öğrenme çerçevelerinin üst düzey API'leri, ImageNet veri kümesi üzerinde önceden eğitilmiş geniş bir model yelpazesi sunar. Burada, bu modelin çıktı katmanının girişini (yani çıkarılan özellikler) yeniden kullandığımız önceden eğitilmiş bir ResNet-34 modeli seçiyoruz. Daha sonra orijinal çıkış katmanını, iki tam bağlı katmanı istifleme gibi eğitilebilecek küçük bir özel çıkış ağı ile değiştirebiliriz. :numref:`sec_fine_tuning`'teki deneyden farklı olarak, aşağıdaki özellik çıkarımı için kullanılan önceden eğitilmiş modeli yeniden eğitmez. Bu, degradelerin depolanması için eğitim süresini ve hafızasını azaltır. 
+Yine, bu yarışma için veri kümesi ImageNet veri kümesinin bir alt kümedir. Bu nedenle, tam ImageNet veri kümesinde önceden eğitilmiş bir model seçmek için :numref:`sec_fine_tuning`'te tartışılan yaklaşımı kullanabilir ve bunu özel bir küçük ölçekli çıktı ağına beslenecek imge özniteliklerini ayıklamak için kullanabiliriz. Derin öğrenme çerçevelerinin üst seviye API'leri, ImageNet veri kümesi üzerinde önceden eğitilmiş geniş bir model yelpazesi sunar. Burada, bu modelin çıktı katmanının girdisini (yani ayıklanan öznitelikler) yeniden kullandığımız önceden eğitilmiş bir ResNet-34 modeli seçiyoruz. Daha sonra orijinal çıktı katmanını, iki tam bağlı katman yığını gibi eğitilebilecek küçük bir özel çıktı ağı ile değiştirebiliriz. :numref:`sec_fine_tuning`'teki deneyden farklı olarak, aşağıdaki öznitelik ayıklamak için kullanılan önceden eğitilmiş modeli yeniden eğitmez. Bu, gradynaların depolanması için eğitim süresini ve hafızasını azaltır. 
 
-Tam ImageNet veri kümesi için üç RGB kanalının araçlarını ve standart sapmalarını kullanarak görüntüleri standartlaştırdığımızı hatırlayın. Aslında, bu aynı zamanda ImageNet'te önceden eğitilmiş model tarafından standardizasyon işlemi ile de tutarlıdır.
+Tüm ImageNet veri kümesi için üç RGB kanalının araçlarını ve standart sapmalarını kullanarak imgeleri standartlaştırdığımızı hatırlayın. Aslında, bu aynı zamanda ImageNet'te önceden eğitilmiş model tarafından uygulanan standartlaştırma işlemi ile de tutarlıdır.
 
 ```{.python .input}
 def get_net(devices):
@@ -231,9 +231,7 @@ def get_net(devices):
     return finetune_net
 ```
 
-Before [**calculating the loss**],
-we first obtain the input of the pretrained model's output layer, i.e., the extracted feature.
-Then we use this feature as the input for our small custom output network to calculate the loss.
+[**Kaybın hesaplanmasından**] önce, önce önceden eğitilmiş modelin çıktı katmanının girdisini, yani ayıklanan özniteliği, elde ederiz. Daha sonra bu özniteliği, kaybı hesaplamak için küçük özel çıktı ağımızın girdisi olarak kullanırız.
 
 ```{.python .input}
 loss = gluon.loss.SoftmaxCrossEntropyLoss()
@@ -266,9 +264,9 @@ def evaluate_loss(data_iter, net, devices):
     return l_sum / n
 ```
 
-## [**Eğitim Fonksiyonu**] Tanımı
+## [**Eğitim Fonksiyonunu**] Tanımlama
 
-Modelin seçip, modelin doğrulama kümesindeki performansına göre hiperparametreleri ayarlayacağız. `train` model eğitim işlevi yalnızca küçük özel çıkış ağının parametrelerini yineleyir.
+Modeli seçip, modelin geçerleme kümesindeki performansına göre hiperparametreleri ayarlayacağız. `train` model eğitim işlevi yalnızca küçük özel çıktı ağının parametrelerini yineler.
 
 ```{.python .input}
 def train(net, train_iter, valid_iter, num_epochs, lr, wd, devices, lr_period,
@@ -355,9 +353,9 @@ def train(net, train_iter, valid_iter, num_epochs, lr, wd, devices, lr_period,
           f' examples/sec on {str(devices)}')
 ```
 
-## [**Modeli Eğitim ve Doğrulanma**]
+## [**Modeli Eğitme ve Geçerleme**]
 
-Şimdi modeli eğitebilir ve doğrulayabiliriz. Aşağıdaki hiperparametrelerin tümü ayarlanabilir. Örneğin, çeyin sayısı artırılabilir. `lr_period` ve `lr_decay` sırasıyla 2 ve 0.9 olarak ayarlandığından, optimizasyon algoritmasının öğrenme hızı her 2 çağ sonrasında 0,9 ile çarpılır.
+Şimdi modeli eğitebilir ve geçerleyebiliriz. Aşağıdaki hiper parametrelerin tümü ayarlanabilir. Örneğin, dönem sayısı artırılabilir. `lr_period` ve `lr_decay` sırasıyla 2 ve 0.9 olarak ayarlandığından, eniyileme algoritmasının öğrenme hızı her 2 dönem sonrasında 0.9 ile çarpılır.
 
 ```{.python .input}
 devices, num_epochs, lr, wd = d2l.try_all_gpus(), 10, 5e-3, 1e-4
@@ -375,9 +373,9 @@ train(net, train_iter, valid_iter, num_epochs, lr, wd, devices, lr_period,
       lr_decay)
 ```
 
-## [**Test Setini Sınıflandırma**] ve Kaggle'da Sonuçları Gönderme
+## [**Test Kümesini Sınıflandırma**] ve Kaggle'da Sonuçları Teslim Etme
 
-:numref:`sec_kaggle_cifar10`'teki son adıma benzer şekilde, sonunda tüm etiketli veriler (doğrulama seti dahil) modeli eğitmek ve test setini sınıflandırmak için kullanılır. Sınıflandırma için eğitimli özel çıkış ağını kullanacağız.
+:numref:`sec_kaggle_cifar10`'teki son adıma benzer şekilde, sonunda tüm etiketli veriler (geçerleme kümesi dahil) modeli eğitmek ve test kümesini sınıflandırmak için kullanılır. Sınıflandırma için eğitilmiş özel çıktı ağını kullanacağız.
 
 ```{.python .input}
 net = get_net(devices)
@@ -418,22 +416,22 @@ with open('submission.csv', 'w') as f:
             [str(num) for num in output]) + '\n')
 ```
 
-Yukarıdaki kod, :numref:`sec_kaggle_house`'te açıklanan şekilde Kaggle'a gönderilecek bir `submission.csv` dosyası oluşturacaktır. 
+Yukarıdaki kod, :numref:`sec_kaggle_house`'te açıklanan şekilde Kaggle'a teslim edilecek bir `submission.csv` dosyası oluşturacaktır. 
 
 ## Özet
 
-* ImageNet veri kümelerindeki görüntüler CIFAR-10 görüntülerinden daha büyüktür (farklı boyutlarda). Farklı bir veri kümesindeki görevler için görüntü büyütme işlemlerini değiştirebiliriz.
-* ImageNet veri kümesinin bir alt kümesini sınıflandırmak için, özellikleri ayıklamak ve yalnızca özel bir küçük ölçekli çıktı ağı eğitebilmek için ImageNet veri kümesinin tam ImageNet veri kümelerinde önceden eğitilmiş modelleri kullanabiliriz. Bu, daha az hesaplama süresi ve bellek maliyetine yol açacaktır.
+* ImageNet veri kümelerindeki imgeler CIFAR-10 imgelerinden (farklı boyutlarda) daha büyüktür. Farklı bir veri kümesindeki görevler için imge artırma işlemlerini değiştirebiliriz.
+* ImageNet veri kümesinin bir alt kümesini sınıflandırmak için, öznitelikleri ayıklamak ve yalnızca özel bir küçük ölçekli çıktı ağı eğitebilmek için ImageNet veri kümesinin tüm ImageNet veri kümesinde önceden eğitilmiş modellerini kullanabiliriz. Bu, daha az hesaplama süresi ve bellek maliyetine yol açacaktır.
 
-## Egzersizler
+## Alıştırmalar
 
-1. Tam Kaggle rekabet veri kümesini kullanırken, diğer bazı hiperparametreleri `lr = 0.01`, `lr_period = 10` ve `lr_period = 10` ve `lr_decay = 0.1` olarak ayarlarken `batch_size` (toplu iş boyutu) ve `num_epochs` (çağın sayısı) artırdığınızda hangi sonuçları elde edebilirsiniz?
-1. Daha derin bir önceden eğitilmiş model kullanırsanız daha iyi sonuçlar alır mısınız? Hiperparametreleri nasıl ayarlarsınız? Sonuçları daha da geliştirebilir misiniz?
+1. Tüm Kaggle yarışma veri kümesini kullanırken, diğer bazı hiper parametreleri `lr = 0.01`, `lr_period = 10` ve `lr_period = 10` ve `lr_decay = 0.1` olarak ayarlarken `batch_size` (toplu iş boyutu) ve `num_epochs` (dönem sayısı) artırdığınızda hangi sonuçları elde edebilirsiniz?
+1. Bir önceden eğitilmiş daha derin model kullanırsanız daha iyi sonuçlar alır mısınız? Hiper parametreleri nasıl ayarlarsınız? Sonuçları daha da iyileştirebilir misiniz?
 
 :begin_tab:`mxnet`
-[Discussions](https://discuss.d2l.ai/t/380)
+[Tartışmalar](https://discuss.d2l.ai/t/380)
 :end_tab:
 
 :begin_tab:`pytorch`
-[Discussions](https://discuss.d2l.ai/t/1481)
+[Tartışmalar](https://discuss.d2l.ai/t/1481)
 :end_tab:

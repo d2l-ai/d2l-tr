@@ -37,6 +37,8 @@ burst read; çoğuşma
 
 bus; veriyolu
 
+bounding box; kuşatan kutu
+
 broadcast; yayınlama
 
 cache; ön bellek
@@ -69,6 +71,8 @@ crowdsourcing; kitle kaynak kullanımı
 
 decoder; kodçözücü
 
+denoising; gürültü arındırma
+
 deployment; konuşlandırma
 
 descent; iniş
@@ -83,7 +87,7 @@ divergent; ıraksayıcı, ıraksayan
 
 domain; etki alanı
 
-downsampling; altörnekleme
+downsampling; örnek seyreltme
 
 dropout;  hattan düşme
 
@@ -318,6 +322,8 @@ tuple; çokuzlu
 underflow; küçümenlik
 
 uniform; tekdüze
+
+upsampling; örnek sıklaştırma
 
 validation set; geçerleme kümesi
 

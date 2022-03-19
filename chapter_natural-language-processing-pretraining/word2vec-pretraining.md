@@ -48,7 +48,7 @@ print(f'Parameter embedding_weight ({embed.weight.shape}, '
       f'dtype={embed.weight.dtype})')
 ```
 
-Gömülü katmanın girişi, bir belirteç (sözcük) dizinidir. Herhangi bir belirteç dizini $i$ için vektör gösterimi, katıştırma katmanındaki ağırlık matrisinin $i^\mathrm{th}$ satırından elde edilebilir. Vektör boyutu (`output_dim`) 4 olarak ayarlandığından, gömme katmanı şekle sahip (2, 3) bir minik toplu işlem için şekilli (2, 3, 4) vektörleri döndürür (2, 3).
+Gömülü katmanın girişi, bir belirteç (sözcük) dizinidir. Herhangi bir belirteç dizini $i$ için vektör gösterimi, katıştırma katmanındaki ağırlık matrisinin $i.$ satırından elde edilebilir. Vektör boyutu (`output_dim`) 4 olarak ayarlandığından, gömme katmanı şekle sahip (2, 3) bir minik toplu işlem için şekilli (2, 3, 4) vektörleri döndürür (2, 3).
 
 ```{.python .input}
 #@tab all

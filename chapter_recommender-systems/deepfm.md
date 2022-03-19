@@ -8,7 +8,7 @@ Etkili bir çözüm derin sinir ağları kullanmaktır. Derin sinir ağları, ö
 
 DeepFM, bir FM bileşeninden ve paralel bir yapıya entegre edilmiş derin bir bileşenden oluşur. FM bileşeni, düşük mertebeden özellik etkileşimlerini modellemek için kullanılan 2 yönlü çarpanlara sahip makinelerle aynıdır. Derin bileşen, yüksek mertebeden özellik etkileşimleri ve doğrusal olmayan değerleri yakalamak için kullanılan bir MLP'dir. Bu iki bileşen aynı giriş/gömme paylaşır ve çıkışları nihai tahmin olarak özetlenir. DeepFM ruhunun hem ezberlemeyi hem de genellemeyi yakalayabilen Wide\ & Deep mimarisine benzediğini belirtmek gerekir. DeepFM'in Wide\ & Deep modeline göre avantajları, özellik kombinasyonlarını otomatik olarak belirleyerek el yapımı özellik mühendisliğinin çabasını azaltmaktır. 
 
-Kısalık için FM bileşeninin açıklamasını atlıyoruz ve çıkışı $\hat{y}^{(FM)}$ olarak belirtiyoruz. Okuyucular daha fazla ayrıntı için son bölüme sevk edilir. $\mathbf{e}_i \in \mathbb{R}^{k}$, $i^\mathrm{th}$ alanının gizli özellik vektörünü göstersin. Derin bileşenin girişi, seyrek kategorik özellik girişi ile bakılan tüm alanların yoğun gömülmelerinin birleştirilmesiyle, şu şekilde gösterilir: 
+Kısalık için FM bileşeninin açıklamasını atlıyoruz ve çıkışı $\hat{y}^{(FM)}$ olarak belirtiyoruz. Okuyucular daha fazla ayrıntı için son bölüme sevk edilir. $\mathbf{e}_i \in \mathbb{R}^{k}$, $i.$ alanının gizli özellik vektörünü göstersin. Derin bileşenin girişi, seyrek kategorik özellik girişi ile bakılan tüm alanların yoğun gömülmelerinin birleştirilmesiyle, şu şekilde gösterilir: 
 
 $$
 \mathbf{z}^{(0)}  = [\mathbf{e}_1, \mathbf{e}_2, ..., \mathbf{e}_f],
@@ -20,7 +20,7 @@ $$
 \mathbf{z}^{(l)}  = \alpha(\mathbf{W}^{(l)}\mathbf{z}^{(l-1)} + \mathbf{b}^{(l)}),
 $$
 
-burada $\alpha$ aktivasyon fonksiyonudur. $\mathbf{W}_{l}$ ve $\mathbf{b}_{l}$, $l^\mathrm{th}$ katmanındaki ağırlık ve önyargıdır. $y_{DNN}$'ün tahminin çıktısını göstermesine izin verin. DeepFM'in nihai tahmini hem FM hem de DNN çıkışlarının toplamıdır. Yani elimizde: 
+burada $\alpha$ aktivasyon fonksiyonudur. $\mathbf{W}_{l}$ ve $\mathbf{b}_{l}$, $l.$ katmanındaki ağırlık ve önyargıdır. $y_{DNN}$'ün tahminin çıktısını göstermesine izin verin. DeepFM'in nihai tahmini hem FM hem de DNN çıkışlarının toplamıdır. Yani elimizde: 
 
 $$
 \hat{y} = \sigma(\hat{y}^{(FM)} + \hat{y}^{(DNN)}),

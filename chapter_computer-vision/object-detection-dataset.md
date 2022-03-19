@@ -1,19 +1,11 @@
 # Nesne Algılama Veri Kümesi
 :label:`sec_object-detection-dataset`
 
-There is no small dataset such as MNIST and Fashion-MNIST in the field of object detection.
-In order to quickly demonstrate object detection models,
-[**we collected and labeled a small dataset**].
-First, we took photos of free bananas from our office
-and generated
-1000 banana images with different rotations and sizes.
-Then we placed each banana image
-at a random position on some background image.
-In the end, we labeled bounding boxes for those bananas on the images. 
+Nesne algılama alanında MNIST ve Fashion-MNIST gibi küçük bir veri kümeleri bulunmamaktadır. Nesne algılama modellerini hızlı bir şekilde göstermek için [**küçük bir veri kümesi topladık ve etiketledik**]. İlk olarak ofisimizdeki bedava muzların fotoğraflarını çektik ve farklı dönüşlerde ve boyutlarda 1000 muz imgesi oluşturduk. Sonra her bir muz imgesini bir arka plan görüntüsü üzerinde rastgele bir konuma yerleştirdik. Sonunda, resimlerdeki bu muzlar için kuşatan kutuları etiketledik. 
 
-## [**Veri Kümesi İndiriliyor**]
+## [**Veri Kümesini İndirme**]
 
-Tüm görüntü ve csv etiket dosyalarıyla birlikte muz algılama veri seti doğrudan internetten indirilebilir.
+Tüm imgeler ve csv etiket dosyasıyla birlikte muz algılama veri kümesi doğrudan internetten indirilebilir.
 
 ```{.python .input}
 %matplotlib inline
@@ -45,7 +37,7 @@ d2l.DATA_HUB['banana-detection'] = (
 
 ## Veri Kümesini Okuma
 
-Aşağıdaki `read_data_bananas` işlevinde [**muz algılama veri setini okuyun**] yapacağız. Veri kümesi, nesne sınıfı etiketleri için bir csv dosyası ve sol üst ve sağ alt köşelerde yer hakikat sınırlama kutusu koordinatları içerir.
+Aşağıdaki `read_data_bananas` işlevinde [**muz algılama veri kümesini okuyacağız**]. Veri kümesi,  bir csv dosyasında nesne sınıfı etiketlerini ve gerçek referans değeri kuşatan kutunun sol üst ve sağ alt köşelerdeki koordinatları içerir.
 
 ```{.python .input}
 #@save
@@ -90,7 +82,7 @@ def read_data_bananas(is_train=True):
     return images, torch.tensor(targets).unsqueeze(1) / 256
 ```
 
-Görüntüleri ve etiketleri okumak için `read_data_bananas` işlevini kullanarak, aşağıdaki `BananasDataset` sınıfı muz algılama veri kümesini yüklemek için [**özelleştirilmiş bir `Dataset` örneği** oluşturmamızı**] sağlayacaktır.
+İmgeleri ve etiketleri okumak için `read_data_bananas` işlevini kullanarak, aşağıdaki `BananasDataset` sınıfı, muz algılama veri kümesini yüklemek için [**özelleştirilmiş bir `Dataset` örneği oluşturmamızı**] sağlayacaktır.
 
 ```{.python .input}
 #@save
@@ -166,7 +158,7 @@ The shape of the label minibatch is
 where $m$ is the largest possible number of bounding boxes
 that any image has in the dataset.
 
-Minibatch'lerde hesaplama daha verimli olmasına rağmen, tüm görüntü örneklerinin birleştirme yoluyla bir mini batch oluşturmak için aynı sayıda sınırlayıcı kutuları içermesini gerektirir. Genel olarak, görüntüler farklı sayıda sınırlayıcı kutuya sahip olabilir; bu nedenle $m$'ten daha az sınırlayıcı kutuya sahip görüntüler, $m$'e ulaşılana kadar yasadışı sınırlayıcı kutularla doldurulacaktır. Daha sonra her sınırlayıcı kutunun etiketi 5 uzunluğunda bir dizi ile temsil edilir. Dizideki ilk öğe, sınırlayıcı kutudaki nesnenin sınıfıdır ve burada -1 dolgu için yasadışı bir sınırlama kutusunu gösterir. Dizinin kalan dört öğesi, sol üst köşenin ve sınırlayıcı kutunun sağ alt köşesinin ($x$, $y$) koordinat değerleridir (aralık 0 ile 1 arasındadır). Muz veri seti için, her görüntüde sadece bir sınırlayıcı kutu olduğundan $m=1$ sahibiz.
+Minigruplarda hesaplama daha verimli olmasına rağmen, tüm imge örneklerinin bitiştirme yoluyla bir minigrup oluşturması için aynı sayıda kuşatan kutu içermeleri gerektirir. Genel olarak, imgeler farklı sayıda kuşatan kutuya sahip olabilir; bu nedenle $m$'den daha az kuşatan kutuya sahip imgeler, $m$'e ulaşılana kadar geçersiz kuşatan kutularla doldurulacaktır. Daha sonra her kuşatan kutunun etiketi 5 uzunluğunda bir dizi ile temsil edilir. Dizideki ilk öğe, kuşatan kutudaki nesnenin sınıfıdır ve burada -1 dolgu için geçersiz bir kuşatan kutusunu gösterir. Dizinin kalan dört öğesi, kuşatan kutunun sol üst köşesinin ve sağ alt köşesinin ($x$, $y$) koordinat değerleridir (aralık 0 ile 1 arasındadır). Muz veri kümesi için, her imgede sadece bir kuşatan kutu olduğundan elimizde $m=1$ var.
 
 ```{.python .input}
 #@tab all
@@ -176,9 +168,9 @@ batch = next(iter(train_iter))
 batch[0].shape, batch[1].shape
 ```
 
-## [**Gösteri**]
+## [**Gösterme**]
 
-Etiketli zemin gerçeği sınırlayıcı kutularıyla on görüntü gösterelim. Muzun dönüşlerinin, boyutlarının ve konumlarının tüm bu görüntülerde değiştiğini görebiliyoruz. Tabii ki, bu sadece basit bir yapay veri kümesidir. Uygulamada, gerçek dünya veri kümeleri genellikle çok daha karmaşıktır.
+Gerçek referans değeri etiketli kuşatan kutularıyla on imge gösterelim. Muzun dönüşlerinin, boyutlarının ve konumlarının tüm bu imgelerde değiştiğini görebiliyoruz. Tabii ki, bu sadece basit bir yapay veri kümesidir. Uygulamada, gerçek dünya veri kümeleri genellikle çok daha karmaşıktır.
 
 ```{.python .input}
 imgs = (batch[0][0:10].transpose(0, 2, 3, 1)) / 255
@@ -197,18 +189,18 @@ for ax, label in zip(axes, batch[1][0:10]):
 
 ## Özet
 
-* Topladığımız muz algılama veri seti, nesne algılama modellerini göstermek için kullanılabilir.
-* Nesne algılama için veri yükleme, görüntü sınıflandırmasına benzer. Bununla birlikte, nesne algılamasında etiketler ayrıca görüntü sınıflandırmasında eksik olan zemin gerçeği sınırlayıcı kutularla ilgili bilgileri de içerir.
+* Topladığımız muz algılama veri kümesi, nesne algılama modellerini göstermek için kullanılabilir.
+* Nesne algılama için veri yükleme, imge sınıflandırmasındakine benzer. Bununla birlikte, nesne algılamasında etiketler ayrıca imge sınıflandırmasında eksik olan gerçek referans değeri kuşatan kutularla ilgili bilgileri de içerir.
 
-## Egzersizler
+## Alıştırmalar
 
-1. Muz algılama veri kümelerinde yer hakikati sınırlayıcı kutularla diğer görüntüleri gösterin. Sınırlayıcı kutulara ve nesnelere göre nasıl farklılık gösterirler?
-1. Nesne algılamaya rastgele kırpma gibi veri büyütme uygulamak istediğimizi söyleyin. Görüntü sınıflandırmasında bundan nasıl farklı olabilir? İpucu: Kırpılmış bir görüntü nesnenin yalnızca küçük bir bölümünü içeriyorsa ne olur?
+1. Muz algılama veri kümelerinde gerçek referans değeri kuşatan kutularla diğer imgeleri gösterin. Kuşatan kutulara ve nesnelere göre nasıl farklılık gösterirler?
+1. Nesne algılamaya rastgele kırpma gibi veri artırımı uygulamak istediğimizi varsayalım. Bu imge sınıflandırmasındakinden nasıl farklı olabilir? İpucu: Kırpılmış bir imge nesnenin yalnızca küçük bir bölümünü içeriyorsa ne olur?
 
 :begin_tab:`mxnet`
-[Discussions](https://discuss.d2l.ai/t/372)
+[Tartışmalar](https://discuss.d2l.ai/t/372)
 :end_tab:
 
 :begin_tab:`pytorch`
-[Discussions](https://discuss.d2l.ai/t/1608)
+[Tartışmalar](https://discuss.d2l.ai/t/1608)
 :end_tab:

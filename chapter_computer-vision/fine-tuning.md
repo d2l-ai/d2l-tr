@@ -1,31 +1,31 @@
 # İnce Ayar
 :label:`sec_fine_tuning`
 
-Daha önceki bölümlerde, Moda-MNIST eğitim veri kümesinde sadece 60000 resim ile modellerin nasıl eğitileceğini tartıştık. Ayrıca, 10 milyondan fazla görüntü ve 1000 nesneye sahip olan, akademide en yaygın kullanılan büyük ölçekli görüntü veri kümesi olan ImageNet'i de tanımladık. Ancak, genellikle karşılaştığımız veri kümesinin boyutu iki veri kümesinin arasındadır. 
+Daha önceki bölümlerde, Fashion-MNIST eğitim veri kümesindeki sadece 60000 resim ile modellerin nasıl eğitileceğini tartıştık. Ayrıca, 10 milyondan fazla imge ve 1000 nesneye sahip olan, akademide en yaygın kullanılan büyük ölçekli imge veri kümesi olan ImageNet'i de tanımladık. Ancak, genellikle karşılaştığımız veri kümesinin boyutu iki veri kümesinin arasındadır. 
 
-Görüntülerden farklı sandalye türlerini tanımak istediğimizi ve kullanıcılara satın alma bağlantılarını önerdiğimizi varsayalım. Olası bir yöntem, önce 100 ortak sandalyeyi tanımlamak, her sandalye için farklı açılarda 1000 görüntü almak ve daha sonra toplanan görüntü veri kümesinde bir sınıflandırma modeli eğitmektir. Bu sandalye veri kümesi Moda-MNIST veri kümesinden daha büyük olsa da, örneklerin sayısı hala ImageNet'te bunun onda birinden daha azdır. Bu, bu sandalye veri setinde ImageNet için uygun karmaşık modellerin aşırı takılmasına neden olabilir. Ayrıca, sınırlı sayıda eğitim örneği nedeniyle, eğitimli modelin doğruluğu pratik gereklilikleri karşılamayabilir. 
+İmgelerden farklı sandalye türlerini tanımak istediğimizi ve kullanıcılara satın alma bağlantılarını önerdiğimizi varsayalım. Olası bir yöntem, önce 100 ortak sandalyeyi tanımlamak, her sandalye için farklı açılardan 1000 imge almak ve daha sonra toplanan imge veri kümesinde bir sınıflandırma modeli eğitmektir. Bu sandalye veri kümesi Fashion-MNIST veri kümesinden daha büyük olsa da, örneklerin sayısı hala ImageNet'in onda birinden daha azdır. Bu, bu sandalye veri setinde ImageNet için uygun karmaşık modellerin aşırı öğrenmesine neden olabilir. Ayrıca, sınırlı sayıda eğitim örneği nedeniyle, eğitimli modelin doğruluğu pratik gereklilikleri karşılamayabilir. 
 
-Yukarıdaki sorunları gidermek için, bariz bir çözüm daha fazla veri toplamaktır. Bununla birlikte, verilerin toplanması ve etiketlenmesi çok zaman ve para alabilir. Örneğin, ImageNet veri kümesini toplamak için, araştırmacılar araştırma finansmanından milyonlarca dolar harcadı. Geçerli veri toplama maliyeti önemli ölçüde düşürülmüş olsa da, bu maliyet yine de göz ardı edilemez. 
+Yukarıdaki sorunları gidermek için, bariz bir çözüm daha fazla veri toplamaktır. Bununla birlikte, verilerin toplanması ve etiketlenmesi çok zaman ve para alabilir. Örneğin, ImageNet veri kümesini toplamak için, araştırmacılar araştırma fonundan milyonlarca dolar harcadı. Geçerli veri toplama maliyeti önemli ölçüde düşmüş olsa da, bu maliyet yine de göz ardı edilemez. 
 
-Başka bir çözüm ise *kaynak veri kümesi* öğrenilen bilgiyi *hedef veri kümesi* aktarmak için*hedef veri kümesi* aktarmaktır. Örneğin, ImageNet veri kümelerindeki görüntülerin çoğunun sandalyelerle ilgisi olmasa da, bu veri kümesinde eğitilen model, kenarları, dokuları, şekilleri ve nesne kompozisyonunu tanımlamaya yardımcı olabilecek daha genel görüntü özelliklerini ayıklayabilir. Bu benzer özellikler sandalyeleri tanımak için de etkili olabilir. 
+Diğer bir çözüm, *kaynak veri kümesinden* öğrenilen bilgileri *hedef veri kümesine* aktarmak için *öğrenme aktarımı* uygulamaktır. Örneğin, ImageNet veri kümelerindeki imgelerin çoğunun sandalyelerle ilgisi olmasa da, bu veri kümesinde eğitilen model, kenarları, dokuları, şekilleri ve nesne bileşimini tanımlamaya yardımcı olabilecek daha genel imge özelliklerini ortaya çıkarasbilir. Bu benzer özellikler sandalyeleri tanımak için de etkili olabilir. 
 
 ## Adımlar
 
-Bu bölümde, transfer öğreniminde ortak bir teknik tanıtacağız : *fine-tuning*. As shown in :numref:`fig_finetune`, ince ayar aşağıdaki dört adımdan oluşur: 
+Bu bölümde, öğrenme aktarımında yaygın bir teknik tanıtacağız: *ince ayar*. :numref:`fig_finetune` içinde gösterildiği gibi, ince ayar aşağıdaki dört adımdan oluşur: 
 
-1. Bir nöral ağ modelini (örn. ImageNet veri kümesi) kaynak veri kümesine (örn. kaynak modeli*) ön eğitin.
-1. Yeni bir sinir ağı modeli oluşturun, örn. *target modeli*. Bu, çıktı katmanı dışındaki tüm model tasarımlarını ve parametrelerini kaynak modelde kopyalar. Bu model parametrelerinin kaynak veri kümesinden öğrenilen bilgileri içerdiğini ve bu bilginin hedef veri kümesine de uygulanacağını varsayıyoruz. Kaynak modelin çıktı katmanının kaynak veri kümesinin etiketleriyle yakından ilişkili olduğunu varsayıyoruz; bu nedenle hedef modelde kullanılmaz.
-1. Çıktı sayısı hedef veri kümeindeki kategorilerin sayısı olan hedef modele bir çıktı katmanı ekleyin. Ardından bu katmanın model parametrelerini rastgele başlatın.
-1. Hedef modeli hedef veri kümelerinde, sandalye veri kümesi gibi eğitin. Çıktı katmanı sıfırdan eğitilirken, diğer tüm katmanların parametreleri kaynak modelin parametrelerine göre ince ayarlanır.
+1. Bir sinir ağı modelini (örn. ImageNet veri kümesi) kaynak veri kümesinde (örn. kaynak modeli*) ön eğitin.
+1. Yeni bir sinir ağı modeli oluşturun, örn. *hedef modeli*. Bu, çıktı katmanı dışındaki tüm model tasarımlarını ve parametrelerini kaynak modelden kopyalar. Bu model parametrelerinin kaynak veri kümesinden öğrenilen bilgileri içerdiğini ve bu bilginin hedef veri kümesine de uygulanacağını varsayıyoruz. Kaynak modelin çıktı katmanının kaynak veri kümesinin etiketleriyle yakından ilişkili olduğunu varsayıyoruz; bu nedenle hedef modelde kullanılmaz.
+1. Hedef modele çıktı sayısı hedef veri kümesindeki kategorilerin sayısı kadar olan bir çıktı katmanı ekleyin. Ardından bu katmanın model parametrelerini rastgele ilkletin.
+1. Hedef modeli hedef veri kümelerinde eğitin, mesela sandalye veri kümesi. Çıktı katmanı sıfırdan eğitilirken, diğer tüm katmanların parametreleri kaynak modelin parametrelerine göre ince ayarlanır.
 
-![Fine tuning.](../img/finetune.svg)
+![İnce ayar.](../img/finetune.svg)
 :label:`fig_finetune`
 
 Hedef veri kümeleri kaynak veri kümelerinden çok daha küçük olduğunda ince ayar modellerin genelleme yeteneğini geliştirmeye yardımcı olur. 
 
-## Hot Dog Tanıma
+## Sosisli Sandviç Tanıma
 
-Somut bir kasa aracılığıyla ince ayar gösterelim: sosisli sandviç tanıma. ImageNet veri kümesine önceden eğitilmiş küçük bir veri kümesine bir ResNet modelini ince ayar yapacağız. Bu küçük veri seti, sosisli ve sosisli olmayan binlerce görüntüden oluşur. Görüntülerden sosisli köpekleri tanımak için ince ayarlı modeli kullanacağız.
+Somut bir vaka aracılığıyla ince ayarı gösterelim: Sosisli sandviç tanıma. ImageNet veri kümesinde önceden eğitilmiş bir ResNet modelini küçük bir veri kümesine ince ayar yapacağız. Bu küçük veri kümesi, sosisli sandviçli ve sandviçsiz binlerce imgeden oluşur. İmgelerden sosisli sandviçleri tanımak için ince ayarlanmış model kullanacağız.
 
 ```{.python .input}
 %matplotlib inline
@@ -49,9 +49,9 @@ import os
 
 ### Veri Kümesini Okuma
 
-[**Kullandığımız hot dog veri seti çevrimiçi görüntülerden alındı**]. Bu veri kümesi oluşur 1400 sosisli içeren pozitif sınıf görüntülerden ve diğer gıdaları içeren birçok negatif sınıf görüntülerden oluşmaktadır. Her iki sınıfın 1000 görüntüleri eğitim için kullanılır ve geri kalanı test içindir. 
+[**Kullandığımız sosisli sandviç veri kümesi çevrimiçi imgelerden alındı**]. Bu veri kümesi, sosisli sandviç içeren 1400 pozitif etiketli imgeden ve diğer yiyecekleri içeren birçok negatif etiketli imgeden oluşur. Her iki sınıfın 1000 imgesi eğitim için kullanılır ve geri kalanı test içindir.
 
-İndirilen veri kümesini açtıktan sonra, iki klasör `hotdog/train` ve `hotdog/test` elde ediyoruz. Her iki klasörde de `hotdog` ve `not-hotdog` alt klasörleri vardır; bunlardan biri karşılık gelen sınıfın görüntülerini içerir.
+İndirilen veri kümesini açtıktan sonra, iki klasör, `hotdog/train` ve `hotdog/test`, elde ediyoruz. Her iki klasörde de `hotdog` ve `not-hotdog` alt klasörleri vardır; bunlardan herbiri karşılık gelen sınıfın imgelerini içerir.
 
 ```{.python .input}
 #@tab all
@@ -62,7 +62,7 @@ d2l.DATA_HUB['hotdog'] = (d2l.DATA_URL + 'hotdog.zip',
 data_dir = d2l.download_extract('hotdog')
 ```
 
-Eğitim ve test veri kümelerindeki tüm görüntü dosyalarını okumak için iki örnek oluşturuyoruz.
+Eğitim ve test veri kümelerindeki tüm imge dosyalarını okumak için iki örnek oluşturuyoruz.
 
 ```{.python .input}
 train_imgs = gluon.data.vision.ImageFolderDataset(
@@ -77,7 +77,7 @@ train_imgs = torchvision.datasets.ImageFolder(os.path.join(data_dir, 'train'))
 test_imgs = torchvision.datasets.ImageFolder(os.path.join(data_dir, 'test'))
 ```
 
-İlk 8 olumlu örnek ve son 8 negatif görüntü aşağıda gösterilmiştir. Gördüğünüz gibi, [**resimler boyut ve en boy oranı** bakımından farklılık gösterir**].
+İlk 8 pozitif örnek ve son 8 negatif imge aşağıda gösterilmiştir. Gördüğünüz gibi, [**resimler boyut ve en-boy oranı bakımından farklılık gösterir**].
 
 ```{.python .input}
 #@tab all
@@ -86,7 +86,7 @@ not_hotdogs = [train_imgs[-i - 1][0] for i in range(8)]
 d2l.show_images(hotdogs + not_hotdogs, 2, 8, scale=1.4);
 ```
 
-Eğitim sırasında, önce görüntüden rastgele boyut ve rastgele en boy oranına sahip bir alanı kırpıyoruz ve sonra bu alanı $224 \times 224$ giriş görüntüsüne ölçeklendiriyoruz. Test sırasında, görüntünün hem yüksekliğini hem de genişliğini 256 piksele ölçeklendirir ve ardından merkezi bir $224 \times 224$ alanını girdi olarak kırpırız. Buna ek olarak, üç RGB (kırmızı, yeşil ve mavi) renk kanalı için değerlerini kanala göre standartlaştırıyoruz. Bir kanalın ortalama değeri, bu kanalın her değerinden çıkarılır ve sonuç bu kanalın standart sapmasına bölünür. 
+Eğitim sırasında, önce imgeden rastgele boyut ve rastgele en-boy oranına sahip bir alanı kırpıyoruz ve sonra bu alanı $224 \times 224$ girdi imgesine ölçeklendiriyoruz. Test sırasında, imgenin hem yüksekliğini hem de genişliğini 256 piksele ölçeklendirir ve ardından merkezi bir $224 \times 224$ alanı girdi olarak kırpırız. Buna ek olarak, üç RGB (kırmızı, yeşil ve mavi) renk kanalı için değerlerini kanala göre standartlaştırıyoruz. Bir kanalın ortalama değeri, bu kanalın her değerinden çıkarılır ve sonuç bu kanalın standart sapmasına bölünür. 
 
 [~~Veri artırımları~~]
 
@@ -129,9 +129,9 @@ test_augs = torchvision.transforms.Compose([
     normalize])
 ```
 
-### [**Modelin Tanımlanması ve Başlatılma**]
+### [**Modelin Tanımlanması ve İlklenmesi**]
 
-Kaynak model olarak ImageNet veri kümesi üzerinde önceden eğitilmiş olan ResNet-18'i kullanıyoruz. Burada, önceden eğitilmiş model parametrelerini otomatik olarak indirmek için `pretrained=True`'ü belirtiyoruz. Bu model ilk kez kullanılıyorsa, indirmek için İnternet bağlantısı gereklidir.
+Kaynak model olarak ImageNet veri kümesi üzerinde önceden eğitilmiş olan ResNet-18'i kullanıyoruz. Burada, önceden eğitilmiş model parametrelerini otomatik olarak indirmek için `pretrained=True`'yi belirtiyoruz. Bu model ilk kez kullanılıyorsa, indirmek için İnternet bağlantısı gereklidir.
 
 ```{.python .input}
 pretrained_net = gluon.model_zoo.vision.resnet18_v2(pretrained=True)
@@ -143,11 +143,11 @@ pretrained_net = torchvision.models.resnet18(pretrained=True)
 ```
 
 :begin_tab:`mxnet`
-Önceden eğitilmiş kaynak model örneği iki üye değişken içerir: `features` ve `output`. Birincisi, çıktı katmanı dışındaki modelin tüm katmanlarını içerir ve ikincisi modelin çıkış katmanıdır. Bu bölümün temel amacı, tüm katmanların ancak çıktı tabakasının model parametrelerinin ince ayarlanmasını kolaylaştırmaktır. Kaynak modelin `output` üye değişkeni aşağıda gösterilmiştir.
+Önceden eğitilmiş kaynak model örneği iki üye değişken içerir: `features` ve `output`. Birincisi, çıktı katmanı dışındaki modelin tüm katmanlarını içerir ve ikincisi modelin çıktı katmanıdır. Bu bölümün temel amacı, çıktı katmanı dışındaki tüm katmanların model parametrelerinin ince ayarını kolaylaştırmaktır. Kaynak modelin üye değişkeni `output` (çıktı) aşağıda gösterilmiştir.
 :end_tab:
 
 :begin_tab:`pytorch`
-Önceden eğitilmiş kaynak model örneği, bir dizi özellik katmanı ve bir çıkış katmanı `fc` içerir. Bu bölümün temel amacı, tüm katmanların ancak çıktı tabakasının model parametrelerinin ince ayarlanmasını kolaylaştırmaktır. Kaynak modelin üye değişkeni `fc` aşağıda verilmiştir.
+Önceden eğitilmiş kaynak model örneği, bir dizi öznitelik katmanı ve bir çıktı katmanı `fc` içerir. Bu bölümün temel amacı, tüm katmanların ancak çıktı tabakasının model parametrelerinin ince ayarlanmasını kolaylaştırmaktır. Kaynak modelin üye değişkeni `fc` aşağıda verilmiştir.
 :end_tab:
 
 ```{.python .input}
@@ -159,13 +159,13 @@ pretrained_net.output
 pretrained_net.fc
 ```
 
-Tam bağlı bir katman olarak ResNet'in son küresel ortalama havuzlama çıktılarını ImageNet veri kümesinin 1000 sınıf çıkışına dönüştürür. Daha sonra hedef model olarak yeni bir sinir ağı kurarız. Son katmandaki çıktı sayısının hedef veri kümesindeki sınıf sayısına (1000 yerine) ayarlanması dışında, önceden eğitilmiş kaynak modeliyle aynı şekilde tanımlanır. 
+Tam bağlı bir katman olarak ResNet'in son küresel ortalama ortaklama çıktılarını ImageNet veri kümesinin 1000 sınıf çıktısına dönüştürür. Daha sonra hedef model olarak yeni bir sinir ağı kurarız. Son katmandaki çıktı sayısının hedef veri kümesindeki sınıf sayısına (1000 yerine) ayarlanması dışında, önceden eğitilmiş kaynak modeliyle aynı şekilde tanımlanır. 
 
-Aşağıdaki kodda, hedef model örneğinin üye değişken özelliklerindeki model parametreleri, kaynak modelin karşılık gelen katmanının model parametrelerine başlatılır. Özelliklerdeki model parametreleri ImageNet veri setinde önceden eğitildiğinden ve yeterince iyi olduğundan, bu parametrelerin ince ayarlanması için genellikle yalnızca küçük bir öğrenme hızına ihtiyaç vardır.  
+Aşağıdaki kodda, hedef model örneğinin üye değişken özniteliklerindeki model parametreleri, kaynak modelin karşılık gelen katmanının model parametrelerine ilkletilir. Özniteliklerdeki model parametreleri ImageNet veri kümesinde önceden eğitildiğinden ve yeterince iyi olduğundan, bu parametrelerin ince ayarlanması için genellikle yalnızca küçük bir öğrenme oranına ihtiyaç vardır.  
 
-Üye değişken çıktısındaki model parametreleri rastgele başlatılır ve genellikle sıfırdan eğitmek için daha büyük bir öğrenme hızı gerektirir. Trainer örneğindeki öğrenme oranının η olduğunu varsayarsak, üye değişken çıktısındaki model parametrelerinin öğrenme oranını yinelemede 10η olarak ayarlarız. 
+Üye değişken çıktısındaki model parametreleri rastgele ilkletilir ve genellikle sıfırdan eğitmek için daha büyük bir öğrenme oranı gerektirir. Trainer örneğindeki öğrenme oranının η olduğunu varsayarsak, üye değişken çıktısındaki model parametrelerinin öğrenme oranını yinelemede 10η olarak ayarlarız. 
 
-Aşağıdaki kodda, hedef model örneğinin `finetune_net` çıkış katmanından önceki model parametreleri, kaynak modelden karşılık gelen katmanların model parametrelerine başlanır. Bu model parametreleri ImageNet'te ön eğitim yoluyla elde edildiğinden etkilidir. Bu nedenle, bu tür önceden eğitilmiş parametreler* ince ayarlar* için yalnızca küçük bir öğrenme oranını kullanabiliriz. Buna karşılık, çıktı katmanındaki model parametreleri rastgele başlatılır ve genellikle sıfırdan öğrenilmesi için daha büyük bir öğrenme hızı gerektirir. Temel öğrenme oranının $\eta$ olmasını sağlayın, çıktı katmanındaki model parametrelerini yinelemek için $10\eta$ öğrenme hızı kullanılacaktır.
+Aşağıdaki kodda, hedef model örneğinin `finetune_net` çıktı katmanından önceki model parametreleri, kaynak modelden karşılık gelen katmanların model parametrelerine ilklenir. Bu model parametreleri ImageNet'te ön eğitim yoluyla elde edildiğinden etkilidir. Bu nedenle, bu tür önceden eğitilmiş parametreleri *ince ayarlamak* için yalnızca küçük bir öğrenme oranını kullanabiliriz. Buna karşılık, çıktı katmanındaki model parametreleri rastgele ilklenir ve genellikle sıfırdan öğrenilmesi için daha büyük bir öğrenme oranı gereklidir. Temel öğrenme oranının $\eta$ olursa, çıktı katmanındaki model parametrelerini yinelemek için $10\eta$ öğrenme oranı kullanılacaktır.
 
 ```{.python .input}
 finetune_net = gluon.model_zoo.vision.resnet18_v2(classes=2)
@@ -183,7 +183,7 @@ finetune_net.fc = nn.Linear(finetune_net.fc.in_features, 2)
 nn.init.xavier_uniform_(finetune_net.fc.weight);
 ```
 
-### [**Modele İnce Ayarlanma**]
+### [**Modeli İnce Ayarlama**]
 
 İlk olarak, ince ayar kullanan `train_fine_tuning` eğitim fonksiyonunu tanımlıyoruz, böylece birden çok kez çağrılabilir.
 
@@ -231,7 +231,7 @@ def train_fine_tuning(net, learning_rate, batch_size=128, num_epochs=5,
                    devices)
 ```
 
-Ön eğitim yoluyla elde edilen model parametreleri*ince ayarlayabilmek* için temel öğrenme oranını küçük bir değere ayarladık. Önceki ayarlara dayanarak, hedef modelin çıkış katmanı parametrelerini on kat daha büyük bir öğrenme hızı kullanarak sıfırdan eğiteceğiz.
+Ön eğitim yoluyla elde edilen model parametreleri *ince ayarlayabilmek* için temel öğrenme oranını küçük bir değere ayarladık. Önceki ayarlara dayanarak, hedef modelin çıktı katmanı parametrelerini on kat daha büyük bir öğrenme oranı kullanarak sıfırdan eğiteceğiz.
 
 ```{.python .input}
 train_fine_tuning(finetune_net, 0.01)
@@ -242,7 +242,7 @@ train_fine_tuning(finetune_net, 0.01)
 train_fine_tuning(finetune_net, 5e-5)
 ```
 
-[**Karşılaştırma için, **] özdeş bir model tanımlarız, ancak (**tüm model parametrelerini rastgele değerlere başlatır**). Tüm modelin sıfırdan eğitilmesi gerektiğinden, daha büyük bir öğrenme hızı kullanabiliriz.
+[**Karşılaştırma için,**] özdeş bir model tanımlarız, ancak (**tüm model parametrelerini rastgele değerlere ilklenir**). Tüm modelin sıfırdan eğitilmesi gerektiğinden, daha büyük bir öğrenme oranı kullanabiliriz.
 
 ```{.python .input}
 scratch_net = gluon.model_zoo.vision.resnet18_v2(classes=2)
@@ -257,19 +257,19 @@ scratch_net.fc = nn.Linear(scratch_net.fc.in_features, 2)
 train_fine_tuning(scratch_net, 5e-4, param_group=False)
 ```
 
-Gördüğümüz gibi, ince ayarlı model aynı çağı için daha iyi performans gösterme eğilimindedir, çünkü başlangıç parametre değerleri daha etkilidir. 
+Gördüğümüz gibi, ince ayarlı model aynı dönem için daha iyi performans gösterme eğilimindedir, çünkü ilk parametre değerleri daha etkilidir. 
 
 ## Özet
 
-* Öğrenmeyi kaynak veri kümesinden öğrenilen bilgileri hedef veri kümesine aktarır. İnce ayar, aktarma öğrenimi için yaygın bir tekniktir.
-* Hedef model, çıktı katmanı dışındaki kaynak modelden parametreleriyle tüm model tasarımlarını kopyalar ve hedef veri kümesine göre bu parametreleri ince ayarlar. Buna karşılık, hedef modelin çıktı katmanının sıfırdan eğitilmesi gerekir.
-* Genel olarak, ince ayar parametreleri daha küçük bir öğrenme hızı kullanırken, çıktı katmanını sıfırdan eğitmek daha büyük bir öğrenme hızı kullanabilir.
+* Öğrenme aktarımı kaynak veri kümesinden öğrenilen bilgiyi hedef veri kümesine aktarır. İnce ayar, öğrenim aktarımı için yaygın bir tekniktir.
+* Hedef model, çıktı katmanı hariç, kaynak modelden parametreleriyle tüm model tasarımlarını kopyalar ve hedef veri kümesine göre bu parametreleri ince ayarlar. Buna karşılık, hedef modelin çıktı katmanının sıfırdan eğitilmesi gerekir.
+* Genel olarak, ince ayar parametreleri daha küçük bir öğrenme oranı kullanırken, çıktı katmanını sıfırdan eğitmek daha büyük bir öğrenme oranı kullanabilir.
 
-## Egzersizler
+## Alıştırmalar
 
-1. `finetune_net` öğrenme oranını artırmaya devam edin. Modelin doğruluğu nasıl değişir?
-2. Ayrıca karşılaştırmalı deneyde `finetune_net` ve `scratch_net`'in hiperparametrelerini ayarlayın. Hala doğrulukta farklılık gösteriyorlar mı?
-3. `finetune_net` çıkış katmanından önceki parametreleri kaynak modelininkine ayarlayın ve eğitim sırasında bunları *not* güncelleyin. Modelin doğruluğu nasıl değişir? Aşağıdaki kodu kullanabilirsiniz.
+1. `finetune_net`'in öğrenme oranını artırmaya devam edin. Modelin doğruluğu nasıl değişir?
+2. Karşılaştırmalı deneyde `finetune_net` ve `scratch_net`'in hiperparametrelerini daha detaylı ayarlayın. Hala doğrulukta farklılık gösteriyorlar mı?
+3. `finetune_net` çıktı katmanından önceki parametreleri kaynak modelininkine ayarlayın ve eğitim sırasında bunları *güncellemeyin*. Modelin doğruluğu nasıl değişir? Aşağıdaki kodu kullanabilirsiniz.
 
 ```{.python .input}
 finetune_net.features.collect_params().setattr('grad_req', 'null')
@@ -281,7 +281,7 @@ for param in finetune_net.parameters():
     param.requires_grad = False
 ```
 
-4. Aslında, `ImageNet` veri kümesinde bir “hotdog” sınıfı var. Çıkış katmanındaki karşılık gelen ağırlık parametresi aşağıdaki kodla elde edilebilir. Bu ağırlık parametresinden nasıl yararlanabiliriz?
+4. Aslında, `ImageNet` veri kümesinde bir "sosislisandviç” sınıfı var. Çıktı katmanındaki karşılık gelen ağırlık parametresi aşağıdaki kodla elde edilebilir. Bu ağırlık parametresinden nasıl yararlanabiliriz?
 
 ```{.python .input}
 weight = pretrained_net.output.weight
@@ -297,9 +297,9 @@ hotdog_w.shape
 ```
 
 :begin_tab:`mxnet`
-[Discussions](https://discuss.d2l.ai/t/368)
+[Tartışmalar](https://discuss.d2l.ai/t/368)
 :end_tab:
 
 :begin_tab:`pytorch`
-[Discussions](https://discuss.d2l.ai/t/1439)
+[Tartışmalar](https://discuss.d2l.ai/t/1439)
 :end_tab:

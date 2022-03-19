@@ -12,7 +12,7 @@ $$
 \mathbf{E}^{(u, t)} = [ \mathbf{q}_{S_{t-L}^u} , ..., \mathbf{q}_{S_{t-2}^u}, \mathbf{q}_{S_{t-1}^u} ]^\top,
 $$
 
-burada $\mathbf{Q} \in \mathbb{R}^{n \times k}$ öğe gömme temsil eder ve $\mathbf{q}_i$ $i^\mathrm{th}$ satırını gösterir. $\mathbf{E}^{(u, t)} \in \mathbb{R}^{L \times k}$, $u$ kullanıcı $u$ geçici ilgisini zaman adım $t$ olarak çıkarmak için kullanılabilir. Giriş matrisini $\mathbf{E}^{(u, t)}$ sonraki iki konvolüsyonel bileşenin girişi olan bir görüntü olarak görebiliriz. 
+burada $\mathbf{Q} \in \mathbb{R}^{n \times k}$ öğe gömme temsil eder ve $\mathbf{q}_i$ $i.$ satırını gösterir. $\mathbf{E}^{(u, t)} \in \mathbb{R}^{L \times k}$, $u$ kullanıcı $u$ geçici ilgisini zaman adım $t$ olarak çıkarmak için kullanılabilir. Giriş matrisini $\mathbf{E}^{(u, t)}$ sonraki iki konvolüsyonel bileşenin girişi olan bir görüntü olarak görebiliriz. 
 
 Yatay kıvrımlı tabaka $d$ yatay filtrelere sahiptir $\mathbf{F}^j \in \mathbb{R}^{h \times k}, 1 \leq j \leq d, h = \{1, ..., L\}$ ve dikey kıvrımlı tabaka $d'$ dikey filtrelere sahiptir $\mathbf{G}^j \in \mathbb{R}^{ L \times 1}, 1 \leq j \leq d'$. Bir dizi konvolüsyonel ve havuz operasyonundan sonra, iki çıkış elde ediyoruz: 
 
@@ -35,7 +35,7 @@ $$
 \hat{y}_{uit} = \mathbf{v}_i \cdot [\mathbf{z}, \mathbf{p}_u]^\top + \mathbf{b}'_i,
 $$
 
-burada $\mathbf{V} \in \mathbb{R}^{n \times 2k}$ matrisi gömme başka bir öğedir. $\mathbf{b}' \in \mathbb{R}^n$, öğeye özgü önyargıdır. $\mathbf{P} \in \mathbb{R}^{m \times k}$, kullanıcıların genel zevkleri için matrisi gömme kullanıcıdır. $\mathbf{p}_u \in \mathbb{R}^{ k}$ $P$ ve $\mathbf{v}_i \in \mathbb{R}^{2k}$ $\mathbf{V}$'ün $i^\mathrm{th}$ sırasıdır. 
+burada $\mathbf{V} \in \mathbb{R}^{n \times 2k}$ matrisi gömme başka bir öğedir. $\mathbf{b}' \in \mathbb{R}^n$, öğeye özgü önyargıdır. $\mathbf{P} \in \mathbb{R}^{m \times k}$, kullanıcıların genel zevkleri için matrisi gömme kullanıcıdır. $\mathbf{p}_u \in \mathbb{R}^{ k}$ $P$ ve $\mathbf{v}_i \in \mathbb{R}^{2k}$ $\mathbf{V}$'ün $i.$ sırasıdır. 
 
 Model BPR veya Menteşe kaybı ile öğrenilebilir. Caser mimarisi aşağıda gösterilmiştir: 
 

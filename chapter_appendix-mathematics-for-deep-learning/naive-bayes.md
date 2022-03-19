@@ -149,7 +149,7 @@ $$ \hat{y} = \mathrm{argmax}_y \> \prod_{i=1}^d P_{xy}[x_i, y]P_y[y],$$
 
 ## Eğitim
 
-Şimdi sorun, $P_{xy}$ ve $P_y$'yi bilmiyor olmamızdır. Bu nedenle, önce bazı eğitim verileri verildiğinde bu değerleri tahmin etmemiz gerekiyor. Bu, modeli *eğitmektir*. $P_y$'yi tahmin etmek çok zor değil. Sadece $10$ sınıfla uğraştığımız için, her rakam için görülme sayısını, $n_y$, sayabilir ve bunu toplam veri miktarına $n$ bölebiliriz. Örneğin, 8 rakamı $n_8 = 5,800$ kez ortaya çıkarsa ve toplam $n = 60,000$ görüntümüz varsa, olasılık tahminimiz $ p(y=8) = 0,0967$ olur.
+Şimdi sorun, $P_{xy}$ ve $P_y$'yi bilmiyor olmamızdır. Bu nedenle, önce bazı eğitim verileri verildiğinde bu değerleri tahmin etmemiz gerekiyor. Bu, modeli *eğitmektir*. $P_y$'yi tahmin etmek çok zor değil. Sadece $10$ sınıfla uğraştığımız için, her rakam için görülme sayısını, $n_y$, sayabilir ve bunu toplam veri miktarına $n$ bölebiliriz. Örneğin, 8 rakamı $n_8 = 5,800$ kez ortaya çıkarsa ve toplam $n = 60,000$ görüntümüz varsa, olasılık tahminimiz $p(y=8) = 0,0967$ olur.
 
 ```{.python .input}
 X, Y = mnist_train[:]  # All training examples
@@ -195,7 +195,7 @@ P_xy = (n_x + 1) / (n_y + 1).reshape(10, 1, 1)
 d2l.show_images(P_xy, 2, 5);
 ```
 
-Bu $10$ \times 28 \times 28$ olasılıkları görselleştirerek (her sınıf için her piksel için) ortalama görünümlü rakamlar elde edebiliriz.
+Bu $10 \times 28 \times 28$ olasılıkları görselleştirerek (her sınıf için her piksel için) ortalama görünümlü rakamlar elde edebiliriz.
 
 Şimdi yeni bir görüntüyü tahmin etmek için :eqref:`eq_naive_bayes_estimation`'yi kullanabiliriz. $\mathbf x$ verildiğinde, aşağıdaki işlevler her $y$ için $p(\mathbf x \mid y)p(y)$'yi hesaplar.
 

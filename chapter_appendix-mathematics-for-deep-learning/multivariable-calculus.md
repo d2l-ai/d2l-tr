@@ -131,7 +131,7 @@ $$
 L(\mathbf{w} + \mathbf{v}) \approx L(\mathbf{w}) + \mathbf{v}\cdot \nabla_{\mathbf{w}} L(\mathbf{w}) = \|\nabla_{\mathbf{w}} L(\mathbf{w})\|\cos(\theta).
 $$
 
-Kolaylık olması açısından yönümüzü birim uzunluğa sahip olacak şekilde aldığımızı ve $\mathbf{v}$ ile $\nabla_ {\mathbf{w}} L(\mathbf{w}) arasındaki açı için $\theta$ kullandığımızı unutmayın. $L$'nin olabildiğince hızlı azalan yönünü bulmak istiyorsak, bu ifadeyi olabildiğince negatif olarak ifade etmek isteriz. Seçtiğimiz yönün bu denkleme girmesinin tek yolu $\cos(\theta)$ sayesindedir ve bu yüzden bu kosinüsü olabildiğince negatif yapmak istiyoruz. Şimdi, kosinüs şeklini hatırlarsak, bunu mümkün olduğunca negatif yapmak için $\cos(\theta) = -1$ yapmamız veya eşdeğer olarak gradyan ile seçtiğimiz yön arasındaki açıyı $\pi$ radyan olacak şekilde, diğer anlamda $180$ derece yapmamız gerekecektir. Bunu başarmanın tek yolu, tam ters yöne gitmektir: $\nabla_{\mathbf{w}} L(\mathbf{w})$ yönünün tam tersini gösteren $\mathbf{v}$'yi seçin !
+Kolaylık olması açısından yönümüzü birim uzunluğa sahip olacak şekilde aldığımızı ve $\mathbf{v}$ ile $\nabla_{\mathbf{w}} L(\mathbf{w})$ arasındaki açı için $\theta$ kullandığımızı unutmayın. $L$'nin olabildiğince hızlı azalan yönünü bulmak istiyorsak, bu ifadeyi olabildiğince negatif olarak ifade etmek isteriz. Seçtiğimiz yönün bu denkleme girmesinin tek yolu $\cos(\theta)$ sayesindedir ve bu yüzden bu kosinüsü olabildiğince negatif yapmak istiyoruz. Şimdi, kosinüs şeklini hatırlarsak, bunu mümkün olduğunca negatif yapmak için $\cos(\theta) = -1$ yapmamız veya eşdeğer olarak gradyan ile seçtiğimiz yön arasındaki açıyı $\pi$ radyan olacak şekilde, diğer anlamda $180$ derece yapmamız gerekecektir. Bunu başarmanın tek yolu, tam ters yöne gitmektir: $\nabla_{\mathbf{w}} L(\mathbf{w})$ yönünün tam tersini gösteren $\mathbf{v}$'yi seçin !
 
 This brings us to one of the most important mathematical concepts in machine learning: the direction of steepest decent points in the direction of $-\nabla_{\mathbf{w}}L(\mathbf{w})$.  Thus our informal algorithm can be rewritten as follows.
 
@@ -154,7 +154,7 @@ $$
 L(\mathbf{x}_0 + \boldsymbol{\epsilon}) \approx L(\mathbf{x}_0) + \boldsymbol{\epsilon}\cdot \nabla_{\mathbf{x}} L(\mathbf{x}_0).
 $$
 
-Gradyan sıfır değilse, $L$'nin daha küçük değerini bulmak için $-\epsilon \nabla_{\mathbf{x}} L(\mathbf{x}_0) $ yönünde bir adım atabileceğimizi biliyoruz. Bu nedenle, gerçekten minimumda isek, böyle bir durum olamaz! $\mathbf{x}_0$ bir minimum ise, $\nabla_{\mathbf{x}} L(\mathbf{x}_{0}) = 0$ olduğu sonucuna varabiliriz. $\nabla_{\mathbf{x}} L(\mathbf{x}_0) = 0$ ifadesi gerçek olan noktaları *kritik nokta* diye çağırıyoruz.
+Gradyan sıfır değilse, $L$'nin daha küçük değerini bulmak için $-\epsilon \nabla_{\mathbf{x}} L(\mathbf{x}_0)$ yönünde bir adım atabileceğimizi biliyoruz. Bu nedenle, gerçekten minimumda isek, böyle bir durum olamaz! $\mathbf{x}_0$ bir minimum ise, $\nabla_{\mathbf{x}} L(\mathbf{x}_{0}) = 0$ olduğu sonucuna varabiliriz. $\nabla_{\mathbf{x}} L(\mathbf{x}_0) = 0$ ifadesi gerçek olan noktaları *kritik nokta* diye çağırıyoruz.
 
 Bu güzel bir bilgi, çünkü bazı nadir durumlarda gradyanın sıfır olduğu tüm noktaları açıkça *bulabiliriz* ve en küçük değere sahip olanı bulabiliriz.
 
@@ -623,7 +623,7 @@ $$
 \frac{d}{dx_k}x_ia_{ij}x_j = [\mathbf{A} + \mathbf{A}^\top]_{ki}x_i.
 $$
 
-Benzer şekilde, bu terim artık $\mathbf{A} + \mathbf{A}^\top$ matrisinin $\mathbf{x} $ vektörü ile çarpımıdır, dolayısıyla şunu görüyoruz
+Benzer şekilde, bu terim artık $\mathbf{A} + \mathbf{A}^\top$ matrisinin $\mathbf{x}$ vektörü ile çarpımıdır, dolayısıyla şunu görüyoruz
 
 $$
 \left[\frac{d}{d\mathbf{x}}(\mathbf{x}^\top A \mathbf{x})\right]_k = \frac{d}{dx_k}x_ia_{ij}x_j = [(\mathbf{A} + \mathbf{A}^\top)\mathbf{x}]_k.
@@ -645,7 +645,7 @@ Eşdeğer olarak $\frac{d}{dx}(ax^2) = 2ax = (a+a)x$'dir. Yine, tek değişkenli
 
 Bu noktada, model oldukça şüpheli görünmelidir, bu yüzden nedenini anlamaya çalışalım. Bunun gibi matris türevlerini aldığımızda, öncelikle aldığımız ifadenin başka bir matris ifadesi olacağını varsayalım: Onu matrislerin çarpımları ve toplamları ve bunların devrikleri cinsinden yazabileceğimiz bir ifade. Böyle bir ifade varsa, tüm matrisler için doğru olması gerekecektir. Özellikle, $1 \times 1$ matrisler için doğru olması gerekecektir, ki bu durumda matris çarpımı sadece sayıların çarpımıdır, matris toplamı sadece toplamdır ve devrik hiçbir şey yapmaz! Başka bir deyişle, aldığımız ifade ne olursa olsun tek değişkenli ifadeyle *eşleşmelidir*. Bu, biraz pratikle, yalnızca ilişkili tek değişkenli ifadenin neye benzemesi gerektiğini bilerek matris türevlerini tahmin edebileceğiniz anlamına gelir!
 
-Bunu deneyelim. $\mathbf{X}$'nin bir $ n\times m$ matrisi, $\mathbf{U}$'nun $n\times r$ ve $\mathbf{V}$'nin $r\times m$ olduğunu varsayalım. Hesaplamayı deneyelim
+Bunu deneyelim. $\mathbf{X}$'nin bir $n \times m$ matrisi, $\mathbf{U}$'nun $n\times r$ ve $\mathbf{V}$'nin $r\times m$ olduğunu varsayalım. Hesaplamayı deneyelim
 
 $$\frac{d}{d\mathbf{V}} \|\mathbf{X} - \mathbf{U}\mathbf{V}\|_2^{2} = \;?$$
 :eqlabel:`eq_mat_goal_2`
@@ -718,7 +718,7 @@ $$
 \frac{d}{dv_{ab}} \|\mathbf{X} - \mathbf{U}\mathbf{V}\|_2^{2}= 2\sum_{i}[\mathbf{X}-\mathbf{U}\mathbf{V}]_{ib}u_{ia}.
 $$
 
-Bunun bir matrisin $a, b$ öğesi gibi görünmesini istiyoruz ki böylece bir matris ifadesine ulaşmak için önceki örnekte olduğu gibi tekniği kullanabilelim, bu da indislerin sırasını $u_{ia}$ üzerinden değiştirmemiz gerektiği anlamına gelir. $. $u_{ia} = [\mathbf{U}^\top]_{ai}$ olduğunu fark edersek, bunu yazabiliriz:
+Bunun bir matrisin $a, b$ öğesi gibi görünmesini istiyoruz ki böylece bir matris ifadesine ulaşmak için önceki örnekte olduğu gibi tekniği kullanabilelim, bu da indislerin sırasını $u_{ia}$ üzerinden değiştirmemiz gerektiği anlamına gelir. $u_{ia} = [\mathbf{U}^\top]_{ai}$ olduğunu fark edersek, bunu yazabiliriz:
 
 $$
 \frac{d}{dv_{ab}} \|\mathbf{X} - \mathbf{U}\mathbf{V}\|_2^{2}= 2\sum_{i} [\mathbf{U}^\top]_{ai}[\mathbf{X}-\mathbf{U}\mathbf{V}]_{ib}.
