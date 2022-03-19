@@ -1,11 +1,11 @@
-# Kaggle'da Görüntü Sınıflandırması (CIFAR-10)
+# Kaggle'da İmge Sınıflandırması (CIFAR-10)
 :label:`sec_kaggle_cifar10`
 
-Şimdiye kadar, doğrudan tensör formatında görüntü veri kümelerini elde etmek için derin öğrenme çerçevelerinin üst düzey API'lerini kullanıyoruz. Ancak, özel görüntü veri kümeleri genellikle görüntü dosyaları şeklinde gelir. Bu bölümde, ham görüntü dosyalarından başlayacağız ve düzenleyeceğiz, okuyacağız, ardından bunları adım adım tensör formatına dönüştüreceğiz. 
+Şimdiye kadar, doğrudan tensör formatında imge veri kümelerini elde etmek için derin öğrenme çerçevelerinin üst düzey API'lerini kullanıyoruz. Ancak, özel imge veri kümeleri genellikle imge dosyaları halinde gelir. Bu bölümde, ham imge dosyalarından başlayacağız ve düzenleyeceğiz, okuyacağız, ardından bunları adım adım tensör formatına dönüştüreceğiz. 
 
-Bilgisayar görüşünde önemli bir veri kümesi olan :numref:`sec_image_augmentation`'te CIFAR-10 veri kümesi ile deney yaptık. Bu bölümde, CIFAR-10 görüntü sınıflandırmasının Kaggle yarışmasını uygulamak için önceki bölümlerde öğrendiğimiz bilgileri uygulayacağız. (**Yarışmanın web adresi https://www.kaggle.com/c/cifar-10**) 
+Bilgisayarla görmede önemli bir veri kümesi olan :numref:`sec_image_augmentation`'te CIFAR-10 veri kümesi ile deney yaptık. Bu bölümde, CIFAR-10 imge sınıflandırmasının Kaggle yarışmasını uygulamak için önceki bölümlerde öğrendiğimiz bilgileri uygulayacağız. (**Yarışmanın web adresi https://www.kaggle.com/c/cifar-10**) 
 
-:numref:`fig_kaggle_cifar10` yarışmanın web sayfasındaki bilgileri gösterir. Sonuçları göndermek için bir Kaggle hesabı kaydettirmeniz gerekir. 
+:numref:`fig_kaggle_cifar10` yarışmanın web sayfasındaki bilgileri gösterir. Sonuçları göndermek için bir Kaggle hesabına kayıt olmanız gerekir. 
 
 ![CIFAR-10 image classification competition webpage information. The competition dataset can be obtained by clicking the "Data" tab.](../img/kaggle-cifar10.png)
 :width:`600px`
@@ -39,22 +39,21 @@ import shutil
 
 ## Veri Kümesini Elde Etme ve Düzenleme
 
-Yarışma veri seti, sırasıyla 50000 ve 300000 görüntü içeren bir eğitim seti ve bir test setine ayrılmıştır. Test setinde, değerlendirme için 10000 görüntü kullanılacak, kalan 290000 görüntüler değerlendirilmeyecek: sadece hile yapmayı zorlaştırmak için dahil edilirler
-*manuel olarak test setinin sonuçları etiketli.
-Bu veri kümeindeki görüntüler, yüksekliği ve genişliği 32 piksel olan png renkli (RGB kanalları) görüntü dosyalarıdır. Görüntüler, uçaklar, arabalar, kuşlar, kediler, geyik, köpekler, kurbağalar, atlar, tekneler ve kamyonlar olmak üzere toplam 10 kategoriyi kapsar. :numref:`fig_kaggle_cifar10`'ün sol üst köşesi veri kümesindeki uçakların, arabaların ve kuşların bazı görüntülerini gösterir. 
+Yarışma veri kümesi, sırasıyla 50000 ve 300000 imge içeren bir eğitim kümesi ve bir test kümesine ayrılmıştır. Test kümesinde, değerlendirme için 10000 imge kullanılacak, kalan 290000 imgeler değerlendirilmeyecek: Bunlar sadece test kümesinin *manuel* etiketli sonuçlarıyla hile yapmayı zorlaştırmak için dahil edilmiştir.
+Bu veri kümesindeki imgeler, yüksekliği ve genişliği 32 piksel olan png renkli (RGB kanalları) imge dosyalarıdır. İmgeler, uçaklar, arabalar, kuşlar, kediler, geyik, köpekler, kurbağalar, atlar, tekneler ve kamyonlar olmak üzere toplam 10 kategoriyi kapsar. :numref:`fig_kaggle_cifar10`'ün sol üst köşesi veri kümesindeki uçakların, arabaların ve kuşların bazı imgelerini gösterir. 
 
 ### Veri Kümesini İndirme
 
-Kaggle'a giriş yaptıktan sonra :numref:`fig_kaggle_cifar10`'te gösterilen CIFAR-10 resim sınıflandırma yarışması web sayfasındaki “Veri” sekmesine tıklayabilir ve “Tümünü İndir” butonuna tıklayarak veri kümesini indirebiliriz. İndirilen dosyayı `../data`'te açtıktan ve içinde `train.7z` ve `test.7z`'yı açtıktan sonra, tüm veri kümesini aşağıdaki yollarda bulacaksınız: 
+Kaggle'a girdi yaptıktan sonra :numref:`fig_kaggle_cifar10`'te gösterilen CIFAR-10 resim sınıflandırma yarışması web sayfasındaki “Veri” sekmesine tıklayabilir ve “Tümünü İndir” butonuna tıklayarak veri kümesini indirebiliriz. İndirilen dosyayı `../data`'da açtıktan ve içinde `train.7z` ve `test.7z`'yı açtıktan sonra, tüm veri kümesini aşağıdaki yollarda bulacaksınız: 
 
 * `../data/cifar-10/train/[1-50000].png`
 * `../data/cifar-10/test/[1-300000].png`
 * `../data/cifar-10/trainLabels.csv`
 * `../data/cifar-10/sampleSubmission.csv`
 
-`train` ve `test` dizinlerinin sırasıyla eğitim ve test görüntülerini içerdiği, `trainLabels.csv` eğitim görüntüleri için etiketler sağlar ve `sample_submission.csv` örnek bir gönderim dosyasıdır. 
+`train` ve `test` dizinlerinin sırasıyla eğitim ve test imgelerini içerdiği, `trainLabels.csv` eğitim imgeleri için etiketler sağlar ve `sample_submission.csv` örnek bir gönderim dosyasıdır. 
 
-Başlamayı kolaylaştırmak için [**İlk 1000 eğitim görüntüsü ve 5 rastgele test görüntüsünü içeren veri kümesinin küçük ölçekli bir örneğini sağlıyoruz. **] Kaggle yarışmasının tam veri kümesini kullanmak için aşağıdaki `demo` değişkenini `False` olarak ayarlamanız gerekir.
+Başlamayı kolaylaştırmak için [**ilk 1000 eğitim imgesi ve 5 rastgele test imgesi içeren veri kümesinin küçük ölçekli bir örneğini sağlıyoruz.**] Kaggle yarışmasının tam veri kümesini kullanmak için aşağıdaki `demo` değişkenini `False` olarak ayarlamanız gerekir.
 
 ```{.python .input}
 #@tab all
@@ -72,7 +71,7 @@ else:
     data_dir = '../data/cifar-10/'
 ```
 
-### [**Veri Kümesini Düzenliyor**]
+### [**Veri Kümesini Düzenleme**]
 
 Model eğitimini ve testlerini kolaylaştırmak için veri kümeleri düzenlememiz gerekiyor. Önce csv dosyasındaki etiketleri okuyalım. Aşağıdaki işlev, dosya adının uzantısız kısmını etiketine eşleyen bir sözlük döndürür.
 
@@ -92,7 +91,7 @@ print('# training examples:', len(labels))
 print('# classes:', len(set(labels.values())))
 ```
 
-Ardından, `reorg_train_valid` işlevini [**orijinal eğitim setinden ayarlanan doğrulamayı bölmek için tanımlıyoruz. **] Bu işlevdeki `valid_ratio` argüman, doğrulamadaki örneklerin sayısının orijinal eğitim kümesindeki örneklerin sayısına oranıdır. Daha somut olarak, $n$'in en az örneklerle sınıfın görüntü sayısı olmasına izin verin ve $r$ oranı olsun. Doğrulama kümesi her sınıf için $\max(\lfloor nr\rfloor,1)$ görüntüyü ayırır. Örnek olarak `valid_ratio=0.1`'yı kullanalım. Orijinal eğitim seti sahip olduğundan 50000 resimler, olacak 45000 yolda eğitim için kullanılan resimler `train_valid_test/train`, diğer 5000 görüntüleri doğrulama yolunda ayarlanmış olarak ayrılacak iken `train_valid_test/valid`. Veri kümesini düzenledikten sonra, aynı sınıfın görüntüleri aynı klasörün altına yerleştirilir.
+Ardından, `reorg_train_valid` işlevini [**esas eğitim kümesinden geçerleme kümesini bölmek için tanımlıyoruz.**] Bu işlevdeki `valid_ratio` argümanı, geçerleme kümesindeki örneklerin sayısının orijinal eğitim kümesindeki örneklerin sayısına oranıdır. Daha somut olarak, sınıfın en az örnek içeren imge sayısı $n$ ve oranı da $r$ olsun. Geçerleme kümesi her sınıf için $\max(\lfloor nr\rfloor,1)$ imge ayırır. Örnek olarak `valid_ratio=0.1`'i kullanalım. Orijinal eğitim kümesi 50000 imgeye sahip olduğundan, `train_valid_test/train` yolunda eğitim için kullanılan 45000 imge olacak, diğer 5000 imge `train_valid_test/valid` yolunda geçerleme kümesi olarak bölünecek. Veri kümesini düzenledikten sonra, aynı sınıfın imgeleri aynı klasörün altına yerleştirilir.
 
 ```{.python .input}
 #@tab all
@@ -126,7 +125,7 @@ def reorg_train_valid(data_dir, labels, valid_ratio):
     return n_valid_per_label
 ```
 
-Aşağıdaki `reorg_test` işlevi [**tahmin sırasında veri yükleme için test setini düzenler.**]
+Aşağıdaki `reorg_test` işlevi [**tahmin sırasında veri yükleme için test kümesini düzenler.**]
 
 ```{.python .input}
 #@tab all
@@ -139,7 +138,7 @@ def reorg_test(data_dir):
                               'unknown'))
 ```
 
-Son olarak, `read_csv_labels`, `reorg_train_valid` ve `reorg_test` (** yukarıda tanımlanan işlevler**) [**invoke**] için bir işlev kullanıyoruz
+Son olarak, `read_csv_labels`, `reorg_train_valid` ve `reorg_test` (**yukarıda tanımlanan işlevleri**) [**çağırmak**] için bir işlev kullanıyoruz.
 
 ```{.python .input}
 #@tab all
@@ -149,7 +148,7 @@ def reorg_cifar10_data(data_dir, valid_ratio):
     reorg_test(data_dir)
 ```
 
-Burada, veri kümesinin küçük ölçekli örneği için toplu iş boyutunu yalnızca 32 olarak ayarlıyoruz. Kaggle yarışmasının tüm veri kümesini eğitip test ederken, `batch_size` 128 gibi daha büyük bir tamsayıya ayarlanmalıdır. Eğitim örneklerinin%10'unu hiper parametrelerin ayarlanması için doğrulama kümesi olarak ayırdık.
+Burada, veri kümesinin küçük ölçekli örneği için toplu iş boyutunu yalnızca 32 olarak ayarlıyoruz. Kaggle yarışmasının tüm veri kümesini eğitip test ederken, `batch_size` 128 gibi daha büyük bir tamsayıya ayarlanmalıdır. Eğitim örneklerinin %10'unu hiper parametrelerin ayarlanması için geçerleme kümesi olarak ayırdık.
 
 ```{.python .input}
 #@tab all
@@ -158,9 +157,9 @@ valid_ratio = 0.1
 reorg_cifar10_data(data_dir, valid_ratio)
 ```
 
-## [**Görüntü Artırma**]
+## [**İmge Artırma**]
 
-Aşırı uyum sağlamak için görüntü büyütme kullanıyoruz. Örneğin, görüntüler eğitim sırasında rastgele yatay olarak çevrilebilir. Renkli görüntülerin üç RGB kanalı için standardizasyon da gerçekleştirebiliriz. Aşağıda ayarlayabileceğiniz bu işlemlerin bazıları listelenmektedir.
+Aşırı öğrenmeyi bertaraf etmek için imge artırımı kullanıyoruz. Örneğin, imgeler eğitim sırasında rastgele yatay olarak çevrilebilir. Renkli imgelerin üç RGB kanalı için standartlaştırma da gerçekleştirebiliriz. Aşağıda ayarlayabileceğiniz bu işlemlerin bazıları listelenmektedir.
 
 ```{.python .input}
 transform_train = gluon.data.vision.transforms.Compose([
@@ -197,7 +196,7 @@ transform_train = torchvision.transforms.Compose([
                                      [0.2023, 0.1994, 0.2010])])
 ```
 
-Test sırasında, değerlendirme sonuçlarındaki rastgeleliği ortadan kaldırmak için yalnızca görüntüler üzerinde standardizasyon gerçekleştiriyoruz.
+Test sırasında, değerlendirme sonuçlarındaki rastgeleliği ortadan kaldırmak için yalnızca imgeler üzerinde standartlaştırma gerçekleştiriyoruz.
 
 ```{.python .input}
 transform_test = gluon.data.vision.transforms.Compose([
@@ -216,7 +215,7 @@ transform_test = torchvision.transforms.Compose([
 
 ## Veri Kümesini Okuma
 
-Ardından, [**ham görüntü dosyalarından oluşan organize veri kümesini okudu**]. Her örnek bir görüntü ve bir etiket içerir.
+Ardından, [**ham imge dosyalarından oluşan düzenlenmiş veri kümesini okuruz**]. Her örnek bir imge ve bir etiket içerir.
 
 ```{.python .input}
 train_ds, valid_ds, train_valid_ds, test_ds = [
@@ -236,13 +235,7 @@ valid_ds, test_ds = [torchvision.datasets.ImageFolder(
     transform=transform_test) for folder in ['valid', 'test']]
 ```
 
-During training,
-we need to [**specify all the image augmentation operations defined above**].
-When the validation set
-is used for model evaluation during hyperparameter tuning,
-no randomness from image augmentation should be introduced.
-Before final prediction,
-we train the model on the combined training set and validation set to make full use of all the labeled data.
+Eğitim sırasında [**yukarıda tanımlanan tüm imge artırım işlemlerini belirtmemiz**] gerekir. Geçerleme kümesi hiperparametre ayarlama sırasında model değerlendirmesi için kullanıldığında, imge artırımdan rastgelelik getirilmemelidir. Son tahminden önce, tüm etiketlenmiş verileri tam olarak kullanmak için modeli birleştirilmiş eğitim kümesi ve geçerleme kümesi üzerinde eğitiriz.
 
 ```{.python .input}
 train_iter, train_valid_iter = [gluon.data.DataLoader(
@@ -271,7 +264,7 @@ test_iter = torch.utils.data.DataLoader(test_ds, batch_size, shuffle=False,
                                         drop_last=False)
 ```
 
-## [**Model**] tanımlama
+## [**Modeli**] Tanımlama
 
 :begin_tab:`mxnet`
 Burada, :numref:`sec_resnet`'te açıklanan uygulamadan biraz farklı olan `HybridBlock` sınıfına dayanan artık blokları inşa ediyoruz. Bu, hesaplama verimliliğini artırmak içindir.
@@ -328,7 +321,7 @@ def resnet18(num_classes):
 ```
 
 :begin_tab:`mxnet`
-Eğitim başlamadan önce :numref:`subsec_xavier`'te açıklanan Xavier başlatma işlemini kullanıyoruz.
+Eğitim başlamadan önce :numref:`subsec_xavier`'te açıklanan Xavier ilkletme işlemini kullanıyoruz.
 :end_tab:
 
 :begin_tab:`pytorch`
@@ -355,9 +348,9 @@ def get_net():
 loss = nn.CrossEntropyLoss(reduction="none")
 ```
 
-## [**Eğitim Fonksiyonu**] tanımlama
+## [**Eğitim Fonksiyonunu**] Tanımlama
 
-Modelleri seçeceğiz ve hiper parametreleri doğrulama kümesindeki modelin performansına göre ayarlayacağız. Aşağıda, model eğitim fonksiyonunu tanımlıyoruz `train`.
+Modelleri seçeceğiz ve hiper parametreleri geçerleme kümesindeki modelin performansına göre ayarlayacağız. Aşağıda, model eğitim fonksiyonunu, `train`, tanımlıyoruz .
 
 ```{.python .input}
 def train(net, train_iter, valid_iter, num_epochs, lr, wd, devices, lr_period,
@@ -436,9 +429,9 @@ def train(net, train_iter, valid_iter, num_epochs, lr, wd, devices, lr_period,
           f' examples/sec on {str(devices)}')
 ```
 
-## [**Modeli Eğitim ve Doğrulanma**]
+## [**Modeli Eğitme ve Geçerleme**]
 
-Şimdi, modeli eğitebilir ve doğrulayabiliriz. Aşağıdaki tüm hiperparametreler ayarlanabilir. Örneğin, çak sayısını artırabiliriz. `lr_period` ve `lr_decay` sırasıyla 4 ve 0.9 olarak ayarlandığında, optimizasyon algoritmasının öğrenme hızı her 4 çağ sonrasında 0,9 ile çarpılır. Sadece gösteri kolaylığı için, burada sadece 20 çağından antrenman yapıyoruz.
+Şimdi, modeli eğitebilir ve geçerleyebiliriz. Aşağıdaki tüm hiper parametreler ayarlanabilir. Örneğin, dönem sayısını artırabiliriz. `lr_period` ve `lr_decay` sırasıyla 4 ve 0.9 olarak ayarlandığında, optimizasyon algoritmasının öğrenme oranı her 4 dönem sonrasında 0.9 ile çarpılır. Sadece gösterim kolaylığı için, burada sadece 20 dönemlik eğitim yapıyoruz.
 
 ```{.python .input}
 devices, num_epochs, lr, wd = d2l.try_all_gpus(), 20, 0.02, 5e-4
@@ -456,9 +449,9 @@ train(net, train_iter, valid_iter, num_epochs, lr, wd, devices, lr_period,
       lr_decay)
 ```
 
-## [**Test Setini Sınıflandırma**] ve Kaggle'da Sonuçları Gönderme
+## [**Test Kümesini Sınıflandırma**] ve Kaggle'da Sonuçları Teslim Etme
 
-Hiperparametrelerle umut verici bir model elde ettikten sonra, modeli yeniden eğitmek ve test setini sınıflandırmak için tüm etiketli verileri (doğrulama seti dahil) kullanırız.
+Hiper parametrelerle umut verici bir model elde ettikten sonra, modeli yeniden eğitmek ve test kümesini sınıflandırmak için tüm etiketli verileri (geçerleme kümesi dahil) kullanırız.
 
 ```{.python .input}
 net, preds = get_net(devices), []
@@ -492,29 +485,29 @@ df['label'] = df['label'].apply(lambda x: train_valid_ds.classes[x])
 df.to_csv('submission.csv', index=False)
 ```
 
-Yukarıdaki kod, biçimi Kaggle yarışmasının gereksinimini karşılayan bir `submission.csv` dosyası oluşturacaktır. Sonuçları Kaggle'a gönderme yöntemi, :numref:`sec_kaggle_house`'teki yönteme benzer. 
+Yukarıdaki kod, biçimi Kaggle yarışmasının gereksinimini karşılayan bir `submission.csv` dosyası oluşturacaktır. Sonuçları Kaggle'a gönderme yöntemi, :numref:`sec_kaggle_house`'teki yönteme benzerdir. 
 
 ## Özet
 
-* Gerekli formata düzenledikten sonra ham görüntü dosyalarını içeren veri kümelerini okuyabiliriz.
+* Gerekli formata düzenledikten sonra ham imge dosyalarını içeren veri kümelerini okuyabiliriz.
 
 :begin_tab:`mxnet`
-* Bir görüntü sınıflandırma yarışmasında, evrimsel sinir ağlarını, görüntü büyütme ve hibrit programlamayı kullanabiliriz.
+* Bir imge sınıflandırma yarışmasında, evrişimli sinir ağlarını, imge artırmayı ve hibrit programlamayı kullanabiliriz.
 :end_tab:
 
 :begin_tab:`pytorch`
-* Bir görüntü sınıflandırma yarışmasında evrimsel sinir ağları ve görüntü büyütme özelliğini kullanabiliriz.
+* Bir imge sınıflandırma yarışmasında evrişimli sinir ağları ve imge artırmayı kullanabiliriz.
 :end_tab:
 
-## Egzersizler
+## Alıştırmalar
 
-1. Bu Kaggle yarışması için CIFAR-10 veri setinin tamamını kullanın. Hiperparametreleri `batch_size = 128`, `num_epochs = 100`, `lr = 0.1`, `lr_period = 50` ve `lr_decay = 0.1` olarak ayarlayın. Bu yarışmada hangi doğruluk ve sıralamayı elde edebileceğinizi görün. Onları daha da geliştirebilir misin?
-1. Görüntü büyütmesini kullanmadığınızda hangi doğruluğu elde edebilirsiniz?
+1. Bu Kaggle yarışması için CIFAR-10 veri kümesinin tamamını kullanın. Hiper parametreleri `batch_size = 128`, `num_epochs = 100`, `lr = 0.1`, `lr_period = 50` ve `lr_decay = 0.1` olarak ayarlayın. Bu yarışmada hangi doğruluk ve sıralamayı elde edebileceğinizi görün. Onları daha da geliştirebilir misin?
+1. İmge artırmayı kullanmadığınızda hangi doğruluğu elde edebilirsiniz?
 
 :begin_tab:`mxnet`
-[Discussions](https://discuss.d2l.ai/t/379)
+[Tartışmalar](https://discuss.d2l.ai/t/379)
 :end_tab:
 
 :begin_tab:`pytorch`
-[Discussions](https://discuss.d2l.ai/t/1479)
+[Tartışmalar](https://discuss.d2l.ai/t/1479)
 :end_tab:
