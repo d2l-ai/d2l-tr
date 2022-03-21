@@ -48,73 +48,75 @@ burada $1$'den az veya $T$'den daha büyük herhangi bir zaman adımı atlanabil
 
 ### Eğitim
 
-Skip-gram modeli parametreleri, sözcük dağarcığındaki her sözcük için merkez sözcük vektörü ve bağlam sözcük vektörüdür. Eğitimde, olasılık fonksiyonunu (yani maksimum olasılık tahmini) maksimize ederek model parametrelerini öğreniriz. Bu, aşağıdaki kayıp işlevini en aza indirmeye eşdeğerdir: 
+Skip-gram modeli parametreleri, sözcük dağarcığındaki her sözcük için merkez sözcük vektörü ve bağlam sözcük vektörüdür. Eğitimde, olasılık fonksiyonunu (yani maksimum olabilirlik tahmini) maksimuma çıkararak model parametrelerini öğreniriz. Bu, aşağıdaki kayıp işlevini en aza indirmeye eşdeğerdir: 
 
 $$ - \sum_{t=1}^{T} \sum_{-m \leq j \leq m,\ j \neq 0} \text{log}\, P(w^{(t+j)} \mid w^{(t)}).$$
 
-Kaybı en aza indirmek için stokastik degrade iniş kullanırken, her yinelemede rastgele model parametrelerini güncellemek için bu sonrakinin (stokastik) degrade hesaplamak için daha kısa bir sonrasını örnekleyebiliriz. Bu (stokastik) degradeyi hesaplamak için, merkez sözcük vektörü ve bağlam sözcük vektörüne göre günlük koşullu olasılığının degradelerini elde etmemiz gerekir. Genel olarak, :eqref:`eq_skip-gram-softmax`'e göre $w_c$ ve $w_o$ bağlam sözcüğünün herhangi bir çiftini içeren günlük koşullu olasılık 
+Kaybı en aza indirmek için rasgele gradyan inişi kullanırken, model parametrelerini güncellemek için bu alt dizi için (rasgele) gradyanı hesaplamak için her yinelemede rastgele daha kısa bir alt diziyi örnekleyebiliriz. Bu (rasgele) gradyanı hesaplamak için, merkez sözcük vektörü ve bağlam sözcük vektörüne göre günlük koşullu olasılığının gradyanlarını elde etmemiz gerekir. Genel olarak, :eqref:`eq_skip-gram-softmax`a göre, herhangi $w_c$ merkez kelimesinin ve $w_o$ bağlam kelimesinin herhangi bir çiftini içeren log koşullu olasılığı aşağıdaki gibidir:
+
 
 $$\log P(w_o \mid w_c) =\mathbf{u}_o^\top \mathbf{v}_c - \log\left(\sum_{i \in \mathcal{V}} \text{exp}(\mathbf{u}_i^\top \mathbf{v}_c)\right).$$
 :eqlabel:`eq_skip-gram-log`
 
-Farklılaşma sayesinde, merkez sözcük vektörü $\mathbf{v}_c$ ile ilgili olarak gradyanı elde edebiliriz 
+Türev alma sayesinde, merkez sözcük vektörü $\mathbf{v}_c$ ile ilgili olarak gradyanı aşağıdaki gibi elde edebiliriz 
 
 $$\begin{aligned}\frac{\partial \text{log}\, P(w_o \mid w_c)}{\partial \mathbf{v}_c}&= \mathbf{u}_o - \frac{\sum_{j \in \mathcal{V}} \exp(\mathbf{u}_j^\top \mathbf{v}_c)\mathbf{u}_j}{\sum_{i \in \mathcal{V}} \exp(\mathbf{u}_i^\top \mathbf{v}_c)}\\&= \mathbf{u}_o - \sum_{j \in \mathcal{V}} \left(\frac{\text{exp}(\mathbf{u}_j^\top \mathbf{v}_c)}{ \sum_{i \in \mathcal{V}} \text{exp}(\mathbf{u}_i^\top \mathbf{v}_c)}\right) \mathbf{u}_j\\&= \mathbf{u}_o - \sum_{j \in \mathcal{V}} P(w_j \mid w_c) \mathbf{u}_j.\end{aligned}$$
 :eqlabel:`eq_skip-gram-grad`
 
-:eqref:`eq_skip-gram-grad`'teki hesaplamanın, sözlükteki tüm sözcüklerin orta sözcük olarak $w_c$ ile koşullu olasılıklarını gerektirdiğini unutmayın. Diğer sözcük vektörlerinin degradeleri aynı şekilde elde edilebilir. 
+:eqref:`eq_skip-gram-grad` içindeki hesaplamanın, sözlükteki tüm kelimelerin merkez kelime $w_c$ ile olan koşullu olasılıklarını gerektirdiğini unutmayın.
+Diğer kelime vektörlerinin gradyanları da aynı şekilde elde edilebilir.
 
-Eğitimden sonra, sözlükte indeks $i$ olan herhangi bir sözcük için, $\mathbf{v}_i$ (orta sözcük olarak) ve $\mathbf{u}_i$ (bağlam sözcüksi olarak) hem de $\mathbf{u}_i$ sözcüksini elde ederiz. Doğal dil işleme uygulamalarında, atlama grafiği modelinin orta sözcük vektörleri genellikle sözcük temsilleri olarak kullanılır. 
+Eğitimden sonra, sözlükte indeks $i$ olan herhangi bir sözcük için, $\mathbf{v}_i$ (merkez sözcük olarak) ve $\mathbf{u}_i$ (bağlam sözcüğü olarak) iki sözcük vektörü elde ederiz. Doğal dil işleme uygulamalarında, skip-gram modelinin merkez sözcük vektörleri genellikle sözcük temsilleri olarak kullanılır. 
 
-## Sürekli Sözcük Çantası (CBOW) Modeli
+## Sürekli Sözcük Torbası (CBOW) Modeli
 
-*Sürekli sözcük torbası* (CBOW) modeli, atlama gram modeline benzer. Skip-gram modelinden en büyük fark, sözcüklerin sürekli torba modeli, bir merkez sözcüğün metin dizisindeki çevreleyen bağlam sözcüklerine dayanarak oluşturulduğunu varsaymasıdır. Örneğin, aynı metin dizisi “the”, “adam”, “seviyor”, “onun” ve “oğul”, orta sözcük ve bağlam penceresi boyutu 2 olarak “seviyor” ile, sözcük sürekli çanta modeli “seviyor” bağlam sözcükleri dayalı “seviyor” orta sözcük üretme koşullu olasılığını dikkate alır “the”, “adam”, “onun” ve “oğlu “(:numref:`fig_cbow` gösterildiği gibi), hangi 
+*Sürekli sözcük torbası* (CBOW) modeli, skip-gram modeline benzer. Skip-gram modelinden en büyük fark, sürekli sözcük torbası modeli, bir merkez sözcüğün metin dizisindeki çevreleyen bağlam sözcüklerine dayanarak oluşturulduğunu varsaymasıdır. Örneğin, aynı "the", "man", "loves", "his", ve "son" metin dizisinde , "loves" merkez kelimedir ve bağlam penceresi boyutu 2'dir, sürekli sözcük torbası modeli, "the", "man", "his" ve "son" bağlam sözcüklerine dayalı olarak "loves" merkez kelimesini üretme koşullu olasılığını dikkate alır (:numref:`fig_cbow`da gösterildiği gibi), 
 
 $$P(\textrm{"loves"}\mid\textrm{"the"},\textrm{"man"},\textrm{"his"},\textrm{"son"}).$$
 
-![The continuous bag of words model considers the conditional probability of generating the center word given its surrounding context words.](../img/cbow.svg)
+![Sürekli sözcük torbası modeli, çevreleyen bağlam kelimeleri verilen merkez kelimeyi üretmenin koşullu olasılığını dikkate alır.](../img/cbow.svg)
 :eqlabel:`fig_cbow`
 
-Sözcüklerin sürekli çanta modelinde birden fazla bağlam sözcükleri bulunduğundan, bu bağlam sözcük vektörleri koşullu olasılığın hesaplanmasında ortalamalanır. Özellikle, sözlükte indeks $i$ olan herhangi bir sözcük için, sırasıyla $\mathbf{v}_i\in\mathbb{R}^d$ ve $\mathbf{u}_i\in\mathbb{R}^d$ ile iki vektörünü, *context* sözcüksi ve bir *center* sözcük olarak kullanıldığında (anlamlar atlama gram modelinde değiştirilir). Çevredeki bağlam sözcükleri $w_{o_1}, \ldots, w_{o_{2m}}$ (sözlükte indeks $c$ ile) $w_{o_1}, \ldots, w_{o_{2m}}$ (dizin $o_1, \ldots, o_{2m}$ sözlükte indeks) verilen herhangi bir merkez sözcük üretme koşullu olasılık 
+Sürekli sözcük torba modelinde çoklu bağlam sözcükleri bulunduğundan, bu bağlam sözcük vektörleri koşullu olasılığın hesaplanmasında ortalanır. Özellikle, sözlükte indeks $i$ olan herhangi bir sözcük için, bir *bağlam* sözcüğü ve bir *merkez* sözcük olarak kullanıldığında (skip-gram modelinde anlamlar değiştirilir) sırasıyla $\mathbf{v}_i\in\mathbb{R}^d$ ve $\mathbf{u}_i\in\mathbb{R}^d$ olan iki vektör ile belirtin. Çevresindeki bağlam sözcükleri $w_{o_1}, \ldots, w_{o_{2m}}$ (sözlükte dizin $c$ ile) $w_{o_1}, \ldots, w_{o_{2m}}$ (sözlükteki dizin $o_1, \ldots, o_{2m}$) verilen herhangi bir merkez sözcük üretme koşullu olasılığı şöyle modellenebilir: 
 
 $$P(w_c \mid w_{o_1}, \ldots, w_{o_{2m}}) = \frac{\text{exp}\left(\frac{1}{2m}\mathbf{u}_c^\top (\mathbf{v}_{o_1} + \ldots, + \mathbf{v}_{o_{2m}}) \right)}{ \sum_{i \in \mathcal{V}} \text{exp}\left(\frac{1}{2m}\mathbf{u}_i^\top (\mathbf{v}_{o_1} + \ldots, + \mathbf{v}_{o_{2m}}) \right)}.$$
 :eqlabel:`fig_cbow-full`
 
-Kısalık için $\mathcal{W}_o= \{w_{o_1}, \ldots, w_{o_{2m}}\}$ ve $\bar{\mathbf{v}}_o = \left(\mathbf{v}_{o_1} + \ldots, + \mathbf{v}_{o_{2m}} \right)/(2m)$'e izin verin. Daha sonra :eqref:`fig_cbow-full` olarak basitleştirilebilir 
+Kısalık için $\mathcal{W}_o= \{w_{o_1}, \ldots, w_{o_{2m}}\}$ ve $\bar{\mathbf{v}}_o = \left(\mathbf{v}_{o_1} + \ldots, + \mathbf{v}_{o_{2m}} \right)/(2m)$ olsun. Daha sonra :eqref:`fig_cbow-full` aşağıdaki gibi basitleştirilebilir 
 
 $$P(w_c \mid \mathcal{W}_o) = \frac{\exp\left(\mathbf{u}_c^\top \bar{\mathbf{v}}_o\right)}{\sum_{i \in \mathcal{V}} \exp\left(\mathbf{u}_i^\top \bar{\mathbf{v}}_o\right)}.$$
 
-$T$ uzunluğunda bir metin dizisi göz önüne alındığında, burada adım $t$ sözcüksi $w^{(t)}$ olarak gösterilir. Bağlam penceresi boyutu $m$ için, sürekli sözcük torbasının olasılık fonksiyonu, bağlam sözcükleri verilen tüm merkez sözcükleri oluşturma olasılığıdır: 
+$T$ uzunluğunda bir metin dizisi göz önüne alındığında, burada $t$ adımdaki  sözcük $w^{(t)}$ olarak gösterilir. Bağlam penceresi boyutu $m$ için, sürekli sözcük torbasının olasılık fonksiyonu, bağlam sözcükleri verildiğinde tüm merkez sözcükleri üretme olasılığıdır: 
 
 $$ \prod_{t=1}^{T}  P(w^{(t)} \mid  w^{(t-m)}, \ldots, w^{(t-1)}, w^{(t+1)}, \ldots, w^{(t+m)}).$$
 
 ### Eğitim
 
-Sözcük modellerinin sürekli çanta eğitimi atlama gram modellerini eğitmekle hemen hemen aynıdır. Sözcüklerin sürekli torba modelinin maksimum olasılık tahmini aşağıdaki kayıp fonksiyonunu en aza indirmeye eşdeğerdir: 
+Sürekli sözcük torbası modellerini eğitmek, skip-gram modellerini eğitmekle hemen hemen aynıdır. Sürekli sözcük torba modelinin maksimum olabilirlik tahmini aşağıdaki kayıp fonksiyonunu en aza indirmeye eşdeğerdir: 
 
 $$  -\sum_{t=1}^T  \text{log}\, P(w^{(t)} \mid  w^{(t-m)}, \ldots, w^{(t-1)}, w^{(t+1)}, \ldots, w^{(t+m)}).$$
 
-Dikkat et 
+Dikkatli incelersek,
 
 $$\log\,P(w_c \mid \mathcal{W}_o) = \mathbf{u}_c^\top \bar{\mathbf{v}}_o - \log\,\left(\sum_{i \in \mathcal{V}} \exp\left(\mathbf{u}_i^\top \bar{\mathbf{v}}_o\right)\right).$$
 
-Farklılaşma sayesinde, herhangi bir bağlam sözcük vektörü ile ilgili gradyanı elde edebilirsiniz $\mathbf{v}_{o_i}$ ($i = 1, \ldots, 2m$) olarak 
+Türev alma sayesinde, herhangi bir bağlam sözcük vektörü göre gradyanını elde edebilirsiniz $\mathbf{v}_{o_i}$ ($i = 1, \ldots, 2m$): 
 
 $$\frac{\partial \log\, P(w_c \mid \mathcal{W}_o)}{\partial \mathbf{v}_{o_i}} = \frac{1}{2m} \left(\mathbf{u}_c - \sum_{j \in \mathcal{V}} \frac{\exp(\mathbf{u}_j^\top \bar{\mathbf{v}}_o)\mathbf{u}_j}{ \sum_{i \in \mathcal{V}} \text{exp}(\mathbf{u}_i^\top \bar{\mathbf{v}}_o)} \right) = \frac{1}{2m}\left(\mathbf{u}_c - \sum_{j \in \mathcal{V}} P(w_j \mid \mathcal{W}_o) \mathbf{u}_j \right).$$
 :eqlabel:`eq_cbow-gradient`
 
-Diğer sözcük vektörlerinin degradeleri aynı şekilde elde edilebilir. Skip-gram modelinin aksine, sözcüklerin sürekli çanta modeli genellikle sözcük temsilleri olarak bağlam sözcük vektörlerini kullanır. 
+Diğer sözcük vektörlerinin gradyanları aynı şekilde elde edilebilir. Skip-gram modelinin aksine, sürekli sözcük torbası modeli genellikle sözcük temsilleri olarak bağlam sözcük vektörlerini kullanır. 
 
 ## Özet
 
-* Sözcük vektörleri sözcükleri temsil etmek için kullanılan vektörlerdir ve ayrıca özellik vektörleri veya sözcüklerin temsilleri olarak da düşünülebilir. Sözcükleri gerçek vektörlere eşleme tekniğine sözcük gömme denir.
-* Word2vec aracı hem atlama gram hem de sürekli sözcük modellerini içerir.
-* Skip-gram modeli, bir sözcüknin etrafındaki sözcükleri bir metin dizisinde üretmek için kullanılabileceğini varsayar; Sürekli sözcük çantası modeli, bir merkez sözcüğün çevreleyen bağlam sözcüklerine dayanarak oluşturulduğunu varsayar.
+* Sözcük vektörleri sözcükleri temsil etmek için kullanılan vektörlerdir ve ayrıca öznitelik vektörleri veya sözcüklerin temsilleri olarak da düşünülebilir. Sözcükleri gerçek vektörlere eşleme tekniğine sözcük gömme denir.
+* Word2vec aracı hem sküp-gram hem de sürekli sözcük torbası modellerini içerir.
+* Skip-gram modeli, bir sözcüğün etrafındaki sözcükleri bir metin dizisinde üretmek için kullanılabileceğini varsayar; Sürekli sözcük torbası modeli, bir merkez sözcüğün çevresindeki bağlam sözcüklerine dayanarak oluşturulduğunu varsayar.
 
-## Egzersizler
+## Alıştırmalar
 
-1. Her degradeyi hesaplamak için hesaplama karmaşıklığı nedir? Sözlük boyutu büyükse sorun ne olabilir?
-1. İngilizce bazı sabit ifadeler “new york” gibi birden fazla sözcükden oluşur. Nasıl kendi sözcük vektörleri eğitmek için? Hint: see Section 4 in the word2vec paper :cite:`Mikolov.Sutskever.Chen.ea.2013`.
-1. Skip-gram modelini örnek olarak alarak word2vec tasarımını düşünelim. Skip-gram modelindeki iki sözcük vektörünün nokta çarpımıyla kosinüs benzerliği arasındaki ilişki nedir? Benzer semantiği olan bir çift sözcük için, sözcük vektörlerinin kosinüs benzerliği (atlama gram modeli tarafından eğitilmiştir) neden yüksek olabilir?
+1. Her gradyanı hesaplamanın hesaplama karmaşıklığı nedir? Sözlük boyutu büyükse ne sorun olabilir?
+1. İngilizce bazı sabit ifadeler, “new york” gibi, birden fazla sözcükten oluşur. Onların sözcük vektörleri nasıl eğitilir? İpucu: 4. Bölümdeki word2vec makalesine bakınız :cite:`Mikolov.Sutskever.Chen.ea.2013`.
+1. Skip-gram modelini örnek alarak word2vec tasarımını düşünelim. Skip-gram modelindeki iki sözcük vektörünün nokta çarpımıyla kosinüs benzerliği arasındaki ilişki nedir? Benzer anlama sahip bir çift sözcük için, sözcük vektörlerinin (skip-gram modeli tarafından eğitilmiş) kosinüs benzerliği neden yüksek olabilir?
 
-[Discussions](https://discuss.d2l.ai/t/381)
+[Tartışmalar](https://discuss.d2l.ai/t/381)
