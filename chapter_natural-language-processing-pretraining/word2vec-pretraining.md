@@ -1,7 +1,7 @@
-# Pretraining word2vec
+# word2vec Ön Eğitimi
 :label:`sec_word2vec_pretraining`
 
-:numref:`sec_word2vec`'te tanımlanan atlama gram modelini uygulamaya devam ediyoruz. Ardından, PTB veri kümesindeki negatif örnekleme kullanarak word2vec ön eğiteceğiz. Her şeyden önce, :numref:`sec_word2vec_data`'te açıklanan `d2l.load_data_ptb` işlevini arayarak veri yineleyicisini ve bu veri kümesi için kelime dağarcığını elde edelim
+:numref:`sec_word2vec`'te tanımlanan skip-gram modelini uygulamaya devam ediyoruz. Ardından, PTB veri kümesindeki negatif örnekleme kullanarak word2vec ön eğiteceğiz. Her şeyden önce, :numref:`sec_word2vec_data`'te açıklanan `d2l.load_data_ptb` işlevini çağırarak veri yineleyicisini ve bu veri kümesi için sözcük dağarcığını elde edelim.
 
 ```{.python .input}
 from d2l import mxnet as d2l
@@ -29,11 +29,11 @@ data_iter, vocab = d2l.load_data_ptb(batch_size, max_window_size,
 
 ## Skip-Gram Modeli
 
-Katmanları ve toplu matris çarpımlarını kullanarak atlama gram modelini uyguluyoruz. İlk olarak, gömme katmanların nasıl çalıştığını inceleyelim. 
+Katmanları ve toplu matris çarpımlarını kullanarak skip-gram modelini uyguluyoruz. İlk olarak, gömme katmanların nasıl çalıştığını inceleyelim. 
 
-### Katman Gömme
+### Gömme Katmanı
 
-:numref:`sec_seq2seq`'te açıklandığı gibi, bir katman, bir simge dizini özellik vektörüyle eşler. Bu katmanın ağırlığı, satır sayısı sözlük boyutuna (`input_dim`) ve sütun sayısı her belirteç için vektör boyutuna eşit olan bir matristir (`output_dim`). Bir kelime gömme modeli eğitildikten sonra, bu ağırlık ihtiyacımız olan şeydir.
+:numref:`sec_seq2seq`'te açıklandığı gibi, bir katman, bir belirteç dizinini öznitelik vektörüyle eşler. Bu katmanın ağırlığı, satır sayısı sözlük boyutuna (`input_dim`) ve sütun sayısı her belirteç için vektör boyutuna (`output_dim`) eşit olan bir matristir. Bir sözcük gömme modeli eğitildikten sonra, bu ağırlık ihtiyacımız olan şeydir.
 
 ```{.python .input}
 embed = nn.Embedding(input_dim=20, output_dim=4)
@@ -48,7 +48,7 @@ print(f'Parameter embedding_weight ({embed.weight.shape}, '
       f'dtype={embed.weight.dtype})')
 ```
 
-Gömülü katmanın girişi, bir belirteç (sözcük) dizinidir. Herhangi bir belirteç dizini $i$ için vektör gösterimi, katıştırma katmanındaki ağırlık matrisinin $i.$ satırından elde edilebilir. Vektör boyutu (`output_dim`) 4 olarak ayarlandığından, gömme katmanı şekle sahip (2, 3) bir minik toplu işlem için şekilli (2, 3, 4) vektörleri döndürür (2, 3).
+Gömülü katmanın girdisi, bir belirteç (sözcük) dizinidir. Herhangi bir belirteç dizini $i$ için vektör gösterimi, gömme katmanındaki ağırlık matrisinin $i.$ satırından elde edilebilir. Vektör boyutu (`output_dim`) 4 olarak ayarlandığından, gömme katmanı (2, 3) şekle sahip bir minigrup işlemi için (2, 3, 4) şekilli vektörler döndürür.
 
 ```{.python .input}
 #@tab all
@@ -56,9 +56,9 @@ x = d2l.tensor([[1, 2, 3], [4, 5, 6]])
 embed(x)
 ```
 
-### İleri yayılmayı tanımlama
+### İleri Yaymayı Tanımlama
 
-İleri yayılımda, atlama grafiği modelinin girişi, `center` şeklin orta kelime indekslerini (toplu iş boyutu, 1) ve `max_len`'nın :numref:`subsec_word2vec-minibatch-loading`'te tanımlandığı `max_len` şeklin (toplu iş boyutu, `max_len`) birleştirilmiş bağlam ve gürültü kelime indekslerini içerir. Bu iki değişken önce belirteç dizinlerinden katman aracılığıyla vektörlere dönüştürülür, daha sonra toplu matris çarpımı (:numref:`subsec_batch_dot`'te açıklanmıştır) bir şekil çıktısı döndürür (toplu iş boyutu, 1, `max_len`). Çıktıdaki her öğe, bir merkez sözcük vektörünün nokta çarpımıdır ve bir bağlam veya parazit sözcük vektörüdür.
+İleri yayılımda, skip-gram modelinin girdisi, (toplu iş boyutu, 1) şekilli `center` merkez sözcük indekslerini ve `max_len`'nın :numref:`subsec_word2vec-minibatch-loading`'te tanımlandığı (toplu iş boyutu, `max_len`) şeklindeki `contexts_and_negatives` bitiştirilmiş bağlam ve gürültü sözcük indekslerini içerir. Bu iki değişken önce belirteç dizinlerinden gömme katmanı aracılığıyla vektörlere dönüştürülür, daha sonra toplu matris çarpımı (:numref:`subsec_batch_dot`'te açıklanmıştır) (toplu iş boyutu, 1, `max_len`) şekilli bir çıktı döndürür. Çıktıdaki her eleman, bir merkez sözcük vektörü ile bir bağlam veya gürültü sözcük vektörünün nokta çarpımıdır .
 
 ```{.python .input}
 def skip_gram(center, contexts_and_negatives, embed_v, embed_u):
@@ -77,7 +77,7 @@ def skip_gram(center, contexts_and_negatives, embed_v, embed_u):
     return pred
 ```
 
-Bazı örnek girişler için bu `skip_gram` işlevinin çıkış şeklini yazdıralım.
+Bazı örnek girdiler için bu `skip_gram` işlevinin çıktı şeklini yazdıralım.
 
 ```{.python .input}
 skip_gram(np.ones((2, 1)), np.ones((2, 4)), embed, embed).shape
@@ -116,7 +116,7 @@ class SigmoidBCELoss(nn.Module):
 loss = SigmoidBCELoss()
 ```
 
-:numref:`subsec_word2vec-minibatch-loading`'teki maske değişkeninin ve etiket değişkeninin açıklamalarımızı hatırlayın. Aşağıdaki, verilen değişkenler için ikili çapraz entropi kaybını hesaplar.
+:numref:`subsec_word2vec-minibatch-loading`'teki maske değişkeninin ve etiket değişkeninin tanımlarını hatırlayın. Aşağıdaki, verilen değişkenler için ikili çapraz entropi kaybını hesaplar.
 
 ```{.python .input}
 #@tab all
@@ -126,7 +126,7 @@ mask = d2l.tensor([[1, 1, 1, 1], [1, 1, 0, 0]])
 loss(pred, label, mask) * mask.shape[1] / mask.sum(axis=1)
 ```
 
-Aşağıda, ikili çapraz entropi kaybında sigmoid aktivasyon fonksiyonu kullanılarak yukarıdaki sonuçların nasıl hesaplandığını (daha az verimli bir şekilde) göstermektedir. İki çıktıları maskelenmemiş tahminler üzerinden ortalama iki normalleştirilmiş kayıp olarak düşünebiliriz.
+Aşağısı, ikili çapraz entropi kaybında sigmoid etkinleştirme fonksiyonu kullanılarak yukarıdaki sonuçların nasıl hesaplandığını (daha az verimli bir şekilde) göstermektedir. İki çıktıyı, maskelenmemiş tahminlere göre ortalaması alınan iki normalleştirilmiş kayıp olarak düşünebiliriz.
 
 ```{.python .input}
 #@tab all
@@ -137,9 +137,9 @@ print(f'{(sigmd(1.1) + sigmd(2.2) + sigmd(-3.3) + sigmd(4.4)) / 4:.4f}')
 print(f'{(sigmd(-1.1) + sigmd(-2.2)) / 2:.4f}')
 ```
 
-### Model Parametreleri Başlatılıyor
+### Model Parametrelerini İlkleme
 
-Sırasıyla orta sözcükler ve bağlam sözcükleri olarak kullanıldıklarında kelime dağarcığındaki tüm kelimeler için iki gömme katman tanımlarız. `embed_size` sözcüğü vektör boyutu 100 olarak ayarlanır.
+Sırasıyla merkez sözcükler ve bağlam sözcükleri olarak kullanıldıklarından sözcük dağarcığındaki tüm sözcükler için iki gömme katmanı tanımlarız. `embed_size` sözcük vektör boyutu 100 olarak ayarlanır.
 
 ```{.python .input}
 embed_size = 100
@@ -157,7 +157,7 @@ net = nn.Sequential(nn.Embedding(num_embeddings=len(vocab),
                                  embedding_dim=embed_size))
 ```
 
-### Eğitim döngüsünün tanımlanması
+### Eğitim Döngüsünün Tanımlanması
 
 Eğitim döngüsü aşağıda tanımlanmıştır. Dolgunun varlığı nedeniyle, kayıp fonksiyonunun hesaplanması önceki eğitim fonksiyonlarına kıyasla biraz farklıdır.
 
@@ -230,10 +230,10 @@ lr, num_epochs = 0.002, 5
 train(net, data_iter, lr, num_epochs)
 ```
 
-## Sözcük Gömlemeleri Uygulama
+## Sözcük Gömmelerini Uygulama
 :label:`subsec_apply-word-embed`
 
-Word2vec modelini eğittikten sonra, eğitimli modeldeki kelime vektörlerinin kosinüs benzerliğini kullanarak sözlükten bir giriş kelimesine en çok benzeyen kelimeleri bulabiliriz.
+Word2vec modelini eğittikten sonra, eğitimli modeldeki sözcük vektörlerinin kosinüs benzerliğini kullanarak sözlükten bir girdi sözcüğüne en çok benzeyen sözcükleri bulabiliriz.
 
 ```{.python .input}
 def get_similar_tokens(query_token, k, embed):
@@ -266,17 +266,17 @@ get_similar_tokens('chip', 3, net[0])
 ## Özet
 
 * Gömülü katmanlar ve ikili çapraz entropi kaybını kullanarak negatif örnekleme ile bir skip-gram modelini eğitebiliriz.
-* Kelime gömme uygulamaları, kelime vektörlerinin kosinüs benzerliğine dayanan belirli bir kelime için anlamsal olarak benzer kelimeleri bulmayı içerir.
+* Sözcük gömme uygulamaları, sözcük vektörlerinin kosinüs benzerliğine dayanan belirli bir sözcük için anlamsal olarak benzer sözcükleri bulmayı içerir.
 
-## Egzersizler
+## Alıştırmalar
 
-1. Eğitimli modeli kullanarak, diğer girdi kelimeleri için anlamsal olarak benzer kelimeleri bulun. Hiperparametreleri ayarlayarak sonuçları iyileştirebilir misiniz?
-1. Bir eğitim corpus çok büyük olduğunda, model parametrelerini güncellerken* mevcut minibatch içindeki orta sözcükler için bağlam sözcükleri ve gürültü kelimelerini sık sık örnekleriz. Başka bir deyişle, aynı merkez sözcük farklı eğitim çemlerinde farklı bağlam sözcükleri veya parazit sözcüklere sahip olabilir. Bu yöntemin faydaları nelerdir? Bu eğitim yöntemini uygulamaya çalışın.
+1. Eğitilmiş modeli kullanarak, diğer girdi sözcükleri için anlamsal olarak benzer sözcükleri bulun. Hiperparametreleri ayarlayarak sonuçları iyileştirebilir misiniz?
+1. Bir eğitim külliyatı çok büyük olduğunda, *model parametrelerini güncellerken* mevcut minigrup içindeki merkez sözcükler için bağlam sözcükleri ve gürültü sözcüklerini sık sık örnekleriz. Başka bir deyişle, aynı merkez sözcük farklı eğitim dönemlerinde farklı bağlam sözcüklerine veya gürültü sözcüklerine sahip olabilir. Bu yöntemin faydaları nelerdir? Bu eğitim yöntemini uygulamaya çalışın.
 
 :begin_tab:`mxnet`
-[Discussions](https://discuss.d2l.ai/t/384)
+[Tartışmalar](https://discuss.d2l.ai/t/384)
 :end_tab:
 
 :begin_tab:`pytorch`
-[Discussions](https://discuss.d2l.ai/t/1335)
+[Tartışmalar](https://discuss.d2l.ai/t/1335)
 :end_tab:
