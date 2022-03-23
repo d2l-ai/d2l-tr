@@ -289,6 +289,8 @@ string; dizgi
 
 stochastic; rasgele
 
+sunsampling; alt örnekleme
+
 surrogate; vekil
 
 switch; anahtar
