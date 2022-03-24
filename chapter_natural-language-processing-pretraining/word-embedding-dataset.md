@@ -1,4 +1,4 @@
-# Sözcük Gömme Ön Eğitim İçin Veri Kümesi
+# Sözcük Gömme Ön Eğitimi İçin Veri Kümesi
 :label:`sec_word2vec_data`
 
 Artık word2vec modellerinin teknik ayrıntılarını ve yaklaşıklama eğitim yöntemlerini bildiğimize göre, uygulamalarını inceleyelim. Özellikle, :numref:`sec_word2vec`'te skip-gram modelini ve :numref:`sec_approx_train`'te negatif örneklemeyi örnek olarak alacağız. Bu bölümde, sözcük gömme modeli ön eğitimi için veri kümesi ile başlıyoruz: Verilerin orijinal biçimi eğitim sırasında yinelenebilen minigruplar haline dönüştürülecektir.
