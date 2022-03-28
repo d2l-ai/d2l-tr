@@ -41,6 +41,8 @@ bounding box; kuşatan kutu
 
 broadcast; yayınlama
 
+byte; bayt, sekizli
+
 cache; ön bellek
 
 checksum; sağlama toplamı
