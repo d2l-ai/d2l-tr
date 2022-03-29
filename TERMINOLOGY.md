@@ -5,6 +5,8 @@ affine; afin
 
 agent; etmen
 
+analogy; benzeşim, benzetme
+
 anchor; çapa
 
 api (application programming interface); uygulama programlama arayüzü
