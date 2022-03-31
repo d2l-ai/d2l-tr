@@ -113,7 +113,7 @@ Modellerimizi eğitirken, tipik olarak tüm minigrup örneklerini aynı anda iş
 %matplotlib inline
 from d2l import mxnet as d2l
 import math
-import numpy as np
+from mxnet import np
 import time
 ```
 
@@ -230,7 +230,18 @@ def normal(x, mu, sigma):
 Artık (**normal dağılımları görselleştirebiliriz**).
 
 ```{.python .input}
-#@tab all
+#@tab mxnet
+# Görselleştirme için gene numpy kullanın
+x = np.arange(-7, 7, 0.01)
+# Mean and standard deviation pairs
+params = [(0, 1), (0, 2), (3, 1)]
+d2l.plot(x.asnumpy(), [normal(x, mu, sigma).asnumpy() for mu, sigma in params], xlabel='x',
+         ylabel='p(x)', figsize=(4.5, 2.5),
+         legend=[f'mean {mu}, std {sigma}' for mu, sigma in params])
+```
+
+```{.python .input}
+#@tab pytorch, tensorflow
 # Görselleştirme için gene numpy kullanın
 x = np.arange(-7, 7, 0.01)
 
