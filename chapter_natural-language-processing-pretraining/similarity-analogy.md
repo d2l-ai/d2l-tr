@@ -1,7 +1,7 @@
-# Kelime Benzerliği ve Benzerliği
+# Sözcük Benzerliği ve Benzeşim
 :label:`sec_synonyms`
 
-:numref:`sec_word2vec_pretraining`'te, küçük bir veri kümesi üzerinde bir word2vec modelini eğittik ve bir girdi sözcüğü için anlamsal olarak benzer kelimeleri bulmak için uyguladık. Uygulamada, büyük corpora üzerinde önceden eğitilmiş kelime vektörleri, daha sonra :numref:`chap_nlp_app`'te ele alınacak olan doğal dil işleme görevlerine uygulanabilir. Büyük corpora'dan önceden eğitilmiş kelime vektörlerinin semantiğini basit bir şekilde göstermek için, bunları benzerlik ve benzetme görevlerine uygulayalım.
+:numref:`sec_word2vec_pretraining`'te, küçük bir veri kümesi üzerinde bir word2vec modelini eğittik ve bunu bir girdi sözcüğü için anlamsal olarak benzer kelimeleri bulmak için uyguladık. Uygulamada, büyük külliyatlar üzerinde önceden eğitilmiş kelime vektörleri, daha sonra :numref:`chap_nlp_app`'te ele alınacak olan doğal dil işleme görevlerine uygulanabilir. Büyük külliyatlardan önceden eğitilmiş kelime vektörlerinin anlamını basit bir şekilde göstermek için, bunları sözcük benzerliğü ve benzeşimi görevlerine uygulayalım.
 
 ```{.python .input}
 from d2l import mxnet as d2l
@@ -19,9 +19,9 @@ from torch import nn
 import os
 ```
 
-## Önceden Eğitimli Word Vektörlerini Yükleme
+## Önceden Eğitilmiş Sözcük Vektörlerini Yükleme
 
-Aşağıda, [GloVe website](https://nlp.stanford.edu/projects/glove/)'ten indirilebilen 50, 100 ve 300 boyutlarında önceden eğitilmiş Eldiven gömme listeler. Önceden eğitilmiş fastText gömme parçaları birden çok dilde mevcuttur. Burada bir İngilizce sürümünü düşünün (300-boyutlu “wiki.en”) indirilebilir [fastText website](https://fasttext.cc/).
+Aşağıda, [GloVe web sitesinden](https://nlp.stanford.edu/projects/glove/) indirilebilen 50, 100 ve 300 boyutlarında önceden eğitilmiş GloVe gömme listeleri verilmektedir. Önceden eğitilmiş fastText gömmeleri birden çok dilde mevcuttur. Burada indirilebilen bir İngilizce sürümünü düşünelim (300-boyutlu "wiki.en") [fastText website](https://fasttext.cc/).
 
 ```{.python .input}
 #@tab all
@@ -42,7 +42,7 @@ d2l.DATA_HUB['wiki.en'] = (d2l.DATA_URL + 'wiki.en.zip',
                            'c1816da3821ae9f43899be655002f6c723e91b88')
 ```
 
-Bu önceden eğitilmiş Eldiven ve fastText gömme yüklemeleri yüklemek için aşağıdaki `TokenEmbedding` sınıfını tanımlıyoruz.
+Bu önceden eğitilmiş GloVe ve fastText gömmelerini yüklemek için aşağıdaki `TokenEmbedding` sınıfını tanımlıyoruz.
 
 ```{.python .input}
 #@tab all
@@ -82,34 +82,34 @@ class TokenEmbedding:
         return len(self.idx_to_token)
 ```
 
-Aşağıda 50 boyutlu Eldiven gömme yüklüyoruz (Vikipedi alt kümesi üzerinde önceden eğitilmiş). `TokenEmbedding` örneğini oluştururken, belirtilen gömme dosyasının henüz değilse indirilmesi gerekir.
+Aşağıda 50 boyutlu GloVe gömmelerini yüklüyoruz (Vikipedi alt kümesi üzerinde önceden eğitilmiş). `TokenEmbedding` örneğini oluştururken, belirtilen gömme dosyasının henüz yoksa indirilmesi gerekir.
 
 ```{.python .input}
 #@tab all
 glove_6b50d = TokenEmbedding('glove.6b.50d')
 ```
 
-Kelime dağarcığı boyutunu çıktılayın. Kelime bilgisi 400000 kelime (jeton) ve özel bir bilinmeyen belirteç içerir.
+Sözcük dağarcığı boyutunu çıktılayın. Sözcük bilgisi 400000 kelime (belirteç) ve özel bir bilinmeyen belirteci içerir.
 
 ```{.python .input}
 #@tab all
 len(glove_6b50d)
 ```
 
-Kelime hazinesinde bir kelimenin indeksini alabiliriz ve tersi de geçerlidir.
+Sözcük hazinesinde bir kelimenin indeksini alabiliriz ve tersi de geçerlidir.
 
 ```{.python .input}
 #@tab all
 glove_6b50d.token_to_idx['beautiful'], glove_6b50d.idx_to_token[3367]
 ```
 
-## Önceden Eğitimli Word Vektörlerini Uygulama
+## Önceden Eğitilmiş Sözcük Vektörlerini Uygulama
 
-Yüklenen Eldiven vektörlerini kullanarak, anlamlarını aşağıdaki kelime benzerliği ve benzetme görevlerine uygulayarak göstereceğiz. 
+Yüklenen GloVe vektörlerini kullanarak, anlamlarını aşağıdak sözcük benzerliği ve benzeşim görevlerine uygulayarak göstereceğiz. 
 
-### Kelime Benzerliği
+### Sözcük Benzerliği
 
-:numref:`subsec_apply-word-embed`'e benzer şekilde, kelime vektörleri arasındaki kosinüs benzerliklerine dayanan bir giriş kelimesi için anlamsal olarak benzer kelimeleri bulmak için aşağıdaki `knn` ($k$ en yakın komşular) işlevini uyguluyoruz.
+:numref:`subsec_apply-word-embed`'e benzer şekilde, sözcük vektörleri arasındaki kosinüs benzerliklerine dayanan bir girdi sözcüğü için anlamsal olarak benzer kelimeleri bulmak için aşağıdaki `knn` ($k$ en yakın komşu) işlevini uygularız.
 
 ```{.python .input}
 def knn(W, x, k):
@@ -141,14 +141,14 @@ def get_similar_tokens(query_token, k, embed):
         print(f'cosine sim={float(c):.3f}: {embed.idx_to_token[int(i)]}')
 ```
 
-`glove_6b50d`'teki önceden eğitilmiş kelime vektörlerinin kelime dağarcığı 400000 kelime ve özel bir bilinmeyen belirteç içerir. Giriş kelimesi ve bilinmeyen belirteci hariç, bu kelime arasında “çip” kelimesine en anlamsal olarak benzer üç kelimeyi bulalım.
+`glove_6b50d`'teki önceden eğitilmiş kelime vektörlerinin kelime dağarcığı 400000 kelime ve özel bir bilinmeyen belirteç içerir. Girdi kelimesi ve bilinmeyen belirteci hariç, bu kelime arasında "çip (chip))" kelimesine en anlamsal olarak benzer üç kelimeyi bulalım.
 
 ```{.python .input}
 #@tab all
 get_similar_tokens('chip', 3, glove_6b50d)
 ```
 
-Aşağıda “bebek” ve “güzel” benzer kelimeler çıktılar.
+Aşağıda "bebek (baby)" ve "güzel (beautiful)" kelimelerinin benzerleri çıktılanır.
 
 ```{.python .input}
 #@tab all
@@ -160,9 +160,9 @@ get_similar_tokens('baby', 3, glove_6b50d)
 get_similar_tokens('beautiful', 3, glove_6b50d)
 ```
 
-### Kelime Analojisi
+### Kelime Benzeşimi
 
-Benzer kelimeleri bulmanın yanı sıra, kelime vektörlerini kelime benzetme görevlerine de uygulayabiliriz. Örneğin, “erkek”: “kadın”። “oğul”: “kızı” bir kelime benzetme şeklidir: “erkek”, “oğul” olarak “kadın” demektir “kızı”. Özellikle, kelime benzetme tamamlama görevi şu şekilde tanımlanabilir: $a : b :: c : d$, $a$, $b$ ve $c$, $d$ bulmak için ilk üç kelime verilen bir kelime benzetme $a : b :: c : d$ için. $w$ kelimesinin vektörünü $\text{vec}(w)$ ile belirtin. Benzetmeyi tamamlamak için, vektörü $\text{vec}(c)+\text{vec}(b)-\text{vec}(a)$ sonucuna en çok benzeyen kelimeyi bulacağız.
+Benzer kelimeleri bulmanın yanı sıra, kelime vektörlerini kelime benzetme görevlerine de uygulayabiliriz. Örneğin, “erkek”: “kadın”። “oğul”: “kızı” bir kelime benzetme şeklidir: “erkek” ile “kadın”, “kız” ile “oğul” benzerdir. Daha özel olarak, kelime benzeşim tamamlama görevi şu şekilde tanımlanabilir: Bir kelime benzeşimi $a : b :: c : d$ için, ilk üç kelime olan $a$, $b$ ve $c$ verildiğinde, $d$ bulunsun. $w$ kelimesinin vektörünü $\text{vec}(w)$ ile belirtilsin. Benzetmeyi tamamlamak için, vektörü $\text{vec}(c)+\text{vec}(b)-\text{vec}(a)$ sonucuna en çok benzeyen kelimeyi bulacağız.
 
 ```{.python .input}
 #@tab all
@@ -173,28 +173,28 @@ def get_analogy(token_a, token_b, token_c, embed):
     return embed.idx_to_token[int(topk[0])]  # Remove unknown words
 ```
 
-Yüklü kelime vektörlerini kullanarak “erkek-kadın” benzetmeyi doğrulayalım.
+Yüklü kelime vektörlerini kullanarak “erkek-kadın” benzeşimini doğrulayalım.
 
 ```{.python .input}
 #@tab all
 get_analogy('man', 'woman', 'son', glove_6b50d)
 ```
 
-Aşağıda bir “başkent-ülke” benzetme tamamlar: “Pekin”: “Çin”። “tokyo”: “japan”. Bu, önceden eğitilmiş kelime vektörlerinde semantik gösterir.
+Aşağıdaki bir “başkent-ülke” benzeşimini tamamlar: “Pekin”: “Çin”። “Tokyo”: “Japonya”. Bu, önceden eğitilmiş kelime vektörlerindeki anlamı gösterir.
 
 ```{.python .input}
 #@tab all
 get_analogy('beijing', 'china', 'tokyo', glove_6b50d)
 ```
 
-“Kötü”: “en kötü”። “büyük”: “en büyük” gibi “sıfat-superlative sıfat” benzetme için, önceden eğitilmiş kelime vektörlerinin sözdizimsel bilgileri yakalayabileceğini görebiliriz.
+“Kötü”: “en kötü”። “büyük”: “en büyük” gibi “sıfat-üstün sıfat” benzetme için, önceden eğitilmiş kelime vektörlerinin sözdizimsel bilgileri yakalayabileceğini görebiliriz.
 
 ```{.python .input}
 #@tab all
 get_analogy('bad', 'worst', 'big', glove_6b50d)
 ```
 
-Önceden eğitilmiş kelime vektörlerinde geçmiş zaman kavramını göstermek için, sözdizimini “şimdiki zaman geçmiş zaman” benzetmesini kullanarak test edebiliriz: “do”: “did”። “go”: “go”: “went”.
+Önceden eğitilmiş kelime vektörlerinde geçmiş zaman kavramını göstermek için, sözdizimini “şimdiki zaman - geçmiş zaman” benzetmesini kullanarak test edebiliriz: “yap (do)”: “yaptım (did)”። “go (git)”: “went (gittim)”.
 
 ```{.python .input}
 #@tab all
@@ -203,18 +203,18 @@ get_analogy('do', 'did', 'go', glove_6b50d)
 
 ## Özet
 
-* Uygulamada, büyük corpora üzerinde önceden eğitilmiş kelime vektörleri doğal dil işleme görevlerine uygulanabilir.
-* Önceden eğitilmiş kelime vektörleri kelime benzerlik ve benzetme görevlerine uygulanabilir.
+* Uygulamada, büyük külliyatlar üzerinde önceden eğitilmiş kelime vektörleri doğal dil işleme görevlerine uygulanabilir.
+* Önceden eğitilmiş kelime vektörleri kelime benzerliği ve benzeşimi görevlerine uygulanabilir.
 
-## Egzersizler
+## Alıştırmalar
 
 1. `TokenEmbedding('wiki.en')` kullanarak fastText sonuçlarını test edin.
-1. Kelime dağarcığı son derece büyük olduğunda, benzer kelimeleri nasıl bulabiliriz veya bir kelime benzerini daha hızlı tamamlayabiliriz?
+1. Kelime dağarcığı son derece büyük olduğunda, benzer kelimeleri nasıl bulabiliriz veya bir kelime benzeşimini daha hızlı tamamlayabiliriz?
 
 :begin_tab:`mxnet`
-[Discussions](https://discuss.d2l.ai/t/387)
+[Tartışmalar](https://discuss.d2l.ai/t/387)
 :end_tab:
 
 :begin_tab:`pytorch`
-[Discussions](https://discuss.d2l.ai/t/1336)
+[Tartışmalar](https://discuss.d2l.ai/t/1336)
 :end_tab:

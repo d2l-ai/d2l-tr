@@ -1,9 +1,9 @@
-# BERT Ön Eğitim için Veri Kümesi
+# BERT Ön Eğitimi için Veri Kümesi
 :label:`sec_bert-dataset`
 
-BERT modelini :numref:`sec_bert`'te uygulandığı şekilde ön eğitmek için, iki ön eğitim görevini kolaylaştırmak için veri kümesini ideal formatta oluşturmamız gerekir: maskeli dil modelleme ve sonraki cümle tahmini. Bir yandan, orijinal BERT modeli, iki büyük corpora BookCorpus ve İngilizce Wikipedia (bkz. :numref:`subsec_bert_pretraining_tasks`), bu kitabın en okuyucuları için koşmayı zorlaştıran iki büyük corpora BookCorpus ve İngilizce Wikipedia'nın birleştirilmesi konusunda önceden eğitilmiştir. Öte yandan, raf dışı önceden eğitilmiş BERT modeli tıp gibi belirli alanlardan gelen uygulamalar için uygun olmayabilir. Böylece, BERT'i özelleştirilmiş bir veri kümesi üzerinde ön eğitmek popüler hale geliyor. BERT ön eğitiminin gösterilmesini kolaylaştırmak için daha küçük bir corpus WikiText-2 :cite:`Merity.Xiong.Bradbury.ea.2016` kullanıyoruz. 
+BERT modelini :numref:`sec_bert`'te uygulandığı şekilde ön eğitirken, iki ön eğitim görevini kolaylaştırmak için veri kümesini ideal formatta oluşturmamız gerekir: Maskeli dil modelleme ve sonraki cümle tahmini. Bir yandan, orijinal BERT modeli, iki büyük külliyat BookCorpus ve İngilizce Wikipedia (bkz. :numref:`subsec_bert_pretraining_tasks`), bu kitabın en okuyucuları için koşmayı zorlaştıran iki büyük külliyatın, BookCorpus ve İngilizce Wikipedia'nın bitiştirilmesinde ön eğitilmiştir. Öte yandan, kullanıma hazır önceden eğitilmiş BERT modeli tıp gibi belirli alanlardan gelen uygulamalar için uygun olmayabilir. Bu nedenden, BERT'i özelleştirilmiş bir veri kümesi üzerinde ön eğitmek popüler hale gelmektedir. BERT ön eğitiminin gösterilmesini kolaylaştırmak için daha küçük bir külliyat, WikiText-2, :cite:`Merity.Xiong.Bradbury.ea.2016` kullanıyoruz. 
 
-:numref:`sec_word2vec_data`'te word2vec ön eğitimi için kullanılan PTB veri kümesiyle karşılaştırıldığında, WikiText-2 (i) orijinal noktalama işaretlerini korur ve bir sonraki cümle tahmini için uygun hale getirir; (ii) orijinal servis talebini ve sayıları korur; (iii) iki kat daha büyüktür.
+:numref:`sec_word2vec_data`'te word2vec ön eğitimi için kullanılan PTB veri kümesiyle karşılaştırıldığında, WikiText-2 (i) orijinal noktalama işaretlerini korur ve bir sonraki cümle tahmini için uygun hale getirir; (ii) orijinal harf büyüklüğünü (büyük-küçük) ve sayıları korur; (iii) iki kat daha büyüktür.
 
 ```{.python .input}
 from d2l import mxnet as d2l
@@ -22,7 +22,7 @@ import random
 import torch
 ```
 
-WikiText-2 veri kümesinde, her satır herhangi bir noktalama işareti ile önceki belirteci arasına boşluk eklendiği bir paragrafı temsil eder. En az iki cümle içeren paragraflar korunur. Cümleleri bölmek için, süreyi sadece basitlik için sınırlayıcı olarak kullanıyoruz. Bu bölümün sonunda yapılan alıştırmalarda daha karmaşık cümle bölme tekniklerinin tartışmalarını bırakıyoruz.
+WikiText-2 veri kümesinde, her satır herhangi bir noktalama işareti ile önceki belirteci arasına boşluk eklenen bir paragrafı temsil eder. En az iki cümle içeren paragraflar korunur. Cümleleri bölerken, noktayı sadece basitlik için sınırlayıcı olarak kullanıyoruz. Daha karmaşık cümle bölme teknikleriyle ilgili tartışmaları bu bölümün sonundaki alıştırmalara bırakıyoruz.
 
 ```{.python .input}
 #@tab all
@@ -45,9 +45,9 @@ def _read_wiki(data_dir):
 
 ## Ön Eğitim Görevleri için Yardımcı İşlevleri Tanımlama
 
-Aşağıda, iki BERT ön eğitim görevi için yardımcı fonksiyonları uygulayarak başlıyoruz: sonraki cümle tahmini ve maskeli dil modelleme. Bu yardımcı işlevler, daha sonra, Hak metin korpusunu BERT ön tren için ideal formattaki veri kümesine dönüştürülürken çağrılır. 
+Aşağıda, iki BERT ön eğitim görevi için yardımcı fonksiyonları uygulayarak başlıyoruz: Sonraki cümle tahmini ve maskeli dil modelleme. Bu yardımcı işlevler, daha sonra, bu ham metin külliyatı, BERT ön eğitimi için ideal biçimli veri kümesine dönüştürülürken çağrılacaktır.
 
-### Sonraki Cümle Tahmin Görevi Oluşturma
+### Sonraki Cümle Tahmini Görevi Oluşturma
 
 :numref:`subsec_nsp` açıklamalarına göre, `_get_next_sentence` işlevi ikili sınıflandırma görevi için bir eğitim örneği oluşturur.
 
@@ -64,7 +64,7 @@ def _get_next_sentence(sentence, next_sentence, paragraphs):
     return sentence, next_sentence, is_next
 ```
 
-Aşağıdaki işlev `_get_next_sentence` işlevini çağırarak `paragraph` girişinden sonraki cümle tahmini için eğitim örnekleri oluşturur. Burada `paragraph`, her cümlenin bir simge listesi olduğu cümlelerin bir listesi. `max_len` bağımsız değişkeni, ön eğitim sırasında BERT girdi dizisinin maksimum uzunluğunu belirtir.
+Aşağıdaki işlev `_get_next_sentence` işlevini çağırarak `paragraph` girdisinden sonraki cümle tahmini için eğitim örnekleri oluşturur. Burada `paragraph`, her cümlenin bir belirteç listesi olduğu bir cümleler listesidir. `max_len` bağımsız değişkeni, ön eğitim sırasında BERT girdi dizisinin maksimum uzunluğunu belirtir.
 
 ```{.python .input}
 #@tab all
@@ -85,7 +85,7 @@ def _get_nsp_data_from_paragraph(paragraph, paragraphs, vocab, max_len):
 ### Maskeli Dil Modelleme Görevi Oluşturma
 :label:`subsec_prepare_mlm_data`
 
-BERT girdi dizisinden maskelenmiş dil modelleme görevi için eğitim örnekleri oluşturmak için aşağıdaki `_replace_mlm_tokens` işlevini tanımlıyoruz. Girişlerinde, `tokens`, BERT giriş sırasını temsil eden belirteçlerin bir listesidir, `candidate_pred_positions`, özel belirteçler hariç BERT giriş dizisinin belirteç indekslerinin bir listesidir (maskeli dil modelleme görevinde özel belirteçler öngörülmez) ve `num_mlm_preds` tahminlerin sayısını gösterir (%15 geri çağırma tahmin etmek için rastgele belirteçleri). :numref:`subsec_mlm`'teki maskelenmiş dil modelleme görevinin tanımını takiben, her tahmin konumunda, girdi özel bir “<mask>” belirteci veya rastgele bir belirteç ile değiştirilebilir veya değişmeden kalabilir. Sonunda, işlev olası değiştirildikten sonra giriş belirteçlerini, tahminlerin gerçekleştiği belirteç dizinlerini ve bu tahminler için etiketleri döndürür.
+BERT girdi dizisinden maskelenmiş dil modelleme görevi için eğitim örnekleri oluşturmak için aşağıdaki `_replace_mlm_tokens` işlevini tanımlıyoruz. Girdilerinde, `tokens`, BERT girdi dizisini temsil eden belirteçlerin bir listesidir, `candidate_pred_positions`, özel belirteçler hariç BERT girdi dizisinin belirteç indekslerinin bir listesidir (maskeli dil modelleme görevinde özel belirteçler tahmin edilmez) ve `num_mlm_preds` tahminlerin sayısını gösterir (tahmin etmek için %15 rastgele belirteci geri çağırın). :numref:`subsec_mlm`'teki maskelenmiş dil modelleme görevinin tanımını takiben, her tahmin konumunda, girdi özel bir “&lt;mask&gt;” belirteci veya rastgele bir belirteç ile değiştirilebilir veya değişmeden kalabilir. Sonunda, işlev olası değiştirmeden sonra girdi belirteçlerini, tahminlerin gerçekleştiği belirteç endekslerini ve bu tahminler için etiketleri döndürür.
 
 ```{.python .input}
 #@tab all
@@ -119,7 +119,7 @@ def _replace_mlm_tokens(tokens, candidate_pred_positions, num_mlm_preds,
     return mlm_input_tokens, pred_positions_and_labels
 ```
 
-Yukarıda bahsedilen `_replace_mlm_tokens` işlevini çağırarak, aşağıdaki işlev, giriş belirteçlerinin (:numref:`subsec_mlm`'te açıklandığı gibi olası belirteç değiştirilmesinden sonra), tahminlerin gerçekleştiği belirteç endeksleri ve bunlar için etiket indekslerinin girişi olarak bir BERT giriş sırası (`tokens`) alır ve döndürür indeksleri tahminler.
+Yukarıda bahsedilen `_replace_mlm_tokens` işlevini çağırarak, aşağıdaki işlev bir BERT girdi dizisini (`tokens`) girdi olarak alır ve girdi belirteçlerinin dizinlerini (:numref:`subsec_mlm`'de açıklandığı gibi olası belirteç değişiminden sonra), belirteç tahminlerin gerçekleştiği indeksleri ve bu tahminler için etiket indekslerini döndürür.
 
 ```{.python .input}
 #@tab all
@@ -146,7 +146,7 @@ def _get_mlm_data_from_tokens(tokens, vocab):
 
 ## Metni Ön Eğitim Veri Kümesine Dönüştürme
 
-Şimdi BERT öncesi eğitim için bir `Dataset` sınıfını özelleştirmeye neredeyse hazırız. Bundan önce, <mask>girişlere özel “” belirteçlerini eklemek için `_pad_bert_inputs` bir yardımcı işlevi tanımlamamız gerekiyor. Onun argümanı `examples`, iki ön eğitim görevi için yardımcı işlevlerinden `_get_nsp_data_from_paragraph` ve `_get_mlm_data_from_tokens` çıkışlarını içerir.
+Şimdi BERT ön eğitimi için bir `Dataset` sınıfını özelleştirmeye neredeyse hazırız. Bundan önce, girdilere özel “&lt;mask&gt;” belirteçlerini eklemek için `_pad_bert_inputs` bir yardımcı işlevi tanımlamamız gerekiyor. Onun argümanı `examples`, iki ön eğitim görevi için yardımcı işlevlerden `_get_nsp_data_from_paragraph` ve `_get_mlm_data_from_tokens` çıktılarını içerir.
 
 ```{.python .input}
 #@save
@@ -208,9 +208,9 @@ def _pad_bert_inputs(examples, max_len, vocab):
             all_mlm_weights, all_mlm_labels, nsp_labels)
 ```
 
-İki ön eğitim görevinin eğitim örneklerini oluşturmak için yardımcı fonksiyonları ve giriş dolgusu için yardımcı işlevini bir araya getirerek, BERT öncesi eğitim için WikiText-2 veri kümesi olarak aşağıdaki `_WikiTextDataset` sınıfını özelleştiriyoruz. `__getitem__ `fonksiyonunu uygulayarak, WikiText-2 corpus gelen bir çift cümleden oluşturulan ön eğitime (maskeli dil modellemesi ve sonraki cümle tahmini) örneklere keyfi olarak erişebiliriz. 
+İki ön eğitim görevinin eğitim örneklerini üretmek için yardımcı fonksiyonları ve girdi dolgulama için yardımcı işlevini bir araya getirerek, BERT ön eğitimi için WikiText-2 veri kümesi olarak aşağıdaki `_WikiTextDataset` sınıfını özelleştiriyoruz. `__getitem__` işlevini uygulayarak, WikiText-2 külliyatından bir çift cümleden oluşturulan ön eğitim (maskeli dil modelleme ve sonraki cümle tahmini) örneklerine keyfi olarak erişebiliriz.
 
-Orijinal BERT modeli kelime boyutu 30000 :cite:`Wu.Schuster.Chen.ea.2016` olan WordPiece gömme kullanır. WordPiece'nin tokenization yöntemi, :numref:`subsec_Byte_Pair_Encoding`'te orijinal bayt çifti kodlama algoritmasının hafif bir modifikasyonudur. Basitlik için, tokenization için `d2l.tokenize` işlevini kullanıyoruz. Beş kereden az görünen seyrek belirteçler filtrelenir.
+Orijinal BERT modeli kelime boyutu 30000 :cite:`Wu.Schuster.Chen.ea.2016` olan WordPiece gömmeleri kullanır. WordPiece'nin belirteçlere ayırma yöntemi, :numref:`subsec_Byte_Pair_Encoding`'te orijinal sekizli çifti kodlama algoritmasının hafif bir değişiğidir. Basitlik için, belirteçlere ayırmak için `d2l.tokenize` işlevini kullanıyoruz. Beş kereden az görünen seyrek belirteçler filtrelenir.
 
 ```{.python .input}
 #@save
@@ -318,7 +318,7 @@ def load_data_wiki(batch_size, max_len):
     return train_iter, train_set.vocab
 ```
 
-Parti boyutunu 512 olarak ve BERT giriş dizisinin maksimum uzunluğunu 64 olarak ayarlayarak, BERT ön eğitim örneklerinden oluşan bir mini toplu işlemin şekillerini yazdırıyoruz. Her BERT giriş dizisinde, maskelenmiş dil modelleme görevi için $10$ ($64 \times 0.15$) konumlarının tahmin edildiğini unutmayın.
+Toplu iş boyutunu 512 olarak ve BERT girdi dizisinin maksimum uzunluğunu 64 olarak ayarlayarak, BERT ön eğitim örneklerinden oluşan bir minigrubun şekillerini yazdırıyoruz. Her BERT girdi dizisinde, maskelenmiş dil modelleme görevi için $10$ ($64 \times 0.15$) konumlarının tahmin edildiğini unutmayın.
 
 ```{.python .input}
 #@tab all
@@ -342,18 +342,18 @@ len(vocab)
 
 ## Özet
 
-* PTB veri kümesiyle karşılaştırıldığında, WikiText-2 tarih kümesi orijinal noktalama işaretlerini, büyük/küçük harf ve sayıları korur ve iki kat daha büyüktür.
-* WikiText-2 dersindeki bir çift cümleden oluşturulan ön eğitime (maskeli dil modellemesi ve sonraki cümle tahmini) örneklere keyfi olarak erişebiliriz.
+* PTB veri kümesiyle karşılaştırıldığında, WikiText-2 veri kümesi orijinal noktalama işaretlerini, büyük/küçük harf ve sayıları korur ve iki kat daha büyüktür.
+* WikiText-2 külliyatındaki bir çift cümleden oluşturulan ön eğitim (maskeli dil modellemesi ve sonraki cümle tahmini) örneklerine keyfi olarak erişebiliriz.
 
-## Egzersizler
+## Alıştırmalar
 
-1. Basitlik açısından, dönem cümleleri bölme için tek sınırlayıcı olarak kullanılır. SpaCy ve NLTK gibi diğer cümle bölme tekniklerini deneyin. Örnek olarak NLTK'yi ele alalım. Önce NLTK'yi kurmanız gerekiyor: `pip install nltk`. Kodda, ilk `import nltk`. Daha sonra Punkt cümle belirteci indirin: `nltk.download('punkt')`. 'Cümleleri gibi cümleleri bölmek için = 'Bu harika! Neden olmasın? `, invoking `nltk.tokenize.sent_tokenize (cümleler) ` will return a list of two sentence strings: ` ['Bu harika! ' , 'Neden olmasın? '] `.
-1. Herhangi bir seyrek belirteci filtrelemezsek kelime dağarcığı boyutu nedir?
+1. Basitlik açısından, nokta cümleleri bölmede tek sınırlayıcı olarak kullanılır. SpaCy ve NLTK gibi diğer cümle ayırma tekniklerini deneyin. Örnek olarak NLTK'yi ele alalım. Önce NLTK'yi kurmanız gerekiyor: `pip install nltk`. Kodda, ilk `import nltk` çağırın. Daha sonra Punkt cümle belirteci ayıklayıcıyı indirin: `nltk.download('punkt')`.  `sentences = 'This is great ! Why not ?'` gibi cümleleri ayırmak için `nltk.tokenize.sent_tokenize(sentences)` çağırmak iki cümlelik bir liste döndürür: `['This is great !', 'Why not ?']`
+1. Seyrek belirteçleri filtrelemezsek kelime dağarcığı boyutu ne olur?
 
 :begin_tab:`mxnet`
-[Discussions](https://discuss.d2l.ai/t/389)
+[Tartışmalar](https://discuss.d2l.ai/t/389)
 :end_tab:
 
 :begin_tab:`pytorch`
-[Discussions](https://discuss.d2l.ai/t/1496)
+[Tartışmalar](https://discuss.d2l.ai/t/1496)
 :end_tab:

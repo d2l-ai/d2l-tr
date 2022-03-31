@@ -1,7 +1,7 @@
-# BERT öncesi eğitim
+# BERT Ön Eğitimi
 :label:`sec_bert-pretraining`
 
-:numref:`sec_bert`'te uygulanan BERT modeli ve :numref:`sec_bert-dataset`'te WikiText-2 veri kümesinden oluşturulan ön eğitim örnekleriyle BERT'in bu bölümdeki WikiText-2 veri kümesi üzerinde ön eğitimini yapacağız.
+:numref:`sec_bert`'te uygulanan BERT modeli ve :numref:`sec_bert-dataset`'ten WikiText-2 veri kümesinden oluşturulan ön eğitim örnekleriyle bu bölümde BERT'in WikiText-2 veri kümesi üzerinde ön eğitimini yapacağız.
 
 ```{.python .input}
 from d2l import mxnet as d2l
@@ -17,7 +17,7 @@ import torch
 from torch import nn
 ```
 
-Başlamak için WikiText-2 veri kümesini maskelenmiş dil modellemesi ve sonraki cümle tahmini için ön eğitim örneklerinin mini toplu olarak yükleriz. Toplu iş boyutu 512 ve BERT giriş dizisinin maksimum uzunluğu 64'tür. Orijinal BERT modelinde maksimum uzunluğun 512 olduğunu unutmayın.
+Başlamak için WikiText-2 veri kümesini maskelenmiş dil modellemesi ve sonraki cümle tahmini için ön eğitim örneklerinin minigrubu olarak yükleriz. Toplu iş boyutu 512 ve BERT girdi dizisinin maksimum uzunluğu 64'tür. Orijinal BERT modelinde maksimum uzunluğun 512 olduğunu unutmayın.
 
 ```{.python .input}
 #@tab all
@@ -25,9 +25,9 @@ batch_size, max_len = 512, 64
 train_iter, vocab = d2l.load_data_wiki(batch_size, max_len)
 ```
 
-## BERT öncesi eğitim
+## BERT Ön Eğitimi
 
-Orijinal BERT farklı model boyutları :cite:`Devlin.Chang.Lee.ea.2018` iki versiyonu vardır. Temel model ($\text{BERT}_{\text{BASE}}$) 768 gizli ünite (gizli boyut) ve 12 kendine dikkat kafası olan 12 katman (transformatör kodlayıcı blokları) kullanır. Büyük model ($\text{BERT}_{\text{LARGE}}$), 1024 gizli ünite ve 16 kendine dikkat kafalı 24 katman kullanır. Özellikle, birincisinin 110 milyon parametresi varken, ikincisi 340 milyon parametreye sahiptir. Kolayca gösteri için, 2 katman, 128 gizli ünite ve 2 özdikkat kafası kullanarak küçük bir BERT tanımlıyoruz.
+Orijinal BERT'in farklı model boyutlarında :cite:`Devlin.Chang.Lee.ea.2018` iki sürümü vardır. Temel model ($\text{BERT}_{\text{BASE}}$) 768 gizli birim (gizli boyut) ve 12 öz-dikkat kafası olan 12 katman (dönüştürücü kodlayıcı blokları) kullanır. Büyük model ($\text{BERT}_{\text{LARGE}}$), 1024 gizli birimli ve 16 öz-dikkat kafalı 24 katman kullanır. Dikkate değer şekilde, birincisinin 110 milyon parametresi varken, ikincisi 340 milyon parametreye sahiptir. Kolayca gösterim için, 2 katman, 128 gizli birim ve 2 öz-dikkat kafası kullanarak küçük bir BERT tanımlıyoruz.
 
 ```{.python .input}
 net = d2l.BERTModel(len(vocab), num_hiddens=128, ffn_num_hiddens=256,
@@ -48,7 +48,7 @@ devices = d2l.try_all_gpus()
 loss = nn.CrossEntropyLoss()
 ```
 
-Eğitim döngüsünü tanımlamadan önce, `_get_batch_loss_bert` bir yardımcı işlevi tanımlıyoruz. Eğitim örneklerinin parçası göz önüne alındığında, bu işlev hem maskelenmiş dil modellemesi hem de sonraki cümle tahmini görevlerinin kaybını hesaplar. BERT ön eğitiminin son kaybının hem maskeli dil modelleme kaybının hem de bir sonraki cümle tahmini kaybının sadece toplamıdır.
+Eğitim döngüsünü tanımlamadan önce, `_get_batch_loss_bert` yardımcı işlevini tanımlıyoruz. Eğitim örneklerinin parçası göz önüne alındığında, bu işlev hem maskelenmiş dil modellemesi hem de sonraki cümle tahmini görevlerinin kaybını hesaplar. BERT ön eğitiminin son kaybı sadece hem maskeli dil modelleme kaybının hem de bir sonraki cümle tahmini kaybının toplamıdır.
 
 ```{.python .input}
 #@save
@@ -103,7 +103,7 @@ def _get_batch_loss_bert(net, loss, vocab_size, tokens_X,
     return mlm_l, nsp_l, l
 ```
 
-Yukarıda belirtilen iki yardımcı işlevini çağıran aşağıdaki `train_bert` işlevi, WikiText-2 (`train_iter`) veri kümesindeki BERT (`net`) ön tren prosedürünü tanımlar. BERT eğitimi çok uzun sürebilir. `train_ch13` işlevinde olduğu gibi eğitim için çayırların sayısını belirtmek yerine (bkz. :numref:`sec_image_augmentation`), aşağıdaki işlevin `num_steps` girdisi, eğitim için yineleme adımlarının sayısını belirtir.
+Yukarıda belirtilen iki yardımcı işlevini çağıran aşağıdaki `train_bert` işlevi, WikiText-2 (`train_iter`) veri kümesindeki BERT (`net`) ön eğitim prosedürünü tanımlar. BERT eğitimi çok uzun sürebilir. `train_ch13` işlevinde olduğu gibi eğitim için dönemlerin sayısını belirtmek yerine (bkz. :numref:`sec_image_augmentation`), aşağıdaki işlevin `num_steps` girdisi, eğitim için yineleme adımlarının sayısını belirtir.
 
 ```{.python .input}
 def train_bert(train_iter, net, loss, vocab_size, devices, num_steps):
@@ -191,7 +191,7 @@ def train_bert(train_iter, net, loss, vocab_size, devices, num_steps):
           f'{str(devices)}')
 ```
 
-BERT ön eğitimi sırasında hem maskeli dil modelleme kaybını hem de sonraki cümle tahmini kaybını çizebiliriz.
+BERT ön eğitimi sırasında hem maskeli dil modelleme kaybını hem de sonraki cümle tahmini kaybını çizdirebiliriz.
 
 ```{.python .input}
 #@tab all
@@ -200,7 +200,7 @@ train_bert(train_iter, net, loss, len(vocab), devices, 50)
 
 ## BERT ile Metni Temsil Etme
 
-BERT ön eğitiminden sonra, tek metin, metin çiftleri veya bunlardaki herhangi bir belirteci temsil etmek için kullanabiliriz. Aşağıdaki işlev, `tokens_a` ve `tokens_b`'teki tüm belirteçler için BERT (`net`) temsillerini döndürür.
+BERT ön eğitiminden sonra onu, tek metin, metin çiftleri veya bunlardaki herhangi bir belirteci temsil etmek için kullanabiliriz. Aşağıdaki işlev, `tokens_a` ve `tokens_b`'teki tüm belirteçler için BERT (`net`) temsillerini döndürür.
 
 ```{.python .input}
 def get_bert_encoding(net, tokens_a, tokens_b=None):
@@ -224,7 +224,7 @@ def get_bert_encoding(net, tokens_a, tokens_b=None):
     return encoded_X
 ```
 
-“Bir vinç uçuyor” cümlesini düşünün. :numref:`subsec_bert_input_rep`'te tartışıldığı gibi BERT giriş temsilini hatırlayın. Özel belirteçleri ekledikten sonra “<cls>” (sınıflandırma için kullanılır) ve “<sep>” (ayırma için kullanılır), BERT giriş sırası altı uzunluğa sahiptir. Sıfır “<cls>” belirteci dizini olduğundan, `encoded_text[:, 0, :]` tüm girdi cümlesinin BERT temsilidir. Polysemy belirteci “vinç” yi değerlendirmek için, belirteçin BERT temsilinin ilk üç öğesini de yazdırıyoruz.
+"A crane is flying" cümlesini düşünün. :numref:`subsec_bert_input_rep`'te tartışıldığı gibi BERT girdi temsilini hatırlayın. Özel belirteçleri ekledikten sonra “&lt;cls&gt;” (sınıflandırma için kullanılır) ve “&lt;sep&gt;” (ayırma için kullanılır), BERT girdi dizisi altı uzunluğa sahiptir. Sıfır “&lt;cls&gt;” belirteci dizini olduğundan, `encoded_text[:, 0, :]` tüm girdi cümlesinin BERT temsilidir. Çokanlamlılık belirteci "crane" yi değerlendirmek için, belirteçin BERT temsilinin ilk üç öğesini de yazdırıyoruz.
 
 ```{.python .input}
 #@tab all
@@ -236,7 +236,7 @@ encoded_text_crane = encoded_text[:, 2, :]
 encoded_text.shape, encoded_text_cls.shape, encoded_text_crane[0][:3]
 ```
 
-Şimdi bir cümle çifti düşünün “bir vinç sürücüsü geldi” ve “sadece gitti”. Benzer şekilde, `encoded_pair[:, 0, :]`, önceden eğitilmiş BERT'ten tüm cümle çiftinin kodlanmış sonucudur. Polysemy belirteci “vinç” nin ilk üç öğesinin, bağlam farklı olduğu zamanlardan farklı olduğunu unutmayın. Bu BERT temsillerinin bağlam duyarlı olduğunu destekler.
+Şimdi bir cümle çifti düşünün "a crane driver came" ("bir vinç sürücüsü geldi") ve "he just left" ("az önce gitti"). Benzer şekilde, `encoded_pair[:, 0, :]`, önceden eğitilmiş BERT'ten tüm cümle çiftinin kodlanmış sonucudur. Çokanlamlılık belirteci "crane" (vinç veya turna) nin ilk üç öğesinin, bağlam farklı olduğu zamanlardan farklı olduğunu unutmayın. Bu BERT temsillerinin bağlam duyarlı olduğunu destekler.
 
 ```{.python .input}
 #@tab all
@@ -249,23 +249,23 @@ encoded_pair_crane = encoded_pair[:, 2, :]
 encoded_pair.shape, encoded_pair_cls.shape, encoded_pair_crane[0][:3]
 ```
 
-:numref:`chap_nlp_app`'te, aşağı akış doğal dil işleme uygulamaları için önceden eğitilmiş bir BERT modeli ince ayar yapacağız. 
+:numref:`chap_nlp_app`'te, aşağı akış doğal dil işleme uygulamaları için önceden eğitilmiş bir BERT modelinde ince ayar yapacağız. 
 
 ## Özet
 
-* Orijinal BERT, temel modelin 110 milyon parametreye sahip olduğu ve büyük modelin 340 milyon parametreye sahip olduğu iki versiyona sahiptir.
-* BERT ön eğitiminden sonra, tek metin, metin çiftleri veya bunlardaki herhangi bir belirteci temsil etmek için kullanabiliriz.
+* Orijinal BERT, temel modelin 110 milyon parametreye sahip olduğu ve büyük modelin 340 milyon parametreye sahip olduğu iki sürüme sahiptir.
+* BERT ön eğitiminden sonra onu, tek metin, metin çiftleri veya bunlardaki herhangi bir belirteci temsil etmek için kullanabiliriz.
 * Deneyde, aynı belirteç, bağlamları farklı olduğunda farklı BERT temsiline sahiptir. Bu BERT temsillerinin bağlam duyarlı olduğunu destekler.
 
-## Egzersizler
+## Alıştırmalar
 
 1. Deneyde, maskeli dil modelleme kaybının bir sonraki cümle tahmini kaybından önemli ölçüde daha yüksek olduğunu görebiliriz. Neden?
-2. BERT giriş dizisinin maksimum uzunluğunu 512 olarak ayarlayın (orijinal BERT modeliyle aynı). Orijinal BERT modelinin $\text{BERT}_{\text{LARGE}}$ gibi yapılandırmalarını kullanın. Bu bölümü çalıştırırken herhangi bir hatayla karşılaşıyor musunuz? Neden?
+2. BERT girdi dizisinin maksimum uzunluğunu 512 olarak ayarlayın (orijinal BERT modeliyle aynı). Orijinal BERT modelinin $\text{BERT}_{\text{LARGE}}$ gibi yapılandırmalarını kullanın. Bu bölümü çalıştırırken herhangi bir hatayla karşılaşıyor musunuz? Neden?
 
 :begin_tab:`mxnet`
-[Discussions](https://discuss.d2l.ai/t/390)
+[Tartışmalar](https://discuss.d2l.ai/t/390)
 :end_tab:
 
 :begin_tab:`pytorch`
-[Discussions](https://discuss.d2l.ai/t/1497)
+[Tartışmalar](https://discuss.d2l.ai/t/1497)
 :end_tab:

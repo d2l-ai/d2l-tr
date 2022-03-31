@@ -5,6 +5,8 @@ affine; afin
 
 agent; etmen
 
+analogy; benzeşim, benzetme
+
 anchor; çapa
 
 api (application programming interface); uygulama programlama arayüzü
@@ -40,6 +42,8 @@ bus; veriyolu
 bounding box; kuşatan kutu
 
 broadcast; yayınlama
+
+byte; bayt, sekizli
 
 cache; ön bellek
 
@@ -288,6 +292,8 @@ stride; uzun adım
 string; dizgi
 
 stochastic; rasgele
+
+sunsampling; alt örnekleme
 
 surrogate; vekil
 

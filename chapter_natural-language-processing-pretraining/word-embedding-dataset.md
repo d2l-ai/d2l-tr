@@ -1,7 +1,7 @@
-# Word Embeddings ön eğitim için veri kümesi
+# Sözcük Gömme Ön Eğitimi İçin Veri Kümesi
 :label:`sec_word2vec_data`
 
-Artık word2vec modellerinin teknik ayrıntılarını ve yaklaşık eğitim yöntemlerini bildiğimize göre, uygulamalarını inceleyelim. Özellikle, :numref:`sec_word2vec`'te atlama gram modelini ve :numref:`sec_approx_train`'te negatif örnekleme örneğini örnek olarak alacağız. Bu bölümde, kelime gömme modelini ön eğitim için veri kümesi ile başlıyoruz: verilerin orijinal formatı eğitim sırasında tekrarlanabilen minibüsler haline dönüştürülecektir.
+Artık word2vec modellerinin teknik ayrıntılarını ve yaklaşıklama eğitim yöntemlerini bildiğimize göre, uygulamalarını inceleyelim. Özellikle, :numref:`sec_word2vec`'te skip-gram modelini ve :numref:`sec_approx_train`'te negatif örneklemeyi örnek olarak alacağız. Bu bölümde, sözcük gömme modeli ön eğitimi için veri kümesi ile başlıyoruz: Verilerin orijinal biçimi eğitim sırasında yinelenebilen minigruplar haline dönüştürülecektir.
 
 ```{.python .input}
 from d2l import mxnet as d2l
@@ -22,7 +22,7 @@ import random
 
 ## Veri Kümesini Okuma
 
-Burada kullandığımız veri kümesi [Penn Tree Bank (PTB)](https://catalog.ldc.upenn.edu/LDC99T42). Bu dergi, Wall Street Journal makalelerinden örneklenmiştir ve eğitim, doğrulama ve test setlerine bölünmüştür. Özgün biçimde, metin dosyasının her satırı boşluklarla ayrılmış sözcüklerin cümlesini temsil eder. Burada her kelimeyi bir jeton olarak ele alıyoruz.
+Burada kullandığımız veri kümesi [Penn Tree Bank (PTB)](https://catalog.ldc.upenn.edu/LDC99T42)'dir. Bu külliyat, Wall Street Journal makalelerinden örneklenmiştir ve eğitim, geçerleme ve test kümelerine bölünmüştür. Özgün biçimde, metin dosyasının her satırı boşluklarla ayrılmış bir sözcükler cümlesini temsil eder. Burada her sözcüğe bir belirteç gibi davranıyoruz.
 
 ```{.python .input}
 #@tab all
@@ -43,7 +43,7 @@ sentences = read_ptb()
 f'# sentences: {len(sentences)}'
 ```
 
-Eğitim setini okuduktan sonra, 10 kereden az görünen herhangi bir kelimenin "<unk>" belirteci ile değiştirildiği korpus için bir kelime dağarcığı oluşturuyoruz. Özgün veri kümesinin <unk>nadir (bilinmeyen) sözcükleri temsil eden "" belirteçleri de içerdiğini unutmayın.
+Eğitim kümesini okuduktan sonra, 10 kereden az görünen herhangi bir sözcüğün "&lt;unk&gt;" belirteci ile değiştirildiği külliyat için bir sözcük dağarcığı oluşturuyoruz. Özgün veri kümesinin nadir (bilinmeyen) sözcükleri temsil eden "&lt;unk&gt;" belirteçleri de içerdiğini unutmayın.
 
 ```{.python .input}
 #@tab all
@@ -51,13 +51,13 @@ vocab = d2l.Vocab(sentences, min_freq=10)
 f'vocab size: {len(vocab)}'
 ```
 
-## Alt örnekleme
+## Alt Örnekleme
 
-Metin verileri genellikle “the”, “a” ve “in” gibi yüksek frekanslı sözcüklere sahiptir: hatta çok büyük corpora'da milyarlarca kez ortaya çıkabilir. Ancak, bu kelimeler genellikle bağlam pencerelerinde birçok farklı kelimeyle birlikte ortaya çıkar ve çok az yararlı sinyaller sağlar. Örneğin, bir bağlam penceresinde “çip” kelimesini göz önünde bulundurun: Sezgisel olarak düşük frekanslı bir “intel” sözcüğüyle birlikte oluşması, eğitimde yüksek frekanslı bir kelime “a” ile birlikte oluşmaktan daha yararlıdır. Dahası, büyük miktarda (yüksek frekanslı) kelimelerle eğitim yavaştır. Böylece, kelime gömme modellerini eğitiyorken, yüksek frekanslı kelimeler*alt örneklenebilir* :cite:`Mikolov.Sutskever.Chen.ea.2013`. Özellikle, veri kümesinde $w_i$ dizinlenmiş her sözcük olasılık ile atılır 
+Metin verileri genellikle “the”, “a” ve “in” gibi yüksek frekanslı sözcüklere sahiptir: Hatta çok büyük külliyatta milyarlarca kez ortaya çıkabilirler. Ancak, bu sözcükler genellikle bağlam pencerelerinde birçok farklı sözcükle birlikte ortaya çıkar ve çok az yararlı sinyaller sağlar. Örneğin, bir bağlam penceresinde “çip” sözcüğünü göz önünde bulundurun: Sezgisel olarak düşük frekanslı bir “intel” sözcüğüyle birlikte oluşması, eğitimde yüksek frekanslı bir sözcük “a” ile birlikte oluşmasından daha yararlıdır. Dahası, büyük miktarda (yüksek frekanslı) sözcüklerle eğitim yavaştır. Böylece, sözcük gömme modellerini eğitiyorken, yüksek frekanslı sözcükler *alt örneklenebilir* :cite:`Mikolov.Sutskever.Chen.ea.2013`. Özellikle, veri kümesindeki dizine alınmış her bir $w_i$ sözcüğü aşağıdaki olasılıkla atılacaktır.
 
 $$ P(w_i) = \max\left(1 - \sqrt{\frac{t}{f(w_i)}}, 0\right),$$
 
-burada $f(w_i)$, $w_i$ kelimelerinin sayısının veri kümelerindeki toplam kelime sayısına oranıdır ve $t$ sabit bir hiperparametre (denemede $10^{-4}$) 'dir. Sadece göreli frekans $f(w_i) > t$ (yüksek frekanslı) sözcük $w_i$ atılabilir ve kelimenin göreli frekansı ne kadar yüksek olursa, atılma olasılığı o kadar yüksektir.
+burada $f(w_i)$, $w_i$ sözcüklerinin sayısının veri kümelerindeki toplam sözcük sayısına oranıdır ve $t$ sabit (deneyde $10^{-4}$) bir hiperparametredir. Sadece göreli frekans $f(w_i) > t$ (yüksek frekanslı) olursa sözcük $w_i$ atılabilir ve sözcüğün göreli frekansı ne kadar yüksek olursa, atılma olasılığı o kadar yüksektir.
 
 ```{.python .input}
 #@tab all
@@ -81,7 +81,7 @@ def subsample(sentences, vocab):
 subsampled, counter = subsample(sentences, vocab)
 ```
 
-Aşağıdaki kod parçacığı, alt örnekleme öncesi ve sonrasında cümle başına belirteç sayısının histogramını çizer. Beklendiği gibi, alt örnekleme, yüksek frekanslı kelimeleri bırakarak cümleleri önemli ölçüde kısaltır ve bu da eğitim hızlandırmasına yol açacaktır.
+Aşağıdaki kod parçacığı, alt örnekleme öncesi ve sonrasında cümle başına belirteç sayısının histogramını çizer. Beklendiği gibi, alt örnekleme, yüksek frekanslı sözcükleri düşürerek cümleleri önemli ölçüde kısaltır ve bu da eğitim hızlandırmasına yol açacaktır.
 
 ```{.python .input}
 #@tab all
@@ -89,7 +89,7 @@ d2l.show_list_len_pair_hist(['origin', 'subsampled'], '# tokens per sentence',
                             'count', sentences, subsampled);
 ```
 
-Bireysel belirteçler için, yüksek frekanslı “the” kelimesinin örnekleme oranı 1/20'den azdır.
+Bireysel belirteçler için, yüksek frekanslı “the” sözcüğünün örnekleme oranı 1/20'den azdır.
 
 ```{.python .input}
 #@tab all
@@ -101,14 +101,14 @@ def compare_counts(token):
 compare_counts('the')
 ```
 
-Buna karşılık, düşük frekanslı kelimeler “katıl” tamamen tutulur.
+Buna karşılık, düşük frekanslı sözcük “join” tamamen tutulur.
 
 ```{.python .input}
 #@tab all
 compare_counts('join')
 ```
 
-Alt örneklemeden sonra, belirteçleri korpus için endekslerine eşliyoruz.
+Alt örneklemeden sonra, belirteçleri külliyat için indekslerine eşliyoruz.
 
 ```{.python .input}
 #@tab all
@@ -116,9 +116,9 @@ corpus = [vocab[line] for line in subsampled]
 corpus[:3]
 ```
 
-## Merkezi Kelimeler ve Bağlam Kelimeleri Ayıklamak
+## Merkezi Sözcükleri ve Bağlam Sözcüklerini Ayıklamak
 
-Aşağıdaki `get_centers_and_contexts` işlevi, `corpus`'ten tüm orta sözcükleri ve bağlam sözcüklerini ayıklar. Bağlam penceresi boyutu olarak rastgele olarak 1 ile `max_window_size` arasında bir tamsayıyı eşit olarak örnekler. Herhangi bir merkez sözcük için, uzaklığı örneklenen bağlam penceresi boyutunu aşmayan sözcükler, bağlam sözcükleridir.
+Aşağıdaki `get_centers_and_contexts` işlevi, `corpus`'ten tüm merkez sözcükleri ve onların bağlam sözcüklerini ayıklar. Bağlam penceresi boyutu olarak rastgele olarak 1 ile `max_window_size` arasında bir tamsayıya eşit olarak örnekler. Herhangi bir merkez sözcük için, uzaklığı örneklenen bağlam penceresi boyutunu aşmayan sözcükler, bağlam sözcükleridir.
 
 ```{.python .input}
 #@tab all
@@ -142,7 +142,7 @@ def get_centers_and_contexts(corpus, max_window_size):
     return centers, contexts
 ```
 
-Ardından, sırasıyla 7 ve 3 kelimeden oluşan iki cümle içeren yapay bir veri kümesi oluşturuyoruz. Maksimum bağlam penceresi boyutunun 2 olmasını sağlayın ve tüm orta sözcükleri ve bağlam sözcüklerini yazdırın.
+Ardından, sırasıyla 7 ve 3 sözcükten oluşan iki cümle içeren yapay bir veri kümesi oluşturuyoruz. Maksimum bağlam penceresi boyutunun 2 olmasını sağlayın ve tüm merkez sözcüklerini ve onların bağlam sözcüklerini yazdırın.
 
 ```{.python .input}
 #@tab all
@@ -152,7 +152,7 @@ for center, context in zip(*get_centers_and_contexts(tiny_dataset, 2)):
     print('center', center, 'has contexts', context)
 ```
 
-PTB veri kümesi üzerinde eğitim yaparken, maksimum bağlam penceresi boyutunu 5'e ayarladık. Aşağıdaki, veri kümelerindeki tüm orta sözcükleri ve bağlam sözcüklerini ayıklar.
+PTB veri kümesi üzerinde eğitim yaparken, maksimum bağlam penceresi boyutunu 5'e ayarladık. Aşağıdaki, veri kümelerindeki tüm merkez sözcüklerini ve onların bağlam sözcüklerini ayıklar.
 
 ```{.python .input}
 #@tab all
@@ -162,7 +162,7 @@ f'# center-context pairs: {sum([len(contexts) for contexts in all_contexts])}'
 
 ## Negatif Örnekleme
 
-Yaklaşık eğitim için negatif örnekleme kullanıyoruz. Gürültülü kelimeleri önceden tanımlanmış bir dağıtıma göre örneklemek için aşağıdaki `RandomGenerator` sınıfını tanımlıyoruz; burada (muhtemelen normalleştirilmemiş) örnekleme dağılımının `sampling_weights` bağımsız değişkeni üzerinden geçirilir.
+Yaklaşıklama eğitim için negatif örnekleme kullanıyoruz. Gürültülü sözcükleri önceden tanımlanmış bir dağıtıma göre örneklemek için aşağıdaki `RandomGenerator` sınıfını tanımlıyoruz; burada (muhtemelen normalleştirilmemiş) örnekleme dağılımı `sampling_weights` argümanı üzerinden geçirilir.
 
 ```{.python .input}
 #@tab all
@@ -186,14 +186,14 @@ class RandomGenerator:
         return self.candidates[self.i - 1]
 ```
 
-Örneğin, $P(X=1)=2/9, P(X=2)=3/9$ ve $P(X=3)=4/9$ örnekleme olasılıkları ile 1, 2 ve 3 indeksleri arasında 10 rasgele değişken $X$ çizebiliriz.
+Örneğin, $P(X=1)=2/9, P(X=2)=3/9$ ve $P(X=3)=4/9$ örnekleme olasılıkları ile 1, 2 ve 3 indeksleri arasında 10 rasgele değişken $X$ çekebiliriz.
 
 ```{.python .input}
 generator = RandomGenerator([2, 3, 4])
 [generator.draw() for _ in range(10)]
 ```
 
-Bir çift orta kelime ve bağlam kelimesi için, rastgele `K` (deneyde 5) gürültü kelimelerini örnekleriz. Word2vec kağıdındaki önerilere göre2vec, $w$ gürültü kelimesinin $P(w)$ örnekleme olasılığı, 0.75 :cite:`Mikolov.Sutskever.Chen.ea.2013`'ün gücüne yükseltilmiş sözlükteki göreli frekansına ayarlanır.
+Bir çift merkez sözcük ve bağlam sözcüğü için, rastgele `K` (deneyde 5) gürültü sözcüğü örnekleriz. Word2vec makalesindeki önerilere göre, $w$ gürültü sözcüğünün $P(w)$ örnekleme olasılığı, 0.75'in :cite:`Mikolov.Sutskever.Chen.ea.2013` gücüne yükseltilmiş olarak sözlükteki göreli frekansına ayarlanır.
 
 ```{.python .input}
 #@tab all
@@ -218,16 +218,16 @@ def get_negatives(all_contexts, vocab, counter, K):
 all_negatives = get_negatives(all_contexts, vocab, counter, 5)
 ```
 
-## Minibatch'larda Eğitim Örnekleri Yükleme
+## Minigruplarda Eğitim Örneklerini Yükleme
 :label:`subsec_word2vec-minibatch-loading`
 
-Bağlam sözcükleri ve örneklenmiş gürültü sözcükleri ile birlikte tüm merkezi kelimeler çıkarıldıktan sonra, eğitim sırasında tekrarlı olarak yüklenebilecek örneklerin minibatch'larına dönüştürülecektir. 
+Bağlam sözcükleri ve örneklenmiş gürültü sözcükleri ile birlikte tüm merkezi sözcükler çıkarıldıktan sonra, eğitim sırasında tekrarlı olarak yüklenebilecek örneklerin minigruplarına dönüştürülecektir. 
 
-Bir mini toplu işlemde, $i.$ örnek bir merkez sözcük ve $n_i$ bağlam sözcükleri ve $m_i$ parazit sözcükleri içerir. Değişen bağlam penceresi boyutları nedeniyle $n_i+m_i$ farklı $i$ için değişiklik gösterir. Böylece, her örnek için bağlam kelimelerini ve gürültü kelimelerini `contexts_negatives` değişkeninde birleştiririz ve birleştirme uzunluğu $\max_i n_i+m_i$'a (`max_len`) ulaşana kadar ped sıfırlarını birleştiririz. Kaybın hesaplanmasında yastıkları hariç tutmak için `masks` bir maske değişkeni tanımlıyoruz. `masks`'daki elemanlar ve `contexts_negatives`'teki `contexts_negatives`'teki elemanlar arasında bire bir yazışma vardır, burada `masks`'daki sıfırlar (aksi olanlar) `contexts_negatives`'teki pedlere karşılık gelir. 
+Bir minigrupta, $i.$ örnek bir merkez sözcük ve onun $n_i$ bağlam sözcükleri ve $m_i$ gürültü sözcükleri içerir. Değişen bağlam penceresi boyutları nedeniyle $n_i+m_i$ farklı $i$'ler için değişiklik gösterir. Böylece, her örnek için bağlam sözcüklerini ve gürültü sözcüklerini `contexts_negatives` değişkeninde bitiştiririz ve bitiştirme uzunluğu $\max_i n_i+m_i$'a (`max_len`) ulaşana kadar sıfırlarla dolgularız. Kaybın hesaplanmasında dolguları hariç tutmak için bir maske değişkeni, `masks`, tanımlıyoruz. `masks`'taki elemanlar ve `contexts_negatives`'teki elemanlar arasında bire bir karşılık vardır, burada `masks`'daki sıfırlar (aksi takdirde birler) `contexts_negatives`'teki dolgulara karşılık gelir. 
 
-Olumlu ve negatif örnekleri ayırt etmek için `contexts_negatives`'teki `contexts_negatives` içindeki parazit sözcüklerden `labels` değişkeni aracılığıyla bağlam sözcüklerini ayırırız. `masks`'e benzer şekilde, `labels`'daki elemanlar ve `contexts_negatives`'teki elemanlar arasında bire bir yazışma vardır ve `contexts_negatives`'teki `labels`'daki birlerin (aksi takdirde sıfırlar) `contexts_negatives`'teki bağlam sözcüklerine (olumlu örnekler) karşılık geldiği yerde. 
+Pozitif ve negatif örnekleri ayırt etmek için `contexts_negatives` içindeki gürültü sözcüklerinden `labels` değişkeni aracılığıyla bağlam sözcüklerini ayırırız. `masks`'e benzer şekilde, `labels`'daki elemanlar ve `contexts_negatives`'teki elemanlar arasında bire bir karşılık vardır ve `labels`'daki birler (aksi takdirde sıfırlar) `contexts_negatives`'teki bağlam sözcüklerine (olumlu örneklere) karşılık gelir. 
 
-Yukarıdaki fikir aşağıdaki `batchify` işlevinde uygulanmaktadır. Girişi `data`, her öğe `center` merkez sözcüklerinden, `context` bağlam kelimelerinden ve `negative`'in gürültü kelimelerinden oluşan bir örnektir, toplu boyutuna eşit uzunlukta bir listedir. Bu işlev, maske değişkeni de dahil olmak üzere eğitim sırasında hesaplamalar için yüklenebilecek bir mini batch döndürür.
+Yukarıdaki fikir aşağıdaki `batchify` işlevinde uygulanmaktadır. Girdi `data` toplu boyutuna eşit uzunlukta bir listedir; her öğesi `center` merkez sözcüklerinden, `context` bağlam sözcüklerinden ve `negative`  gürültü sözcüklerinden oluşan bir örnektir. Bu işlev, maske değişkeni de dahil olmak üzere eğitim sırasında hesaplamalar için yüklenebilecek bir minigrup döndürür.
 
 ```{.python .input}
 #@tab all
@@ -246,7 +246,7 @@ def batchify(data):
         contexts_negatives), d2l.tensor(masks), d2l.tensor(labels))
 ```
 
-Bu işlevi iki örnekten oluşan bir mini batch kullanarak test edelim.
+Bu işlevi iki örnekten oluşan bir minigrup kullanarak test edelim.
 
 ```{.python .input}
 #@tab all
@@ -259,9 +259,9 @@ for name, data in zip(names, batch):
     print(name, '=', data)
 ```
 
-## Her Şeyleri Bir Araya Getirmek
+## Her Şeyi Bir Araya Getirmek
 
-Son olarak, PTB veri kümesini okuyan ve veri yineleyicisini ve kelime dağarcığını döndüren `load_data_ptb` işlevini tanımlıyoruz.
+Son olarak, PTB veri kümesini okuyan ve veri yineleyicisini ve sözcük dağarcığını döndüren `load_data_ptb` işlevini tanımlıyoruz.
 
 ```{.python .input}
 #@save
@@ -320,7 +320,7 @@ def load_data_ptb(batch_size, max_window_size, num_noise_words):
     return data_iter, vocab
 ```
 
-Veri yineleyicisinin ilk mini batch yazdıralım.
+Veri yineleyicisinin ilk minigrubunu yazdıralım.
 
 ```{.python .input}
 #@tab all
@@ -333,19 +333,19 @@ for batch in data_iter:
 
 ## Özet
 
-* Yüksek frekanslı kelimeler eğitimde o kadar yararlı olmayabilir. Eğitimde hızlandırmak için onları alt deneyebiliriz.
-* Hesaplama verimliliği için örnekler minibüsler halinde yükleriz. Paddingleri dolgulardan ayırmak için diğer değişkenleri ve negatif olanlardan olumlu örnekler tanımlayabiliriz.
+* Yüksek frekanslı sözcükler eğitimde o kadar yararlı olmayabilir. Eğitimde hızlanmak için onları alt örnekleyebiliriz.
+* Hesaplama verimliliği için örnekleri minigruplar halinde yükleriz. Dolguları dolgu olmayanlardan ve olumlu örnekleri olumsuz olanlardan ayırt etmek için başka değişkenler tanımlayabiliriz.
 
-## Egzersizler
+## Alıştırmalar
 
 1. Alt örnekleme kullanmıyorsa, bu bölümdeki kodun çalışma süresi nasıl değişir?
-1. `RandomGenerator` sınıfı `k` rasgele örnekleme sonuçlarını önbelleğe alır. `k`'ü diğer değerlere ayarlayın ve veri yükleme hızını nasıl etkilediğini görün.
-1. Bu bölümün kodundaki diğer hiperparametreler veri yükleme hızını etkileyebilir?
+1. `RandomGenerator` sınıfı `k` rasgele örnekleme sonuçlarını önbelleğe alır. `k`'yi diğer değerlere ayarlayın ve veri yükleme hızını nasıl etkilediğini görün.
+1. Bu bölümün kodundaki hangi diğer hiperparametreler veri yükleme hızını etkileyebilir?
 
 :begin_tab:`mxnet`
-[Discussions](https://discuss.d2l.ai/t/383)
+[Tartışmalar](https://discuss.d2l.ai/t/383)
 :end_tab:
 
 :begin_tab:`pytorch`
-[Discussions](https://discuss.d2l.ai/t/1330)
+[Tartışmalar](https://discuss.d2l.ai/t/1330)
 :end_tab:
