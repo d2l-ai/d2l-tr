@@ -1,19 +1,19 @@
 # Doğal Dil Çıkarımı: Dikkat Kullanma
 :label:`sec_natural-language-inference-attention`
 
-:numref:`sec_natural-language-inference-and-dataset`'da doğal dil çıkarım görevini ve SNLI veri kümesini tanıttık. Karmaşık ve derin mimarilere dayanan birçok model göz önüne alındığında, Parikh ve ark. Doğal dil çıkarımına dikkat mekanizmaları ile hitap etmeyi önerdi ve bunu “ayrıştırılabilir dikkat modeli” olarak nitelendirdi :cite:`Parikh.Tackstrom.Das.ea.2016`. Bu, tekrarlayan veya kıvrımlı katmanları olmayan bir modelle sonuçlanır ve SNLI veri kümelerinde o anda çok daha az parametre ile en iyi sonucu elde eder. Bu bölümde, :numref:`fig_nlp-map-nli-attention`'te tasvir edildiği gibi doğal dil çıkarımı için bu dikkat tabanlı yöntemi (MLP'lerle) açıklayacağız ve uygulayacağız. 
+:numref:`sec_natural-language-inference-and-dataset`'da doğal dil çıkarım görevini ve SNLI veri kümesini tanıttık. Karmaşık ve derin mimarilere dayanan birçok model göz önüne alındığında, Parikh ve ark. doğal dil çıkarımını dikkat mekanizmaları ile ele almayı önerdi ve bunu "ayrıştırılabilir dikkat modeli" olarak adlandırdı :cite:`Parikh.Tackstrom.Das.ea.2016`. Bu, yinelemeli veya evrişimli katmanları olmayan bir modelle sonuçlanır ve SNLI veri kümesinde o anda çok daha az parametre ile en iyi sonucu elde eder. Bu bölümde, :numref:`fig_nlp-map-nli-attention`'te tasvir edildiği gibi doğal dil çıkarımı için bu dikkat tabanlı yöntemi (MLP'lerle) açıklayacağız ve uygulayacağız. 
 
-![This section feeds pretrained GloVe to an architecture based on attention and MLPs for natural language inference.](../img/nlp-map-nli-attention.svg)
+![Bu bölüm, önceden eğitilmiş GloVe'yi, doğal dil çıkarımı için dikkat ve MLP'lere dayalı bir mimariye besler.](../img/nlp-map-nli-attention.svg)
 :label:`fig_nlp-map-nli-attention`
 
 ## Model
 
-Tesislerde ve hipotezlerdeki belirteçlerin sırasını korumaktan daha basit, sadece bir metin dizisindeki belirteçleri diğerindeki her belirteçle hizalayabiliriz ve tam tersi de geçerlidir, daha sonra tesisler ve hipotezler arasındaki mantıksal ilişkileri tahmin etmek için bu bilgileri karşılaştırabilir ve toplayabiliriz. Makine çevirisinde kaynak ve hedef cümleler arasında belirteçlerin hizalanmasına benzer şekilde, tesis ve hipotezler arasındaki belirteçlerin hizalanması dikkat mekanizmaları ile düzgün bir şekilde gerçekleştirilebilir. 
+Öncüllerdeki ve hipotezlerdeki belirteçlerin sırasını korumaktan daha basit olarak, sadece bir metin dizisindeki belirteçleri diğerindeki her belirteçle hizalayabiliriz ve tersi de geçerlidir, daha sonra öncüller ve hipotezler arasındaki mantıksal ilişkileri tahmin etmek için bu bilgileri karşılaştırabilir ve birleştirebiliriz. Makine çevirisinde kaynak ve hedef cümleler arasında belirteçlerin hizalanmasına benzer şekilde, öncül ve hipotezler arasındaki belirteçlerin hizalanması dikkat mekanizmaları ile düzgün bir şekilde gerçekleştirilebilir. 
 
-![Natural language inference using attention mechanisms.](../img/nli-attention.svg)
+![Dikkat mekanizmalarını kullanarak doğal dil çıkarımı.](../img/nli-attention.svg)
 :label:`fig_nli_attention`
 
-:numref:`fig_nli_attention` dikkat mekanizmalarını kullanarak doğal dil çıkarım yöntemini tasvir eder. Yüksek düzeyde, ortaklaşa eğitilmiş üç adımdan oluşur: katılmak, karşılaştırmak ve birleştirmek. Onları aşağıda adım adım göstereceğiz.
+:numref:`fig_nli_attention` dikkat mekanizmalarını kullanarak doğal dil çıkarım yöntemini tasvir eder. Yüksek düzeyde, ortaklaşa eğitilmiş üç adımdan oluşur: Dikkat etmek, karşılaştırmak ve biriktirmek. Onları aşağıda adım adım göstereceğiz.
 
 ```{.python .input}
 from d2l import mxnet as d2l
@@ -31,16 +31,16 @@ from torch import nn
 from torch.nn import functional as F
 ```
 
-### Katılmak
+### Dikkat Etme
 
-İlk adım, bir metin dizisindeki belirteçleri diğer dizideki her belirteçle hizalamaktır. Varsayalım ki öncülün “uykuya ihtiyacım var” ve hipotezin “yorgunum” olduğunu varsayalım. Semantik benzerlik nedeniyle, “i” hipotezinde “i” ile öncül içinde “i” ile hizalamak ve “yorgun” hipotezinde öncül içinde “uyku” ile hizalamak isteyebiliriz. Aynı şekilde, hipotezdeki “i” öncülünde “i” ile hizalamak ve “ihtiyaç” ve “uyku” ile hipotezde “yorgun” ile hizalamak isteyebiliriz. Bu hizalamanın, ideal olarak büyük ağırlıkların hizalanacak belirteçlerle ilişkilendirildiği ağırlıklı ortalama kullanarak*yumuşak* olduğunu unutmayın. Gösterim kolaylığı için, :numref:`fig_nli_attention` böyle bir hizalamayı *sert* bir şekilde gösterir. 
+İlk adım, bir metin dizisindeki belirteçleri diğer dizideki her belirteçle hizalamaktır. Öncülün “benim uykuya ihtiyacım var” ve hipotezin “ben yorgunum” olduğunu varsayalım. Anlamsal benzerlik nedeniyle, hipotezdeki "ben" ile öncül içindeki "ben"'i hizalamak ve hipotezdeki "yorgun"'u öncül içindeki "uyku" ile hizalamak isteyebiliriz. Benzer şekilde, öncüldeki "ben"i hipotezdeki "ben" ile hizalamak ve öncüldeki "uyku" ve "ihtiyaç"'ı hipotezdeki "yorgun" ile aynı hizaya getirmek isteyebiliriz. Bu tür bir hizalamanın, ideal olarak büyük ağırlıkların hizalanacak belirteçlerle ilişkilendirildiği, ağırlıklı ortalama kullanılarak *yumuşak* olduğunu unutmayın. Gösterim kolaylığı için, :numref:`fig_nli_attention` böyle bir hizalamayı *sert* bir şekilde gösterir. 
 
-Şimdi dikkat mekanizmalarını kullanarak yumuşak hizalamayı daha ayrıntılı olarak tanımlıyoruz. $\mathbf{A} = (\mathbf{a}_1, \ldots, \mathbf{a}_m)$ ve $\mathbf{B} = (\mathbf{b}_1, \ldots, \mathbf{b}_n)$ tarafından belirtin, sırasıyla $\mathbf{a}_i, \mathbf{b}_j \in \mathbb{R}^{d}$ ($i = 1, \ldots, m, j = 1, \ldots, n$) $\mathbf{a}_i, \mathbf{b}_j \in \mathbb{R}^{d}$ ($i = 1, \ldots, m, j = 1, \ldots, n$) $d$ boyutlu bir sözcük vektörü olan simge sayısı $m$ ve $n$ olan öncül ve hipotezi belirtin. Yumuşak hizalama için dikkat ağırlıklarını $e_{ij} \in \mathbb{R}$ olarak hesaplıyoruz 
+Şimdi dikkat mekanizmalarını kullanarak yumuşak hizalamayı daha ayrıntılı olarak tanımlıyoruz. $\mathbf{A} = (\mathbf{a}_1, \ldots, \mathbf{a}_m)$ ve $\mathbf{B} = (\mathbf{b}_1, \ldots, \mathbf{b}_n)$ ile, sırasıyla $\mathbf{a}_i, \mathbf{b}_j \in \mathbb{R}^{d}$ ($i = 1, \ldots, m, j = 1, \ldots, n$) $\mathbf{a}_i, \mathbf{b}_j \in \mathbb{R}^{d}$ ($i = 1, \ldots, m, j = 1, \ldots, n$) $d$ boyutlu bir sözcük vektörü olan belirteç sayısı $m$ ve $n$ olan öncül ve hipotezi belirtin. Yumuşak hizalama için $e_{ij} \in \mathbb{R}$ dikkat ağırlıklarını aşağıdaki gibi hesaplıyoruz 
 
 $$e_{ij} = f(\mathbf{a}_i)^\top f(\mathbf{b}_j),$$
 :eqlabel:`eq_nli_e`
 
-burada $f$ işlevi aşağıdaki `mlp` işlevinde tanımlanan bir MLP olduğu. $f$ çıkış boyutu `mlp` `num_hiddens` bağımsız değişkeni tarafından belirtilir.
+burada $f$ işlevi, aşağıdaki `mlp` işlevinde tanımlanan bir MLP'dir. $f$'in çıktı boyutu, `mlp`'nin `num_hiddens`argümanı tarafından belirlenir.
 
 ```{.python .input}
 def mlp(num_hiddens, flatten):
@@ -69,21 +69,21 @@ def mlp(num_inputs, num_hiddens, flatten):
     return nn.Sequential(*net)
 ```
 
-Bu :eqref:`eq_nli_e` $f$ girişleri alır $\mathbf{a}_i$ ve $\mathbf{b}_j$ ayrı ayrı yerine bir çift giriş olarak bir çift alır, vurgulanmalıdır. Bu *ayrıştırma* hilesi $mn$ uygulamaları (kuadratik karmaşıklık) yerine sadece $f$ $f$ uygulamalarına (doğrusal karmaşıklık) yol açar. 
+:eqref:`eq_nli_e`'de $f$'in $\mathbf{a}_i$ ve $\mathbf{b}_j$ girdilerini girdi olarak bir çift almak yerine ayrı ayrı aldığı vurgulanmalıdır. Bu *ayrıştırma* püf noktası, $mn$ uygulama (ikinci dereceden karmaşıklık) yerine $f$'in yalnızca $m + n$ uygulamasına (doğrusal karmaşıklık)  yol açar. 
 
-:eqref:`eq_nli_e`'te dikkat ağırlıklarını normalleştirerek, varsayımdaki tüm belirteç vektörlerinin ağırlıklı ortalamasını hesaplıyoruz ve bu hipotezin temsilini elde etmek için $i$ tarafından endeksli belirteç ile yumuşak bir şekilde hizalanan hipotezin temsilini elde ederiz: 
+:eqref:`eq_nli_e`'te dikkat ağırlıklarını normalleştirerek, varsayımdaki tüm belirteç vektörlerinin ağırlıklı ortalamasını hesaplıyoruz ve bu hipotezin temsilini elde etmek için $i$ ile endeksli belirteç ile yumuşak bir şekilde hizalanan hipotezin temsilini elde ediyoruz: 
 
 $$
 \boldsymbol{\beta}_i = \sum_{j=1}^{n}\frac{\exp(e_{ij})}{ \sum_{k=1}^{n} \exp(e_{ik})} \mathbf{b}_j.
 $$
 
-Benzer şekilde, hipotezde $j$ tarafından endekslenen her belirteç için öncül belirteçlerinin yumuşak hizalamasını hesaplarız: 
+Benzer şekilde, hipotezde $j$ ile endekslenen her belirteç için öncül belirteçlerinin yumuşak hizalamasını hesaplarız: 
 
 $$
 \boldsymbol{\alpha}_j = \sum_{i=1}^{m}\frac{\exp(e_{ij})}{ \sum_{k=1}^{m} \exp(e_{kj})} \mathbf{a}_i.
 $$
 
-Aşağıda `Attend` giriş tesislerinde `A` ve giriş hipotezleri `B` ile giriş hipotezlerinin yumuşak hizalanmasını (`beta`) ve giriş hipotezleri ile (`alpha`) yumuşak hizalamasını hesaplamak için `Attend` sınıfını tanımlıyoruz.
+Aşağıda, hipotezlerin (`beta`) girdi öncülleri `A` ile yumuşak hizalamasını ve öncüllerin (`alpha`) girdi hipotezleri `B` ile yumuşak hizalamasını  hesaplamak için `Attend` sınıfını tanımlıyoruz.
 
 ```{.python .input}
 class Attend(nn.Block):
@@ -140,17 +140,17 @@ class Attend(nn.Module):
         return beta, alpha
 ```
 
-### Karşılaştırıyor
+### Karşılaştırma
 
-Bir sonraki adımda, bir dizideki bir simgeyi, bu belirteçle yumuşak bir şekilde hizalanan diğer diziyle karşılaştırırız. Yumuşak hizalamada, bir dizideki tüm belirteçlerin, muhtemelen farklı dikkat ağırlıklarına sahip olsa da, diğer sırayla bir belirteçle karşılaştırılacağını unutmayın. Kolay gösterim için, :numref:`fig_nli_attention`, jetonları hizalanmış belirteçlerle *sert* bir şekilde çiftleştirir. Örneğin, katılan adımın öncüldeki “ihtiyaç” ve “uyku” hipotezinde “yorgun” ile hizalandığını, çifti “yorul-uyku ihtiyacı” karşılaştırılacağını belirlediğini varsayalım. 
+Bir sonraki adımda, bir dizideki bir belirteci, bu belirteçle yumuşak bir şekilde hizalanan diğer diziyle karşılaştırırız. Yumuşak hizalamada, bir dizideki tüm belirteçlerin, muhtemelen farklı dikkat ağırlıklarına sahip olsa da, diğer dizideki bir belirteçle karşılaştırılacağını unutmayın. Kolay gösterim için, :numref:`fig_nli_attention` belirteçleri *sert* bir şekilde hizalanmış belirteçlerle eşleştirir. Örneğin, dikkat etme adımının öncüldeki "ihtiyaç" ve "uyku"nun her ikisinin de hipotezdeki "yorgun" ile aynı hizada olduğunu belirlediğini varsayalım, "yorgun--uykuya ihtiyacım var" çifti karşılaştırılacaktır.
 
-Karşılaştırma adımında, bir diziden belirteçlerin birleştirmesini (operatör $[\cdot, \cdot]$) ve diğer diziden hizalanmış belirteçleri $g$ (bir MLP) işlevine besleriz: 
+Karşılaştırma adımında, bir diziden belirteçlerin (operatör $[\cdot, \cdot]$) ve diğer diziden hizalanmış belirteçlerin bitiştirilmesini $g$ (bir MLP) işlevine besleriz: 
 
 $$\mathbf{v}_{A,i} = g([\mathbf{a}_i, \boldsymbol{\beta}_i]), i = 1, \ldots, m\\ \mathbf{v}_{B,j} = g([\mathbf{b}_j, \boldsymbol{\alpha}_j]), j = 1, \ldots, n.$$
 
 :eqlabel:`eq_nli_v_ab` 
 
-:eqref:`eq_nli_v_ab`'te, $\mathbf{v}_{A,i}$, öncüldeki $i$ belirteci ve $i$ belirteci ile yumuşak bir şekilde hizalanan tüm hipotez belirteçleri arasındaki karşılaştırmadır; $\mathbf{v}_{B,j}$ ise, hipotezdeki jeton $j$ ile yumuşak bir şekilde hizalanan simge $j$ arasındaki karşılaştırma ve jeton $j$ ile yumuşak bir şekilde hizalanan tüm öncül belirteçleri. Aşağıdaki `Compare` sınıfı, adım karşılaştırılması gibi tanımlar.
+:eqref:`eq_nli_v_ab`'te, $\mathbf{v}_{A,i}$, öncüldeki $i$ belirteci ve $i$ belirteci ile yumuşak bir şekilde hizalanan tüm hipotez belirteçleri arasındaki karşılaştırmadır; $\mathbf{v}_{B,j}$ ise hipotezdeki $j$ belirteci ile $j$ belirteci ile yumuşak bir şekilde hizalanmış tüm öncül belirteçler arasındaki karşılaştırmadır. Aşağıdaki `Compare` sınıfı, böyle bir karşılaştırma adımı tanımlar.
 
 ```{.python .input}
 class Compare(nn.Block):
@@ -177,21 +177,21 @@ class Compare(nn.Module):
         return V_A, V_B
 ```
 
-### Toplama
+### Biriktirmek
 
-İki karşılaştırma vektörü seti $\mathbf{v}_{A,i}$ ($i = 1, \ldots, m$) ve $\mathbf{v}_{B,j}$ ($j = 1, \ldots, n$) elinizde, son adımda mantıksal ilişkiyi ortaya çıkaracak şekilde bu bilgileri toplayacağız. Her iki seti de özetleyerek başlıyoruz: 
+İki karşılaştırma vektörü kümesi $\mathbf{v}_{A,i}$ ($i = 1, \ldots, m$) ve $\mathbf{v}_{B,j}$ ($j = 1, \ldots, n$) ile, son adımda mantıksal ilişkiyi çıkarmak için bu tür bilgileri biriktireceğiz. Her iki kümeyi toplayarak başlıyoruz: 
 
 $$
 \mathbf{v}_A = \sum_{i=1}^{m} \mathbf{v}_{A,i}, \quad \mathbf{v}_B = \sum_{j=1}^{n}\mathbf{v}_{B,j}.
 $$
 
-Daha sonra mantıksal ilişkinin sınıflandırma sonucunu elde etmek için $h$ (bir MLP) işlevine her iki özetleme sonuçlarının birleştirilmesini besleriz: 
+Daha sonra mantıksal ilişkinin sınıflandırma sonucunu elde etmek için $h$ (bir MLP) işlevine her iki özetleme sonuçlarının bitiştirilmesini besleriz: 
 
 $$
 \hat{\mathbf{y}} = h([\mathbf{v}_A, \mathbf{v}_B]).
 $$
 
-Toplama adımı aşağıdaki `Aggregate` sınıfında tanımlanır.
+Biriktirme adımı aşağıdaki `Aggregate` sınıfında tanımlanır.
 
 ```{.python .input}
 class Aggregate(nn.Block):
@@ -226,9 +226,9 @@ class Aggregate(nn.Module):
         return Y_hat
 ```
 
-### Her Şeyleri Bir Araya Getirmek
+### Her Şeyi Bir Araya Koyma
 
-Katılan, karşılaştırarak ve adımları bir araya getirerek, bu üç adımı ortaklaşa eğitmek için ayrıştırılabilir dikkat modelini tanımlıyoruz.
+Dikkat etme, karşılaştırma ve biriktirme adımlarını bir araya getirerek, bu üç adımı birlikte eğitmek için ayrıştırılabilir dikkat modelini tanımlarız.
 
 ```{.python .input}
 class DecomposableAttention(nn.Block):
@@ -272,13 +272,13 @@ class DecomposableAttention(nn.Module):
         return Y_hat
 ```
 
-## Modelin Eğitimi ve Değerlendirilmesi
+## Model Eğitimi ve Değerlendirilmesi
 
 Şimdi SNLI veri kümesinde tanımlanmış ayrıştırılabilir dikkat modelini eğiteceğiz ve değerlendireceğiz. Veri kümesini okuyarak başlıyoruz. 
 
-### Veri kümesini okuma
+### Veri Kümesini Okuma
 
-SNLI veri kümesini :numref:`sec_natural-language-inference-and-dataset`'te tanımlanan işlevi kullanarak indirip okuyoruz. Parti boyutu ve sıra uzunluğu sırasıyla $256$ ve $50$ olarak ayarlanır.
+SNLI veri kümesini :numref:`sec_natural-language-inference-and-dataset`'te tanımlanan işlevi kullanarak indirip okuyoruz. Toplu iş boyutu ve dizi uzunluğu sırasıyla $256$ ve $50$ olarak ayarlanır.
 
 ```{.python .input}
 #@tab all
@@ -288,7 +288,7 @@ train_iter, test_iter, vocab = d2l.load_data_snli(batch_size, num_steps)
 
 ### Modeli Oluşturma
 
-Giriş belirteçlerini temsil etmek için önceden eğitilmiş 100 boyutlu Eldiven gömme kullanıyoruz. Böylece, :eqref:`eq_nli_e` olarak :eqref:`eq_nli_e` ve $\mathbf{b}_j$ vektörlerin boyutunu önceden tanımlıyoruz. :eqref:`eq_nli_e` ve :eqref:`eq_nli_v_ab`'te :eqref:`eq_nli_v_ab`'te $g$ fonksiyonlarının çıkış boyutu 200 olarak ayarlanır. Ardından bir model örneği oluştururuz, parametrelerini başlatırız ve giriş belirteçlerinin vektörlerini başlatmak için GloVe gömülü yükleriz.
+Girdi belirteçlerini temsil etmek için önceden eğitilmiş 100 boyutlu GloVe gömmeyi kullanıyoruz. Böylece, $\mathbf{a}_i$ ve $\mathbf{b}_j$ vektörlerinin :eqref:`eq_nli_e` içindeki boyutunu önceden 100 olarak tanımlarız. :eqref:`eq_nli_e` içindeki $f$ ve :eqref:`eq_nli_v_ab` içindeki $g$ fonksiyonlarının çıktı boyutu 200 olarak ayarlanmıştır. Ardından bir model örneği oluşturur, parametrelerini ilkler ve girdi belirteçlerinin vektörlerini ilklemek için GloVe gömmeyi yükleriz.
 
 ```{.python .input}
 embed_size, num_hiddens, devices = 100, 200, d2l.try_all_gpus()
@@ -308,9 +308,9 @@ embeds = glove_embedding[vocab.idx_to_token]
 net.embedding.weight.data.copy_(embeds);
 ```
 
-### Modelin Eğitimi ve Değerlendirilmesi
+### Model Eğitimi ve Değerlendirilmesi
 
-:numref:`sec_multi_gpu`'teki `split_batch` işlevinin aksine, metin dizileri (veya görüntüler) gibi tek girişleri alan `split_batch` işlevinin aksine, minibatch'lerde binalar ve hipotezler gibi birden fazla girişi almak için `split_batch_multi_inputs` işlevi tanımlıyoruz.
+:numref:`sec_multi_gpu`'teki `split_batch` işlevinin aksine, metin dizileri (veya imgeler) gibi tek girdileri alan `split_batch` işlevinin aksine, minigruplarda öncüller ve hipotezler gibi birden fazla girdiyi almak için `split_batch_multi_inputs` işlevi tanımlıyoruz.
 
 ```{.python .input}
 #@save
@@ -369,7 +369,7 @@ def predict_snli(net, vocab, premise, hypothesis):
             else 'neutral'
 ```
 
-Eğitimli modeli, örnek bir cümle çifti için doğal dil çıkarım sonucunu elde etmek için kullanabiliriz.
+Eğitilmiş modeli, örnek bir cümle çifti için doğal dil çıkarım sonucunu elde etmek için kullanabiliriz.
 
 ```{.python .input}
 #@tab all
@@ -378,21 +378,21 @@ predict_snli(net, vocab, ['he', 'is', 'good', '.'], ['he', 'is', 'bad', '.'])
 
 ## Özet
 
-* Çürüyebilir dikkat modeli, binalar ve hipotezler arasındaki mantıksal ilişkileri tahmin etmek için üç adımdan oluşur: katılmak, karşılaştırmak ve birleştirmek.
-* Dikkat mekanizmalarıyla, bir metin dizisinde belirteçleri diğerindeki her belirteçle hizalayabiliriz ve tam tersi de geçerlidir. Bu hizalama, ideal olarak büyük ağırlıkların hizalanacak belirteçlerle ilişkilendirildiği ağırlıklı ortalama kullanılarak yumuşaktır.
-* Ayrışma hilesi, dikkat ağırlıklarını hesaplarken kuadratik karmaşıklıktan daha arzu edilen doğrusal bir karmaşıklığa yol açar.
-* Doğal dil çıkarımı gibi doğal dil işleme görevi için giriş temsili olarak önceden eğitilmiş sözcük vektörlerini kullanabiliriz.
+* Ayrıştırılabilir dikkat modeli, öncüller ve hipotezler arasındaki mantıksal ilişkileri tahmin etmek için üç adımdan oluşur: Dikkat etmek, karşılaştırmak ve biriktirmek.
+* Dikkat mekanizmalarıyla, bir metin dizisinde belirteçleri diğerindeki her belirteçle hizalayabiliriz ve tam tersi de geçerlidir. Bu hizalama, ideal olarak büyük ağırlıkların hizalanacak belirteçlerle ilişkilendirildiği ağırlıklı ortalama kullanıldığından yumuşaktır.
+* Ayrıştırma püf noktası, dikkat ağırlıklarını hesaplarken ikinci dereceden karmaşıklıktan daha fazla arzu edilen doğrusal bir karmaşıklığa yol açar.
+* Doğal dil çıkarımı gibi aşağı akış doğal dil işleme görevi için girdi temsili olarak önceden eğitilmiş sözcük vektörlerini kullanabiliriz.
 
-## Egzersizler
+## Alıştırmalar
 
-1. Modeli diğer hiperparametre kombinasyonları ile eğitin. Test setinde daha iyi doğruluk elde edebilir misiniz?
-1. Doğal dil çıkarımı için ayrıştırılabilir dikkat modelinin en büyük dezavantajları nelerdir?
+1. Modeli diğer hiperparametre kombinasyonları ile eğitin. Test kümesinde daha iyi doğruluk elde edebilir misiniz?
+1. Doğal dil çıkarımı için ayrıştırılabilir dikkat modelinin en büyük sakıncaları nelerdir?
 1. Herhangi bir cümle çifti için anlamsal benzerlik düzeyini (örneğin, 0 ile 1 arasında sürekli bir değer) elde etmek istediğimizi varsayalım. Veri kümesini nasıl toplayıp etiketleyeceğiz? Dikkat mekanizmaları ile bir model tasarlayabilir misiniz?
 
 :begin_tab:`mxnet`
-[Discussions](https://discuss.d2l.ai/t/395)
+[Tartışmalar](https://discuss.d2l.ai/t/395)
 :end_tab:
 
 :begin_tab:`pytorch`
-[Discussions](https://discuss.d2l.ai/t/1530)
+[Tartışmalar](https://discuss.d2l.ai/t/1530)
 :end_tab:
