@@ -31,7 +31,7 @@ from torch import nn
 from torch.nn import functional as F
 ```
 
-### Dikkat Etme
+### Dikkat Etmek
 
 İlk adım, bir metin dizisindeki belirteçleri diğer dizideki her belirteçle hizalamaktır. Öncülün “benim uykuya ihtiyacım var” ve hipotezin “ben yorgunum” olduğunu varsayalım. Anlamsal benzerlik nedeniyle, hipotezdeki "ben" ile öncül içindeki "ben"'i hizalamak ve hipotezdeki "yorgun"'u öncül içindeki "uyku" ile hizalamak isteyebiliriz. Benzer şekilde, öncüldeki "ben"i hipotezdeki "ben" ile hizalamak ve öncüldeki "uyku" ve "ihtiyaç"'ı hipotezdeki "yorgun" ile aynı hizaya getirmek isteyebiliriz. Bu tür bir hizalamanın, ideal olarak büyük ağırlıkların hizalanacak belirteçlerle ilişkilendirildiği, ağırlıklı ortalama kullanılarak *yumuşak* olduğunu unutmayın. Gösterim kolaylığı için, :numref:`fig_nli_attention` böyle bir hizalamayı *sert* bir şekilde gösterir. 
 
@@ -140,7 +140,7 @@ class Attend(nn.Module):
         return beta, alpha
 ```
 
-### Karşılaştırma
+### Karşılaştırmak
 
 Bir sonraki adımda, bir dizideki bir belirteci, bu belirteçle yumuşak bir şekilde hizalanan diğer diziyle karşılaştırırız. Yumuşak hizalamada, bir dizideki tüm belirteçlerin, muhtemelen farklı dikkat ağırlıklarına sahip olsa da, diğer dizideki bir belirteçle karşılaştırılacağını unutmayın. Kolay gösterim için, :numref:`fig_nli_attention` belirteçleri *sert* bir şekilde hizalanmış belirteçlerle eşleştirir. Örneğin, dikkat etme adımının öncüldeki "ihtiyaç" ve "uyku"nun her ikisinin de hipotezdeki "yorgun" ile aynı hizada olduğunu belirlediğini varsayalım, "yorgun--uykuya ihtiyacım var" çifti karşılaştırılacaktır.
 
