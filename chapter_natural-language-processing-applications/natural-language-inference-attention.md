@@ -3,7 +3,7 @@
 
 :numref:`sec_natural-language-inference-and-dataset`'da doğal dil çıkarım görevini ve SNLI veri kümesini tanıttık. Karmaşık ve derin mimarilere dayanan birçok model göz önüne alındığında, Parikh ve ark. doğal dil çıkarımını dikkat mekanizmaları ile ele almayı önerdi ve bunu "ayrıştırılabilir dikkat modeli" olarak adlandırdı :cite:`Parikh.Tackstrom.Das.ea.2016`. Bu, yinelemeli veya evrişimli katmanları olmayan bir modelle sonuçlanır ve SNLI veri kümesinde o anda çok daha az parametre ile en iyi sonucu elde eder. Bu bölümde, :numref:`fig_nlp-map-nli-attention`'te tasvir edildiği gibi doğal dil çıkarımı için bu dikkat tabanlı yöntemi (MLP'lerle) açıklayacağız ve uygulayacağız. 
 
-![Bu bölüm, önceden eğitilmiş GloVe'yi, doğal dil çıkarımı için dikkat ve MLP'lere dayalı bir mimariye besler.](../img/nlp-map-nli-attention.svg)
+![Bu bölüm, önceden eğitilmiş GloVe'i, doğal dil çıkarımı için dikkat ve MLP'lere dayalı bir mimariye besler.](../img/nlp-map-nli-attention.svg)
 :label:`fig_nlp-map-nli-attention`
 
 ## Model
@@ -71,7 +71,7 @@ def mlp(num_inputs, num_hiddens, flatten):
 
 :eqref:`eq_nli_e`'de $f$'in $\mathbf{a}_i$ ve $\mathbf{b}_j$ girdilerini girdi olarak bir çift almak yerine ayrı ayrı aldığı vurgulanmalıdır. Bu *ayrıştırma* püf noktası, $mn$ uygulama (ikinci dereceden karmaşıklık) yerine $f$'in yalnızca $m + n$ uygulamasına (doğrusal karmaşıklık)  yol açar. 
 
-:eqref:`eq_nli_e`'te dikkat ağırlıklarını normalleştirerek, varsayımdaki tüm belirteç vektörlerinin ağırlıklı ortalamasını hesaplıyoruz ve bu hipotezin temsilini elde etmek için $i$ ile endeksli belirteç ile yumuşak bir şekilde hizalanan hipotezin temsilini elde ediyoruz: 
+:eqref:`eq_nli_e` içideki dikkat ağırlıklarını normalleştirerek, varsayımdaki tüm belirteç vektörlerinin ağırlıklı ortalamasını hesaplıyoruz ve bu hipotezin temsilini elde etmek için $i$ ile endeksli belirteç ile yumuşak bir şekilde hizalanan hipotezin temsilini elde ediyoruz: 
 
 $$
 \boldsymbol{\beta}_i = \sum_{j=1}^{n}\frac{\exp(e_{ij})}{ \sum_{k=1}^{n} \exp(e_{ik})} \mathbf{b}_j.
