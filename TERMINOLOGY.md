@@ -309,6 +309,8 @@ tabular; çizelge halindeki
 
 tagging; etiketleme
 
+Tapestry system; Gobleb sistemi
+
 teacher forcing; öğretici zorlama
 
 tensor; gerey
