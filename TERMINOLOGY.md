@@ -101,6 +101,8 @@ elementwise; eleman yönlü
 
 encoder; kodlayıcı
 
+entailment; gereklilik
+
 environment; ortam
 
 epoch; dönem
@@ -228,6 +230,8 @@ pooling; ortaklama
 posterior; sonsal olasılık
 
 postprocess; sonradan işlemek
+
+premise; öncül
 
 preprocess; ön işlemek
 

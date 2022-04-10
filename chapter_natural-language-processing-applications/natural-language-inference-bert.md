@@ -1,12 +1,12 @@
-# Doğal Dil Çıkarımı: İnce Ayar BERT
+# Doğal Dil Çıkarımı: BERT İnce Ayar ı
 :label:`sec_natural-language-inference-bert`
 
-Bu bölümün önceki bölümlerinde, SNLI veri kümesinde (:numref:`sec_natural-language-inference-and-dataset`'de açıklandığı gibi) doğal dil çıkarım görevi için dikkat tabanlı bir mimari (:numref:`sec_natural-language-inference-attention`'te) tasarladık. Şimdi BERT ince ayar yaparak bu görevi tekrar gözden geçiriyoruz. :numref:`sec_finetuning-bert`'da tartışıldığı gibi, doğal dil çıkarımı bir dizi düzeyi metin çifti sınıflandırma sorunudur ve ince ayar BERT yalnızca :numref:`fig_nlp-map-nli-bert`'te gösterildiği gibi ek bir MLP tabanlı mimari gerektirir. 
+Bu ünitenin önceki bölümlerinde, SNLI veri kümesinde (:numref:`sec_natural-language-inference-and-dataset`'de açıklandığı gibi) doğal dil çıkarım görevi için dikkat tabanlı bir mimari (:numref:`sec_natural-language-inference-attention`'te) tasarladık. Şimdi BERT ince ayar yaparak bu görevi tekrar gözden geçiriyoruz. :numref:`sec_finetuning-bert`'da tartışıldığı gibi, doğal dil çıkarımı bir dizi düzeyi metin çifti sınıflandırma sorunudur ve  BERT ince ayarı yalnızca :numref:`fig_nlp-map-nli-bert`'te gösterildiği gibi ek bir MLP tabanlı mimari gerektirir. 
 
-![This section feeds pretrained BERT to an MLP-based architecture for natural language inference.](../img/nlp-map-nli-bert.svg)
+![Bu bölüm, doğal dil çıkarımı için önceden eğitilmiş BERT'i MLP tabanlı bir mimariye besler.](../img/nlp-map-nli-bert.svg)
 :label:`fig_nlp-map-nli-bert`
 
-Bu bölümde, BERT'in önceden eğitilmiş küçük bir sürümünü indireceğiz, ardından SNLI veri kümesinde doğal dil çıkarımı için ince ayar yapacağız.
+Bu bölümde, BERT'in önceden eğitilmiş küçük bir sürümünü indireceğiz, ardından SNLI veri kümesinde doğal dil çıkarımı için ince ayarını yapacağız.
 
 ```{.python .input}
 from d2l import mxnet as d2l
@@ -29,9 +29,9 @@ from torch import nn
 import os
 ```
 
-## Önceden Eğitimli BERT yükleniyor
+## Önceden Eğitilmiş BERT'i Yükleme
 
-Bert'i :numref:`sec_bert-dataset` ve :numref:`sec_bert-pretraining`'te WikiText-2 veri kümelerinde nasıl ön eğitileceğini açıkladık (orijinal BERT modelinin çok daha büyük corpora üzerinde önceden eğitildiğini unutmayın). :numref:`sec_bert-pretraining`'te tartışıldığı gibi, orijinal BERT modelinin yüz milyonlarca parametresi vardır. Aşağıda, önceden eğitilmiş BERT'in iki versiyonunu sunuyoruz: “bert.base” ince ayar yapmak için çok sayıda hesaplama kaynağı gerektiren orijinal BERT baz modeli kadar büyüktür, “bert.small” ise gösteriyi kolaylaştırmak için küçük bir versiyondur.
+Bert'i :numref:`sec_bert-dataset` ve :numref:`sec_bert-pretraining`'te WikiText-2 veri kümelerinde nasıl ön eğitebileceğimizi açıkladık (orijinal BERT modelinin çok daha büyük külliyatlar üzerinde önceden eğitildiğini unutmayın). :numref:`sec_bert-pretraining`'te tartışıldığı gibi, orijinal BERT modelinin yüz milyonlarca parametresi vardır. Aşağıda, önceden eğitilmiş BERT'in iki versiyonunu sunuyoruz: “bert.base” ince ayar yapmak için çok sayıda hesaplama kaynağı gerektiren orijinal BERT temel modeli kadar büyüktür, “bert.small” ise gösterimi kolaylaştırmak için küçük bir versiyondur.
 
 ```{.python .input}
 d2l.DATA_HUB['bert.base'] = (d2l.DATA_URL + 'bert.base.zip',
@@ -48,7 +48,7 @@ d2l.DATA_HUB['bert.small'] = (d2l.DATA_URL + 'bert.small.torch.zip',
                               'c72329e68a732bef0452e4b96a1c341c8910f81f')
 ```
 
-Önceden eğitilmiş BERT modeli, sözcük dağarcığını tanımlayan bir “vocab.json” dosyası ve önceden eğitilmiş parametrelerin “önceden eğitilmiş.params” dosyasını içerir. Önceden eğitilmiş BERT parametrelerini yüklemek için aşağıdaki `load_pretrained_model` işlevini uyguluyoruz.
+Önceden eğitilmiş BERT modeli, sözcük dağarcığını tanımlayan bir “vocab.json” dosyasını ve önceden eğitilmiş parametrelerin olduğu “pretrained.params” dosyasını içerir. Önceden eğitilmiş BERT parametrelerini yüklemek için aşağıdaki `load_pretrained_model` işlevini uyguluyoruz.
 
 ```{.python .input}
 def load_pretrained_model(pretrained_model, num_hiddens, ffn_num_hiddens,
@@ -89,7 +89,7 @@ def load_pretrained_model(pretrained_model, num_hiddens, ffn_num_hiddens,
     return bert, vocab
 ```
 
-Makinelerin çoğunda gösterimi kolaylaştırmak için, bu bölümde önceden eğitilmiş BERT'in küçük versiyonunu (“bert.small”) yükleyip ince ayar yapacağız. Egzersizde, test doğruluğunu önemli ölçüde artırmak için çok daha büyük “bert.base” in nasıl ince ayar yapılacağını göstereceğiz.
+Makinelerin çoğunda gösterimi kolaylaştırmak için, bu bölümde önceden eğitilmiş BERT'in küçük versiyonunu (“bert.small”) yükleyip ona ince ayar yapacağız. Alıştırmada, test doğruluğunu önemli ölçüde artırmak için çok daha büyük “bert.base” in nasıl ince ayar yapılacağını göstereceğiz.
 
 ```{.python .input}
 #@tab all
@@ -99,9 +99,9 @@ bert, vocab = load_pretrained_model(
     num_layers=2, dropout=0.1, max_len=512, devices=devices)
 ```
 
-## BERT ince ayar için Dataset
+## BERT İnce Ayarı İçin Dataset
 
-SNLI veri kümesinde aşağı akış görevi doğal dil çıkarımı için, özelleştirilmiş bir veri kümesi sınıfı `SNLIBERTDataset` tanımlıyoruz. Her örnekte, öncül ve hipotez bir çift metin dizisi oluşturur ve :numref:`fig_bert-two-seqs`'te tasvir edildiği gibi bir BERT girdi dizisine paketlenir. Hatırlayın :numref:`subsec_bert_input_rep` segment kimlikleri bir BERT giriş dizisinde öncül ve hipotezi ayırt etmek için kullanılır. BERT giriş dizisinin önceden tanımlanmış maksimum uzunluğu ile (`max_len`), giriş metni çiftinin uzununun son belirteci `max_len` karşılanıncaya kadar kaldırılmaya devam eder. BERT ince ayar için SNLI veri kümesinin oluşturulmasını hızlandırmak için, paralel olarak eğitim veya test örnekleri oluşturmak için 4 işçi süreci kullanıyoruz.
+SNLI veri kümesinde aşağı akış görevi doğal dil çıkarımı için, özelleştirilmiş bir veri kümesi sınıfı `SNLIBERTDataset` tanımlıyoruz. Her örnekte, öncül ve hipotez bir çift metin dizisi oluşturur ve :numref:`fig_bert-two-seqs`'te tasvir edildiği gibi bir BERT girdi dizisine paketlenir. Hatırlayalım; :numref:`subsec_bert_input_rep` bölüm kimlikleri bir BERT girdi dizisinde öncül ve hipotezi ayırt etmek için kullanılır. Bir BERT girdi dizisinin (`max_len`) önceden tanımlanmış maksimum uzunluğu ile, girdi metin çiftinin daha uzun olanının son belirteci, `max_len` karşılanana kadar ortadan kaldırılmaya devam eder. BERT ince ayarında SNLI veri kümesinin oluşturulmasını hızlandırmak için, paralel olarak eğitim veya test örnekleri oluşturmada 4 işçi süreci kullanıyoruz.
 
 ```{.python .input}
 class SNLIBERTDataset(gluon.data.Dataset):
@@ -210,7 +210,7 @@ class SNLIBERTDataset(torch.utils.data.Dataset):
         return len(self.all_token_ids)
 ```
 
-SNLI veri kümesini indirdikten sonra, `SNLIBERTDataset` sınıfını başlatarak eğitim ve test örnekleri oluşturuyoruz. Bu tür örnekler, doğal dil çıkarımlarının eğitimi ve test edilmesi sırasında minibatch'larda okunacaktır.
+SNLI veri kümesini indirdikten sonra, `SNLIBERTDataset` sınıfından örnek yaratarak eğitim ve test örnekleri oluşturuyoruz. Bu tür örnekler, doğal dil çıkarımlarının eğitimi ve test edilmesi sırasında minigruplarda okunacaktır.
 
 ```{.python .input}
 # Reduce `batch_size` if there is an out of memory error. In the original BERT
@@ -239,9 +239,9 @@ test_iter = torch.utils.data.DataLoader(test_set, batch_size,
                                   num_workers=num_workers)
 ```
 
-## İnce Ayar BERT
+## BERT İnce Ayarı
 
-:numref:`fig_bert-two-seqs`'ün de belirttiği gibi, BERT doğal dil çıkarımı için ince ayar yalnızca iki tam bağlı katmandan oluşan ekstra bir MLP gerektirir (aşağıdaki `BERTClassifier` sınıfında `self.hidden` ve `self.output`). Bu MLP<cls>, hem öncül hem de hipotezin bilgilerini kodlayan özel “” belirtecinin BERT temsilini, doğal dil çıkarımının üç çıkışına dönüştürür: entailment, çelişki ve tarafsız.
+:numref:`fig_bert-two-seqs`'ün de belirttiği gibi, doğal dil çıkarımı için BERT ince ayarı yalnızca iki tam bağlı katmandan oluşan ek bir MLP gerektirir (aşağıdaki `BERTClassifier` sınıfında `self.hidden` ve `self.output`). Bu MLP, hem öncül hem de hipotezin bilgilerini kodlayan özel “&lt;cls&gt;” belirtecinin BERT temsilini, doğal dil çıkarımının üç çıktısına dönüştürür: Gerekçe, çelişki ve tarafsızlık.
 
 ```{.python .input}
 class BERTClassifier(nn.Block):
@@ -272,7 +272,7 @@ class BERTClassifier(nn.Module):
         return self.output(self.hidden(encoded_X[:, 0, :]))
 ```
 
-Aşağıda, önceden eğitilmiş BERT modeli `bert`, aşağı akım uygulaması için `BERTClassifier` örneğine `net` beslenir. BERT ince ayarının ortak uygulamalarında, sadece ek MLP'nin (`net.output`) çıkış tabakasının parametreleri sıfırdan öğrenilecektir. Önceden eğitilmiş BERT kodlayıcının (`net.encoder`) ve ek MLP'nin gizli katmanının (`net.hidden`) tüm parametreleri ince ayarlanacaktır.
+Aşağıda, önceden eğitilmiş BERT modeli `bert`, aşağı akış uygulaması için `BERTClassifier` örneği `net`'e beslenir. BERT ince ayarının ortak uygulamalarında, sadece ek MLP'nin (`net.output`) çıktı tabakasının parametreleri sıfırdan öğrenilecektir. Önceden eğitilmiş BERT kodlayıcısının (`net.encoder`) ve ek MLP'nin gizli katmanının (`net.hidden`) tüm parametreleri ince ayarlanacaktır.
 
 ```{.python .input}
 net = BERTClassifier(bert)
@@ -284,9 +284,9 @@ net.output.initialize(ctx=devices)
 net = BERTClassifier(bert)
 ```
 
-:numref:`sec_bert`'te hem `MaskLM` sınıfının hem de `NextSentencePred` sınıfının çalıştıkları MLP'lerde parametrelere sahip olduğunu hatırlayın. Bu parametreler önceden eğitilmiş BERT modeli `bert` olanların bir parçasıdır ve `net` parametrelerinin dolayısıyla bir parçası. Bununla birlikte, bu tür parametreler sadece maskeli dil modelleme kaybını ve ön eğitim sırasında bir sonraki cümle tahmini kaybını hesaplamak içindir. Bu iki kayıp fonksiyonları aşağı akım uygulamalarına ince ayar ile alakasız, bu nedenle, BERT ince ayarlı olduğunda `MaskLM` ve `NextSentencePred` çalışan MLP'lerin parametreleri güncellenmez (durdu). 
+:numref:`sec_bert`'te hem `MaskLM` sınıfının hem de `NextSentencePred` sınıfının konuşlanmış MLP'lerinde parametrelere sahip olduğunu hatırlayın. Bu parametreler önceden eğitilmiş `bert` BERT modelinin ve dolayısıyla `net` içindeki parametrelerin bir parçasıdır. Bununla birlikte, bu tür parametreler sadece maskeli dil modelleme kaybını ve ön eğitim sırasında bir sonraki cümle tahmini kaybını hesaplamak içindir. Bu iki kayıp işlevi, aşağı akış uygulamalarının ince ayarını yapmakla ilgisizdir, bu nedenle, BERT ince ayarı yapıldığında `MaskLM` ve `NextSentencePred`'de kullanılan MLP'lerin parametreleri güncellenmez (bozulmaz).
 
-Eski degradelere sahip parametrelere izin vermek için `ignore_stale_grad=True` bayrağı `d2l.train_batch_ch13` işlevinde `step` işlevinde ayarlanır. Bu işlevi, SNLI'nin eğitim setini (`train_iter`) ve test setini (`test_iter`) kullanarak `net` modelini eğitmek ve değerlendirmek için kullanıyoruz. Sınırlı hesaplama kaynakları nedeniyle, eğitim ve test doğruluğu daha da geliştirilebilir: tartışmalarını egzersizlerde bırakıyoruz.
+Dondurulmuş gradyanlara sahip parametrelere izin vermek için `ignore_stale_grad=True` işareti `d2l.train_batch_ch13`'in `step` işlevinde ayarlanır. Bu işlevi, SNLI'nin eğitim kümesini (`train_iter`) ve test kümesini (`test_iter`) kullanarak `net` modelini eğitmek ve değerlendirmek için kullanıyoruz. Sınırlı hesaplama kaynakları nedeniyle, eğitim ve test doğruluğu daha da iyileştirilebilir: Tartışmalarını alıştırmalara bırakıyoruz.
 
 ```{.python .input}
 lr, num_epochs = 1e-4, 5
@@ -306,18 +306,18 @@ d2l.train_ch13(net, train_iter, test_iter, loss, trainer, num_epochs, devices)
 
 ## Özet
 
-* SNLI veri kümesindeki doğal dil çıkarımı gibi aşağı akım uygulamaları için önceden eğitilmiş BERT modelini ince ayar yapabiliriz.
-* İnce ayar sırasında BERT modeli aşağı akım uygulaması için modelin bir parçası haline gelir. Sadece ön eğitim kaybı ile ilgili parametreler ince ayar sırasında güncellenmeyecektir. 
+* SNLI veri kümesindeki doğal dil çıkarımı gibi aşağı akış uygulamaları için önceden eğitilmiş BERT modeline ince ayar yapabiliriz.
+* İnce ayar sırasında BERT modeli aşağı akış uygulaması için modelin bir parçası haline gelir. Sadece ön eğitim kaybı ile ilgili parametreler ince ayar sırasında güncellenmeyecektir. 
 
-## Egzersizler
+## Alıştırmalar
 
-1. Hesaplama kaynağınız izin veriyorsa, orijinal BERT baz modeli kadar büyük olan çok daha büyük, önceden eğitilmiş BERT modeline ince ayar yapın. `load_pretrained_model` işlevinde bağımsız değişkenleri şu şekilde ayarlayın: 'bert.small' yerine 'bert.base' ile değiştirilmesi, sırasıyla `num_hiddens=256`, `ffn_num_hiddens=512`, `num_heads=4` ve `num_layers=2` ile 768, 3072, 12 ve 12 değerlerini artırın. İnce ayar zamanlarını artırarak (ve muhtemelen diğer hiperparametreleri ayarlayarak), 0.86'dan daha yüksek bir test doğruluğu elde edebilir misiniz?
-1. Bir çift dizileri uzunluk oranlarına göre nasıl kesilir? Bu çift kesme yöntemini ve `SNLIBERTDataset` sınıfında kullanılan yöntemi karşılaştırın. Artıları ve eksileri nelerdir?
+1. Hesaplama kaynağınız izin veriyorsa, orijinal BERT temel modeli kadar büyük olan çok daha büyük, önceden eğitilmiş BERT modeline ince ayar yapın. `load_pretrained_model` işlevinde bağımsız değişkenleri şu şekilde ayarlayın: 'bert.small' yerine 'bert.base' ile kullanın, sırasıyla `num_hiddens=256`, `ffn_num_hiddens=512`, `num_heads=4` ve `num_layers=2` ile 768, 3072, 12 ve 12 değerlerini değiştirin. İnce ayar dönemlerini artırarak (ve muhtemelen diğer hiperparametreleri ayarlayarak), 0.86'dan daha yüksek bir test doğruluğu elde edebilir misiniz?
+1. Bir çift dizi uzunluk oranlarına göre nasıl budanır? Bu çift budama yöntemini ve `SNLIBERTDataset` sınıfında kullanılan yöntemi karşılaştırın. Artıları ve eksileri nelerdir?
 
 :begin_tab:`mxnet`
-[Discussions](https://discuss.d2l.ai/t/397)
+[Tartışmalar](https://discuss.d2l.ai/t/397)
 :end_tab:
 
 :begin_tab:`pytorch`
-[Discussions](https://discuss.d2l.ai/t/1526)
+[Tartışmalar](https://discuss.d2l.ai/t/1526)
 :end_tab:

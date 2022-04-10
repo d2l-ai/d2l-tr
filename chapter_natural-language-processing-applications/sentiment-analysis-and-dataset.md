@@ -1,11 +1,10 @@
 # Duygu Analizi ve Veri Kümesi
 :label:`sec_sentiment`
 
-Çevrimiçi sosyal medya ve inceleme platformlarının çoğalmasıyla birlikte, karar verme süreçlerini desteklemek için büyük bir potansiyel taşıyan bir çok inatçı veri kaydedildi.
-*Duygu analizi*
-ürün incelemeleri, blog yorumları ve forum tartışmaları gibi insanların ürettikleri metinlerdeki duyguları inceler. Siyaset (örn. politikalara yönelik kamu duygularının analizi), finans (örneğin, pazarın duygularının analizi) ve pazarlama (örneğin, ürün araştırması ve marka yönetimi) kadar çeşitli alanlara geniş uygulamalara sahiptir. 
+Çevrimiçi sosyal medya ve inceleme platformlarının çoğalmasıyla birlikte, karar verme süreçlerini desteklemek için büyük bir potansiyel taşıyan bir çok görüşlü veri kaydedildi.
+*Duygu analizi* ürün incelemeleri, blog yorumları ve forum tartışmaları gibi insanların ürettikleri metinlerdeki duyguları inceler. Siyaset (örn. politikalara yönelik kamu duygularının analizi), finans (örneğin, pazarın duygularının analizi) ve pazarlama (örneğin, ürün araştırması ve marka yönetimi) kadar çeşitli alanlara geniş uygulamalara sahiptir. 
 
-Duygular ayrık kutuplar veya ölçekler (örneğin, pozitif ve negatif) olarak sınıflandırılabileceğinden, duyarlılık analizini, değişen uzunluktaki bir metin dizisini sabit uzunlukta bir metin kategorisine dönüştüren bir metin sınıflandırma görevi olarak düşünebiliriz. Bu bölümde, duygu analizi için Stanford'un [büyük film incelemesi veri kümesini](https://ai.stanford.edu/~amaas/data/sentiment/) kullanacağız. IMDb'den indirilen 25000 film incelemesini içeren bir eğitim seti ve bir test setinden oluşur. Her iki veri kümesinde de, farklı duyarlılık kutuplarını gösteren eşit sayıda “pozitif” ve “negatif” etiket bulunur.
+Duygular ayrık kutuplar veya ölçekler (örneğin, pozitif ve negatif) olarak sınıflandırılabileceğinden, duygu analizini, değişen uzunluktaki bir metin dizisini sabit uzunlukta bir metin kategorisine dönüştüren bir metin sınıflandırma görevi olarak düşünebiliriz. Bu bölümde, duygu analizi için Stanford'un [film incelemesi büyük veri kümesini](https://ai.stanford.edu/~amaas/data/sentiment/) kullanacağız. IMDb'den indirilen 25000 film incelemesini içeren bir eğitim kümesi ve bir test kümesinden oluşur. Her iki veri kümesinde de, farklı duygu kutuplarını gösteren eşit sayıda “pozitif” ve “negatif” etiketleri bulunur.
 
 ```{.python .input}
 from d2l import mxnet as d2l
@@ -24,7 +23,7 @@ import os
 
 ##  Veri Kümesini Okuma
 
-İlk olarak, `../data/aclImdb` yolunda bu IMDb inceleme veri kümesini indirin ve ayıklayın.
+İlk olarak, bu IMDb inceleme veri kümesini `../data/aclImdb` yoluna indirin ve ayıklayın.
 
 ```{.python .input}
 #@tab all
@@ -36,7 +35,7 @@ d2l.DATA_HUB['aclImdb'] = (
 data_dir = d2l.download_extract('aclImdb', 'aclImdb')
 ```
 
-Ardından, eğitimi okuyun ve veri kümelerini test edin. Her örnek bir inceleme ve etiketidir: “pozitif” için 1 ve “negatif” için 0.
+Ardından, eğitim ve test veri kümelerini okuyun. Her örnek bir inceleme ve onun etiketidir: “Pozitif” için 1 ve “negatif” için 0.
 
 ```{.python .input}
 #@tab all
@@ -60,9 +59,9 @@ for x, y in zip(train_data[0][:3], train_data[1][:3]):
     print('label:', y, 'review:', x[0:60])
 ```
 
-## Veri Kümesinin Önişlenmesi
+## Veri Kümesini Ön İşlemesi
 
-Her kelimeyi bir belirteç olarak tedavi ederek ve 5 kereden az görünen sözcükleri filtreleyerek, eğitim veri kümesinden bir kelime dağarcığı oluşturuyoruz.
+Her kelimeye bir belirteç gibi davranarak ve 5 kereden az görünen sözcükleri filtreleyerek, eğitim veri kümesinden bir kelime dağarcığı oluşturuyoruz.
 
 ```{.python .input}
 #@tab all
@@ -70,7 +69,7 @@ train_tokens = d2l.tokenize(train_data[0], token='word')
 vocab = d2l.Vocab(train_tokens, min_freq=5, reserved_tokens=['<pad>'])
 ```
 
-Belirteçlendirme işleminden sonra, belirteçlerdeki inceleme uzunluklarının histogramını çizelim.
+Belirteçlendirme işleminden sonra, inceleme uzunluklarının belirteçler cinsinden histogramını çizelim.
 
 ```{.python .input}
 #@tab all
@@ -80,7 +79,7 @@ d2l.plt.ylabel('count')
 d2l.plt.hist([len(line) for line in train_tokens], bins=range(0, 1000, 50));
 ```
 
-Beklediğimiz gibi, incelemeler değişen uzunluklara sahiptir. Bu tür incelemelerin mini toplu işlemlerini her seferinde işlemek için, :numref:`sec_machine_translation`'teki makine çevirisi veri kümesi için ön işleme adımına benzer olan kesme ve dolgu ile her incelemenin uzunluğunu 500 olarak ayarladık.
+Beklediğimiz gibi, incelemeler değişen uzunluklara sahiptir. Bu tür incelemelerin minigrup işlemlerini her seferinde işlemek için, :numref:`sec_machine_translation`'teki makine çevirisi veri kümesi için ön işleme adımına benzer olan budama ve dolgulama ile her incelemenin uzunluğunu 500 olarak ayarladık.
 
 ```{.python .input}
 #@tab all
@@ -92,7 +91,7 @@ print(train_features.shape)
 
 ## Veri Yineleyiciler Oluşturma
 
-Şimdi veri yineleyiciler oluşturabiliriz. Her yinelemede, bir mini toplu örnekler döndürülür.
+Şimdi veri yineleyiciler oluşturabiliriz. Her yinelemede, bir örnekler minigrubu döndürülür.
 
 ```{.python .input}
 train_iter = d2l.load_array((train_features, train_data[1]), 64)
@@ -113,9 +112,9 @@ for X, y in train_iter:
 print('# batches:', len(train_iter))
 ```
 
-## Her Şeyleri Bir Araya Getirmek
+## Her Şeyleri Bir Araya Koymak
 
-Son olarak, yukarıdaki adımları `load_data_imdb` işlevine sarıyoruz. Eğitim ve test veri yineleyicileri ve IMDb inceleme veri kümesinin kelime dağarcığını döndürür.
+Son olarak, yukarıdaki adımları `load_data_imdb` işlevinde sarıyoruz. İşlev eğitim ve test veri yineleyicileri ve IMDb inceleme veri kümesinin kelime dağarcığını döndürür.
 
 ```{.python .input}
 #@save
@@ -162,19 +161,18 @@ def load_data_imdb(batch_size, num_steps=500):
 
 ## Özet
 
-* Duyarlılık analizi, değişen uzunluktaki metin dizisini dönüştüren bir metin sınıflandırma problemi olarak kabul edilen, üretilen metinlerdeki insanların duygularını inceler
-sabit uzunlukta bir metin kategorisine girin.
-* Ön işlemden sonra Stanford'un büyük film incelemesi veri kümesini (IMDb inceleme veri kümesini) bir kelime dağarcığıyla veri yineleyicilerine yükleyebiliriz.
+* Duygu analizi, değişen uzunluktaki bir metin dizisini sabit uzunlukta bir metin kategorisine dönüştüren bir metin sınıflandırma problemi olarak kabul edilen, üretilmiş metindeki insanların duygularını inceler.
+* Ön işlemeden sonra Stanford'un film inceleme büyük veri kümesini (IMDb inceleme veri kümesini) kelime dağarcıklı veri yineleyicilerine yükleyebiliriz.
 
-## Egzersizler
+## Alıştırmalar
 
-1. Eğitim duygu analizi modellerini hızlandırmak için bu bölümdeki hangi hiperparametreleri değiştirebiliriz?
-1. [Amazon reviews](https://snap.stanford.edu/data/web-Amazon.html) veri kümesini veri yineleyicilerine ve duyarlılık analizi için etiketlere yüklemek için bir işlev uygulayabilir misiniz?
+1. Duygu analizi modellerinin eğitimi hızlandırmak için bu bölümdeki hangi hiperparametreleri değiştirebiliriz?
+1. [Amazon incelemeleri](https://snap.stanford.edu/data/web-Amazon.html) veri kümesini duygu analizi için veri yineleyicilerine ve etiketlere yükleme için bir işlev uygulayabilir misiniz?
 
 :begin_tab:`mxnet`
-[Discussions](https://discuss.d2l.ai/t/391)
+[Tartışmalar](https://discuss.d2l.ai/t/391)
 :end_tab:
 
 :begin_tab:`pytorch`
-[Discussions](https://discuss.d2l.ai/t/1387)
+[Tartışmalar](https://discuss.d2l.ai/t/1387)
 :end_tab:

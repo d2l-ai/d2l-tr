@@ -1,9 +1,9 @@
-# Duygu Analizi: Tekrarlayan Sinir Ağlarının Kullanımı
+# Duygu Analizi: Yinemeli Sinir Ağlarının Kullanımı
 :label:`sec_sentiment_rnn`
 
-Kelime benzerliği ve benzetme görevleri gibi, biz de duyarlılık analizine önceden eğitilmiş kelime vektörleri de uygulayabiliriz. :numref:`sec_sentiment`'teki IMDb inceleme veri kümesi çok büyük olmadığından, büyük ölçekli corpora üzerinde önceden eğitilmiş metin temsillerinin kullanılması modelin aşırı uyumunu azaltabilir. :numref:`fig_nlp-map-sa-rnn`'da gösterilen belirli bir örnek olarak, önceden eğitilmiş Eldiven modelini kullanarak her belirteci temsil edeceğiz ve bu belirteç temsillerini çok katmanlı çift yönlü bir RNN'ye besleyeceğiz ve metin sırası temsilini elde etmek için bu belirteç temsillerini :cite:`Maas.Daly.Pham.ea.2011`'e dönüştürülecek. Aynı aşağı akım uygulaması için daha sonra farklı bir mimari seçim düşüneceğiz. 
+Kelime benzerliği ve benzetme görevleri gibi, biz de duygu analizine önceden eğitilmiş kelime vektörleri de uygulayabiliriz. :numref:`sec_sentiment`'teki IMDb inceleme veri kümesi çok büyük olmadığından, büyük ölçekli külliyat üzerinde önceden eğitilmiş metin temsillerinin kullanılması modelin aşırı öğrenmesini azaltabilir. :numref:`fig_nlp-map-sa-rnn` içinde gösterilen özel bir örnek olarak, önceden eğitilmiş GloVe modelini kullanarak her belirteci temsil edeceğiz ve bu belirteç temsillerini metin dizisi gösterimini, ki duygu analizi çıktılarına dönüştürülecektir, elde etmek için çok katmanlı çift yönlü bir RNN'ye besleyeceğiz :cite:`Maas.Daly.Pham.ea.2011`. Aynı aşağı akım uygulaması için daha sonra farklı bir mimari seçimi ele alacağız.
 
-![This section feeds pretrained GloVe to an RNN-based architecture for sentiment analysis.](../img/nlp-map-sa-rnn.svg)
+![Bu bölüm, duygu analizi için önceden eğitilmiş GloVe'yi RNN tabanlı bir mimariye besler.](../img/nlp-map-sa-rnn.svg)
 :label:`fig_nlp-map-sa-rnn`
 
 ```{.python .input}
@@ -28,7 +28,7 @@ train_iter, test_iter, vocab = d2l.load_data_imdb(batch_size)
 
 ## RNN'lerle Tek Metni Temsil Etme
 
-Duyarlılık analizi gibi metin sınıflandırmalarında, değişen uzunluktaki bir metin dizisi sabit uzunlukta kategorilere dönüştürülür. Aşağıdaki `BiRNN` sınıfında, bir metin dizisinin her belirteci, gömme katman (`self.embedding`) aracılığıyla bireysel önceden eğitilmiş Eldiven temsilini alırken, tüm dizi çift yönlü RNN (`self.encoder`) ile kodlanır. Daha somut olarak, hem başlangıç hem de son zaman adımlarında iki yönlü LSTM'nin gizli durumları (son katmanda) metin sırasının temsili olarak birleştirilir. Bu tek metin temsili daha sonra iki çıkışlı (“pozitif” ve “negatif”) tam bağlı bir katman (`self.decoder`) ile çıktı kategorilerine dönüştürülür.
+Duygu analizi gibi metin sınıflandırmalarında, değişen uzunluktaki bir metin dizisi sabit uzunlukta kategorilere dönüştürülür. Aşağıdaki `BiRNN` sınıfında, bir metin dizisinin her belirteci, gömme katman (`self.embedding`) aracılığıyla bireysel önceden eğitilmiş GloVe temsilini alırken, tüm dizi çift yönlü RNN (`self.encoder`) ile kodlanır. Daha somut olarak, iki yönlü LSTM'nin hem ilk hem de son zaman adımlarındaki gizli durumları (son katmanda), metin dizisinin temsili olarak bitiştirilir. Bu tek metin gösterimi daha sonra iki çıktıya ("pozitif" ve "negatif") sahip tam bağlı bir katman (`self.encoder`) tarafından çıktı kategorilerine dönüştürülür.
 
 ```{.python .input}
 class BiRNN(nn.Block):
@@ -95,7 +95,7 @@ class BiRNN(nn.Module):
         return outs
 ```
 
-Duygu analizi için tek bir metni temsil etmek üzere iki gizli katman içeren iki yönlü bir RNN oluşturalım.
+Duygu analizi için tek bir metni temsil etmek üzere iki gizli katman içeren öift yönlü bir RNN oluşturalım.
 
 ```{.python .input}
 #@tab all
@@ -119,9 +119,9 @@ def init_weights(m):
 net.apply(init_weights);
 ```
 
-## Önceden Eğitimli Word Vektörlerini Yükleme
+## Önceden Eğitilmiş Sözcük Vektörlerini Yükleme
 
-Aşağıda önceden eğitilmiş 100 boyutlu yüklüyoruz (`embed_size` ile tutarlı olması gerekir) Kelime dağarcığındaki belirteçler için Eldiven ve gömme.
+Aşağıda önceden eğitilmiş 100 boyutlu (`embed_size` ile tutarlı olması gerekir) kelime dağarcığındaki belirteçler için GloVe gömmelerini yüklüyoruz.
 
 ```{.python .input}
 #@tab all
@@ -149,9 +149,9 @@ net.embedding.weight.data.copy_(embeds)
 net.embedding.weight.requires_grad = False
 ```
 
-## Modelin Eğitimi ve Değerlendirilmesi
+## Model Eğitimi ve Değerlendirilmesi
 
-Şimdi iki yönlü RNN'leri duygu analizi için eğitebiliriz.
+Şimdi çift yönlü RNN'leri duygu analizi için eğitebiliriz.
 
 ```{.python .input}
 lr, num_epochs = 0.01, 5
@@ -168,7 +168,7 @@ loss = nn.CrossEntropyLoss(reduction="none")
 d2l.train_ch13(net, train_iter, test_iter, loss, trainer, num_epochs, devices)
 ```
 
-Eğitimli model `net` kullanarak bir metin dizisinin duyarlılığını tahmin etmek için aşağıdaki işlevi tanımlıyoruz.
+Eğitimli modeli, `net`, kullanarak bir metin dizisinin duygusunu tahmin etmek için aşağıdaki işlevi tanımlıyoruz.
 
 ```{.python .input}
 #@save
@@ -189,7 +189,7 @@ def predict_sentiment(net, vocab, sequence):
     return 'positive' if label == 1 else 'negative'
 ```
 
-Son olarak, iki basit cümlenin duygularını tahmin etmek için eğitimli modeli kullanalım.
+Son olarak, iki basit cümlenin duygusunu tahmin etmek için eğitimli modeli kullanalım.
 
 ```{.python .input}
 #@tab all
@@ -204,18 +204,18 @@ predict_sentiment(net, vocab, 'this movie is so bad')
 ## Özet
 
 * Önceden eğitilmiş sözcük vektörleri, bir metin dizisinde tek tek belirteçleri temsil edebilir.
-* Çift yönlü RNN'ler, ilk ve son zaman adımlarında gizli durumlarının birleştirilmesi yoluyla gibi bir metin sırasını temsil edebilir. Bu tek metin temsili, tamamen bağlı bir katman kullanılarak kategorilere dönüştürülebilir.
+* Çift yönlü RNN'ler, örneğin ilk ve son zaman adımlarında gizli durumlarının bitiştirilmesi yoluyla olduğu gibi bir metin dizisini temsil edebilir. Bu tek metin gösterimi, tam bağlı bir katman kullanılarak kategorilere dönüştürülebilir.
 
-## Egzersizler
+## Alıştırmalar
 
-1. Çeyin sayısını artırın. Eğitim ve test doğruluklarını geliştirebilir misiniz? Diğer hiperparametreleri ayarlamaya ne dersin?
-1. 300 boyutlu Eldiven gömme gibi daha büyük önceden eğitilmiş sözcük vektörlerini kullanın. Sınıflandırma doğruluğunu arttırıyor mu?
-1. SpaCy tokenization kullanarak sınıflandırma doğruluğunu artırabilir miyiz? SpaCy (`pip install spacy`) yüklemeniz ve İngilizce paketini (`python -m spacy download en`) yüklemeniz gerekir. Kodda, önce spaCy (`import spacy`) içe aktarın. Ardından, spaCy İngilizce paketini yükleyin (`spacy_en = spacy.load('en')`). Son olarak, `def tokenizer(text): return [tok.text for tok in spacy_en.tokenizer(text)]` işlevini tanımlayın ve orijinal `tokenizer` işlevini değiştirin. GloVe ve spaCy içinde ifade belirteçlerinin farklı biçimlerine dikkat edin. Örneğin, “new york” ifadesi Glove'deki “new-york” şeklini ve spaCy tokenization işleminden sonra “new york” şeklini alır.
+1. Dönem sayısını artırın. Eğitim ve test doğruluklarını iyileştirebilir misiniz? Diğer hiperparametreleri ayarlamaya ne dersiniz?
+1. 300 boyutlu GloVe gömme gibi daha büyük önceden eğitilmiş sözcük vektörlerini kullanın. Sınıflandırma doğruluğunu arttırıyor mu?
+1. SpaCy belirteçleştirmesini kullanarak sınıflandırma doğruluğunu artırabilir miyiz? SpaCy (`pip install spacy`) yüklemeniz ve İngilizce paketini (`python -m spacy download en`) yüklemeniz gerekir. Kodda, önce spaCy'i (`import spacy`) içe aktarın. Ardından, spaCy İngilizce paketini yükleyin (`spacy_en = spacy.load('en')`). Son olarak, `def tokenizer(text): return [tok.text for tok in spacy_en.tokenizer(text)]` işlevini tanımlayın ve orijinal `tokenizer` işlevini değiştirin. GloVe ve spaCy içinde ifade belirteçlerinin farklı biçimlerine dikkat edin. Örneğin, "new york" ifade belirteci GloVe'de "new-york" biçimini ve spaCy belirteçleştirmesinden sonra "new york" biçimini alır.
 
 :begin_tab:`mxnet`
-[Discussions](https://discuss.d2l.ai/t/392)
+[Tartışmalar](https://discuss.d2l.ai/t/392)
 :end_tab:
 
 :begin_tab:`pytorch`
-[Discussions](https://discuss.d2l.ai/t/1424)
+[Tartışmalar](https://discuss.d2l.ai/t/1424)
 :end_tab:

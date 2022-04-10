@@ -1,32 +1,31 @@
 # Doğal Dil Çıkarımı ve Veri Kümesi
 :label:`sec_natural-language-inference-and-dataset`
 
-:numref:`sec_sentiment`'te, duygu analizi sorununu tartıştık. Bu görev, tek bir metin dizisini, duyarlılık kutupları kümesi gibi önceden tanımlanmış kategorilere sınıflandırmayı amaçlamaktadır. Ancak, bir cümlenin başka bir biçimde çıkarılıp çıkarılamayacağına karar verme ihtiyacı olduğunda veya anlamsal olarak eşdeğer cümleleri tanımlayarak fazlalığı ortadan kaldırmaya ihtiyaç duyulduğunda, bir metin dizisinin nasıl sınıflandırılacağını bilmek yetersizdir. Bunun yerine, metin dizileri çiftleri üzerinde akıl edebilmek gerekir. 
+:numref:`sec_sentiment`'te, duygu analizi sorununu tartıştık. Bu görev, tek bir metin dizisini, duygu kutupları kümesi gibi önceden tanımlanmış kategorilere sınıflandırmayı amaçlamaktadır. Bununla birlikte, bir cümlenin diğerinden çıkarılıp çıkarılamayacağına karar vermek veya anlamsal olarak eşdeğer cümleleri tanımlayarak fazlalıkları ortadan kaldırmak gerektiğinde, bir metin dizisini nasıl sınıflandıracağını bilmek yetersizdir. Bunun yerine, metin dizileri çiftleri üzerinde akıl yürütebilmemiz gerekir. 
 
 ## Doğal Dil Çıkarımı
 
-*Doğal dil çıkarımı* bir *hipotez* olup olmadığını inceler
-, her ikisinin de metin dizisi olduğu bir *öncül* den çıkarılabilir. Başka bir deyişle, doğal dil çıkarımı, bir çift metin dizisi arasındaki mantıksal ilişkiyi belirler. Bu tür ilişkiler genellikle üç tipe ayrılır: 
+*Doğal dil çıkarımı*, her ikisinin de bir metin dizisi olduğu bir *öncülden* bir *hipotezin* çıkarılıp çıkarılamayacağını inceler. Başka bir deyişle, doğal dil çıkarımı, bir çift metin dizisi arasındaki mantıksal ilişkiyi belirler. Bu tür ilişkiler genellikle üç tipe ayrılır: 
 
-* *Katkı*: Hipotez, öncülden çıkarılabilir.
-* *Çelişme*: Hipotezin olumsuzluğu öncülden çıkarılabilir.
-* *Tarafsiz*: Diğer tüm davalar.
+* *Gerekçe*: Hipotez, öncülden çıkarılabilir.
+* *Çelişki*: Hipotezin olumsuzlanması öncülden çıkarılabilir.
+* *Tarafsızlık*: Diğer tüm durumlar.
 
-Doğal dil çıkarımı aynı zamanda metinsel bağlılık görevi olarak da bilinir. Örneğin, aşağıdaki çift *entailment* olarak etiketlenecektir, çünkü hipotezdeki “sevgi göstermek” öncülünde “birbirine sarılmaktan” çıkarılabilir. 
+Doğal dil çıkarımı aynı zamanda metinsel gerekçe görevi olarak da bilinir. Örneğin, aşağıdaki çift, *gerekçe* olarak etiketlenecektir, çünkü hipotezdeki “sevgi göstermek” öncülünden “birbirine sarılmak” çıkarılabilir. 
 
-> Premise: İki kadın birbirlerine sarılıyor. 
+> Öncül: İki kadın birbirlerine sarılıyor. 
 
 > Hipotez: İki kadın sevgi gösteriyor. 
 
-Aşağıdaki*contradiction* örneği “kodlama örneğini çalıştırmak” yerine “uyku” yerine “uyku değil” anlamına geldiği için bir örnektir. 
+"Kodlama örneğini çalıştırmak", "uyku" yerine "uyumamayı" gösterdiğinden, aşağıda bir *çelişki* örneği verilmiştir.
 
-> Premise: Bir adam Derin Öğrenmeye Dalış bölümünden kodlama örneğini çalıştırıyor. 
+> Öncül: Bir adam Derin Öğrenmeye Dalış'tan kodlama örneğini çalıştırıyor. 
 
 > Hipotez: Adam uyuyor. 
 
-Üçüncü örnek bir *tarafsızlık* ilişkisini gösterir, çünkü ne “ünlü” ne de “ünlü değil” “bizim için performans gösteriyor” gerçeğinden çıkarılamaz.  
+Üçüncü örnek bir *tarafsızlık* ilişkisini gösterir, çünkü ne "ünlü" ne de "ünlü değil" "bizim için performans gösteriyor" gerçeğinden çıkarılamaz.  
 
-> Premise: Müzisyenler bizim için performans gösteriyorlar. 
+> Öncül: Müzisyenler bizim için performans gösteriyorlar. 
 
 > Hipotez: Müzisyenler ünlüdür. 
 
@@ -34,7 +33,7 @@ Doğal dil çıkarımı doğal dili anlamak için merkezi bir konu olmuştur. Bi
 
 ## Stanford Doğal Dil Çıkarımı (SNLI) Veri Kümesi
 
-Stanford Natural Language Inference (SNLI) Corpus üzerinde 500000 etiketli İngilizce cümle çiftleri :cite:`Bowman.Angeli.Potts.ea.2015` bir koleksiyondur. Çıkarılan SNLI veri kümesini `../data/snli_1.0` yolunda indirip saklıyoruz.
+Stanford Doğal Dil Çıkarımı (Stanford Natural Language Inference - SNLI) Külliyatı 500000'in üzerinde etiketli İngilizce cümle çiftleri içeren bir koleksiyondur :cite:`Bowman.Angeli.Potts.ea.2015`. Ayıklanan SNLI veri kümesini `../data/snli_1.0` yoluna indirip saklıyoruz.
 
 ```{.python .input}
 from d2l import mxnet as d2l
@@ -70,7 +69,7 @@ data_dir = d2l.download_extract('SNLI')
 
 ### Veri Kümesini Okuma
 
-Orijinal SNLI veri seti, deneylerimizde gerçekten ihtiyacımız olandan çok daha zengin bilgiler içeriyor. Böylece, bir işlev tanımlamak `read_snli` yalnızca veri kümesinin bir kısmını ayıklamak, sonra tesislerinde, hipotezlerin ve etiketlerinin listelerini döndürmek için.
+Orijinal SNLI veri kümesi, deneylerimizde gerçekten ihtiyacımız olandan çok daha zengin bilgi içeriyor. Bu nedenle, veri kümesinin yalnızca bir kısmını çıkarmak için bir `read_snli` işlevi tanımlarız, ardından öncüllerin, hipotezlerin ve bunların etiketlerinin listesini döndürürüz.
 
 ```{.python .input}
 #@tab all
@@ -95,7 +94,7 @@ def read_snli(data_dir, is_train):
     return premises, hypotheses, labels
 ```
 
-Şimdi ilk 3 çift öncül ve hipotezin yanı sıra etiketlerini yazdıralım (“0", “1" ve “2" sırasıyla “gerekçe”, “çelişki” ve “nötr” e karşılık gelir).
+Şimdi ilk 3 çift öncül ve hipotezin yanı sıra onların etiketlerini yazdıralım ("0", "1" ve "2" sırasıyla "gerekçe", "çelişki" ve "tarafsızlık"'a karşılık gelir).
 
 ```{.python .input}
 #@tab all
@@ -106,7 +105,7 @@ for x0, x1, y in zip(train_data[0][:3], train_data[1][:3], train_data[2][:3]):
     print('label:', y)
 ```
 
-Eğitim setinin yaklaşık 550000 çiftleri vardır ve test seti yaklaşık 10000 çifte sahiptir. Aşağıdakiler, hem eğitim setinde hem de test setinde “gerekçe”, “çelişki” ve “nötr” üç etiketinin dengelendiğini göstermektedir.
+Eğitim kümesinin yaklaşık 550000 çifti vardır ve test kümesi yaklaşık 10000 çifte sahiptir. Aşağıdakiler, hem eğitim kümesinde hem de test kümesinde "gerekçe", "çelişki" ve "tarafsızlık" üç etiketinin dengelendiğini göstermektedir.
 
 ```{.python .input}
 #@tab all
@@ -115,9 +114,9 @@ for data in [train_data, test_data]:
     print([[row for row in data[2]].count(i) for i in range(3)])
 ```
 
-### Veri kümesini yüklemek için bir sınıf tanımlama
+### Veri kümesini Yüklemek İçin Bir Sınıf Tanımlama
 
-Aşağıda, Gluon'daki `Dataset` sınıfından miras alarak SNLI veri kümesini yüklemek için bir sınıf tanımlıyoruz. Sınıf yapıcısındaki `num_steps` bağımsız değişkeni, bir metin dizisinin uzunluğunu belirtir, böylece dizilerin her mini toplu işlemi aynı şekle sahip olur. Başka bir deyişle, daha uzun sırayla ilk `num_steps`'ten sonra belirteçler kesilirken, özel belirteçleri “<pad>” uzunluğu `num_steps` olana kadar daha kısa dizilere eklenecektir. `__getitem__` işlevini uygulayarak, `idx` endeksi ile öncül, hipotez ve etikete keyfi olarak erişebiliriz.
+Aşağıda, Gluon'daki `Dataset` sınıfından türetilmiş SNLI veri kümesini yüklemek için bir sınıf tanımlıyoruz. Sınıf kurucusundaki `num_steps` bağımsız değişkeni, bir metin dizisinin uzunluğunu belirtir, böylece dizilerin her minigrup işlemi aynı şekle sahip olur. Başka bir deyişle, daha uzun sıradaki ilk `num_steps` olanlardan sonraki belirteçler kırpılırken, "&lt;pad&gt;" özel belirteçleri uzunlukları `num_steps` olana kadar daha kısa dizilere eklenecektir. `__getitem__` işlevini uygulayarak, `idx` endeksi ile öncüle, hipoteze ve etikete keyfi olarak erişebiliriz.
 
 ```{.python .input}
 #@save
@@ -180,9 +179,9 @@ class SNLIDataset(torch.utils.data.Dataset):
         return len(self.premises)
 ```
 
-### Her Şeyleri Bir Araya Getirmek
+### Her Şeyi Bir Araya Koymak
 
-Artık `read_snli` işlevini ve `SNLIDataset` sınıfını SNLI veri kümesini indirmek ve eğitim setinin kelime dağarcığıyla birlikte hem eğitim hem de test setleri için `DataLoader` örneklerini iade edebiliriz. Eğitim setinden inşa edilen kelime dağarcığını test setinin olduğu gibi kullanmamız dikkat çekicidir. Sonuç olarak, test setindeki herhangi bir yeni belirteç, eğitim setinde eğitilen modele bilinmeyecektir.
+Artık `read_snli` işlevini ve `SNLIDataset` sınıfını SNLI veri kümesini indirmek ve eğitim kümesinin kelime dağarcığıyla birlikte hem eğitim hem de test kümeleri için `DataLoader` örneklerini döndürmek için çalıştırabiliriz. Eğitim kümesinden inşa edilen kelime dağarcığını test kümesininki gibi kullanmamız dikkat çekicidir. Sonuç olarak, test kümesindeki herhangi bir yeni belirteç, eğitim kümesinde eğitilen modelce bilinmeyecektir.
 
 ```{.python .input}
 #@save
@@ -221,7 +220,7 @@ def load_data_snli(batch_size, num_steps=50):
     return train_iter, test_iter, train_set.vocab
 ```
 
-Burada toplu iş boyutunu 128 ve sıra uzunluğunu 50'ye ayarladık ve veri yineleyicilerini ve kelime dağarcığını almak için `load_data_snli` işlevini çağırıyoruz. Sonra kelime dağarcığı boyutunu yazdırıyoruz.
+Burada toplu iş boyutunu 128'e ve sıra uzunluğunu 50'ye ayarlıyoruz ve veri yineleyicilerini ve kelime dağarcığını elde etmek için `load_data_snli` işlevini çağırıyoruz. Sonra kelime dağarcığı boyutunu yazdırıyoruz.
 
 ```{.python .input}
 #@tab all
@@ -229,7 +228,7 @@ train_iter, test_iter, vocab = load_data_snli(128, 50)
 len(vocab)
 ```
 
-Şimdi ilk mini batch şeklini yazdırıyoruz. Duygu analizinin aksine, iki giriş `X[0]` ve `X[1]` bina ve hipotez çiftlerini temsil ediyor.
+Şimdi ilk minigrup şeklini yazdırıyoruz. Duygu analizinin aksine, `X[0]` ve `X[1]` iki girdisi öncül ve hipotez çiftlerini temsil ediyor.
 
 ```{.python .input}
 #@tab all
@@ -242,19 +241,19 @@ for X, Y in train_iter:
 
 ## Özet
 
-* Doğal dil çıkarımı, bir hipotezin her ikisinin de metin dizisi olduğu bir öncülden çıkarılıp çıkarılamayacağını inceler.
-* Doğal dil çıkarımlarında, bina ve hipotezler arasındaki ilişkiler, bağlılık, çelişki ve tarafsız sayılabilir.
-* Stanford Natural Language Inference (SNLI) Corpus, doğal dil çıkarımının popüler bir kıyaslama veri kümasıdır.
+* Doğal dil çıkarımı, her ikisinin de bir metin dizisi olduğu, bir öncülden bir hipotezin çıkarılıp çıkarılamayacağını inceler.
+* Doğal dil çıkarımlarında, öncüller ve hipotezler arasındaki ilişkiler, gerekçe, çelişki ve tarafsızlık olarak sayılabilir.
+* Stanford Doğal Dil Çıkarımı (Stanford Natural Language Inference - SNLI) Külliyatı, doğal dil çıkarımında popüler bir kıyaslama veri kümesidir.
 
-## Egzersizler
+## Alıştırmalar
 
-1. Makine çevirisi uzun bir çıktı çevirisi ve bir zemin doğruluk çevirisi arasında yüzeysel $n$ gram eşleştirme dayalı değerlendirilmiştir. Doğal dil çıkarımı kullanarak makine çevirisi sonuçlarını değerlendirmek için bir ölçü tasarlayabilir misiniz?
-1. Kelime boyutunu azaltmak için hiperparametreleri nasıl değiştirebiliriz?
+1. Makine çevirisi uzun zamandır bir çıktı çevirisi ile bir gerçek referans değer çeviri arasındaki yüzeysel $n$-gramlar eşleşmesine dayalı olarak değerlendirilmektedir. Doğal dil çıkarımını kullanarak makine çevirisi sonuçlarını değerlendirmek için bir ölçü tasarlayabilir misiniz?
+1. Kelime dağarcığı boyutunu azaltmak için hiperparametreleri nasıl değiştirebiliriz?
 
 :begin_tab:`mxnet`
-[Discussions](https://discuss.d2l.ai/t/394)
+[Tartışmalar](https://discuss.d2l.ai/t/394)
 :end_tab:
 
 :begin_tab:`pytorch`
-[Discussions](https://discuss.d2l.ai/t/1388)
+[Tartışmalar](https://discuss.d2l.ai/t/1388)
 :end_tab:
