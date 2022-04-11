@@ -73,6 +73,8 @@ covariate; ortak değişken
 
 crowdsourcing; kitle kaynak kullanımı
 
+dataframe; veri çerçevesi
+
 decoder; kodçözücü
 
 denoising; gürültü arındırma
@@ -290,6 +292,8 @@ smoothing; düzleştirme
 softmax; eşiksiz en büyük işlev veya softmaks
 
 spam; yaramaz posta
+
+sparsity; seyreklik
 
 stride; uzun adım
 
