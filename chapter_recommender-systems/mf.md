@@ -1,22 +1,22 @@
-# Matris Çarpanlara Ayırma
+# Matrisi Çarpanlarına Ayırma 
 
-Matrix Factorization :cite:`Koren.Bell.Volinsky.2009`, tavsiye sistemleri literatüründe köklü bir algoritmadır. Matris çarpanlara çıkarma modelinin ilk versiyonu Simon Funk tarafından, etkileşim matrisini çarpanlara dönüştürme fikrini tarif ettiği ünlü bir [blog yazısı](https://sifter.org/~simon/journal/20061211.html) içinde önerilmiştir. Daha sonra 2006'da düzenlenen Netflix yarışması nedeniyle yaygın olarak tanındı. O dönemde medya akışı ve video kiralama şirketi Netflix, öneri sistemi performansını artırmak için bir yarışma duyurdu. Netflix taban çizgisinde, yani Cinematch) yüzde 10 oranında iyileşebilecek en iyi takım bir milyon ABD doları ödülü kazanacaktır. Bu nedenle, bu yarışma tavsiye sistemi araştırması alanına çok dikkat çekti. Daha sonra büyük ödül BellKor'un Pragmatik Kaos ekibi, BellKor, Pragmatik Teori ve BigChaos'un kombine ekibi tarafından kazanıldı (şimdi bu algoritmalar hakkında endişelenmenize gerek yok). Son puan bir topluluk çözümünün (yani birçok algoritmanın birleşimi) sonucu olmasına rağmen, matris çarpanlarına ayırma algoritması son karışımda kritik bir rol oynadı. Netflix Grand Prize çözümünün :cite:`Toscher.Jahrer.Bell.2009` teknik raporu, benimsenen modele ayrıntılı bir giriş sağlar. Bu bölümde, matris çarpanlara ayırma modelinin ayrıntılarına ve uygulanmasına dalacağız. 
+Matris Çarpanlarına Ayırma (Ayrıştırma) :cite:`Koren.Bell.Volinsky.2009`, tavsiye sistemleri yazınında köklü bir algoritmadır. Matris ayrıştırma modelinin ilk sürümü Simon Funk tarafından, etkileşim matrisini ayrıştırma fikrini tarif ettiği ünlü bir [blog yazısı](https://sifter.org/~simon/journal/20061211.html) içinde önerilmiştir. Daha sonra 2006'da düzenlenen Netflix yarışması nedeniyle yaygın olarak tanındı. O dönemde medya akışı ve video kiralama şirketi Netflix, öneri sistemi başarımını artırmak için bir yarışma duyurdu. Netflix referans değerinden, yani Cinematch, yüzde 10 oranında iyileştirebilen en iyi takım bir milyon ABD doları ödülü kazanacaktı. Bu nedenle, bu yarışma tavsiye sistemi araştırması alanına çok dikkat çekti. Daha sonra büyük ödül BellKor'un Pragmatik Kaos ekibi, BellKor, Pragmatik Teori ve BigChaos'un birleşmiş bir ekibi tarafından kazanıldı (şimdilik bu algoritmalar hakkında endişelenmenize gerek yok). Nihai sonuç bir topluluk çözümünün (yani birçok algoritmanın birleşimi) sonucu olmasına rağmen, matris ayrıştırma algoritması son karışımda kritik bir rol oynadı. Netflix Büyük Ödül çözümünün :cite:`Toscher.Jahrer.Bell.2009` teknik raporu, benimsenen modele ayrıntılı bir giriş sağlar. Bu bölümde, matris ayrıştırma modelinin ayrıntılarına ve uygulanmasına dalacağız. 
 
-## Matris Çarpanlara Ayırma Modeli
+## Matrisi Çarpanlara Ayırma Modeli
 
-Matris çarpanlara ayırma, işbirlikçi filtreleme modellerinin bir sınıfıdır. Model özellikle, kullanıcı öğesi etkileşim matrisini (örn. derecelendirme matrisi) iki alt dereceli matrisin ürününe çarpıtıp, kullanıcı öğesi etkileşimlerinin düşük rütbeli yapısını yakalar. 
+Matris çarpanlarına ayırma, işbirlikçi filtreleme modellerinin bir sınıfıdır. Model özellikle, kullanıcı-öğe etkileşim matrisini (örn. derecelendirme matrisi) iki düşük kerteli matrisin çarpımına ayrıştırıp kullanıcı-öğe etkileşimlerinin düşük kerteli yapısını yakalar. 
 
-$\mathbf{R} \in \mathbb{R}^{m \times n}$, $m$ kullanıcıları ve $n$ öğe ile etkileşim matrisi göstersin ve $\mathbf{R}$ değerleri açık derecelendirmeleri temsil eder. Kullanıcı öğesi etkileşimi bir kullanıcı latent matris $\mathbf{P} \in \mathbb{R}^{m \times k}$ ve bir öğe latent matris $\mathbf{Q} \in \mathbb{R}^{n \times k}$, burada $k \ll m, n$, gizli faktör boyutudur. $\mathbf{p}_u$ $\mathbf{P}$ ve $\mathbf{q}_i$'nın $\mathbf{q}_i$'nın $i.$ satırını $\mathbf{Q}$'nin $i.$ satırını göstersin. Verilen bir öğe $i$ için, $\mathbf{q}_i$ öğesinin öğeleri, bir filmin türleri ve dilleri gibi öğenin bu özelliklere sahip olduğu ölçüde ölçer. Verilen bir kullanıcı $u$ için, $\mathbf{p}_u$ unsurları, kullanıcının öğelerin ilgili özelliklerine ilgi derecesini ölçer. Bu gizli faktörler, bu örneklerde belirtildiği gibi belirgin boyutları ölçebilir veya tamamen yorumlanamaz olabilir. Tahmin edilen derecelendirme tarafından tahmin edilebilir 
+$\mathbf{R} \in \mathbb{R}^{m \times n}$, $m$ kullanıcıları ve $n$ öğe ile etkileşim matrisi göstersin ve $\mathbf{R}$ değerleri açık derecelendirmeleri temsil eder. Kullanıcı-öğe etkileşimi bir kullanıcı gizli matrisi $\mathbf{P} \in \mathbb{R}^{m \times k}$ ve bir öğe gizli matrisi $\mathbf{Q} \in \mathbb{R}^{n \times k}$ şeklinde çarpanlara ayrılacaktır, burada $k \ll m, n$, gizli faktör boyutudur. $\mathbf{p}_u$ $\mathbf{P}$'nin $u.$  satırını ve $\mathbf{q}_i$ $\mathbf{Q}$'nin $i$ satırını göstersin. Belirli bir $i$ öğesi için, $\mathbf{q}_i$ öğesinin elemanları, öğenin bir filmin türleri ve dilleri gibi özniteliklere ne ölçüde sahip olduğunu ölçer. Belirli bir kullanıcı $u$ için, $\mathbf{p}_u$ öğesinin elemanları, kullanıcının öğelere karşılık gelen özniteliklere ne kadar ilgi duyduğunu ölçer. Bu gizli faktörler, bu örneklerde belirtildiği gibi belirgin boyutları ölçebilir veya tamamen yorumlanamaz olabilir. Tahmini derecelendirme aşağıdaki gibi hesaplanabilir
 
 $$\hat{\mathbf{R}} = \mathbf{PQ}^\top$$
 
-burada $\hat{\mathbf{R}}\in \mathbb{R}^{m \times n}$ $\mathbf{R}$ ile aynı şekle sahip tahmin edilen derecelendirme matrisidir. Bu tahmin kuralının önemli bir sorunu kullanıcılar/öğeler önyargıları modellenemez olmasıdır. Örneğin, bazı kullanıcılar daha yüksek derecelendirme verme eğilimindedir veya bazı öğeler kalitesiz kaliteden dolayı her zaman daha düşük derecelendirme alır. Bu önyargılar gerçek dünyadaki uygulamalarda yaygındır. Bu önyargıları yakalamak için, kullanıcıya özgü ve öğeye özel önyargı terimleri tanıtılmaktadır. Özellikle, tahmini derecelendirme kullanıcısı $u$ öğeye verdiği $i$ 
+burada $\hat{\mathbf{R}}\in \mathbb{R}^{m \times n}$, $\mathbf{R}$ ile aynı şekle sahip tahmin edilen derecelendirme matrisidir. Bu tahmin kuralının önemli bir sorunu kullanıcılar/öğeler önyargılarının modellenemez olmasıdır. Örneğin, bazı kullanıcılar daha yüksek derecelendirme verme eğilimindedir veya bazı öğeler düşük kalitesinden dolayı her zaman daha düşük derecelendirme alır. Bu önyargılar gerçek dünyadaki uygulamalarda yaygındır. Bu önyargıları yakalamak için, kullanıcıya özgü ve öğeye özgü önyargı terimleri tanıtıldı. Özellikle, $u$ kullanıcısının $i$ öğesine verdiği tahmini derecelendirme aşağıdaki hesaplanır: 
 
 $$
 \hat{\mathbf{R}}_{ui} = \mathbf{p}_u\mathbf{q}^\top_i + b_u + b_i
 $$
 
-Ardından, tahmin edilen derecelendirme puanları ile gerçek derecelendirme puanları arasındaki ortalama kare hatayı en aza indirerek matris çarpanlarına ayırma modelini eğitiyoruz. Objektif işlev aşağıdaki gibi tanımlanır: 
+Ardından, tahmin edilen derecelendirme puanları ile gerçek derecelendirme puanları arasındaki ortalama kare hatayı en aza indirerek matris çarpanlarına ayırma modelini eğitiyoruz. Amaç işlevi aşağıdaki gibi tanımlanır: 
 
 $$
 \underset{\mathbf{P}, \mathbf{Q}, b}{\mathrm{argmin}} \sum_{(u, i) \in \mathcal{K}} \| \mathbf{R}_{ui} -
@@ -24,13 +24,13 @@ $$
 \|^2_F + b_u^2 + b_i^2 )
 $$
 
-burada $\lambda$ düzenlenme oranını gösterir. Düzenli terim $\ lambda (\ |\ mathbf {P}\ |^2_F +\ |\ mathbf {Q}\ |^2_F + b_u^2 + b_i^2) $ is used to avoid over-fitting by penalizing the magnitude of the parameters. The $ (u, i) $ pairs for which $\ mathbf {R} _ {ui} $ bilinen $ is used to avoid over-fitting by penalizing the magnitude of the parameters. The $ (u, i) $ pairs for which $\ mathbf {R} _ {ui} $ setinde saklanır 14. Model parametreleri Stokastik Gradyan Descent ve Adam gibi bir optimizasyon algoritması ile öğrenilebilir. 
+burada $\lambda$ düzenlileştirme oranını gösterir. Düzenlileştirme terimi $\ lambda (\| \mathbf{P} \|^2_F +\| \mathbf{Q}\|^2_F + b_u^2 + b_i^2 )$ parametrelerin büyüklüğünü cezalandırarak aşırı öğrenmeden kaçınmakta kullanılır. $\mathbf{R}_{ui}$'ın bilindiği $(u, i)$ çiftleri $\mathcal{K}=\{(u, i) \mid \mathbf{R}_{ui} \text{ biliniyor}\}$ kümesinde saklanır . Model parametreleri, Rasgele Gradyan İnişi ve Adam gibi bir eniyileme algoritması ile öğrenilebilir. 
 
-Matris çarpanlara aykırı modelinin sezgisel bir örneği aşağıda gösterilmiştir: 
+Matrisi çarpanlara ayırma modelinin sezgisel bir gösterimi aşağıda gösterilmiştir. 
 
-![Illustration of matrix factorization model](../img/rec-mf.svg)
+![Matrisi çarpanlara ayırma modelinin resimlendirilmesi](../img/rec-mf.svg)
 
-Bu bölümün geri kalanında, matris çarpanlarına uygulanmasını açıklayacağız ve modeli MovieLens veri kümesinde eğiteceğiz.
+Bu bölümün geri kalanında, matris ayrıştırma uygulanmasını açıklayacağız ve modeli MovieLens veri kümesinde eğiteceğiz.
 
 ```{.python .input  n=2}
 from d2l import mxnet as d2l
@@ -42,7 +42,7 @@ npx.set_np()
 
 ## Model Uygulaması
 
-İlk olarak, yukarıda açıklanan matris çarpanlara geçirme modelini uyguluyoruz. Kullanıcı ve öğe gizli faktörler `nn.Embedding` ile oluşturulabilir. `input_dim` öğe/kullanıcı sayısıdır ve (`output_dim`) ise gizli faktörlerin boyutudur ($k$). `nn.Embedding`'yı `output_dim`'ü bir olarak ayarlayarak kullanıcı/öğe önyargılarını oluşturmak için de kullanabiliriz. `forward` işlevinde, gömülü aramak için kullanıcı ve öğe kimlikleri kullanılır.
+İlk olarak, yukarıda açıklanan matris ayrıştırma modelini uyguluyoruz. Kullanıcı ve öğe gizli etkenleri `nn.Embedding` ile oluşturulabilir. `input_dim` öğe/kullanıcı sayısıdır ve (`output_dim`) ise gizli etkenlerin boyutudur ($k$). `nn.Embedding`'yı `output_dim`'i bir olarak kurup kullanıcı/öğe önyargılarını oluşturmak için de kullanabiliriz. `forward` işlevinde, gömmeleri aramak için kullanıcı ve öğe kimlikleri kullanılır.
 
 ```{.python .input  n=4}
 class MF(nn.Block):
@@ -62,15 +62,15 @@ class MF(nn.Block):
         return outputs.flatten()
 ```
 
-## Değerlendirme Önlemleri
+## Değerlendirme Ölçümleri
 
-Daha sonra, modelin tahmin ettiği derecelendirme puanları ile gerçekte gözlemlenen derecelendirme puanları (zemin gerçeği) :cite:`Gunawardana.Shani.2015` arasındaki farkları ölçmek için yaygın olarak kullanılan RMSE (kök-ortalama kare hatası) ölçümünü uygularız. RMSE şu şekilde tanımlanır: 
+Daha sonra, modelin tahmin ettiği derecelendirme puanları ile gerçekte gözlemlenen derecelendirme puanları (gerçek referans değer) :cite:`Gunawardana.Shani.2015` arasındaki farkları ölçmek için yaygın olarak kullanılan RMSE (ortalama kare hatasının kökü) ölçümünü uygularız. RMSE şu şekilde tanımlanır: 
 
 $$
 \mathrm{RMSE} = \sqrt{\frac{1}{|\mathcal{T}|}\sum_{(u, i) \in \mathcal{T}}(\mathbf{R}_{ui} -\hat{\mathbf{R}}_{ui})^2}
 $$
 
-burada $\mathcal{T}$, değerlendirmek istediğiniz kullanıcı ve öğelerin çiftlerinden oluşan kümedir. $|\mathcal{T}|$ bu kümenin boyutudur. `mx.metric` tarafından sağlanan RMSE işlevini kullanabiliriz.
+burada $\mathcal{T}$, değerlendirmek istediğiniz kullanıcıların ve öğelerin çiftlerinden oluşan kümedir. $|\mathcal{T}|$ bu kümenin boyutudur. `mx.metric` tarafından sağlanan RMSE işlevini kullanabiliriz.
 
 ```{.python .input  n=3}
 def evaluator(net, test_iter, devices):
@@ -86,9 +86,9 @@ def evaluator(net, test_iter, devices):
     return float(np.mean(np.array(rmse_list)))
 ```
 
-## Modelin Eğitimi ve Değerlendirilmesi
+## Model Eğitimi ve Değerlendirilmesi
 
-Eğitim fonksiyonunda, kilo çürümesi ile $L_2$ kaybını benimsedik. Ağırlık bozunma mekanizması, $L_2$ düzenlemesi ile aynı etkiye sahiptir.
+Eğitim fonksiyonunda, ağırlık sönümü ile $L_2$ kaybını benimsedik. Ağırlık sönümü mekanizması, $L_2$ düzenlileştirmesi ile aynı etkiye sahiptir.
 
 ```{.python .input  n=4}
 #@save
@@ -129,7 +129,7 @@ def train_recsys_rating(net, train_iter, test_iter, loss, trainer, num_epochs,
           f'on {str(devices)}')
 ```
 
-Son olarak, her şeyi bir araya getirelim ve modeli eğitelim. Burada, gizli faktör boyutunu 30'a ayarlıyoruz.
+Son olarak, her şeyi bir araya koyalım ve modeli eğitelim. Burada, gizli çarpan boyutunu 30'a ayarlıyoruz.
 
 ```{.python .input  n=5}
 devices = d2l.try_all_gpus()
@@ -145,7 +145,7 @@ train_recsys_rating(net, train_iter, test_iter, loss, trainer, num_epochs,
                     devices, evaluator)
 ```
 
-Aşağıda, bir kullanıcının (ID 20) bir öğeye verebileceği derecelendirmeyi tahmin etmek için eğitimli modeli kullanıyoruz (ID 30).
+Aşağıda, bir kullanıcının (ID 20) bir öğeye (ID 30) verebileceği derecelendirmeyi tahmin etmek için eğitimli modeli kullanıyoruz .
 
 ```{.python .input  n=6}
 scores = net(np.array([20], dtype='int', ctx=devices[0]),
@@ -155,15 +155,15 @@ scores
 
 ## Özet
 
-* Matris çarpanlara çıkarma modeli, tavsiye sistemlerinde yaygın olarak kullanılmaktadır. Kullanıcının bir öğeye verebileceği derecelendirmeleri tahmin etmek için kullanılabilir.
-* Tavsiye sistemleri için matris çarpanlarını uygulayabilir ve eğitebiliriz.
+* Matrisi çarpanlara ayırma modeli, tavsiye sistemlerinde yaygın olarak kullanılmaktadır. Kullanıcının bir öğeye verebileceği derecelendirmeleri tahmin etmek için kullanılabilir.
+* Tavsiye sistemleri için matris ayrıştırma uygulayabilir ve eğitebiliriz.
 
-## Egzersizler
+## Alıştırmalar
 
-* Gizli faktörlerin boyutunu değiştir. Gizli faktörlerin boyutu model performansını nasıl etkiler?
-* Farklı iyileştiriciler, öğrenme oranları ve kilo bozunma oranları deneyin.
+* Gizli çarpanların boyutunu değiştir. Gizli çarpanların boyutu model performansını nasıl etkiler?
+* Farklı eniyileyicileri, öğrenme oranlarını ve ağırlık sönümü oranlarını deneyin.
 * Belirli bir film için diğer kullanıcıların tahmini derecelendirme puanlarını kontrol edin.
 
 :begin_tab:`mxnet`
-[Discussions](https://discuss.d2l.ai/t/400)
+[Tartışmalar](https://discuss.d2l.ai/t/400)
 :end_tab:
