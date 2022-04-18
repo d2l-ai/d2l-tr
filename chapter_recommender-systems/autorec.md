@@ -112,7 +112,7 @@ d2l.train_recsys_rating(net, train_iter, test_iter, loss, trainer, num_epochs,
 ## Alıştırmalar
 
 * Model performansı üzerindeki etkisini görmek için AutoRec'in gizli boyutunu değiştir.
-* Daha fazla gizli katman eklemeyi deneyin. Model performansını iyileştirmek yararlı mıdır?
+* Daha fazla gizli katman eklemeyi deneyin. Model performansını iyileştirmede yararlı mıdır?
 * Kodçözücü ve kodlayıcı etkinleştirme işlevlerinin daha iyi bir kombinasyonunu bulabilir misiniz?
 
 :begin_tab:`mxnet`

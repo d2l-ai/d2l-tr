@@ -1,20 +1,20 @@
 # Tavsiye Sistemleri için Kişiselleştirilmiş Sıralama
 
-Eski bölümlerde, sadece açık geribildirim dikkate alındı ve modeller gözlemlenen derecelendirmeler üzerinde eğitildi ve test edildi. Bu tür yöntemlerin iki dezavantajları vardır: Birincisi, çoğu geri bildirim açık değildir, ancak gerçek dünya senaryolarında örtük değildir ve açık geri bildirimlerin toplanması daha pahalı olabilir. İkincisi, kullanıcıların çıkarları için öngörücü olabilecek gözlenmeyen kullanıcı öğe çiftleri tamamen göz ardı edilir ve bu yöntemler, derecelendirmelerin rastgele eksik olmadığı durumlarda, kullanıcıların tercihleri nedeniyle uygun değildir. Gözlemlenmeyen kullanıcı öğesi çiftleri, gerçek negatif geri bildirim (kullanıcılar öğelerle ilgilenmez) ve eksik değerlerin bir karışımıdır (kullanıcı gelecekte öğelerle etkileşime girebilir). Biz sadece matris çarpanlara ve AutoRec gözlenmeyen çiftleri görmezden geliyoruz. Açıkçası, bu modeller gözlenen ve gözlemlenmeyen çiftler arasında ayrım yapamaz ve genellikle kişiselleştirilmiş sıralama görevleri için uygun değildir. 
+Önceki bölümlerde, sadece açık geri bildirim dikkate alındı ve modeller gözlemlenen derecelendirmeler üzerinde eğitildi ve test edildi. Bu tür yöntemlerin iki dezavantajları vardır: Birincisi, çoğu geri bildirim açık değildir, ancak gerçek dünya senaryolarında örtüktür ve açık geri bildirimlerin toplanması daha pahalı olabilir. İkinci olarak, kullanıcıların ilgi alanları için tahminde bulunabilecek, gözlemlenmeyen kullanıcı-öğe çiftleri tamamen göz ardı edilir, bu da bu yöntemleri, derecelendirmelerin rastgele değil de, kullanıcıların tercihleri nedeniyle eksik olduğu durumlar için uygunsuz hale getirir. Gözlemlenmeyen kullanıcı öğe çiftleri, gerçek olumsuz geri bildirim (kullanıcılar öğelerle ilgilenmez) ve eksik değerlerin bir karışımıdır (kullanıcı gelecekte öğelerle etkileşime girebilir). Matrisş çarpanlarına ayırmada ve AutoRec'te gözlemlenmeyen çiftleri basitçe yok sayarız. Açıkçası, bu modeller gözlenen ve gözlemlenmeyen çiftler arasında ayrım yapamaz ve genellikle kişiselleştirilmiş sıralama görevleri için uygun değildir. 
 
-Bu amaçla, örtük geri bildirimlerden sıralamalı öneri listeleri oluşturmayı hedefleyen bir öneri modeli sınıfı popülerlik kazanmıştır. Genel olarak, kişiselleştirilmiş sıralama modelleri noktasal, çift veya listwise yaklaşımlarla optimize edilebilir. Sivri yaklaşımlar, bir seferde tek bir etkileşimi dikkate alır ve bireysel tercihleri tahmin etmek için bir sınıflandırıcı veya bir regresörü eğitir. Matris çarpanları ve AutoRec noktasal hedeflerle optimize edilmiştir. İkili yaklaşımlar her kullanıcı için bir çift öğe dikkate alır ve bu çift için en uygun siparişi yaklaşık olarak değerlendirmeyi amaçlar. Genellikle, çift yönlü yaklaşımlar sıralama görevi için daha uygundur, çünkü göreli düzeni tahmin etmek sıralamanın niteliğini anımsatır. Listwise yaklaşımları, örneğin Normalleştirilmiş İndirimli Toplu Kazanç ([NDCG](https://en.wikipedia.org/wiki/Discounted_cumulative_gain)) gibi sıralama önlemlerini doğrudan optimize etmek gibi öğelerin tüm listesinin sıralamasını yaklaşık olarak değerlendirir. Bununla birlikte, listwise yaklaşımları noktasal veya çift yönlü yaklaşımlardan daha karmaşık ve bilgi işlem yoğundur. Bu bölümde iki çift hedef/kayıp, Bayesian Kişiselleştirilmiş Sıralama kaybı ve Menteşe kaybı ve bunların ilgili uygulamaları sunulacaktır. 
+Bu amaçla, örtülü geri bildirimlerden sıralanmış tavsiye listeleri oluşturmayı hedefleyen bir tavsiye modeli sınıfı popülerlik kazanmıştır. Genel olarak, kişiselleştirilmiş sıralama modelleri noktasal, ikili veya list halinde yaklaşımlarla optimize edilebilir. Noktasal yaklaşımlar, bir seferde tek bir etkileşimi dikkate alır ve bireysel tercihleri tahmin etmek için bir sınıflandırıcı veya bir bağlanım eğitir. Matrisi çarpanlarına ayırma ve AutoRec noktasal amaç işlevleriyle optimize edilmiştir. İkili yaklaşımlar her kullanıcı için bir çift öğe dikkate alır ve bu çift için en uygun sıralamayı yaklaşıklandırmayı amaçlar. Genellikle, ikili yaklaşımlar sıralama görevi için daha uygundur, çünkü göreli sırayı tahmin etmek sıralamanın doğasını anımsatır. Liste halinde yaklaşımlar, örneğin Normalleştirilmiş İndirgenmiş Toplu Kazanç ([NDCG](https://en.wikipedia.org/wiki/Discounted_cumulative_gain)) gibi, sıralama ölçütlerini doğrudan optimize etmek gibi tüm öğe listesinin sıralamasını yaklaşık olarak değerlendirir. Bununla birlikte, listeye dayalı yaklaşımlar noktasal veya  ikili yaklaşımlardan daha karmaşık ve hesaplama yoğundur. Bu bölümde, iki ikili hedef/kayıp, Bayesian Kişiselleştirilmiş Sıralama kaybı ve Menteşe kaybı ve bunların ilgili uygulamaları sunulacaktır. 
 
 ## Bayesian Kişiselleştirilmiş Sıralama Kaybı ve Uygulaması
 
-Bayesian kişiselleştirilmiş sıralama (BPR) :cite:`Rendle.Freudenthaler.Gantner.ea.2009`, maksimum arka tahmin ediciden elde edilen çift kişiselleştirilmiş bir sıralama kaybıdır. Birçok mevcut öneri modelinde yaygın olarak kullanılmaktadır. BPR'nin eğitim verileri hem pozitif hem de negatif çiftlerden (eksik değerler) oluşur. Kullanıcının, gözlemlenmeyen diğer tüm öğeler üzerinde olumlu öğeyi tercih ettiği varsayılır. 
+Bayesian kişiselleştirilmiş sıralama (BPR) :cite:`Rendle.Freudenthaler.Gantner.ea.2009`, maksimum sonsal olasılık tahmincisinden türetilmiş ikili kişiselleştirilmiş sıralama kaybıdır. Birçok mevcut tavsiye modelinde yaygın olarak kullanılmaktadır. BPR'nin eğitim verisi hem olumlu hem de olumsuz çiftlerden (eksik değerler) oluşur. Kullanıcının, gözlemlenmeyen diğer tüm öğeler üzerinde olumlu öğeyi tercih ettiği varsayılır. 
 
-Resmi olarak, eğitim verileri, $u$ kullanıcısı $u$ öğesinin $j$ öğesi üzerinde $i$ öğesini tercih ettiğini temsil eden $(u, i, j)$ şeklinde tuples tarafından oluşturulmuştur. Posterior olasılığın en üst düzeye çıkarılmasını amaçlayan BPR'nin Bayesian formülasyonu aşağıda verilmiştir: 
+Bişimsel olarak, eğitim verileri $(u, i, j)$ biçiminde çoklular tarafından oluşturulur; bu, $u$ kullanıcısının $i$ öğesini $j$ öğesine tercih ettiğini gösterir. Sonsal olasılığın en üst düzeye çıkarılmasını amaçlayan BPR'nin Bayesian formülasyonu aşağıda verilmiştir: 
 
 $$
 p(\Theta \mid >_u )  \propto  p(>_u \mid \Theta) p(\Theta)
 $$
 
-$\Theta$ keyfi bir öneri modelinin parametrelerini temsil ettiği yerde, $>_u$, $u$ kullanıcısı için tüm öğelerin istenen kişiselleştirilmiş toplam sıralamasını temsil eder. Kişiselleştirilmiş sıralama görevi için genel optimizasyon kriterini elde etmek için maksimum arka tahmin ediciyi formüle edebiliriz. 
+$\Theta$ keyfi bir öneri modelinin parametrelerini temsil ettiği yerde, $>_u$, $u$ kullanıcısı için tüm öğelerin istenen kişiselleştirilmiş toplam sıralamasını temsil eder. Kişiselleştirilmiş sıralama görevi için genel eniyileştirme kriterini elde etmek için maksimum sonsal olasılık tahminciyi formüle edebiliriz. 
 
 $$
 \begin{aligned}
@@ -26,9 +26,9 @@ $$
 \end{aligned}
 $$
 
-$D := \{(u, i, j) \mid i \in I^+_u \wedge j \in I \backslash I^+_u \}$ eğitim setidir, $I^+_u$ kullanıcının $u$ sevdiği öğeleri, $I$ tüm öğeleri belirten $I$ ve $I \backslash I^+_u$, kullanıcının sevdiği öğeler hariç diğer tüm öğeleri belirten $I \backslash I^+_u$ ile 73229363614 numaralı kullanıcının $i$ ve 7322936363614'e tahmini puanlarıdır. $\hat{y}_{ui}$ ve $\hat{y}_{uj}$, $u$ kullanıcısının $u$ öğesine tahmini puanlarıdır. 20, sırasıyla. Önceki $p(\Theta)$, sıfır ortalama ve varyans kovaryans matrisi $\Sigma_\Theta$ ile normal bir dağılımdır. Burada, $\Sigma_\Theta = \lambda_\Theta I$ izin veriyoruz. 
+$D := \{(u, i, j) \mid i \in I^+_u \wedge j \in I \backslash I^+_u \}$ eğitim kümesidir, $I^+_u$ $u$ kullanıcının sevdiği öğeleri, $I$ tüm öğeleri ve $I \backslash I^+_u$, kullanıcının sevdiği öğeler hariç diğer tüm öğeleri belirtir. $\hat{y}_{ui}$ ve $\hat{y}_{uj}$, sırasıyla $i$ ve $j$ öğesi için $u$ kullanıcısının tahmini puanlarıdır. Önsel olasılık $p(\Theta)$, sıfır ortalama ve $\Sigma_\Theta$ varyans-kovaryans matrisi ile normal bir dağılımdır. Burada, $\Sigma_\Theta = \lambda_\Theta I$ olsun. 
 
-! [Illustration of Bayesian Personalized Ranking](../img/rec-ranking.svg) Temel sınıfı `mxnet.gluon.loss.Loss` uygulayacak ve Bayesian kişiselleştirilmiş sıralama kaybını oluşturmak için `forward` yöntemini geçersiz kılacağız. Kayıp sınıfını ve np modülünü içe aktararak başlıyoruz.
+![Bayes Kişiselleştirilmiş Sıralamanın resimlendirilmesi](../img/rec-ranking.svg) `mxnet.gluon.loss.Loss` temel sınıfını uygulayacağız ve Bayesian kişiselleştirilmiş sıralama kaybını oluşturmak için `forward` yöntemini geçersiz kılacağız. Loss sınıfını ve np modülünü içe aktararak başlıyoruz.
 
 ```{.python .input  n=5}
 from mxnet import gluon, np, npx
@@ -51,13 +51,13 @@ class BPRLoss(gluon.loss.Loss):
 
 ## Menteşe Kaybı ve Uygulanması
 
-Sıralama için Menteşe kaybı, SVM'ler gibi sınıflandırıcılarda sıklıkla kullanılan gluon kütüphanesinde sağlanan [menteşe kaybı](https://mxnet.incubator.apache.org/api/python/gluon/loss.html#mxnet.gluon.loss.HingeLoss) farklı bir şekle sahiptir. Tavsiye sistemlerinde sıralamada kullanılan kayıp aşağıdaki formdadır. 
+Sıralama için Menteşe kaybı, SVM'ler gibi sınıflandırıcılarda sıklıkla kullanılan gluon kütüphanesinde sağlanan [menteşe kaybı](https://mxnet.incubator.apache.org/api/python/gluon/loss.html#mxnet.gluon.loss.HingeLoss)ndan farklı bir şekle sahiptir. Tavsiye sistemlerinde sıralamada kullanılan kayıp aşağıdaki formdadır. 
 
 $$
  \sum_{(u, i, j \in D)} \max( m - \hat{y}_{ui} + \hat{y}_{uj}, 0)
 $$
 
-burada $m$ güvenlik marjı boyutudur. Negatif öğeleri pozitif maddelerden uzaklaştırmayı amaçlıyor. BPR'ye benzer şekilde, mutlak çıkışlar yerine pozitif ve negatif numuneler arasındaki mesafeyi optimize etmeyi amaçlar ve önerici sistemlere çok uygun hale getirir.
+burada $m$ güvenlik kenar payı boyutudur. Olumsuz öğeleri olumlu öğelerden uzaklaştırmayı amaçlar. BPR'ye benzer şekilde, mutlak çıktılar yerine olumlu ve olumsuz örneklmeler arasındaki mesafeyi optimize etmeyi amaçlar ve bu onu önerici sistemlere çok uygun hale getirir.
 
 ```{.python .input  n=3}
 #@save
@@ -76,14 +76,14 @@ Bu iki kayıp tavsiye kişiselleştirilmiş sıralama için değiştirilebilir.
 
 ## Özet
 
-- Tavsiye sistemlerinde kişiselleştirilmiş sıralama görevi için üç tür sıralama kaybı vardır, yani noktalı, çift yönlü ve listwise yöntemleri.
-- İki çift kaybeder, Bayesian kişiselleştirilmiş sıralama kaybı ve menteşe kaybı, birbirinin yerine kullanılabilir.
+- Tavsiye sistemlerinde kişiselleştirilmiş sıralama görevi için üç tür sıralama kaybı vardır; yani noktasal, ikili ve liste halinde yöntemler.
+- İki ikili kayıp, Bayes kişiselleştirilmiş sıralama kaybı ve menteşe kaybı, birbirinin yerine kullanılabilir.
 
-## Egzersizler
+## Alıştırmalar
 
-- BPR ve menteşe kaybı varyantı var mı?
-- BPR veya menteşe kaybı kullanan herhangi bir öneri modeli bulabilir misiniz?
+- BPR ve menteşe kaybının başka bişimleri var mıdır?
+- BPR veya menteşe kaybı kullanan herhangi bir tavsiye modeli bulabilir misiniz?
 
 :begin_tab:`mxnet`
-[Discussions](https://discuss.d2l.ai/t/402)
+[Tartışmalar](https://discuss.d2l.ai/t/402)
 :end_tab:
