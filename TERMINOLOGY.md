@@ -243,6 +243,8 @@ prior; önsel olasılık
 
 receptive field; alım alanı
 
+reconstruction; geri çatma
+
 recurrent neural network; yinelemeli sinir ağı
 
 recursion; özyineleme
