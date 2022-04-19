@@ -243,8 +243,8 @@ train_ranking(net, train_iter, test_iter, loss, trainer, None, num_users,
 
 ## Alıştırmalar
 
-* Gizli çarpanların boyutunu değiştir. Gizli çarpanların boyutu model performansını nasıl etkiler?
-* Performans üzerindeki etkisini kontrol etmek için MLP'nin mimarilerini (örn. katman sayısı, her katmanın sinir sayısı) değiştir.
+* Gizli çarpanların boyutunu değiştirin. Gizli çarpanların boyutu model performansını nasıl etkiler?
+* Performans üzerindeki etkisini kontrol etmek için MLP'nin mimarilerini (örn. katman sayısı, her katmanın sinir sayısı) değiştirin.
 * Farklı eniyileyicileri, öğrenme oranını ve ağırlık sönümü oranını deneyin.
 * Bu modeli eniyilemek için son bölümde tanımlanan menteşe kaybını kullanmaya çalışın.
 

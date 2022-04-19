@@ -160,7 +160,7 @@ scores
 
 ## Alıştırmalar
 
-* Gizli çarpanların boyutunu değiştir. Gizli çarpanların boyutu model performansını nasıl etkiler?
+* Gizli çarpanların boyutunu değiştirin. Gizli çarpanların boyutu model performansını nasıl etkiler?
 * Farklı eniyileyicileri, öğrenme oranlarını ve ağırlık sönümü oranlarını deneyin.
 * Belirli bir film için diğer kullanıcıların tahmini derecelendirme puanlarını kontrol edin.
 

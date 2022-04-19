@@ -39,7 +39,8 @@ import os
 npx.set_np()
 ```
 
-## DeepFM Uygulaması DeepFM'in uygulanması FM ile benzerdir. FM parçasını değişmeden tutuyoruz ve aktivasyon fonksiyonu olarak `relu` ile bir MLP bloğu kullanıyoruz. Bırakma modeli düzenli hale getirmek için de kullanılır. MLP nöronların sayısı `mlp_dims` hiperparametre ile ayarlanabilir.
+## DeepFM Uygulaması 
+DeepFM'in uygulanması FM ile benzerdir. FM parçasını değişmeden tutuyoruz ve aktivasyon fonksiyonu olarak `relu` ile bir MLP bloğu kullanıyoruz. Bırakma modeli düzenli hale getirmek için de kullanılır. MLP nöronların sayısı `mlp_dims` hiperparametre ile ayarlanabilir.
 
 ```{.python .input  n=2}
 class DeepFM(nn.Block):
@@ -69,7 +70,8 @@ class DeepFM(nn.Block):
         return x
 ```
 
-## Modelin Eğitimi ve Değerlendirilmesi Veri yükleme işlemi FM ile aynıdır. DeepFM'nin MLP bileşenini bir piramit yapısına sahip üç katmanlı yoğun bir ağa ayarladık (30-20-10). Diğer tüm hiperparametreler FM ile aynı kalır.
+## Model Eğitimi ve Değerlendirilmesi 
+Veri yükleme işlemi FM ile aynıdır. DeepFM'nin MLP bileşenini bir piramit yapısına sahip üç katmanlı yoğun bir ağa ayarladık (30-20-10). Diğer tüm hiperparametreler FM ile aynı kalır.
 
 ```{.python .input  n=4}
 batch_size = 2048
@@ -102,11 +104,11 @@ FM ile karşılaştırıldığında DeepFM daha hızlı yakınlaşır ve daha iy
 * Sinir ağlarının FM'ye entegre edilmesi, karmaşık ve yüksek mertebeden etkileşimleri modellemesini sağlar.
 * DeepFM, reklam veri kümelerinde orijinal FM'den daha iyi performans gösterir.
 
-## Egzersizler
+## Alıştırmalar
 
 * Model performansı üzerindeki etkisini kontrol etmek için MLP yapısını değiştir.
 * Veri kümesini Criteo olarak değiştirin ve orijinal FM modeliyle karşılaştırın.
 
 :begin_tab:`mxnet`
-[Discussions](https://discuss.d2l.ai/t/407)
+[Tartışmalar](https://discuss.d2l.ai/t/407)
 :end_tab:

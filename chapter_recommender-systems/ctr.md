@@ -4,7 +4,7 @@ Etkileşim verileri, kullanıcıların tercih ve ilgi alanlarının en temel gö
 
 Dijital pazarlamacılar, müşterilere reklam göstermek için çevrimiçi reklamcılık kullanır. Tıklama oranı, reklamverenlerin gösterim sayısı başına reklamlarında aldıkları tıklama sayısını ölçen bir metriktir ve aşağıdaki formülle hesaplanan bir yüzde değer olarak ifade edilir:  
 
-$$ \text{CTR} = \frac{\#\text{Clicks}} {\#\text{Impressions}} \times 100 \% .$$
+$$ \text{CTR} = \frac{\#\text{Tıklanmalar}} {\#\text{Gösterimler}} \times 100 \% .$$
 
 Tıklama oranı, tahmin algoritmalarının etkinliğini gösteren önemli bir sinyaldir. Tıklama oranı tahmini, bir web sitesindeki bir şeyin tıklanma olabilirliğini tahmin etme görevidir. CTR tahmini modelleri sadece hedefli reklam sistemlerinde değil, aynı zamanda genel öğe (örn. filmler, haberler, ürünler) öneri sistemlerinde, e-posta kampanyalarında ve hatta arama motorlarında da kullanılabilir. Ayrıca kullanıcı memnuniyeti, dönüşüm oranı ile de yakından ilişkilidir ve reklamverenlerin gerçekçi beklentileri belirlemelerine yardımcı olabileceğinden kampanya hedeflerini belirlemede yardımcı olabilir.
 
