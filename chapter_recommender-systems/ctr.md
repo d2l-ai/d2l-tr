@@ -1,12 +1,12 @@
-# Zengin Özellikli Tavsiye Sistemleri
+# Zengin Öznitelikli Tavsiye Sistemleri
 
-Etkileşim verileri, kullanıcıların tercih ve ilgi alanlarının en temel göstergesidir. Eski tanıtılan modellerde kritik bir rol oynar. Ancak, etkileşim verileri genellikle son derece seyrektir ve bazen gürültülü olabilir. Bu sorunu gidermek için, öğelerin özellikleri, kullanıcı profilleri ve hatta etkileşimin hangi bağlamda öneri modeline gerçekleştiği gibi yan bilgileri entegre edebiliriz. Bu özelliklerin kullanılması, özellikle etkileşim verileri eksik olduğunda, bu özelliklerin kullanıcıların ilgi alanlarının etkili bir belirleyicisi olabileceği konusunda önerilerde bulunmada faydalıdır. Bu nedenle, öneri modelleri de bu özelliklerle başa çıkmak ve modele bazı içerik/bağlam farkındalık kazandırmak için yeteneğine sahip olması önemlidir. Bu tür öneri modellerini göstermek için çevrimiçi reklam önerileri :cite:`McMahan.Holt.Sculley.ea.2013` için tıklama oranı (TO) hakkında başka bir görev sunuyoruz ve anonim bir reklam verisi sunuyoruz. Hedeflenen reklam hizmetleri yaygın ilgi gördü ve genellikle tavsiye motorları olarak çerçevelenir. Kullanıcıların kişisel zevkine ve ilgi alanlarına uyan reklamların önerilmesi, tıklama oranının iyileştirilmesi açısından önemlidir. 
+Etkileşim verileri, kullanıcıların tercih ve ilgi alanlarının en temel göstergesidir. Daha önce tanıtılan modellerde kritik bir rol oynar. Ancak, etkileşim verileri genellikle son derece seyrektir ve bazen gürültülü olabilir. Bu sorunu çözmek için öğelerin öznitelikleri, kullanıcı profilleri ve hatta etkileşimin hangi bağlamda gerçekleştiği gibi yan bilgileri tavsiye modeline entegre edebiliriz. Bu özniteliklerin kullanılması, özellikle etkileşim verilerinin eksik olduğu durumlarda, bu özniteliklerin kullanıcıların ilgi alanlarının etkili bir tahmincisi olabileceği için önerilerde bulunmaya yardımcı olur. Bu nedenle, tavsiye modellerinin bu özniteliklerle başa çıkma ve modele bir miktar içerik/bağlam farkındalığı verme kabiliyetine sahip olması esastır. Bu tür öneri modellerini göstermek için, çevrimiçi reklam önerilerinde tıklama oranı (CTR) hakkında başka bir görev tanıtıyoruz :cite:`McMahan.Holt.Sculley.ea.2013` ve anonim bir reklam verisi sunuyoruz. Hedefli reklam hizmetleri yaygın ilgi gördüler ve genellikle tavsiye motorları olarak çerçevelenirler. Kullanıcıların kişisel zevkine ve ilgi alanlarına uyan reklamların önerilmesi, tıklama oranının iyileştirilmesi açısından önemlidir. 
 
-Dijital pazarlamacılar, müşterilere reklam göstermek için çevrimiçi reklamcılık kullanır. Tıklama oranı, reklamverenlerin gösterim sayısı başına reklamlarında aldıkları tıklama sayısını ölçen bir metriktir ve aşağıdaki formülle hesaplanan yüzde olarak ifade edilir:  
+Dijital pazarlamacılar, müşterilere reklam göstermek için çevrimiçi reklamcılık kullanır. Tıklama oranı, reklamverenlerin gösterim sayısı başına reklamlarında aldıkları tıklama sayısını ölçen bir metriktir ve aşağıdaki formülle hesaplanan bir yüzde değer olarak ifade edilir:  
 
 $$ \text{CTR} = \frac{\#\text{Clicks}} {\#\text{Impressions}} \times 100 \% .$$
 
-Tıklama oranı, tahmin algoritmalarının etkinliğini gösteren önemli bir sinyaldir. Tıklama oranı tahmini, bir web sitesindeki bir şeyin tıklanma olasılığını tahmin etme görevidir. CTR tahmini modelleri sadece hedeflenen reklam sistemlerinde değil, aynı zamanda genel öğede (örn. filmler, haberler, ürünler) öneri sistemleri, e-posta kampanyaları ve hatta arama motorlarında da kullanılabilir. Ayrıca kullanıcı memnuniyeti, dönüşüm oranı ile de yakından ilişkilidir ve reklamverenlerin gerçekçi beklentileri belirlemelerine yardımcı olabileceğinden kampanya hedefleri belirlemede yardımcı olabilir.
+Tıklama oranı, tahmin algoritmalarının etkinliğini gösteren önemli bir sinyaldir. Tıklama oranı tahmini, bir web sitesindeki bir şeyin tıklanma olabilirliğini tahmin etme görevidir. CTR tahmini modelleri sadece hedefli reklam sistemlerinde değil, aynı zamanda genel öğe (örn. filmler, haberler, ürünler) öneri sistemlerinde, e-posta kampanyalarında ve hatta arama motorlarında da kullanılabilir. Ayrıca kullanıcı memnuniyeti, dönüşüm oranı ile de yakından ilişkilidir ve reklamverenlerin gerçekçi beklentileri belirlemelerine yardımcı olabileceğinden kampanya hedeflerini belirlemede yardımcı olabilir.
 
 ```{.python .input}
 from collections import defaultdict
@@ -15,9 +15,9 @@ from mxnet import gluon, np
 import os
 ```
 
-## Çevrimiçi Reklam VeriKümesi
+## Çevrimiçi Reklam Veri Kümesi
 
-İnternet ve mobil teknolojinin önemli gelişmeleriyle, çevrimiçi reklamcılık önemli bir gelir kaynağı haline geldi ve İnternet endüstrisinde gelirin büyük çoğunluğunu oluşturmaktadır. Gündelik ziyaretçilerin ödeme yapan müşterilere dönüştürülmesi için kullanıcıların ilgi alanlarını çeken ilgili reklamları veya reklamları görüntülemek önemlidir. Tanıtılan veri kümesi bir online reklam veri kümesidir. Bu, hedef değişkeni temsil eden ilk sütun, bir reklamın (1) tıklanıp tıklanmadığını (0) belirten 34 alandan oluşur. Diğer tüm sütunlar kategorik özelliklerdir. Sütunlar reklam kimliğini, site veya uygulama kimliğini, cihaz kimliğini, saati, kullanıcı profillerini vb. temsil edebilir. Özelliklerin gerçek semantiği anonimleştirme ve gizlilik endişesi nedeniyle açıklanmamıştır. 
+İnternet ve mobil teknolojinin önemli gelişmeleriyle, çevrimiçi reklamcılık önemli bir gelir kaynağı haline geldi ve İnternet endüstrisinde gelirin büyük çoğunluğunu oluşturmaktadır. Gündelik ziyaretçilerin ödeme yapan müşterilere dönüştürülmesi için kullanıcıların ilgi alanlarını çeken reklamları veya  ilgili reklamları görüntülemek önemlidir. Tanıtılan veri kümesi bir çevrimiçi reklam veri kümesidir. Bir reklamın tıklanıp (1) tıklanmadığını (0) belirten hedef değişkeni temsil eden ilk sütunla birlikte 34 alandan oluşur. Diğer tüm sütunlar kategorik özniteliklerdir. Sütunlar reklam kimliğini, site veya uygulama kimliğini, cihaz kimliğini, zamanı, kullanıcı profillerini vb. temsil edebilir. Özniteliklerin gerçek anlamı anonimleştirme ve gizlilik endişesi nedeniyle açıklanmamıştır. 
 
 Aşağıdaki kod veri kümesini sunucumuzdan indirir ve yerel veri klasörüne kaydeder.
 
@@ -29,11 +29,11 @@ d2l.DATA_HUB['ctr'] = (d2l.DATA_URL + 'ctr.zip',
 data_dir = d2l.download_extract('ctr')
 ```
 
-Bir antrenman seti ve sırasıyla 15000 ve 3000 örnek/hattan oluşan bir test seti bulunmaktadır. 
+Sırasıyla 15000 ve 3000 örnekten/satırdan oluşan bir eğitim kümesi ve bir test kümesi bulunmaktadır.
 
-## Veri kümesi Sarıcı
+## Veri Kümesi Sarmalayıcı
 
-Veri yükleme kolaylığı için, CSV dosyasından reklam veri kümesini yükleyen ve `DataLoader` tarafından kullanılabilen bir `CTRDataset`'ü uyguluyoruz.
+Veri yükleme kolaylığı için, CSV dosyasından reklam veri kümesini yükleyen ve `DataLoader` tarafından kullanılabilen bir `CTRDataset`'i uyguluyoruz.
 
 ```{.python .input  n=13}
 #@save
@@ -85,14 +85,16 @@ train_data = CTRDataset(os.path.join(data_dir, 'train.csv'))
 train_data[0]
 ```
 
-Görüldüğü gibi, tüm 34 alan kategorik özelliklerdir. Her değer, karşılık gelen girdinin tek sıcak dizinini temsil eder. $0$ etiketi, tıklanmadığı anlamına gelir. Bu `CTRDataset`, Criteo ekran reklam mücadelesi [Dataset](https://labs.criteo.com/2014/02/kaggle-display-advertising-challenge-dataset/) ve Avazu tıklama oranı tahmini [Dataset](https://www.kaggle.com/c/avazu-ctr-prediction) gibi diğer veri kümelerini yüklemek için de kullanılabilir.   
+Görüldüğü gibi, tüm 34 alan kategorik özniteliklerdir. Her değer, karşılık gelen girdinin birebir kodlama dizinini temsil eder. $0$ etiketi, tıklanmadığı anlamına gelir. Bu `CTRDataset`, Criteo ekran reklam yarışması [veri kümesi](https://labs.criteo.com/2014/02/kaggle-display-advertising-challenge-dataset/) ve Avazu tıklama oranı tahmini [veri kümesi](https://www.kaggle.com/c/avazu-ctr-prediction) gibi diğer veri kümelerini yüklemek için de kullanılabilir.   
 
-## Özet* Tıklama oranı reklam sistemlerinin ve tavsiye sistemlerinin etkinliğini ölçmek için kullanılan önemli bir metriktir.* Tıklama oranı tahmini genellikle ikili sınıflandırma problemine dönüştürülür. Hedef, verilen özelliklere göre bir reklam/öğenin tıklanıp tıklanmayacağını tahmin etmektir. 
+## Özet
+* Tıklama oranı reklam sistemlerinin ve tavsiye sistemlerinin etkinliğini ölçmek için kullanılan önemli bir metriktir.
+* Tıklama oranı tahmini genellikle ikili sınıflandırma problemine dönüştürülür. Hedef, verilen özniteliklere göre bir reklamın/öğenin tıklanıp tıklanmayacağını tahmin etmektir. 
 
-## Egzersizler
+## Alıştırmalar
 
-* Sağlanan `CTRDataset` ile Criteo ve Avazu veri kümesini yükleyebilir misiniz. Gerçek değerli özelliklerden oluşan Criteo veri kümesinin kodunu biraz gözden geçirmeniz gerekebilir.
+* Sağlanan `CTRDataset` ile Criteo ve Avazu veri kümesini yükleyebilir misiniz? Gerçek değerli özniteliklerden oluşan Criteo veri kümesinin kodunu biraz gözden geçirmeniz gerekebilir.
 
 :begin_tab:`mxnet`
-[Discussions](https://discuss.d2l.ai/t/405)
+[Tartışmalar](https://discuss.d2l.ai/t/405)
 :end_tab:
