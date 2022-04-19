@@ -100,7 +100,7 @@ d2l.train_ch13(net, train_iter, test_iter, loss, trainer, num_epochs, devices)
 ## Alıştırmalar
 
 * FM'yi Avazu, MovieLens ve Criteo veri kümeleri gibi diğer veri kümelerinde test edebilir misiniz?
-* Performans üzerindeki etkisini kontrol etmek için gömme boyutunu değiştirin, matris çarpanlarına ayırma ile benzer bir model gözlemleyebilir misiniz?
+* Performans üzerindeki etkisini kontrol etmek için gömme boyutunu değiştirin, matris çarpanlarına ayırma ile benzer bir örüntü gözlemleyebilir misiniz?
 
 :begin_tab:`mxnet`
 [Tartışmalar](https://discuss.d2l.ai/t/406)
