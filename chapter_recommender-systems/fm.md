@@ -1,8 +1,8 @@
-# Çarpanlara Ayırma Makinaları
+# Çarpanlara Ayırma Makineleri
 
 2010 yılında Steffen Rendle tarafından önerilen çarpanlara ayırma makineleri (FM) :cite:`Rendle.2010`, sınıflandırma, bağlanım ve sıralama görevleri için kullanılabilen bir gözetimli algoritmadır. Hızla fark edildi ve tahminler ve öneriler yapmak için popüler ve etkili bir yöntem haline geldi. Özellikle, doğrusal bağlanım modelinin ve matris çarpanlara ayırma modelinin genelleştirilmesidir. Dahası, polinom çekirdeği olan destek vektör makinelerini andırır. Çarpanlara ayırma makinelerinin doğrusal bağlanım ve matris çarpanlara ayırma üzerindeki güçlü yönleri şunlardır: (1) $\chi$ yönlü değişken etkileşimleri modelleyebilir, burada $\chi$ polinom kuvvetinin sayısıdır ve genellikle ikiye ayarlanır. (2) Çarpanlara ayırma makineleriyle ilişkili hızlı bir eniyileme algoritması, polinom hesaplama süresini doğrusal karmaşıklığa indirerek, özellikle yüksek boyutlu seyrek girdiler için son derece verimli hale getirebilir. Bu nedenlerden dolayı çarpanlara ayırma makineleri modern reklam ve ürün tavsiyelerinde yaygın olarak kullanılmaktadır. Teknik detaylar ve uygulamalar aşağıda açıklanmıştır. 
 
-## 2-Yönlü Çarpanlara Ayırma Makinaları
+## 2-Yönlü Çarpanlara Ayırma Makineleri
 
 Biçimsel olarak, $x \in \mathbb{R}^d$ bir örneklemin öznitelik vektörlerini göstersin ve $y$ gerçek değerli etiket veya ikili sınıf “tıklanma/tıklanmama” gibi sınıf etiketi olabilen karşılık gelen etiketi gösterir. İkinci derece bir çarpanlara ayırma makinesi modeli şu şekilde tanımlanır: 
 
