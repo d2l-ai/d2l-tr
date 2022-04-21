@@ -93,7 +93,7 @@ Görüldüğü gibi, tüm 34 alan kategorik özniteliklerdir. Her değer, karş�
 
 ## Alıştırmalar
 
-* Sağlanan `CTRDataset` ile Criteo ve Avazu veri kümesini yükleyebilir misiniz? Gerçek değerli özniteliklerden oluşan Criteo veri kümesinin kodunu biraz gözden geçirmeniz gerekebilir.
+* Sağlanan `CTRDataset` ile Criteo ve Avazu veri kümelerini yükleyebilir misiniz? Gerçek değerli özniteliklerden oluşan Criteo veri kümesinin kodunu biraz gözden geçirmeniz gerekebilir.
 
 :begin_tab:`mxnet`
 [Tartışmalar](https://discuss.d2l.ai/t/405)
