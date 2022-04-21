@@ -1,33 +1,33 @@
-# Sıra Duyarlı Tavsiye Sistemleri
+# Sıraya Duyarlı Tavsiye Sistemleri
 
-Önceki bölümlerde, kullanıcıların kısa vadeli davranışlarını dikkate almadan tavsiye görevini matris tamamlama sorunu olarak özetleriz. Bu bölümde, sıralı olarak sıralanmış kullanıcı etkileşim günlüklerini dikkate alan bir öneri modeli sunacağız. Giriş, geçmiş kullanıcı eylemlerinin sıralı ve genellikle zaman damgalı listesi olduğu sırada bilinçli bir öneri :cite:`Quadrana.Cremonesi.Jannach.2018`'tür. Bir dizi yeni literatür, bu tür bilgileri kullanıcıların zamansal davranış kalıplarını modellemede ve ilgi alanlarının kaymasını keşfetmede kullanışlılığını göstermiştir. 
+Önceki bölümlerde, kullanıcıların kısa vadeli davranışlarını dikkate almadan tavsiye görevini matris tamamlama sorunu olarak soyutladık. Bu bölümde, dizili olarak sıralanmış kullanıcı etkileşim günlüklerini dikkate alan bir tavsiye modeli sunacağız. Girdinin, geçmiş kullanıcı eylemlerinin sıralı ve genellikle zaman damgalı bir listesi olduğu :cite:`Quadrana.Cremonesi.Jannach.2018` sıraya duyarlı bir tavsiye aracıdır. Son zamanlardaki bir dizi çalışma, kullanıcıların geçici davranış kalıplarını modellemede ve ilgi kaymalarını keşfetmede bu tür bilgileri birleştirmenin yararlılığını göstermiştir. 
 
-Tanıtılacağımız model Caser :cite:`Tang.Wang.2018`, evrimsel dizinin gömülü öneri modelinin kısaltıldığı, evrimsel sinir ağları kullanıcıların son faaliyetlerinin dinamik desen etkilerini yakalama benimser. Caser'in ana bileşeni yatay bir evrimsel ağ ve dikey bir evrimsel ağdan oluşur ve sırasıyla sendika düzeyinde ve nokta düzeyinde dizi kalıplarını ortaya çıkarmayı amaçlar. Nokta düzeyi deseni, tek bir öğenin geçmiş dizideki hedef öğe üzerindeki etkisini belirtirken, sendika düzeyi deseni önceki birkaç eylemin sonraki hedef üzerindeki etkilerini ima eder. Örneğin, hem süt hem de tereyağı birlikte satın almak, sadece birini satın almaktan çok un satın alma olasılığına yol açar. Dahası, kullanıcıların genel ilgi alanları veya uzun vadeli tercihleri de son tamamen bağlı katmanlarda modellenmiştir ve bu da kullanıcı ilgi alanlarının daha kapsamlı bir modellenmesi ile sonuçlanır. Modelin detayları aşağıdaki gibi açıklanmıştır. 
+Tanıtacağımız model, Caser :cite:`Tang.Wang.2018`, evrişimli dizi gömme öneri modelinin kısaltması, kullanıcıların son etkinliklerinin dinamik örüntü etkilerini yakalayan evrişimli sinir ağlarını benimser. Caser'in ana bileşeni yatay bir evrişimli ağdan ve dikey bir evrişimli ağdan oluşur ve sırasıyla birleşim düzeyinde ve nokta düzeyinde dizi kalıplarını ortaya çıkarmayı amaçlar. Nokta düzeyi deseni, tek bir öğenin geçmiş dizideki hedef öğe üzerindeki etkisini belirtirken, birleşim düzeyi deseni önceki birkaç eylemin sonraki hedef üzerindeki etkilerini ima eder. Örneğin, birlikte hem süt hem de tereyağı satın almak, sadece birini satın almaktan daha yüksek un satın alma olasılığına yol açar. Dahası, kullanıcıların genel ilgi alanları veya uzun vadeli tercihleri de son tam bağlı katmanlarda modellenmiştir ve bu da kullanıcı ilgi alanlarının daha kapsamlı bir modellenmesi ile sonuçlanır. Modelin detayları aşağıdaki gibi açıklanmıştır. 
 
 ## Model Mimarileri
 
-Sıraya duyarlı öneri sisteminde, her kullanıcı öğe kümesindeki bazı öğelerin dizisiyle ilişkilendirilir. Let $S^u = (S_1^u, ... S_{|S_u|}^u)$ sipariş dizisini gösterir. Caser'in amacı, kullanıcı genel zevklerini ve kısa vadeli niyetini göz önünde bulundurarak öğeyi tavsiye etmektir. Önceki $L$ öğelerini göz önünde bulundurduğumuzu varsayalım, $t$ zaman adımı için eski etkileşimleri temsil eden bir gömme matrisi oluşturulabilir: 
+Sıraya duyarlı tavsiye sisteminde, her kullanıcı öğe kümesindeki bazı öğelerin dizisiyle ilişkilendirilir. Let $S^u = (S_1^u, ... S_{|S_u|}^u)$ sıralı diziyi göstersin. Caser'in amacı, kullanıcı genel zevklerini ve kısa vadeli niyetini göz önünde bulundurarak öğeyi tavsiye etmektir. Önceki $L$ öğelerini göz önünde bulundurduğumuzu varsayalım, $t$ zaman adımı için eski etkileşimleri temsil eden bir gömme matrisi oluşturulabilir: 
 
 $$
 \mathbf{E}^{(u, t)} = [ \mathbf{q}_{S_{t-L}^u} , ..., \mathbf{q}_{S_{t-2}^u}, \mathbf{q}_{S_{t-1}^u} ]^\top,
 $$
 
-burada $\mathbf{Q} \in \mathbb{R}^{n \times k}$ öğe gömme temsil eder ve $\mathbf{q}_i$ $i.$ satırını gösterir. $\mathbf{E}^{(u, t)} \in \mathbb{R}^{L \times k}$, $u$ kullanıcı $u$ geçici ilgisini zaman adım $t$ olarak çıkarmak için kullanılabilir. Giriş matrisini $\mathbf{E}^{(u, t)}$ sonraki iki konvolüsyonel bileşenin girişi olan bir görüntü olarak görebiliriz. 
+burada $\mathbf{Q} \in \mathbb{R}^{n \times k}$ öğe gömmelerini temsil eder ve $\mathbf{q}_i$ $i.$ satırını gösterir. $\mathbf{E}^{(u, t)} \in \mathbb{R}^{L \times k}$, $u$ kullanıcısının $t$ zaman adımdaki geçici ilgisini çıkarmak için kullanılabilir. $\mathbf{E}^{(u, t)}$ girdi matrisini sonraki iki evrişimli bileşenin girdisi olan bir imge gibi görebiliriz. 
 
-Yatay kıvrımlı tabaka $d$ yatay filtrelere sahiptir $\mathbf{F}^j \in \mathbb{R}^{h \times k}, 1 \leq j \leq d, h = \{1, ..., L\}$ ve dikey kıvrımlı tabaka $d'$ dikey filtrelere sahiptir $\mathbf{G}^j \in \mathbb{R}^{ L \times 1}, 1 \leq j \leq d'$. Bir dizi konvolüsyonel ve havuz operasyonundan sonra, iki çıkış elde ediyoruz: 
+Yatay evrişimli tabaka $d$ tane $\mathbf{F}^j \in \mathbb{R}^{h \times k}, 1 \leq j \leq d, h = \{1, ..., L\}$ yatay filtrelerine sahiptir ve dikey evrişimli tabaka $d'$ tane $\mathbf{G}^j \in \mathbb{R}^{ L \times 1}, 1 \leq j \leq d'$ dikey filtrelerine sahiptir. Bir dizi evrişim ve ortaklama operasyonundan sonra, iki çıktı elde ediyoruz: 
 
 $$
 \mathbf{o} = \text{HConv}(\mathbf{E}^{(u, t)}, \mathbf{F}) \\
 \mathbf{o}'= \text{VConv}(\mathbf{E}^{(u, t)}, \mathbf{G}) ,
 $$
 
-burada $\mathbf{o} \in \mathbb{R}^d$ yatay evrimsel ağın çıkışıdır ve $\mathbf{o}' \in \mathbb{R}^{kd'}$ dikey konvolsiyonel ağın çıkışıdır. Basitlik için, evrişim ve havuz operasyonlarının ayrıntılarını atlıyoruz. Daha yüksek seviyeli temsiller elde etmek için birleştirilir ve tamamen bağlı bir sinir ağı katmanına beslenir. 
+burada $\mathbf{o} \in \mathbb{R}^d$ yatay evrişimli ağın çıktısıdır ve $\mathbf{o}' \in \mathbb{R}^{kd'}$ dikey evrişimli ağın çıktısıdır. Basitlik için, evrişim ve ortaklama operasyonlarının ayrıntılarını atlıyoruz. Daha yüksek seviyeli temsiller elde etmek için bitiştirilir ve tam bağlı bir sinir ağı katmanına beslenir. 
 
 $$
 \mathbf{z} = \phi(\mathbf{W}[\mathbf{o}, \mathbf{o}']^\top + \mathbf{b}),
 $$
 
-burada $\mathbf{W} \in \mathbb{R}^{k \times (d + kd')}$ ağırlık matrisi ve $\mathbf{b} \in \mathbb{R}^k$ önyargısıdır. Öğrenilen vektör $\mathbf{z} \in \mathbb{R}^k$, kullanıcının kısa vadeli niyetinin gösterimidir. 
+burada $\mathbf{W} \in \mathbb{R}^{k \times (d + kd')}$ ağırlık matrisi ve $\mathbf{b} \in \mathbb{R}^k$ ek girdidir. Öğrenilen vektör $\mathbf{z} \in \mathbb{R}^k$, kullanıcının kısa vadeli niyetinin temsilidir. 
 
 Sonunda, tahmin fonksiyonu, kullanıcıların kısa vadeli ve genel zevklerini bir araya getirir ve bu da şu şekilde tanımlanır: 
 
@@ -35,11 +35,11 @@ $$
 \hat{y}_{uit} = \mathbf{v}_i \cdot [\mathbf{z}, \mathbf{p}_u]^\top + \mathbf{b}'_i,
 $$
 
-burada $\mathbf{V} \in \mathbb{R}^{n \times 2k}$ matrisi gömme başka bir öğedir. $\mathbf{b}' \in \mathbb{R}^n$, öğeye özgü önyargıdır. $\mathbf{P} \in \mathbb{R}^{m \times k}$, kullanıcıların genel zevkleri için matrisi gömme kullanıcıdır. $\mathbf{p}_u \in \mathbb{R}^{ k}$ $P$ ve $\mathbf{v}_i \in \mathbb{R}^{2k}$ $\mathbf{V}$'ün $i.$ sırasıdır. 
+burada $\mathbf{V} \in \mathbb{R}^{n \times 2k}$ başka bir öğe gömme matrisidir. $\mathbf{b}' \in \mathbb{R}^n$, öğeye özgü ek girdidir. $\mathbf{P} \in \mathbb{R}^{m \times k}$, kullanıcıların genel zevkleri için kullanıcı gömme matrisidir. $\mathbf{p}_u \in \mathbb{R}^{ k}$, $P$'nin $u.$ satırıdır  ve $\mathbf{v}_i \in \mathbb{R}^{2k}$ $\mathbf{V}$'nin $i.$ satırıdır. 
 
 Model BPR veya Menteşe kaybı ile öğrenilebilir. Caser mimarisi aşağıda gösterilmiştir: 
 
-![Illustration of the Caser Model](../img/rec-caser.svg)
+![Caser modelinin resimleştirilmesi](../img/rec-caser.svg)
 
 Önce gerekli kütüphaneleri içe aktarıyoruz.
 
@@ -53,7 +53,8 @@ import random
 npx.set_np()
 ```
 
-## Model Uygulaması Aşağıdaki kod Caser modelini uygular. Dikey bir kıvrımsal tabaka, yatay bir kıvrım tabakası ve tam bağlı bir katmandan oluşur.
+## Model Uygulaması 
+Aşağıdaki kod Caser modelini uygular. Dikey bir evrişimli tabaka, yatay bir evrişimli tabaka ve tam bağlı bir katmandan oluşur.
 
 ```{.python .input  n=4}
 class Caser(nn.Block):
@@ -102,9 +103,10 @@ class Caser(nn.Block):
         return res
 ```
 
-## Negatif Örnekleme ile Sıralı Veri Kümesi Sıralı etkileşim verilerini işlemek için Dataset sınıfını yeniden uygulamalıyız. Aşağıdaki kod, `SeqDataset` adlı yeni bir dataset sınıfı oluşturur. Her örnekte, kullanıcı kimliğini, önceki $L$ etkileşim öğeleri bir dizi olarak ve hedef olarak etkileşim sonraki öğe çıktılar. Aşağıdaki şekil, bir kullanıcı için veri yükleme işlemini göstermektedir. Bu kullanıcının 9 filmi sevdiğini varsayalım, bu dokuz filmi kronolojik sırayla düzenliyoruz. En son film test öğesi olarak bırakılır. Kalan sekiz film için, her örnek beş ($L=5$) filmden oluşan bir dizi ve hedef öğe olarak sonraki öğesi içeren üç eğitim örneği alabiliriz. Negatif örnekler, Özelleştirilmiş veri kümesine de dahil edilir. 
+## Negatif Örnekleme ile Sıralı Veri Kümesi 
+Sıralı etkileşim verilerini işlemek için Dataset sınıfını yeniden uygulamalıyız. Aşağıdaki kod, `SeqDataset` adlı yeni bir veri kümesi sınıfı oluşturur. Her örneklemde, kullanıcı kimliğini, bir dizi olarak etkileşimli önceki $L$ öğeyi ve hedef olarak etkileşime girdiği sonraki öğeyi çıktılar. Aşağıdaki şekil, bir kullanıcı için veri yükleme işlemini göstermektedir. Bu kullanıcının 9 filmi sevdiğini varsayalım, bu dokuz filmi kronolojik sırayla düzenleriz. En son film test öğesi olarak bırakılır. Kalan sekiz film için, her örnek beş ($L=5$) filmden oluşan bir dizi ve hedef öğe olarak sonraki öğeyi içeren üç eğitim örneklemi elde edebiliriz. Negatif örnekler, Özelleştirilmiş veri kümesine de dahil edilir. 
 
-![Illustration of the data generation process](../img/rec-seq-data.svg)
+![Veri oluşturma sürecinin resimlendirilmesi](../img/rec-seq-data.svg)
 
 ```{.python .input  n=5}
 class SeqDataset(gluon.data.Dataset):
@@ -160,9 +162,9 @@ class SeqDataset(gluon.data.Dataset):
                 neg[i])
 ```
 
-## MovieLens 100K veri kümesini yükleme
+## MovieLens 100K Veri Kümesini Yükleme
 
-Daha sonra, MovieLens 100K veri kümesini sıra duyarlı modda okur ve yukarıda uygulanan sıralı dataloader ile eğitim verilerini yükleriz.
+Daha sonra, MovieLens 100K veri kümesini sıra duyarlı modda okur ve yukarıda uygulanan sıralı veri yükleyici (dataloader) ile eğitim verilerini yükleriz.
 
 ```{.python .input  n=6}
 TARGET_NUM, L, batch_size = 1, 5, 4096
@@ -182,9 +184,10 @@ test_seq_iter = train_seq_data.test_seq
 train_seq_data[0]
 ```
 
-Eğitim veri yapısı yukarıda gösterilmiştir. İlk öğe kullanıcı kimliğidir, bir sonraki liste bu kullanıcının sevdiği son beş öğeyi gösterir ve son öğe, bu kullanıcının beş öğeden sonra sevdiği öğedir. 
+Eğitim veri yapısı yukarıda gösterilmiştir. İlk öğe kullanıcı kimliğidir, sonraki liste bu kullanıcının beğendiği son beş öğeyi gösterir ve son öğe bu kullanıcının beş öğeden sonra beğendiği öğedir.
 
-## Modeli Şimdi eğitin, modeli eğitelim. Sonuçların karşılaştırılabilir olması için son bölümde öğrenme hızı, iyileştirici ve $k$ dahil NeuMF ile aynı ayarı kullanıyoruz.
+## Modeli Eğitmek
+Şimdi modeli eğitelim. Sonuçların karşılaştırılabilir olması için son bölümde öğrenme oranı, eniyileyici ve $k$ dahil NeuMF ile aynı ayarı kullanıyoruz.
 
 ```{.python .input  n=7}
 devices = d2l.try_all_gpus()
@@ -200,14 +203,16 @@ d2l.train_ranking(net, train_iter, test_iter, loss, trainer, test_seq_iter,
                   d2l.evaluate_ranking, candidates, eval_step=1)
 ```
 
-## Özet * Bir kullanıcının kısa vadeli ve uzun vadeli çıkarlarını çıkarması, daha etkili bir şekilde tercih ettiği bir sonraki öğenin tahmin edilmesini sağlayabilir.* Konvolsiyonel sinir ağları, kullanıcıların kısa vadeli çıkarlarını sıralı etkileşimlerden yakalamak için kullanılabilir. 
+## Özet 
+* Bir kullanıcının kısa vadeli ve uzun vadeli ilgilerini çıkarsamak, daha etkili bir şekilde tercih ettiği bir sonraki öğenin tahmin edilmesini sağlayabilir.
+* Evrişimli sinir ağları, kullanıcıların kısa vadeli ilgilerini sıralı etkileşimlerden yakalamak için kullanılabilir. 
 
-## Egzersizler
+## Alıştırmalar
 
-* Yatay ve dikey kıvrımsal ağlardan birini kaldırarak bir ablasyon çalışması yürütmek, hangi bileşen daha önemlidir?
-* Hiperparametre $L$ değiştir. Daha uzun tarihsel etkileşimler daha yüksek doğruluk getirir mi?
-* Yukarıda tanıtılan sıraya duyarlı öneri görevinin yanı sıra, oturum tabanlı öneri :cite:`Hidasi.Karatzoglou.Baltrunas.ea.2015` adlı başka bir dizi duyarlı öneri görevi türü vardır. Bu iki görev arasındaki farkları açıklayabilir misiniz?
+* Yatay ve dikey evrişimli ağlardan birini kaldırarak bir çıkarma çalışması yapın, hangi bileşen daha önemlidir?
+* Hiperparametre $L$'yi değiştir. Daha uzun tarihsel etkileşimler daha yüksek doğruluk getirir mi?
+* Yukarıda tanıttığımız diziye duyarlı tavsiye görevinin yanı sıra, oturum tabanlı tavsiye adı verilen başka bir diziye duyarlı tavsiye görevi türü daha vardır :cite:`Hidasi.Karatzoglou.Baltrunas.ea.2015`. Bu iki görev arasındaki farkları açıklayabilir misiniz?
 
 :begin_tab:`mxnet`
-[Discussions](https://discuss.d2l.ai/t/404)
+[Tartışmalar](https://discuss.d2l.ai/t/404)
 :end_tab:

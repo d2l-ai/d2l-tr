@@ -1,10 +1,10 @@
-#  MovieLens Veri Kümesini
+#  MovieLens Veri Kümesi
 
-Tavsiye araştırması için kullanılabilen bir dizi veri kümesi vardır. Bunların arasında, [MovieLens](https://movielens.org/) veri kümesi muhtemelen daha popüler olanlardan biridir. MovieLens ticari olmayan web tabanlı bir film öneri sistemidir. 1997 yılında oluşturulan ve araştırma amaçlı film derecelendirme verilerini toplamak amacıyla Minnesota Üniversitesi'nde bir araştırma laboratuvarı olan GroupLens tarafından işletilmektedir. MovieLens verileri, kişiselleştirilmiş öneri ve sosyal psikoloji de dahil olmak üzere çeşitli araştırma çalışmaları için kritik öneme sahiptir. 
+Tavsiye araştırmaları için kullanılabilen bir dizi veri kümesi vardır. Bunların arasında, [MovieLens](https://movielens.org/) veri kümesi muhtemelen en popüler olanlardan biridir. MovieLens ticari olmayan web tabanlı bir film tavsiye sistemidir. 1997 yılında, Minnesota Üniversitesi'nde bir araştırma laboratuvarı olan GroupLens tarafından araştırma amacıyla film derecelendirme verilerini toplamak için oluşturulmuştur ve işletilmektedir. MovieLens verileri, kişiselleştirilmiş tavsiye ve sosyal psikoloji de dahil olmak üzere çeşitli araştırma çalışmaları için kritik öneme sahiptir. 
 
 ## Verileri Alma
 
-MovieLens veri kümesi [GroupLens](https://grouplens.org/datasets/movielens/) website. Several versions are available. We will use the MovieLens 100K dataset :cite:`Herlocker.Konstan.Borchers.ea.1999` tarafından barındırılmaktadır. Bu veri kümesi, 1682 filmdeki 943 kullanıcıdan 1'e 5 yıldız arasında değişen $100,000$ derecelendirmelerinden oluşmaktadır. Her kullanıcının en az 20 film derecelendirmesi için temizlendi. Yaş, cinsiyet, kullanıcılar ve öğeler için türler gibi bazı basit demografik bilgiler de mevcuttur. [ml-100k.zip](http://files.grouplens.org/datasets/movielens/ml-100k.zip)'i indirebilir ve csv formatındaki tüm $100,000$ derecelendirmelerini içeren `u.data` dosyasını çıkarabiliriz. Klasörde başka birçok dosya var, her dosya için ayrıntılı bir açıklama veri kümesinin [README](http://files.grouplens.org/datasets/movielens/ml-100k-README.txt) dosyasında bulunabilir. 
+MovieLens veri kümesi, [GroupLens](https://grouplens.org/datasets/movielens/) web sitesinde konuşlandırılmaktadır. Birçok sürümü mevcuttur. MovieLens 100K veri kümesini kullanacağız :cite:`Herlocker.Konstan.Borchers.ea.1999`. Bu veri kümesi, 1682 filmdeki 943 kullanıcıdan 1'e 5 yıldız arasında değişen $100000$ derecelendirmeden oluşmaktadır. Veri her kullanıcıdan en az 20 film derecelendirmesi içerecek şekilde temizlendi. Yaş, cinsiyet, kullanıcılar ve öğeler için türler gibi bazı basit demografik bilgiler de mevcuttur. [ml-100k.zip](http://files.grouplens.org/datasets/movielens/ml-100k.zip)'i indirebilir ve csv formatındaki bütün $100000$ derecelendirmeyi içeren `u.data` dosyasını ayıklayabiliriz. Klasörde başka birçok dosya bulunur, her dosya için ayrıntılı bir açıklama veri kümesinin [README](http://files.grouplens.org/datasets/movielens/ml-100k-README.txt) dosyasında bulunabilir. 
 
 Başlangıç olarak, bu bölümün deneylerini çalıştırmak için gereken paketleri içe aktaralım.
 
@@ -36,7 +36,7 @@ def read_data_ml100k():
 
 ## Veri Kümesinin İstatistikleri
 
-Verileri yükleyelim ve ilk beş kaydı manuel olarak inceleyelim. Bu, veri yapısını öğrenmek ve düzgün yüklendiklerini doğrulamak için etkili bir yoldur.
+Verileri yükleyelim ve ilk beş kaydı elden inceleyelim. Bu, veri yapısını öğrenmek ve düzgün yüklendiklerini doğrulamak için etkili bir yoldur.
 
 ```{.python .input  n=3}
 data, num_users, num_items = read_data_ml100k()
@@ -46,9 +46,9 @@ print(f'matrix sparsity: {sparsity:f}')
 print(data.head(5))
 ```
 
-Her satırın “kullanıcı kimliği” 1-943, “madde kimliği” 1-1682, “derecelendirme” 1-5 ve “zaman damgası” dahil olmak üzere dört sütundan oluştuğunu görebiliriz. $n \times m$ boyutlarında bir etkileşim matrisi oluşturabiliriz, burada $n$ ve $m$ sırasıyla kullanıcı sayısı ve öğe sayısı. Bu veri kümesi yalnızca mevcut derecelendirmeleri kaydeder, bu nedenle buna derecelendirme matrisi diyebiliriz ve bu matrisin değerlerinin tam derecelendirmeleri temsil etmesi durumunda etkileşim matrisi ve derecelendirme matrisini birbirinin yerine kullanacağız. Kullanıcılar filmlerin çoğunu derecelendirmediğinden derecelendirme matrisindeki değerlerin çoğu bilinmemektedir. Ayrıca bu veri kümesinin seyrek olduğunu da gösteriyoruz. Sparsity `1 - number of nonzero entries / ( number of users * number of items)` olarak tanımlanır. Açıkçası, etkileşim matrisi son derece seyrektir (yani, seyrek =93,695%). Gerçek dünya veri kümeleri, daha büyük ölçüde seyrek yaşayabilir ve önerici sistemlerinin oluşturulmasında uzun süredir devam eden bir zorluk olmuştur. Kullanıcı/öğe özellikleri gibi ek yan bilgileri kullanmak için uygulanabilir bir çözüm, seyreliği hafifletmektir. 
+Her satırın “user id” (kullanıcı kimliği) 1-943, “item id” (öğe kimliği) 1-1682, “rating” (derecelendirme) 1-5 ve “timestamp” (zaman damgası) dahil olmak üzere dört sütundan oluştuğunu görebiliriz. $n \times m$ boyutlarında bir etkileşim matrisi oluşturabiliriz, burada $n$ ve $m$ sırasıyla kullanıcı sayısı ve öğe sayısıdır. Bu veri kümesi yalnızca mevcut derecelendirmeleri kaydeder, bu nedenle buna derecelendirme matrisi diyebiliriz ve bu matrisin değerlerinin tam derecelendirmeleri temsil etmesi durumunda etkileşim matrisi ve derecelendirme matrisini birbirinin yerine kullanacağız. Kullanıcılar filmlerin çoğunu derecelendirmediğinden derecelendirme matrisindeki değerlerin çoğu bilinmemektedir. Ayrıca bu veri kümesinin seyrek olduğunu da gösteriyoruz. Seyreklik `1 - number of nonzero entries / ( number of users * number of items)` ( 1 - sıfır olmayan girdiler / (kullanıcı sayısı * öğe sayısı)) olarak tanımlanır. Açıkçası, etkileşim matrisi son derece seyrektir (yani, seyreklik = 93,695%). Gerçek dünya veri kümeleri, daha büyük ölçüde seyreklik yaşayabilir ve önerici sistemlerinin oluşturulmasında uzun süredir devam eden bir zorluk olmuştur. Kullanıcı/öğe öznitelikleri gibi ek yan bilgileri kullanmak için uygulanabilir bir çözüm, seyreliği hafifletmektir. 
 
-Daha sonra farklı derecelendirme sayısının dağılımını çiziyoruz. Beklendiği gibi, normal bir dağılım gibi görünüyor ve çoğu derecelendirme 3-4 olarak ortalanıyor.
+Daha sonra farklı derecelendirme sayımlarının dağılımını çizdiriyoruz. Beklendiği gibi, normal bir dağılım gibi görünüyor ve çoğu derecelendirme 3-4 olarak ortalanmıştır.
 
 ```{.python .input  n=4}
 d2l.plt.hist(data['rating'], bins=5, ec='black')
@@ -58,9 +58,9 @@ d2l.plt.title('Distribution of Ratings in MovieLens 100K')
 d2l.plt.show()
 ```
 
-## Veri kümesini bölme
+## Veri Kümesini Bölme
 
-Veri kümesini eğitim ve test setlerine ayırdık. Aşağıdaki işlev `random` ve `seq-aware` dahil olmak üzere iki bölünmüş mod sağlar. `random` modunda, fonksiyon 100k etkileşimlerini zaman damgası dikkate almadan rastgele böler ve verilerin%90'ını eğitim örnekleri olarak, geri kalanın%10'unu varsayılan olarak test örnekleri olarak kullanır. `seq-aware` modunda, bir kullanıcının test için en son puan aldığı öğeyi ve kullanıcıların eğitim seti olarak tarihsel etkileşimlerini bırakıyoruz. Kullanıcı geçmişi etkileşimleri, zaman damgasına göre en eskisinden en yeniye sıralanır. Bu mod, sıraya duyarlı öneri bölümünde kullanılır.
+Veri kümesini eğitim ve test kümelerine ayırdık. Aşağıdaki işlev `random` ve `seq-aware` dahil olmak üzere iki bölünmüş mod sağlar. `random` modunda, fonksiyon 100k etkileşimlerini zaman damgası dikkate almadan rastgele böler ve varsayılan olarak verilerin %90'ını eğitim örnekleri, geri kalanın %10'unu test örnekleri olarak kullanır. `seq-aware` modunda, bir kullanıcının test için en son puan aldığı öğeyi ve kullanıcıların eğitim kümesi olarak tarihsel etkileşimlerini bırakıyoruz. Kullanıcı geçmişi etkileşimleri, zaman damgasına göre en eskisinden en yeniye sıralanır. Bu mod, sıraya duyarlı tavsiye bölümünde kullanılır.
 
 ```{.python .input  n=5}
 #@save
@@ -88,11 +88,11 @@ def split_data_ml100k(data, num_users, num_items,
     return train_data, test_data
 ```
 
-Yalnızca bir test kümesi dışında, pratikte bir doğrulama kümesi kullanmanın iyi bir uygulama olduğunu unutmayın. Ancak, kısalık uğruna bunu atlıyoruz. Bu durumda, test setimiz çıkarılan doğrulama setimiz olarak kabul edilebilir. 
+Yalnızca bir test kümesi dışında, pratikte bir geçerleme kümesi kullanmanın iyi bir uygulama olduğunu unutmayın. Ancak, kısalık uğruna bunu burada atlıyoruz. Bu durumda, test kümemiz dışarıda tutulan geçerleme kümemiz olarak kabul edilebilir. 
 
-## Verileri yükleme
+## Veriyi Yükleme
 
-Veri kümesi bölünmesinden sonra, eğitim setini ve test setini kolaylık sağlamak için listelere ve sözlükler/matrise dönüştüreceğiz. Aşağıdaki işlev, dataframe satırını satır okur ve kullanıcılar/öğelerin dizinini sıfırdan başlatır. İşlev daha sonra kullanıcı, öğeler, derecelendirme ve etkileşimleri kaydeden bir sözlük/matris listelerini döndürür. Geri bildirim türünü `explicit` veya `implicit` için belirtebiliriz.
+Veri kümesinin bölünmesinden sonra, eğitim kümesini ve test kümesini kolaylık sağlamak için listelere ve sözlüklere/matrise dönüştüreceğiz. Aşağıdaki işlev, veri çerçevesini satır satır okur ve kullanıcılar/öğelerin dizinini sıfırdan başlatır. İşlev daha sonra kullanıcılar, öğeler, derecelendirmeler listelerini ve etkileşimleri kaydeden bir sözlük/matris döndürür. Geri bildirim türünü `explicit` (açık) veya `implicit` (örtük) diye belirtebiliriz.
 
 ```{.python .input  n=6}
 #@save
@@ -112,7 +112,7 @@ def load_data_ml100k(data, num_users, num_items, feedback='explicit'):
     return users, items, scores, inter
 ```
 
-Daha sonra yukarıdaki adımları bir araya getirdik ve bir sonraki bölümde kullanılacaktır. Sonuçlar ile sarılır `Dataset` ve `DataLoader`. Eğitim verileri için `DataLoader`'nın `last_batch`'ünün `rollover` moduna ayarlandığını (Kalan örnekler bir sonraki çağa yuvarlanır.) ve siparişlerin karıştırıldığını unutmayın.
+Daha sonra yukarıdaki adımları bir araya getiriyoruz ve bir sonraki bölümde kullanacağız. Sonuçlar `Dataset` ve `DataLoader` ile sarmalanır. Eğitim verileri için `DataLoader`'ın (VeriYineleyici) `last_batch`'inin (son_topluis) `rollover` (cevirme) moduna ayarlandığını kalan örnekler bir sonraki döneme aktarılır) ve sıraların karıştırıldığını unutmayın.
 
 ```{.python .input  n=7}
 #@save
@@ -139,14 +139,14 @@ def split_and_load_ml100k(split_mode='seq-aware', feedback='explicit',
 
 ## Özet
 
-* MovieLens veri kümeleri, öneri araştırması için yaygın olarak kullanılmaktadır. Halka açık ve kullanımı ücretsizdir.
-* Daha sonraki bölümlerde daha fazla kullanım için MovieLens 100k veri kümesini indirmek ve önişlemek için işlevler tanımlıyoruz.
+* MovieLens veri kümeleri, tavsiye araştırmaları için yaygın olarak kullanılmaktadır. Kamuya açıktır ve kullanımı ücretsizdir.
+* MovieLens 100k veri kümesini daha sonraki bölümlerde kullanmak üzere indirmek ve ön işlemek için işlevler tanımlıyoruz.
 
-## Egzersizler
+## Alıştırmalar
 
-* Başka hangi benzer öneri veri kümelerini bulabilirsiniz?
+* Başka hangi benzer tavsiye veri kümelerini bulabilirsiniz?
 * MovieLens hakkında daha fazla bilgi için [https://movielens.org/](https://movielens.org/) sitesini ziyaret edin.
 
 :begin_tab:`mxnet`
-[Discussions](https://discuss.d2l.ai/t/399)
+[Tartışmalar](https://discuss.d2l.ai/t/399)
 :end_tab:

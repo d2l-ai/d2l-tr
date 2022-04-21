@@ -1,30 +1,30 @@
 # AutoRec: Otomatik kodlayıcılar ile Değerlendirme Tahmini
 
-Matris çarpanlara çıkarma modeli, derecelendirme tahmini görevinde iyi bir performans elde etse de, aslında doğrusal bir modeldir. Bu nedenle, bu tür modeller, kullanıcıların tercihlerini tahmin edebilecek karmaşık doğrusal olmayan ve karmaşık ilişkileri yakalama yeteneğine sahip değildir. Bu bölümde, doğrusal olmayan bir sinir ağı işbirlikçi filtreleme modeli olan AutoRec :cite:`Sedhain.Menon.Sanner.ea.2015` tanıtıyoruz. Otomatik kodlayıcı mimarisiyle işbirliğine dayalı filtrelemeyi (CF) tanımlar ve doğrusal olmayan dönüşümleri açık geri bildirimler temelinde CF'ye entegre etmeyi amaçlar. Sinir ağlarının herhangi bir sürekli fonksiyona yaklaşabildiği kanıtlanmıştır, bu da matris çarpanlarına ilişkin sınırlandırmanın sınırlandırılmasını ve matris çarpanlaştırmasının ifade gücünü zenginleştirmeye uygun hale getirilmiştir. 
+Matrisi çarpanlara ayırma modeli, derecelendirme tahmini görevinde iyi bir performans elde etmesine rağmen, aslında doğrusal bir modeldir. Bu nedenle, bu tür modeller, kullanıcıların tercihlerini öngörebilecek karmaşık doğrusal olmayan ve dallı budaklı ilişkileri yakalama yeteneğine sahip değildir. Bu bölümde, doğrusal olmayan bir sinir ağı işbirlikçi filtreleme modeli olan AutoRec'i :cite:`Sedhain.Menon.Sanner.ea.2015` tanıtıyoruz. Otomatik kodlayıcı mimarisiyle işbirlikçi filtrelemeyi (CF) tanımlar ve doğrusal olmayan dönüşümleri açık geri bildirim temelinde CF'ye entegre etmeyi amaçlar. Sinir ağlarının herhangi bir sürekli fonksiyona yaklaşabildiği kanıtlanmıştır, bu da onu matris çarpanlarına ayırmanın sınırlamasını ele almaya ve matris çarpanlarına ayırmanın ifadesini zenginleştirmeye uygun hale getirir. 
 
-Bir yandan AutoRec, giriş katmanı, gizli bir katman ve yeniden yapılanma (çıktı) katmanından oluşan bir otomatik kodlayıcı ile aynı yapıya sahiptir. Otomatik kodlayıcı, girdileri gizli (ve genellikle düşük boyutlu) temsillere kodlamak için girişini çıktısına kopyalamayı öğrenen bir sinir ağıdır. AutoReg'de, kullanıcıları/öğeleri açıkça düşük boyutlu alana gömmek yerine, girdi olarak etkileşim matrisinin sütununu/satırını kullanır ve ardından çıktı katmanındaki etkileşim matrisini yeniden oluşturur. 
+Bir yandan AutoRec, girdi katmanı, gizli bir katman ve geri çatma (çıktı) katmanından oluşan bir otomatik kodlayıcı ile aynı yapıya sahiptir. Otomatik kodlayıcı, girdileri gizli (ve genellikle düşük boyutlu) temsillere kodlamak için girdisini çıktısına kopyalamayı öğrenen bir sinir ağıdır. AutoRec'de, kullanıcıları/öğeleri açıkça düşük boyutlu alana gömmek yerine, girdi olarak etkileşim matrisinin sütununu/satırını kullanır ve ardından çıktı katmanındaki etkileşim matrisini geri çatar. 
 
-Öte yandan, AutoRec geleneksel bir otomatik kodlayıcıdan farklıdır: gizli temsilleri öğrenmek yerine, AutoRec çıktı katmanını öğrenme/yeniden yapılandırmaya odaklanır. Tamamlanmış bir derecelendirme matrisini yeniden oluşturmayı amaçlayan giriş olarak kısmen gözlenen bir etkileşim matrisini kullanır. Bu arada, girdinin eksik girişleri, öneri amacıyla yeniden yapılanma yoluyla çıkış katmanına doldurulur.  
+Öte yandan, AutoRec geleneksel bir otomatik kodlayıcıdan farklıdır: Gizli temsilleri öğrenmek yerine, AutoRec çıktı katmanını öğrenmeye/geri çatmaya odaklanır. Girdi olarak kısmen gözlemlenen bir etkileşim matrisi kullanır ve tamamlanmış bir derecelendirme matrisini geri çatmayı amaçlar. Bu esnada, girdinin eksik girdileri, tavsiye amacıyla çıktı katmanında geri çatma yoluyla doldurulur.  
 
-AutoRec iki çeşidi vardır: kullanıcı tabanlı ve öğe tabanlı. Kısalık için, burada sadece öğe tabanlı AutoRec tanıtıyoruz. Kullanıcı tabanlı AutoRec buna göre türetilebilir. 
+AutoRec iki çeşidi vardır: Kullanıcı tabanlı ve öğe tabanlı. Kısaca, burada sadece öğe tabanlı AutoRec'i tanıtıyoruz. Kullanıcı tabanlı AutoRec buna göre türetilebilir. 
 
 ## Model
 
-$\mathbf{R}_{*i}$'in, bilinmeyen derecelendirmelerin varsayılan olarak sıfıra ayarlandığı derecelendirme matrisinin $i.$ sütununu göstermesine izin verin. Sinir mimarisi şu şekilde tanımlanır: 
+$\mathbf{R}_{*i}$, bilinmeyen derecelendirmelerin varsayılan olarak sıfıra ayarlandığı derecelendirme matrisinin $i.$ sütununu göstersin. Sinir mimarisi şu şekilde tanımlanır: 
 
 $$
 h(\mathbf{R}_{*i}) = f(\mathbf{W} \cdot g(\mathbf{V} \mathbf{R}_{*i} + \mu) + b)
 $$
 
-burada $f(\cdot)$ ve $g(\cdot)$ aktivasyon fonksiyonlarını temsil eder, $\mathbf{W}$ ve $\mathbf{V}$ ağırlık matrisleri, $\mu$ ve $b$ önyargılardır. $h( \cdot )$ AutoRec tüm ağını göstersin. $h(\mathbf{R}_{*i})$ çıkışı, derecelendirme matrisinin $i.$ sütununun yeniden yapılandırılmasıdır. 
+burada $f(\cdot)$ ve $g(\cdot)$ etkinleştirme fonksiyonlarını temsil eder, $\mathbf{W}$ ve $\mathbf{V}$ ağırlık matrisleri, $\mu$ ve $b$ ek girdilerdir. $h( \cdot )$ AutoRec tüm ağını göstersin. $h(\mathbf{R}_{*i})$ çıktısı, derecelendirme matrisinin $i.$ sütununun geri çatmasıdır. 
 
-Aşağıdaki objektif işlevi yeniden yapılanma hatasının en aza indirilmesini amaçlamaktadır: 
+Aşağıdaki amaç işlevi geri çatma hatasının en aza indirilmesini amaçlamaktadır: 
 
 $$
 \underset{\mathbf{W},\mathbf{V},\mu, b}{\mathrm{argmin}} \sum_{i=1}^M{\parallel \mathbf{R}_{*i} - h(\mathbf{R}_{*i})\parallel_{\mathcal{O}}^2} +\lambda(\| \mathbf{W} \|_F^2 + \| \mathbf{V}\|_F^2)
 $$
 
-burada $\| \cdot \|_{\mathcal{O}}$, yalnızca gözlenen derecelendirmelerin katkısı dikkate alındığı anlamına gelir, yani yalnızca gözlenen girişlerle ilişkili ağırlıklar geri yayılım sırasında güncellenir.
+burada $\| \cdot \|_{\mathcal{O}}$, yalnızca gözlenen derecelendirmelerin katkısı dikkate alındığı anlamına gelir, yani yalnızca gözlenen girdilerle ilişkili ağırlıklar geri yayma sırasında güncellenir.
 
 ```{.python .input  n=3}
 from d2l import mxnet as d2l
@@ -37,7 +37,7 @@ npx.set_np()
 
 ## Modelin Uygulanması
 
-Tipik bir otomatik kodlayıcı bir kodlayıcı ve bir kod çözücüden oluşur. Kodlayıcı, girdiyi gizli temsillere yansıtır ve kod çözücü gizli katmanı yeniden yapılanma katmanıyla eşler. Bu uygulamayı takip ediyoruz ve kodlayıcıyı ve kod çözücüyü yoğun katmanlarla oluşturuyoruz. Kodlayıcının etkinleştirilmesi varsayılan olarak `sigmoid` olarak ayarlanır ve kod çözücü için hiçbir etkinleştirme uygulanmaz. Aşırı uyumu azaltmak için kodlama dönüşümünden sonra bırakma dahildir. Gözlenmeyen girdilerin degradeleri, yalnızca gözlenen derecelendirmelerin model öğrenme sürecine katkıda bulunmasını sağlamak için maskelenir.
+Tipik bir otomatik kodlayıcı bir kodlayıcı ve bir kodçözücüden oluşur. Kodlayıcı, girdiyi gizli temsillere iz düşürür ve kodçözücü gizli katmanı geri çatma katmanıyla eşler. Bu yöntemi takip ediyoruz ve kodlayıcıyı ve kodçözücüyü yoğun katmanlarla oluşturuyoruz. Kodlayıcının etkinleştirilmesi varsayılan olarak `sigmoid` diye ayarlanır ve kodçözücü için hiçbir etkinleştirme uygulanmaz. Aşırı öğrenmeyi azaltmak için kodlama dönüşümünden sonra hattan düşürme eklenir. Gözlenmeyen girdilerin gradyanları, yalnızca gözlenen derecelendirmelerin model öğrenme sürecine katkıda bulunmasını sağlamak için maskelenir.
 
 ```{.python .input  n=2}
 class AutoRec(nn.Block):
@@ -57,9 +57,9 @@ class AutoRec(nn.Block):
             return pred
 ```
 
-## Değerlendiriciyi Yeniden Uygulanıyor
+## Değerlendiriciyi Yeniden Uygulamak
 
-Giriş ve çıkış değiştiğinden, değerlendirme işlevini yeniden uygulamalıyız, ancak doğruluk ölçüsü olarak RMSE'yi kullanıyoruz.
+Girdi ve çıktı değiştiğinden, değerlendirme işlevini yeniden uygulamalıyız, ancak doğruluk ölçütü olarak RMSE'yi kullanıyoruz.
 
 ```{.python .input  n=3}
 def evaluator(network, inter_matrix, test_data, devices):
@@ -74,9 +74,9 @@ def evaluator(network, inter_matrix, test_data, devices):
     return float(rmse)
 ```
 
-## Modelin Eğitimi ve Değerlendirilmesi
+## Model Eğitimi ve Değerlendirilmesi
 
-Şimdi, MovieLens veri kümesinde AutoReg'i eğitip değerlendirelim. RMSE testinin matris çarpanlarına modelinden daha düşük olduğunu ve nöral ağların derecelendirme tahmini görevindeki etkinliğini doğruladığını açıkça görebiliriz.
+Şimdi, MovieLens veri kümesinde AutoRec'i eğitip değerlendirelim. Testin RMSE'sinin matrisi çarpanlarına ayırma modelinden daha düşük olduğunu ve sinir ağlarının derecelendirme tahmini görevindeki etkinliğini doğruladığını açıkça görebiliriz.
 
 ```{.python .input  n=4}
 devices = d2l.try_all_gpus()
@@ -106,15 +106,15 @@ d2l.train_recsys_rating(net, train_iter, test_iter, loss, trainer, num_epochs,
 
 ## Özet
 
-* Matris çarpanlara ayırma algoritmasını otomatik kodlayıcılar ile çerçeveleyebiliriz, doğrusal olmayan katmanları ve bırakma düzenini entegre edebiliriz. 
-* MovieLens 100K veri kümesindeki deneyler, AutoReg'in matris çarpanlarına kıyasla üstün performans sağladığını gösteriyor.
+* Doğrusal olmayan katmanları ve hattan düşürme düzenlileştirmesini entegre ederken, matrisi çarpanlara ayırma algoritmasını otomatik kodlayıcılarla çerçeveleyebiliriz.
+* MovieLens 100K veri kümesindeki deneyler, AutoRec'in matris çarpanlarına ayırmaya kıyasla üstün performans sağladığını gösteriyor.
 
-## Egzersizler
+## Alıştırmalar
 
-* Model performansı üzerindeki etkisini görmek için AutoReg'in gizli boyutunu değiştir.
-* Daha fazla gizli katman eklemeyi deneyin. Model performansını iyileştirmek yararlı mıdır?
-* Kod çözücü ve kodlayıcı aktivasyon işlevlerinin daha iyi bir kombinasyonunu bulabilir misiniz?
+* Model performansı üzerindeki etkisini görmek için AutoRec'in gizli boyutunu değiştirin.
+* Daha fazla gizli katman eklemeyi deneyin. Model performansını iyileştirmede yararlı mıdır?
+* Kodçözücü ve kodlayıcı etkinleştirme işlevlerinin daha iyi bir kombinasyonunu bulabilir misiniz?
 
 :begin_tab:`mxnet`
-[Discussions](https://discuss.d2l.ai/t/401)
+[Tartışmalar](https://discuss.d2l.ai/t/401)
 :end_tab:

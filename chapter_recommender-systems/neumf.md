@@ -1,19 +1,19 @@
-# Kişiselleştirilmiş Sıralama için Nöral İşbirliğine Dayalı Filtreleme
+# Kişiselleştirilmiş Sıralama için Sinirsel İşbirlikçi Filtreleme
 
-Bu bölüm, örtük geri bildirimlerle öneri için nöral işbirliğine dayalı filtreleme (NCF) çerçevesini tanıtarak, açık geri bildirimlerin ötesine geçmektedir. Örtülü geribildirim, öneri sistemlerinde yaygındır. Tıklamalar, satın alma ve saatler gibi eylemler, toplanması kolay ve kullanıcıların tercihlerini belirten yaygın örtülü geri bildirimlerdir. Sinirsel matris çarpanlarına ayırmanın kısaltıldığı NeuMF :cite:`He.Liao.Zhang.ea.2017` başlıklı model, kişiselleştirilmiş sıralama görevini örtük geribildirimle ele almayı amaçlamaktadır. Bu model, model ifade gücünü artırmayı amaçlayan matris çarpanlarına ait nokta ürünlerinin yerini almak için nöral ağların esnekliğini ve doğrusallığını kullanır. Özellikle bu model, genelleştirilmiş matris çarpanlaştırması (GMF) ve MLP dahil olmak üzere iki alt ağla yapılandırılmıştır ve basit nokta ürünleri yerine iki yoldan etkileşimleri modeller. Bu iki ağın çıkışları nihai tahmin puanları hesaplaması için birleştirilir. AutoReg'deki derecelendirme tahmini görevinden farklı olarak, bu model örtük geri bildirime dayalı olarak her kullanıcı için sıralamalı bir öneri listesi oluşturur. Bu modeli eğitmek için son bölümde tanıtılan kişiselleştirilmiş sıralama kaybını kullanacağız. 
+Bu bölüm, örtülü geri bildirimlerle öneri için sinirsel işbirlikçi filtreleme (NCF) çerçevesini tanıtarak, açık geri bildirimlerin ötesine geçmektedir. Örtülü geribildirim, tavsiye sistemlerinde yaygındır. Tıklamalar, satın almalar ve izlemeler gibi eylemler, toplanması kolay ve kullanıcıların tercihlerini belirten yaygın örtülü geri bildirimlerdir. Sinirsel matris çarpanlarına ayırmanın kısaltıldığı NeuMF :cite:`He.Liao.Zhang.ea.2017` başlıklı model, kişiselleştirilmiş sıralama görevini örtülü geri bildirimle ele almayı amaçlamaktadır. Bu model, modelin ifade edilebilirliğini artırmayı amaçlayan matrisi çarpanlarına ayırmanın nokta çarpımlarını değiştirmek için sinir ağlarının esnekliğini ve doğrusal olmama özelliğini kullanır. Özellikle bu model, genelleştirilmiş matris çarpanlara ayırması (GMF) ve MLP dahil olmak üzere iki alt ağla yapılandırılmıştır ve basit nokta çarpımları yerine iki yoldan etkileşimleri modeller. Bu iki ağın çıktıları nihai tahmin puanları hesaplaması için birleştirilir. AutoRec'deki derecelendirme tahmini görevinden farklı olarak, bu model örtülü geri bildirime dayalı olarak her kullanıcı için sıralamalı bir tavsiye listesi oluşturur. Bu modeli eğitmek için son bölümde tanıtılan kişiselleştirilmiş sıralama kaybını kullanacağız. 
 
 ## NeuMF modeli
 
-Yukarıda belirtildiği gibi, NeuMF iki alt ağı sigortalar. GMF, giriş kullanıcı ve madde latent faktörlerin elementwise ürünü olduğu matris çarpanlaştırmasının genel bir sinir ağı versiyonudur. İki nöral katmandan oluşur: 
+Yukarıda belirtildiği gibi, NeuMF iki alt ağı kaynaştırır. GMF, girdi kullanıcı ve öğe saklı faktörlerinin eleman yönlü çarpımı olduğu matris çarpanlarına ayırmanın genel bir sinir ağı versiyonudur. İki sinirsel katmandan oluşur: 
 
 $$
 \mathbf{x} = \mathbf{p}_u \odot \mathbf{q}_i \\
 \hat{y}_{ui} = \alpha(\mathbf{h}^\top \mathbf{x}),
 $$
 
-burada $\odot$ vektörlerin Hadamard ürününü gösterir. $\mathbf{P} \in \mathbb{R}^{m \times k}$ ve $\mathbf{Q} \in \mathbb{R}^{n \times k}$ sırasıyla kullanıcı ve öğeye gizli matrise çekirdek göleti. $\mathbf{p}_u \in \mathbb{R}^{ k}$ $P$ ve $\mathbf{q}_i \in \mathbb{R}^{ k}$ $\mathbf{q}_i \in \mathbb{R}^{ k}$ satır $P$ ve $\mathbf{q}_i \in \mathbb{R}^{ k}$, $Q$ satırıdır. $\alpha$ ve 73229363615 satır $Q$. $\alpha$ ve 7322936363615'dir. 23, çıkış katmanının aktivasyon işlevini ve ağırlığını gösterir . $\hat{y}_{ui}$ kullanıcısının $u$ öğesine verebileceği tahmin puanı $i$. 
+burada $\odot$ vektörlerin Hadamard çarpımını gösterir. $\mathbf{P} \in \mathbb{R}^{m \times k}$ ve $\mathbf{Q} \in \mathbb{R}^{n \times k}$ sırasıyla kullanıcı ve öğe gizli matrisine karşılık gelir. $\mathbf{p}_u \in \mathbb{R}^{ k}$, $P$'nin $u.$ satırıdır ve $\mathbf{q}_i \in \mathbb{R}^{ k}$, $Q$ öğesinin $i.$ satırıdır. $\alpha$ ve $h$, çıktı katmanının etkinleştirme fonksiyonunu ve ağırlığını gösterir. $\hat{y}_{ui}$, $u$ kullanıcısının $i$ öğesine verebileceği tahmin puanıdır.
 
-Bu modelin bir başka bileşeni ise MTP'dir. Model esnekliğini zenginleştirmek için MLP alt ağı kullanıcı ve öğe gömme GMF ile paylaşmaz. Giriş olarak kullanıcı ve öğe gömme birleştirmeyi kullanır. Karmaşık bağlantılar ve doğrusal olmayan dönüşümlerle, kullanıcılar ve öğeler arasındaki karmaşık etkileşimleri tahmin edebilir. Daha doğrusu, MLP alt ağı şu şekilde tanımlanır: 
+Bu modelin bir başka bileşeni ise MTP'dir. Model esnekliğini zenginleştirmek için MLP alt ağı, kullanıcı ve öğe gömmelerini GMF ile paylaşmaz. Girdi olarak kullanıcı ve öğe gömmelerini bitiştirmeyi kullanır. Karmaşık bağlantılar ve doğrusal olmayan dönüşümlerle, kullanıcılar ve öğeler arasındaki karmaşık etkileşimleri tahmin edebilir. Daha doğrusu, MLP alt ağı şu şekilde tanımlanır: 
 
 $$
 \begin{aligned}
@@ -25,16 +25,16 @@ z^{(1)} &= \phi_1(\mathbf{U}_u, \mathbf{V}_i) = \left[ \mathbf{U}_u, \mathbf{V}_
 \end{aligned}
 $$
 
-burada $\mathbf{W}^*, \mathbf{b}^*$ ve $\alpha^*$ ağırlık matrisini, önyargı vektörü ve etkinleştirme işlevini gösterir. $\phi^*$ karşılık gelen katmanın işlevini gösterir. $\mathbf{z}^*$ karşılık gelen katmanın çıkışını gösterir. 
+burada $\mathbf{W}^*, \mathbf{b}^*$ ve $\alpha^*$ ağırlık matrisini, ek girdi vektörünü ve etkinleştirme işlevini gösterir. $\phi^*$ karşılık gelen katmanın işlevini gösterir. $\mathbf{z}^*$ karşılık gelen katmanın çıktısını gösterir. 
 
-GMF ve MLP sonuçlarını birleştirmek için, basit bir ekleme yerine, NeuMF, iki alt ağın ikinci son katmanlarını birleştirerek, diğer katmanlara iletilebilen bir özellik vektörü oluşturur. Daha sonra, çıkışlar matris $\mathbf{h}$ ve sigmoid aktivasyon fonksiyonu ile yansıtılır. Tahmin katmanı şu şekilde formüle edilir:
+GMF ve MLP sonuçlarını kaynaştırmak için, basit bir toplam yerine, NeuMF, iki alt ağın ikinci son katmanlarını bitiştirerek, diğer katmanlara iletilebilen bir öznitelik vektörü oluşturur. Daha sonra çıktılar $\mathbf{h}$ matrisi ve bir sigmoid etkinleştirme fonksiyonu ile yansıtılır. Tahmin katmanı şu şekilde formüle edilir:
 $$
 \hat{y}_{ui} = \sigma(\mathbf{h}^\top[\mathbf{x}, \phi^L(z^{(L-1)})]).
 $$
 
 Aşağıdaki şekil, NeuMF'nin model mimarisini göstermektedir. 
 
-![Illustration of the NeuMF model](../img/rec-neumf.svg)
+![NeuMF modelinin resimleştirilmesi](../img/rec-neumf.svg)
 
 ```{.python .input  n=1}
 from d2l import mxnet as d2l
@@ -46,7 +46,8 @@ import random
 npx.set_np()
 ```
 
-## Model Uygulaması Aşağıdaki kod NeuMF modelini uygular. Genelleştirilmiş bir matris çarpanlarına sahip modelden ve farklı kullanıcı ve öğe gömme vektörlerine sahip bir MLP oluşur. MLP'nin yapısı `nums_hiddens` parametresi ile kontrol edilir. ReLU, varsayılan etkinleştirme işlevi olarak kullanılır.
+## Model Uygulaması 
+Aşağıdaki kod NeuMF modelini uygular. Genelleştirilmiş bir matrisi çarpanlara ayırma modelinden ve farklı kullanıcı ve öğe gömme vektörlerine sahip bir MLP'den oluşur. MLP'nin yapısı `nums_hiddens` parametresi ile kontrol edilir. ReLU, varsayılan etkinleştirme işlevi olarak kullanılır.
 
 ```{.python .input  n=2}
 class NeuMF(nn.Block):
@@ -76,7 +77,7 @@ class NeuMF(nn.Block):
 
 ## Negatif Örnekleme ile Özelleştirilmiş Veri Kümesi
 
-Çifte sıralama kaybı için önemli bir adım negatif örneklemedir. Her kullanıcı için, bir kullanıcının etkileşim kurmadığı öğeler aday öğelerdir (gözlenmeyen girişler). Aşağıdaki işlev, kullanıcı kimliğini ve aday öğelerini girdi olarak alır ve negatif öğeleri, o kullanıcının aday kümesindeki her kullanıcı için rastgele örnekler. Eğitim aşamasında, model, kullanıcının hoşlanmadığı veya etkileşime girmediği öğelerden daha yüksek sıralamayı sevdiği öğelerin sıralanmasını sağlar.
+İkili sıralama kaybı için önemli bir adım negatif örneklemedir. Her kullanıcı için, bir kullanıcının etkileşim kurmadığı öğeler aday öğelerdir (gözlenmeyen girişler). Aşağıdaki işlev, kullanıcı kimliğini ve aday öğelerini girdi olarak alır ve negatif öğeleri, o kullanıcının aday kümesindeki her kullanıcı için rastgele örneklemler. Eğitim aşamasında model, kullanıcının beğendiği öğelerin, sevmediği veya etkileşimde bulunmadığı öğelerden daha üst sıralarda yer almasını sağlar.
 
 ```{.python .input  n=3}
 class PRDataset(gluon.data.Dataset):
@@ -95,13 +96,14 @@ class PRDataset(gluon.data.Dataset):
         return self.users[idx], self.items[idx], neg_items[indices]
 ```
 
-## Değerlendirici Bu bölümde, eğitim ve test setlerini oluşturmak için zaman stratejisine göre bölünmeyi benimsedik. Model etkinliğini değerlendirmek için verilen $\ell$ ($\ text {Hit} @\ ell$) ve ROC eğrisi (AUC) altındaki alan kesme hızı dahil olmak üzere iki değerlendirme önlemi kullanılır. Her kullanıcı için verilen pozisyonda $\ell$ isabet oranı önerilen öğenin üst $\ell$ sıralamalı listesine dahil olup olmadığını gösterir. Resmi tanım şöyledir: 
+## Değerlendirici 
+Bu bölümde, eğitim ve test kümelerini oluşturmak için zaman stratejisine göre bölünmeyi benimsedik. Model etkinliğini değerlendirmek için belirli bir $\ell$ ($\text{Hit}@\ell$) kesme noktasındaki isabet oranı ve ROC eğrisi (AUC) altındaki alan dahil olmak üzere iki değerlendirme ölçütü kullanılır. Her kullanıcı için verilen $\ell$ konumundaki isabet oranı, önerilen öğenin en üstteki $\ell$ sıralamasında yer alıp almadığını gösterir. Biçimsel tanım şöyledir: 
 
 $$
 \text{Hit}@\ell = \frac{1}{m} \sum_{u \in \mathcal{U}} \textbf{1}(rank_{u, g_u} <= \ell),
 $$
 
-burada $\textbf{1}$, zemin gerçeği öğesi üst $\ell$ listesinde yer alıyorsa, aksi takdirde sıfıra eşittir. $rank_{u, g_u}$, $u$ kullanıcısının $g_u$ numaralı öğesinin tavsiye listesinde yer alan doğruluk öğesinin $g_u$ sıralamasını gösterir (İdeal sıralama 1'dir). $m$ kullanıcı sayısı. $\mathcal{U}$ kullanıcı ayarıdır. 
+burada $\textbf{1}$, referans gerçek öğesi $\ell$ listesinde üst sıralarda yer alıyorsa bire eşit olan bir gösterge işlevini belirtir, aksi takdirde sıfıra eşittir. $rank_{u, g_u}$, tavsiye listesinde $u$ kullanıcısının $g_u$ referans gerçek öğesinin sıralamasını belirtir (İdeal sıralama 1'dir). $m$ kullanıcı sayısıdır. $\mathcal{U}$ kullanıcı ayarıdır. 
 
 AUC tanımı şöyledir: 
 
@@ -109,9 +111,9 @@ $$
 \text{AUC} = \frac{1}{m} \sum_{u \in \mathcal{U}} \frac{1}{|\mathcal{I} \backslash S_u|} \sum_{j \in I \backslash S_u} \textbf{1}(rank_{u, g_u} < rank_{u, j}),
 $$
 
-burada $\mathcal{I}$ öğe ayarlanır. $S_u$, $u$ kullanıcısının aday öğesidir. Hassasiyet, geri çağırma ve normalleştirilmiş indirimli toplu kazanç (NDCG) gibi diğer birçok değerlendirme protokollerinin de kullanılabileceğini unutmayın. 
+burada $\mathcal{I}$ öğe kümesidir. $S_u$, $u$ kullanıcısının aday öğeleridir. Kesinlik, geri çağırma ve normalleştirilmiş indirimli toplu kazanç (NDCG) gibi diğer birçok değerlendirme protokollerinin de kullanılabileceğini unutmayın. 
 
-Aşağıdaki işlev, her kullanıcı için isabet sayılarını ve AUC hesaplar.
+Aşağıdaki işlev, her kullanıcı için isabet sayımlarını ve AUC'yi hesaplar.
 
 ```{.python .input  n=4}
 #@save
@@ -125,7 +127,7 @@ def hit_and_auc(rankedlist, test_matrix, k):
     return len(hits_k), auc
 ```
 
-Ardından, genel Hit oranı ve AUC aşağıdaki gibi hesaplanır.
+Ardından, genel isabet oranı ve AUC aşağıdaki gibi hesaplanır.
 
 ```{.python .input  n=5}
 #@save
@@ -159,9 +161,9 @@ def evaluate_ranking(net, test_input, seq, candidates, num_users, num_items,
     return np.mean(np.array(hit_rate)), np.mean(np.array(auc))
 ```
 
-## Modelin Eğitimi ve Değerlendirilmesi
+## Model Eğitimi ve Değerlendirilmesi
 
-Eğitim fonksiyonu aşağıda tanımlanmıştır. Modeli çift şeklinde eğitiyoruz.
+Eğitim fonksiyonu aşağıda tanımlanmıştır. Modeli ikili şeklinde eğitiyoruz.
 
 ```{.python .input  n=6}
 #@save
@@ -199,7 +201,7 @@ def train_ranking(net, train_iter, test_iter, loss, trainer, test_seq_iter,
           f'on {str(devices)}')
 ```
 
-Şimdi, MovieLens 100k veri kümesini yükleyebilir ve modeli eğitebiliriz. MovieLens veri kümesindeki derecelendirmeler olduğundan, bazı doğruluk kayıplarıyla birlikte, bu derecelendirmeleri sıfırlara ve birlere göre ikili hale getiriyoruz. Bir kullanıcı bir öğeyi derecelendirdiyse, örtük geri bildirimi bir olarak değerlendiririz, aksi takdirde sıfır olarak kabul ederiz. Bir öğeyi derecelendirme eylemi, örtük geri bildirim sağlama şekli olarak değerlendirilebilir. Burada veri kümesini `seq-aware` modunda bölüyoruz. Kullanıcıların en son etkileşim içindeki öğelerin test için bırakıldığı yer.
+Şimdi, MovieLens 100k veri kümesini yükleyebilir ve modeli eğitebiliriz. MovieLens veri kümesindeki derecelendirmeler olduğundan, bazı doğruluk kayıplarıyla birlikte, bu derecelendirmeleri sıfırlara ve birlere göre ikili hale getiriyoruz. Bir kullanıcı bir öğeyi derecelendirdiyse, örtülü geri bildirimi bir olarak değerlendiririz, aksi takdirde sıfır olarak kabul ederiz. Bir öğeyi derecelendirme eylemi, örtülü geri bildirim sağlama şekli olarak değerlendirilebilir. Burada, veri kümesini, kullanıcıların en son etkileşimde bulunduğu öğelerin test için dışarıda bırakıldığı `seq-aware` modunda böldük.
 
 ```{.python .input  n=11}
 batch_size = 1024
@@ -215,7 +217,7 @@ train_iter = gluon.data.DataLoader(
     True, last_batch="rollover", num_workers=d2l.get_dataloader_workers())
 ```
 
-Daha sonra modeli oluşturup başlatıyoruz. 10 sabit gizli boyuta sahip üç katmanlı bir MLP kullanıyoruz.
+Daha sonra modeli oluşturup ilkliyoruz. Sabit gizli 10 boyuta sahip üç katmanlı bir MLP kullanıyoruz.
 
 ```{.python .input  n=8}
 devices = d2l.try_all_gpus()
@@ -236,16 +238,16 @@ train_ranking(net, train_iter, test_iter, loss, trainer, None, num_users,
 
 ## Özet
 
-* Matris çarpanlara doğrusal olmayan özellik eklemek, model yeteneğini ve etkinliğini arttırmak için faydalıdır.
-* NeuMF, matris çarpanlarına ve çok katmanlı algılayıcının birleşimidir. Çok katmanlı algılayıcı, kullanıcı ve öğe gömme birleştirmesini girdi olarak alır.
+* Matris çarpanlara ayırma modeline doğrusal olmayanlık eklemek, model kapasitesini ve etkinliğini geliştirmek için faydalıdır.
+* NeuMF, matris çarpanlara ayırma ve çok katmanlı algılayıcının bir birleşimidir. Çok katmanlı algılayıcı, girdi olarak kullanıcı ve öğe gömmelerinin bitiştirilmesini alır.
 
-## Egzersizler
+## Alıştırmalar
 
-* Gizli faktörlerin boyutunu değiştir. Gizli faktörlerin boyutu model performansını nasıl etkiler?
-* Performans üzerindeki etkisini kontrol etmek için MLP'nin mimarilerini (örn. katman sayısı, her katmanın nöron sayısı) değişebilir.
-* Farklı optimizatörleri, öğrenme hızı ve kilo bozunma oranını deneyin.
-* Bu modeli optimize etmek için son bölümde tanımlanan menteşe kaybını kullanmaya çalışın.
+* Gizli çarpanların boyutunu değiştirin. Gizli çarpanların boyutu model performansını nasıl etkiler?
+* Performans üzerindeki etkisini kontrol etmek için MLP'nin mimarilerini (örn. katman sayısı, her katmanın sinir sayısı) değiştirin.
+* Farklı eniyileyicileri, öğrenme oranını ve ağırlık sönümü oranını deneyin.
+* Bu modeli eniyilemek için son bölümde tanımlanan menteşe kaybını kullanmaya çalışın.
 
 :begin_tab:`mxnet`
-[Discussions](https://discuss.d2l.ai/t/403)
+[Tartışmalar](https://discuss.d2l.ai/t/403)
 :end_tab:

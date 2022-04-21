@@ -1,20 +1,20 @@
-# Çarpanlara Ayırma Makinaları
+# Çarpanlara Ayırma Makineleri
 
-2010 yılında Steffen Rendle tarafından önerilen çarpanlara ayırma makineleri (FM) :cite:`Rendle.2010`, sınıflandırma, regresyon ve sıralama görevleri için kullanılabilen denetimli bir algoritmadır. Hızla fark edildi ve tahminler ve öneriler yapmak için popüler ve etkili bir yöntem haline geldi. Özellikle, doğrusal regresyon modelinin ve matris çarpanlara çıkarma modelinin genelleştirilmesidir. Dahası, polinom çekirdeği olan destek vektör makinelerini andırır. Çarpanlara ayırma makinelerinin doğrusal regresyon ve matris çarpanlaştırması üzerindeki güçlü yönleri şunlardır: (1) $\chi$ yönlü değişken etkileşimleri modelleyebilir, burada $\chi$ polinom düzeninin sayısıdır ve genellikle ikiye ayarlanır. (2) Çarpanlara ayırma makineleri ile ilişkili hızlı optimizasyon algoritması azaltabilir polinom hesaplama süresi doğrusal karmaşıklığa, özellikle yüksek boyutlu seyrek girişler için son derece verimli hale getirir. Bu nedenlerden dolayı çarpanlara ayırma makineleri modern reklam ve ürün önerilerinde yaygın olarak kullanılmaktadır. Teknik detaylar ve uygulamalar aşağıda açıklanmıştır. 
+2010 yılında Steffen Rendle tarafından önerilen çarpanlara ayırma makineleri (FM) :cite:`Rendle.2010`, sınıflandırma, bağlanım ve sıralama görevleri için kullanılabilen bir gözetimli algoritmadır. Hızla fark edildi ve tahminler ve öneriler yapmak için popüler ve etkili bir yöntem haline geldi. Özellikle, doğrusal bağlanım modelinin ve matris çarpanlara ayırma modelinin genelleştirilmesidir. Dahası, polinom çekirdeği olan destek vektör makinelerini andırır. Çarpanlara ayırma makinelerinin doğrusal bağlanım ve matris çarpanlara ayırma üzerindeki güçlü yönleri şunlardır: (1) $\chi$ yönlü değişken etkileşimleri modelleyebilir, burada $\chi$ polinom kuvvetinin sayısıdır ve genellikle ikiye ayarlanır. (2) Çarpanlara ayırma makineleriyle ilişkili hızlı bir eniyileme algoritması, polinom hesaplama süresini doğrusal karmaşıklığa indirerek, özellikle yüksek boyutlu seyrek girdiler için son derece verimli hale getirebilir. Bu nedenlerden dolayı çarpanlara ayırma makineleri modern reklam ve ürün tavsiyelerinde yaygın olarak kullanılmaktadır. Teknik detaylar ve uygulamalar aşağıda açıklanmıştır. 
 
-## 2-Yönlü Çarpanlara Ayak Makinaları
+## 2-Yönlü Çarpanlara Ayırma Makineleri
 
-Resmi olarak, $x \in \mathbb{R}^d$ bir numunenin özellik vektörlerini göstersin ve $y$ gerçek değerli etiket veya ikili sınıf “tıklatma/tıklama-tıklama” gibi sınıf etiketi olabilen karşılık gelen etiketi gösterir. İkinci derece bir çarpanlara ayırma makinesi modeli şu şekilde tanımlanır: 
+Biçimsel olarak, $x \in \mathbb{R}^d$ bir örneklemin öznitelik vektörlerini göstersin ve $y$ gerçek değerli etiket veya ikili sınıf “tıklanma/tıklanmama” gibi sınıf etiketi olabilen karşılık gelen etiketi gösterir. İkinci derece bir çarpanlara ayırma makinesi modeli şu şekilde tanımlanır: 
 
 $$
 \hat{y}(x) = \mathbf{w}_0 + \sum_{i=1}^d \mathbf{w}_i x_i + \sum_{i=1}^d\sum_{j=i+1}^d \langle\mathbf{v}_i, \mathbf{v}_j\rangle x_i x_j
 $$
 
-burada $\mathbf{w}_0 \in \mathbb{R}$ küresel önyargıdır; $\mathbf{w} \in \mathbb{R}^d$ i-th değişkeninin ağırlıklarını gösterir; $\mathbf{V} \in \mathbb{R}^{d\times k}$ özellik gömme özelliğini temsil eder; $\mathbf{v}_i$ $\mathbf{V}$'ün $i.$ satırını temsil eder; $k$ gizli faktörlerin boyutsallığıdır; $\langle\cdot, \cdot \rangle$ iki vektörün nokta ürünüdür. $\langle\cdot, \cdot \rangle$, iki vektörün nokta ürünüdür. 293617 modeli etkileşim $i.$ ve $j.$ özelliği arasında. Bazı özellik etkileşimleri kolayca anlaşılabilir, böylece uzmanlar tarafından tasarlanabilirler. Bununla birlikte, diğer özellik etkileşimlerinin çoğu verilerde gizlidir ve tanımlanması zordur. Böylece modelleme özelliği etkileşimleri otomatik olarak özellik mühendisliği çabalarını büyük ölçüde azaltabilir. İlk iki terimin doğrusal regresyon modeline karşılık geldiği ve son terimin matris çarpanlara ayırma modelinin bir uzantısı olduğu açıktır. $i$ özelliği bir öğeyi temsil eder ve $j$ özelliği bir kullanıcıyı temsil ediyorsa, üçüncü terim tam olarak kullanıcı ve öğe gömme arasındaki nokta ürünüdür. FM'nin daha yüksek siparişlere genelleme yapabileceğini de belirtmek gerekir (derece > 2). Bununla birlikte, sayısal kararlılık genelleme zayıflatabilir. 
+burada $\mathbf{w}_0 \in \mathbb{R}$ küresel ek girdidir; $\mathbf{w} \in \mathbb{R}^d$ i. değişkeninin ağırlıklarını gösterir; $\mathbf{V} \in \mathbb{R}^{d\times k}$ öznitelik gömmelerini temsil eder; $\mathbf{v}_i$ $\mathbf{V}$'nin $i.$ satırını temsil eder; $k$ gizli çarpanların boyutsallığıdır; $\langle\cdot, \cdot \rangle$ iki vektörün nokta çarpımıdır. $\langle \mathbf{v}_i, \mathbf{v}_j \rangle$, $i.$ ve $j.$ özniteliği arasındaki etkileşimi modeller. Bazı öznitelik etkileşimleri kolayca anlaşılabilir, böylece uzmanlar tarafından tasarlanabilirler. Bununla birlikte, diğer öznitelik etkileşimlerinin çoğu verilerde gizlidir ve tanımlanması zordur. Böylece, öznitelik etkileşimlerini otomatik olarak modellemek, öznitelik mühendisliğindeki çabaları büyük ölçüde azaltabilir. İlk iki terimin doğrusal bağlanım modeline karşılık geldiği ve son terimin matris çarpanlara ayırma modelinin bir uzantısı olduğu açıktır. $i$ özniteliği bir öğeyi temsil eder ve $j$ özniteliği bir kullanıcıyı temsil ediyorsa, üçüncü terim tam olarak kullanıcı ve öğe gömmeleri arasındaki nokta çarpımıdır. FM'nin daha yüksek kuvvetlere genelleme yapabileceğini de belirtmek gerekir (kuvvet > 2). Bununla birlikte, sayısal kararlılık genellemeyi zayıflatabilir. 
 
 ## Verimli Bir Optimizasyon Ölçütü
 
-Çarpma makinelerinin düz ileri bir yöntemle optimize edilmesi, tüm çift yönlü etkileşimlerin hesaplanması gerektiği için $\mathcal{O}(kd^2)$ karmaşıklığına yol açar. Bu verimsizlik sorununu çözmek için, FM'nin üçüncü terimini yeniden düzenleyebiliriz, bu da hesaplama maliyetini büyük ölçüde düşürebilir ve doğrusal bir zaman karmaşıklığına yol açar ($\mathcal{O}(kd)$). İkili etkileşim teriminin yeniden formülasyonu aşağıdaki gibidir: 
+Çarpanlara ayırma makinelerinin düz ileri bir yöntemle optimize edilmesi, tüm ikili etkileşimlerin hesaplanması gerektiği için $\mathcal{O}(kd^2)$ karmaşıklığına yol açar. Bu verimsizlik sorununu çözmek için, FM'nin üçüncü terimini yeniden düzenleyebiliriz, bu da hesaplama maliyetini büyük ölçüde düşürebilir ve doğrusal bir zaman karmaşıklığına yol açar ($\mathcal{O}(kd)$). İkili etkileşim teriminin yeniden formülleştirilmesi aşağıdaki gibidir: 
 
 $$
 \begin{aligned}
@@ -26,9 +26,9 @@ $$
  \end{aligned}
 $$
 
-Bu reformülasyon ile model karmaşıklığı büyük ölçüde azaltılır. Dahası, seyrek özellikler için, yalnızca sıfır olmayan elementlerin hesaplanması gerekir, böylece genel karmaşıklık sıfır olmayan özelliklerin sayısına doğrusal olur. 
+Bu yeniden formülleştirme ile model karmaşıklığı büyük ölçüde azaltılır. Dahası, seyrek öznitelikler için, yalnızca sıfır olmayan elemanların hesaplanması gerekir, böylece genel karmaşıklık sıfır olmayan özniteliklerin sayısına doğrusal olur. 
 
-FM modelini öğrenmek için, regresyon görevi için MSE kaybını, sınıflandırma görevleri için çapraz entropi kaybı ve sıralama görevi için BPR kaybını kullanabiliriz. Stokastik degrade iniş ve Adam gibi standart iyileştiriciler optimizasyon için uygundur.
+FM modelini öğrenmek için, bağlanım görevi için MSE kaybını, sınıflandırma görevleri için çapraz entropi kaybını ve sıralama görevi için BPR kaybını kullanabiliriz. Rasgele gradyan inişi ve Adam gibi standart eniyileştiriciler eniyileme için uygundur.
 
 ```{.python .input  n=2}
 from d2l import mxnet as d2l
@@ -39,7 +39,8 @@ import os
 npx.set_np()
 ```
 
-## Model Uygulaması Aşağıdaki kod çarpanlara ayırma makinelerini uygular. FM'nin doğrusal bir regresyon bloğu ve verimli bir özellik etkileşim bloğu içerdiğini görmek açıktır. CTR tahminini sınıflandırma görevi olarak ele aldığımızdan, final puanı üzerinde sigmoid fonksiyon uyguluyoruz.
+## Model Uygulaması 
+Aşağıdaki kod çarpanlara ayırma makinelerini uygular. FM'nin doğrusal bir bağlanım bloğu ve verimli bir öznitelik etkileşim bloğu içerdiğini görmek barizdir. CTR tahminini sınıflandırma görevi olarak ele aldığımızdan, nihai puan üzerinde sigmoid işlevi uyguluyoruz.
 
 ```{.python .input  n=2}
 class FM(nn.Block):
@@ -59,7 +60,8 @@ class FM(nn.Block):
         return x
 ```
 
-## Reklam Veri Kümesini Yükle Online reklam veri kümesini yüklemek için son bölümdeki CTR veri sarmalayıcısını kullanırız.
+## Reklam Veri Kümesini Yükleme 
+Çevrimiçi reklam veri kümesini yüklemek için son bölümdeki CTR veri sarmalayıcısını kullanırız.
 
 ```{.python .input  n=3}
 batch_size = 2048
@@ -76,7 +78,8 @@ test_iter = gluon.data.DataLoader(
     num_workers=d2l.get_dataloader_workers())
 ```
 
-## Modeli Sonrasında eğitiyoruz, modeli eğitiyoruz. Öğrenme oranı 0,02 olarak ayarlanır ve gömme boyutu varsayılan olarak 20'ye ayarlanır. `Adam` iyileştirici ve `SigmoidBinaryCrossEntropyLoss` kayıp model eğitimi için kullanılır.
+## Modeli Eğitme
+Sonrasında, modeli eğitiyoruz. Öğrenme oranı 0,02 olarak ayarlanır ve gömme boyutu varsayılan olarak 20'ye ayarlanır. `Adam` eniyileştiricisi ve `SigmoidBinaryCrossEntropyLoss` kaybı model eğitimi için kullanılır.
 
 ```{.python .input  n=5}
 devices = d2l.try_all_gpus()
@@ -91,14 +94,14 @@ d2l.train_ch13(net, train_iter, test_iter, loss, trainer, num_epochs, devices)
 
 ## Özet
 
-* FM, regresyon, sınıflandırma ve sıralama gibi çeşitli görevlere uygulanabilen genel bir çerçevedir.
-* Özellik etkileşimi/geçiş, tahmin görevleri için önemlidir ve 2 yönlü etkileşim FM ile etkili bir şekilde modellenebilir.
+* FM, bağlanım, sınıflandırma ve sıralama gibi çeşitli görevlere uygulanabilen genel bir çerçevedir.
+* Öznitelik etkileşimi/kesiti, tahmin görevleri için önemlidir ve 2 yönlü etkileşim FM ile verimli bir şekilde modellenebilir.
 
-## Egzersizler
+## Alıştırmalar
 
 * FM'yi Avazu, MovieLens ve Criteo veri kümeleri gibi diğer veri kümelerinde test edebilir misiniz?
-* Performans üzerindeki etkisini kontrol etmek için gömme boyutu farklı, matris çarpanlarına benzer bir desen gözlemleyebilir misiniz?
+* Performans üzerindeki etkisini kontrol etmek için gömme boyutunu değiştirin, matris çarpanlarına ayırma ile benzer bir örüntü gözlemleyebilir misiniz?
 
 :begin_tab:`mxnet`
-[Discussions](https://discuss.d2l.ai/t/406)
+[Tartışmalar](https://discuss.d2l.ai/t/406)
 :end_tab:

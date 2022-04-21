@@ -73,6 +73,8 @@ covariate; ortak değişken
 
 crowdsourcing; kitle kaynak kullanımı
 
+dataframe; veri çerçevesi
+
 decoder; kodçözücü
 
 denoising; gürültü arındırma
@@ -241,6 +243,8 @@ prior; önsel olasılık
 
 receptive field; alım alanı
 
+reconstruction; geri çatma
+
 recurrent neural network; yinelemeli sinir ağı
 
 recursion; özyineleme
@@ -291,6 +295,8 @@ softmax; eşiksiz en büyük işlev veya softmaks
 
 spam; yaramaz posta
 
+sparsity; seyreklik
+
 stride; uzun adım
 
 string; dizgi
@@ -308,6 +314,8 @@ symmetry; bakışım
 tabular; çizelge halindeki
 
 tagging; etiketleme
+
+Tapestry system; Gobleb sistemi
 
 teacher forcing; öğretici zorlama
 
