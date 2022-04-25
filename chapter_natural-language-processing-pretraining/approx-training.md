@@ -67,7 +67,7 @@ Göstermek için, :numref:`fig_hi_softmax`'teki $w_c$ sözcüğü verilen $w_3$ 
 
 $$P(w_3 \mid w_c) = \sigma(\mathbf{u}_{n(w_3, 1)}^\top \mathbf{v}_c) \cdot \sigma(-\mathbf{u}_{n(w_3, 2)}^\top \mathbf{v}_c) \cdot \sigma(\mathbf{u}_{n(w_3, 3)}^\top \mathbf{v}_c).$$
 
-$\sigma(x)+\sigma(-x) = 1$ olduğundan, $\mathcal{V}$ sözlüğündeki tüm sözcükleri herhangi bir $w_c$ sözcüğüne dayalı olarak üretmenin koşullu olasılıklarının toplamının 1 olduğunu tutar:: 
+$\sigma(x)+\sigma(-x) = 1$ olduğundan, $\mathcal{V}$ sözlüğündeki tüm sözcükleri herhangi bir $w_c$ sözcüğüne dayalı olarak üretmenin koşullu olasılıklarının toplamının 1 olduğunu tutar: 
 
 $$\sum_{w \in \mathcal{V}} P(w \mid w_c) = 1.$$
 :eqlabel:`eq_hi-softmax-sum-one`
