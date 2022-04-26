@@ -79,7 +79,7 @@ $$
 \end{aligned}
 $$
 
-Bunun üç çözümü vardır: $0$, 1 $ ve $ 9/13 $. İlk ikisi açıkça minimumdur, dizimize $0$ olasılık atadıkları için maksimum değildirler. Nihai değer, dizimize sıfır olasılık *atamaz* ve bu nedenle, maksimum olasılık tahmini $\hat \theta = 9/13$ olmalıdır.
+Bunun üç çözümü vardır: $0$, $1$ ve $9/13$. İlk ikisi açıkça minimumdur, dizimize $0$ olasılık atadıkları için maksimum değildirler. Nihai değer, dizimize sıfır olasılık *atamaz* ve bu nedenle, maksimum olasılık tahmini $\hat \theta = 9/13$ olmalıdır.
 
 ## Sayısal Optimizasyon (Eniyileme) ve Negatif Logaritmik-Olabilirliği
 
@@ -209,7 +209,7 @@ Soru, "Bu neden geçerli?" haline gelir. Sonuçta, yoğunlukları tanıtmamızı
 
 Aslında soru budur ve neden yoğunluklara geçebileceğimizi anlamak, epsilonlara ne olduğunu izlemeye yönelik bir alıştırmadır.
 
-Önce hedefimizi yeniden tanımlayalım. Sürekli rastgele değişkenler için artık tam olarak doğru değeri elde etme olasılığını hesaplamak istemediğimizi, bunun yerine $\epsilon$ aralığında eşleştirme yapmak istediğimizi varsayalım. Basit olması için, verilerimizin aynı şekilde dağıtılmış rastgele değişkenler $X_1, \ldots, X_N$'nin tekrarlanan gözlemleri,  $x_1, \ldots, x_N $, olduğunu varsayıyoruz. Daha önce gördüğümüz gibi, bu şu şekilde yazılabilir:
+Önce hedefimizi yeniden tanımlayalım. Sürekli rastgele değişkenler için artık tam olarak doğru değeri elde etme olasılığını hesaplamak istemediğimizi, bunun yerine $\epsilon$ aralığında eşleştirme yapmak istediğimizi varsayalım. Basit olması için, verilerimizin aynı şekilde dağıtılmış rastgele değişkenler $X_1, \ldots, X_N$'nin tekrarlanan gözlemleri,  $x_1, \ldots, x_N$, olduğunu varsayıyoruz. Daha önce gördüğümüz gibi, bu şu şekilde yazılabilir:
 
 $$
 \begin{aligned}

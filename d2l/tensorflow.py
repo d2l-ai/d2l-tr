@@ -46,6 +46,7 @@ import pandas as pd
 import requests
 from IPython import display
 from matplotlib import pyplot as plt
+from matplotlib_inline import backend_inline
 
 d2l = sys.modules[__name__]
 
@@ -56,7 +57,7 @@ def use_svg_display():
     """Use the svg format to display a plot in Jupyter.
 
     Defined in :numref:`sec_calculus`"""
-    display.set_matplotlib_formats('svg')
+    backend_inline.set_matplotlib_formats('svg')
 
 def set_figsize(figsize=(3.5, 2.5)):
     """Set the figure size for matplotlib.
@@ -82,7 +83,7 @@ def set_axes(axes, xlabel, ylabel, xlim, ylim, xscale, yscale, legend):
 def plot(X, Y=None, xlabel=None, ylabel=None, legend=None, xlim=None,
          ylim=None, xscale='linear', yscale='linear',
          fmts=('-', 'm--', 'g-.', 'r:'), figsize=(3.5, 2.5), axes=None):
-    """Plot data points.
+    """Veri noktalarını çiz.
 
     Defined in :numref:`sec_calculus`"""
     if legend is None:
@@ -141,7 +142,7 @@ class Timer:
         return np.array(self.times).cumsum().tolist()
 
 def synthetic_data(w, b, num_examples):
-    """Generate y = Xw + b + noise.
+    """Veri yaratma, y = Xw + b + gurultu.
 
     Defined in :numref:`sec_linear_scratch`"""
     X = d2l.zeros((num_examples, w.shape[0]))
@@ -152,26 +153,26 @@ def synthetic_data(w, b, num_examples):
     return X, y
 
 def linreg(X, w, b):
-    """The linear regression model.
+    """Dogrusal regresyon modeli.
 
     Defined in :numref:`sec_linear_scratch`"""
     return d2l.matmul(X, w) + b
 
 def squared_loss(y_hat, y):
-    """Squared loss.
+    """Kare kayip.
 
     Defined in :numref:`sec_linear_scratch`"""
     return (y_hat - d2l.reshape(y, y_hat.shape)) ** 2 / 2
 
 def sgd(params, grads, lr, batch_size):
-    """Minibatch stochastic gradient descent.
+    """Minigrup rasgele gradyan inişi.
 
     Defined in :numref:`sec_linear_scratch`"""
     for param, grad in zip(params, grads):
         param.assign_sub(lr*grad/batch_size)
 
 def load_array(data_arrays, batch_size, is_train=True):
-    """Construct a TensorFlow data iterator.
+    """Bir TensorFlow veri yineleyici olusturun.
 
     Defined in :numref:`sec_linear_concise`"""
     dataset = tf.data.Dataset.from_tensor_slices(data_arrays)
@@ -181,7 +182,7 @@ def load_array(data_arrays, batch_size, is_train=True):
     return dataset
 
 def get_fashion_mnist_labels(labels):
-    """Return text labels for the Fashion-MNIST dataset.
+    """Fashion-MNIST veri kümesi için metin etiketleri döndürün.
 
     Defined in :numref:`sec_fashion_mnist`"""
     text_labels = ['t-shirt', 'trouser', 'pullover', 'dress', 'coat',
@@ -189,7 +190,7 @@ def get_fashion_mnist_labels(labels):
     return [text_labels[int(i)] for i in labels]
 
 def show_images(imgs, num_rows, num_cols, titles=None, scale=1.5):
-    """Plot a list of images.
+    """Görsellerin bir listesini çizin
 
     Defined in :numref:`sec_fashion_mnist`"""
     figsize = (num_cols * scale, num_rows * scale)
@@ -204,12 +205,12 @@ def show_images(imgs, num_rows, num_cols, titles=None, scale=1.5):
     return axes
 
 def load_data_fashion_mnist(batch_size, resize=None):
-    """Download the Fashion-MNIST dataset and then load it into memory.
+    """Fashion-MNIST veri kümesini indirin ve ardından belleğe yükleyin.
 
     Defined in :numref:`sec_fashion_mnist`"""
     mnist_train, mnist_test = tf.keras.datasets.fashion_mnist.load_data()
-    # Divide all numbers by 255 so that all pixel values are between
-    # 0 and 1, add a batch dimension at the last. And cast label to int32
+    # Tüm piksel değerleri 0 ile 1 arasında olacak şekilde tüm sayıları 255'e bölün,
+    # en sonunda bir grup boyutu ekleyin. Ayrıca etiketi int32'ye çevirin.
     process = lambda X, y: (tf.expand_dims(X, axis=3) / 255,
                             tf.cast(y, dtype='int32'))
     resize_fn = lambda X, y: (
@@ -221,7 +222,7 @@ def load_data_fashion_mnist(batch_size, resize=None):
             batch_size).map(resize_fn))
 
 def accuracy(y_hat, y):
-    """Compute the number of correct predictions.
+    """Dogru tahminlerin sayisini hesaplayin.
 
     Defined in :numref:`sec_softmax_scratch`"""
     if len(y_hat.shape) > 1 and y_hat.shape[1] > 1:
@@ -230,16 +231,16 @@ def accuracy(y_hat, y):
     return float(d2l.reduce_sum(d2l.astype(cmp, y.dtype)))
 
 def evaluate_accuracy(net, data_iter):
-    """Compute the accuracy for a model on a dataset.
+    """Bir veri kümesindeki bir modelin doğruluğunu hesaplayın.
 
     Defined in :numref:`sec_softmax_scratch`"""
-    metric = Accumulator(2)  # No. of correct predictions, no. of predictions
+    metric = Accumulator(2)  # Dogru tahmin sayisi, tahmin sayisi
     for X, y in data_iter:
         metric.add(accuracy(net(X), y), d2l.size(y))
     return metric[0] / metric[1]
 
 class Accumulator:
-    """For accumulating sums over `n` variables."""
+    """`n` degisken uzerinden toplamlari biriktirmek için"""
     def __init__(self, n):
         """Defined in :numref:`sec_softmax_scratch`"""
         self.data = [0.0] * n
@@ -254,18 +255,18 @@ class Accumulator:
         return self.data[idx]
 
 def train_epoch_ch3(net, train_iter, loss, updater):
-    """The training loop defined in Chapter 3.
+    """Bolum 3'te tanimlanan egitim dongusu.
 
     Defined in :numref:`sec_softmax_scratch`"""
-    # Sum of training loss, sum of training accuracy, no. of examples
+    # Egitim kaybi toplami, egitim dogrulugu toplami, ornek sayisi
     metric = Accumulator(3)
     for X, y in train_iter:
-        # Compute gradients and update parameters
+        # Gradyanlari hesaplayin ve parametreleri guncelleyin
         with tf.GradientTape() as tape:
             y_hat = net(X)
-            # Keras implementations for loss takes (labels, predictions)
-            # instead of (predictions, labels) that users might implement
-            # in this book, e.g. `cross_entropy` that we implemented above
+            # Kullanicilarin bu kitapta uygulayabilecekleri (tahminler, etiketler)
+            # yerine kayip alimları (etiketler, tahminler) için Keras uygulamalari
+            # ör. yukarida uyguladigimiz 'cross_entropy'
             if isinstance(loss, tf.keras.losses.Loss):
                 l = loss(y, y_hat)
             else:
@@ -276,34 +277,34 @@ def train_epoch_ch3(net, train_iter, loss, updater):
             updater.apply_gradients(zip(grads, params))
         else:
             updater(X.shape[0], tape.gradient(l, updater.params))
-        # Keras loss by default returns the average loss in a batch
+        # Varsayilan olarak Keras kaybi, bir toplu is icindeki ortalama kaybı döndürür
         l_sum = l * float(tf.size(y)) if isinstance(
             loss, tf.keras.losses.Loss) else tf.reduce_sum(l)
         metric.add(l_sum, accuracy(y_hat, y), tf.size(y))
-    # Return training loss and training accuracy
+    # Egitim kaybini ve dogrulugunu dondur
     return metric[0] / metric[2], metric[1] / metric[2]
 
 class Animator:
-    """For plotting data in animation."""
+    """Animasyonda veri cizdirme"""
     def __init__(self, xlabel=None, ylabel=None, legend=None, xlim=None,
                  ylim=None, xscale='linear', yscale='linear',
                  fmts=('-', 'm--', 'g-.', 'r:'), nrows=1, ncols=1,
                  figsize=(3.5, 2.5)):
         """Defined in :numref:`sec_softmax_scratch`"""
-        # Incrementally plot multiple lines
+        # Coklu cizgileri artarak cizdir
         if legend is None:
             legend = []
         d2l.use_svg_display()
         self.fig, self.axes = d2l.plt.subplots(nrows, ncols, figsize=figsize)
         if nrows * ncols == 1:
             self.axes = [self.axes, ]
-        # Use a lambda function to capture arguments
+        # Argumanlari elde tutmak icin bir lambda islevi kullan
         self.config_axes = lambda: d2l.set_axes(
             self.axes[0], xlabel, ylabel, xlim, ylim, xscale, yscale, legend)
         self.X, self.Y, self.fmts = None, None, fmts
 
     def add(self, x, y):
-        # Add multiple data points into the figure
+        # Coklu veri noktalarini sekile ekleyin
         if not hasattr(y, "__len__"):
             y = [y]
         n = len(y)
@@ -325,7 +326,7 @@ class Animator:
         display.clear_output(wait=True)
 
 def train_ch3(net, train_iter, test_iter, loss, num_epochs, updater):
-    """Train a model (defined in Chapter 3).
+    """Bir modeli egitin (Bolum 3'te tanimlanmistir).
 
     Defined in :numref:`sec_softmax_scratch`"""
     animator = Animator(xlabel='epoch', xlim=[1, num_epochs], ylim=[0.3, 0.9],
@@ -340,7 +341,7 @@ def train_ch3(net, train_iter, test_iter, loss, num_epochs, updater):
     assert test_acc <= 1 and test_acc > 0.7, test_acc
 
 class Updater():
-    """For updating parameters using minibatch stochastic gradient descent.
+    """Minigrup rasgele gradyan inisini kullanarak parametreleri guncellemek icin.
 
     Defined in :numref:`sec_softmax_scratch`"""
     def __init__(self, params, lr):
@@ -351,7 +352,7 @@ class Updater():
         d2l.sgd(self.params, grads, self.lr, batch_size)
 
 def predict_ch3(net, test_iter, n=6):
-    """Predict labels (defined in Chapter 3).
+    """Etiketleri tahmin etme (Bolum 3'te tanimlanmistir).
 
     Defined in :numref:`sec_softmax_scratch`"""
     for X, y in test_iter:
@@ -366,7 +367,7 @@ def evaluate_loss(net, data_iter, loss):
     """Evaluate the loss of a model on the given dataset.
 
     Defined in :numref:`sec_model_selection`"""
-    metric = d2l.Accumulator(2)  # Sum of losses, no. of examples
+    metric = d2l.Accumulator(2)  # Kayiplarin toplami, ornek sayisi
     for X, y in data_iter:
         l = loss(net(X), y)
         metric.add(d2l.reduce_sum(l), d2l.size(l))
@@ -1402,7 +1403,6 @@ def train_concise_ch11(trainer_fn, hyperparams, data_iter, num_epochs=2):
     net.add(tf.keras.layers.Dense(1,
             kernel_initializer=tf.random_normal_initializer(stddev=0.01)))
     optimizer = trainer_fn(**hyperparams)
-    # Note: `MeanSquaredError` computes squared error without the 1/2 factor
     loss = tf.keras.losses.MeanSquaredError()
     animator = d2l.Animator(xlabel='epoch', ylabel='loss',
                             xlim=[0, num_epochs], ylim=[0.22, 0.35])
@@ -1420,7 +1420,9 @@ def train_concise_ch11(trainer_fn, hyperparams, data_iter, num_epochs=2):
                 timer.stop()
                 p = n/X.shape[0]
                 q = p/tf.data.experimental.cardinality(data_iter).numpy()
-                r = (d2l.evaluate_loss(net, data_iter, loss),)
+                # `MeanSquaredError` computes squared error without the 1/2
+                # factor
+                r = (d2l.evaluate_loss(net, data_iter, loss) / 2,)
                 animator.add(q, r)
                 timer.start()
     print(f'loss: {animator.Y[0][-1]:.3f}, {timer.avg():.3f} sec/epoch')
@@ -1471,46 +1473,7 @@ def bbox_to_rect(bbox, color):
     # upper-left y), width, height)
     return d2l.plt.Rectangle(
         xy=(bbox[0], bbox[1]), width=bbox[2]-bbox[0], height=bbox[3]-bbox[1],
-        fill=False, edgecolor=color, linewidth=2)
-
-def update_D(X, Z, net_D, net_G, loss, optimizer_D):
-    """Update discriminator.
-
-    Defined in :numref:`sec_basic_gan`"""
-    batch_size = X.shape[0]
-    ones = tf.ones((batch_size,)) # Labels corresponding to real data
-    zeros = tf.zeros((batch_size,)) # Labels corresponding to fake data
-    # Do not need to compute gradient for `net_G`, so it's outside GradientTape
-    fake_X = net_G(Z)
-    with tf.GradientTape() as tape:
-        real_Y = net_D(X)
-        fake_Y = net_D(fake_X)
-        # We multiply the loss by batch_size to match PyTorch's BCEWithLogitsLoss
-        loss_D = (loss(ones, tf.squeeze(real_Y)) + loss(
-            zeros, tf.squeeze(fake_Y))) * batch_size / 2
-    grads_D = tape.gradient(loss_D, net_D.trainable_variables)
-    optimizer_D.apply_gradients(zip(grads_D, net_D.trainable_variables))
-    return loss_D
-
-def update_G(Z, net_D, net_G, loss, optimizer_G):
-    """Update generator.
-
-    Defined in :numref:`sec_basic_gan`"""
-    batch_size = Z.shape[0]
-    ones = tf.ones((batch_size,))
-    with tf.GradientTape() as tape:
-        # We could reuse `fake_X` from `update_D` to save computation
-        fake_X = net_G(Z)
-        # Recomputing `fake_Y` is needed since `net_D` is changed
-        fake_Y = net_D(fake_X)
-        # We multiply the loss by batch_size to match PyTorch's BCEWithLogits loss
-        loss_G = loss(ones, tf.squeeze(fake_Y)) * batch_size
-    grads_G = tape.gradient(loss_G, net_G.trainable_variables)
-    optimizer_G.apply_gradients(zip(grads_G, net_G.trainable_variables))
-    return loss_G
-
-d2l.DATA_HUB['pokemon'] = (d2l.DATA_URL + 'pokemon.zip',
-                           'c065c0e2593b8b161a2d7873e42418bf6a21106c')# Alias defined in config.ini
+        fill=False, edgecolor=color, linewidth=2)# Alias defined in config.ini
 size = lambda a: tf.size(a).numpy()
 
 reshape = tf.reshape

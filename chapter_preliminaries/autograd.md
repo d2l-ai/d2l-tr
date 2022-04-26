@@ -192,7 +192,7 @@ Bazen, [**bazı hesaplamaları kaydedilen hesaplama grafiğinin dışına taşı
 
 Burada, `y` ile aynı değere sahip yeni bir `u` değişkeni döndürmek için `y`'yi ayırabiliriz, ancak bu `y`'nin hesaplama grafiğinde nasıl hesaplandığına dair tüm bilgileri yok sayar.
 Başka bir deyişle, gradyan `u`'dan `x`'e geriye doğru akmayacaktır.
-Bu nedenle, aşağıdaki geri yayılım işlevi,`z = x * x * x`'in `x`'e göre kısmi türevi hesaplamak yerine, `z = u * x`'in `x`'e göre kısmi türevini `u` sabitmiş gibi davranarak hesaplar. 
+Bu nedenle, aşağıdaki geri yayılım işlevi, `z = x * x * x`'in `x`'e göre kısmi türevi hesaplamak yerine, `z = u * x`'in `x`'e göre kısmi türevini `u` sabitmiş gibi davranarak hesaplar. 
 
 ```{.python .input}
 with autograd.record():

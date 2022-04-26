@@ -51,6 +51,7 @@ import pandas as pd
 import requests
 from IPython import display
 from matplotlib import pyplot as plt
+from matplotlib_inline import backend_inline
 
 d2l = sys.modules[__name__]
 
@@ -61,7 +62,7 @@ def use_svg_display():
     """Use the svg format to display a plot in Jupyter.
 
     Defined in :numref:`sec_calculus`"""
-    display.set_matplotlib_formats('svg')
+    backend_inline.set_matplotlib_formats('svg')
 
 def set_figsize(figsize=(3.5, 2.5)):
     """Set the figure size for matplotlib.
@@ -87,7 +88,7 @@ def set_axes(axes, xlabel, ylabel, xlim, ylim, xscale, yscale, legend):
 def plot(X, Y=None, xlabel=None, ylabel=None, legend=None, xlim=None,
          ylim=None, xscale='linear', yscale='linear',
          fmts=('-', 'm--', 'g-.', 'r:'), figsize=(3.5, 2.5), axes=None):
-    """Plot data points.
+    """Veri noktalarını çiz.
 
     Defined in :numref:`sec_calculus`"""
     if legend is None:
@@ -146,7 +147,7 @@ class Timer:
         return np.array(self.times).cumsum().tolist()
 
 def synthetic_data(w, b, num_examples):
-    """Generate y = Xw + b + noise.
+    """Veri yaratma, y = Xw + b + gurultu.
 
     Defined in :numref:`sec_linear_scratch`"""
     X = d2l.normal(0, 1, (num_examples, len(w)))
@@ -155,33 +156,33 @@ def synthetic_data(w, b, num_examples):
     return X, d2l.reshape(y, (-1, 1))
 
 def linreg(X, w, b):
-    """The linear regression model.
+    """Dogrusal regresyon modeli.
 
     Defined in :numref:`sec_linear_scratch`"""
     return d2l.matmul(X, w) + b
 
 def squared_loss(y_hat, y):
-    """Squared loss.
+    """Kare kayip.
 
     Defined in :numref:`sec_linear_scratch`"""
     return (y_hat - d2l.reshape(y, y_hat.shape)) ** 2 / 2
 
 def sgd(params, lr, batch_size):
-    """Minibatch stochastic gradient descent.
+    """Minigrup rasgele gradyan inişi.
 
     Defined in :numref:`sec_linear_scratch`"""
     for param in params:
         param[:] = param - lr * param.grad / batch_size
 
 def load_array(data_arrays, batch_size, is_train=True):
-    """Construct a Gluon data iterator.
+    """Bir Gluon veri yineleyici olusturun.
 
     Defined in :numref:`sec_linear_concise`"""
     dataset = gluon.data.ArrayDataset(*data_arrays)
     return gluon.data.DataLoader(dataset, batch_size, shuffle=is_train)
 
 def get_fashion_mnist_labels(labels):
-    """Return text labels for the Fashion-MNIST dataset.
+    """Fashion-MNIST veri kümesi için metin etiketleri döndürün.
 
     Defined in :numref:`sec_fashion_mnist`"""
     text_labels = ['t-shirt', 'trouser', 'pullover', 'dress', 'coat',
@@ -189,7 +190,7 @@ def get_fashion_mnist_labels(labels):
     return [text_labels[int(i)] for i in labels]
 
 def show_images(imgs, num_rows, num_cols, titles=None, scale=1.5):
-    """Plot a list of images.
+    """Görsellerin bir listesini çizin
 
     Defined in :numref:`sec_fashion_mnist`"""
     figsize = (num_cols * scale, num_rows * scale)
@@ -204,13 +205,13 @@ def show_images(imgs, num_rows, num_cols, titles=None, scale=1.5):
     return axes
 
 def get_dataloader_workers():
-    """Use 4 processes to read the data except for Windows.
+    """Windows dışında, verileri okumak için 4 işlem kullanın.
 
     Defined in :numref:`sec_fashion_mnist`"""
     return 0 if sys.platform.startswith('win') else 4
 
 def load_data_fashion_mnist(batch_size, resize=None):
-    """Download the Fashion-MNIST dataset and then load it into memory.
+    """Fashion-MNIST veri kümesini indirin ve ardından belleğe yükleyin.
 
     Defined in :numref:`sec_fashion_mnist`"""
     dataset = gluon.data.vision
@@ -226,7 +227,7 @@ def load_data_fashion_mnist(batch_size, resize=None):
                                   num_workers=get_dataloader_workers()))
 
 def accuracy(y_hat, y):
-    """Compute the number of correct predictions.
+    """Dogru tahminlerin sayisini hesaplayin.
 
     Defined in :numref:`sec_softmax_scratch`"""
     if len(y_hat.shape) > 1 and y_hat.shape[1] > 1:
@@ -235,16 +236,16 @@ def accuracy(y_hat, y):
     return float(d2l.reduce_sum(d2l.astype(cmp, y.dtype)))
 
 def evaluate_accuracy(net, data_iter):
-    """Compute the accuracy for a model on a dataset.
+    """Bir veri kümesindeki bir modelin doğruluğunu hesaplayın.
 
     Defined in :numref:`sec_softmax_scratch`"""
-    metric = Accumulator(2)  # No. of correct predictions, no. of predictions
+    metric = Accumulator(2)  # Dogru tahmin sayisi, tahmin sayisi
     for X, y in data_iter:
         metric.add(accuracy(net(X), y), d2l.size(y))
     return metric[0] / metric[1]
 
 class Accumulator:
-    """For accumulating sums over `n` variables."""
+    """`n` degisken uzerinden toplamlari biriktirmek için"""
     def __init__(self, n):
         """Defined in :numref:`sec_softmax_scratch`"""
         self.data = [0.0] * n
@@ -259,45 +260,45 @@ class Accumulator:
         return self.data[idx]
 
 def train_epoch_ch3(net, train_iter, loss, updater):
-    """Train a model within one epoch (defined in Chapter 3).
+    """Bir modeli bir donem icinde egitme (Bolum 3'te tanimlanmistir).
 
     Defined in :numref:`sec_softmax_scratch`"""
-    # Sum of training loss, sum of training accuracy, no. of examples
+    # Egitim kaybi toplami, egitim dogrulugu toplami, ornek sayisi
     metric = Accumulator(3)
     if isinstance(updater, gluon.Trainer):
         updater = updater.step
     for X, y in train_iter:
-        # Compute gradients and update parameters
+        # Gradyanlari hesaplayin ve parametreleri guncelleyin
         with autograd.record():
             y_hat = net(X)
             l = loss(y_hat, y)
         l.backward()
         updater(X.shape[0])
         metric.add(float(l.sum()), accuracy(y_hat, y), y.size)
-    # Return training loss and training accuracy
+    # Egitim kaybini ve dogrulugunu dondur
     return metric[0] / metric[2], metric[1] / metric[2]
 
 class Animator:
-    """For plotting data in animation."""
+    """Animasyonda veri cizdirme"""
     def __init__(self, xlabel=None, ylabel=None, legend=None, xlim=None,
                  ylim=None, xscale='linear', yscale='linear',
                  fmts=('-', 'm--', 'g-.', 'r:'), nrows=1, ncols=1,
                  figsize=(3.5, 2.5)):
         """Defined in :numref:`sec_softmax_scratch`"""
-        # Incrementally plot multiple lines
+        # Coklu cizgileri artarak cizdir
         if legend is None:
             legend = []
         d2l.use_svg_display()
         self.fig, self.axes = d2l.plt.subplots(nrows, ncols, figsize=figsize)
         if nrows * ncols == 1:
             self.axes = [self.axes, ]
-        # Use a lambda function to capture arguments
+        # Argumanlari elde tutmak icin bir lambda islevi kullan
         self.config_axes = lambda: d2l.set_axes(
             self.axes[0], xlabel, ylabel, xlim, ylim, xscale, yscale, legend)
         self.X, self.Y, self.fmts = None, None, fmts
 
     def add(self, x, y):
-        # Add multiple data points into the figure
+        # Coklu veri noktalarini sekile ekleyin
         if not hasattr(y, "__len__"):
             y = [y]
         n = len(y)
@@ -319,7 +320,7 @@ class Animator:
         display.clear_output(wait=True)
 
 def train_ch3(net, train_iter, test_iter, loss, num_epochs, updater):
-    """Train a model (defined in Chapter 3).
+    """Bir modeli egitin (Bolum 3'te tanimlanmistir).
 
     Defined in :numref:`sec_softmax_scratch`"""
     animator = Animator(xlabel='epoch', xlim=[1, num_epochs], ylim=[0.3, 0.9],
@@ -334,7 +335,7 @@ def train_ch3(net, train_iter, test_iter, loss, num_epochs, updater):
     assert test_acc <= 1 and test_acc > 0.7, test_acc
 
 def predict_ch3(net, test_iter, n=6):
-    """Predict labels (defined in Chapter 3).
+    """Etiketleri tahmin etme (Bolum 3'te tanimlanmistir).
 
     Defined in :numref:`sec_softmax_scratch`"""
     for X, y in test_iter:
@@ -349,7 +350,7 @@ def evaluate_loss(net, data_iter, loss):
     """Evaluate the loss of a model on the given dataset.
 
     Defined in :numref:`sec_model_selection`"""
-    metric = d2l.Accumulator(2)  # Sum of losses, no. of examples
+    metric = d2l.Accumulator(2)  # Kayiplarin toplami, ornek sayisi
     for X, y in data_iter:
         l = loss(net(X), y)
         metric.add(d2l.reduce_sum(l), d2l.size(l))

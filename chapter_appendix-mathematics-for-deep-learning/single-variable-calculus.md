@@ -162,7 +162,7 @@ f(x+\epsilon) & = g(x+\epsilon) + h(x+\epsilon) \\
 \end{aligned}
 $$
 
-Bu sonucu $f(x+\epsilon) \approx f(x) + \epsilon \frac{df}{dx}(x)$ gerçeğiyle karşılaştırdığımızda istenildiği gibi $\frac{df}{dx}(x) = \frac{dg}{dx}(x) + \frac{dh}{dx}(x)$ olduğunu görürüz. Buradaki sezgi şudur: $x$ girdisini değiştirdiğimizde, $g$ ve $h$ çıktının değişmesine $\frac{dg}{dx}(x)$$ ve $\frac{dh}{dx}(x)$ ile birlikte katkıda bulunur.
+Bu sonucu $f(x+\epsilon) \approx f(x) + \epsilon \frac{df}{dx}(x)$ gerçeğiyle karşılaştırdığımızda istenildiği gibi $\frac{df}{dx}(x) = \frac{dg}{dx}(x) + \frac{dh}{dx}(x)$ olduğunu görürüz. Buradaki sezgi şudur: $x$ girdisini değiştirdiğimizde, $g$ ve $h$ çıktının değişmesine $\frac{dg}{dx}(x)$ ve $\frac{dh}{dx}(x)$ ile birlikte katkıda bulunur.
 
 Çarpım daha inceliklidir ve bu ifadelerle nasıl çalışılacağı konusunda yeni bir gözlem gerektirecektir. Önceden olduğu gibi :eqref:`eq_small_change`'i kullanarak başlayacağız :
 
@@ -269,7 +269,7 @@ $$
 
 Bunun *neden* yararlı bir fikir olduğunu anlamaya çalışalım. Aşağıda, $f^{(2)}(x)$, $f^{(1)}(x)$ ve $f(x)$'i görselleştiriyoruz.
 
-İlk olarak, ikinci türevin $ f^{(2)}(x)$ pozitif bir sabit olduğu durumu düşünün. Bu, birinci türevin eğiminin pozitif olduğu anlamına gelir. Sonuç olarak, birinci türev, $f^{(1)}(x)$, negatif olarak başlayabilir, bir noktada sıfır olur ve sonra sonunda pozitif olur. Bu bize esas fonksiyonumuz $f$'nin eğimini anlatır; dolayısıyla $f$ fonksiyonunun kendisi azalır, düzleşir, sonra artar. Başka bir deyişle, $f$ işlevi yukarı doğru eğrilir ve şu şekilde gösterildiği gibi tek bir minimuma sahiptir :numref:`fig_positive-second`.
+İlk olarak, ikinci türevin $f^{(2)}(x)$ pozitif bir sabit olduğu durumu düşünün. Bu, birinci türevin eğiminin pozitif olduğu anlamına gelir. Sonuç olarak, birinci türev, $f^{(1)}(x)$, negatif olarak başlayabilir, bir noktada sıfır olur ve sonra sonunda pozitif olur. Bu bize esas fonksiyonumuz $f$'nin eğimini anlatır; dolayısıyla $f$ fonksiyonunun kendisi azalır, düzleşir, sonra artar. Başka bir deyişle, $f$ işlevi yukarı doğru eğrilir ve şu şekilde gösterildiği gibi tek bir minimuma sahiptir :numref:`fig_positive-second`.
 
 ![İkinci türevin pozitif bir sabit olduğunu varsayarsak, artmakta olan ilk türev, fonksiyonun kendisinin bir minimuma sahip olduğu anlamına gelir.](../img/posSecDer.svg)
 :label:`fig_positive-second`
@@ -347,7 +347,7 @@ f(x) \approx \frac{\frac{d^3f}{dx^3}(x_0)}{6}(x-x_0)^3 + \frac{\frac{d^2f}{dx^2}
 $$
 
 
-burada $ 6 = 3 \times 2 = 3! $, $x^3$'ün üçüncü türevini alırsak önümüze gelen sabitten gelir.
+burada $6 = 3 \times 2 = 3!$, $x^3$'ün üçüncü türevini alırsak önümüze gelen sabitten gelir.
 
 Dahası, bir $n$ dereceli polinom elde edebiliriz.
 

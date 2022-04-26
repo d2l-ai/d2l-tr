@@ -5,13 +5,21 @@ affine; afin
 
 agent; etmen
 
+analogy; benzeşim, benzetme
+
 anchor; çapa
 
 api (application programming interface); uygulama programlama arayüzü
 
 array; dizilim
 
+assembly code; birleştirici kodu
+
+asynchronous; eşzamansız
+
 autoregressive; özbağlanımlı
+
+backend; arka işlemci
 
 backprop; geriyay
 
@@ -27,17 +35,29 @@ bias; algoritmalardaki yanlılık
 
 built-in; yerleşik, gömülü
 
+burst read; çoğuşma
+
 bus; veriyolu
 
+bounding box; kuşatan kutu
+
 broadcast; yayınlama
+
+byte; bayt, sekizli
+
+cache; ön bellek
 
 checksum; sağlama toplamı
 
 co-adaptation; birlikte-uyarlama
 
+combination; katışım
+
 computer vision; bilgisayarla görme
 
 concatenation; bitiştirme
+
+condition number; (matrisin) sağlamlık sayısı
 
 confusion-matrix; hata matrisi
 
@@ -45,13 +65,19 @@ container; kapsayıcı
 
 convex; dışbükey
 
+coordinate-wise; koordinat yönlü
+
 corpus; külliyat
 
 covariate; ortak değişken
 
 crowdsourcing; kitle kaynak kullanımı
 
+dataframe; veri çerçevesi
+
 decoder; kodçözücü
+
+denoising; gürültü arındırma
 
 deployment; konuşlandırma
 
@@ -63,9 +89,11 @@ discriminator; ayrımcı
 
 distribution shift; dağılım kayması
 
+divergent; ıraksayıcı, ıraksayan
+
 domain; etki alanı
 
-downsampling; altörnekleme
+downsampling; örnek seyreltme
 
 dropout;  hattan düşme
 
@@ -74,6 +102,8 @@ early stopping; erken durdurma
 elementwise; eleman yönlü
 
 encoder; kodlayıcı
+
+entailment; gereklilik
 
 environment; ortam
 
@@ -85,13 +115,19 @@ extrapolation; dışdeğerleme
 
 feature; öznitelik
 
-floating number; kayan virgüllü sayılar (gerçel sayı gösterimi)
+firmware; bellenim
+
+flag; bayrak
+
+floating number; kayan virgüllü sayı (gerçel sayı gösterimi)
 
 frame; çerçeve
 
+front-end; önişlemci
+
 full rank; tam kerteli
 
-fully-connected; tam-bağlı
+fully-connected; tam bağlı
 
 gate; geçit
 
@@ -113,6 +149,8 @@ holdout; harici tutulan
 
 hybridization; melezleştirme
 
+imperative; buyuru
+
 imputation; itham
 
 indicator; gösterge, belirteç
@@ -125,6 +163,10 @@ internal covariate shift; dahili eşdeğişken kayması
 
 interpolation; aradeğerleme
 
+interpreter; yorumlayıcı
+
+interrupt; işkesme
+
 invariance; değişmezlik
 
 joint probability; bileşik olasılık
@@ -136,6 +178,8 @@ lasso regression; kement regresyon
 latent; saklı
 
 leaky; sızıntılı
+
+lemma; önsav
 
 likelihood; olabilirlik
 
@@ -153,6 +197,10 @@ meta; başkalaşım
 
 minibatch; minigrup
 
+multi-head; çoklu-kafa
+
+multiplexer; çoklayıcı
+
 nontrivial; apaçık olmayan
 
 objective functions; amaç fonksiyonları
@@ -167,7 +215,7 @@ overfitting; aşırı öğrenme
 
 padding; dolgu
 
-parse; ayrıştırmak
+parsing; ayrıştırma
 
 permutation; devrişim
 
@@ -185,6 +233,8 @@ posterior; sonsal olasılık
 
 postprocess; sonradan işlemek
 
+premise; öncül
+
 preprocess; ön işlemek
 
 pretraining; ön eğitim
@@ -193,9 +243,13 @@ prior; önsel olasılık
 
 receptive field; alım alanı
 
+reconstruction; geri çatma
+
 recurrent neural network; yinelemeli sinir ağı
 
 recursion; özyineleme
+
+register; yazmaç
 
 regression; bağlanım veya regresyon
 
@@ -209,6 +263,8 @@ residual networks; artık ağlar
 
 ridge regression; sırt regresyon
 
+ringbus; çember veriyolu
+
 robust; gürbüz
 
 quantization; nicemleme
@@ -221,7 +277,11 @@ scaler; sayıl, skaler
 
 script; betik
 
+self-attention; özdikkat
+
 semantic segmentation; anlamsal bölünme
+
+semidefinite; yarı-kesin
 
 sequence; dizi
 
@@ -235,13 +295,19 @@ softmax; eşiksiz en büyük işlev veya softmaks
 
 spam; yaramaz posta
 
+sparsity; seyreklik
+
 stride; uzun adım
 
 string; dizgi
 
 stochastic; rasgele
 
+sunsampling; alt örnekleme
+
 surrogate; vekil
+
+switch; anahtar
 
 symmetry; bakışım
 
@@ -249,9 +315,13 @@ tabular; çizelge halindeki
 
 tagging; etiketleme
 
+Tapestry system; Gobleb sistemi
+
 teacher forcing; öğretici zorlama
 
 tensor; gerey
+
+thread; iş parçacığı
 
 tutorial; öğreticiler
 
@@ -270,6 +340,8 @@ tuple; çokuzlu
 underflow; küçümenlik
 
 uniform; tekdüze
+
+upsampling; örnek sıklaştırma
 
 validation set; geçerleme kümesi
 

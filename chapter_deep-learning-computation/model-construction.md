@@ -13,7 +13,7 @@ Bu karmaşık ağları uygulamak için, bir sinir ağı *bloğu* kavramını sun
 :label:`fig_blocks`
 
 
-Programlama açısından, bir blok *sınıf* ile temsil edilir. Onun herhangi bir alt sınıfı, girdisini çıktıya dönüştüren ve gerekli parametreleri depolayan bir ileri yayma yöntemi tanımlamalıdır. Bazı blokların herhangi bir parametre gerektirmediğini unutmayın. Son olarak, gradyanları hesaplamak için bir blok geriye yayma yöntemine sahip olmalıdır. Neyse ki, kendi bloğumuzu tanımlarken otomatik türev almanın sağladığı bazı perde arkası sihir sayesinde (:numref:`sec_autograd`da tanıtıldı), sadece parametreler ve ileri yayma işlevi hakkında endişelenmemiz gerekir.
+Programlama açısından, bir blok *sınıf* ile temsil edilir. Onun herhangi bir alt sınıfı, girdisini çıktıya dönüştüren ve gerekli parametreleri depolayan bir ileri yayma yöntemi tanımlamalıdır. Bazı blokların herhangi bir parametre gerektirmediğini unutmayın. Son olarak, gradyanları hesaplamak için bir blok geriye yayma yöntemine sahip olmalıdır. Neyse ki, kendi bloğumuzu tanımlarken otomatik türev almanın sağladığı bazı perde arkası sihir sayesinde (:numref:`sec_autograd`'te tanıtıldı), sadece parametreler ve ileri yayma işlevi hakkında endişelenmemiz gerekir.
 
 [**Başlangıç olarak MLPleri uygulamak için kullandığımız kodları yeniden gözden geçiriyoruz**] (:numref:`sec_mlp_concise`). Aşağıdaki kod, 256 birim ve ReLU etkinleştirmesine sahip tam bağlı bir gizli katmana sahip bir ağ oluşturur ve ardından 10 birimle (etkinleştirme işlevi yok) tam bağlı çıktı katmanı gelir.
 
@@ -97,19 +97,19 @@ Aşağıdaki kod parçacığında, 256 gizli birime sahip bir gizli katman ve 10
 
 ```{.python .input}
 class MLP(nn.Block):
-    # Declare a layer with model parameters. Here, we declare two
-    # fully-connected layers
+    # Model parametreleriyle bir katman ilan edin. 
+    # Burada, tam bağlı iki katman ilan ediyoruz.
     def __init__(self, **kwargs):
-        # Call the constructor of the `MLP` parent class `Block` to perform
-        # the necessary initialization. In this way, other function arguments
-        # can also be specified during class instantiation, such as the model
-        # parameters, `params` (to be described later)
+        # Gerekli ilklemeyi gerçekleştirmek için `MLP` üst sınıfının `Block` 
+        # kurucusunu çağırın. Bu şekilde, sınıf örneği yaratma sırasında model
+        # parametreleri, `params` (daha sonra açıklanacak) gibi diğer fonksiyon 
+        # argümanları da belirtilebilir.
         super().__init__(**kwargs)
-        self.hidden = nn.Dense(256, activation='relu')  # Hidden layer
-        self.out = nn.Dense(10)  # Output layer
+        self.hidden = nn.Dense(256, activation='relu')  # Gizli katman
+        self.out = nn.Dense(10)  # Çıktı katmanı
 
-    # Define the forward propagation of the model, that is, how to return the
-    # required model output based on the input `X`
+    # Modelin ileri yaymasını tanımla, yani `X` girdisine dayalı 
+    # olarak gerekli model çıktısının nasıl döndürüleceğini tanımla.
     def forward(self, X):
         return self.out(self.hidden(X))
 ```
@@ -117,42 +117,40 @@ class MLP(nn.Block):
 ```{.python .input}
 #@tab pytorch
 class MLP(nn.Module):
-    # Declare a layer with model parameters. Here, we declare two fully
-    # connected layers
+    # Model parametreleriyle bir katman tanımlayın. 
+    # Burada tam bağlı iki katman tanımlıyoruz.
     def __init__(self):
-        # Call the constructor of the `MLP` parent class `Module` to perform
-        # the necessary initialization. In this way, other function arguments
-        # can also be specified during class instantiation, such as the model
-        # parameters, `params` (to be described later)
+        # Gerekli ilklemeyi gerçekleştirmek için `MLP` üst sınıfının `Module` 
+        # kurucusunu çağırın. Bu şekilde, sınıf örneği yaratma sırasında model parametreleri, 
+        # `params` (daha sonra açıklanacak) gibi diğer fonksiyon argümanları da belirtilebilir.
         super().__init__()
-        self.hidden = nn.Linear(20, 256)  # Hidden layer
-        self.out = nn.Linear(256, 10)  # Output layer
+        self.hidden = nn.Linear(20, 256)  # Gizli katman
+        self.out = nn.Linear(256, 10)  # Çıktı katmanı
 
-    # Define the forward propagation of the model, that is, how to return the
-    # required model output based on the input `X`
+    # Modelin ileri yaymasını tanımla, yani `X` girdisine dayalı 
+    # olarak gerekli model çıktısının nasıl döndürüleceğini tanımla.
     def forward(self, X):
-        # Note here we use the funtional version of ReLU defined in the
-        # nn.functional module.
+        # Burada, nn.function modülünde tanımlanan ReLU'nun fonksiyonel 
+        # versiyonunu kullandığımıza dikkat edin.
         return self.out(F.relu(self.hidden(X)))
 ```
 
 ```{.python .input}
 #@tab tensorflow
 class MLP(tf.keras.Model):
-    # Declare a layer with model parameters. Here, we declare two fully
-    # connected layers
+    # Model parametreleriyle bir katman tanımlayın. 
+    # Burada tam bağlı iki katman tanımlıyoruz.
     def __init__(self):
-        # Call the constructor of the `MLP` parent class `Model` to perform
-        # the necessary initialization. In this way, other function arguments
-        # can also be specified during class instantiation, such as the model
-        # parameters, `params` (to be described later)
+        # Gerekli ilklemeyi gerçekleştirmek için `MLP` üst sınıfının `Model` 
+        # kurucusunu çağırın. Bu şekilde, sınıf örneği yaratma sırasında model parametreleri, 
+        # `params` (daha sonra açıklanacak) gibi diğer fonksiyon argümanları da belirtilebilir.
         super().__init__()
-        # Hidden layer
+        # Gizli katman
         self.hidden = tf.keras.layers.Dense(units=256, activation=tf.nn.relu)
-        self.out = tf.keras.layers.Dense(units=10)  # Output layer
+        self.out = tf.keras.layers.Dense(units=10)  # Çıktı katmanı
 
-    # Define the forward propagation of the model, that is, how to return the
-    # required model output based on the input `X`
+    # Modelin ileri yaymasını tanımla, yani `X` girdisine dayalı 
+    # olarak gerekli model çıktısının nasıl döndürüleceğini tanımla.
     def call(self, X):
         return self.out(self.hidden((X)))
 ```

@@ -1,7 +1,7 @@
 # Çok Katmanlı Algılayıcıların Sıfırdan Uygulanması
 :label:`sec_mlp_scratch`
 
-Artık çok katmanlı algılayıcıları (MLP'ler) matematiksel olarak nitelendirdiğimize göre, birini kendimiz uygulamaya çalışalım.Softmax regresyonu (:numref:`sec_softmax_scratch`) ile elde ettiğimiz önceki sonuçlarla karşılaştırmak için Fashion-MNIST imge sınıflandırma veri kümesi (:numref:`sec_fashion_mnist`) ile çalışmaya devam edeceğiz.
+Artık çok katmanlı algılayıcıları (MLP'ler) matematiksel olarak nitelendirdiğimize göre, birini kendimiz uygulamaya çalışalım. Softmax regresyonu (:numref:`sec_softmax_scratch`) ile elde ettiğimiz önceki sonuçlarla karşılaştırmak için Fashion-MNIST imge sınıflandırma veri kümesi (:numref:`sec_fashion_mnist`) ile çalışmaya devam edeceğiz.
 
 ```{.python .input}
 from d2l import mxnet as d2l
@@ -30,7 +30,7 @@ train_iter, test_iter = d2l.load_data_fashion_mnist(batch_size)
 
 ## Model Parametrelerini İlkleme
 
-Fashion-MNIST'in 10 sınıf içerdiğini ve her görüntünün $28 \times 28 = 784$ gri tonlamalı piksel değerleri ızgarasından oluştuğunu hatırlayın. Yine şimdilik pikseller arasındaki uzamsal yapıyı göz ardı edeceğiz, bu nedenle bunu 784 girdi özniteliği ve 10 sınıf içeren basit bir sınıflandırma veri kümesi olarak düşünebiliriz. Başlarken, [**bir gizli katman ve 256 gizli birim içeren bir MLP uygulayacağız.**] Bu miktarların ikisini de hiperparametreler olarak kabul edebileceğimizi unutmayın. Tipik olarak, belleğin donanımda öyle tahsis edildiğinden ve adreslendiğinden hesaplama açısından verimli olma eğiliminde olan 2'nin katlarında katman genişliklerini seçiyoruz.
+Fashion-MNIST'in 10 sınıf içerdiğini ve her görüntünün $28 \times 28 = 784$ gri tonlamalı piksel değerleri ızgarasından oluştuğunu hatırlayın. Yine şimdilik pikseller arasındaki uzamsal yapıyı göz ardı edeceğiz, bu nedenle bunu 784 girdi özniteliği ve 10 sınıf içeren basit bir sınıflandırma veri kümesi olarak düşünebiliriz. Başlarken, [**bir gizli katman ve 256 gizli birim içeren bir MLP uygulayacağız.**] Bu miktarların ikisini de hiper parametreler olarak kabul edebileceğimizi unutmayın. Tipik olarak, belleğin donanımda öyle tahsis edildiğinden ve adreslendiğinden hesaplama açısından verimli olma eğiliminde olan 2'nin katlarında katman genişliklerini seçiyoruz.
 
 Yine, parametrelerimizi birkaç tensörle temsil edeceğiz. *Her katman* için, bir ağırlık matrisi ve bir ek girdi vektörünü izlememiz gerektiğini unutmayın. Her zaman olduğu gibi, bu parametrelere göre kaybın gradyanları için bellek ayırıyoruz.
 
@@ -126,7 +126,7 @@ def net(X):
 
 ## Kayıp İşlevi
 
-Sayısal kararlılığı sağlamak için ve softmaks işlevini zaten sıfırdan uygularken (:numref:`sec_softmax_scratch`), softmaks ve çapraz entropi kaybını hesaplamak için yüksek seviyeli API'lerden birleşik işlevi kullanıyoruz. Bu karmaşıklıkla ilgili önceki tartışmamızı hatırlayın :numref:`subsec_softmax-implement-revisited`. İlgili okuru, uygulama ayrıntıları hakkındaki bilgilerini derinleştirmek için kayıp işlevi kaynak kodunu incelemeye teşvik ediyoruz.
+Sayısal kararlılığı sağlamak için ve softmaks işlevini zaten sıfırdan uygularken (:numref:`sec_softmax_scratch`), softmaks ve çapraz entropi kaybını hesaplamak için yüksek seviyeli API'lerden birleşik işlevi kullanıyoruz. Bu karmaşıklıkla ilgili önceki tartışmamızı hatırlayın :numref:`subsec_softmax-implementation-revisited`. İlgili okuru, uygulama ayrıntıları hakkındaki bilgilerini derinleştirmek için kayıp işlevi kaynak kodunu incelemeye teşvik ediyoruz.
 
 ```{.python .input}
 loss = gluon.loss.SoftmaxCrossEntropyLoss()
@@ -146,7 +146,7 @@ def loss(y_hat, y):
 
 ## Eğitim
 
-Neyse ki, [**MLP'ler için eğitim döngüsü softmax bağlanımıyla tamamen aynıdır.**] Tekrar `d2l` paketini kullanarak, `train_ch3` fonksiyonunu çağırıyoruz (bakınız :numref:`sec_softmax_scratch`), dönem sayısını 10 ve öğrenme oranını 0.1 olarak ayarlıyoruz.
+Neyse ki, [**MLP'ler için eğitim döngüsü softmax bağlanımıyla tamamen aynıdır.**] Tekrar `d2l` paketini kullanarak, `train_ch3` fonksiyonunu çağırıyoruz (bkz. :numref:`sec_softmax_scratch`), dönem sayısını 10 ve öğrenme oranını 0.1 olarak ayarlıyoruz.
 
 ```{.python .input}
 num_epochs, lr = 10, 0.1
@@ -178,16 +178,16 @@ d2l.predict_ch3(net, test_iter)
 ## Özet
 
 * Manuel olarak yapıldığında bile basit bir MLP uygulamanın kolay olduğunu gördük.
-* Bununla birlikte, çok sayıda katmanla, MLP'leri sıfırdan uygulamak yine de karmaşık olabilir (örneğin, modelimizin parametrelerini adlandırmak ve takip etmek)
+* Bununla birlikte, çok sayıda katmanla, MLP'leri sıfırdan uygulamak yine de karmaşık olabilir (örneğin, modelimizin parametrelerini adlandırmak ve takip etmek).
 
 ## Alıştırmalar
 
-1. Hiperparametre `num_hiddens` değerini değiştirin ve bu hiper parametrenin sonuçlarınızı nasıl etkilediğini görün. Diğerlerini sabit tutarak bu hiperparametrenin en iyi değerini belirleyiniz.
+1. Hiper parametre `num_hiddens` değerini değiştirin ve bu hiper parametrenin sonuçlarınızı nasıl etkilediğini görün. Diğerlerini sabit tutarak bu hiper parametrenin en iyi değerini belirleyiniz.
 1. Sonuçları nasıl etkilediğini görmek için ek bir gizli katman eklemeyi deneyiniz.
-1. Öğrenme oranını değiştirmek sonuçlarınızı nasıl değiştirir? Model mimarisini ve diğer hiperparametreleri (dönem sayısı dahil) sabitlersek, hangi öğrenme oranı size en iyi sonuçları verir?
-1. Tüm hiperparametreleri (öğrenme oranı, dönem sayısı, gizli katman sayısı, katman başına gizli birim sayısı) birlikte optimize ederek elde edebileceğiniz en iyi sonuç nedir?
-1. Birden fazla hiperparametre ile uğraşmanın neden çok daha zor olduğunu açıklayınız.
-1. Birden fazla hiperparametre üzerinde bir arama yapılandırmak için düşünebileceğiniz en akıllı strateji nedir?
+1. Öğrenme oranını değiştirmek sonuçlarınızı nasıl değiştirir? Model mimarisini ve diğer hiper parametreleri (dönem sayısı dahil) sabitlersek, hangi öğrenme oranı size en iyi sonuçları verir?
+1. Tüm hiper parametreleri (öğrenme oranı, dönem sayısı, gizli katman sayısı, katman başına gizli birim sayısı) birlikte optimize ederek elde edebileceğiniz en iyi sonuç nedir?
+1. Birden fazla hiper parametre ile uğraşmanın neden çok daha zor olduğunu açıklayınız.
+1. Birden fazla hiper parametre üzerinde bir arama yapılandırmak için düşünebileceğiniz en akıllı strateji nedir?
 
 :begin_tab:`mxnet`
 [Tartışmalar](https://discuss.d2l.ai/t/92)

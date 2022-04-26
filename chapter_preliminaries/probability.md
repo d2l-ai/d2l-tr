@@ -194,7 +194,7 @@ Bu aksiyom sistemi sayesinde, rastlantısallıkla ilgili herhangi bir felsefi ta
 ### Rastgele Değişkenler
 
 Bir zar atma rastgele deneyimizde, *rastgele değişken* kavramını tanıttık. Rastgele bir değişken hemen hemen herhangi bir miktar olabilir ve deterministik değildir. Değişken rastgele bir deneyde bir dizi olasılık arasından bir değer alabilir.
-Değeri bir zar atmanın $\mathcal{S} = \{1, 2, 3, 4, 5, 6\}$ örnek uzayında olan $X$ rastgele değişkenini düşünün. "Bir $5$ görme" olayını $\{X = 5\}$ veya $X = 5$ ve olasılığını $P(\{X = 5\}) $ veya $P(X = 5)$ diye belirtiriz.
+Değeri bir zar atmanın $\mathcal{S} = \{1, 2, 3, 4, 5, 6\}$ örnek uzayında olan $X$ rastgele değişkenini düşünün. "Bir $5$ görme" olayını $\{X = 5\}$ veya $X = 5$ ve olasılığını $P(\{X = 5\})$ veya $P(X = 5)$ diye belirtiriz.
 $P(X = a)$ ile, $X$ rastgele değişkeni ile $X$'ın alabileceği değerler (örneğin, $a$) arasında bir ayrım yaparız.
 Bununla birlikte, bu tür bilgiçlik, hantal bir gösterimle sonuçlanır.
 Kısa bir gösterim için, bir yandan, $P(X)$'ı, $X$ rasgele değişkeni üzerindeki *dağılım* olarak gösterebiliriz: Dağılım bize $X$'ın herhangi bir değeri alma olasılığını söyler.
@@ -202,7 +202,7 @@ Kısa bir gösterim için, bir yandan, $P(X)$'ı, $X$ rasgele değişkeni üzeri
 Olasılık teorisindeki bir olay, örnek uzaydan bir küme sonuç olduğu için, rastgele bir değişkenin alması için bir dizi değer belirleyebiliriz.
 Örneğin, $P(1 \leq X \leq 3)$, $\{1 \leq X \leq 3\}$ olayının olasılığını belirtir, yani $\{X = 1, 2, \text{veya}, 3\}$ anlamına gelir. Aynı şekilde, $P(1 \leq X \leq 3)$, $X$ rasgele değişkeninin $\{1, 2, 3\}$'ten bir değer alabilme olasılığını temsil eder.
 
-Bir zarın yüzleri gibi *kesikli* rastgele değişkenler ile bir kişinin ağırlığı ve boyu gibi *sürekli* olanlar arasında ince bir fark olduğunu unutmayın. İki kişinin tam olarak aynı boyda olup olmadığını sormanın pek bir anlamı yok. Yeterince hassas ölçümler alırsak, gezegendeki hiçbir insanın aynı boyda olmadığını göreceksiniz. Aslında, yeterince ince bir ölçüm yaparsak, uyandığınızda ve uyuduğunuzda da boyunuz aynı olmayacaktır. Dolayısıyla, birinin 1,80139278291028719210196740527486202 metre boyunda olma olasılığını sormanın hiçbir amacı yoktur. Dünya insan nüfusu göz önüne alındığında, olasılık neredeyse 0'dır. Bu durumda, birinin boyunun belirli bir aralıkta, örneğin 1,79 ile 1,81 metre arasında olup olmadığını sormak daha mantıklıdır. Bu durumlarda, bir değeri *yoğunluk* olarak görme olasılığımızı ölçüyoruz. Tam olarak 1.80 metrelik boyun olasılığı yoktur, ancak yoğunluğu sıfır değildir. Herhangi iki farklı boy arasındaki aralıkta sıfır olmayan bir olasılığa sahibiz.
+Bir zarın yüzleri gibi *kesikli* rastgele değişkenler ile bir kişinin ağırlığı ve boyu gibi *sürekli* olanlar arasında ince bir fark olduğunu unutmayın. İki kişinin tam olarak aynı boyda olup olmadığını sormanın pek bir anlamı yok. Yeterince hassas ölçümler alırsak, gezegendeki hiçbir insanın aynı boyda olmadığını göreceksiniz. Aslında, yeterince ince bir ölçüm yaparsak, uyandığınızda ve uyuduğunuzda da boyunuz aynı olmayacaktır. Dolayısıyla, birinin 1,80139278291028719210196740527486202 metre boyunda olma olasılığını sormanın hiçbir amacı yoktur. Dünya insan nüfusu göz önüne alındığında, olasılık neredeyse 0'dır. Bu durumda, birinin boyunun belirli bir aralıkta, örneğin 1,79 ile 1,81 metre arasında olup olmadığını sormak daha mantıklıdır. Bu durumlarda, bir değeri *yoğunluk* olarak görme olasılığımızı ölçüyoruz. Tam olarak 1,80 metrelik boyun olasılığı yoktur, ancak yoğunluğu sıfır değildir. Herhangi iki farklı boy arasındaki aralıkta sıfır olmayan bir olasılığa sahibiz.
 Bu bölümün geri kalanında, olasılığı ayrık uzayda ele alıyoruz.
 Sürekli rastgele değişkenler üzerindeki olasılık için, şuraya başvurabilirsiniz :numref:`sec_random_variables`.
 
@@ -246,7 +246,7 @@ bu aynı zamanda *toplam kuralı* olarak da bilinir. Tümleştirmenin bir sonucu
 
 ### Bağımsızlık
 
-Kontrol edilmesi gereken diğer bir yararlı özellik, *bağımlılık* ve *bağımsızlık*'tır.
+Kontrol edilmesi gereken diğer bir yararlı özellik, *bağımlılık* ve *bağımsızlık*tır.
 İki rastgele değişken olan $A$ ve $B$'nin birbirinden bağımsızlığı, $A$ olayının ortaya çıkmasının, $B$ olayının oluşumu hakkında herhangi bir bilgi vermediği anlamına gelir.
 Bu durumda $P(B \mid A) = P(B)$'dir. İstatistikçiler bunu genellikle $A \perp B$ olarak ifade ederler. Bayes teoreminden, bunu aynı zamanda $P(A \mid B) = P(A)$ olduğunu da izler.
 Diğer tüm durumlarda $A$ ve $B$'ye bağımlı diyoruz. Örneğin, bir zarın iki ardışık atışı bağımsızdır. Aksine, bir ışık anahtarının konumu ve odadaki parlaklık değildir (her zaman kırılmış bir ampulümüz, elektrik kesintisi veya kırık bir anahtarımız olabileceğinden, tam olarak gerekirci (deterministik) değildirler).

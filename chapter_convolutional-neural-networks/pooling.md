@@ -7,11 +7,11 @@ Genellikle esas görevimiz bize imge hakkında küresel bir soru sormaktadır, �
 
 Dahası, kenarlar gibi (:numref:`sec_conv_layer`'te tartışıldığına benzer) alt seviye öznitelikleri tespit ederken, genellikle temsillerimizin yer değiştirmelerden etkilenmez olmasını isteriz. Örneğin, siyah beyaz arasında keskin gösterimli bir `X` imgesini alıp tüm imgeyi bir pikselle sağa kaydırırsak, yani `Z[i, j] = X[i, j + 1]`, yeni imgenin çıktısı çok farklı olabilir. Kenar bir piksel ile kaydırılmış olacaktır. Gerçekte, nesneler neredeyse hiç bir zaman aynı yerde olmaz. Aslında, bir tripod ve sabit bir nesneyle bile, deklanşörün hareketi nedeniyle kameranın titreşimi her şeyi bir piksel kaydırabilir (üst düzey kameralar bu sorunu gidermek için özel özelliklerle donatılmıştır).
 
-Bu bölümde, evrişimli katmanların konuma duyarlılığını azaltmak ve gösterimleri uzaysal altörneklemek gibi ikili amaçlara hizmet eden *ortaklama katmanları* tanıtılmaktadır.
+Bu bölümde, evrişimli katmanların konuma duyarlılığını azaltmak ve gösterimleri uzaysal örnek seyreltmek gibi ikili amaçlara hizmet eden *ortaklama katmanları* tanıtılmaktadır.
 
 ## Maksimum Ortaklama ve Ortalama Ortaklama
 
-*Ortaklama* işlemcileri, evrişimli katmanlar gibi, sabit şekilli pencerenin (bazen *ortaklama penceresi* olarak da bilinir) geçtiği her konum için tek bir çıktı hesaplayarak, uzun adımına göre girdideki tüm bölgelere kaydırılan sabit şekilli bir pencereden oluşur. Bununla birlikte, evrişimli katmandaki girdi ve çekirdeklerin çapraz korelasyon hesaplamasının aksine, ortaklama katmanı hiçbir parametre içermez (*çekirdek* yoktur). Bunun yerine, ortaklama uygulayıcıları belirleyicidir (determinist) ve genellikle ortaklama penceresindeki öğelerin maksimum veya ortalama değerini hesaplar. Bu işlemler sırasıyla *maksimum ortaklama* (*kısaca ortaklama*) ve *ortalama ortaklama* olarak adlandırılır.
+*Ortaklama* işlemcileri, evrişimli katmanlar gibi, sabit şekilli pencerenin (bazen *ortaklama penceresi* olarak da bilinir) geçtiği her konum için tek bir çıktı hesaplayarak, uzun adımına göre girdideki tüm bölgelere kaydırılan sabit şekilli bir pencereden oluşur. Bununla birlikte, evrişimli katmandaki girdi ve çekirdeklerin çapraz korelasyon hesaplamasının aksine, ortaklama katmanı hiçbir parametre içermez (*çekirdek* yoktur). Bunun yerine, ortaklama uygulayıcıları gerekircidir (determinist) ve genellikle ortaklama penceresindeki öğelerin maksimum veya ortalama değerini hesaplar. Bu işlemler sırasıyla *maksimum ortaklama* (*kısaca ortaklama*) ve *ortalama ortaklama* olarak adlandırılır.
 
 Her iki durumda da, çapraz korelasyon uygulayıcısında olduğu gibi, ortaklama penceresinin girdi tensörünün sol üstünden başlayarak girdi tensörünün soldan sağa ve yukarıdan aşağıya doğru kayması olarak düşünebiliriz. Ortaklama penceresinin vurduğu her konumda, maksimum veya ortalama ortaklamanın kullanılmasına bağlı olarak, pencerede girdi alt tensörünün maksimum veya ortalama değerini hesaplar.
 
@@ -115,8 +115,8 @@ Varsayılan olarak, (**çerçevenin yerleşik sınıfındaki örnekteki uzun ad�
 
 ```{.python .input}
 pool2d = nn.MaxPool2D(3)
-# Because there are no model parameters in the pooling layer, we do not need
-# to call the parameter initialization function
+# Ortaklama katmanında model parametresi olmadığı için parametre 
+# ilkleme fonksiyonunu çağırmamız gerekmez
 pool2d(X)
 ```
 

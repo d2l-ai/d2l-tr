@@ -4,9 +4,9 @@
 
 # D2L.ai: Çoklu-Çerçeveli Kod, Matematik ve Tartışmalar İçeren Etkileşimli Derin Öğrenmeye Dalış Kitabı
 
-[![İnşa Durumu](http://ci.d2l.ai/job/d2l-tr/job/master/badge/icon)](http://ci.d2l.ai/job/d2l-tr/job/master/) | Güncel sürüm: v0.17.1
+[![İnşa Durumu](http://ci.d2l.ai/job/d2l-tr/job/master/badge/icon)](http://ci.d2l.ai/job/d2l-tr/job/master/) | Güncel sürüm: v0.17.5
 
-[Kitap web sitesi](https://d2l.ai/) | [STAT 157 Dersi UC Berkeley, Bahar 2019](http://courses.d2l.ai/berkeley-stat-157/index.html) | [Çeviri Rehberi](https://docs.google.com/document/d/1jjDTVH_GsHImBb_RoE1siKXdmXN8I1Bd5QN--eSG8is)
+[Kitap web sitesi](https://tr.d2l.ai/) | [STAT 157 Dersi UC Berkeley, Bahar 2019](http://courses.d2l.ai/berkeley-stat-157/index.html) | [Çeviri Rehberi](https://docs.google.com/document/d/1jjDTVH_GsHImBb_RoE1siKXdmXN8I1Bd5QN--eSG8is)
 
 <h5 align="center"><i>Derin öğrenmeyi anlamanın en iyi yolu yaparak öğrenmektir.</i></h5>
 
@@ -21,7 +21,7 @@ Bu açık kaynak kitabın hedefi, kavramları, kodu ve ortamı öğreterek derin
 
 Hedeflerimiz:
 1. Herkesin serbestçe kullanabildiği
-1. Uygulamalı makine öğrenimi bilimcisi olma yolunda bir başlangıç noktası sağlamak için yeterli teknik derinlik sunan
+1. Uygulamalı makine öğrenmesi bilimcisi olma yolunda bir başlangıç noktası sağlamak için yeterli teknik derinlik sunan
 1. Okuyuculara pratikte problemlerin nasıl çözüleceğini gösteren çalıştırılabilir kod içeren
 1. Hem bizim hem de genel olarak topluluk tarafından yapılacak hızlı güncellemelere izin veren
 1. Teknik detayların etkileşimli tartışılması ve soruların cevaplanması için bir forum ile tamamlanan
@@ -44,7 +44,7 @@ bir kaynak sunmaktır.
 
 1. [**Detecting Human Driver Inattentive and Aggressive Driving Behavior Using Deep Learning: Recent Advances, Requirements and Open Challenges**](https://ieeexplore.ieee.org/stamp/stamp.jsp?arnumber=9107077). M. Alkinani, W. Khan, Q. Arshad. *IEEE Access, 2020*
 
-<details> <summary> daha fazlası </summary>
+<details><summary> daha fazlası </summary>
 
 1. [**Diagnosing Parkinson by Using Deep Autoencoder Neural Network**](https://link.springer.com/chapter/10.1007/978-981-15-6325-6_5). U. Kose, O. Deperlioglu, J. Alzubi, B. Patrut. *Deep Learning for Medical Decision Support Systems, 2020*
 
@@ -77,7 +77,7 @@ Bu kitabı yararlı buluyorsanız, lütfen bu depoya yıldız ekleyin (★) veya
 > <p>"Bu, zamana uygun derin öğrenme ilkelerine sadece kapsamlı bir genel bakış sunmakla kalmayıp aynı zamanda uygulamalı programlama koduna sahip ayrıntılı algoritmalar içeren ve dahası, bilgisayarlı görmedeki ve doğal dil işlemedeki derin öğrenmeye son teknoloji ürünü bir giriş sağlayan büyüleyici bir kitaptır. Derin öğrenmeye dalmak istiyorsanız bu kitaba dalın!"</p>
 > <b>&mdash; Jiawei Han, Michael Aiken Chair Professor, University of Illinois at Urbana-Champaign</b>
 
-> <p>"Jupyter not defterleri ile tümleşik uygulamalı deneyime odaklanan, makine öğrenimi literatürüne son derece hoş bir eklemedir. Derin öğrenme öğrencileri bu alanda yetkin olmak için bu kitabı çok değerli bulmalıdır."</p>
+> <p>"Jupyter not defterleri ile tümleşik uygulamalı deneyime odaklanan, makine öğrenmesi literatürüne son derece hoş bir eklemedir. Derin öğrenme öğrencileri bu alanda yetkin olmak için bu kitabı çok değerli bulmalıdır."</p>
 > <b>&mdash; Bernhard Schölkopf, Director, Max Planck Institute for Intelligent Systems</b>
 
 
@@ -85,7 +85,7 @@ Bu kitabı yararlı buluyorsanız, lütfen bu depoya yıldız ekleyin (★) veya
 
 Bu açık kaynak kitap pedagojik önerilerden, yazım hatası düzeltmelerinden ve topluluk katılımcılarından gelen diğer iyileştirmelerden faydalanmıştır. Yardımınız kitabı herkes için daha iyi hale getirmede değerlidir.
 
-**Sayın [D2L'ye katkıda bulunanlar](https://github.com/d2l-ai/d2l-tr/graphs/contributors), lütfen GitHub kimliğinizi ve adınızı d2lbook.en AT gmail NOKTA com adresine e-posta ile gönderiniz ki adınız [teşekkürler](https://d2l.ai/chapter_preface/index.html#Acknowledgments) bölümünde çıksın. Teşekkürler.**
+**Sayın [D2L'ye katkıda bulunanlar](https://github.com/d2l-ai/d2l-tr/graphs/contributors), lütfen GitHub kimliğinizi ve adınızı d2lbook.en AT gmail NOKTA com adresine e-posta ile gönderiniz ki adınız [teşekkürler](https://tr.d2l.ai/chapter_preface/index.html#Acknowledgments) bölümünde çıksın. Teşekkürler.**
 
 
 
