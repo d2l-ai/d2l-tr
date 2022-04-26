@@ -337,7 +337,7 @@ print('b tahmin hatasi', true_b - b)
 :end_tab:
 
 :begin_tab:`pytorch`
-1. Eğer `nn.MSELoss(reduction='sum')`ı `nn.MSELoss()` ile değiştirirsek, kodun aynı şekilde davranması için öğrenme oranını nasıl değiştirebiliriz? Neden?
+1. Eğer `nn.MSELoss()`ı `nn.MSELoss(reduction='sum')` ile değiştirirsek, kodun aynı şekilde davranması için öğrenme oranını nasıl değiştirebiliriz? Neden?
 1. Hangi kayıp işlevlerinin ve ilkleme yöntemlerinin sağlandığını görmek için PyTorch belgelerini inceleyin. Kaybı Huber kaybıyla yer değiştirin.
 1. `net[0].weight`'in gradyanına nasıl erişirsiniz?
 
