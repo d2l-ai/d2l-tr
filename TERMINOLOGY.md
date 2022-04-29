@@ -303,7 +303,7 @@ string; dizgi
 
 stochastic; rasgele
 
-sunsampling; alt örnekleme
+subsampling; alt örnekleme
 
 surrogate; vekil
 
