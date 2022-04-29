@@ -15,7 +15,7 @@ Miniconda'nın web sitesini ziyaret edin ve Python 3.x sürümünüze ve makine 
 sh Miniconda3-latest-MacOSX-x86_64.sh -b
 ```
 
-Python 3.x'e sahip bir Linux kullanıcısı, adı "Miniconda3" ve "Linux" dizelerini içeren dosyayı indirmeli ve indirme konumunda aşağıdaki yazılıları yürütmeli:
+Python 3.x'e sahip bir Linux kullanıcısı, adı "Miniconda3" ve "Linux" dizelerini içeren dosyayı indirmeli ve indirme konumunda aşağıda yazılanları yürütmeli:
 
 ```bash
 sh Miniconda3-latest-Linux-x86_64.sh -b
@@ -38,7 +38,7 @@ conda create --name d2l python=3.8 -y
 ## D2L Not Defterlerini İndirme
 
 Sonra, bu kitapta kullanılan kodu indirmeniz gerekiyor. Kodu indirmek ve açmak için
-herhangi bir HTML sayfasının üst kısmındaki "Tüm Not Defterleri" sekmesine
+herhangi bir HTML sayfasının üst kısmındaki "Not Defterleri" sekmesine
 tıklayabilirsiniz. Alternatif olarak, "unzip" varsa kullanabilirsiniz
 (yoksa "sudo apt install unzip" yazarak kurabilirsiniz):
 

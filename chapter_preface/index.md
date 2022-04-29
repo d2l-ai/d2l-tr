@@ -187,7 +187,7 @@ yuntai, Yuanxiang Zhu, amarazov, pasricha, Ben Greenawald, Shivam Upadhyay, Quan
 Parthe Pandit, Ishan Kumar, HomunculusK, Lane Schwartz, varadgunjal, Jason Wiener, Armin Gholampoor,
 Shreshtha13, eigen-arnav, Hyeonggyu Kim, EmilyOng, Bálint Mucsányi, Chase DuBois.
 
-Türkçe çevirisindeki katkılarından dolayı Murat Semerci ve Barış Yaşin'e teşekkür ediyoruz.
+Türkçe çevirisindeki katkılarından dolayı Murat Semerci, Barış Yaşin ve Emre Kaya'ya teşekkür ediyoruz.
 
 Amazon Web Services'e, özellikle Swami Sivasubramanian, Peter DeSantis, Adam Selipsky ve Andrew Jassy'ye bu kitabı yazma konusundaki cömert desteklerinden dolayı teşekkür ediyoruz. Yeterli zaman, kaynaklar, meslektaşlarla tartışmalar ve sürekli teşvik olmasaydı bu kitap olmazdı.
 
