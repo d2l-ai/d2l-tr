@@ -415,9 +415,9 @@ Bunun nedeni, Python'un önce `Y + X` değerini hesaplayarak sonuç için yeni b
 
 ```{.python .input}
 #@tab all
-önceki = id(Y)
+onceki = id(Y)
 Y = Y + X
-id(Y) == önceki
+id(Y) == onceki
 ```
 
 Bu iki nedenden dolayı istenmez olabilir.
@@ -474,9 +474,9 @@ Ancak TensorFlow, hesaplamayı çalıştırmadan önce derlenen ve optimize edil
 
 ```{.python .input}
 #@tab mxnet, pytorch
-önceki = id(X)
+onceki = id(X)
 X += Y
-id(X) == önceki
+id(X) == onceki
 ```
 
 ```{.python .input}
