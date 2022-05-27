@@ -83,7 +83,7 @@ deployment; konuşlandırma
 
 descent; iniş
 
-deterministic; gerekirci
+deterministic; gerekirci, belirlenimci
 
 discriminator; ayrımcı
 
