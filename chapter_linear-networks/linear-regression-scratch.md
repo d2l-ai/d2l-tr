@@ -271,7 +271,7 @@ for epoch in range(num_epochs):
         # Parametreleri gradyanlarına göre güncelle
         sgd([w, b], [dw, db], lr, batch_size)
     train_l = loss(net(features, w, b), labels)
-    print(f'epoch {epoch + 1}, loss {float(tf.reduce_mean(train_l)):f}')
+    print(f'donem {epoch + 1}, kayip {float(tf.reduce_mean(train_l)):f}')
 ```
 
 Bu durumda, veri kümemizi kendimiz sentezlediğimiz için, gerçek parametrelerin ne olduğunu tam olarak biliyoruz. Böylece [**eğitimdeki başarımızı, gerçek parametreleri eğitim döngümüz aracılığıyla öğrendiklerimizle karşılaştırarak**] değerlendirebiliriz. Gerçekten de birbirlerine çok yakın oldukları ortaya çıkıyor.

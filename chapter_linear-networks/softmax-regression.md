@@ -1,33 +1,33 @@
 # Eşiksiz En Büyük İşlev Bağlanımı  (Softmaks Regresyon)
 :label:`sec_softmax`
 
-:numref:`sec_linear_regression`'de, doğrusal bağlanımı tanıttık, :numref:`sec_linear_scratch`'da sıfırdan uygulamalar üzerinde çalıştık ve ağır işi yapmak için :numref:`sec_linear_concise`'te derin öğrenme çerçevesinin yüksek seviyeli API'lerini tekrar kullandık.
+:numref:`sec_linear_regression` içinde, doğrusal bağlanımı tanıttık, :numref:`sec_linear_scratch` içinde sıfırdan uygulamalar üzerinde çalıştık ve ağır işi yapmak için :numref:`sec_linear_concise` içinde derin öğrenme çerçevesinin yüksek seviyeli API'lerini tekrar kullandık.
 
 Bağlanım, *ne kadar?* veya *kaç?* sorularını yanıtlamak istediğimizde ulaştığımız araçtır. Bir evin kaç dolara satılacağını (fiyatı) veya bir beyzbol takımının kazanabileceği galibiyet sayısını veya bir hastanın taburcu edilmeden önce hastanede kalacağı gün sayısını tahmin etmek istiyorsanız, o zaman muhtemelen bir regresyon modeli arıyorsunuz.
 
-Uygulamada, daha çok *sınıflandırma* ile ilgileniyoruz. "Ne kadar" değil, "hangisi" sorusu sorarak:
+Uygulamada, daha çok *sınıflandırma* ile ilgileniyoruz. "Ne kadar" değil, "hangisi" sorusunu sorarak:
 
 * Bu e-posta spam klasörüne mi yoksa gelen kutusuna mı ait?
 * Bu müşterinin bir abonelik hizmetine *kaydolma* mı veya *kaydolmama* mı olasılığı daha yüksek?
-* Bu resim bir eşeği, köpeği, kediyi veya horozu mu tasvir ediyor?
+* Bu resim bir eşeği, köpeği, kediyi veya horozu tasvir ediyor mu?
 * Aston'ın bir sonraki izleyeceği film hangisi?
 
-Konuşma dilinde, makine öğrenmesi uygulayıcıları iki ince farklı sorunu tanımlamak için *sınıflandırma* kelimesini aşırı yüklüyorlar: (i) yalnızca örneklerin kategorilere (sınıflara) zor olarak atanmasıyla ilgilendiğimiz konular ve (ii) yumuşak atamalar yapmak istediğimiz yerler, yani her bir kategorinin geçerli olma olasılığını değerlendirme. Ayrım, kısmen bulanıklaşma eğilimindedir, çünkü çoğu zaman, yalnızca zor görevleri önemsediğimizde bile, yine de yumuşak atamalar yapan modeller kullanıyoruz.
+Konuşma dilinde, makine öğrenmesi uygulayıcıları iki incelikle farklı sorunu tanımlamak için *sınıflandırma* kelimesini aşırı yüklüyorlar: (i) Yalnızca örneklerin kategorilere (sınıflara) zor olarak atanmasıyla ilgilendiğimiz konular ve (ii) yumuşak atamalar yapmak istediğimiz yerler, yani her bir kategorinin geçerli olma olasılığını değerlendirme. Ayrım, kısmen bulanıklaşma eğilimindedir, çünkü çoğu zaman, yalnızca zor görevleri önemsediğimizde bile, yine de yumuşak atamalar yapan modeller kullanıyoruz.
 
 ## Sınıflandırma Problemi
 :label:`subsec_classification-problem`
 
-Ayaklarımızı ısındırmak için basit bir görüntü sınıflandırma problemiyle başlayalım. Buradaki her girdi $2\times2$ gri tonlamalı bir resimden oluşur. Her piksel değerini tek bir skaler ile temsil edebiliriz ve bu da  bize dört özellik, $x_1, x_2, x_3, x_4$, verir. Ayrıca, her görüntünün "kedi", "tavuk" ve "köpek" kategorilerinden birine ait olduğunu varsayalım.
+Ayaklarımızı ısındırmak için basit bir imge sınıflandırma problemiyle başlayalım. Buradaki her girdi $2\times2$ gri tonlamalı bir imgeden oluşur. Her piksel değerini tek bir skaler ile temsil edebiliriz ve bu da  bize dört öznitelik, $x_1, x_2, x_3, x_4$, verir. Ayrıca, her imgenin "kedi", "tavuk" ve "köpek" kategorilerinden birine ait olduğunu varsayalım.
 
-Daha sonra, etiketleri nasıl temsil edeceğimizi seçmeliyiz. İki bariz seçeneğimiz var. Belki de en doğal dürtü, tam sayıların sırasıyla $\{\text{köpek}, \text{kedi}, \text{tavuk}\}$'u temsil ettiği $\{1, 2, 3 \}$ içinden $y$'yi seçmek olacaktır. Bu, bu tür bilgileri bir bilgisayarda *saklamanın* harika bir yoludur. Kategoriler arasında doğal bir sıralama varsa, örneğin $\{\text{bebek}, \text{yürümeye başlayan çocuk}, \text{ergen}, \text{genç yetişkin}, \text{yetişkin}, \text{yaşlı}\}$ tahmin etmeye çalışıyor olsaydık, bu sorunu bağlanım olarak kabul etmek ve etiketleri bu biçimde tutmak mantıklı bile olabilirdi.
+Daha sonra, etiketleri nasıl temsil edeceğimizi seçmeliyiz. İki bariz seçeneğimiz var. Belki de en doğal dürtü, tam sayıların sırasıyla $\{\text{köpek}, \text{kedi}, \text{tavuk}\}$ temsil eden $\{1, 2, 3 \}$ içinden $y$'yi seçmek olacaktır. Bu, bu tür bilgileri bir bilgisayarda *saklamanın* harika bir yoludur. Kategoriler arasında doğal bir sıralama varsa, örneğin $\{\text{bebek}, \text{yürümeye başlayan çocuk}, \text{ergen}, \text{genç yetişkin}, \text{yetişkin}, \text{yaşlı}\}$ tahmin etmeye çalışıyor olsaydık, bu sorunu bağlanım olarak kabul etmek ve etiketleri bu biçimde tutmak mantıklı bile olabilirdi.
 
 Ancak genel sınıflandırma sorunları, sınıflar arasında doğal sıralamalarla gelmez. Neyse ki, istatistikçiler uzun zaman önce kategorik verileri göstermenin basit bir yolunu keşfettiler: *Bire bir kodlama*. Bire bir kodlama, kategorilerimiz kadar bileşen içeren bir vektördür. Belirli bir örneğin kategorisine karşılık gelen bileşen $1$'e ve diğer tüm bileşenler $0$'a ayarlanmıştır. Bizim durumumuzda, $y$ etiketi üç boyutlu bir vektör olacaktır: $(1, 0, 0)$ - "kedi", $(0, 1, 0)$ - "tavuk" ve $(0, 0, 1)$ - "köpek":
 
 $$y \in \{(1, 0, 0), (0, 1, 0), (0, 0, 1)\}.$$
 
-## Ağ mimarisi
+## Ağ Mimarisi
 
-Tüm olası sınıflarla ilişkili koşullu olasılıkları tahmin etmek için, sınıf başına bir tane olmak üzere birden çok çıktıya sahip bir modele ihtiyacımız var. Doğrusal modellerle sınıflandırmayı ifade etmek için, çıktılarımız olduğu kadar çok sayıda afin (affine) fonksiyona ihtiyacımız olacak. Her çıktı kendi afin işlevine karşılık gelecektir. Bizim durumumuzda, 4 özniteliğimiz ve 3 olası çıktı kategorimiz olduğundan, ağırlıkları temsil etmek için 12 sayıla (indeskli $w$) ve ek girdileri temsil etmek için 3 sayıla (indeksli $b$) ihtiyacımız olacak. Her girdi için şu üç *logit*i, $o_1, o_2$ ve $o_3$, hesaplıyoruz:
+Tüm olası sınıflarla ilişkili koşullu olasılıkları tahmin etmek için, sınıf başına bir tane olmak üzere birden çok çıktıya sahip bir modele ihtiyacımız var. Doğrusal modellerle sınıflandırmayı ifade etmek için, çıktılarımız kadar sayıda afin (affine) fonksiyona ihtiyacımız olacak. Her çıktı kendi afin işlevine karşılık gelecektir. Bizim durumumuzda, 4 özniteliğimiz ve 3 olası çıktı kategorimiz olduğundan, ağırlıkları temsil etmek için 12 sayıla (indeskli $w$) ve ek girdileri temsil etmek için 3 sayıla (indeksli $b$) ihtiyacımız olacak. Her girdi için şu üç *logit*i, $o_1, o_2$ ve $o_3$, hesaplıyoruz:
 
 $$
 \begin{aligned}
@@ -37,7 +37,7 @@ o_3 &= x_1 w_{31} + x_2 w_{32} + x_3 w_{33} + x_4 w_{34} + b_3.
 \end{aligned}
 $$
 
-Bu hesaplamayı :numref:`fig_softmaxreg`'de gösterilen sinir ağı diyagramı ile tasvir edebiliriz. Doğrusal regresyonda olduğu gibi, softmaks regresyon da tek katmanlı bir sinir ağıdır. Ayrıca her çıktının, $o_1, o_2$ ve $o_3$, hesaplanması,  tüm girdilere, $x_1$, $x_2$, $x_3$ ve $x_4$, bağlı olduğundan, eşiksiz en büyük işlev bağlanımının (softmaks regresyonunun) çıktı katmanı da tamamen bağlı katman olarak tanımlanır.
+Bu hesaplamayı :numref:`fig_softmaxreg` içinde gösterilen sinir ağı diyagramı ile tasvir edebiliriz. Doğrusal regresyonda olduğu gibi, softmaks regresyon da tek katmanlı bir sinir ağıdır. Ayrıca her çıktının, $o_1, o_2$ ve $o_3$, hesaplanması,  tüm girdilere, $x_1$, $x_2$, $x_3$ ve $x_4$, bağlı olduğundan, eşiksiz en büyük işlev bağlanımının (softmaks regresyonunun) çıktı katmanı da tamamen bağlı katman olarak tanımlanır.
 
 ![Eşiksiz en büyük işlev bağlanımı bir tek katmanlı sinir ağıdır.](../img/softmaxreg.svg)
 :label:`fig_softmaxreg`
@@ -49,14 +49,14 @@ Modeli daha öz bir şekilde ifade etmek için doğrusal cebir gösterimini kull
 
 Sonraki bölümlerde göreceğimiz gibi, derin öğrenmede tam bağlı katmanlar her yerde bulunur. Ancak, adından da anlaşılacağı gibi, tam bağlı katmanlar, potansiyel olarak birçok öğrenilebilir parametreyle *tamamen* bağlantılıdır. Özellikle, $d$ girdileri ve $q$ çıktıları olan herhangi bir tam bağlı katman için, parametreleştirme maliyeti $\mathcal{O}(dq)$'dır ve bu pratikte aşırı derecede yüksek olabilir. Neyse ki, $d$ girdilerini $q$ çıktılarına dönüştürmenin bu maliyeti $\mathcal{O}(\frac{dq}{n})$'a düşürülebilir, burada $n$ hiper parametresi bizim tarafımızdan gerçek dünya uygulamalarında, parametre tasarrufu ve model etkinliği arasındaki dengeyi sağlamak için esnek bir şekilde belirtilebilir :cite:`Zhang.Tay.Zhang.ea.2021`.
 
-# Eşiksiz En Büyük İşlev İşlemi 
+## Eşiksiz En Büyük İşlev İşlemi 
 :label:`subsec_softmax_operation`
 
 Burada ele alacağımız ana yaklaşım, modelimizin çıktılarını olasılıklar olarak yorumlamaktır. Gözlemlenen verilerin olabilirliğini en üst düzeye çıkaran olasılıkları üretmek için parametrelerimizi optimize edeceğiz (eniyileceğiz). Ardından, tahminler üretmek için bir eşik belirleyeceğiz, örneğin maksimum tahmin edilen olasılığa sahip etiketi seçeceğiz.
 
 Biçimsel olarak ifade edersek, herhangi bir $\hat{y}_j$ çıktısının belirli bir öğenin $j$ sınıfına ait olma olasılığı olarak yorumlanmasını istiyoruz. Sonra en büyük çıktı değerine sahip sınıfı tahminimiz $\operatorname*{argmax}_j y_j$ olarak seçebiliriz. Örneğin, $\hat{y}_1$, $\hat{y}_2$ ve $\hat{y}_3$ sırasıyla 0.1, 0.8 ve 0.1 ise, o zaman (örneğimizde) "tavuğu" temsil eden kategori 2'yi tahmin ederiz.
 
-Logit $o$'yu doğrudan ilgilendiğimiz çıktılarımız olarak yorumlamamızı önermek isteyebilirsiniz. Bununla birlikte, doğrusal katmanın çıktısının doğrudan bir olasılık olarak yorumlanmasında bazı sorunlar vardır. Bir yandan, hiçbir şey bu sayıların toplamını 1'e sınırlamıyor. Diğer yandan, girdilere bağlı olarak negatif değerler alabilirler. Bunlar, :numref:`sec_prob`'da sunulan temel olasılık aksiyomlarını ihlal ediyor.
+Logit $o$'yu doğrudan ilgilendiğimiz çıktılarımız olarak yorumlamamızı önermek isteyebilirsiniz. Bununla birlikte, doğrusal katmanın çıktısının doğrudan bir olasılık olarak yorumlanmasında bazı sorunlar vardır. Bir yandan, hiçbir şey bu sayıların toplamını 1'e sınırlamıyor. Diğer yandan, girdilere bağlı olarak negatif değerler alabilirler. Bunlar, :numref:`sec_prob` içinde sunulan temel olasılık aksiyomlarını ihlal ediyor.
 
 Çıktılarımızı olasılıklar olarak yorumlamak için, (yeni verilerde bile) bunların negatif olmayacağını ve toplamlarının 1 olacağını garanti etmeliyiz. Dahası, modeli gerçeğe uygun olasılıkları tahmin etmeye teşvik eden bir eğitim amaç fonksiyonuna ihtiyacımız var. Bir sınıflandırıcı tüm örneklerden 0.5 çıktısını verdiğinde, bu örneklerin yarısının gerçekte tahmin edilen sınıfa ait olacağını umuyoruz. Bu, *kalibrasyon* adı verilen bir özelliktir.
 
@@ -81,7 +81,7 @@ Hesaplama verimliliğini artırmak ve GPU'lardan yararlanmak için, genellikle v
 $$ \begin{aligned} \mathbf{O} &= \mathbf{X} \mathbf{W} + \mathbf{b}, \\ \hat{\mathbf{Y}} & = \mathrm{softmax}(\mathbf{O}). \end{aligned} $$
 :eqlabel:`eq_minibatch_softmax_reg`
 
-Bu, baskın işlemi, her seferinde bir örnek işlersek yürüteceğimiz matris-vektör ürünlerine karşı $\mathbf{X} \mathbf{W}$ matris-matris çarpımını, hızlandırır. $\mathbf{X}$ içindeki her satır bir veri örneğini temsil ettiğinden, softmaks işleminin kendisi *satır bazında* hesaplanabilir: Her $\mathbf{O}$ satırı için, tüm girdilerin üssünü alın ve sonra bunları toplayarak normalleştirin. :eqref:`eq_minibatch_softmax_reg`'deki $\mathbf{X} \mathbf{W} + \mathbf{b}$ toplamı sırasında yayınlamayı tetikleriz, hem minigrup logitleri $\mathbf{O}$ hem de çıktı olasılıkları $\hat{\mathbf{Y}}$, $n \times q$ matrislerdir.
+Bu, baskın işlemi, her seferinde bir örnek işlersek yürüteceğimiz matris-vektör çarpımlarına karşı $\mathbf{X} \mathbf{W}$ matris-matris çarpımını, hızlandırır. $\mathbf{X}$ içindeki her satır bir veri örneğini temsil ettiğinden, softmaks işleminin kendisi *satır bazında* hesaplanabilir: Her $\mathbf{O}$ satırı için, tüm girdilerin üssünü alın ve sonra bunları toplayarak normalleştirin. :eqref:`eq_minibatch_softmax_reg` içindeki $\mathbf{X} \mathbf{W} + \mathbf{b}$ toplamı sırasında yayınlamayı tetikleriz, hem minigrup logitleri $\mathbf{O}$ hem de çıktı olasılıkları $\hat{\mathbf{Y}}$, $n \times q$ matrislerdir.
 
 ## Kayıp (Yitim) İşlevi
 
@@ -107,12 +107,12 @@ $\mathbf{y}$ ve $q$ sınıflarının üzerindeki $\hat{\mathbf{y}}$ model tahmin
 $$ l(\mathbf{y}, \hat{\mathbf{y}}) = - \sum_{j=1}^q y_j \log \hat{y}_j. $$
 :eqlabel:`eq_l_cross_entropy`
 
-Daha sonra açıklanacak nedenlerden ötürü, :eqref:`eq_l_cross_entropy`'deki kayıp işlevi genellikle *çapraz entropi kaybı* olarak adlandırılır. $\mathbf{y}$, $q$ uzunluğunda bire bir vektör olduğundan, $j$ tüm koordinatlarının toplamı, bir terim hariç tümü için kaybolur. Tüm $\hat{y}_j$'ler tahmini olasılıklar olduğundan, logaritmaları hiçbir zaman $0$'dan büyük olmaz. Sonuç olarak, gerçek etiketi *kesinlik* ile doğru bir şekilde tahmin edersek, yani gerçek etiket $\mathbf{y}$ için tahmini olasılık $P(\mathbf{y} \mid \mathbf{x}) = 1$ ise, kayıp fonksiyonu daha fazla küçültülemez. Bunun genellikle imkansız olduğunu unutmayın. Örneğin, veri kümesinde etiket gürültüsü olabilir (bazı örnekler yanlış etiketlenmiş olabilir). Girdi öznitelikleri her örneği mükemmel bir şekilde sınıflandırmak için yeterince bilgilendirici olmadığında da mümkün olmayabilir.
+Daha sonra açıklanacak nedenlerden ötürü, :eqref:`eq_l_cross_entropy` içindeki kayıp işlevi genellikle *çapraz entropi kaybı* olarak adlandırılır. $\mathbf{y}$, $q$ uzunluğunda bire bir vektör olduğundan, $j$ tüm koordinatlarının toplamı, bir terim hariç tümü için kaybolur. Tüm $\hat{y}_j$'ler tahmini olasılıklar olduğundan, logaritmaları hiçbir zaman $0$'dan büyük olmaz. Sonuç olarak, gerçek etiketi *kesinlik* ile doğru bir şekilde tahmin edersek, yani gerçek etiket $\mathbf{y}$ için tahmini olasılık $P(\mathbf{y} \mid \mathbf{x}) = 1$ ise, kayıp fonksiyonu daha fazla küçültülemez. Bunun genellikle imkansız olduğunu unutmayın. Örneğin, veri kümesinde etiket gürültüsü olabilir (bazı örnekler yanlış etiketlenmiş olabilir). Girdi öznitelikleri her örneği mükemmel bir şekilde sınıflandırmak için yeterince bilgilendirici olmadığında da mümkün olmayabilir.
 
 ### Softmaks ve Türevleri
 :label:`subsec_softmax_and_derivatives`
 
-Softmaks ve karşılık gelen kayıp fonksiyonu çok yaygın olduğundan, nasıl hesaplandığını biraz daha iyi anlamaya değerdir. :eqref:`eq_softmax_y_and_o`'i kayıp tanımına, :eqref:`eq_l_cross_entropy` eklersek ve softmaks tanımını kullanırsak:
+Softmaks ve karşılık gelen kayıp fonksiyonu çok yaygın olduğundan, nasıl hesaplandığını biraz daha iyi anlamaya değerdir. :eqref:`eq_softmax_y_and_o` içindeki kayıp tanımına, :eqref:`eq_l_cross_entropy` eklersek ve softmaks tanımını kullanırsak:
 
 $$
 \begin{aligned}
@@ -128,11 +128,11 @@ $$
 \partial_{o_j} l(\mathbf{y}, \hat{\mathbf{y}}) = \frac{\exp(o_j)}{\sum_{k=1}^q \exp(o_k)} - y_j = \mathrm{softmax}(\mathbf{o})_j - y_j.
 $$
 
-Başka bir deyişle, türev, softmax işlemiyle ifade edildiği gibi modelimiz tarafından atanan olasılık ile bire bir etiket vektöründeki öğeler tarafından ifade edildiği gibi gerçekte ne olduğu arasındaki farktır. Bu anlamda, regresyonda gördüğümüze çok benzerdir; gradyan $y$ gözlemi ile $\hat{y}$ tahmini arasındaki farktır. Bu bir tesadüf değil. Herhangi bir üssel aile (bkz. [dağılımlar üzerine çevrimiçi ek](https://tr.d2l.ai/chapter_appendix-mathematics-for-deep-learning/distributions.html)) modelinde, log-olabilirlik gradyanları tam olarak bu terim tarafından verilmektedir. Bu gerçek, gradyanları hesaplamayı pratikte kolaylaştırır.
+Başka bir deyişle, türev, softmax işlemiyle ifade edildiği gibi modelimiz tarafından atanan olasılık ile bire-bir etiket vektöründeki öğeler tarafından ifade edildiği gibi gerçekte ne olduğu arasındaki farktır. Bu anlamda, regresyonda gördüğümüze çok benzerdir; gradyan $y$ gözlemi ile $\hat{y}$ tahmini arasındaki farktır. Bu bir tesadüf değil. Herhangi bir üssel aile (bkz. [dağılımlar üzerine çevrimiçi ek](https://tr.d2l.ai/chapter_appendix-mathematics-for-deep-learning/distributions.html)) modelinde, log-olabilirlik gradyanları tam olarak bu terim tarafından verilmektedir. Bu gerçek, gradyanları hesaplamayı pratikte kolaylaştırır.
 
 ### Çapraz Entropi Kaybı
 
-Şimdi, sadece tek bir sonucu değil, sonuçlara göre bütün bir dağılımı gözlemlediğimiz durumu düşünün. $\mathbf{y}$ etiketi için önceki ile aynı gösterimi kullanabiliriz. Tek fark, $(0, 0, 1)$ gibi sadece ikilik girdiler içeren bir vektör yerine, artık genel bir olasılık vektörüne sahibiz, örneğin $(0.1, 0.2, 0.7)$. Daha önce :eqref:`eq_l_cross_entropy`'da $l$ kaybını tanımlamak için kullandığımız matematik hala iyi çalışıyor, sadece yorumu biraz daha genel. Burada etiketler üzerindeki dağılım için beklenen kayıp değeridir. Bu kayıp, *çapraz entropi kaybı* olarak adlandırılır ve sınıflandırma problemlerinde en sık kullanılan kayıplardan biridir. Bilgi teorisinin sadece temellerini tanıtarak ismin gizemini çözebiliriz. Bilgi teorisinin daha fazla detayını anlamak isterseniz, [bilgi teorisi üzerine çevrimiçi ek](https://tr.d2l.ai/chapter_appendix-mathematics-for-deep-learning/information-theory.html)'e başvurabilirsiniz.
+Şimdi, sadece tek bir sonucu değil, sonuçlara göre bütün bir dağılımı gözlemlediğimiz durumu düşünün. $\mathbf{y}$ etiketi için önceki ile aynı gösterimi kullanabiliriz. Tek fark, $(0, 0, 1)$ gibi sadece ikilik girdiler içeren bir vektör yerine, artık genel bir olasılık vektörüne sahibiz, örneğin $(0.1, 0.2, 0.7)$. Daha önce :eqref:`eq_l_cross_entropy` içinde $l$ kaybını tanımlamak için kullandığımız matematik hala iyi çalışıyor, sadece yorumu biraz daha genel. Burada etiketler üzerindeki dağılım için beklenen kayıp değeridir. Bu kayıp, *çapraz entropi kaybı* olarak adlandırılır ve sınıflandırma problemlerinde en sık kullanılan kayıplardan biridir. Bilgi teorisinin sadece temellerini tanıtarak ismin gizemini çözebiliriz. Bilgi teorisinin daha fazla detayını anlamak isterseniz, [bilgi teorisi üzerine çevrimiçi ek](https://tr.d2l.ai/chapter_appendix-mathematics-for-deep-learning/information-theory.html)'e başvurabilirsiniz.
 
 ## Bilgi Teorisinin Temelleri
 :label:`subsec_info_theory_basics`
@@ -152,7 +152,7 @@ Bilgi teorisinin temel teoremlerinden biri, $P$ dağılımından rastgele çekil
 
 Sıkıştırmanın tahminle ne ilgisi olduğunu merak ediyor olabilirsiniz. Sıkıştırmak istediğimiz bir veri akışımız olduğunu hayal edin. Bir sonraki belirteci (token) tahmin etmek bizim için her zaman kolaysa, bu verinin sıkıştırılması da kolaydır! Akıştaki her belirtecin her zaman aynı değeri aldığı uç örneği ele alalım. Bu çok sıkıcı bir veri akışı! Ayrıca sadece sıkıcı değil, aynı zamanda tahmin etmesi de kolay. Her zaman aynı olduklarından, akışın içeriğini iletmek için herhangi bir bilgi iletmemiz gerekmez. Tahmin etmesi kolay, sıkıştırması kolay.
 
-Halbuki, her olayı tam olarak tahmin edemezsek, o zaman bazen şaşırabiliriz. Bir olaya daha düşük bir olasılık atadığımızda sürprizimiz daha da büyük olur. Claude Shannon (öznel) bir olasılık, $P(j)$, atamış olan bir $j$ olayı gözlemlemenin *şaşırtıcı* olduğunu göstermek için $\log \frac{1}{P(j)} = -\log P(j)$'yi hesapladı. :eqref:`eq_softmax_reg_entropy`'da tanımlanan entropi, veri oluşturma süreciyle gerçekten eşleşen doğru olasılıklar atandığında *beklenen şaşırtıcılıktır*.
+Halbuki, her olayı tam olarak tahmin edemezsek, o zaman bazen şaşırabiliriz. Bir olaya daha düşük bir olasılık atadığımızda sürprizimiz daha da büyük olur. Claude Shannon (öznel) bir olasılık, $P(j)$, atamış olan bir $j$ olayı gözlemlemenin *şaşırtıcı* olduğunu göstermek için $\log \frac{1}{P(j)} = -\log P(j)$'yi hesapladı. :eqref:`eq_softmax_reg_entropy` içinde tanımlanan entropi, veri oluşturma süreciyle gerçekten eşleşen doğru olasılıklar atandığında *beklenen şaşırtıcılıktır*.
 
 ### Çapraz Entropiye Yeniden Bakış
 

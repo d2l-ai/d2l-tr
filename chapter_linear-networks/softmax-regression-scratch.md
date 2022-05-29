@@ -1,8 +1,8 @@
 # Sıfırdan Softmaks Regresyon Uygulaması Yaratma
 :label:`sec_softmax_scratch`
 
-(**Doğrusal regresyonu sıfırdan uyguladığımız gibi**), (~~softmaks regresyonunun~~) da benzer şekilde temel olduğuna ve onu nasıl uygulayacağınızın detaylı ayrıntılarını bilmeniz gerektiğine inanıyoruz.
-:numref:`sec_fashion_mnist`'da yeni eklenen Fashion-MNIST veri kümesiyle çalışacağız, grup boyutu 256 olan bir veri yineleyicisi kuracağız.
+(**Sıfırdan lineer regresyon uyguladığımız gibi,**) softmax regresyonunun da benzer şekilde temel olduğuna ve (**kanlı ayrıntılarını**) (~~softmax regresyon~~) ve nasıl kendinizin uygulanacağını bilmeniz gerektiğine inanıyoruz.
+:numref:`sec_fashion_mnist` içinde yeni eklenen Fashion-MNIST veri kümesiyle çalışacağız, grup boyutu 256 olan bir veri yineleyicisi kuracağız.
 
 ```{.python .input}
 from d2l import mxnet as d2l
@@ -68,7 +68,7 @@ b = tf.Variable(tf.zeros(num_outputs))
 
 ## Softmaks İşlemini Tanımlama
 
-Softmaks regresyon modelini uygulamadan önce, toplam operatörünün bir tensörde belirli boyutlar boyunca nasıl çalıştığını :numref:`subseq_lin-alg-reduction` ve :numref:`subseq_lin-alg-non-reduction`'da anlatıldığı gibi kısaca gözden geçirelim. [**Bir `X` matrisi verildiğinde, tüm öğeleri (varsayılan olarak) veya yalnızca aynı eksendeki öğeleri toplayabiliriz**], örneğin aynı sütun (eksen 0) veya aynı satır (eksen 1) üzerinden. `X` (2, 3) şeklinde bir tensör ise ve sütunları toplarsak, sonucun (3,) şeklinde bir vektör olacağını unutmayın. Toplam operatörünü çağırırken, üzerinde topladığımız boyutu daraltmak yerine esas tensördeki eksen sayısını korumayı belirtebiliriz. Bu, (1, 3) şeklinde iki boyutlu bir tensörle sonuçlanacaktır.
+Softmaks regresyon modelini uygulamadan önce, toplam operatörünün bir tensörde belirli boyutlar boyunca nasıl çalıştığını :numref:`subseq_lin-alg-reduction` ve :numref:`subseq_lin-alg-non-reduction` içinde anlatıldığı gibi kısaca gözden geçirelim. [**Bir `X` matrisi verildiğinde, tüm öğeleri (varsayılan olarak) veya yalnızca aynı eksendeki öğeleri toplayabiliriz**], örneğin aynı sütun (eksen 0) veya aynı satır (eksen 1) üzerinden. `X` (2, 3) şeklinde bir tensör ise ve sütunları toplarsak, sonucun (3,) şeklinde bir vektör olacağını unutmayın. Toplam operatörünü çağırırken, üzerinde topladığımız boyutu daraltmak yerine esas tensördeki eksen sayısını korumayı belirtebiliriz. Bu, (1, 3) şeklinde iki boyutlu bir tensörle sonuçlanacaktır.
 
 ```{.python .input}
 #@tab pytorch
@@ -82,7 +82,7 @@ X = d2l.tensor([[1.0, 2.0, 3.0], [4.0, 5.0, 6.0]])
 d2l.reduce_sum(X, 0, keepdims=True), d2l.reduce_sum(X, 1, keepdims=True)
 ```
 
-(**Artık softmaks işlemini uygulamaya**) hazırız. Softmaks'in üç adımdan oluştuğunu hatırlayın: (i) Her terimin üssünü alıyoruz (`exp` kullanarak); (ii) her bir örnek için normalleştirme sabitini elde etmek için her satırı topluyoruz (toplu işte (batch) örnek başına bir satırımız vardır); (iii) her satırı normalleştirme sabitine bölerek sonucun toplamının 1 olmasını sağlıyoruz. Koda bakmadan önce, bunun bir denklem olarak nasıl ifade edildiğini hatırlayalım:
+(**Artık softmaks işlemini uygulamaya**) hazırız. Softmaks'ın üç adımdan oluştuğunu hatırlayın: (i) Her terimin üssünü alıyoruz (`exp` kullanarak); (ii) her bir örnek için normalleştirme sabitini elde etmek için her satırı topluyoruz (toplu işte (batch) örnek başına bir satırımız vardır); (iii) her satırı normalleştirme sabitine bölerek sonucun toplamının 1 olmasını sağlıyoruz. Koda bakmadan önce, bunun bir denklem olarak nasıl ifade edildiğini hatırlayalım:
 
 (**
 $$\mathrm{softmax}(\mathbf{X})_{ij} = \frac{\exp(\mathbf{X}_{ij})}{\sum_k \exp(\mathbf{X}_{ik})}.$$
@@ -136,11 +136,10 @@ def net(X):
 
 ## Kayıp Fonksiyonunu Tanımlama
 
-Daha sonra, :numref:`sec_softmax`da tanıtıldığı gibi, çapraz entropi kaybı işlevini uygulamamız gerekir. Bu, tüm derin öğrenmede en yaygın kayıp işlevi olabilir, çünkü şu anda sınıflandırma sorunları regresyon sorunlarından çok daha fazladır.
+Daha sonra, :numref:`sec_softmax` içinde tanıtıldığı gibi, çapraz entropi kaybı işlevini uygulamamız gerekir. Bu, tüm derin öğrenmede en yaygın kayıp işlevi olabilir, çünkü şu anda sınıflandırma sorunları regresyon sorunlarından çok daha fazladır.
 
 Çapraz entropinin, gerçek etikete atanan tahmin edilen olasılığın negatif log-olabilirliğini aldığını hatırlayın. Bir Python for-döngüsü (verimsiz olma eğilimindedir) ile tahminler üzerinde yinelemek yerine, tüm öğeleri tek bir operatörle seçebiliriz. 
-
-Aşağıda, [**3 sınıf üzerinde tahmin edilen olasılıkların 2 örneğini ve bunlara karşılık gelen `y` etiketleriyle `y_hat` örnek verilerini oluşturuyoruz.**] `y` ile, ilk örnekte birinci sınıfın doğru tahmin olduğunu biliyoruz. ve ikinci örnekte üçüncü sınıf temel gerçektir. [**`y`'yi `y_hat` içindeki olasılıkların indeksleri olarak kullanarak,**] ilk örnekte birinci sınıfın olasılığını ve ikinci örnekte üçüncü sınıfın olasılığını seçiyoruz.
+Aşağıda, [**3 sınıf üzerinde tahmin edilen olasılıkların 2 örneğini ve bunlara karşılık gelen `y` etiketleriyle `y_hat` örnek verilerini oluşturuyoruz.**] `y` ile, ilk örnekte birinci sınıfın doğru tahmin olduğunu biliyoruz ve ikinci örnekte üçüncü sınıf temel referans değerdir. [**`y`'yi `y_hat` içindeki olasılıkların indeksleri olarak kullanarak,**] ilk örnekte birinci sınıfın olasılığını ve ikinci örnekte üçüncü sınıfın olasılığını seçiyoruz.
 
 Aşağıda, 3 sınıf üzerinden tahmin edilen olasılıkların 2 örneğini içeren bir oyuncak verisi `y_hat`'i oluşturuyoruz. Ardından birinci örnekte birinci sınıfın olasılığını ve ikinci örnekte üçüncü sınıfın olasılığını seçiyoruz.
 
@@ -183,7 +182,7 @@ Tahmin edilen olasılık dağılımı `y_hat` göz önüne alındığında, gene
 
 Tahminler `y` etiket sınıfıyla tutarlı olduğunda doğrudur. Sınıflandırma doğruluğu, doğru olan tüm tahminlerin oranıdır. Doğruluğu doğrudan optimize etmek zor olabilse de (türevleri alınamaz), genellikle en çok önemsediğimiz performans ölçütüdür ve sınıflandırıcıları eğitirken neredeyse her zaman onu rapor edeceğiz.
 
-Doğruluğu hesaplamak için aşağıdakileri yapıyoruz. İlk olarak, `y_hat` bir matris ise, ikinci boyutun her sınıf için tahmin puanlarını sakladığını varsayıyoruz. Her satırdaki en büyük giriş için dizine göre tahmin edilen sınıfı elde ederken `argmax` kullanırız. Ardından, [**tahmin edilen sınıfı kesin-doğru `y` ile karşılaştırırız**]. Eşitlik operatörü `==` veri türlerine duyarlı olduğundan, `y_hat` veri türünü `y` ile eşleşecek şekilde dönüştürürüz. Sonuç, 0 (yanlış) ve 1 (doğru) girişlerini içeren bir tensördür. Toplamlarını almak doğru tahminlerin sayısını verir.
+Doğruluğu hesaplamak için aşağıdakileri yapıyoruz. İlk olarak, `y_hat` bir matris ise, ikinci boyutun her sınıf için tahmin puanlarını sakladığını varsayıyoruz. Her satırdaki en büyük girdi için dizine göre tahmin edilen sınıfı elde ederken `argmax` kullanırız. Ardından, [**tahmin edilen sınıfı gerçek referans değer `y` ile karşılaştırırız**]. Eşitlik operatörü `==` veri türlerine duyarlı olduğundan, `y_hat` veri türünü `y` ile eşleşecek şekilde dönüştürürüz. Sonuç, 0 (yanlış) ve 1 (doğru) girişlerini içeren bir tensördür. Toplamlarını almak doğru tahminlerin sayısını verir.
 
 ```{.python .input}
 #@tab all
