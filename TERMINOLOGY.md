@@ -153,6 +153,8 @@ imperative; buyuru
 
 imputation; itham
 
+independent and identically distributed; bağımsız ve özdeşçe dağılmış
+
 indicator; gösterge, belirteç
 
 information retrieval; bilgi getirimi

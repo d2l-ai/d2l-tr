@@ -1,7 +1,7 @@
 # Çok Katmanlı Algılayıcıların Kısa Uygulaması
 :label:`sec_mlp_concise`
 
-Tahmin edebileceğiniz gibi, (**üst düzey API'lere güvenerek, MLP'leri daha da kısaca uygulayabiliriz.**)
+Tahmin edebileceğiniz gibi, (**yüksek seviye API'lere güvenerek, MLP'leri daha da kısaca uygulayabiliriz.**)
 
 ```{.python .input}
 from d2l import mxnet as d2l
@@ -86,7 +86,7 @@ d2l.train_ch3(net, train_iter, test_iter, loss, num_epochs, trainer)
 
 ## Özet
 
-* Üst düzey API'leri kullanarak MLP'leri çok daha kısaca uygulayabiliriz.
+* Yüksek seviye API'leri kullanarak MLP'leri çok daha kısaca uygulayabiliriz.
 * Aynı sınıflandırma problemi için, bir MLP'nin uygulanması, etkinleştirme fonksiyonlarına sahip ek gizli katmanlar haricinde softmaks bağlanımının uygulanmasıyla aynıdır.
 
 ## Alıştırmalar

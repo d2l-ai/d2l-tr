@@ -30,9 +30,9 @@ train_iter, test_iter = d2l.load_data_fashion_mnist(batch_size)
 
 ## Model Parametrelerini İlkleme
 
-Fashion-MNIST'in 10 sınıf içerdiğini ve her görüntünün $28 \times 28 = 784$ gri tonlamalı piksel değerleri ızgarasından oluştuğunu hatırlayın. Yine şimdilik pikseller arasındaki uzamsal yapıyı göz ardı edeceğiz, bu nedenle bunu 784 girdi özniteliği ve 10 sınıf içeren basit bir sınıflandırma veri kümesi olarak düşünebiliriz. Başlarken, [**bir gizli katman ve 256 gizli birim içeren bir MLP uygulayacağız.**] Bu miktarların ikisini de hiper parametreler olarak kabul edebileceğimizi unutmayın. Tipik olarak, belleğin donanımda öyle tahsis edildiğinden ve adreslendiğinden hesaplama açısından verimli olma eğiliminde olan 2'nin katlarında katman genişliklerini seçiyoruz.
+Fashion-MNIST'in 10 sınıf içerdiğini ve her imgenin $28 \times 28 = 784$ gri tonlamalı piksel değerleri ızgarasından oluştuğunu hatırlayın. Yine şimdilik pikseller arasındaki uzamsal yapıyı göz ardı edeceğiz, bu nedenle bunu 784 girdi özniteliği ve 10 sınıf içeren basit bir sınıflandırma veri kümesi olarak düşünebiliriz. Başlarken, [**bir gizli katman ve 256 gizli birim içeren bir MLP uygulayacağız.**] Bu miktarların ikisini de hiper parametreler olarak kabul edebileceğimizi unutmayın. Tipik olarak, belleğin donanımda öyle tahsis edildiğinden ve adreslendiğinden hesaplama açısından verimli olma eğiliminde olan 2'nin katlarında katman genişliklerini seçiyoruz.
 
-Yine, parametrelerimizi birkaç tensörle temsil edeceğiz. *Her katman* için, bir ağırlık matrisi ve bir ek girdi vektörünü izlememiz gerektiğini unutmayın. Her zaman olduğu gibi, bu parametrelere göre kaybın gradyanları için bellek ayırıyoruz.
+Yine, parametrelerimizi birkaç tensörle temsil edeceğiz. *Her katman* için, bir ağırlık matrisini ve bir ek girdi vektörünü izlememiz gerektiğini unutmayın. Her zaman olduğu gibi, bu parametrelere göre kaybın gradyanları için bellek ayırıyoruz.
 
 ```{.python .input}
 num_inputs, num_outputs, num_hiddens = 784, 10, 256
@@ -126,7 +126,7 @@ def net(X):
 
 ## Kayıp İşlevi
 
-Sayısal kararlılığı sağlamak için ve softmaks işlevini zaten sıfırdan uygularken (:numref:`sec_softmax_scratch`), softmaks ve çapraz entropi kaybını hesaplamak için yüksek seviyeli API'lerden birleşik işlevi kullanıyoruz. Bu karmaşıklıkla ilgili önceki tartışmamızı hatırlayın :numref:`subsec_softmax-implementation-revisited`. İlgili okuru, uygulama ayrıntıları hakkındaki bilgilerini derinleştirmek için kayıp işlevi kaynak kodunu incelemeye teşvik ediyoruz.
+Sayısal kararlılığı sağlamak için ve softmaks işlevini zaten sıfırdan uygularken (:numref:`sec_softmax_scratch`), softmaks ve çapraz entropi kaybını hesaplamak için yüksek seviyeli API'lerden birleşik işlevi kullanıyoruz. Bu karmaşıklıkla ilgili önceki tartışmamızı :numref:`subsec_softmax-implementation-revisited` içinden hatırlayın. İlgili okuru, uygulama ayrıntıları hakkındaki bilgilerini derinleştirmek için kayıp işlevi kaynak kodunu incelemeye teşvik ediyoruz.
 
 ```{.python .input}
 loss = gluon.loss.SoftmaxCrossEntropyLoss()
