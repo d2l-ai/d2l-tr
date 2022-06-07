@@ -133,20 +133,20 @@ Girdi negatif olduğunda, ReLU fonksiyonunun türevi 0'dır ve girdi pozitif old
 
 ```{.python .input}
 y.backward()
-d2l.plot(x, x.grad, 'x', 'grad of relu', figsize=(5, 2.5))
+d2l.plot(x, x.grad, 'x', 'relu gradyani', figsize=(5, 2.5))
 ```
 
 ```{.python .input}
 #@tab pytorch
 y.backward(torch.ones_like(x), retain_graph=True)
-d2l.plot(x.detach(), x.grad, 'x', 'grad of relu', figsize=(5, 2.5))
+d2l.plot(x.detach(), x.grad, 'x', 'relu gradyani', figsize=(5, 2.5))
 ```
 
 ```{.python .input}
 #@tab tensorflow
 with tf.GradientTape() as t:
     y = tf.nn.relu(x)
-d2l.plot(x.numpy(), t.gradient(y, x).numpy(), 'x', 'grad of relu',
+d2l.plot(x.numpy(), t.gradient(y, x).numpy(), 'x', 'relu gradyani',
          figsize=(5, 2.5))
 ```
 
@@ -194,7 +194,7 @@ Sigmoid fonksiyonunun türevi aşağıda çizilmiştir. Girdi 0 olduğunda, sigm
 
 ```{.python .input}
 y.backward()
-d2l.plot(x, x.grad, 'x', 'grad of sigmoid', figsize=(5, 2.5))
+d2l.plot(x, x.grad, 'x', 'sigmoid gradyani', figsize=(5, 2.5))
 ```
 
 ```{.python .input}
@@ -202,14 +202,14 @@ d2l.plot(x, x.grad, 'x', 'grad of sigmoid', figsize=(5, 2.5))
 # Clear out previous gradients
 x.grad.data.zero_()
 y.backward(torch.ones_like(x),retain_graph=True)
-d2l.plot(x.detach(), x.grad, 'x', 'grad of sigmoid', figsize=(5, 2.5))
+d2l.plot(x.detach(), x.grad, 'x', 'sigmoid gradyani', figsize=(5, 2.5))
 ```
 
 ```{.python .input}
 #@tab tensorflow
 with tf.GradientTape() as t:
     y = tf.nn.sigmoid(x)
-d2l.plot(x.numpy(), t.gradient(y, x).numpy(), 'x', 'grad of sigmoid',
+d2l.plot(x.numpy(), t.gradient(y, x).numpy(), 'x', 'sigmoid gradyani',
          figsize=(5, 2.5))
 ```
 
@@ -247,7 +247,7 @@ Tanh fonksiyonunun türevi aşağıda çizilmiştir. Girdi 0'a yaklaştıkça, t
 
 ```{.python .input}
 y.backward()
-d2l.plot(x, x.grad, 'x', 'grad of tanh', figsize=(5, 2.5))
+d2l.plot(x, x.grad, 'x', 'tanh gradyani', figsize=(5, 2.5))
 ```
 
 ```{.python .input}
@@ -255,14 +255,14 @@ d2l.plot(x, x.grad, 'x', 'grad of tanh', figsize=(5, 2.5))
 # Clear out previous gradients.
 x.grad.data.zero_()
 y.backward(torch.ones_like(x),retain_graph=True)
-d2l.plot(x.detach(), x.grad, 'x', 'grad of tanh', figsize=(5, 2.5))
+d2l.plot(x.detach(), x.grad, 'x', 'tanh gradyani', figsize=(5, 2.5))
 ```
 
 ```{.python .input}
 #@tab tensorflow
 with tf.GradientTape() as t:
     y = tf.nn.tanh(x)
-d2l.plot(x.numpy(), t.gradient(y, x).numpy(), 'x', 'grad of tanh',
+d2l.plot(x.numpy(), t.gradient(y, x).numpy(), 'x', 'tanh gradyani',
          figsize=(5, 2.5))
 ```
 

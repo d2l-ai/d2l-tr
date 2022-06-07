@@ -75,7 +75,7 @@ Sonuç, geçerleme ve test verileri arasındaki sınırların endişe verici der
 
 Eğitim verisi kıt olduğunda, uygun bir geçerleme kümesi oluşturmak için yeterli veriyi tutmaya bile imkanımız olmayabilir. Bu soruna popüler bir çözüm, $K$*-kat çapraz geçerleme* kullanmaktır. Burada, esas eğitim verileri $K$ tane çakışmayan alt kümeye bölünmüştür. Ardından, model eğitimi ve geçerleme, her seferinde $K-1$ tane alt küme üzerinde eğitim ve farklı bir alt kümede (bu turda eğitim için kullanılmayan) geçerleme olmak üzere, $K$ kez yürütülür. Son olarak, eğitim ve geçerleme hataları $K$ deneyden elde edilen sonuçların ortalaması alınarak tahmin edilir.
 
-## Eksik veya Aşırı Öğrenme?
+## Eksik Öğrenme mi veya Aşırı Öğrenme mi?
 
 Eğitim ve geçerleme hatalarını karşılaştırdığımızda, iki genel duruma dikkat etmek istiyoruz. Birincisi, eğitim hatamızın ve geçerleme hatamızın hem önemli hem de aralarında küçük bir boşluk olduğu durumlara dikkat etmek istiyoruz. Model eğitim hatasını azaltamıyorsa, bu, modelimizin modellemeye çalıştığımız deseni yakalamak için çok basit (yani, yeterince ifade edici değil) olduğu anlamına gelebilir. Dahası, eğitim ve geçerleme hatalarımız arasındaki *genelleme boşluğu* küçük olduğundan, daha karmaşık bir modelle kurtulabileceğimize inanmak için nedenimiz var. Bu olgu, *eksik öğrenme* olarak bilinir.
 
@@ -134,7 +134,7 @@ import math
 
 Önce verilere ihtiyacımız var. $x$ verildiğinde, eğitim ve test verilerinde [**ilgili etiketleri oluşturmak için aşağıdaki kübik polinomu kullanacağız**]:
 
-(**$$y = 5 + 1.2x - 3.4\frac{x^2}{2!} + 5.6 \frac{x^3}{3!} + \epsilon \text{ where }
+(**$$y = 5 + 1.2x - 3.4\frac{x^2}{2!} + 5.6 \frac{x^3}{3!} + \epsilon \text{ öyle ki }
 \epsilon \sim \mathcal{N}(0, 0.1^2).$$**)
 
 Gürültü terimi $\epsilon$, ortalaması 0 ve standart sapması 0.1 olan normal bir dağılıma uyar. Eniyileme için, genellikle çok büyük gradyan değerlerinden veya kayıplardan kaçınırız.
@@ -143,8 +143,8 @@ Bu nedenden *öznitelikler* $x^i$'dan $\frac{x^i}{i!}$'ya ölçeklendirilir. Bu 
 ```{.python .input}
 #@tab all
 max_degree = 20  # Polinomun maksimum derecesi
-n_train, n_test = 100, 100  # Egitim ve test veri kumesi boyutlari
-true_w = np.zeros(max_degree)  # Bos alan tahsisi
+n_train, n_test = 100, 100  # Eğitim ve test veri kumesi boyutları
+true_w = np.zeros(max_degree)  # Boş alan tahsisi
 true_w[0:4] = np.array([5, 1.2, -3.4, 5.6])
 
 features = np.random.normal(size=(n_train + n_test, 1))
@@ -152,7 +152,7 @@ np.random.shuffle(features)
 poly_features = np.power(features, np.arange(max_degree).reshape(1, -1))
 for i in range(max_degree):
     poly_features[:, i] /= math.gamma(i + 1)  # `gamma(n)` = (n-1)!
-# `labels`'in sekli: (`n_train` + `n_test`,)
+# `labels`'in şekli: (`n_train` + `n_test`,)
 labels = np.dot(poly_features, true_w)
 labels += np.random.normal(scale=0.1, size=labels.shape)
 ```
@@ -179,8 +179,8 @@ features[:2], poly_features[:2, :], labels[:2]
 ```{.python .input}
 #@tab mxnet, tensorflow
 def evaluate_loss(net, data_iter, loss):  #@save
-    """Evaluate the loss of a model on the given dataset."""
-    metric = d2l.Accumulator(2)  # Kayiplarin toplami, ornek sayisi
+    """Verilen veri kümesindeki bir modelin kaybını değerlendirin."""
+    metric = d2l.Accumulator(2)  # Kayıpların toplamı, örnek sayısı
     for X, y in data_iter:
         l = loss(net(X), y)
         metric.add(d2l.reduce_sum(l), d2l.size(l))
@@ -190,8 +190,8 @@ def evaluate_loss(net, data_iter, loss):  #@save
 ```{.python .input}
 #@tab pytorch
 def evaluate_loss(net, data_iter, loss):  #@save
-    """Evaluate the loss of a model on the given dataset."""
-    metric = d2l.Accumulator(2)  # Kayiplarin toplami, ornek sayisi
+    """Verilen veri kümesindeki bir modelin kaybını değerlendirin."""
+    metric = d2l.Accumulator(2)  # Kayıpların toplamı, örnek sayısı
     for X, y in data_iter:
         out = net(X)
         y = d2l.reshape(y, out.shape)
@@ -207,7 +207,7 @@ def train(train_features, test_features, train_labels, test_labels,
           num_epochs=400):
     loss = gluon.loss.L2Loss()
     net = nn.Sequential()
-    # Polinomdaki ozniteliklerde zaten sagladigimiz için ek girdiyi yok sayin
+    # Polinomdaki özniteliklerde zaten sağladığımız için ek girdiyi yok sayın
     net.add(nn.Dense(1, use_bias=False))
     net.initialize()
     batch_size = min(10, train_labels.shape[0])
@@ -233,7 +233,7 @@ def train(train_features, test_features, train_labels, test_labels,
           num_epochs=400):
     loss = nn.MSELoss(reduction='none')
     input_shape = train_features.shape[-1]
-    # Polinomdaki ozniteliklerde zaten sagladigimiz için ek girdiyi yok sayin
+    # Polinomdaki özniteliklerde zaten sağladığımız için ek girdiyi yok sayın
     net = nn.Sequential(nn.Linear(input_shape, 1, bias=False))
     batch_size = min(10, train_labels.shape[0])
     train_iter = d2l.load_array((train_features, train_labels.reshape(-1,1)),
@@ -258,7 +258,7 @@ def train(train_features, test_features, train_labels, test_labels,
           num_epochs=400):
     loss = tf.losses.MeanSquaredError()
     input_shape = train_features.shape[-1]
-    # Polinomdaki ozniteliklerde zaten sagladigimiz için ek girdiyi yok sayin
+    # Polinomdaki özniteliklerde zaten sağladığımız için ek girdiyi yok sayın
     net = tf.keras.Sequential()
     net.add(tf.keras.layers.Dense(1, use_bias=False))
     batch_size = min(10, train_labels.shape[0])
@@ -277,29 +277,29 @@ def train(train_features, test_features, train_labels, test_labels,
     print('weight:', net.get_weights()[0].T)
 ```
 
-### [**Üçüncü Dereceden Polinom Fonksiyon Oturtma (Normal)**]
+### [**Üçüncü Dereceden Polinom Fonksiyon Uydurma (Normal)**]
 
 İlk olarak, veri oluşturma işlevi ile aynı dereceye sahip üçüncü dereceden bir polinom işlevini kullanarak başlayacağız. Sonuçlar bu modelin eğitim ve test kaybının, birlikte, etkili biçimde düşürülebildiği göstermektedir. Eğitilen model parametreleri de $w = [5, 1.2, -3.4, 5.6]$ gerçek değerlerine yakındır.
 
 ```{.python .input}
 #@tab all
-# Polinom ozniteliklerden ilk dort boyutu alin, orn., 1, x, x^2/2!, x^3/3!
+# Polinom özniteliklerden ilk dört boyutu alın, örn., 1, x, x^2/2!, x^3/3!
 train(poly_features[:n_train, :4], poly_features[n_train:, :4],
       labels[:n_train], labels[n_train:])
 ```
 
-### [**Doğrusal Fonksiyon Oturtma (Eksik Öğrenme)**]
+### [**Doğrusal Fonksiyon Uydurma (Eksik Öğrenme)**]
 
 Doğrusal fonksiyon oturtmaya başka bir bakış atalım. Erken dönemlerdeki düşüşten sonra, bu modelin eğitim kaybını daha da düşürmek zorlaşır. Son dönem yinelemesi tamamlandıktan sonra, eğitim kaybı hala yüksektir. Doğrusal olmayan desenleri (buradaki üçüncü dereceden polinom işlevi gibi) uydurmak için kullanıldığında doğrusal modeller eksik öğrenme gösterme eğilimindedir.
 
 ```{.python .input}
 #@tab all
-# Polinom ozniteliklerden ilk iki boyutu alin, orn., 1, x.
+# Polinom özniteliklerden ilk iki boyutu alın, örn., 1, x.
 train(poly_features[:n_train, :2], poly_features[n_train:, :2],
       labels[:n_train], labels[n_train:])
 ```
 
-### [**Yüksek Dereceli Polinom İşlevi Oturtmak  (Aşırı Öğrenme)**]
+### [**Yüksek Dereceli Polinom İşlevi Uydurmak (Aşırı Öğrenme)**]
 
 Şimdi modeli çok yüksek dereceli bir polinom kullanarak eğitmeye çalışalım. Burada, daha yüksek dereceli katsayıların sıfıra yakın değerlere sahip olması gerektiğini öğrenmek için yeterli veri yoktur. Sonuç olarak, aşırı karmaşık modelimiz o kadar duyarlıdır ki eğitim verisindeki gürültüden etkilenir. Eğitim kaybı etkili bir şekilde azaltılabilse de, test kaybı hala çok daha yüksektir. Karmaşık modelin verilere fazla uyduğunu gösterir.
 
@@ -310,7 +310,7 @@ train(poly_features[:n_train, :], poly_features[n_train:, :],
       labels[:n_train], labels[n_train:], num_epochs=1500)
 ```
 
-Daha ileriki bölümlerde, aşırı öğrenme problemlerini ve bunlarla başa çıkma yöntemlerini, örneğin ağırlık sönümü ve hattan düşme gibi, tartışmaya devam edeceğiz.
+Daha ileriki bölümlerde, aşırı öğrenme problemlerini ve bunlarla başa çıkma yöntemlerini, örneğin ağırlık sönümü ve hattan düşürme gibi, tartışmaya devam edeceğiz.
 
 ## Özet
 

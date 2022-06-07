@@ -214,13 +214,13 @@ Sürekli rastgele değişkenler üzerindeki olasılık için, şuraya başvurabi
 Daha karmaşık bir örnek olarak, imgeler milyonlarca piksel, dolayısıyla milyonlarca rastgele değişken içerir. Ve çoğu durumda imgeler, imgedeki nesneleri tanımlayan bir etiketle birlikte gelir. Etiketi rastgele bir değişken olarak da düşünebiliriz. Tüm meta (üst) verileri konum, zaman, diyafram, odak uzaklığı, ISO, odak mesafesi ve kamera türü gibi, rastgele değişkenler olarak bile düşünebiliriz.
 Bunların hepsi birlikte oluşan rastgele değişkenlerdir. Birden çok rastgele değişkenle uğraştığımızda, ilgilendiğimiz birkaç miktar vardır.
 
-### Bileşik olasılık
+### Bileşik Olasılık
 
 İlki, *bileşik olasılık* $P(A=a, B=b)$ olarak adlandırılır. Herhangi $a$ ve $b$ değerleri verildiğinde, bileşik olasılık şu cevabı vermemizi sağlar: $A = a$ ve $B = b$ olaylarının aynı anda olma olasılığı nedir?
 Tüm $a$ ve $b$ değerleri için, $P(A=a, B=b) \leq P (A=a)$ olduğuna dikkat edin.
 Durum böyle olmalıdır, çünkü $A=a$ ve $B=b$ olması için $A=a$ olması gerekir *ve* $B=b$ de gerçekleşmelidir (ve bunun tersi de geçerlidir). Bu nedenle, $A=a$ ve $B=b$, tek tek $A=a$ veya $B=b$ değerinden daha büyük olamaz.
 
-### Koşullu olasılık
+### Koşullu Olasılık
 
 Bu bizi ilginç bir orana getiriyor: $0 \leq \frac{P(A=a, B=b)}{P(A=a)} \leq 1$. Bu oranı bir *koşullu olasılık* olarak adlandırıyoruz ve bunu $P(B=b \mid A=a)$ ile gösteriyoruz: $A=a$ olması koşuluyla, $B=b$ olasılığıdır.
 

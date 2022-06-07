@@ -40,7 +40,7 @@ $\epsilon$'u öznitelikler ve etiketlerdeki olası ölçüm hatalarını yakalı
 ```{.python .input}
 #@tab mxnet, pytorch
 def synthetic_data(w, b, num_examples):  #@save
-    """Veri yaratma, y = Xw + b + gurultu."""
+    """Veri yaratma, y = Xw + b + gürültü."""
     X = d2l.normal(0, 1, (num_examples, len(w)))
     y = d2l.matmul(X, w) + b
     y += d2l.normal(0, 0.01, y.shape)
@@ -50,7 +50,7 @@ def synthetic_data(w, b, num_examples):  #@save
 ```{.python .input}
 #@tab tensorflow
 def synthetic_data(w, b, num_examples):  #@save
-    """Veri yaratma, y = Xw + b + gurultu."""
+    """Veri yaratma, y = Xw + b + gürültü."""
     X = d2l.zeros((num_examples, w.shape[0]))
     X += tf.random.normal(shape=X.shape)
     y = d2l.matmul(X, tf.reshape(w, (-1, 1))) + b
@@ -78,7 +78,7 @@ print('oznitelikler:', features[0],'\netiket:', labels[0])
 ```{.python .input}
 #@tab all
 d2l.set_figsize()
-# İki nokta ustuste sadece gosterim amaclidir
+# İki nokta üstüste sadece gösterim amaçlıdır
 d2l.plt.scatter(d2l.numpy(features[:, 1]), d2l.numpy(labels), 1);
 ```
 
@@ -93,7 +93,7 @@ Aşağıdaki kodda, bu işlevselliğin olası bir uygulamasını göstermek içi
 def data_iter(batch_size, features, labels):
     num_examples = len(features)
     indices = list(range(num_examples))
-    # Ornekler belirli bir sira gozetmeksizin rastgele okunur
+    # Örnekler belirli bir sıra gözetmeksizin rastgele okunur
     random.shuffle(indices)
     for i in range(0, num_examples, batch_size):
         batch_indices = d2l.tensor(
@@ -106,7 +106,7 @@ def data_iter(batch_size, features, labels):
 def data_iter(batch_size, features, labels):
     num_examples = len(features)
     indices = list(range(num_examples))
-    # Ornekler belirli bir sira gozetmeksizin rastgele okunur
+    # Örnekler belirli bir sıra gözetmeksizin rastgele okunur
     random.shuffle(indices)
     for i in range(0, num_examples, batch_size):
         j = tf.constant(indices[i: min(i + batch_size, num_examples)])
@@ -163,7 +163,7 @@ Daha sonra, [**modelimizi, onun girdileri ve parametreleri çıktıları ile ili
 ```{.python .input}
 #@tab all
 def linreg(X, w, b):  #@save
-    """Dogrusal regresyon modeli."""
+    """Doğrusal regresyon modeli."""
     return d2l.matmul(X, w) + b
 ```
 
@@ -174,7 +174,7 @@ def linreg(X, w, b):  #@save
 ```{.python .input}
 #@tab all
 def squared_loss(y_hat, y):  #@save
-    """Kare kayip."""
+    """Kare kayıp."""
     return (y_hat - d2l.reshape(y, y_hat.shape)) ** 2 / 2
 ```
 
@@ -237,7 +237,7 @@ loss = squared_loss
 for epoch in range(num_epochs):
     for X, y in data_iter(batch_size, features, labels):
         with autograd.record():
-            l = loss(net(X, w, b), y)  # `X` ve `y`'deki minigrup kaybi
+            l = loss(net(X, w, b), y)  # `X` ve `y`'deki minigrup kaybı
         # `l`'nin şekli (`batch_size`, 1) olduğu ve skaler bir değişken olmadığı için, 
         # `l`'deki öğeler,[`w`, `b`]'ye göre gradyanların olduğu yeni bir değişken 
         # elde etmek için birbirine eklenir.
@@ -251,7 +251,7 @@ for epoch in range(num_epochs):
 #@tab pytorch
 for epoch in range(num_epochs):
     for X, y in data_iter(batch_size, features, labels):
-        l = loss(net(X, w, b), y)  # `X` ve `y`'deki minigrup kaybi
+        l = loss(net(X, w, b), y)  # `X` ve `y`'deki minigrup kaybı
         # [`w`, `b`]'e göre `l` üzerindeki gradyanı hesaplayın
         l.sum().backward()
         sgd([w, b], lr, batch_size)  # Parametreleri gradyanlarına göre güncelle
@@ -265,7 +265,7 @@ for epoch in range(num_epochs):
 for epoch in range(num_epochs):
     for X, y in data_iter(batch_size, features, labels):
         with tf.GradientTape() as g:
-            l = loss(net(X, w, b), y)  # `X` ve `y`'deki minigrup kaybi
+            l = loss(net(X, w, b), y)  # `X` ve `y`'deki minigrup kaybı
         # [`w`, `b`]'e göre `l` üzerindeki gradyanı hesaplayın
         dw, db = g.gradient(l, [w, b])
         # Parametreleri gradyanlarına göre güncelle

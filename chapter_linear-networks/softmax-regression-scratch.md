@@ -187,7 +187,7 @@ Doğruluğu hesaplamak için aşağıdakileri yapıyoruz. İlk olarak, `y_hat` b
 ```{.python .input}
 #@tab all
 def accuracy(y_hat, y):  #@save
-    """Dogru tahminlerin sayisini hesaplayin."""
+    """Doğru tahminlerin sayısını hesaplayın."""
     if len(y_hat.shape) > 1 and y_hat.shape[1] > 1:
         y_hat = d2l.argmax(y_hat, axis=1)
     cmp = d2l.astype(y_hat, y.dtype) == y
@@ -206,8 +206,8 @@ Benzer şekilde, veri yineleyici `data_iter` aracılığıyla erişilen [**bir v
 ```{.python .input}
 #@tab mxnet, tensorflow
 def evaluate_accuracy(net, data_iter):  #@save
-    """Bir veri kümesindeki bir modelin doğruluğunu hesaplayın."""
-    metric = Accumulator(2)  # Dogru tahmin sayisi, tahmin sayisi
+    """Bir veri kümesinde bir modelin doğruluğunu hesaplayın."""
+    metric = Accumulator(2)  # Doğru tahmin sayısı, tahmin sayısı
     for X, y in data_iter:
         metric.add(accuracy(net(X), y), d2l.size(y))
     return metric[0] / metric[1]
@@ -216,10 +216,10 @@ def evaluate_accuracy(net, data_iter):  #@save
 ```{.python .input}
 #@tab pytorch
 def evaluate_accuracy(net, data_iter):  #@save
-    """Bir veri kumesindeki bir modelin dogrulugunu hesaplayin."""
+    """Bir veri kumesinde bir modelin doğruluğunu hesaplayın."""
     if isinstance(net, torch.nn.Module):
-        net.eval()  # Modeli degerlendirme moduna kurun
-    metric = Accumulator(2)  # Dogru tahmin sayisi, tahmin sayisi
+        net.eval()  # Modeli değerlendirme moduna kurun
+    metric = Accumulator(2)  # Doğru tahmin sayısı, tahmin sayısı
 
     with torch.no_grad():
         for X, y in data_iter:
@@ -232,7 +232,7 @@ Burada, `Accumulator`, birden çok değişken üzerindeki toplamları biriktirme
 ```{.python .input}
 #@tab all
 class Accumulator:  #@save
-    """`n` degisken uzerinden toplamlari biriktirmek için"""
+    """`n` değişken üzerinden toplamları biriktirmek için"""
     def __init__(self, n):
         self.data = [0.0] * n
 
@@ -259,63 +259,63 @@ Softmaks regresyonu için [**eğitim döngüsü**], :numref:`sec_linear_scratch`
 
 ```{.python .input}
 def train_epoch_ch3(net, train_iter, loss, updater):  #@save
-    """Bir modeli bir donem icinde egitme (Bolum 3'te tanimlanmistir)."""
-    # Egitim kaybi toplami, egitim dogrulugu toplami, ornek sayisi
+    """Bir modeli bir dönem içinde eğitme (Bölüm 3'te tanımlanmıştır)."""
+    # Eğitim kaybı toplamı, eğitim doğruluğu toplamı, örnek sayısı
     metric = Accumulator(3)
     if isinstance(updater, gluon.Trainer):
         updater = updater.step
     for X, y in train_iter:
-        # Gradyanlari hesaplayin ve parametreleri guncelleyin
+        # Gradyanları hesaplayın ve parametreleri güncelleyin
         with autograd.record():
             y_hat = net(X)
             l = loss(y_hat, y)
         l.backward()
         updater(X.shape[0])
         metric.add(float(l.sum()), accuracy(y_hat, y), y.size)
-    # Egitim kaybini ve dogrulugunu dondur
+    # Eğitim kaybını ve doğruluğunu döndür
     return metric[0] / metric[2], metric[1] / metric[2]
 ```
 
 ```{.python .input}
 #@tab pytorch
 def train_epoch_ch3(net, train_iter, loss, updater):  #@save
-    """Bolum 3'te tanimlanan egitim dongusu."""
-    # Modeli egitim moduna kurun
+    """Bölüm 3'te tanımlanan eğitim döngüsü."""
+    # Modeli eğitim moduna kurun
     if isinstance(net, torch.nn.Module):
         net.train()
-    # Egitim kaybi toplami, egitim dogrulugu toplami, ornek sayisi
+    # Eğitim kaybı toplamı, eğitim doğruluğu toplamı, örnek sayısı
     metric = Accumulator(3)
     for X, y in train_iter:
-        # Gradyanlari hesaplayin ve parametreleri guncelleyin
+        # Gradyanları hesaplayın ve parametreleri güncelleyin
         y_hat = net(X)
         l = loss(y_hat, y)
         if isinstance(updater, torch.optim.Optimizer):
-            # PyTorch yerleşik optimize edicisini ve kayip kriterini kullanma
+            # PyTorch yerleşik optimize edicisini ve kayıp kriterini kullanma
             updater.zero_grad()
             l.mean().backward()
             updater.step()
         else:
-            # Ozel olarak oluşturulmus optimize edicisini ve kayip olcutunu kullanma
+            # Özel olarak oluşturulmuş optimize edicisini ve kayıp ölçütünü kullanma
             l.sum().backward()
             updater(X.shape[0])
         metric.add(float(l.sum()), accuracy(y_hat, y), y.numel())
-    # Egitim kaybini ve dogrulugunu dondur
+    # Eğitim kaybını ve doğruluğunu döndür
     return metric[0] / metric[2], metric[1] / metric[2]
 ```
 
 ```{.python .input}
 #@tab tensorflow
 def train_epoch_ch3(net, train_iter, loss, updater):  #@save
-    """Bolum 3'te tanimlanan egitim dongusu."""
-    # Egitim kaybi toplami, egitim dogrulugu toplami, ornek sayisi
+    """Bölüm 3'te tanımlanan eğitim döngüsü."""
+     # Eğitim kaybı toplamı, eğitim doğruluğu toplamı, örnek sayısı
     metric = Accumulator(3)
     for X, y in train_iter:
-        # Gradyanlari hesaplayin ve parametreleri guncelleyin
+        # Gradyanları hesaplayın ve parametreleri güncelleyin
         with tf.GradientTape() as tape:
             y_hat = net(X)
-            # Kullanicilarin bu kitapta uygulayabilecekleri (tahminler, etiketler) 
-            # yerine kayip alimları (etiketler, tahminler) için Keras uygulamalari
-            # ör. yukarida uyguladigimiz 'cross_entropy'
+            # Kullanıcıların bu kitapta uygulayabilecekleri (tahminler, etiketler) 
+            # yerine kayıp alımları (etiketler, tahminler) için Keras uygulamaları
+            # ör. yukarıda uyguladığımız `cross_entropy`
             if isinstance(loss, tf.keras.losses.Loss):
                 l = loss(y, y_hat)
             else:
@@ -326,11 +326,11 @@ def train_epoch_ch3(net, train_iter, loss, updater):  #@save
             updater.apply_gradients(zip(grads, params))
         else:
             updater(X.shape[0], tape.gradient(l, updater.params))
-        # Varsayilan olarak Keras kaybi, bir toplu is icindeki ortalama kaybı döndürür
+        # Varsayılan olarak Keras kaybı, bir toplu iş içindeki ortalama kaybı döndürür
         l_sum = l * float(tf.size(y)) if isinstance(
             loss, tf.keras.losses.Loss) else tf.reduce_sum(l)
         metric.add(l_sum, accuracy(y_hat, y), tf.size(y))
-    # Egitim kaybini ve dogrulugunu dondur
+     # Eğitim kaybını ve doğruluğunu döndür
     return metric[0] / metric[2], metric[1] / metric[2]
 ```
 
@@ -339,25 +339,25 @@ Eğitim işlevinin uygulamasını göstermeden önce, [**verileri animasyonda (c
 ```{.python .input}
 #@tab all
 class Animator:  #@save
-    """Animasyonda veri cizdirme"""
+    """Animasyonda veri çizdirme"""
     def __init__(self, xlabel=None, ylabel=None, legend=None, xlim=None,
                  ylim=None, xscale='linear', yscale='linear',
                  fmts=('-', 'm--', 'g-.', 'r:'), nrows=1, ncols=1,
                  figsize=(3.5, 2.5)):
-        # Coklu cizgileri artarak cizdir
+        # Çoklu çizgileri artarak çizdir
         if legend is None:
             legend = []
         d2l.use_svg_display()
         self.fig, self.axes = d2l.plt.subplots(nrows, ncols, figsize=figsize)
         if nrows * ncols == 1:
             self.axes = [self.axes, ]
-        # Argumanlari elde tutmak icin bir lambda islevi kullan
+        # Argumanları elde tutmak için bir lambda işlevi kullan
         self.config_axes = lambda: d2l.set_axes(
             self.axes[0], xlabel, ylabel, xlim, ylim, xscale, yscale, legend)
         self.X, self.Y, self.fmts = None, None, fmts
 
     def add(self, x, y):
-        # Coklu veri noktalarini sekile ekleyin
+        # Çoklu veri noktalarını şekile ekleyin
         if not hasattr(y, "__len__"):
             y = [y]
         n = len(y)
@@ -385,9 +385,9 @@ Aşağıdaki eğitim işlevi daha sonra, `num_epochs` ile belirtilen birden çok
 ```{.python .input}
 #@tab all
 def train_ch3(net, train_iter, test_iter, loss, num_epochs, updater):  #@save
-    """Bir modeli egitin (Bolum 3'te tanimlanmistir)."""
+    """Bir modeli eğitin (Bölüm 3'te tanımlanmıştır)."""
     animator = Animator(xlabel='epoch', xlim=[1, num_epochs], ylim=[0.3, 0.9],
-                        legend=['train loss', 'train acc', 'test acc'])
+                        legend=['egitim kaybi', 'egitim dogr', 'test dogr'])
     for epoch in range(num_epochs):
         train_metrics = train_epoch_ch3(net, train_iter, loss, updater)
         test_acc = evaluate_accuracy(net, test_iter)
@@ -411,7 +411,7 @@ def updater(batch_size):
 ```{.python .input}
 #@tab tensorflow
 class Updater():  #@save
-    """Minigrup rasgele gradyan inisini kullanarak parametreleri guncellemek icin."""
+    """Minigrup rasgele gradyan inişini kullanarak parametreleri güncellemek için."""
     def __init__(self, params, lr):
         self.params = params
         self.lr = lr
@@ -437,7 +437,7 @@ Artık eğitim tamamlandı, [**modelimiz bazı imgeleri sınıflandırmaya**] ha
 ```{.python .input}
 #@tab all
 def predict_ch3(net, test_iter, n=6):  #@save
-    """Etiketleri tahmin etme (Bolum 3'te tanimlanmistir)."""
+    """Etiketleri tahmin etme (Bölüm 3'te tanımlanmıştır)."""
     for X, y in test_iter:
         break
     trues = d2l.get_fashion_mnist_labels(y)

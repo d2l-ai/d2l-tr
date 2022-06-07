@@ -43,7 +43,7 @@ Kendi yineleyicimizi döndürmek yerine, [**verileri okumak için bir çerçeved
 
 ```{.python .input}
 def load_array(data_arrays, batch_size, is_train=True):  #@save
-    """Bir Gluon veri yineleyici olusturun."""
+    """Bir Gluon veri yineleyici oluşturun."""
     dataset = gluon.data.ArrayDataset(*data_arrays)
     return gluon.data.DataLoader(dataset, batch_size, shuffle=is_train)
 ```
@@ -51,7 +51,7 @@ def load_array(data_arrays, batch_size, is_train=True):  #@save
 ```{.python .input}
 #@tab pytorch
 def load_array(data_arrays, batch_size, is_train=True):  #@save
-    """Bir PyTorch veri yineleyici olusturun."""
+    """Bir PyTorch veri yineleyici oluşturun."""
     dataset = data.TensorDataset(*data_arrays)
     return data.DataLoader(dataset, batch_size, shuffle=is_train)
 ```
@@ -59,7 +59,7 @@ def load_array(data_arrays, batch_size, is_train=True):  #@save
 ```{.python .input}
 #@tab tensorflow
 def load_array(data_arrays, batch_size, is_train=True):  #@save
-    """Bir TensorFlow veri yineleyici olusturun."""
+    """Bir TensorFlow veri yineleyici oluşturun."""
     dataset = tf.data.Dataset.from_tensor_slices(data_arrays)
     if is_train:
         dataset = dataset.shuffle(buffer_size=1000)
@@ -105,7 +105,7 @@ Kolaylık sağlamak için Gluon'un her katman için girdi şeklini belirlememizi
 :end_tab:
 
 ```{.python .input}
-# `nn` sinir aglari icin kisaltmadir
+# `nn` sinir ağları için kısaltmadır
 from mxnet.gluon import nn
 net = nn.Sequential()
 net.add(nn.Dense(1))
@@ -113,14 +113,14 @@ net.add(nn.Dense(1))
 
 ```{.python .input}
 #@tab pytorch
-# `nn` sinir aglari icin kisaltmadir
+# `nn` sinir ağları için kısaltmadır
 from torch import nn
 net = nn.Sequential(nn.Linear(2, 1))
 ```
 
 ```{.python .input}
 #@tab tensorflow
-# `keras` TensorFlow'un ust-seviye API'sidir
+# `keras` TensorFlow'un üst-seviye API'sidir
 net = tf.keras.Sequential()
 net.add(tf.keras.layers.Dense(1))
 ```
