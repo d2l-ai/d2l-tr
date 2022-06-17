@@ -13,7 +13,7 @@ Bu karmaşık ağları uygulamak için, bir sinir ağı *bloğu* kavramını sun
 :label:`fig_blocks`
 
 
-Programlama açısından, bir blok *sınıf* ile temsil edilir. Onun herhangi bir alt sınıfı, girdisini çıktıya dönüştüren ve gerekli parametreleri depolayan bir ileri yayma yöntemi tanımlamalıdır. Bazı blokların herhangi bir parametre gerektirmediğini unutmayın. Son olarak, gradyanları hesaplamak için bir blok geriye yayma yöntemine sahip olmalıdır. Neyse ki, kendi bloğumuzu tanımlarken otomatik türev almanın sağladığı bazı perde arkası sihir sayesinde (:numref:`sec_autograd`'te tanıtıldı), sadece parametreler ve ileri yayma işlevi hakkında endişelenmemiz gerekir.
+Programlama açısından, bir blok *sınıf* ile temsil edilir. Onun herhangi bir alt sınıfı, girdisini çıktıya dönüştüren ve gerekli parametreleri depolayan bir ileri yayma yöntemi tanımlamalıdır. Bazı blokların herhangi bir parametre gerektirmediğini unutmayın. Son olarak, gradyanları hesaplamak için bir blok geriye yayma yöntemine sahip olmalıdır. Neyse ki, kendi bloğumuzu tanımlarken otomatik türev almanın sağladığı bazı perde arkası sihir sayesinde (:numref:`sec_autograd` içinde tanıtıldı), sadece parametreler ve ileri yayma işlevi hakkında endişelenmemiz gerekir.
 
 [**Başlangıç olarak MLPleri uygulamak için kullandığımız kodları yeniden gözden geçiriyoruz**] (:numref:`sec_mlp_concise`). Aşağıdaki kod, 256 birim ve ReLU etkinleştirmesine sahip tam bağlı bir gizli katmana sahip bir ağ oluşturur ve ardından 10 birimle (etkinleştirme işlevi yok) tam bağlı çıktı katmanı gelir.
 
@@ -157,7 +157,7 @@ class MLP(tf.keras.Model):
 
 İlk olarak ileri yayma işlevine odaklanalım. Girdi olarak `X`'i aldığını, gizli gösterimi etkinleştirme işlevi uygulanmış olarak hesapladığını ve logitlerini çıktı verdiğini unutmayın. Bu `MLP` uygulamasında, her iki katman da örnek değişkenlerdir. Bunun neden makul olduğunu anlamak için, iki MLP'yi (`net1` ve `net2`) somutlaştırdığınızı ve bunları farklı veriler üzerinde eğittiğinizi hayal edin. Doğal olarak, iki farklı öğrenilmiş modeli temsil etmelerini bekleriz.
 
-[**MLP'nin katmanlarını**] kurucuda [**ilkliyoruz**] ve (**daha sonra bu katmanları**) her bir ileri yayma işlevi çağrısında (**çağırıyoruz**). Birkaç önemli ayrıntıya dikkat edin. İlk olarak, özelleştirilmiş `__init__` işlevimiz, `super() .__init__()` aracılığıyla üst sınıfın `__init__` işlevini çağırır ve bizi çoğu bloğa uygulanabilen standart şablon kodunu yeniden biçimlendirme zahmetinden kurtarır. Daha sonra, tam bağlı iki katmanımızı `self.hidden` ve `self.out`'a atayarak somutlaştırıyoruz. Yeni bir operatör uygulamadığımız sürece, geriye yayma işlevi veya parametre ilkleme konusunda endişelenmemize gerek olmadığını unutmayın. Sistem bu işlevleri otomatik olarak üretecektir. Bunu deneyelim.
+[**MLP'nin katmanlarını**] kurucuda [**ilkliyoruz**] ve (**daha sonra bu katmanları**) her bir ileri yayma işlevi çağrısında (**çağırıyoruz**). Birkaç önemli ayrıntıya dikkat edin. İlk olarak, özelleştirilmiş `__init__` işlevimiz, `super().__init__()` aracılığıyla üst sınıfın `__init__` işlevini çağırır ve bizi çoğu bloğa uygulanabilen standart şablon kodunu yeniden biçimlendirme zahmetinden kurtarır. Daha sonra, tam bağlı iki katmanımızı `self.hidden` ve `self.out`'a atayarak somutlaştırıyoruz. Yeni bir operatör uygulamadığımız sürece, geriye yayma işlevi veya parametre ilkleme konusunda endişelenmemize gerek olmadığını unutmayın. Sistem bu işlevleri otomatik olarak üretecektir. Bunu deneyelim.
 
 ```{.python .input}
 net = MLP()
@@ -191,16 +191,16 @@ Aşağıdaki `MySequential` sınıfı aynı işlevselliği varsayılan `Sequenti
 ```{.python .input}
 class MySequential(nn.Block):
     def add(self, block):
-        # Here, `block` is an instance of a `Block` subclass, and we assume 
-        # that it has a unique name. We save it in the member variable
-        # `_children` of the `Block` class, and its type is OrderedDict. When
-        # the `MySequential` instance calls the `initialize` function, the
-        # system automatically initializes all members of `_children`
+        # Burada, `block`, `Block` alt sınıfının bir örneğidir ve eşsiz bir 
+        # ada sahip olduğunu varsayıyoruz. Bunu `Block` sınıfının `_children` 
+        # üye değişkenine kaydederiz ve türü OrderedDict'tir. `MySequential` 
+        # örneği `initialize` işlevini çağırdığında, sistem tüm `_children` 
+        # üyelerini otomatik olarak ilkler.
+
         self._children[block.name] = block
 
     def forward(self, X):
-        # OrderedDict guarantees that members will be traversed in the order
-        # they were added
+        # OrderedDict, üyelerin eklendikleri sırayla işletileceğini garanti eder.
         for block in self._children.values():
             X = block(X)
         return X
@@ -212,14 +212,13 @@ class MySequential(nn.Module):
     def __init__(self, *args):
         super().__init__()
         for idx, module in enumerate(args):
-            # Here, `module` is an instance of a `Module` subclass. We save it
-            # in the member variable `_modules` of the `Module` class, and its
-            # type is OrderedDict
+            # Burada, `module` , `mMdule` alt sınıfının bir örneğidir. 
+            # Bunu, `Module` sınıfının `_modules` üye değişkenine kaydederiz 
+            # ve türü OrderedDict'tir.
             self._modules[str(idx)] = module
 
     def forward(self, X):
-        # OrderedDict guarantees that members will be traversed in the order
-        # they were added
+        # OrderedDict, üyelerin eklendikleri sırayla işletileceğini garanti eder.
         for block in self._modules.values():
             X = block(X)
         return X
@@ -232,8 +231,7 @@ class MySequential(tf.keras.Model):
         super().__init__()
         self.modules = []
         for block in args:
-            # Here, `block` is an instance of a `tf.keras.layers.Layer`
-            # subclass
+            # Burada, `block`, bir `tf.keras.layers.Layer` alt sınıfının bir örneğidir
             self.modules.append(block)
 
     def call(self, X):
@@ -274,7 +272,7 @@ net = MySequential(
 net(X)
 ```
 
-Bu `MySequential` kullanımının, daha önce `Sequential` sınıfı için yazdığımız kodla aynı olduğuna dikkat edin (burada açıklandığı gibi :numref:`sec_mlp_concise`).
+Bu `MySequential` kullanımının, daha önce `Sequential` sınıfı için yazdığımız kodla aynı olduğuna dikkat edin (:numref:`sec_mlp_concise` içinde açıklandığı gibi).
 
 ## [**İleri Yayma İşlevinde Kodu Yürütme**]
 
@@ -286,21 +284,20 @@ Bu `MySequential` kullanımının, daha önce `Sequential` sınıfı için yazd�
 class FixedHiddenMLP(nn.Block):
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
-        # Random weight parameters created with the `get_constant` function
-        # are not updated during training (i.e., constant parameters)
+        # `get_constant` işleviyle oluşturulan rastgele ağırlık parametreleri 
+        # eğitim sırasında güncellenmez (yani sabit parametreler)
         self.rand_weight = self.params.get_constant(
             'rand_weight', np.random.uniform(size=(20, 20)))
         self.dense = nn.Dense(20, activation='relu')
 
     def forward(self, X):
         X = self.dense(X)
-        # Use the created constant parameters, as well as the `relu` and `dot`
-        # functions
+        # Oluşturulan sabit parametrelerin yanı sıra `relu` ve `dot` 
+        # işlevlerini kullanın
         X = npx.relu(np.dot(X, self.rand_weight.data()) + 1)
-        # Reuse the fully-connected layer. This is equivalent to sharing
-        # parameters with two fully-connected layers
+        # Tam bağlı katmanı yeniden kullanın. Bu, parametreleri tamamen bağlı iki katmanla paylaşmaya eşdeğerdir.
         X = self.dense(X)
-        # Control flow
+        # Kontrol akışı
         while np.abs(X).sum() > 1:
             X /= 2
         return X.sum()
@@ -311,20 +308,19 @@ class FixedHiddenMLP(nn.Block):
 class FixedHiddenMLP(nn.Module):
     def __init__(self):
         super().__init__()
-        # Random weight parameters that will not compute gradients and
-        # therefore keep constant during training
+        # Gradyanları hesaplamayan ve bu nedenle eğitim sırasında sabit kalan 
+        # rastgele ağırlık parametreleri
         self.rand_weight = torch.rand((20, 20), requires_grad=False)
         self.linear = nn.Linear(20, 20)
 
     def forward(self, X):
         X = self.linear(X)
-        # Use the created constant parameters, as well as the `relu` and `mm`
-        # functions
+        # Oluşturulan sabit parametrelerin yanı sıra `relu` ve `mm`işlevlerini kullanın
         X = F.relu(torch.mm(X, self.rand_weight) + 1)
-        # Reuse the fully-connected layer. This is equivalent to sharing
-        # parameters with two fully-connected layers
+        # Tam bağlı katmanı yeniden kullanın. Bu, parametreleri tamamen bağlı iki 
+        # katmanla paylaşmaya eşdeğerdir.
         X = self.linear(X)
-        # Control flow
+        # Kontrol akışı
         while X.abs().sum() > 1:
             X /= 2
         return X.sum()
@@ -336,20 +332,19 @@ class FixedHiddenMLP(tf.keras.Model):
     def __init__(self):
         super().__init__()
         self.flatten = tf.keras.layers.Flatten()
-        # Random weight parameters created with `tf.constant` are not updated
-        # during training (i.e., constant parameters)
+        # `tf.constant` ile oluşturulan rastgele ağırlık parametreleri eğitim sırasında güncellenmez (yani sabit parametreler)
         self.rand_weight = tf.constant(tf.random.uniform((20, 20)))
         self.dense = tf.keras.layers.Dense(20, activation=tf.nn.relu)
 
     def call(self, inputs):
         X = self.flatten(inputs)
-        # Use the created constant parameters, as well as the `relu` and
-        # `matmul` functions
+        # Oluşturulan sabit parametrelerin yanı sıra `relu` ve `matmul` 
+        # işlevlerini kullanın
         X = tf.nn.relu(tf.matmul(X, self.rand_weight) + 1)
-        # Reuse the fully-connected layer. This is equivalent to sharing
-        # parameters with two fully-connected layers
+        # Tam bağlı katmanı yeniden kullanın. Bu, parametreleri tamamen bağlı iki 
+        # katmanla paylaşmaya eşdeğerdir.
         X = self.dense(X)
-        # Control flow
+        # Kontrol akışı
         while tf.reduce_sum(tf.math.abs(X)) > 1:
             X /= 2
         return tf.reduce_sum(X)
@@ -452,7 +447,7 @@ Python'u hızlandırmanın en iyi yolu, ondan tamamen kaçınmaktır.
 * Birçok katman bir blok içerebilir.
 * Bir blok birçok blok içerebilir.
 * Bir blok kod içerebilir.
-* Bloklar, parametre ilkleme ve geri yayma dahil olmak üzere birçok idare işini halleder.
+* Bloklar, parametre ilkleme ve geri yayma dahil olmak üzere birçok temel yürütme işlerini halleder.
 * Katmanların ve blokların dizili birleştirmeleri `Sequential` blok tarafından gerçekleştirilir.
 
 

@@ -1,7 +1,7 @@
 # Softmaks Regresyonunun Kısa Uygulaması
 :label:`sec_softmax_concise`
 
-:numref:`sec_linear_concise` içindeki derin öğrenme çerçevelerinin (**yüksek seviyeli API'leri**) (**doğrusal regresyon uygulamasını çok daha kolay hale getirdi**), (~~burada~~) onu sınıflandırma modellerini uygulamada (**benzer şekilde**) (veya muhtemelen daha fazla) uygun bulacağız . Fashion-MNIST veri kümesine bağlı kalalım ve iş boyutunu :numref:`sec_softmax_scratch` gibi 256'da tutalım.
+:numref:`sec_linear_concise` içindeki derin öğrenme çerçevelerinin (**yüksek seviyeli API'leri**) (**doğrusal regresyon uygulamasını çok daha kolay hale getirdi**), (~~burada~~) onu sınıflandırma modellerini uygulamada (**benzer şekilde**) (veya muhtemelen daha fazla) uygun bulacağız. Fashion-MNIST veri kümesine bağlı kalalım ve iş boyutunu :numref:`sec_softmax_scratch` gibi 256'da tutalım.
 
 ```{.python .input}
 from d2l import mxnet as d2l
@@ -31,7 +31,7 @@ train_iter, test_iter = d2l.load_data_fashion_mnist(batch_size)
 
 ## Model Parametrelerini İlkleme
 
-:numref:`sec_softmax`'te bahsedildiği gibi, [**softmaks regresyonunun çıktı katmanı tam bağlı bir katmandır**]. Bu nedenle, modelimizi uygulamak için, `Sequential`'a 10 çıktılı tam bağlı bir katman eklememiz yeterlidir. Yine burada, `Sequential` gerçekten gerekli değildir, ancak derin modelleri uygularken her yerde bulunacağından bu alışkanlığı oluşturalım. Yine, ağırlıkları sıfır ortalama ve 0.01 standart sapma ile rastgele ilkliyoruz.
+:numref:`sec_softmax` içinde bahsedildiği gibi, [**softmaks regresyonunun çıktı katmanı tam bağlı bir katmandır**]. Bu nedenle, modelimizi uygulamak için, `Sequential`'a 10 çıktılı tam bağlı bir katman eklememiz yeterlidir. Yine burada, `Sequential` gerçekten gerekli değildir, ancak derin modelleri uygularken her yerde bulunacağından bu alışkanlığı oluşturalım. Yine, ağırlıkları sıfır ortalama ve 0.01 standart sapma ile rastgele ilkliyoruz.
 
 ```{.python .input}
 net = nn.Sequential()
@@ -64,7 +64,7 @@ net.add(tf.keras.layers.Dense(10, kernel_initializer=weight_initializer))
 ## Softmaks Uygulamasına Yeniden Bakış
 :label:`subsec_softmax-implementation-revisited`
 
-Önceki örneğimiz :numref:`sec_softmax_scratch`'de, modelimizin çıktısını hesapladık ve sonra bu çıktıyı çapraz entropi kaybıyla çalıştırdık. Matematiksel olarak bu, yapılacak son derece makul bir şeydir. Bununla birlikte, hesaplama açısından, üs alma, sayısal kararlılık sorunlarının bir kaynağı olabilir.
+Önceki örneğimiz :numref:`sec_softmax_scratch` içinde, modelimizin çıktısını hesapladık ve sonra bu çıktıyı çapraz entropi kaybıyla çalıştırdık. Matematiksel olarak bu, yapılacak son derece makul bir şeydir. Bununla birlikte, hesaplama açısından, üs alma, sayısal kararlılık sorunlarının bir kaynağı olabilir.
 
 Softmaks fonksiyonunun $\hat y_j = \frac{\exp(o_j)}{\sum_k \exp(o_k)}$'yi hesapladığını hatırlayın; burada $\hat y_j$  tahmin edilen olasılık dağılımı $\hat {\mathbf y}$'nin $j.$ öğesidir ve $o_j$, $\mathbf{o}$ logitlerinin $j.$ öğesidir. $o_k$ değerlerinden bazıları çok büyükse (yani çok pozitifse), o zaman $\exp(o_k)$ belirli veri türleri için sahip olabileceğimiz en büyük sayıdan daha büyük olabilir (yani *taşar*). Bu, paydayı (ve/veya payı) `inf` (sonsuz) yapar ve o zaman $\hat y_j$ için 0, `inf` veya `nan` (sayı değil) ile karşılaşırız. Bu durumlarda çapraz entropi için iyi tanımlanmış bir dönüş değeri elde edemeyiz.
 

@@ -47,6 +47,8 @@ byte; bayt, sekizli
 
 cache; ön bellek
 
+callback; geri arama
+
 checksum; sağlama toplamı
 
 co-adaptation; birlikte-uyarlama
@@ -83,7 +85,7 @@ deployment; konuşlandırma
 
 descent; iniş
 
-deterministic; gerekirci
+deterministic; gerekirci, belirlenimci
 
 discriminator; ayrımcı
 
@@ -152,6 +154,8 @@ hybridization; melezleştirme
 imperative; buyuru
 
 imputation; itham
+
+independent and identically distributed; bağımsız ve özdeşçe dağılmış
 
 indicator; gösterge, belirteç
 
@@ -303,7 +307,7 @@ string; dizgi
 
 stochastic; rasgele
 
-sunsampling; alt örnekleme
+subsampling; alt örnekleme
 
 surrogate; vekil
 

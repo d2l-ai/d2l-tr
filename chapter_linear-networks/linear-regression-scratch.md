@@ -40,7 +40,7 @@ $\epsilon$'u öznitelikler ve etiketlerdeki olası ölçüm hatalarını yakalı
 ```{.python .input}
 #@tab mxnet, pytorch
 def synthetic_data(w, b, num_examples):  #@save
-    """Veri yaratma, y = Xw + b + gurultu."""
+    """Veri yaratma, y = Xw + b + gürültü."""
     X = d2l.normal(0, 1, (num_examples, len(w)))
     y = d2l.matmul(X, w) + b
     y += d2l.normal(0, 0.01, y.shape)
@@ -50,7 +50,7 @@ def synthetic_data(w, b, num_examples):  #@save
 ```{.python .input}
 #@tab tensorflow
 def synthetic_data(w, b, num_examples):  #@save
-    """Veri yaratma, y = Xw + b + gurultu."""
+    """Veri yaratma, y = Xw + b + gürültü."""
     X = d2l.zeros((num_examples, w.shape[0]))
     X += tf.random.normal(shape=X.shape)
     y = d2l.matmul(X, tf.reshape(w, (-1, 1))) + b
@@ -78,7 +78,7 @@ print('oznitelikler:', features[0],'\netiket:', labels[0])
 ```{.python .input}
 #@tab all
 d2l.set_figsize()
-# İki nokta ustuste sadece gosterim amaclidir
+# İki nokta üstüste sadece gösterim amaçlıdır
 d2l.plt.scatter(d2l.numpy(features[:, 1]), d2l.numpy(labels), 1);
 ```
 
@@ -93,7 +93,7 @@ Aşağıdaki kodda, bu işlevselliğin olası bir uygulamasını göstermek içi
 def data_iter(batch_size, features, labels):
     num_examples = len(features)
     indices = list(range(num_examples))
-    # Ornekler belirli bir sira gozetmeksizin rastgele okunur
+    # Örnekler belirli bir sıra gözetmeksizin rastgele okunur
     random.shuffle(indices)
     for i in range(0, num_examples, batch_size):
         batch_indices = d2l.tensor(
@@ -106,7 +106,7 @@ def data_iter(batch_size, features, labels):
 def data_iter(batch_size, features, labels):
     num_examples = len(features)
     indices = list(range(num_examples))
-    # Ornekler belirli bir sira gozetmeksizin rastgele okunur
+    # Örnekler belirli bir sıra gözetmeksizin rastgele okunur
     random.shuffle(indices)
     for i in range(0, num_examples, batch_size):
         j = tf.constant(indices[i: min(i + batch_size, num_examples)])
@@ -152,9 +152,9 @@ w = tf.Variable(tf.random.normal(shape=(2, 1), mean=0, stddev=0.01),
 b = tf.Variable(tf.zeros(1), trainable=True)
 ```
 
-Parametrelerimizi ilkledikten sonra, bir sonraki görevimiz, verilerimize yeterince iyi oturana kadar onları güncellemektir. Her güncelleme, parametrelere göre kayıp fonksiyonumuzun gradyanını almayı gerektirir. Gradyan verildiğinde, her parametreyi kaybı azaltabilecek yönde güncelleyebiliriz.
+Parametrelerimizi ilkledikten sonra, bir sonraki görevimiz, verilerimize yeterince iyi uyum sağlayana kadar onları güncellemektir. Her güncelleme, parametrelere göre kayıp fonksiyonumuzun gradyanını almayı gerektirir. Gradyan verildiğinde, her parametreyi kaybı azaltabilecek yönde güncelleyebiliriz.
 
-Hiç kimse gradyanları açıkça hesaplamak istemediğinden (bu sıkıcı ve hataya açıktır), gradyanı hesaplamak için :numref:`sec_autograd`'te tanıtıldığı gibi otomatik türev almayı kullanırız.
+Hiç kimse gradyanları açıkça hesaplamak istemediğinden (bu sıkıcı ve hataya açıktır), gradyanı hesaplamak için :numref:`sec_autograd` içinde tanıtıldığı gibi otomatik türev almayı kullanırız.
 
 ## Modeli Tanımlama
 
@@ -163,27 +163,27 @@ Daha sonra, [**modelimizi, onun girdileri ve parametreleri çıktıları ile ili
 ```{.python .input}
 #@tab all
 def linreg(X, w, b):  #@save
-    """Dogrusal regresyon modeli."""
+    """Doğrusal regresyon modeli."""
     return d2l.matmul(X, w) + b
 ```
 
 ## Kayıp Fonksiyonunu Tanımlama
 
-[**Modelimizi güncellemek, kayıp fonksiyonumuzun gradyanını almayı gerektirdiğinden**], önce (**kayıp fonksiyonunu tanımlamalıyız**). Burada kare kayıp fonksiyonunu şurada açıklandığı gibi kullanacağız :numref:`sec_linear_regression`. Uygulamada, `y` gerçek değerini tahmin edilen değer `y_hat` şekline dönüştürmemiz gerekir. Aşağıdaki işlev tarafından döndürülen sonuç da `y_hat` ile aynı şekle sahip olacaktır.
+[**Modelimizi güncellemek, kayıp fonksiyonumuzun gradyanını almayı gerektirdiğinden**], önce (**kayıp fonksiyonunu tanımlamalıyız**). Burada kare kayıp fonksiyonunu şurada açıklandığı, :numref:`sec_linear_regression`, gibi kullanacağız . Uygulamada, `y` gerçek değerini tahmin edilen değer `y_hat` şekline dönüştürmemiz gerekir. Aşağıdaki işlev tarafından döndürülen sonuç da `y_hat` ile aynı şekle sahip olacaktır.
 
 ```{.python .input}
 #@tab all
 def squared_loss(y_hat, y):  #@save
-    """Kare kayip."""
+    """Kare kayıp."""
     return (y_hat - d2l.reshape(y, y_hat.shape)) ** 2 / 2
 ```
 
 ## Optimizasyon Algoritmasını Tanımlama
 
-:numref:`sec_linear_regression`'de tartıştığımız gibi, doğrusal regresyon kapalı form bir çözüme sahiptir. Ancak, bu doğrusal regresyon hakkında bir kitap değil: Derin öğrenme hakkında bir kitap. Bu kitabın tanıttığı diğer modellerin hiçbiri analitik olarak çözülemediğinden, bu fırsatı minigrup rasgele gradyan inişinin ilk çalışan örneğini tanıtmak için kullanacağız.
+:numref:`sec_linear_regression` içinde tartıştığımız gibi, doğrusal regresyon kapalı biçim bir çözüme sahiptir. Ancak, bu doğrusal regresyon hakkında bir kitap değil: Derin öğrenme hakkında bir kitap. Bu kitabın tanıttığı diğer modellerin hiçbiri analitik olarak çözülemediğinden, bu fırsatı minigrup rasgele gradyan inişinin ilk çalışan örneğini tanıtmak için kullanacağız.
 [~~Doğrusal regresyonun kapalı biçimli bir çözümü olmasına rağmen, bu kitaptaki diğer modellerde yoktur. Burada minigrup rasgele gradyan inişini tanıtıyoruz.~~] 
 
-Her adımda, veri setimizden rastgele alınan bir minigrup kullanarak, parametrelerimize göre kaybın gradyanını tahmin edeceğiz. Daha sonra kayıpları azaltabilecek yönde parametrelerimizi güncelleyeceğiz. Aşağıdaki kod, bir küme parametre, bir öğrenme oranı ve bir grup boyutu verildiğinde minigrup rasgele gradyan iniş güncellemesini uygular. Güncelleme adımının boyutu, öğrenme oranı `lr` tarafından belirlenir. Kaybımız, örneklerin minigrubu üzerinden bir toplam olarak hesaplandığından, adım boyutumuzu grup boyutuna (`batch_size`) göre normalleştiririz, böylece tipik bir adım boyutunun büyüklüğü, grup boyutu seçimimize büyük ölçüde bağlı olmaz.
+Her adımda, veri kümemizden rastgele alınan bir minigrup kullanarak, parametrelerimize göre kaybın gradyanını tahmin edeceğiz. Daha sonra kayıpları azaltabilecek yönde parametrelerimizi güncelleyeceğiz. Aşağıdaki kod, bir küme parametre, bir öğrenme oranı ve bir grup boyutu verildiğinde minigrup rasgele gradyan iniş güncellemesini uygular. Güncelleme adımının boyutu, öğrenme oranı `lr` tarafından belirlenir. Kaybımız, örneklerin minigrubu üzerinden bir toplam olarak hesaplandığından, adım boyutumuzu grup boyutuna (`batch_size`) göre normalleştiririz, böylece tipik bir adım boyutunun büyüklüğü, grup boyutu seçimimize büyük ölçüde bağlı olmaz.
 
 ```{.python .input}
 def sgd(params, lr, batch_size):  #@save
@@ -223,7 +223,7 @@ Her yinelemede, bir minigrup eğitim örneği alacağız ve bir dizi tahmin elde
      * Gradyanı hesaplayın: $\mathbf{g} \leftarrow \partial_{(\mathbf{w},b)} \frac{1}{|\mathcal{B}|} \sum_{i \in \mathcal{B}} l(\mathbf{x}^{(i)}, y^{(i)}, \mathbf{w}, b)$
      * Parametreleri güncelleyin: $(\mathbf{w}, b) \leftarrow (\mathbf{w}, b) - \eta \mathbf{g}$
 
-Her bir *dönemde (epoch)*, eğitim veri kümesindeki her örnekten geçtikten sonra (örneklerin sayısının grup boyutuna bölünebildiği varsayılarak) tüm veri kümesini (`data_iter` işlevini kullanarak) yineleyeceğiz. Dönemlerin sayısı, `num_epochs`, ve öğrenme hızı, `lr`, burada sırasıyla 3 ve 0,03 olarak belirlediğimiz hiper parametrelerdir. Ne yazık ki, hiper parametrelerin belirlenmesi zordur ve deneme yanılma yoluyla bazı ayarlamalar gerektirir. Bu ayrıntıları şimdilik atlıyoruz, ancak daha sonra :numref:`chap_optimization` bölümünde tekrarlayacağız.
+Her bir *dönemde (epoch)*, eğitim veri kümesindeki her örnekten geçtikten sonra (örneklerin sayısının grup boyutuna bölünebildiği varsayılarak) tüm veri kümesini (`data_iter` işlevini kullanarak) yineleyeceğiz. Dönemlerin sayısı, `num_epochs`, ve öğrenme hızı, `lr`, burada sırasıyla 3 ve 0.03 olarak belirlediğimiz hiper parametrelerdir. Ne yazık ki, hiper parametrelerin belirlenmesi zordur ve deneme yanılma yoluyla bazı ayarlamalar gerektirir. Bu ayrıntıları şimdilik atlıyoruz, ancak daha sonra :numref:`chap_optimization` içinde tekrarlayacağız.
 
 ```{.python .input}
 #@tab all
@@ -237,7 +237,7 @@ loss = squared_loss
 for epoch in range(num_epochs):
     for X, y in data_iter(batch_size, features, labels):
         with autograd.record():
-            l = loss(net(X, w, b), y)  # `X` ve `y`'deki minigrup kaybi
+            l = loss(net(X, w, b), y)  # `X` ve `y`'deki minigrup kaybı
         # `l`'nin şekli (`batch_size`, 1) olduğu ve skaler bir değişken olmadığı için, 
         # `l`'deki öğeler,[`w`, `b`]'ye göre gradyanların olduğu yeni bir değişken 
         # elde etmek için birbirine eklenir.
@@ -251,7 +251,7 @@ for epoch in range(num_epochs):
 #@tab pytorch
 for epoch in range(num_epochs):
     for X, y in data_iter(batch_size, features, labels):
-        l = loss(net(X, w, b), y)  # `X` ve `y`'deki minigrup kaybi
+        l = loss(net(X, w, b), y)  # `X` ve `y`'deki minigrup kaybı
         # [`w`, `b`]'e göre `l` üzerindeki gradyanı hesaplayın
         l.sum().backward()
         sgd([w, b], lr, batch_size)  # Parametreleri gradyanlarına göre güncelle
@@ -265,13 +265,13 @@ for epoch in range(num_epochs):
 for epoch in range(num_epochs):
     for X, y in data_iter(batch_size, features, labels):
         with tf.GradientTape() as g:
-            l = loss(net(X, w, b), y)  # `X` ve `y`'deki minigrup kaybi
+            l = loss(net(X, w, b), y)  # `X` ve `y`'deki minigrup kaybı
         # [`w`, `b`]'e göre `l` üzerindeki gradyanı hesaplayın
         dw, db = g.gradient(l, [w, b])
         # Parametreleri gradyanlarına göre güncelle
         sgd([w, b], [dw, db], lr, batch_size)
     train_l = loss(net(features, w, b), labels)
-    print(f'epoch {epoch + 1}, loss {float(tf.reduce_mean(train_l)):f}')
+    print(f'donem {epoch + 1}, kayip {float(tf.reduce_mean(train_l)):f}')
 ```
 
 Bu durumda, veri kümemizi kendimiz sentezlediğimiz için, gerçek parametrelerin ne olduğunu tam olarak biliyoruz. Böylece [**eğitimdeki başarımızı, gerçek parametreleri eğitim döngümüz aracılığıyla öğrendiklerimizle karşılaştırarak**] değerlendirebiliriz. Gerçekten de birbirlerine çok yakın oldukları ortaya çıkıyor.

@@ -1,11 +1,11 @@
 # Veri ile Oynama Yapmak
 :label:`sec_ndarray`
 
-Bir şeylerin yapılabilmesi için, verileri depolamak ve oynama yapmak (manipule etmek) için bazı yollar bulmamız gerekir.
+Bir şeylerin yapılabilmesi için, verileri depolamak ve oynama yapmak (manipule etmek) için bazı yollar bulmamız gerekiyor.
 Genellikle verilerle ilgili iki önemli şey vardır: (i) Bunları elde etmek; ve (ii) bilgisayar içine girdikten sonra bunları işlemek. Veri depolamanın bir yolu olmadan onu elde etmenin bir anlamı yok, bu yüzden önce sentetik (yapay) verilerle oynayarak ellerimizi kirletelim. Başlamak için, *gerey (tensör)* olarak da adlandırılan $n$ boyutlu diziyi tanıtalım.
 
 Python'da en çok kullanılan bilimsel hesaplama paketi olan NumPy ile çalıştıysanız, bu bölümü tanıdık bulacaksınız.
-Hangi çerçeveyi kullanırsanız kullanın, *tensör sınıfı* (MXNet'teki `ndarray`, hem PyTorch hem de TensorFlow'daki `Tensor`), fazladan birkaç öldürücü özellik ile NumPy'nin `ndarray`'ına benzer.
+Hangi çerçeveyi kullanırsanız kullanın, *tensör sınıfı* (MXNet'teki `ndarray`, hem PyTorch hem de TensorFlow'daki `Tensor`), fazladan birkaç vurucu özellik ile NumPy'nin `ndarray`'ına benzer.
 İlk olarak, GPU hesaplama hızlandırmayı iyi desteklerken, NumPy sadece CPU hesaplamasını destekler.
 İkincisi, tensör sınıfı otomatik türev almayı destekler.
 Bu özellikler, tensör sınıfını derin öğrenme için uygun hale getirir.
@@ -13,9 +13,9 @@ Kitap boyunca, tensörler dediğimizde, aksi belirtilmedikçe tensör sınıfın
 
 ## Başlangıç
 
-Bu bölümde, sizi ayaklandırıp koşturmayı, kitapta ilerledikçe üstüne koyarak geliştireceğiniz temel matematik ve sayısal hesaplama araçlarıyla donatılmayı amaçlıyoruz.
-Bazı matematiksel kavramları veya kütüphane işlevlerini içselleştirme de zorlanıyorsanız, endişelenmeyin.
-Aşağıdaki bölümlerde bu konular pratik örnekler bağlamında tekrar ele alınacak ve yerine oturacaktır.
+Bu bölümde, sizi ayaklandırıp koşturmayı, kitapta ilerledikçe üstüne koyarak geliştireceğiniz temel matematik ve sayısal hesaplama araçlarıyla donatmayı amaçlıyoruz.
+Bazı matematiksel kavramları veya kütüphane işlevlerini içselleştirmede zorlanıyorsanız, endişelenmeyin.
+Aşağıdaki bölümlerde bu konular pratik örnekler bağlamında tekrar ele alınacak ve yerine oturacak.
 Öte yandan, zaten biraz bilgi birikiminiz varsa ve matematiksel içeriğin daha derinlerine inmek istiyorsanız, bu bölümü atlayabilirsiniz.
 
 :begin_tab:`mxnet`
@@ -113,7 +113,7 @@ tf.size(x)
 Örneğin, `x` tensörümüzü, (12,) şekilli bir satır vektöründen (3, 4) şekilli bir matrise dönüştürebiliriz .
 Bu yeni tensör tam olarak aynı değerleri içerir, ancak onları 3 satır ve 4 sütun olarak düzenlenmiş bir matris olarak görür.
 Yinelemek gerekirse, şekil değişmiş olsa da, elemanlar değişmemiştir.
-Boyutun yeniden şekillendirilerek değiştirilmediğine dikkat edin.
+Boyutun yeniden şekillendirilme ile değiştirilmediğine dikkat edin.
 
 ```{.python .input}
 #@tab mxnet, pytorch
@@ -216,11 +216,11 @@ Sayıldan sayıla eşleşen herhangi bir fonksiyondan eleman yönlü bir fonksiy
 Matematiksel gösterimde, böyle bir *tekli* skaler işlemi (bir girdi alarak) $f: \mathbb{R} \rightarrow \mathbb{R}$ imzasıyla ifade ederiz.
 Bu, işlevin herhangi bir gerçel sayıdan ($\mathbb{R}$) diğerine eşlendiği anlamına gelir.
 Benzer şekilde, $f: \mathbb{R}, \mathbb{R} \rightarrow \mathbb{R}$ imzası ile bir *ikili* skaler operatörü (iki gerçel girdi alarak ve bir çıktı verir) belirtiriz.
-*Aynı şekilli* iki  $\mathbf{u}$ ve $\mathbf{v}$ vektörü ve $f$ ikili operatörü verildiğinde, tüm $i$ler için $c_i \gets f(u_i, v_i)$ ayarlayarak $\mathbf{c} = F(\mathbf{u},\mathbf{v})$ vektörünü üretebiliriz; burada $c_i, u_i$ ve $v_i$, $\mathbf{c}, \mathbf{u}$ ve $\mathbf{v}$ vektörlerinin $i.$ elemanlarıdır.
+*Aynı şekilli* iki  $\mathbf{u}$ ve $\mathbf{v}$ vektörü ve $f$ ikili operatörü verildiğinde, tüm $i$ler için $c_i \gets f(u_i, v_i)$ diye ayarlayarak $\mathbf{c} = F(\mathbf{u},\mathbf{v})$ vektörünü üretebiliriz; burada $c_i, u_i$ ve $v_i$, $\mathbf{c}, \mathbf{u}$ ve $\mathbf{v}$ vektörlerinin $i.$ elemanlarıdır.
 Burada, skaler fonksiyonu eleman yönlü bir vektör işlemini *yükselterek* vektör değerli $F: \mathbb{R}^d, \mathbb{R}^d \rightarrow \mathbb{R}^d$ ürettik.
 
-Ortak standart aritmetik operatörler (`+`, `-`,` * `,`/` ve `**`), rastgele şekile sahip herhangi bir benzer şekilli tensörler için eleman yönlü işlemlere *yükseltilmiştir*.
-Aynı şekle sahip herhangi iki tansör üzerinde eleman yönlü işlemleri çağırabiliriz.
+Ortak standart aritmetik operatörler (`+`, `-`, `*`, `/` ve `**`), rastgele şekile sahip herhangi bir benzer şekilli tensörler için eleman yönlü işlemlere *yükseltilmiştir*.
+Aynı şekle sahip herhangi iki tensör üzerinde eleman yönlü işlemleri çağırabiliriz.
 Aşağıdaki örnekte, 5 öğeli bir grubu formüle etmek için virgül kullanıyoruz, her öğe eleman yönlü bir işlemin sonucudur.
 
 ### İşlemler
@@ -266,7 +266,7 @@ tf.exp(x)
 ```
 
 Eleman yönlü hesaplamalara ek olarak, vektör iç çarpımı ve matris çarpımı dahil olmak üzere doğrusal cebir işlemleri de gerçekleştirebiliriz.
-Doğrusal cebirin önemli parçalarını (varsayılmış hiçbir ön bilgi olmadan) şu şekilde açıklayacağız :numref:`sec_linear-algebra`.
+Doğrusal cebirin önemli parçalarını (varsayılmış hiçbir ön bilgi olmadan) :numref:`sec_linear-algebra` içinde açıklayacağız.
 
 Ayrıca birden fazla tensörü bir araya getirip daha büyük bir tensör oluşturmak için uçtan uca *istifleyebiliriz*.
 Sadece tensörlerin bir listesini vermeli ve sisteme hangi eksende birleştireceklerini söylemeliyiz.
@@ -295,7 +295,7 @@ tf.concat([X, Y], axis=0), tf.concat([X, Y], axis=1)
 
 Bazen, *mantıksal ifadeler* aracılığıyla bir ikili tensör oluşturmak isteriz.
 Örnek olarak `X == Y`'yi ele alalım.
-Her konum için, eğer `X` ve `Y` bu konumda eşitse, yeni tensördeki karşılık gelen girdi 1 değerini alır, yani mantıksal ifade `X == Y` o konumda doğrudur; aksi halde bu pozisyon 0 değerini alır.
+Her konum için, eğer `X` ve `Y` bu konumda eşitse, yeni tensördeki karşılık gelen girdi 1 değerini alır, yani mantıksal ifade `X == Y` o konumda doğrudur; aksi halde o pozisyon 0 değerini alır.
 
 ```{.python .input}
 #@tab all
@@ -389,7 +389,7 @@ X_var
 ```
 
 Birden fazla öğeye aynı değeri atamak istiyorsak, hepsini indeksleriz ve sonra da değer atarız.
-Örneğin, `[0:2, :]` birinci ve ikinci satırlara erişir, burada `:` eksen 1 (sütun) boyunca tüm elemanları alır.
+Örneğin, `[0:2, :]` birinci ve ikinci satırlara erişir, burada `:` Eksen 1 (sütun) boyunca tüm elemanları alır.
 Biz burada matrisler için indekslemeyi tartışırken, anlatılanlar açıkça vektörler ve 2'den fazla boyuttaki tensörler için de geçerlidir.
 
 ```{.python .input}
@@ -408,16 +408,16 @@ X_var
 ## Belleği Kaydetme
 
 [**Koşulan işlemler, sonuçların tutulması için yeni bellek ayrılmasına neden olabilir.**]
-Örneğin, `Y = X + Y` yazarsak, `Y`yi göstermek için kullanılan tensörden vazgeçer ve bunun yerine yeni ayrılan bellekteki `Y`yi işaret ederiz.
+Örneğin, `Y = X + Y` yazarsak, `Y`'yi göstermek için kullanılan tensörden vazgeçer ve bunun yerine yeni ayrılan bellekteki `Y`'yi işaret ederiz.
 Aşağıdaki örnekte, bunu, bize bellekteki referans edilen nesnenin tam adresini veren Python'un `id()` fonksiyonu ile gösteriyoruz.
 `Y = Y + X` komutunu çalıştırdıktan sonra, `id(Y)` ifadesinin farklı bir yeri gösterdiğini göreceğiz.
-Bunun nedeni, Python'un önce `Y + X` değerini hesaplayarak sonuç için yeni bellek ayırması ve ardından `Y`yi bellekteki bu yeni konuma işaret etmesidir.
+Bunun nedeni, Python'un önce `Y + X` değerini hesaplayarak sonuç için yeni bellek ayırması ve ardından `Y`'yi bellekteki bu yeni konuma işaret etmesidir.
 
 ```{.python .input}
 #@tab all
-before = id(Y)
+onceki = id(Y)
 Y = Y + X
-id(Y) == before
+id(Y) == onceki
 ```
 
 Bu iki nedenden dolayı istenmez olabilir.
@@ -430,7 +430,7 @@ Yerinde güncelleme yapmazsak, diğer referanslar hala eski bellek konumuna işa
 :begin_tab:`mxnet, pytorch`
 Neyse ki, (**yerinde işlemler yapmak**) kolaydır.
 Bir işlemin sonucunu daha önce ayrılmış bir diziye dilim gösterimi ile atayabiliriz, örneğin, `Y[:] = <ifade>`.
-Bu kavramı göstermek için, önce başka bir `Y` ile aynı şekle sahip yeni bir `Z` matrisi yaratıyoruz ve bir blok $0$ girdisi tahsis etmek üzere `zeros_like`i kullanıyoruz.
+Bu kavramı göstermek için, önce başka bir `Y` ile aynı şekle sahip yeni bir `Z` matrisi yaratıyoruz ve bir blok $0$ girdisi tahsis etmek üzere `zeros_like`'i kullanıyoruz.
 :end_tab:
 
 :begin_tab:`tensorflow`
@@ -474,9 +474,9 @@ Ancak TensorFlow, hesaplamayı çalıştırmadan önce derlenen ve optimize edil
 
 ```{.python .input}
 #@tab mxnet, pytorch
-before = id(X)
+onceki = id(X)
 X += Y
-id(X) == before
+id(X) == onceki
 ```
 
 ```{.python .input}

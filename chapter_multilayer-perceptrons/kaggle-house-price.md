@@ -1,7 +1,7 @@
 # Kaggle'da Ev Fiyatlarını Tahmin Etme
 :label:`sec_kaggle_house`
 
-Artık derin ağlar oluşturmak ve eğitmek için bazı temel araçları sunduğumuza ve bunları ağırlık sönümü ve hattan düşürme gibi tekniklerle düzenlediğimize göre, tüm bu bilgileri bir Kaggle yarışmasına katılarak uygulamaya koymaya hazırız. Ev fiyat tahmini yarışması başlangıç için harika bir yerdir. Veriler oldukça geneldir ve özel modeller gerektirebilecek (ses veya video gibi) acayip yapılar sergilememektedir. Bart de Cock tarafından 2011 yılında toplanan bu veri kümesi, :cite:`De-Cock.2011`, 2006--2010 döneminden itibaren Ames, IA'daki ev fiyatlarını kapsamaktadır. Harrison ve Rubinfeld'in (1978) ünlü [Boston konut veri kümesi](https://archive.ics.uci.edu/ml/machine-learning-databases/housing/housing.names)'nden önemli ölçüde daha büyüktür ve hem fazla örneğe, hem de daha fazla özniteliğe sahiptir.
+Artık derin ağlar oluşturmak ve eğitmek için bazı temel araçları sunduğumuza ve bunları ağırlık sönümü ve hattan düşürme gibi tekniklerle düzenlileştirdiğimize göre, tüm bu bilgileri bir Kaggle yarışmasına katılarak uygulamaya koymaya hazırız. Ev fiyat tahmini yarışması başlangıç için harika bir yerdir. Veriler oldukça geneldir ve özel modeller gerektirebilecek (ses veya video gibi) acayip yapılar sergilememektedir. Bart de Cock tarafından 2011 yılında toplanan bu veri kümesi, :cite:`De-Cock.2011`, 2006--2010 döneminden itibaren Ames, IA'daki ev fiyatlarını kapsamaktadır. Harrison ve Rubinfeld'in (1978) ünlü [Boston konut veri kümesi](https://archive.ics.uci.edu/ml/machine-learning-databases/housing/housing.names)'nden önemli ölçüde daha büyüktür ve hem fazla örneğe, hem de daha fazla özniteliğe sahiptir.
 
 Bu bölümde, veri ön işleme, model tasarımı ve hiper parametre seçimi ayrıntılarında size yol göstereceğiz. Uygulamalı bir yaklaşımla, bir veri bilimcisi olarak kariyerinizde size rehberlik edecek bazı sezgiler kazanacağınızı umuyoruz.
 
@@ -81,7 +81,7 @@ def download_all():  #@save
 :width:`400px`
 :label:`fig_kaggle`
 
-Ev fiyatları tahminleme yarışması sayfasında, :numref:`fig_house_pricing`'da gösterildiği gibi, veri kümesini bulabilir ("Data" sekmesinin altında), tahminleri gönderebilir ve sıralamanıza bakabilirsiniz. URL tam buradadır:
+Ev fiyatları tahminleme yarışması sayfasında, :numref:`fig_house_pricing` içinde gösterildiği gibi, veri kümesini bulabilir ("Data" sekmesinin altında), tahminleri gönderebilir ve sıralamanıza bakabilirsiniz. URL tam buradadır:
 
 > https://www.kaggle.com/c/house-prices-advanced-regression-techniques
 
@@ -102,14 +102,14 @@ sadece "na" olarak işaretlenmiştir. Her evin fiyatı sadece eğitim
 kümesi için dahildir (sonuçta bu bir yarışmadır). Bir geçerleme kümesi 
 oluşturmak için eğitim kümesini bölümlere ayırmak isteyeceğiz, 
 ancak modellerimizi yalnızca tahminleri Kaggle'a yükledikten sonra 
-resmi test kümesinde değerlendirebiliriz. :numref:`fig_house_pricing`'deki 
+resmi test kümesinde değerlendirebiliriz. :numref:`fig_house_pricing` içindeki 
 yarışma sekmesindeki "Data" sekmesi, verileri indirmek için bağlantılar 
 içerir.
 
 
-Başlamak için, verileri :numref:`sec_pandas`'de tanıttığımız 
+Başlamak için, verileri :numref:`sec_pandas` içinde tanıttığımız 
 [**`pandas`'ı kullanarak okuyup işleyeceğiz**]. Bu nedenle devam 
-etmeden önce `pandas` kurduğunuza emin olmak isteyeceksiniz.
+etmeden önce `pandas`'ı kurduğunuza emin olmak isteyeceksiniz.
 Neyse ki, Jupyter'de okuyorsanız, pandas'ı not defterinden bile 
 çıkmadan kurabiliriz.
 
@@ -261,7 +261,7 @@ olmadığını görmek için bir makulluk kontrolü sağlar. Burada rastgele
 tahmin etmekten daha iyisini yapamazsak, o zaman bir veri işleme 
 hatasına sahip olma ihtimalimiz yüksek olabilir. Eğer işler yolunda 
 giderse, doğrusal model bize basit modelin en iyi rapor edilen 
-modellere ne kadar yaklaştığı konusunda biraz önsezi vererek bize 
+modellere ne kadar yaklaştığı konusunda biraz önsezi vererek 
 daha süslü modellerden ne kadar kazanç beklememiz gerektiğine dair 
 bir fikir verir.
 
@@ -532,7 +532,7 @@ train_and_pred(train_features, test_features, train_labels, test_data,
                num_epochs, lr, weight_decay, batch_size)
 ```
 
-Sonra, :numref:`fig_kaggle_submit2`'de gösterildiği gibi, tahminlerimizi Kaggle'a 
+Sonra, :numref:`fig_kaggle_submit2` içinde gösterildiği gibi, tahminlerimizi Kaggle'a 
 gönderebilir ve test kümesindeki gerçek ev fiyatları (etiketler) ile nasıl 
 karşılaştırıldıklarını görebiliriz. Adımlar oldukça basittir:
 
