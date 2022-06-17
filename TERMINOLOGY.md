@@ -47,6 +47,8 @@ byte; bayt, sekizli
 
 cache; ön bellek
 
+callback; geri arama
+
 checksum; sağlama toplamı
 
 co-adaptation; birlikte-uyarlama
