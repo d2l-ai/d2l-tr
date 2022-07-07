@@ -1,7 +1,7 @@
 # Dil Modelleri ve Veri Kümesi
 :label:`sec_language_model`
 
-:numref:`sec_text_preprocessing`'te, metin verilerini andıçlara nasıl eşleyeceğimizi görüyoruz; burada bu andıçlar, sözcükler veya karakterler gibi ayrık gözlemler dizisi olarak görülebiliyor. $T$ uzunluğunda bir metin dizisinde andıçların sırayla $x_1, x_2, \ldots, x_T$ olduğunu varsayalım. Daha sonra, metin dizisinde, $x_t$ ($1 \leq t \leq T$), $t$ adımındaki gözlem veya etiket olarak kabul edilebilir. Böyle bir metin dizisi göz önüne alındığında, *dil modelinin amacı* dizinin bileşik olasılığını tahmin etmektir
+:numref:`sec_text_preprocessing` içinde, metin verilerini andıçlara nasıl eşleyeceğimizi görüyoruz; burada bu andıçlar, sözcükler veya karakterler gibi ayrık gözlemler dizisi olarak görülebiliyor. $T$ uzunluğunda bir metin dizisinde andıçların sırayla $x_1, x_2, \ldots, x_T$ olduğunu varsayalım. Daha sonra, metin dizisinde, $x_t$ ($1 \leq t \leq T$), $t$ adımındaki gözlem veya etiket olarak kabul edilebilir. Böyle bir metin dizisi göz önüne alındığında, *dil modelinin amacı* dizinin bileşik olasılığını tahmin etmektir
 
 $$P(x_1, x_2, \ldots, x_T).$$
 
@@ -11,13 +11,18 @@ Bununla birlikte, dil modelleri sınırlı biçimlerde bile mükemmel hizmet ver
 
 ## Dil Modeli Öğrenme
 
-Bariz soru, bir belgeyi, hatta bir dizi andıcı nasıl modellememiz gerektiğidir. Metin verilerini kelime düzeyinde andıçladığımızı varsayalım. :numref:`sec_sequence`'teki dizi modellerine uyguladığımız analize başvuruda bulunabiliriz. Temel olasılık kurallarını uygulayarak başlayalım:
+Bariz soru, bir belgeyi, hatta bir dizi andıcı nasıl modellememiz gerektiğidir. Metin verilerini kelime düzeyinde andıçladığımızı varsayalım. :numref:`sec_sequence` içindeki dizi modellerine uyguladığımız analize başvuruda bulunabiliriz. Temel olasılık kurallarını uygulayarak başlayalım:
 
 $$P(x_1, x_2, \ldots, x_T) = \prod_{t=1}^T P(x_t  \mid  x_1, \ldots, x_{t-1}).$$
 
 Örneğin, dört kelime içeren bir metin dizisinin olasılığı şu şekilde verilecektir:
 
-$$P(\text{derin}, \text{öğrenme}, \text{çok}, \text{eğlencelidir}) =  P(\text{derin}) P(\text{öğrenme}  \mid  \text{derin}) P(\text{çok})  \mid  \text{derin}, \text{öğrenme}) P(\text{eğlencelidir}  \mid  \text{derin}, \text{öğrenme}, \text{çok}).$$
+$$\begin{aligned}
+P(\text{derin}, \text{öğrenme}, \text{çok}, \text{eğlencelidir}) 
+=& P(\text{derin}) P(\text{öğrenme}  \mid  \text{derin}) P(\text{çok})  \mid  \text{derin}, \text{öğrenme}) 
+ & P(\text{eğlencelidir}  \mid  \text{derin}, \text{öğrenme}, \text{çok})
+\end{aligned}
+$$
 
 Dil modelini hesaplamak için, kelimelerin olasılığını ve bir kelimenin önceki birkaç kelimeye koşullu olasılığını hesaplamamız gerekir. Bu olasılıklar esasen dil modeli parametreleridir.
 

@@ -57,7 +57,7 @@ Aşağıdaki `tokenize` işlevi, girdi olarak bir liste (`lines`) alır ve burad
 ```{.python .input}
 #@tab all
 def tokenize(lines, token='word'):  #@save
-   """Metin satırlarını kelime veya karakter belirteçlerine ayırın."""
+    """Metin satırlarını kelime veya karakter belirteçlerine ayırın."""
     if token == 'word':
         return [line.split() for line in lines]
     elif token == 'char':
