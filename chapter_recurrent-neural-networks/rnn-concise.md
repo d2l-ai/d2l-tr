@@ -34,7 +34,7 @@ train_iter, vocab = d2l.load_data_time_machine(batch_size, num_steps)
 
 ## [**Modelin Tanımlanması**]
 
-Yüksek seviyeli API'ler, yinelemeli sinir ağlarının uygulamalarını sağlar. Yinelemeli sinir ağı tabakasını `rnn_layer`'i tek bir gizli katman ve 256 gizli birimle inşa ediyoruz. Aslında, birden fazla katmana sahip olmanın ne anlama geldiğini henüz tartışmadık; onu :numref:`sec_deep_rnn`'te göreceğiz. Şimdilik, basitçe, birden fazla katmanın bir RNN katmanının çıktısının bir sonraki RNN katmanı için girdi olarak kullanılması olduğunu söylemek yeterli.
+Üst seviye API'ler, yinelemeli sinir ağlarının uygulamalarını sağlar. Yinelemeli sinir ağı tabakası `rnn_layer`'i tek bir gizli katman ve 256 gizli birimle inşa ediyoruz. Aslında, birden fazla katmana sahip olmanın ne anlama geldiğini henüz tartışmadık; onu :numref:`sec_deep_rnn` içinde göreceğiz. Şimdilik, birden çok katmanın, bir sonraki RNN katmanı için girdi olarak kullanılan bir RNN katmanının çıktısı anlamına geldiğini söylemek yeterlidir.
 
 ```{.python .input}
 num_hiddens = 256
@@ -58,7 +58,7 @@ rnn_layer = tf.keras.layers.RNN(rnn_cell, time_major=True,
 ```
 
 :begin_tab:`mxnet`
-Gizli durumu ilklemek basittir. Üye fonksiyonunu, `begin_state`'i çağırıyoruz . Bu, minigruptaki her örnek için (gizli katman sayısı, grup boyutu, gizli birim sayısı) şekilli bir ilk gizli durumu içeren liste (`state`) döndürür. Daha sonra tanıtılacak bazı modellerde (örneğin, uzun ömürlü kısa-dönem belleği), bu liste başka bilgiler de içerir.
+Gizli durumu ilklemek basittir. Üye fonksiyonu `begin_state`'i çağırıyoruz . Bu, minigruptaki her örnek için (gizli katman sayısı, grup boyutu, gizli birim sayısı) şekilli bir ilk gizli durumu içeren liste (`state`) döndürür. Daha sonra tanıtılacak bazı modellerde (örneğin, uzun ömürlü kısa-dönem belleği), bu liste başka bilgiler de içerir.
 :end_tab:
 
 :begin_tab:`pytorch`
@@ -82,7 +82,7 @@ state = rnn_cell.get_initial_state(batch_size=batch_size, dtype=tf.float32)
 state.shape
 ```
 
-[**Gizli bir durum ve bir girdi ile, çıktıyı güncellenmiş gizli durumla hesaplayabiliriz.**] `rnn_layer`'in “çıktı” (`Y`)'inin çıktı katmanlarının hesaplanmasını *içermediği* vurgulanmalıdır: *Her bir* zaman adımındaki gizli durumu ifade eder ve sonraki çıktı katmanına girdi olarak kullanılabilir.
+[**Gizli bir durum ve bir girdi ile, çıktıyı güncellenmiş gizli durumla hesaplayabiliriz.**] `rnn_layer`'in “çıktı”'nın (`Y`) çıktı katmanlarının hesaplanmasını *içermediği* vurgulanmalıdır: *Her bir* zaman adımındaki gizli durumu ifade eder ve sonraki çıktı katmanına girdi olarak kullanılabilir.
 
 :begin_tab:`mxnet`
 Ayrıca, `rnn_layer` tarafından döndürülen güncelleştirilmiş gizli durum (`state_new`) minigrubun *son* zaman adımındaki gizli durumunu ifade eder. Sıralı bölümlemede bir dönem içinde sonraki minigrubun gizli durumunu ilklemede kullanılabilir. Birden çok gizli katman için, her katmanın gizli durumu bu değişkende saklanır (`state_new`). Daha sonra tanıtılacak bazı modellerde (örneğin, uzun ömürlü kısa-dönem belleği), bu değişken başka bilgiler de içerir.
@@ -108,12 +108,12 @@ Y, state_new = rnn_layer(X, state)
 Y.shape, len(state_new), state_new[0].shape
 ```
 
-:numref:`sec_rnn_scratch`'e benzer şekilde, [**tam bir RNN modeli için bir `RNNModel` sınıfı tanımlarız.**] `rnn_layer`'in yalnızca gizli yinelemeli katmanları içerdiğini unutmayın, ayrı bir çıktı katmanı oluşturmamız gerekir.
+:numref:`sec_rnn_scratch` içindekine benzer şekilde, [**tam bir RNN modeli için bir `RNNModel` sınıfı tanımlarız.**] `rnn_layer`'in yalnızca gizli yinelemeli katmanları içerdiğini unutmayın, ayrı bir çıktı katmanı oluşturmamız gerekir.
 
 ```{.python .input}
 #@save
 class RNNModel(nn.Block):
-    """The RNN model."""
+    """RNN modeli."""
     def __init__(self, rnn_layer, vocab_size, **kwargs):
         super(RNNModel, self).__init__(**kwargs)
         self.rnn = rnn_layer
@@ -123,9 +123,9 @@ class RNNModel(nn.Block):
     def forward(self, inputs, state):
         X = npx.one_hot(inputs.T, self.vocab_size)
         Y, state = self.rnn(X, state)
-        # The fully-connected layer will first change the shape of `Y` to
-        # (`num_steps` * `batch_size`, `num_hiddens`). Its output shape is
-        # (`num_steps` * `batch_size`, `vocab_size`).
+        # Tam bağlı katman önce `Y`'nin şeklini 
+        # (`num_steps` * `batch_size`, `num_hiddens`) olarak değiştirir. 
+        # Çıktı (`num_steps` * `batch_size`, `vocab_size`) şeklindedir.
         output = self.dense(Y.reshape(-1, Y.shape[-1]))
         return output, state
 
@@ -137,14 +137,14 @@ class RNNModel(nn.Block):
 #@tab pytorch
 #@save
 class RNNModel(nn.Module):
-    """The RNN model."""
+    """RNN modeli."""
     def __init__(self, rnn_layer, vocab_size, **kwargs):
         super(RNNModel, self).__init__(**kwargs)
         self.rnn = rnn_layer
         self.vocab_size = vocab_size
         self.num_hiddens = self.rnn.hidden_size
-        # If the RNN is bidirectional (to be introduced later),
-        # `num_directions` should be 2, else it should be 1.
+        # RNN çift yönlü ise (daha sonra tanıtılacaktır), 
+        # `num_directions` 2 olmalı, yoksa 1 olmalıdır.
         if not self.rnn.bidirectional:
             self.num_directions = 1
             self.linear = nn.Linear(self.num_hiddens, self.vocab_size)
@@ -156,20 +156,20 @@ class RNNModel(nn.Module):
         X = F.one_hot(inputs.T.long(), self.vocab_size)
         X = X.to(torch.float32)
         Y, state = self.rnn(X, state)
-        # The fully connected layer will first change the shape of `Y` to
-        # (`num_steps` * `batch_size`, `num_hiddens`). Its output shape is
-        # (`num_steps` * `batch_size`, `vocab_size`).
+        # Tam bağlı katman önce `Y`'nin şeklini 
+        # (`num_steps` * `batch_size`, `num_hiddens`) olarak değiştirir. 
+        # Çıktı (`num_steps` * `batch_size`, `vocab_size`) şeklindedir.
         output = self.linear(Y.reshape((-1, Y.shape[-1])))
         return output, state
 
     def begin_state(self, device, batch_size=1):
         if not isinstance(self.rnn, nn.LSTM):
-            # `nn.GRU` takes a tensor as hidden state
+            # `nn.GRU` gizli durum olarak bir tensör alır
             return  torch.zeros((self.num_directions * self.rnn.num_layers,
                                  batch_size, self.num_hiddens), 
                                 device=device)
         else:
-            # `nn.LSTM` takes a tuple of hidden states
+            # `nn.LSTM` bir gizli durum çokuzu alır
             return (torch.zeros((
                 self.num_directions * self.rnn.num_layers,
                 batch_size, self.num_hiddens), device=device),
@@ -190,7 +190,7 @@ class RNNModel(tf.keras.layers.Layer):
 
     def call(self, inputs, state):
         X = tf.one_hot(tf.transpose(inputs), self.vocab_size)
-        # Later RNN like `tf.keras.layers.LSTMCell` return more than two values
+        # Daha sonra `tf.keras.layers.LSTMCell` gibi RNN ikiden fazla değer döndürür
         Y, *state = self.rnn(X, state)
         output = self.dense(tf.reshape(Y, (-1, Y.shape[-1])))
         return output, state
@@ -228,7 +228,7 @@ with strategy.scope():
 d2l.predict_ch8('time traveller', 10, net, vocab)
 ```
 
-Oldukça açık, bu model hiç çalışmıyor. Ardından, :numref:`sec_rnn_scratch`'te tanımlanan aynı hiper parametrelerle `train_ch8`'i çağırdık ve [**modelimizi üst düzey API'lerle eğitiyoruz.**]
+Oldukça açık, bu model hiç çalışmıyor. Ardından, :numref:`sec_rnn_scratch` içinde tanımlanan aynı hiper parametrelerle `train_ch8`'i çağırdık ve [**modelimizi üst düzey API'lerle eğitiyoruz.**]
 
 ```{.python .input}
 num_epochs, lr = 500, 1
@@ -252,23 +252,23 @@ Son bölümle karşılaştırıldığında, bu model, kodun derin öğrenme çer
 ## Özet
 
 * Derin öğrenme çerçevesinin üst düzey API'leri RNN katmanının bir uygulanmasını sağlar.
-* Üst düzey API'lerin RNN katmanı, çıktı ve çıktı katmanının çıktı hesaplaması içermeyen güncelleştirilmiş bir gizli durumunu döndürür.
+* Üst düzey API'lerin RNN katmanı, çıktının çıktı katmanı hesaplamasını içermediği bir çıktı ve güncellenmiş bir gizli durum döndürür.
 * Üst düzey API'lerin kullanılması, sıfırdan uygulama yaratmaktan daha hızlı RNN eğitimine yol açar.
 
 ## Alıştırmalar
 
 1. RNN modelini üst düzey API'leri kullanarak aşırı eğitebilir misiniz?
-1. RNN modelinde gizli katman sayısını artırırsanız ne olur? Modelin çalışmasını sağlayabilecek misin?
-1. Bir RNN kullanarak :numref:`sec_sequence`'ün özbağlanımlı modelini uygulayın.
+1. RNN modelinde gizli katman sayısını artırırsanız ne olur? Modelin çalışmasını sağlayabilecek misiniz?
+1. Bir RNN kullanarak :numref:`sec_sequence` içindeki özbağlanımlı modelini uygulayın.
 
 :begin_tab:`mxnet`
 [Tartışmalar](https://discuss.d2l.ai/t/335)
 :end_tab:
 
 :begin_tab:`pytorch`
-[Discussions](https://discuss.d2l.ai/t/1053)
+[Tartışmalar](https://discuss.d2l.ai/t/1053)
 :end_tab:
 
 :begin_tab:`tensorflow`
-[Discussions](https://discuss.d2l.ai/t/2211)
+[Tartışmalar](https://discuss.d2l.ai/t/2211)
 :end_tab:
