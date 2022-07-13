@@ -133,6 +133,8 @@ fully-connected; tam bağlı
 
 gate; geçit
 
+gated recurrent units; geçitli yinelemeli birimler
+
 generative adversarial networks; çekişmeli üretici ağlar
 
 gpu; grafik işleme birimi
