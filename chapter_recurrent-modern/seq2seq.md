@@ -1,16 +1,16 @@
 # Diziden Diziye Öğrenme
 :label:`sec_seq2seq`
 
-:numref:`sec_machine_translation`'te gördüğümüz gibi, makine çevirisinde hem girdi hem de çıktı değişken uzunlukta dizilerdir. Bu tür problemleri çözmek için :numref:`sec_encoder-decoder`'te genel bir kodlayıcı-kodçözücü mimarisi tasarladık. Bu bölümde, bu mimarinin kodlayıcısını ve kodçözücüsünü tasarlamak için iki RNN kullanacağız ve makine çevirisi :cite:`Sutskever.Vinyals.Le.2014,Cho.Van-Merrienboer.Gulcehre.ea.2014` için *diziden diziye* öğrenmeyi uygulayacağız.
+:numref:`sec_machine_translation` içinde gördüğümüz gibi, makine çevirisinde hem girdi hem de çıktı değişken uzunlukta dizilerdir. Bu tür problemleri çözmek için :numref:`sec_encoder-decoder` içinde genel bir kodlayıcı-kodçözücü mimarisi tasarladık. Bu bölümde, bu mimarinin kodlayıcısını ve kodçözücüsünü tasarlamak için iki RNN kullanacağız ve makine çevirisi :cite:`Sutskever.Vinyals.Le.2014,Cho.Van-Merrienboer.Gulcehre.ea.2014` için *diziden diziye* öğrenmeyi uygulayacağız.
 
-Kodlayıcı-kodçözücü mimarisinin tasarım ilkesini takiben, RNN kodlayıcı girdi olarak değişken uzunlukta bir diziyi alabilir ve bir sabit şekilli gizli duruma dönüştürebilir. Başka bir deyişle, girdi (kaynak) dizisinin bilgileri RNN kodlayıcısının gizli durumunda *kodlanmış* olur. Çıktı dizisi andıç andıç oluşturmak için, ayrı bir RNN kodçözücü, girdi dizisinin kodlanmış bilgileriyle birlikte, hangi andıçların görüldüğünü (dil modellemesinde olduğu gibi) veya oluşturulduğuna bağlı olarak bir sonraki andıcı tahmin edebilir. :numref:`fig_seq2seq`, makine çevirisinde diziden diziye öğrenme için iki RNN'nin nasıl kullanılacağını gösterir.
+Kodlayıcı-kodçözücü mimarisinin tasarım ilkesini takiben, RNN kodlayıcı girdi olarak değişken uzunlukta bir diziyi alabilir ve bir sabit şekilli gizli duruma dönüştürebilir. Başka bir deyişle, girdi (kaynak) dizisinin bilgileri RNN kodlayıcısının gizli durumunda *kodlanmış* olur. Çıktı dizisini andıç andıç oluşturmak için, ayrı bir RNN kodçözücü, girdi dizisinin kodlanmış bilgileriyle birlikte, hangi andıçların görüldüğünü (dil modellemesinde olduğu gibi) veya oluşturulduğuna bağlı olarak bir sonraki andıcı tahmin edebilir. :numref:`fig_seq2seq`, makine çevirisinde diziden diziye öğrenme için iki RNN'nin nasıl kullanılacağını gösterir.
 
 ![Bir RNN kodlayıcı ve bir RNN kodçözücü ile diziden diziye öğrenme.](../img/seq2seq.svg)
 :label:`fig_seq2seq`
 
-:numref:`fig_seq2seq`'te, özel "&lt;eos&gt;" andıcı dizinin sonunu işaretler. Model, bu andıç oluşturulduktan sonra tahminlerde bulunmayı durdurabilir. RNN kodçözücüsünün ilk zaman adımında, iki özel tasarım kararı vardır. İlk olarak, özel dizi başlangıç andıcı, "&lt;bos&gt;", bir girdidir. İkincisi, RNN kodlayıcısının son gizli durumu, kodçözücünün gizli durumunu ilklemek için kullanılır. :cite:`Sutskever.Vinyals.Le.2014`'teki gibi tasarımlarda, kodlanmış girdi dizisi bilgilerinin çıktı (hedef) dizisini oluşturmak için kodçözücüsüne beslenmesi tam olarak da budur. :cite:`Cho.Van-Merrienboer.Gulcehre.ea.2014` gibi diğer bazı tasarımlarda, kodlayıcının son gizli durumu, :numref:`fig_seq2seq`'te gösterildiği gibi her adımda girdilerin bir parçası olarak kodçözücüye beslenir. :numref:`sec_language_model`'deki dil modellerinin eğitimine benzer şekilde, etiketlerin bir andıç ile kaydırılmış orijinal çıktı dizisi olmasına izin verebiliriz: "&lt;bos&gt;", “Ils”, “regardent”, “.” $\rightarrow$ “Ils”, “regardent”,”.“,"&lt;eos&gt;".
+:numref:`fig_seq2seq` şeklinde, özel "&lt;eos&gt;" andıcı dizinin sonunu işaretler. Model, bu andıç oluşturulduktan sonra tahminlerde bulunmayı durdurabilir. RNN kodçözücüsünün ilk zaman adımında, iki özel tasarım kararı vardır. İlk olarak, özel dizi başlangıç andıcı, "&lt;bos&gt;", bir girdidir. İkincisi, RNN kodlayıcısının son gizli durumu, kodçözücünün gizli durumunu ilklemek için kullanılır. :cite:`Sutskever.Vinyals.Le.2014` çalışmasındaki gibi tasarımlarda, kodlanmış girdi dizisi bilgilerinin çıktı (hedef) dizisini oluşturmak için kodçözücüsüne beslenmesi tam olarak da budur. :cite:`Cho.Van-Merrienboer.Gulcehre.ea.2014` gibi diğer bazı tasarımlarda, kodlayıcının son gizli durumu, :numref:`fig_seq2seq` şeklinde gösterildiği gibi her adımda girdilerin bir parçası olarak kodçözücüye beslenir. :numref:`sec_language_model` içindeki dil modellerinin eğitimine benzer şekilde, etiketlerin bir andıç ile kaydırılmış orijinal çıktı dizisi olmasına izin verebiliriz: "&lt;bos&gt;", “Ils”, “regardent”, “.” $\rightarrow$ “Ils”, “regardent”,”.“,"&lt;eos&gt;".
 
-Aşağıda, :numref:`fig_seq2seq`'ün tasarımını daha ayrıntılı olarak açıklayacağız. Bu modeli :numref:`sec_machine_translation`'te tanıtılan İngilizce-Fransız veri kümesinde makine çevirisi için eğiteceğiz.
+Aşağıda, :numref:`fig_seq2seq` tasarımını daha ayrıntılı olarak açıklayacağız. Bu modeli :numref:`sec_machine_translation` içinde tanıtılan İngilizce-Fransız veri kümesinden makine çevirisi için eğiteceğiz.
 
 ```{.python .input}
 import collections
@@ -40,7 +40,7 @@ import tensorflow as tf
 
 ## Kodlayıcı
 
-Teknik olarak konuşursak, kodlayıcı değişken uzunluktaki bir girdi dizisini sabit şekilli *bağlam değişkeni* $\mathbf{c}$'ye dönüştürür ve bu bağlam değişkende girdi dizisinin bilgilerini kodlar. :numref:`fig_seq2seq`'te gösterildiği gibi, kodlayıcıyı tasarlamak için bir RNN kullanabiliriz.
+Teknik olarak konuşursak, kodlayıcı değişken uzunluktaki bir girdi dizisini sabit şekilli *bağlam değişkeni* $\mathbf{c}$'ye dönüştürür ve bu bağlam değişkeninde girdi dizisinin bilgilerini kodlar. :numref:`fig_seq2seq` şeklinde gösterildiği gibi, kodlayıcıyı tasarlamak için bir RNN kullanabiliriz.
 
 Bir dizi örneği düşünelim (toplu küme boyutu: 1). Girdi dizimizin $x_1, \ldots, x_T$ olduğunu varsayalım, öyle ki $x_t$ girdi metin dizisindeki $t.$ andıç olsun. $t$ zaman adımında, RNN $x_t$ için girdi öznitelik vektörü $\mathbf{x}_t$'yi ve önceki zaman adımından gizli durum $\mathbf{h}_{t-1}$'yi şu anki gizli durum $\mathbf{h}_t$'ye dönüştürür. RNN'nin yinelemeli tabakasının dönüşümünü ifade etmek için $f$ işlevini kullanabiliriz:
 
@@ -50,7 +50,7 @@ Genel olarak, kodlayıcı, gizli durumları her zaman adımında özelleştirilm
 
 $$\mathbf{c} =  q(\mathbf{h}_1, \ldots, \mathbf{h}_T).$$
 
-Örneğin, :numref:`fig_seq2seq`'te olduğu gibi $q(\mathbf{h}_1, \ldots, \mathbf{h}_T) = \mathbf{h}_T$'yi seçerken, bağlam değişkeni yalnızca son zaman adımındaki girdi dizisinin gizli durumu $\mathbf{h}_T$'dir.
+Örneğin, :numref:`fig_seq2seq` şeklinde olduğu gibi $q(\mathbf{h}_1, \ldots, \mathbf{h}_T) = \mathbf{h}_T$'yi seçerken, bağlam değişkeni yalnızca son zaman adımındaki girdi dizisinin gizli durumu $\mathbf{h}_T$'dir.
 
 Şimdiye kadar kodlayıcıyı tasarlamak için tek yönlü bir RNN kullandık, burada gizli bir durum yalnızca gizli durumun önceki ve o anki zaman adımındaki girdi altdizisine bağlıdır. Ayrıca çift yönlü RNN'leri kullanarak kodlayıcılar da oluşturabiliriz. Bu durumda, tüm dizinin bilgilerini kodlayan gizli durum, zaman adımından önceki ve sonraki altdiziye (geçerli zaman adımındaki girdi dahil) bağlıdır.
 
@@ -59,23 +59,23 @@ $$\mathbf{c} =  q(\mathbf{h}_1, \ldots, \mathbf{h}_T).$$
 ```{.python .input}
 #@save
 class Seq2SeqEncoder(d2l.Encoder):
-    """The RNN encoder for sequence to sequence learning."""
+    """Diziden diziye öğrenme için RNN kodlayıcı."""
     def __init__(self, vocab_size, embed_size, num_hiddens, num_layers,
                  dropout=0, **kwargs):
         super(Seq2SeqEncoder, self).__init__(**kwargs)
-        # Embedding layer
+        # Gömme katmanı
         self.embedding = nn.Embedding(vocab_size, embed_size)
         self.rnn = rnn.GRU(num_hiddens, num_layers, dropout=dropout)
 
     def forward(self, X, *args):
-        # The output `X` shape: (`batch_size`, `num_steps`, `embed_size`)
+        # `X` çıktısının şekli: (`batch_size`, `num_steps`, `embed_size`)
         X = self.embedding(X)
-        # In RNN models, the first axis corresponds to time steps
+        # RNN modellerinde ilk eksen zaman adımlarına karşılık gelir
         X = X.swapaxes(0, 1)
         state = self.rnn.begin_state(batch_size=X.shape[1], ctx=X.ctx)
         output, state = self.rnn(X, state)
-        # `output` shape: (`num_steps`, `batch_size`, `num_hiddens`)
-        # `state[0]` shape: (`num_layers`, `batch_size`, `num_hiddens`)
+        # `output` (çıktı) şekli: (`num_steps`, `batch_size`, `num_hiddens`)
+        # `state[0]` (durum) şekli: (`num_layers`, `batch_size`, `num_hiddens`)
         return output, state
 ```
 
@@ -83,24 +83,24 @@ class Seq2SeqEncoder(d2l.Encoder):
 #@tab pytorch
 #@save
 class Seq2SeqEncoder(d2l.Encoder):
-    """The RNN encoder for sequence to sequence learning."""
+    """Diziden diziye öğrenme için RNN kodlayıcı."""
     def __init__(self, vocab_size, embed_size, num_hiddens, num_layers,
                  dropout=0, **kwargs):
         super(Seq2SeqEncoder, self).__init__(**kwargs)
-        # Embedding layer
+        # Gömme katmanı
         self.embedding = nn.Embedding(vocab_size, embed_size)
         self.rnn = nn.GRU(embed_size, num_hiddens, num_layers,
                           dropout=dropout)
 
     def forward(self, X, *args):
-        # The output `X` shape: (`batch_size`, `num_steps`, `embed_size`)
+        # `X` çıktısının şekli: (`batch_size`, `num_steps`, `embed_size`)
         X = self.embedding(X)
-        # In RNN models, the first axis corresponds to time steps
+        # RNN modellerinde ilk eksen zaman adımlarına karşılık gelir
         X = X.permute(1, 0, 2)
-        # When state is not mentioned, it defaults to zeros
+        # Durumdan bahsedilmediğinde varsayılan olarak sıfırdır.
         output, state = self.rnn(X)
-        # `output` shape: (`num_steps`, `batch_size`, `num_hiddens`)
-        # `state` shape: (`num_layers`, `batch_size`, `num_hiddens`)
+        # `output` (çıktı) şekli: (`num_steps`, `batch_size`, `num_hiddens`)
+        # `state[0]` (durum) şekli: (`num_layers`, `batch_size`, `num_hiddens`)
         return output, state
 ```
 
@@ -108,10 +108,10 @@ class Seq2SeqEncoder(d2l.Encoder):
 #@tab tensorflow
 #@save
 class Seq2SeqEncoder(d2l.Encoder):
-    """The RNN encoder for sequence to sequence learning."""
+    """Diziden diziye öğrenme için RNN kodlayıcı."""
     def __init__(self, vocab_size, embed_size, num_hiddens, num_layers, dropout=0, **kwargs): 
         super().__init__(*kwargs)
-        # Embedding layer
+        # Gömme katmanı
         self.embedding = tf.keras.layers.Embedding(vocab_size, embed_size)
         self.rnn = tf.keras.layers.RNN(tf.keras.layers.StackedRNNCells(
             [tf.keras.layers.GRUCell(num_hiddens, dropout=dropout)
@@ -119,15 +119,15 @@ class Seq2SeqEncoder(d2l.Encoder):
                                        return_state=True)
     
     def call(self, X, *args, **kwargs):
-        # The input `X` shape: (`batch_size`, `num_steps`)
-        # The output `X` shape: (`batch_size`, `num_steps`, `embed_size`)
+        # `output` (çıktı) şekli: (`num_steps`, `batch_size`, `num_hiddens`)
+        # `state[0]` (durum) şekli: (`num_layers`, `batch_size`, `num_hiddens`)
         X = self.embedding(X)
         output = self.rnn(X, **kwargs)
         state = output[1:]
         return output[0], state
 ```
 
-Yinelemeli katmanların döndürülen değişkenleri :numref:`sec_rnn-concise`'te açıklanmıştı. Yukarıdaki [**kodlayıcı uygulamasını göstermek**] için somut bir örnek kullanalım. Aşağıda, gizli birimlerin sayısı 16 olan iki katmanlı bir GRU kodlayıcısı oluşturuyoruz. `X` dizi girdilerinin bir minigrubu göz önüne alındığında (grup boyutu: 4, zaman adımı sayısı: 7), son katmanın gizli durumları (kodlayıcının yinelemeli katmanları tarafından döndürülen `output`) şekli (zaman adımlarının sayısı, grup boyutu, gizli birimlerin sayısı) olan tensörlerdir.
+Yinelemeli katmanların döndürülen değişkenleri :numref:`sec_rnn-concise` içinde açıklanmıştı. Yukarıdaki [**kodlayıcı uygulamasını göstermek**] için somut bir örnek kullanalım. Aşağıda, gizli birimlerin sayısı 16 olan iki katmanlı bir GRU kodlayıcısı oluşturuyoruz. `X` dizi girdilerinin bir minigrubu göz önüne alındığında (grup boyutu: 4, zaman adımı sayısı: 7), son katmanın gizli durumları (kodlayıcının yinelemeli katmanları tarafından döndürülen `output`) şekli (zaman adımlarının sayısı, grup boyutu, gizli birimlerin sayısı) olan tensörlerdir.
 
 ```{.python .input}
 encoder = Seq2SeqEncoder(vocab_size=10, embed_size=8, num_hiddens=16,
@@ -178,14 +178,14 @@ len(state), [element.shape for element in state]
 
 Az önce de belirttiğimiz gibi, kodlayıcının çıktısının $\mathbf{c}$ bağlam değişkeni $x_1, \ldots, x_T$ tüm girdi dizisini kodlar. Eğitim veri kümesinden $y_1, y_2, \ldots, y_{T'}$ çıktı dizisi göz önüne alındığında, her zaman adım $t'$ için (sembol, girdi dizilerinin veya kodlayıcıların $t$ zaman adımından farklıdır), kodçözücü çıktısının olasılığı $y_{t'}$, önceki çıktı altdizisi $y_1, \ldots, y_{t'-1}$ ve $\mathbf{c}$ bağlam değişkeni üzerinde koşulludur, yani, $P(y_{t'} \mid y_1, \ldots, y_{t'-1}, \mathbf{c})$.
 
-Bu koşullu olasılığı diziler üzerinde modellemek için, kodçözücü olarak başka bir RNN kullanabiliriz. Herhangi bir $t^\prime$ zaman adımındaki çıktı dizisinde, RNN önceki zaman adımından $y_{t^\prime-1}$ çıktı dizisini ve $\mathbf{c}$ bağlam değişkenini girdi olarak alır, sonra onları ve önceki gizli durumu $\mathbf{s}_{t^\prime-1}$ ile beraber şu aki zaman adımındaki gizli durum $\mathbf{s}_{t^\prime}$'ye dönüştürür. Sonuç olarak, kodçözücünün gizli katmanının dönüşümünü ifade etmek için $g$ işlevini kullanabiliriz:
+Bu koşullu olasılığı diziler üzerinde modellemek için, kodçözücü olarak başka bir RNN kullanabiliriz. Herhangi bir $t^\prime$ zaman adımındaki çıktı dizisinde, RNN önceki zaman adımından $y_{t^\prime-1}$ çıktı dizisini ve $\mathbf{c}$ bağlam değişkenini girdi olarak alır, sonra onları ve önceki gizli durumu $\mathbf{s}_{t^\prime-1}$ ile beraber şu anki zaman adımındaki gizli durum $\mathbf{s}_{t^\prime}$'ye dönüştürür. Sonuç olarak, kodçözücünün gizli katmanının dönüşümünü ifade etmek için $g$ işlevini kullanabiliriz:
 
 $$\mathbf{s}_{t^\prime} = g(y_{t^\prime-1}, \mathbf{c}, \mathbf{s}_{t^\prime-1}).$$
 :eqlabel:`eq_seq2seq_s_t`
 
 Kodçözücünün gizli durumunu elde ettikten sonra, $t^\prime$ adımındaki çıktı için koşullu olasılık dağılımını, $P(y_{t^\prime} \mid y_1, \ldots, y_{t^\prime-1}, \mathbf{c})$'yi hesaplamak için bir çıktı katmanını ve softmaks işlemini kullanabiliriz.
 
-:numref:`fig_seq2seq`'ü takiben, kodçözücüyü aşağıdaki gibi uygularken, kodçözücünün gizli durumunu ilklemek için kodlayıcının son zaman adımındaki gizli durumu doğrudan kullanırız. Bu, RNN kodlayıcı ve RNN kodçözücüsünün aynı sayıda katman ve gizli birimlere sahip olmasını gerektirir. Kodlanmış girdi dizisi bilgilerini daha da dahil etmek için, bağlam değişkeni kodçözücü girdisiyle her zaman adımda bitiştirilir. Çıktı andıcının olasılık dağılımını tahmin etmek için, RNN kodçözücüsünün son katmanındaki gizli durumunu dönüştüren tam bağlı bir katman kullanılır.
+:numref:`fig_seq2seq` şeklini takiben, kodçözücüyü aşağıdaki gibi uygularken, kodçözücünün gizli durumunu ilklemek için kodlayıcının son zaman adımındaki gizli durumu doğrudan kullanırız. Bu, RNN kodlayıcı ve RNN kodçözücüsünün aynı sayıda katman ve gizli birimlere sahip olmasını gerektirir. Kodlanmış girdi dizisi bilgilerini daha da dahil etmek için, bağlam değişkeni kodçözücü girdisiyle her zaman adımda bitiştirilir. Çıktı andıcının olasılık dağılımını tahmin etmek için, RNN kodçözücüsünün son katmanındaki gizli durumunu dönüştüren tam bağlı bir katman kullanılır.
 
 ```{.python .input}
 class Seq2SeqDecoder(d2l.Decoder):
