@@ -1,7 +1,7 @@
 # Dikkat Ortaklama: Nadaraya-Watson Çekirdek Bağlanımı
 :label:`sec_nadaraya-watson`
 
-Artık :numref:`fig_qkv` çerçevesinde dikkat mekanizmalarının ana bileşenlerini biliyorsunuz. Yeniden özetlemek için sorgular (istemli işaretler) ve anahtarlar (istemsiz işaretler) arasındaki etkileşimler *dikkat ortaklama* ile sonuçlanır. Dikkat ortaklama, çıktıyı üretmek için seçici olarak değerleri (duyusal girdiler) bir araya getirir. Bu bölümde, dikkat mekanizmalarının pratikte nasıl çalıştığına dair üst düzey bir görünüm vermek için dikkat ortaklamasını daha ayrıntılı olarak anlatacağız. Özellikle, 1964 yılında önerilen Nadaraya-Watson çekirdek bağlanım modeli, dikkat mekanizmaları ile makine öğrenmesini göstermek için basit ama eksiksiz bir örnektir.
+Artık :numref:`fig_qkv` çerçevesinde dikkat mekanizmalarının ana bileşenlerini biliyorsunuz. Yeniden özetlemek için sorgular (istemli işaretler) ve anahtarlar (istemsiz işaretler) arasındaki etkileşimler *dikkat ortaklama* ile sonuçlanır. Dikkat ortaklama, çıktıyı üretmek için seçici olarak değerleri (duyusal girdiler) bir araya getirir. Bu bölümde, dikkat mekanizmalarının pratikte nasıl çalıştığına dair üst düzey bir görünüm vermek için dikkat ortaklamasını daha ayrıntılı olarak anlatacağız. Özellikle, 1964 yılında önerilen Nadaraya-Watson çekirdek bağlanım modeli, makine öğrenmesini dikkat mekanizmaları ile göstermek için basit ama eksiksiz bir örnektir.
 
 ```{.python .input}
 from d2l import mxnet as d2l
@@ -36,14 +36,14 @@ $$y_i = 2\sin(x_i) + x_i^{0.8} + \epsilon,$$
 burada $\epsilon$ sıfır ortalama ve 0.5 standart sapma ile normal bir dağılıma uyar. Hem 50 eğitim örneği hem de 50 test örneği üretilir. Dikkat modelini daha sonra daha iyi görselleştirmek için, eğitim girdileri sıralanır.
 
 ```{.python .input}
-n_train = 50  # No. of training examples
-x_train = np.sort(d2l.rand(n_train) * 5)   # Training inputs
+n_train = 50  # Eğitim örneklerinin adedi
+x_train = np.sort(d2l.rand(n_train) * 5)   # Eğitim girdileri
 ```
 
 ```{.python .input}
 #@tab pytorch
-n_train = 50  # No. of training examples
-x_train, _ = torch.sort(d2l.rand(n_train) * 5)   # Training inputs
+n_train = 50  # Eğitim örneklerinin adedi
+x_train, _ = torch.sort(d2l.rand(n_train) * 5)   # Eğitim girdileri
 ```
 
 ```{.python .input}
@@ -56,10 +56,10 @@ x_train = tf.sort(tf.random.uniform(shape=(n_train,), maxval=5))
 def f(x):
     return 2 * d2l.sin(x) + x**0.8
 
-y_train = f(x_train) + d2l.normal(0.0, 0.5, (n_train,))  # Training outputs
-x_test = d2l.arange(0, 5, 0.1)  # Testing examples
-y_truth = f(x_test)  # Ground-truth outputs for the testing examples
-n_test = len(x_test)  # No. of testing examples
+y_train = f(x_train) + d2l.normal(0.0, 0.5, (n_train,))  # Eğitim çıktıları
+x_test = d2l.arange(0, 5, 0.1)  # Test örnekleri
+y_truth = f(x_test)  # Test örneklerinin adedi gerçek referans değeri
+n_test = len(x_test)  # Test örneklerinin adedi
 n_test
 ```
 
@@ -68,10 +68,10 @@ n_test
 def f(x):
     return 2 * d2l.sin(x) + x**0.8
 
-y_train = f(x_train) + d2l.normal(0.0, 0.5, (n_train,))  # Training outputs
-x_test = d2l.arange(0, 5, 0.1)  # Testing examples
-y_truth = f(x_test)  # Ground-truth outputs for the testing examples
-n_test = len(x_test)  # No. of testing examples
+y_train = f(x_train) + d2l.normal(0.0, 0.5, (n_train,))  # Eğitim çıktıları
+x_test = d2l.arange(0, 5, 0.1)  # Test örnekleri
+y_truth = f(x_test)  # Test örneklerinin adedi gerçek referans değeri
+n_test = len(x_test)  # Test örneklerinin adedi
 n_test
 ```
 
@@ -80,10 +80,10 @@ n_test
 def f(x):
     return 2 * d2l.sin(x) + x**0.8
 
-y_train = f(x_train) + d2l.normal((n_train,), 0.0, 0.5)  # Training outputs
-x_test = d2l.arange(0, 5, 0.1)  # Testing examples
-y_truth = f(x_test)  # Ground-truth outputs for the testing examples
-n_test = len(x_test)  # No. of testing examples
+y_train = f(x_train) + d2l.normal((n_train,), 0.0, 0.5)  # Eğitim çıktıları
+x_test = d2l.arange(0, 5, 0.1)  # Test örnekleri
+y_truth = f(x_test)  # Test örneklerinin adedi gerçek referans değeri
+n_test = len(x_test)  # Test örneklerinin adedi
 n_test
 ```
 
@@ -99,7 +99,7 @@ def plot_kernel_reg(y_hat):
 
 ## Ortalama Ortaklama
 
-Bu regresyon problemi için belki de dünyanın “en aptalca” tahmin edicisiyle başlıyoruz: Ortalama ortaklama kullanarak tüm eğitim çıktıları üzerinde ortalama: 
+Bu regresyon problemi için belki de dünyanın “en aptalca” tahmin edicisiyle başlıyoruz: Ortalama ortaklama kullanarak tüm eğitim çıktıları üzerinde ortalama, 
 
 $$f(x) = \frac{1}{n}\sum_{i=1}^n y_i,$$
 :eqlabel:`eq_avg-pooling`
@@ -130,12 +130,12 @@ Açıkçası, ortalama ortaklama girdileri, $x_i$, atlar. Girdi yerlerine göre 
 $$f(x) = \sum_{i=1}^n \frac{K(x - x_i)}{\sum_{j=1}^n K(x - x_j)} y_i,$$
 :eqlabel:`eq_nadaraya-watson`
 
-burada $K$ bir *çekirdek*. :eqref:`eq_nadaraya-watson` içindeki tahmin ediciye *Nadaraya-Watson çekirdek regresyonu* denir. Burada çekirdeklerin ayrıntılarına dalmayacağız. :numref:`fig_qkv`'teki dikkat mekanizmalarının çerçevesini hatırlayın. Dikkat açısından bakıldığında, :eqref:`eq_nadaraya-watson`'i *dikkat ortaklama*nın daha genelleştirilmiş bir formunda yeniden yazabiliriz: 
+burada $K$ bir *çekirdek*tir. :eqref:`eq_nadaraya-watson` içindeki tahmin ediciye *Nadaraya-Watson çekirdek regresyonu* denir. Burada çekirdeklerin ayrıntılarına dalmayacağız. :numref:`fig_qkv` içindeki dikkat mekanizmalarının çerçevesini hatırlayın. Dikkat açısından bakıldığında, :eqref:`eq_nadaraya-watson` denklemini *dikkat ortaklama*nın daha genelleştirilmiş bir formunda yeniden yazabiliriz: 
 
 $$f(x) = \sum_{i=1}^n \alpha(x, x_i) y_i,$$
 :eqlabel:`eq_attn-pooling`
 
-burada $x$ sorgu ve $(x_i, y_i)$ anahtar-değer çiftidir. :eqref:`eq_attn-pooling` ve :eqref:`eq_avg-pooling`'ü karşılaştırarak, buradaki dikkat havuzlama $y_i$ değerlerinin ağırlıklı bir ortalamasıdır. :eqref:`eq_attn-pooling` içindeki *dikkat ağırlığı* $\alpha(x, x_i)$, $x$ sorgu ve $\alpha$ ile modellenen anahtar $x_i$ arasındaki etkileşime dayalı olarak $y_i$ karşılık gelen değere atanır. Herhangi bir sorgu için, tüm anahtar-değer çiftleri üzerindeki dikkat ağırlıkları geçerli bir olasılık dağılımıdır: Negatif değildir ve bire toplanır. 
+burada $x$ sorgu ve $(x_i, y_i)$ anahtar-değer çiftidir. :eqref:`eq_attn-pooling` ve :eqref:`eq_avg-pooling` karşılaştırılırsa, buradaki dikkat havuzlama $y_i$ değerlerinin ağırlıklı bir ortalamasıdır. :eqref:`eq_attn-pooling` içindeki *dikkat ağırlığı* $\alpha(x, x_i)$, $x$ sorgu ve $\alpha$ ile modellenen anahtar $x_i$ arasındaki etkileşime dayalı olarak karşılık gelen $y_i$ değerine atanır. Herhangi bir sorgu için, tüm anahtar-değer çiftleri üzerindeki dikkat ağırlıkları geçerli bir olasılık dağılımıdır: Negatif değillerdir ve bire toplanırlar. 
 
 Dikkat ortaklama sezgileri kazanmak için, sadece aşağıda tanımlanan bir *Gauss çekirdeği*ni düşünün 
 
@@ -143,54 +143,57 @@ $$
 K(u) = \frac{1}{\sqrt{2\pi}} \exp(-\frac{u^2}{2}).
 $$
 
-Gauss çekirdeğini :eqref:`eq_attn-pooling` ve :eqref:`eq_nadaraya-watson`'e koyarsak 
+Gauss çekirdeğini :eqref:`eq_attn-pooling` ve :eqref:`eq_nadaraya-watson` denklemlerine koyarsak 
 
 $$\begin{aligned} f(x) &=\sum_{i=1}^n \alpha(x, x_i) y_i\\ &= \sum_{i=1}^n \frac{\exp\left(-\frac{1}{2}(x - x_i)^2\right)}{\sum_{j=1}^n \exp\left(-\frac{1}{2}(x - x_j)^2\right)} y_i \\&= \sum_{i=1}^n \mathrm{softmax}\left(-\frac{1}{2}(x - x_i)^2\right) y_i. \end{aligned}$$
 :eqlabel:`eq_nadaraya-watson-gaussian`
 
-:eqref:`eq_nadaraya-watson-gaussian` içinde, verilen $x$ sorgusuna daha yakın olan bir $x_i$ anahtarı, anahtarın karşılık gelen değeri $y_i$'a atanan *daha büyük bir dikkat ağırlığı* aracılığıyla *daha fazla dikkat* alacaktır.
+:eqref:`eq_nadaraya-watson-gaussian` içinde, verilen $x$ sorgusuna daha yakın olan bir $x_i$ anahtarı, anahtarın karşılık gelen $y_i$ değerine atanan *daha büyük bir dikkat ağırlığı* aracılığıyla *daha fazla dikkat* alacaktır.
 
 Nadaraya-Watson çekirdek regresyonu parametrik olmayan bir modeldir; bu nedenle :eqref:`eq_nadaraya-watson-gaussian`, *parametrik olmayan dikkat ortaklama* örneğidir. Aşağıda, bu parametrik olmayan dikkat modeline dayanarak tahmini çiziyoruz. Tahmin edilen çizgi düzgün ve ortalama ortaklama tarafından üretilen gerçek referans değere daha yakındır.
 
 ```{.python .input}
-# Shape of `X_repeat`: (`n_test`, `n_train`), where each row contains the
-# same testing inputs (i.e., same queries)
+# `X_repeat` şekli: (`n_test`, `n_train`), burada her satır aynı test 
+# girdilerini içerir (yani aynı sorgular)
 X_repeat = d2l.reshape(x_test.repeat(n_train), (-1, n_train))
-# Note that `x_train` contains the keys. Shape of `attention_weights`:
-# (`n_test`, `n_train`), where each row contains attention weights to be
-# assigned among the values (`y_train`) given each query
+# `x_train`'in anahtarları içerdiğine dikkat edin. `attention_weights` şekli: 
+# (`n_test`, `n_train`)'dir, burada her satır, her sorguya verilen değerler 
+# (`y_train`) arasında atanacak dikkat ağırlıklarını içerir
 attention_weights = npx.softmax(-(X_repeat - x_train)**2 / 2)
 # Each element of `y_hat` is weighted average of values, where weights are
 # attention weights
+# `y_hat`'nin her bir öğesi, ağırlıkların dikkat ağırlıkları olduğu 
+# değerlerin ağırlıklı ortalamasıdır.
 y_hat = d2l.matmul(attention_weights, y_train)
 plot_kernel_reg(y_hat)
 ```
 
 ```{.python .input}
 #@tab pytorch
-# Shape of `X_repeat`: (`n_test`, `n_train`), where each row contains the
-# same testing inputs (i.e., same queries)
+# `X_repeat` şekli: (`n_test`, `n_train`), burada her satır aynı test 
+# girdilerini içerir (yani aynı sorgular)
 X_repeat = d2l.reshape(x_test.repeat_interleave(n_train), (-1, n_train))
-# Note that `x_train` contains the keys. Shape of `attention_weights`:
-# (`n_test`, `n_train`), where each row contains attention weights to be
-# assigned among the values (`y_train`) given each query
+# `x_train`'in anahtarları içerdiğine dikkat edin. `attention_weights` şekli: 
+# (`n_test`, `n_train`)'dir, burada her satır, her sorguya verilen değerler 
+# (`y_train`) arasında atanacak dikkat ağırlıklarını içerir
 attention_weights = nn.functional.softmax(-(X_repeat - x_train)**2 / 2, dim=1)
-# Each element of `y_hat` is weighted average of values, where weights are
-# attention weights
+# `y_hat`'nin her bir öğesi, ağırlıkların dikkat ağırlıkları olduğu 
+# değerlerin ağırlıklı ortalamasıdır.
 y_hat = d2l.matmul(attention_weights, y_train)
 plot_kernel_reg(y_hat)
 ```
 
 ```{.python .input}
 #@tab tensorflow
-# Shape of `X_repeat`: (`n_test`, `n_train`), where each row contains the 
-# same testing inputs (i.e., same queries)
+# `X_repeat` şekli: (`n_test`, `n_train`), burada her satır aynı test 
+# girdilerini içerir (yani aynı sorgular)
 X_repeat = tf.repeat(tf.expand_dims(x_train, axis=0), repeats=n_train, axis=0)
-# Note that `x_train` contains the keys. Shape of `attention_weights`:
-# (`n_test`, `n_train`), where each row contains attention weights to be
-# assigned among the values (`y_train`) given each query
+# `x_train`'in anahtarları içerdiğine dikkat edin. `attention_weights` şekli: 
+# (`n_test`, `n_train`)'dir, burada her satır, her sorguya verilen değerler 
+# (`y_train`) arasında atanacak dikkat ağırlıklarını içerir
 attention_weights = tf.nn.softmax(-(X_repeat - tf.expand_dims(x_train, axis=1))**2/2, axis=1)
-# Each element of `y_hat` is weighted average of values, where weights are attention weights
+# `y_hat`'nin her bir öğesi, ağırlıkların dikkat ağırlıkları olduğu 
+# değerlerin ağırlıklı ortalamasıdır.
 y_hat = tf.matmul(attention_weights, tf.expand_dims(y_train, axis=1))
 plot_kernel_reg(y_hat)
 ```
