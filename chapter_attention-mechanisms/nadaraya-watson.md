@@ -224,19 +224,19 @@ d2l.show_heatmaps(tf.expand_dims(tf.expand_dims(attention_weights, axis=0), axis
 
 Parametrik olmayan Nadaraya-Watson çekirdek regresyonu *tutarlılık* avantajından yararlanır: Yeterli veri verildiğinde bu model en uygun çözüme yakınlaşır. Bununla birlikte, öğrenilebilir parametreleri dikkat ortaklamasına kolayca tümleştirebiliriz. 
 
-Örnek olarak, :eqref:`eq_nadaraya-watson-gaussian`'ten biraz farklı, aşağıdaki gibi $x$ sorgu ve $x_i$ anahtarı arasındaki uzaklık, öğrenilebilir bir parametre $w$ ile çarpılır: 
+Örnek olarak, :eqref:`eq_nadaraya-watson-gaussian` denkleminden biraz farklı olarak, aşağıdaki gibi $x$ sorgu ve $x_i$ anahtarı arasındaki uzaklık, öğrenilebilir bir parametre $w$ ile çarpılır: 
 
 $$\begin{aligned}f(x) &= \sum_{i=1}^n \alpha(x, x_i) y_i \\&= \sum_{i=1}^n \frac{\exp\left(-\frac{1}{2}((x - x_i)w)^2\right)}{\sum_{j=1}^n \exp\left(-\frac{1}{2}((x - x_j)w)^2\right)} y_i \\&= \sum_{i=1}^n \mathrm{softmax}\left(-\frac{1}{2}((x - x_i)w)^2\right) y_i.\end{aligned}$$
 :eqlabel:`eq_nadaraya-watson-gaussian-para`
 
-Bölümün geri kalanında, :eqref:`eq_nadaraya-watson-gaussian-para`'teki dikkat ortaklama parametresini öğrenerek bu modeli eğiteceğiz. 
+Bölümün geri kalanında, :eqref:`eq_nadaraya-watson-gaussian-para` denklemindeki dikkat ortaklama parametresini öğrenerek bu modeli eğiteceğiz. 
 
 ### Toplu Matris Çarpması
 :label:`subsec_batch_dot`
 
 Minigruplar için dikkati daha verimli bir şekilde hesaplamak için, derin öğrenme çerçeveleri tarafından sağlanan toplu matris çarpma yardımcı programlarından yararlanabiliriz. 
 
-İlk minigrup $n$ matrisleri $\mathbf{X}_1, \ldots, \mathbf{X}_n$ şekil $a\times b$ içerdiğini ve ikinci minibatch $n$ matrisleri $b\times c$ şekil $b\times c$ $\mathbf{Y}_1, \ldots, \mathbf{Y}_n$ matrisleri içerdiğini varsayalım. Onların toplu matris çarpımı $n$ şekil $a\times c$ matrisleri $\mathbf{X}_1\mathbf{Y}_1, \ldots, \mathbf{X}_n\mathbf{Y}_n$ ile sonuçlanır. Bu nedenle, [**iki şekil tensör verilen ($n$, $a$, $b$) ve ($n$, $b$, $c$), toplu matris çarpma çıktılarının şekli ($n$, $a$, $c$) .**]
+İlk minigrup $n$ matrisleri $\mathbf{X}_1, \ldots, \mathbf{X}_n$ şekil $a\times b$ içerdiğini ve ikinci minibatch $n$ matrisleri $b\times c$ şekilli $\mathbf{Y}_1, \ldots, \mathbf{Y}_n$ matrisleri içerdiğini varsayalım. Onların toplu matris çarpımı $n$ şekil $a\times c$ matrisleri $\mathbf{X}_1\mathbf{Y}_1, \ldots, \mathbf{X}_n\mathbf{Y}_n$ ile sonuçlanır. Bu nedenle, [**iki şekil tensör verilen ($n$, $a$, $b$) ve ($n$, $b$, $c$), toplu matris çarpma çıktılarının şekli ($n$, $a$, $c$)'dir.**]
 
 İlk minigrubun $a\times b$ şeklinde $\mathbf{X}_1, \ldots, \mathbf{X}_n$ $n$ matrisi içerdiğini ve ikinci minigrubun $b\times c$ şeklinde $\mathbf{Y}_1, \ldots, \mathbf{Y}_n$ $n$ matrisi içerdiğini varsayalım. Onların toplu matris çarpımı, $\mathbf{X}_1\mathbf{Y}_1, \ldots, \mathbf{X}_n\mathbf{Y}_n$ $a\times c$ şeklinde $n$ matris ile sonuçlanır. Bu nedenle, [**($n$, $a$, $b$) ve ($n$, $b$, $c$) şeklinde iki tensör verildiğinde, toplu matris çarpım çıktılarının şekli ($n$, $a$, $c$)'dir.**]
 
@@ -284,7 +284,7 @@ tf.matmul(tf.expand_dims(weights, axis=1), tf.expand_dims(values, axis=-1)).nump
 
 ### Modeli Tanımlama
 
-Minigrup matris çarpımını kullanarak, aşağıda :eqref:`eq_nadaraya-watson-gaussian-para`'teki [**parametrik dikkat ortaklama**]yı temel alan Nadaraya-Watson çekirdek regresyonunun parametrik versiyonunu tanımlıyoruz.
+Minigrup matris çarpımını kullanarak, aşağıda :eqref:`eq_nadaraya-watson-gaussian-para` denklemindeki [**parametrik dikkat ortaklama**]yı temel alan Nadaraya-Watson çekirdek regresyonunun parametrik versiyonunu tanımlıyoruz.
 
 ```{.python .input}
 class NWKernelRegression(nn.Block):
@@ -293,13 +293,13 @@ class NWKernelRegression(nn.Block):
         self.w = self.params.get('w', shape=(1,))
 
     def forward(self, queries, keys, values):
-        # Shape of the output `queries` and `attention_weights`:
-        # (no. of queries, no. of key-value pairs)
+        # `queries` ve `attention_weights` çıktısının şekli: 
+        # (sorgu sayısı, anahtar/değer çifti sayısı)
         queries = d2l.reshape(
             queries.repeat(keys.shape[1]), (-1, keys.shape[1]))
         self.attention_weights = npx.softmax(
             -((queries - keys) * self.w.data())**2 / 2)
-        # Shape of `values`: (no. of queries, no. of key-value pairs)
+        # `values` (değerler) şekli: (sorgu sayısı, anahtar/değer çifti sayısı)
         return npx.batch_dot(np.expand_dims(self.attention_weights, 1),
                              np.expand_dims(values, -1)).reshape(-1)
 ```
@@ -312,13 +312,13 @@ class NWKernelRegression(nn.Module):
         self.w = nn.Parameter(torch.rand((1,), requires_grad=True))
 
     def forward(self, queries, keys, values):
-        # Shape of the output `queries` and `attention_weights`:
-        # (no. of queries, no. of key-value pairs)
+        # `queries` ve `attention_weights` çıktısının şekli: 
+        # (sorgu sayısı, anahtar/değer çifti sayısı)
         queries = d2l.reshape(
             queries.repeat_interleave(keys.shape[1]), (-1, keys.shape[1]))
         self.attention_weights = nn.functional.softmax(
             -((queries - keys) * self.w)**2 / 2, dim=1)
-        # Shape of `values`: (no. of queries, no. of key-value pairs)
+        # `values` (değerler) şekli: (sorgu sayısı, anahtar/değer çifti sayısı)
         return torch.bmm(self.attention_weights.unsqueeze(1),
                          values.unsqueeze(-1)).reshape(-1)
 ```
@@ -344,47 +344,47 @@ class NWKernelRegression(tf.keras.layers.Layer):
 Aşağıda, dikkat modelini eğitmek için eğitim veri kümesini anahtar ve değerlere dönüştürürüz. Parametrik dikkat ortaklamada, herhangi bir eğitim girdisi çıktısını tahmin etmek için kendisi dışındaki tüm eğitim örneklerinden anahtar-değer çiftlerini alır.
 
 ```{.python .input}
-# Shape of `X_tile`: (`n_train`, `n_train`), where each column contains the
-# same training inputs
+# `X_tile`'in şekli: (`n_train`, `n_train`), burada her sütun aynı
+#  eğitim girdilerini içerir
 X_tile = np.tile(x_train, (n_train, 1))
-# Shape of `Y_tile`: (`n_train`, `n_train`), where each column contains the
-# same training outputs
+# `Y_tile`'in şekli: (`n_train`, `n_train`), burada her sütun aynı 
+# eğitim çıktılarını içerir
 Y_tile = np.tile(y_train, (n_train, 1))
-# Shape of `keys`: ('n_train', 'n_train' - 1)
+# `keys`'in şekli: (`n_train`, `n_train` - 1)
 keys = d2l.reshape(X_tile[(1 - d2l.eye(n_train)).astype('bool')],
                    (n_train, -1))
-# Shape of `values`: ('n_train', 'n_train' - 1)
+# `values`'in şekli: (`n_train`, `n_train` - 1)
 values = d2l.reshape(Y_tile[(1 - d2l.eye(n_train)).astype('bool')],
                      (n_train, -1))
 ```
 
 ```{.python .input}
 #@tab pytorch
-# Shape of `X_tile`: (`n_train`, `n_train`), where each column contains the
-# same training inputs
+# `X_tile`'in şekli: (`n_train`, `n_train`), burada her sütun aynı
+#  eğitim girdilerini içerir
 X_tile = x_train.repeat((n_train, 1))
-# Shape of `Y_tile`: (`n_train`, `n_train`), where each column contains the
-# same training outputs
+# `Y_tile`'in şekli: (`n_train`, `n_train`), burada her sütun aynı 
+# eğitim çıktılarını içerir
 Y_tile = y_train.repeat((n_train, 1))
-# Shape of `keys`: ('n_train', 'n_train' - 1)
+# `keys`'in şekli: (`n_train`, `n_train` - 1)
 keys = d2l.reshape(X_tile[(1 - d2l.eye(n_train)).type(torch.bool)],
                    (n_train, -1))
-# Shape of `values`: ('n_train', 'n_train' - 1)
+# `values`'in şekli: (`n_train`, `n_train` - 1)
 values = d2l.reshape(Y_tile[(1 - d2l.eye(n_train)).type(torch.bool)],
                      (n_train, -1))
 ```
 
 ```{.python .input}
 #@tab tensorflow
-# Shape of `X_tile`: (`n_train`, `n_train`), where each column contains the
-# same training inputs
+# `X_tile`'in şekli: (`n_train`, `n_train`), burada her sütun aynı
+#  eğitim girdilerini içerir
 X_tile = tf.repeat(tf.expand_dims(x_train, axis=0), repeats=n_train, axis=0)
-# Shape of `Y_tile`: (`n_train`, `n_train`), where each column contains the
-# same training outputs
+# `Y_tile`'in şekli: (`n_train`, `n_train`), burada her sütun aynı 
+# eğitim çıktılarını içerir
 Y_tile = tf.repeat(tf.expand_dims(y_train, axis=0), repeats=n_train, axis=0)
-# Shape of `keys`: ('n_train', 'n_train' - 1)
+# `keys`'in şekli: (`n_train`, `n_train` - 1)
 keys = tf.reshape(X_tile[tf.cast(1 - tf.eye(n_train), dtype=tf.bool)], shape=(n_train, -1))
-# Shape of `values`: ('n_train', 'n_train' - 1)
+# `values`'in şekli: (`n_train`, `n_train` - 1)
 values = tf.reshape(Y_tile[tf.cast(1 - tf.eye(n_train), dtype=tf.bool)], shape=(n_train, -1))
 ```
 
@@ -439,13 +439,13 @@ for epoch in range(5):
     animator.add(epoch + 1, float(loss))
 ```
 
-Parametrik dikkat modelini eğittikten sonra, [**tahminini**] çizebiliriz. Eğitim veri kümesini gürültüye oturtmaya çalışırken, tehmin edilen çizgi, daha önce çizilen parametrik olmayan karsılığından daha az pürüzsüzdür.
+Parametrik dikkat modelini eğittikten sonra, [**tahminini**] çizebiliriz. Eğitim veri kümesini gürültüye oturtmaya çalışırken, tahmin edilen çizgi, daha önce çizilen parametrik olmayan karşılığından daha az pürüzsüzdür.
 
 ```{.python .input}
-# Shape of `keys`: (`n_test`, `n_train`), where each column contains the same
-# training inputs (i.e., same keys)
+# `keys`'in şekli: (`n_test`, `n_train`), burada her sütun aynı eğitim 
+# girdilerini (yani aynı anahtarları) içerir
 keys = np.tile(x_train, (n_test, 1))
-# Shape of `value`: (`n_test`, `n_train`)
+# `value`'in şekli: (`n_test`, `n_train`)
 values = np.tile(y_train, (n_test, 1))
 y_hat = net(x_test, keys, values)
 plot_kernel_reg(y_hat)
@@ -453,10 +453,10 @@ plot_kernel_reg(y_hat)
 
 ```{.python .input}
 #@tab pytorch
-# Shape of `keys`: (`n_test`, `n_train`), where each column contains the same
-# training inputs (i.e., same keys)
+# `keys`'in şekli: (`n_test`, `n_train`), burada her sütun aynı eğitim 
+# girdilerini (yani aynı anahtarları) içerir
 keys = x_train.repeat((n_test, 1))
-# Shape of `value`: (`n_test`, `n_train`)
+# `value`'in şekli: (`n_test`, `n_train`)
 values = y_train.repeat((n_test, 1))
 y_hat = net(x_test, keys, values).unsqueeze(1).detach()
 plot_kernel_reg(y_hat)
@@ -464,10 +464,10 @@ plot_kernel_reg(y_hat)
 
 ```{.python .input}
 #@tab tensorflow
-# Shape of `keys`: (`n_test`, `n_train`), where each column contains the same
-# training inputs (i.e., same keys)
+# `keys`'in şekli: (`n_test`, `n_train`), burada her sütun aynı eğitim 
+# girdilerini (yani aynı anahtarları) içerir
 keys = tf.repeat(tf.expand_dims(x_train, axis=0), repeats=n_test, axis=0)
-# Shape of `value`: (`n_test`, `n_train`)
+# `value`'in şekli: (`n_test`, `n_train`)
 values = tf.repeat(tf.expand_dims(y_train, axis=0), repeats=n_test, axis=0)
 y_hat = net(x_test, keys, values)
 plot_kernel_reg(y_hat)
@@ -497,7 +497,7 @@ d2l.show_heatmaps(tf.expand_dims(tf.expand_dims(net.attention_weights, axis=0), 
 
 ## Özet
 
-* Nadaraya-Watson çekirdek regresyonu, dikkat mekanizmaları ile makine öğrenmesinin bir örneğidir.
+* Nadaraya-Watson çekirdek regresyonu, makine öğrenmesinin dikkat mekanizmaları ile bir örneğidir.
 * Nadaraya-Watson çekirdek regresyonunun dikkat ortaklaması, eğitim çıktılarının ağırlıklı bir ortalamasıdır. Dikkat açısından bakıldığında, dikkat ağırlığı, bir sorgunun işlevine ve değerle eşleştirilmiş anahtara dayanan bir değere atanır.
 * Dikkat ortaklama parametrik olabilir de olmayabilir de.
 
