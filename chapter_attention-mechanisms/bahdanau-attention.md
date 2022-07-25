@@ -70,14 +70,14 @@ class Seq2SeqAttentionDecoder(AttentionDecoder):
 
     def init_state(self, enc_outputs, enc_valid_lens, *args):
         # `outputs`'un şekli: (`num_steps`, `batch_size`, `num_hiddens`).
-        #`hidden_state[0]`'in şekli: (`num_layers`, `batch_size`,
+        # `hidden_state[0]`'in şekli: (`num_layers`, `batch_size`,
         # `num_hiddens`)
         outputs, hidden_state = enc_outputs
         return (outputs.swapaxes(0, 1), hidden_state, enc_valid_lens)
 
     def forward(self, X, state):
         # `enc_outputs`'un şekli: (`batch_size`, `num_steps`, `num_hiddens`).
-        # `hidden_state[0]`'in şekli:: (`num_layers`, `batch_size`,
+        # `hidden_state[0]`'in şekli: (`num_layers`, `batch_size`,
         # `num_hiddens`)
         enc_outputs, hidden_state, enc_valid_lens = state
         # `X` çıktısının şekli: (`num_steps`, `batch_size`, `embed_size`)
@@ -86,17 +86,17 @@ class Seq2SeqAttentionDecoder(AttentionDecoder):
         for x in X:
             # `query`'in şekli:: (`batch_size`, 1, `num_hiddens`)
             query = np.expand_dims(hidden_state[0][-1], axis=1)
-            # `context`'in şekli:: (`batch_size`, 1, `num_hiddens`)
+            # `context`'in şekli: (`batch_size`, 1, `num_hiddens`)
             context = self.attention(
                 query, enc_outputs, enc_outputs, enc_valid_lens)
             # Öznitelik boyutunda bitiştir
             x = np.concatenate((context, np.expand_dims(x, axis=1)), axis=-1)
             # `x`'i (1, `batch_size`, `embed_size` + `num_hiddens`) olarak 
-            # yeniden şekillendirin)
+            # yeniden şekillendirin
             out, hidden_state = self.rnn(x.swapaxes(0, 1), hidden_state)
             outputs.append(out)
             self._attention_weights.append(self.attention.attention_weights)
-        # Tam bağlı katman dönüşümünden sonra, `outputs (çıktılar) şekli:
+        # Tam bağlı katman dönüşümünden sonra, `outputs` (çıktılar) şekli:
         # (`num_steps`, `batch_size`, `vocab_size`)
         outputs = self.dense(np.concatenate(outputs, axis=0))
         return outputs.swapaxes(0, 1), [enc_outputs, hidden_state,
@@ -123,33 +123,33 @@ class Seq2SeqAttentionDecoder(AttentionDecoder):
 
     def init_state(self, enc_outputs, enc_valid_lens, *args):
         # `outputs`'un şekli: (`num_steps`, `batch_size`, `num_hiddens`).
-        #`hidden_state[0]`'in şekli: (`num_layers`, `batch_size`,
+        # `hidden_state[0]`'in şekli: (`num_layers`, `batch_size`,
         # `num_hiddens`)
         outputs, hidden_state = enc_outputs
         return (outputs.permute(1, 0, 2), hidden_state, enc_valid_lens)
 
     def forward(self, X, state):
         # `enc_outputs`'un şekli: (`batch_size`, `num_steps`, `num_hiddens`).
-        # `hidden_state[0]`'in şekli:: (`num_layers`, `batch_size`,
+        # `hidden_state[0]`'in şekli: (`num_layers`, `batch_size`,
         # `num_hiddens`)
         enc_outputs, hidden_state, enc_valid_lens = state
         # `X` çıktısının şekli: (`num_steps`, `batch_size`, `embed_size`)
         X = self.embedding(X).permute(1, 0, 2)
         outputs, self._attention_weights = [], []
         for x in X:
-            # `query`'in şekli:: (`batch_size`, 1, `num_hiddens`)
+            # `query`'in şekli: (`batch_size`, 1, `num_hiddens`)
             query = torch.unsqueeze(hidden_state[-1], dim=1)
-            # `context`'in şekli:: (`batch_size`, 1, `num_hiddens`)
+            # `context`'in şekli: (`batch_size`, 1, `num_hiddens`)
             context = self.attention(
                 query, enc_outputs, enc_outputs, enc_valid_lens)
             # Öznitelik boyutunda bitiştir
             x = torch.cat((context, torch.unsqueeze(x, dim=1)), dim=-1)
             # `x`'i (1, `batch_size`, `embed_size` + `num_hiddens`) olarak 
-            # yeniden şekillendirin)
+            # yeniden şekillendirin
             out, hidden_state = self.rnn(x.permute(1, 0, 2), hidden_state)
             outputs.append(out)
             self._attention_weights.append(self.attention.attention_weights)
-        # Tam bağlı katman dönüşümünden sonra, `outputs (çıktılar) şekli:
+        # Tam bağlı katman dönüşümünden sonra, `outputs` (çıktılar) şekli:
         # (`num_steps`, `batch_size`, `vocab_size`)
         outputs = self.dense(torch.cat(outputs, dim=0))
         return outputs.permute(1, 0, 2), [enc_outputs, hidden_state,
@@ -177,22 +177,22 @@ class Seq2SeqAttentionDecoder(AttentionDecoder):
 
     def init_state(self, enc_outputs, enc_valid_lens, *args):
         # `outputs`'un şekli: (`batch_size`, `num_steps`, `num_hiddens`).
-        #`hidden_state[0]`'in şekli: (`num_layers`, `batch_size`, `num_hiddens`)
+        # `hidden_state[0]`'in şekli: (`num_layers`, `batch_size`, `num_hiddens`)
         outputs, hidden_state = enc_outputs
         return (outputs, hidden_state, enc_valid_lens)
 
     def call(self, X, state, **kwargs):
         # `enc_outputs`'un şekli: (`batch_size`, `num_steps`, `num_hiddens`).
-        # `hidden_state[0]`'in şekli:: (`num_layers`, `batch_size`, `num_hiddens`)
+        # `hidden_state[0]`'in şekli: (`num_layers`, `batch_size`, `num_hiddens`)
         enc_outputs, hidden_state, enc_valid_lens = state
         # `X` çıktısının şekli: (`num_steps`, `batch_size`, `embed_size`)
         X = self.embedding(X) # Input `X` has shape: (`batch_size`, `num_steps`)
         X = tf.transpose(X, perm=(1, 0, 2))
         outputs, self._attention_weights = [], []
         for x in X:
-            # `query`'in şekli:: (`batch_size`, 1, `num_hiddens`)
+            # `query`'in şekli: (`batch_size`, 1, `num_hiddens`)
             query = tf.expand_dims(hidden_state[-1], axis=1)
-            # `context`'in şekli:: (`batch_size, 1, `num_hiddens`)
+            # `context`'in şekli: (`batch_size, 1, `num_hiddens`)
             context = self.attention(query, enc_outputs, enc_outputs,
                                      enc_valid_lens, **kwargs)
             # Öznitelik boyutunda bitiştir
@@ -201,7 +201,7 @@ class Seq2SeqAttentionDecoder(AttentionDecoder):
             hidden_state = out[1:]
             outputs.append(out[0])
             self._attention_weights.append(self.attention.attention_weights)
-        # Tam bağlı katman dönüşümünden sonra, `outputs (çıktılar) şekli:
+        # Tam bağlı katman dönüşümünden sonra, `outputs` (çıktılar) şekli:
         # (`batch_size`, `num_steps`, `vocab_size`)
         outputs = self.dense(tf.concat(outputs, axis=1))
         return outputs, [enc_outputs, hidden_state, enc_valid_lens]
@@ -211,7 +211,7 @@ class Seq2SeqAttentionDecoder(AttentionDecoder):
         return self._attention_weights
 ```
 
-Aşağıda, 7 zaman adımlı 4 dizi girdisinden oluşan bir minigrup kullanarak Bahdanau dikkatiyle [**uygulanan kod çözücüyü**] test ediyoruz.
+Aşağıda, 7 zaman adımlı 4 dizi girdisinden oluşan bir minigrup kullanarak Bahdanau dikkatiyle [**uygulanan kodçözücüyü**] test ediyoruz.
 
 ```{.python .input}
 encoder = d2l.Seq2SeqEncoder(vocab_size=10, embed_size=8, num_hiddens=16,
@@ -323,7 +323,7 @@ d2l.show_heatmaps(
 #@tab tensorflow
 # Sıra sonu belirtecini eklemek için bir tane ekle
 d2l.show_heatmaps(attention_weights[:, :, :, :len(engs[-1].split()) + 1],
-                  xlabel='Key posistions', ylabel='Query posistions')
+                  xlabel='Key positions', ylabel='Query positions')
 ```
 
 ## Özet
