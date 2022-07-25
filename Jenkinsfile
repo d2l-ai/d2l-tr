@@ -38,6 +38,7 @@ stage("Build and Publish") {
       conda activate ${ENV_NAME}
       ./static/cache.sh restore _build/eval_pytorch/data
       d2lbook build eval --tab pytorch
+      d2lbook build slides --tab pytorch
       ./static/cache.sh store _build/eval_pytorch/data
       """
 
