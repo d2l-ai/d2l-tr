@@ -95,8 +95,7 @@ pip install tensorflow tensorflow-probability
 Bir sonraki adımımız, bu kitapta bulunan sık kullanılan işlevleri ve sınıfları kapsamak için geliştirdiğimiz `d2l` paketini kurmaktır.
 
 ```bash
-# -U: Bütün paketleri en yeni sürümlerine güncelle
-pip install -U d2l
+pip install d2l==0.17.5
 ```
 
 Bu kurulum adımlarını tamamladıktan sonra, Jupyter not defteri sunucusunu şu şekilde çalıştırarak başlatabiliriz:
