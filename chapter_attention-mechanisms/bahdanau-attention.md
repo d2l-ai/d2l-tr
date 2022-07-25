@@ -186,7 +186,7 @@ class Seq2SeqAttentionDecoder(AttentionDecoder):
         # `hidden_state[0]`'in şekli: (`num_layers`, `batch_size`, `num_hiddens`)
         enc_outputs, hidden_state, enc_valid_lens = state
         # `X` çıktısının şekli: (`num_steps`, `batch_size`, `embed_size`)
-        X = self.embedding(X) # Input `X` has shape: (`batch_size`, `num_steps`)
+        X = self.embedding(X) # `X` girdisinin şekli: (`batch_size`, `num_steps`)
         X = tf.transpose(X, perm=(1, 0, 2))
         outputs, self._attention_weights = [], []
         for x in X:
@@ -322,8 +322,9 @@ d2l.show_heatmaps(
 ```{.python .input}
 #@tab tensorflow
 # Sıra sonu belirtecini eklemek için bir tane ekle
-d2l.show_heatmaps(attention_weights[:, :, :, :len(engs[-1].split()) + 1],
-                  xlabel='Key positions', ylabel='Query positions')
+d2l.show_heatmaps(
+    attention_weights[:, :, :, :len(engs[-1].split()) + 1],
+    xlabel='Key positions', ylabel='Query positions')
 ```
 
 ## Özet
