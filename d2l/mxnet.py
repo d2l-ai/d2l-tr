@@ -5,29 +5,10 @@ USE_TENSORFLOW = False
 DATA_HUB = dict()
 DATA_URL = 'http://d2l-data.s3-accelerate.amazonaws.com/'
 
-import collections
-import hashlib
-import inspect
-import math
-import os
-import random
-import re
-import shutil
-import sys
-import tarfile
-import time
-import zipfile
-from collections import defaultdict
-import pandas as pd
-import requests
-from IPython import display
-from matplotlib import pyplot as plt
-
 from mxnet import autograd, context, gluon, image, init, np, npx
 from mxnet.gluon import nn, rnn
 from mxnet.gluon.data.vision import transforms
 
-d2l = sys.modules[__name__]
 nn_Module = nn.Block
 
 #################   WARNING   ################
@@ -2562,7 +2543,7 @@ def predict_snli(net, vocab, premise, hypothesis):
             else 'neutral'
 
 d2l.DATA_HUB['ml-100k'] = (
-    'http://files.grouplens.org/datasets/movielens/ml-100k.zip',
+    'https://files.grouplens.org/datasets/movielens/ml-100k.zip',
     'cd4dcac4241c8a4ad7badc7ca635da8a69dddb83')
 
 def read_data_ml100k():

@@ -1,7 +1,7 @@
 # Yinelemeli Sinir Ağları
 :label:`sec_rnn`
 
-:numref:`sec_language_model`'te $n$-gramlık modelleri tanıttık; $x_t$ kelimesinin $t$ zaman adımındaki koşullu olasılığı sadece önceki $n-1$ kelimeye bağlıdır. Eğer $x_t$ üzerinde $t-(n-1)$ zaman adımından daha önceki kelimelerin olası etkisini dahil etmek istiyorsanız, $n$'yı artırmanız gerekir. Bununla birlikte, model parametrelerinin sayısı da katlanarak artacaktır, çünkü $\mathcal{V}$ kelime dağarcığı kümesi için $|\mathcal{V}|^n$ tane değer depolamamız gerekir. Bu nedenle, $P(x_t \mid x_{t-1}, \ldots, x_{t-n+1})$'yı modellemek yerine bir saklı değişken modeli kullanılmak tercih edilir:
+:numref:`sec_language_model` içinde $n$-gramlık modelleri tanıttık; $x_t$ kelimesinin $t$ zaman adımındaki koşullu olasılığı sadece önceki $n-1$ kelimeye bağlıdır. Eğer $x_t$ üzerinde $t-(n-1)$ zaman adımından daha önceki kelimelerin olası etkisini dahil etmek istiyorsanız, $n$'yi artırmanız gerekir. Bununla birlikte, model parametrelerinin sayısı da katlanarak artacaktır, çünkü $\mathcal{V}$ kelime dağarcığı kümesi için $|\mathcal{V}|^n$ tane değer depolamamız gerekir. Bu nedenle, $P(x_t \mid x_{t-1}, \ldots, x_{t-n+1})$'yı modellemek yerine bir saklı değişken modeli kullanılmak tercih edilir:
 
 $$P(x_t \mid x_{t-1}, \ldots, x_1) \approx P(x_t \mid h_{t-1}),$$
 
@@ -10,11 +10,11 @@ burada $h_{t-1}$, $t-1$ adıma kadar dizi bilgisi depolayan bir *gizli durum*dur
 $$h_t = f(x_{t}, h_{t-1}).$$
 :eqlabel:`eq_ht_xt`
 
-:eqref:`eq_ht_xt`'teki yeterince güçlü bir $f$ işlevi için, saklı değişken modeli bir yaklaşım değildir. Sonuçta, $h_t$ şimdiye kadar gözlemlediği tüm verileri saklayabilir. Ancak, potansiyel olarak hem hesaplamayı hem de depolamayı pahalı hale getirebilir.
+:eqref:`eq_ht_xt` içindeki yeterince güçlü bir $f$ işlevi için, saklı değişken modeli bir yaklaşım değildir. Sonuçta, $h_t$ şimdiye kadar gözlemlediği tüm verileri saklayabilir. Ancak, potansiyel olarak hem hesaplamayı hem de depolamayı pahalı hale getirebilir.
 
-:numref:`chap_perceptrons`'te gizli birimli gizli katmanları tartıştığımızı anımsayın. Gizli katmanların ve gizli durumların iki çok farklı kavramı ifade etmeleri önemlidir. Gizli katmanlar, açıklandığı gibi, girdiden çıktıya giden yolda gözden gizlenen katmanlardır. Gizli durumlar teknik olarak belirli bir adımda yaptığımız işleme *girdiler*dir ve yalnızca önceki zaman adımlarındaki verilere bakarak hesaplanabilirler.
+:numref:`chap_perceptrons` içinde gizli birimli gizli katmanları tartıştığımızı anımsayın. Gizli katmanların ve gizli durumların iki çok farklı kavramı ifade etmeleri önemlidir. Gizli katmanlar, açıklandığı gibi, girdiden çıktıya giden yolda gözden gizlenen katmanlardır. Gizli durumlar teknik olarak belirli bir adımda yaptığımız işleme *girdiler*dir ve yalnızca önceki zaman adımlarındaki verilere bakarak hesaplanabilirler.
 
-*Yinelemeli sinir ağları* (RNN) gizli durumlara sahip sinir ağlarıdır. RNN modelini tanıtmadan önce, ilk olarak :numref:`sec_mlp`'te tanıtılan MLP modelini anımsayalım.
+*Yinelemeli sinir ağları* (RNN) gizli durumlara sahip sinir ağlarıdır. RNN modelini tanıtmadan önce, ilk olarak :numref:`sec_mlp` içinde tanıtılan MLP modelini anımsayalım.
 
 ## Gizli Durumu Olmayan Sinir Ağları
 
@@ -29,7 +29,7 @@ $$\mathbf{O} = \mathbf{H} \mathbf{W}_{hq} + \mathbf{b}_q,$$
 
 burada $\mathbf{O} \in \mathbb{R}^{n \times q}$ çıktı değişkeni, $\mathbf{W}_{hq} \in \mathbb{R}^{h \times q}$ ağırlık parametresi ve $\mathbf{b}_q \in \mathbb{R}^{1 \times q}$ çıktı katmanının ek girdi parametresidir. Eğer bir sınıflandırma problemi ise, çıktı kategorilerinin olasılık dağılımını hesaplamak için $\text{softmaks}(\mathbf{O})$'i kullanabiliriz.
 
-Bu, :numref:`sec_sequence`'te daha önce çözdüğümüz bağlanım problemine tamamen benzer, dolayısıyla ayrıntıları atlıyoruz. Öznitelik-etiket çiftlerini rastgele seçebileceğimizi ve ağımızın parametrelerini otomatik türev alma ve rasgele eğim inişi yoluyla öğrenebileceğimizi söylemek yeterli.
+Bu, :numref:`sec_sequence` içinde daha önce çözdüğümüz bağlanım problemine tamamen benzer, dolayısıyla ayrıntıları atlıyoruz. Öznitelik-etiket çiftlerini rastgele seçebileceğimizi ve ağımızın parametrelerini otomatik türev alma ve rasgele eğim inişi yoluyla öğrenebileceğimizi söylemek yeterli.
 
 ## Gizli Durumlu Yinelemeli Sinir Ağları
 :label:`subsec_rnn_w_hidden_states`
@@ -41,15 +41,15 @@ $t$ zaman adımında girdileri $\mathbf{X}_t \in \mathbb{R}^{n \times d}$ olan b
 $$\mathbf{H}_t = \phi(\mathbf{X}_t \mathbf{W}_{xh} + \mathbf{H}_{t-1} \mathbf{W}_{hh}  + \mathbf{b}_h).$$
 :eqlabel:`rnn_h_with_state`
 
-:eqref:`rnn_h_without_state` ile karşılaştırıldığında, :eqref:`rnn_h_with_state` bir terim daha, $\mathbf{H}_{t-1} \mathbf{W}_{hh}$, ekler ve böylece :eqref:`eq_ht_xt`'den bir örnek oluşturur. Bitişik zaman adımlarındaki $\mathbf{H}_t$ ve $\mathbf{H}_{t-1}$ gizli değişkenlerinin arasındaki ilişkiden, bu değişkenlerin dizinin tarihsel bilgilerini şu anki zaman adımına kadar yakaladığını ve sakladığını biliyoruz; tıpkı sinir ağının şimdiki zaman adımının durumu veya hafızası gibi. Bu nedenle, böyle bir gizli değişken *gizli durum* olarak adlandırılır. Gizli durum şu anki zaman adımında önceki zaman adımının aynı tanımını kullandığından, :eqref:`rnn_h_with_state`'nın hesaplanmasa *yineleme*dir. Bu nedenle, yinelemeli hesaplamalara dayalı gizli durumlara sahip sinir ağları *yinelemeli sinir ağları*dır. RNN'lerde :eqref:`rnn_h_with_state`'ün hesaplanmasını gerçekleştiren katmanlar *yinelemeli katmanlar* olarak adlandırılır.
+:eqref:`rnn_h_without_state` ile karşılaştırıldığında, :eqref:`rnn_h_with_state` bir terim daha, $\mathbf{H}_{t-1} \mathbf{W}_{hh}$, ekler ve böylece :eqref:`eq_ht_xt`'den bir örnek oluşturur. Bitişik zaman adımlarındaki $\mathbf{H}_t$ ve $\mathbf{H}_{t-1}$ gizli değişkenlerinin arasındaki ilişkiden, bu değişkenlerin dizinin tarihsel bilgilerini şu anki zaman adımına kadar yakaladığını ve sakladığını biliyoruz; tıpkı sinir ağının şimdiki zaman adımının durumu veya hafızası gibi. Bu nedenle, böyle bir gizli değişken *gizli durum* olarak adlandırılır. Gizli durum şu anki zaman adımında önceki zaman adımının aynı tanımını kullandığından, :eqref:`rnn_h_with_state`'nın hesaplanması *yineleme*dir. Bu nedenle, yinelemeli hesaplamalara dayalı gizli durumlara sahip sinir ağları *yinelemeli sinir ağları*dır. RNN'lerde :eqref:`rnn_h_with_state`'ün hesaplanmasını gerçekleştiren katmanlar *yinelemeli katmanlar* olarak adlandırılır.
 
-RNN oluşturmak için birçok farklı yol vardır. :eqref:`rnn_h_with_state`'de tanımlanan gizli bir duruma sahip RNN'ler çok yaygındır. Zaman adımı $t$ için çıktı katmanının çıktısı MLP'deki hesaplamaya benzer:
+RNN oluşturmak için birçok farklı yol vardır. :eqref:`rnn_h_with_state` içinde tanımlanan gizli bir duruma sahip RNN'ler çok yaygındır. Zaman adımı $t$ için çıktı katmanının çıktısı MLP'deki hesaplamaya benzer:
 
 $$\mathbf{O}_t = \mathbf{H}_t \mathbf{W}_{hq} + \mathbf{b}_q.$$
 
-RNN parametreleri gizli katmanın $\mathbf{W}_{xh} \in \mathbb{R}^{d \times h}, \mathbf{W}_{hh} \in \mathbb{R}^{h \times h}$ ağırlıkları ve $\mathbf{b}_h \in \mathbb{R}^{1 \times h}$ ek girdisi ile birlikte çıktı katmanının $\mathbf{W}_{hq} \in \mathbb{R}^{h \times q}$ ağırlıkları ve $\mathbf{b}_q \in \mathbb{R}^{1 \times q}$ ek girdilerini içerir. Farklı zaman adımlarında bile, RNN'lerin her zaman bu model parametrelerini kullandığını belirtmek gerekir. Bu nedenle, bir RNN parametrelendirmenin maliyeti zaman adım sayısı arttıkça büyümez.
+RNN parametreleri gizli katmanın $\mathbf{W}_{xh} \in \mathbb{R}^{d \times h}, \mathbf{W}_{hh} \in \mathbb{R}^{h \times h}$ ağırlıkları ve $\mathbf{b}_h \in \mathbb{R}^{1 \times h}$ ek girdisi ile birlikte çıktı katmanının $\mathbf{W}_{hq} \in \mathbb{R}^{h \times q}$ ağırlıklarını ve $\mathbf{b}_q \in \mathbb{R}^{1 \times q}$ ek girdilerini içerir. Farklı zaman adımlarında bile, RNN'lerin her zaman bu model parametrelerini kullandığını belirtmek gerekir. Bu nedenle, bir RNN parametrelendirmenin maliyeti zaman adım sayısı arttıkça büyümez.
 
-:numref:`fig_rnn`, bitişik üç zaman adımında bir RNN'nin hesaplama mantığını göstermektedir. Herhangi bir $t$ zamanda adımında, gizli durumun hesaplanması şu şekilde düşünülebilir: (i) $t$ şimdiki zaman adımındaki $\mathbf{X}_t$ girdisi ile önceki $t-1$ zaman adımındaki $\mathbf{H}_{t-1}$ gizli durumu bitiştirme; (ii) bitiştirme sonucunu $\phi$ etkinleştirme fonksiyonlu tam bağlı bir katmana besleme. Bu şekilde tam bağlı bir katmanın çıktısı, $t$ şimdiki zaman adımı $\mathbf{H}_t$ gizli durumudur. Bu durumda, model parametrelerinin hepsi :eqref:`rnn_h_with_state`'teki $\mathbf{W}_{xh}$ ve $\mathbf{W}_{hh}$'ün bitiştirilmesi ve $\mathbf{b}_h$ ek girdisidir. Şimdiki $t$ zaman adımının $\mathbf{H}_t$ gizli durumu, sonraki $t+1$ adımının $\mathbf{H}_{t+1}$ gizli durumunun hesaplanmasına katılacaktır. Dahası, $\mathbf{H}_t$, $t$ şimdiki zaman adımının $\mathbf{O}_t$ çıktısını hesaplamak için tam bağlı çıktı katmanına da beslenir.
+:numref:`fig_rnn`, bitişik üç zaman adımında bir RNN'nin hesaplama mantığını göstermektedir. Herhangi bir $t$ zaman adımında, gizli durumun hesaplanması şu şekilde düşünülebilir: (i) $t$ şimdiki zaman adımındaki $\mathbf{X}_t$ girdisi ile önceki $t-1$ zaman adımındaki $\mathbf{H}_{t-1}$ gizli durumu bitiştirme; (ii) bitiştirme sonucunu $\phi$ etkinleştirme fonksiyonlu tam bağlı bir katmana besleme. Bu şekilde tam bağlı bir katmanın çıktısı, $t$ şimdiki zaman adımı $\mathbf{H}_t$ gizli durumudur. Bu durumda, model parametrelerinin hepsi :eqref:`rnn_h_with_state`'teki $\mathbf{W}_{xh}$ ve $\mathbf{W}_{hh}$'ün bitiştirilmesi ve $\mathbf{b}_h$ ek girdisidir. Şimdiki $t$ zaman adımının $\mathbf{H}_t$ gizli durumu, sonraki $t+1$ adımının $\mathbf{H}_{t+1}$ gizli durumunun hesaplanmasına katılacaktır. Dahası, $\mathbf{H}_t$, $t$ şimdiki zaman adımının $\mathbf{O}_t$ çıktısını hesaplamak için tam bağlı çıktı katmanına da beslenir.
 
 ![Gizli duruma sahip bir RNN.](../img/rnn.svg)
 :label:`fig_rnn`
@@ -97,14 +97,14 @@ d2l.matmul(d2l.concat((X, H), 1), d2l.concat((W_xh, W_hh), 0))
 
 ## RNN Tabanlı Karakter Düzeyinde Dil Modelleri
 
-:numref:`sec_language_model`'teki dil modellemesi için şimdiki ve geçmiş andıçlara dayanarak bir sonraki simgeyi tahmin etmeyi amaçladığımızı hatırlayın, böylece orijinal diziyi etiketler olarak bir andıç kaydırıyoruz. Bengio ve ark. önce dil modelleme için bir sinir ağı kullanmayı önerdi :cite:`Bengio.Ducharme.Vincent.ea.2003`. Aşağıda, bir dil modeli oluşturmak için RNN'lerin nasıl kullanılabileceğini gösteriyoruz. Minigrup boyutu bir olsun ve metnin sırası "makine" olsun. Sonraki bölümlerdeki eğitimi basitleştirmek için, metni sözcükler yerine karakterler haline getiririz ve *karakter düzeyinde bir dil modeli*ni göz önünde bulundururuz. :numref:`fig_rnn_train`, karakter düzeyinde dil modellemesi için bir RNN aracılığıyla şimdiki ve önceki karakterlere dayanarak bir sonraki karakterin nasıl tahmin edileceğini gösterir.
+:numref:`sec_language_model` içindeki dil modellemesi için şimdiki ve geçmiş andıçlara dayanarak bir sonraki simgeyi tahmin etmeyi amaçladığımızı hatırlayın, böylece orijinal diziyi etiketler olarak bir andıç kaydırıyoruz. Bengio ve ark. önce dil modelleme için bir sinir ağı kullanmayı önerdi :cite:`Bengio.Ducharme.Vincent.ea.2003`. Aşağıda, bir dil modeli oluşturmak için RNN'lerin nasıl kullanılabileceğini gösteriyoruz. Minigrup boyutu bir olsun ve metnin sırası "makine" (machine) olsun. Sonraki bölümlerdeki eğitimi basitleştirmek için, metni sözcükler yerine karakterler haline getiririz ve *karakter düzeyinde bir dil modeli*ni göz önünde bulundururuz. :numref:`fig_rnn_train`, karakter düzeyinde dil modellemesi için bir RNN aracılığıyla şimdiki ve önceki karakterlere dayanarak bir sonraki karakterin nasıl tahmin edileceğini gösterir.
 
 ![RNN'ye dayalı karakter düzeyinde bir dil modeli. Girdi ve etiket dizileri sırasıyla "machin" ve "achine" dir.](../img/rnn-train.svg)
 :label:`fig_rnn_train`
 
 Eğitim işlemi sırasında, çıktı katmanından çıktıda her zaman adım için bir softmaks işlemi çalıştırırız ve daha sonra model çıktısı ile etiket arasındaki hatayı hesaplamak için çapraz entropi kaybını kullanırız. Gizli katmandaki gizli durumun yinelemeli hesaplanması nedeniyle, :numref:`fig_rnn_train`, $\mathbf{O}_3$'teki 3. zaman adımının çıktısı, “m”, “a” ve “c” metin dizisi ile belirlenir. Eğitim verilerindeki dizinin bir sonraki karakteri “h” olduğu için, 3. zaman adımının kaybı, “m”, “a”, “c”'ye göre oluşturulan bir sonraki karakterin olasılık dağılımına ve bu zaman adımının “h” etiketine bağlı olacaktır.
 
-Uygulamada, her andıç bir $d$ boyutlu vektör ile temsil edilir ve grup boyutu olarak $n>1$ kullanırız. Bu nedenle, $t$'deki $\mathbf X_t$ girdisi :numref:`subsec_rnn_w_hidden_states`'te tartıştığımız gibi $n\times d$ şekilli bir matris olacaktır.
+Uygulamada, her andıç bir $d$ boyutlu vektör ile temsil edilir ve grup boyutu olarak $n>1$ kullanırız. Bu nedenle, $t$'deki $\mathbf X_t$ girdisi :numref:`subsec_rnn_w_hidden_states` içinde tartıştığımız gibi $n\times d$ şekilli bir matris olacaktır.
 
 ## Şaşkınlık
 :label:`subsec_perplexity`

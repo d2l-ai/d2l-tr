@@ -3,7 +3,7 @@
 
 Pratikte, aynı sorgular, anahtarlar ve değerler kümesi verildiğinde, modelimizin, çeşitli aralıkların bir sıra içinde (örneğin, daha kısa menzile karşı daha uzun menzil) bağımlılıklarını yakalama gibi aynı dikkat mekanizmasının farklı davranışlarından elde edilen bilgileri birleştirmesini isteyebiliriz. Bu nedenle, dikkat mekanizmamızın sorguların, anahtarların ve değerlerin farklı temsil alt alanlarını ortaklaşa kullanmasına izin vermek yararlı olabilir. 
 
-Bu amaçla, tek bir dikkat ortaklaması yerine, sorgular, anahtarlar ve değerler $h$ tane bağımsız olarak öğrenilen doğrusal izdüşümler ile dönüştürülebilir. Daha sonra bu $h$ öngörülen sorgular, anahtarlar ve değerler paralel olarak dikkat ortaklaması içine beslenir. Nihayetinde, $h$ dikkat ortaklama çıktıları bitiştirilir ve son çıktıyı üretmek için başka bir öğrenilmiş doğrusal izdüşüm ile dönüştürülür. Bu tasarıma *çoklu kafalı dikkat* denir, burada $h$ dikkat ortaklama çıktılarının her biri *kafa*dır :cite:`Vaswani.Shazeer.Parmar.ea.2017`. Öğrenilebilir doğrusal dönüşümler gerçekleştirmek için tam bağlı katmanları kullanan çoklu kafalı dikkat :numref:`fig_multi-head-attention`'da açıklanmıştır. 
+Bu amaçla, tek bir dikkat ortaklaması yerine, sorgular, anahtarlar ve değerler $h$ tane bağımsız olarak öğrenilen doğrusal izdüşümler ile dönüştürülebilir. Daha sonra bu $h$ öngörülen sorgular, anahtarlar ve değerler paralel olarak dikkat ortaklaması içine beslenir. Nihayetinde, $h$ dikkat ortaklama çıktıları bitiştirilir ve son çıktıyı üretmek için başka bir öğrenilmiş doğrusal izdüşüm ile dönüştürülür. Bu tasarıma *çoklu kafalı dikkat* denir, burada $h$ dikkat ortaklama çıktılarının her biri *kafa*dır :cite:`Vaswani.Shazeer.Parmar.ea.2017`. Öğrenilebilir doğrusal dönüşümler gerçekleştirmek için tam bağlı katmanları kullanan çoklu kafalı dikkat :numref:`fig_multi-head-attention` şeklinde açıklanmıştır. 
 
 ![Çoklu kafanın bir araya getirildiği ve ardından doğrusal olarak dönüştürüldüğü çoklu kafalı dikkat.](../img/multi-head-attention.svg)
 :label:`fig_multi-head-attention`
@@ -44,21 +44,7 @@ import tensorflow as tf
 
 ## Uygulama
 
-In our implementation,
-we [**choose the scaled dot-product attention
-for each head**] of the multi-head attention.
-To avoid significant growth
-of computational cost and parameterization cost,
-we set
-$p_q = p_k = p_v = p_o / h$.
-Note that $h$ heads
-can be computed in parallel
-if we set
-the number of outputs of linear transformations
-for the query, key, and value
-to $p_q h = p_k h = p_v h = p_o$.
-In the following implementation,
-$p_o$ is specified via the argument `num_hiddens`.
+Uygulamamızda, çoklu kafalı dikkatin [**her bir kafa için ölçeklendirilmiş nokta-çarpımı dikkatini seçiyoruz**]. Hesaplama maliyetinde ve parametreleştirme maliyetinde önemli bir artıştan kaçınmak için $p_q = p_k = p_v = p_o / h$ olarak ayarladık. Sorgu, anahtar ve değer için doğrusal dönüşümlerin çıktı sayısını $p_q h = p_k h = p_v h = p_o$ olarak ayarlarsak, $h$ adet kafanın paralel olarak hesaplanabileceğini unutmayın. Aşağıdaki uygulamada, $p_o$, `num_hiddens` bağımsız değişkeni aracılığıyla belirtilir.
 
 ```{.python .input}
 #@save
@@ -75,28 +61,28 @@ class MultiHeadAttention(nn.Block):
         self.W_o = nn.Dense(num_hiddens, use_bias=use_bias, flatten=False)
 
     def forward(self, queries, keys, values, valid_lens):
-        # Shape of `queries`, `keys`, or `values`:
-        # (`batch_size`, no. of queries or key-value pairs, `num_hiddens`)
-        # Shape of `valid_lens`:
+        # `queries`, `keys`, veya `values` şekli:
+        # (`batch_size`,  anahtar-değer çiftleri veya sorgu sayısı, `num_hiddens`)
+        # `valid_lens`'in şekli:
         # (`batch_size`,) or (`batch_size`, no. of queries)
-        # After transposing, shape of output `queries`, `keys`, or `values`:
-        # (`batch_size` * `num_heads`, no. of queries or key-value pairs,
+        # Devirme sonrası, output `queries`, `keys`, veya `values` şekli:
+        # (`batch_size` * `num_heads`,  anahtar-değer çiftleri veya sorgu sayısı,
         # `num_hiddens` / `num_heads`)
         queries = transpose_qkv(self.W_q(queries), self.num_heads)
         keys = transpose_qkv(self.W_k(keys), self.num_heads)
         values = transpose_qkv(self.W_v(values), self.num_heads)
 
         if valid_lens is not None:
-            # On axis 0, copy the first item (scalar or vector) for
-            # `num_heads` times, then copy the next item, and so on
+            # 0 ekseninde, ilk öğeyi (skaler veya vektör) `num_heads` kez 
+            # kopyalayın, ardından sonraki öğeyi kopyalayın ve devam edin.
             valid_lens = valid_lens.repeat(self.num_heads, axis=0)
 
-        # Shape of `output`: (`batch_size` * `num_heads`, no. of queries,
+        # `output`'un şekli: (`batch_size` * `num_heads`, no. of queries,
         # `num_hiddens` / `num_heads`)
         output = self.attention(queries, keys, values, valid_lens)
         
-        # Shape of `output_concat`:
-        # (`batch_size`, no. of queries, `num_hiddens`)
+        # `output_concat`'in şekli:
+        # (`batch_size`, sorgu sayısı, `num_hiddens`)
         output_concat = transpose_output(output, self.num_heads)
         return self.W_o(output_concat)
 ```
@@ -117,29 +103,29 @@ class MultiHeadAttention(nn.Module):
         self.W_o = nn.Linear(num_hiddens, num_hiddens, bias=bias)
 
     def forward(self, queries, keys, values, valid_lens):
-        # Shape of `queries`, `keys`, or `values`:
-        # (`batch_size`, no. of queries or key-value pairs, `num_hiddens`)
-        # Shape of `valid_lens`:
+        # `queries`, `keys`, veya `values` şekli:
+        # (`batch_size`,  anahtar-değer çiftleri veya sorgu sayısı, `num_hiddens`)
+        # `valid_lens`'in şekli:
         # (`batch_size`,) or (`batch_size`, no. of queries)
-        # After transposing, shape of output `queries`, `keys`, or `values`:
-        # (`batch_size` * `num_heads`, no. of queries or key-value pairs,
+        # Devirme sonrası, output `queries`, `keys`, veya `values` şekli:
+        # (`batch_size` * `num_heads`,  anahtar-değer çiftleri veya sorgu sayısı,
         # `num_hiddens` / `num_heads`)
         queries = transpose_qkv(self.W_q(queries), self.num_heads)
         keys = transpose_qkv(self.W_k(keys), self.num_heads)
         values = transpose_qkv(self.W_v(values), self.num_heads)
 
         if valid_lens is not None:
-            # On axis 0, copy the first item (scalar or vector) for
-            # `num_heads` times, then copy the next item, and so on
+            # 0 ekseninde, ilk öğeyi (skaler veya vektör) `num_heads` kez 
+            # kopyalayın, ardından sonraki öğeyi kopyalayın ve devam edin.
             valid_lens = torch.repeat_interleave(
                 valid_lens, repeats=self.num_heads, dim=0)
 
-        # Shape of `output`: (`batch_size` * `num_heads`, no. of queries,
+        # `output`'un şekli: (`batch_size` * `num_heads`, no. of queries,
         # `num_hiddens` / `num_heads`)
         output = self.attention(queries, keys, values, valid_lens)
 
-        # Shape of `output_concat`:
-        # (`batch_size`, no. of queries, `num_hiddens`)
+        # `output_concat`'in şekli:
+        # (`batch_size`, sorgu sayısı, `num_hiddens`)
         output_concat = transpose_output(output, self.num_heads)
         return self.W_o(output_concat)
 ```
@@ -160,26 +146,27 @@ class MultiHeadAttention(tf.keras.layers.Layer):
         self.W_o = tf.keras.layers.Dense(num_hiddens, use_bias=bias)
     
     def call(self, queries, keys, values, valid_lens, **kwargs):
-        # Shape of `queries`, `keys`, or `values`:
-        # (`batch_size`, no. of queries or key-value pairs, `num_hiddens`)
-        # Shape of `valid_lens`:
+        # `queries`, `keys`, veya `values` şekli:
+        # (`batch_size`,  anahtar-değer çiftleri veya sorgu sayısı, `num_hiddens`)
+        # `valid_lens`'in şekli:
         # (`batch_size`,) or (`batch_size`, no. of queries)
-        # After transposing, shape of output `queries`, `keys`, or `values`:
-        # (`batch_size` * `num_heads`, no. of queries or key-value pairs,
+        # Devirme sonrası, output `queries`, `keys`, veya `values` şekli:
+        # (`batch_size` * `num_heads`,  anahtar-değer çiftleri veya sorgu sayısı,
         # `num_hiddens` / `num_heads`)
         queries = transpose_qkv(self.W_q(queries), self.num_heads)
         keys = transpose_qkv(self.W_k(keys), self.num_heads)
         values = transpose_qkv(self.W_v(values), self.num_heads)
         
         if valid_lens is not None:
-            # On axis 0, copy the first item (scalar or vector) for
-            # `num_heads` times, then copy the next item, and so on
+            # 0 ekseninde, ilk öğeyi (skaler veya vektör) `num_heads` kez 
+            # kopyalayın, ardından sonraki öğeyi kopyalayın ve devam edin.
             valid_lens = tf.repeat(valid_lens, repeats=self.num_heads, axis=0)
             
-        # Shape of `output`: (`batch_size` * `num_heads`, no. of queries, `num_hiddens` / `num_heads`)
+        # `output`'un şekli: (`batch_size` * `num_heads`, no. of queries, 
+        # `num_hiddens` / `num_heads`)
         output = self.attention(queries, keys, values, valid_lens, **kwargs)
         
-        # Shape of `output_concat`: (`batch_size`, no. of queries, `num_hiddens`)
+        # `output_concat`'in şekli: (`batch_size`, sorgu sayısı, `num_hiddens`)
         output_concat = transpose_output(output, self.num_heads)
         return self.W_o(output_concat)
 ```
@@ -189,28 +176,28 @@ class MultiHeadAttention(tf.keras.layers.Layer):
 ```{.python .input}
 #@save
 def transpose_qkv(X, num_heads):
-    """Transposition for parallel computation of multiple attention heads."""
-    # Shape of input `X`:
-    # (`batch_size`, no. of queries or key-value pairs, `num_hiddens`).
-    # Shape of output `X`:
-    # (`batch_size`, no. of queries or key-value pairs, `num_heads`,
+    """Çoklu dikkat kafasının paralel hesaplaması için aktarım."""
+    # `X` girdisinin şekli:
+    # (`batch_size`, anahtar-değer çiftleri veya sorgu sayısı, `num_hiddens`).
+    # `X` çıktısının şekli:
+    # (`batch_size`, anahtar-değer çiftleri veya sorgu sayısı, `num_heads`,
     # `num_hiddens` / `num_heads`)
     X = X.reshape(X.shape[0], X.shape[1], num_heads, -1)
 
-    # Shape of output `X`:
-    # (`batch_size`, `num_heads`, no. of queries or key-value pairs,
+    # `X` çıktısının şekli:
+    # (`batch_size`, `num_heads`, anahtar-değer çiftleri veya sorgu sayısı,
     # `num_hiddens` / `num_heads`)
     X = X.transpose(0, 2, 1, 3)
 
-    # Shape of `output`:
-    # (`batch_size` * `num_heads`, no. of queries or key-value pairs,
+    # `output`'un şekli:
+    # (`batch_size` * `num_heads`, anahtar-değer çiftleri veya sorgu sayısı
     # `num_hiddens` / `num_heads`)
     return X.reshape(-1, X.shape[2], X.shape[3])
 
 
 #@save
 def transpose_output(X, num_heads):
-    """Reverse the operation of `transpose_qkv`."""
+    """`transpose_qkv` işlemini tersine çevir."""
     X = X.reshape(-1, num_heads, X.shape[1], X.shape[2])
     X = X.transpose(0, 2, 1, 3)
     return X.reshape(X.shape[0], X.shape[1], -1)
@@ -220,28 +207,28 @@ def transpose_output(X, num_heads):
 #@tab pytorch
 #@save
 def transpose_qkv(X, num_heads):
-    """Transposition for parallel computation of multiple attention heads."""
-    # Shape of input `X`:
-    # (`batch_size`, no. of queries or key-value pairs, `num_hiddens`).
-    # Shape of output `X`:
-    # (`batch_size`, no. of queries or key-value pairs, `num_heads`,
+    """Çoklu dikkat kafasının paralel hesaplaması için aktarım."""
+    # `X` girdisinin şekli:
+    # (`batch_size`, anahtar-değer çiftleri veya sorgu sayısı, `num_hiddens`).
+    # `X` çıktısının şekli:
+    # (`batch_size`,anahtar-değer çiftleri veya sorgu sayısı, `num_heads`,
     # `num_hiddens` / `num_heads`)
     X = X.reshape(X.shape[0], X.shape[1], num_heads, -1)
 
-    # Shape of output `X`:
-    # (`batch_size`, `num_heads`, no. of queries or key-value pairs,
+    # `X` çıktısının şekli:
+    # (`batch_size`, `num_heads`, anahtar-değer çiftleri veya sorgu sayısı,
     # `num_hiddens` / `num_heads`)
     X = X.permute(0, 2, 1, 3)
 
-    # Shape of `output`:
-    # (`batch_size` * `num_heads`, no. of queries or key-value pairs,
+    # `output`'un şekli:
+    # (`batch_size` * `num_heads`, anahtar-değer çiftleri veya sorgu sayısı,
     # `num_hiddens` / `num_heads`)
     return X.reshape(-1, X.shape[2], X.shape[3])
 
 
 #@save
 def transpose_output(X, num_heads):
-    """Reverse the operation of `transpose_qkv`."""
+    """`transpose_qkv` işlemini tersine çevir."""
     X = X.reshape(-1, num_heads, X.shape[1], X.shape[2])
     X = X.permute(0, 2, 1, 3)
     return X.reshape(X.shape[0], X.shape[1], -1)
@@ -251,38 +238,34 @@ def transpose_output(X, num_heads):
 #@tab tensorflow
 #@save
 def transpose_qkv(X, num_heads):
-    """Transposition for parallel computation of multiple attention heads."""
-    # Shape of input `X`:
-    # (`batch_size`, no. of queries or key-value pairs, `num_hiddens`).
-    # Shape of output `X`:
-    # (`batch_size`, no. of queries or key-value pairs, `num_heads`,
+    """Çoklu dikkat kafasının paralel hesaplaması için aktarım."""
+    # `X` girdisinin şekli:
+    # (`batch_size`, anahtar-değer çiftleri veya sorgu sayısı, `num_hiddens`).
+    # `X` çıktısının şekli:
+    # (`batch_size`, anahtar-değer çiftleri veya sorgu sayısı, `num_heads`,
     # `num_hiddens` / `num_heads`)
     X = tf.reshape(X, shape=(X.shape[0], X.shape[1], num_heads, -1))
 
-    # Shape of output `X`:
-    # (`batch_size`, `num_heads`, no. of queries or key-value pairs,
+    # `X` çıktısının şekli:
+    # (`batch_size`, `num_heads`, anahtar-değer çiftleri veya sorgu sayısı,
     # `num_hiddens` / `num_heads`)
     X = tf.transpose(X, perm=(0, 2, 1, 3))
 
-    # Shape of `output`:
-    # (`batch_size` * `num_heads`, no. of queries or key-value pairs,
+    # `output`'un şekli:
+    # (`batch_size` * `num_heads`, anahtar-değer çiftleri veya sorgu sayısı,
     # `num_hiddens` / `num_heads`)
     return tf.reshape(X, shape=(-1, X.shape[2], X.shape[3]))
 
 
 #@save
 def transpose_output(X, num_heads):
-    """Reverse the operation of `transpose_qkv`."""
+    """`transpose_qkv` işlemini tersine çevir."""
     X = tf.reshape(X, shape=(-1, num_heads, X.shape[1], X.shape[2]))
     X = tf.transpose(X, perm=(0, 2, 1, 3))
     return tf.reshape(X, shape=(X.shape[0], X.shape[1], -1))
 ```
 
-Let us [**test our implemented**] `MultiHeadAttention` class
-using a toy example where keys and values are the same.
-As a result,
-the shape of the multi-head attention output
-is (`batch_size`, `num_queries`, `num_hiddens`).
+Anahtarların ve değerlerin aynı olduğu bir basit örneği kullanarak [**uygulanan**] `MultiHeadAttention` sınıfını test edelim. Sonuç olarak, çoklu kafalı dikkat çıktısının şekli (`batch_size`, `num_queries`, `num_hiddens`) şeklindedir.
 
 ```{.python .input}
 num_hiddens, num_heads = 100, 5
@@ -324,12 +307,12 @@ attention(X, Y, Y, valid_lens, training=False).shape
 ## Özet
 
 * Çoklu kafalı dikkat, sorguların, anahtarların ve değerlerin farklı temsil altuzayları aracılığıyla aynı dikkat ortaklama bilgisini birleştirir.
-* Çoklu kafalı dikkati paralel hesaplamak için uygun tensör düzenlemeleri gereklidir.
+* Çoklu kafalı dikkatin çoklu kafasını paralel olarak hesaplamak için uygun tensör düzenlemeleri gereklidir.
 
 ## Alıştırmalar
 
-1. Bu deneyde çoklu kafanın dikkat ağırlıklarını görselleştirin.
-1. Çoklu kafa dikkatine dayalı eğitimli bir modelimiz olduğunu ve tahmin hızını artırmak için en az önemli dikkat kafalarını budamak istediğimizi varsayalım. Bir dikkat kafasının önemini ölçmek için deneyleri nasıl tasarlayabiliriz
+1. Bu deneydeki çoklu kafanın dikkat ağırlıklarını görselleştirin.
+1. Çoklu kafa dikkatine dayalı eğitilmiş bir modelimiz olduğunu ve tahmin hızını artırmak için en az önemli dikkat kafalarını budamak istediğimizi varsayalım. Bir dikkat kafasının önemini ölçmek için deneyleri nasıl tasarlayabiliriz.
 
 :begin_tab:`mxnet`
 [Tartışmalar](https://discuss.d2l.ai/t/1634)

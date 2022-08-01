@@ -1,11 +1,11 @@
 # Makine Çevirisi ve Veri Kümesi
 :label:`sec_machine_translation`
 
-Doğal dil işlemenin anahtarı olan dil modellerini tasarlamak için RNN kullandık. Diğer bir amiral gemisi kıyaslaması, girdi dizilerini çıktı dizilerine dönüştüren *dizi dönüştürme* modelleri için merkezi bir problem düzlemi olan *makine çevirisi*dir. Çeşitli modern yapay zeka uygulamalarında önemli bir rol oynayan dizi dönüştürme modelleri, bu bölümün geri kalanının ve :numref:`chap_attention`'ün odağını oluşturacaktır. Bu amaçla, bu bölüm makine çevirisi sorununu ve daha sonra kullanılacak veri kümesini anlatır.
+Doğal dil işlemenin anahtarı olan dil modellerini tasarlamak için RNN kullandık. Diğer bir amiral gemisi kıyaslaması, girdi dizilerini çıktı dizilerine dönüştüren *dizi dönüştürme* modelleri için merkezi bir problem düzlemi olan *makine çevirisi*dir. Çeşitli modern yapay zeka uygulamalarında önemli bir rol oynayan dizi dönüştürme modelleri, bu bölümün geri kalanının ve sonraki bölümün, :numref:`chap_attention`, odağını oluşturacaktır. Bu amaçla, bu bölüm makine çevirisi sorununu ve daha sonra kullanılacak veri kümesini anlatır.
 
 *Makine çevirisi* bir dizinin bir dilden diğerine otomatik çevirisidir. Aslında, bu alan, özellikle II. Dünya Savaşı'nda dil kodlarını kırmak için bilgisayarların kullanılması göz önüne alınarak, sayısal bilgisayarların icat edilmesinin kısa bir süre sonrasından 1940'lara kadar uzanabilir. Onlarca yıldır, bu alanda, istatistiksel yaklaşımlar, :cite:`Brown.Cocke.Della-Pietra.ea.1988,Brown.Cocke.Della-Pietra.ea.1990`, sinir ağlarını kullanarak uçtan uca öğrenmenin yükselmesinin öncesine kadar baskın olmuştur. İkincisi, çeviri modeli ve dil modeli gibi bileşenlerde istatistiksel analiz içeren *istatistiksel makine çevirisinden* ayırt edilmesi için genellikle *sinirsel makine çevirisi* olarak adlandırılır.
 
-Uçtan uca öğrenmeyi vurgulayan bu kitap, sinirsel makine çevirisi yöntemlerine odaklanacaktır. Külliyatı tek bir dil olan :numref:`sec_language_model`'teki dil modeli problemimizden farklı olarak, makine çevirisi veri kümeleri sırasıyla kaynak dilde ve hedef dilde bulunan metin dizileri çiftlerinden oluşmaktadır. Bu nedenle, dil modelleme için ön işleme rutinini yeniden kullanmak yerine, makine çevirisi veri kümelerini ön işlemek için farklı bir yol gerekir. Aşağıda, önceden işlenmiş verilerin eğitim için minigruplara nasıl yükleneceğini gösteriyoruz.
+Uçtan uca öğrenmeyi vurgulayan bu kitap, sinirsel makine çevirisi yöntemlerine odaklanacaktır. Külliyatı tek bir dil olan :numref:`sec_language_model` içindeki dil modeli problemimizden farklı olarak, makine çevirisi veri kümeleri sırasıyla kaynak dilde ve hedef dilde bulunan metin dizileri çiftlerinden oluşmaktadır. Bu nedenle, dil modelleme için ön işleme rutinini yeniden kullanmak yerine, makine çevirisi veri kümelerini ön işlemek için farklı bir yol gerekir. Aşağıda, önceden işlenmiş verilerin eğitim için minigruplara nasıl yükleneceğini gösteriyoruz.
 
 ```{.python .input}
 from d2l import mxnet as d2l
@@ -40,7 +40,7 @@ d2l.DATA_HUB['fra-eng'] = (d2l.DATA_URL + 'fra-eng.zip',
 
 #@save
 def read_data_nmt():
-    """Load the English-French dataset."""
+    """İnglizce-Fransızca veri kümesini yükle."""
     data_dir = d2l.download_extract('fra-eng')
     with open(os.path.join(data_dir, 'fra.txt'), 'r') as f:
         return f.read()
@@ -55,14 +55,14 @@ Veri kümesini indirdikten sonra, ham metin verileri için [**birkaç ön işlem
 #@tab all
 #@save
 def preprocess_nmt(text):
-    """Preprocess the English-French dataset."""
+    """İngilizce-Fransızca veri kümesini ön işle."""
     def no_space(char, prev_char):
         return char in set(',.!?') and prev_char != ' '
 
-    # Replace non-breaking space with space, and convert uppercase letters to
-    # lowercase ones
+    # Bölünmez boşluğu boşlukla değiştirin ve büyük harfleri küçük 
+    # harflere dönüştürün
     text = text.replace('\u202f', ' ').replace('\xa0', ' ').lower()
-    # Insert space between words and punctuation marks
+    # Sözcükler ve noktalama işaretleri arasına boşluk ekleyin
     out = [' ' + char if i > 0 and no_space(char, text[i - 1]) else char
            for i, char in enumerate(text)]
     return ''.join(out)
@@ -73,13 +73,13 @@ print(text[:80])
 
 ## [**Andıçlama**]
 
-:numref:`sec_language_model`'teki karakter düzeyinde andıçlara ayırmaktan farklı olarak, makine çevirisi için burada kelime düzeyinde andıçlamayı tercih ediyoruz (son teknoloji modeller daha gelişmiş andıçlama teknikleri kullanabilir). Aşağıdaki `tokenize_nmt` işlevi, her andıç bir sözcük veya noktalama işareti olduğu ilk `num_examples` tane metin dizisi çiftini andıçlar. Bu işlev, andıç listelerinden oluşan iki liste döndürür: `source` (kaynak) ve `target` (hedef). Özellikle, `source[i]` kaynak dilde (İngilizce burada) $i$. metin dizisinden andıçların bir listesidir ve `target[i]` hedef dildekileri (Fransızca burada) içerir.
+:numref:`sec_language_model` içindeki karakter düzeyinde andıçlara ayırmaktan farklı olarak, makine çevirisi için burada kelime düzeyinde andıçlamayı tercih ediyoruz (son teknoloji modeller daha gelişmiş andıçlama teknikleri kullanabilir). Aşağıdaki `tokenize_nmt` işlevi, her andıç bir sözcük veya noktalama işareti olduğu ilk `num_examples` tane metin dizisi çiftini andıçlar. Bu işlev, andıç listelerinden oluşan iki liste döndürür: `source` (kaynak) ve `target` (hedef). Özellikle, `source[i]` kaynak dilde (İngilizce burada) $i$. metin dizisinden andıçların bir listesidir ve `target[i]` hedef dildekileri (Fransızca burada) içerir.
 
 ```{.python .input}
 #@tab all
 #@save
 def tokenize_nmt(text, num_examples=None):
-    """Tokenize the English-French dataset."""
+    """İngilizce-Fransızca veri kümesini andıçla."""
     source, target = [], []
     for i, line in enumerate(text.split('\n')):
         if num_examples and i > num_examples:
@@ -100,7 +100,7 @@ source[:6], target[:6]
 #@tab all
 #@save
 def show_list_len_pair_hist(legend, xlabel, ylabel, xlist, ylist):
-    """Plot the histogram for list length pairs."""
+    """Liste uzunluğu çiftleri için histogramı çizin."""
     d2l.set_figsize()
     _, _, patches = d2l.plt.hist(
         [[len(l) for l in xlist], [len(l) for l in ylist]])
@@ -128,7 +128,7 @@ len(src_vocab)
 ## Veri Kümesini Okuma
 :label:`subsec_mt_data_loading`
 
-Dil modellemesinde, [**her dizi örneğinin**], bir cümlenin bir kesimine veya birden fazla cümle üzerine bir yayılan [**sabit bir uzunluğa**] sahip olduğunu hatırlayın. Bu :numref:`sec_language_model`'teki `num_steps` (zaman adımları veya andıç sayısı) bağımsız değişkeni tarafından belirtilmiştir. Makine çevirisinde, her örnek, her metin dizisinin farklı uzunluklara sahip olabileceği bir kaynak ve hedef metin dizisi çiftidir.
+Dil modellemesinde, [**her dizi örneğinin**], bir cümlenin bir kesimine veya birden fazla cümle üzerine bir yayılan [**sabit bir uzunluğa**] sahip olduğunu hatırlayın. Bu :numref:`sec_language_model` içindeki `num_steps` (zaman adımları veya andıç sayısı) bağımsız değişkeni tarafından belirtilmiştir. Makine çevirisinde, her örnek, her metin dizisinin farklı uzunluklara sahip olabileceği bir kaynak ve hedef metin dizisi çiftidir.
 
 Hesaplamada verimlilik için, yine de bir minigrup metin dizisini *kırkma (truncation)* ve *dolgu* ile işleyebiliriz. Aynı minigruptaki her dizinin aynı `num_steps` uzunluğunda olması gerektiğini varsayalım. Bir metin dizisi `num_steps` andıçtan daha azsa, uzunluğu `num_steps`'e ulaşana kadar özel "&lt;pad&gt;" andıcını sonuna eklemeye devam edeceğiz. Aksi takdirde, metin sırasını yalnızca ilk `num_steps` andıcını alıp geri kalanını atarak keseceğiz. Bu şekilde, her metin dizisi aynı şekle sahip minigruplar olarak yüklenebileceği aynı uzunluğa sahip olacaktır.
 
@@ -138,7 +138,7 @@ Aşağıdaki `truncate_pad` işlevi metin dizilerini daha önce açıklandığı
 #@tab all
 #@save
 def truncate_pad(line, num_steps, padding_token):
-    """Truncate or pad sequences."""
+    """Dizileri dolgula veya kırk"""
     if len(line) > num_steps:
         return line[:num_steps]  # Truncate
     return line + [padding_token] * (num_steps - len(line))  # Pad
@@ -152,7 +152,7 @@ truncate_pad(src_vocab[source[0]], 10, src_vocab['<pad>'])
 #@tab all
 #@save
 def build_array_nmt(lines, vocab, num_steps):
-    """Transform text sequences of machine translation into minibatches."""
+    """Makine çevirisinin metin dizilerini minigruplara dönüştürün."""
     lines = [vocab[l] for l in lines]
     lines = [l + [vocab['<eos>']] for l in lines]
     array = d2l.tensor([truncate_pad(
@@ -170,7 +170,7 @@ Son olarak, veri yineleyiciyi hem kaynak dil hem de hedef dil için kelime dağa
 #@tab all
 #@save
 def load_data_nmt(batch_size, num_steps, num_examples=600):
-    """Return the iterator and the vocabularies of the translation dataset."""
+    """Çeviri veri kümesinin yineleyicisini ve sözcük dağarcıklarını döndür."""
     text = preprocess_nmt(read_data_nmt())
     source, target = tokenize_nmt(text, num_examples)
     src_vocab = d2l.Vocab(source, min_freq=2,
@@ -201,7 +201,7 @@ for X, X_valid_len, Y, Y_valid_len in train_iter:
 
 * Makine çevirisi, bir dizinin bir dilden diğerine otomatik çevirisini ifade eder.
 * Kelime düzeyinde andıçlama kullanırsak, kelime dağarcığının boyutu, karakter düzeyinde andıçlama kullanmaya göre önemli ölçüde daha büyük olacaktır. Bunu hafifletmek için, seyrek kullanılan andıçları aynı bilinmeyen andıç olarak ifade alabiliriz.
-* Metin dizilerini kesebilir ve dolgulayabiliriz, böylece hepsi minigruplarda yüklenirken aynı uzunluğa sahip olurlar.
+* Metin dizilerini kırkabilir ve dolgulayabiliriz, böylece hepsi minigruplarda yüklenirken aynı uzunluğa sahip olurlar.
 
 ## Alıştırmalar
 
