@@ -31,7 +31,7 @@ Ardından, doğrudan `conda`'yı çalıştırabilmeniz için kabuğu (shell) sı
 ortam oluşturabilirsiniz:
 
 ```bash
-conda create --name d2l python=3.8 -y
+conda create --name d2l python=3.9 -y
 ```
 
 
