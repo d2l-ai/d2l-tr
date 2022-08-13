@@ -168,9 +168,9 @@ Ardından, bu kitabın kodunu indirin.
 
 ```bash
 sudo apt-get install unzip
-mkdir d2l-en && cd d2l-en
-curl https://d2l.ai/d2l-en.zip -o d2l-en.zip
-unzip d2l-en.zip && rm d2l-en.zip
+mkdir d2l-tr && cd d2l-tr
+curl https://tr.d2l.ai/d2l-tr.zip -o d2l-tr.zip
+unzip d2l-tr.zip && rm d2l-tr.zip
 ```
 
 Ardından conda `d2l` ortamını oluşturun ve yüklemeye devam etmek için `y` girin.
