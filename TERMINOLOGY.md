@@ -165,6 +165,8 @@ information retrieval; bilgi getirimi
 
 initialization; ilkleme
 
+insight; kavrama
+
 internal covariate shift; dahili eşdeğişken kayması
 
 interpolation; aradeğerleme
