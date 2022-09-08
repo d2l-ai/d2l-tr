@@ -5,6 +5,8 @@ affine; afin
 
 agent; etmen
 
+aliasing; zamansal örtüşme
+
 analogy; benzeşim, benzetme
 
 anchor; çapa
