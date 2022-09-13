@@ -181,7 +181,7 @@ Optimizasyon için tek bir cihaz yetersiz olduğunda, işlemeyi senkronize etmek
 | :------------------------------ | -----: | :---------------------------------------- |
 | GPU Paylaşımlı Bellek erişimi        |  30 ns | 30~90 döngü (küme çakışmaları gecikme ekler) |
 | GPU Global Bellek erişimi        | 200 ns | 200~800 döngü                            |
-| GPU'da CUDE çekirdiği başlatma      |  10 μs | Evsahibi CPU'nun GPU'ya çekirdek başlatmasını emretmesi    |
+| GPU'da CUDE çekirdiği başlatma      |  10 μs | Ana bilgisayar CPU'nun GPU'ya çekirdek başlatmasını emretmesi    |
 | NVLink GPU ile 1MB aktarım |  30 μs | ~33GB/s on NVIDIA 40GB NVLink           |
 | PCI-E GPU ile 1MB aktarım |  80 μs | ~12GB/s on PCI-Express x16 link         |
 :label:`table_latency_numbers_tesla`
