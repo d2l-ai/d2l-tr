@@ -69,7 +69,7 @@ def corr2d(X, K):  #@save
     return Y
 ```
 
-İki boyutlu çapraz korelasyon işleminin yukarıdaki uygulamasının çıktısını doğrulamak için :numref:`fig_correlation` içinden girdi tensörünü `X`'i ve çekirdek tensörünü `K`'yı inşa edebiliriz.
+İki boyutlu çapraz korelasyon işleminin [**yukarıdaki uygulamasının çıktısını doğrulamak**] için :numref:`fig_correlation` içinden girdi tensörünü `X`'i ve çekirdek tensörünü `K`'yı inşa edebiliriz.
 
 ```{.python .input}
 #@tab all
@@ -128,7 +128,7 @@ $h \times w$ evrişiminde veya $h \times w$ evrişim çekirdeğinde, evrişim ç
 
 ## İmgelerde Nesne Kenarını Algılama
 
-Evrişimli bir katmanın basit bir uygulamasını ayrıştırmak için biraz zaman ayıralım: Piksel değişiminin yerini bularak bir imgedeki nesnenin kenarını tespit etme. İlk olarak, $6\times 8$ piksellik bir “imge” oluşturuyoruz. Orta dört sütun siyah (0) ve geri kalanı beyaz (1) olsun.
+[**Evrişimli bir katmanın basit bir uygulamasını ayrıştırmak için biraz zaman ayıralım: Piksel değişiminin yerini bularak bir imgedeki nesnenin kenarını tespit etme**]. İlk olarak, $6\times 8$ piksellik bir “imge” oluşturuyoruz. Orta dört sütun siyah (0) ve geri kalanı beyaz (1) olsun.
 
 ```{.python .input}
 #@tab mxnet, pytorch
@@ -151,7 +151,7 @@ Daha sonra, 1 yüksekliğinde ve 2 genişliğinde bir çekirdek `K` inşa ediyor
 K = d2l.tensor([[1.0, -1.0]])
 ```
 
-`X` (girdimiz) ve `K` (çekirdeğimiz) argümanlarıyla çapraz korelasyon işlemini gerçekleştirmeye hazırız. Gördüğünüz gibi,  beyazdan siyaha kenar için 1 ve siyahtan beyaza kenar için -1 tespit ediyoruz. Diğer tüm çıktılar 0 değerini alır.
+`X` (girdimiz) ve `K` (çekirdeğimiz) argümanlarıyla çapraz korelasyon işlemini gerçekleştirmeye hazırız. Gördüğünüz gibi, [**beyazdan siyaha kenar için 1 ve siyahtan beyaza kenar için -1 tespit ediyoruz.**] Diğer tüm çıktılar 0 değerini alır.
 
 ```{.python .input}
 #@tab all
@@ -159,7 +159,7 @@ Y = corr2d(X, K)
 Y
 ```
 
-Artık çekirdeği devrik imgeye uygulayabiliriz. Beklendiği gibi, yok oluyor. Çekirdek `K` yalnızca dikey kenarları algılar.
+Artık çekirdeği devrik imgeye uygulayabiliriz. Beklendiği gibi, yok oluyor. [**Çekirdek `K` yalnızca dikey kenarları algılar.**]
 
 ```{.python .input}
 #@tab all
@@ -170,7 +170,7 @@ corr2d(d2l.transpose(X), K)
 
 Sonlu farklar `[1, -1]` ile bir kenar dedektörü tasarlamak, aradığımız şeyin tam olarak ne olduğunu biliyorsak temiz olur. Ancak, daha büyük çekirdeklere baktığımızda ve ardışık evrişim katmanlarını göz önünde bulundurduğumuzda, her filtrenin manuel olarak ne yapması gerektiğini tam olarak belirtmek imkansız olabilir.
 
-Şimdi `X`'ten `Y`'yi oluşturan çekirdeği yalnızca girdi-çıktı çiftlerine bakarak öğrenip öğrenemeyeceğimizi görelim. Önce bir evrişimli tabaka oluşturup çekirdeğini rastgele bir tensör olarak ilkletiriz. Daha sonra, her yinelemede, `Y`'yi evrişimli tabakanın çıktısıyla karşılaştırmak için kare hatayı kullanacağız. Daha sonra çekirdeği güncellemek için gradyanı hesaplayabiliriz. Basitlik uğruna, aşağıda iki boyutlu evrişimli katmanlar için yerleşik sınıfı kullanıyoruz ve ek girdiyi görmezden geliyoruz.
+Şimdi [**`X`'ten `Y`'yi oluşturan çekirdeği yalnızca girdi-çıktı çiftlerine bakarak öğrenip öğrenemeyeceğimizi**] görelim. Önce bir evrişimli tabaka oluşturup çekirdeğini rastgele bir tensör olarak ilkletiriz. Daha sonra, her yinelemede, `Y`'yi evrişimli tabakanın çıktısıyla karşılaştırmak için kare hatayı kullanacağız. Daha sonra çekirdeği güncellemek için gradyanı hesaplayabiliriz. Basitlik uğruna, aşağıda iki boyutlu evrişimli katmanlar için yerleşik sınıfı kullanıyoruz ve ek girdiyi görmezden geliyoruz.
 
 ```{.python .input}
 # 1 çıktı kanallı ve (1, 2) şekilli çekirdekli iki boyutlu bir evrişim katmanı 
@@ -183,6 +183,7 @@ conv2d.initialize()
 # ve kanal sayısının her ikisi de 1'dir.
 X = X.reshape(1, 1, 6, 8)
 Y = Y.reshape(1, 1, 6, 7)
+lr = 3e-2  # Öğrenme oranı
 
 for i in range(10):
     with autograd.record():
@@ -190,9 +191,9 @@ for i in range(10):
         l = (Y_hat - Y) ** 2
     l.backward()
     # Çekirdeği güncelle
-    conv2d.weight.data()[:] -= 3e-2 * conv2d.weight.grad()
+    conv2d.weight.data()[:] -= lr * conv2d.weight.grad()
     if (i + 1) % 2 == 0:
-        print(f'batch {i + 1}, loss {float(l.sum()):.3f}')
+        print(f'donem {i + 1}, loss {float(l.sum()):.3f}')
 ```
 
 ```{.python .input}
@@ -206,6 +207,7 @@ conv2d = nn.Conv2d(1,1, kernel_size=(1, 2), bias=False)
 # ve kanal sayısının her ikisi de 1'dir.
 X = X.reshape((1, 1, 6, 8))
 Y = Y.reshape((1, 1, 6, 7))
+lr = 3e-2  # Öğrenme oranı
 
 for i in range(10):
     Y_hat = conv2d(X)
@@ -213,9 +215,9 @@ for i in range(10):
     conv2d.zero_grad()
     l.sum().backward()
     # Çekirdeği güncelle
-    conv2d.weight.data[:] -= 3e-2 * conv2d.weight.grad
+    conv2d.weight.data[:] -= lr * conv2d.weight.grad
     if (i + 1) % 2 == 0:
-        print(f'batch {i + 1}, loss {l.sum():.3f}')
+        print(f'donem {i + 1}, loss {l.sum():.3f}')
 ```
 
 ```{.python .input}
@@ -224,11 +226,12 @@ for i in range(10):
 # oluşturun. Basitlik adına, burada ek girdiyi görmezden geliyoruz.
 conv2d = tf.keras.layers.Conv2D(1, (1, 2), use_bias=False)
 
-# İki boyutlu evrişimli katman, (örnek, kanal, yükseklik, genişlik) biçiminde 
+# İki boyutlu evrişimli katman, (örnek, yükseklik, genişlik, kanal) biçiminde 
 # dört boyutlu girdi ve çıktı kullanır; burada toplu iş boyutunun (gruptaki örnek sayısı) 
 # ve kanal sayısının her ikisi de 1'dir.
 X = tf.reshape(X, (1, 6, 8, 1))
 Y = tf.reshape(Y, (1, 6, 7, 1))
+lr = 3e-2  # Learning rate
 
 Y_hat = conv2d(X)
 for i in range(10):
@@ -237,15 +240,15 @@ for i in range(10):
         Y_hat = conv2d(X)
         l = (abs(Y_hat - Y)) ** 2
         # Çekirdeği güncelle
-        update = tf.multiply(3e-2, g.gradient(l, conv2d.weights[0]))
+        update = tf.multiply(lr, g.gradient(l, conv2d.weights[0]))
         weights = conv2d.get_weights()
         weights[0] = conv2d.weights[0] - update
         conv2d.set_weights(weights)
         if (i + 1) % 2 == 0:
-            print(f'batch {i + 1}, loss {tf.reduce_sum(l):.3f}')
+            print(f'donem {i + 1}, loss {tf.reduce_sum(l):.3f}')
 ```
 
-Hatanın 10 yinelemeden sonra küçük bir değere düştüğünü fark ediniz. Şimdi öğrendiğimiz çekirdek tensörüne bir göz atacağız.
+Hatanın 10 yinelemeden sonra küçük bir değere düştüğünü fark ediniz. Şimdi [**öğrendiğimiz çekirdek tensörüne bir göz atacağız**].
 
 ```{.python .input}
 d2l.reshape(conv2d.weight.data(), (1, 2))
