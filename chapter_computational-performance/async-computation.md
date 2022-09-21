@@ -1,7 +1,7 @@
 # Eşzamansız Hesaplama
 :label:`sec_async`
 
-Günümüzün bilgisayarları, birden fazla CPU çekirdeği (genellikle çekirdek başına birden fazla iş parçacığı), GPU başına birden çok işlem öğesi ve genellikle cihaz başına birden çok GPU'dan oluşan son derece paralel sistemlerdir. Kısacası, birçok farklı şeyi aynı anda, genellikle farklı cihazlarda işleyebiliriz. Ne yazık ki Python, en azından ekstra yardım almadan paralel ve eşzamansız kod yazmanın harika bir yolu değildir. Sonuçta, Python tek iş parşacıklıdır ve bunun gelecekte değişmesi pek olası değil. MXNet ve TensorFlow gibi derin öğrenme çerçeveleri, performansı artırmak için *eşzamansız programlama* modeli benimser, PyTorch ise Python'un kendi zamanlayıcısını kullanarak farklı bir performans değişimine yol açar. PyTorch için varsayılan olarak GPU işlemleri eşzamansızdır. GPU kullanan bir işlev çağırdığınızda, işlemler belirli bir aygıta sıralanır, ancak daha sonrasına kadar zorunlu olarak yürütülmez. Bu, CPU veya diğer GPU'lardaki işlemler de dahil olmak üzere paralel olarak daha fazla hesaplama yürütmemize olanak tanır. 
+Günümüzün bilgisayarları, birden fazla CPU çekirdeği (genellikle çekirdek başına birden fazla iş parçacığı), GPU başına birden çok işlem öğesi ve genellikle cihaz başına birden çok GPU'dan oluşan son derece paralel sistemlerdir. Kısacası, birçok farklı şeyi aynı anda, genellikle farklı cihazlarda işleyebiliriz. Ne yazık ki Python, en azından ekstra yardım almadan paralel ve eşzamansız kod yazmanın harika bir yolu değildir. Sonuçta, Python tek iş parçacıklıdır ve bunun gelecekte değişmesi pek olası değil. MXNet ve TensorFlow gibi derin öğrenme çerçeveleri, performansı artırmak için *eşzamansız programlama* modeli benimser, PyTorch ise Python'un kendi zamanlayıcısını kullanarak farklı bir performans değişimine yol açar. PyTorch için varsayılan olarak GPU işlemleri eşzamansızdır. GPU kullanan bir işlev çağırdığınızda, işlemler belirli bir aygıta sıralanır, ancak daha sonrasına kadar zorunlu olarak yürütülmez. Bu, CPU veya diğer GPU'lardaki işlemler de dahil olmak üzere paralel olarak daha fazla hesaplama yürütmemize olanak tanır. 
 
 Bu nedenle, eşzamansız programlamanın nasıl çalıştığını anlamak, hesaplama gereksinimlerini ve karşılıklı bağımlılıkları proaktif azaltarak daha verimli programlar geliştirmemize yardımcı olur. Bu, bellek yükünü azaltmamıza ve işlemci kullanımını artırmamıza olanak tanır.
 
@@ -45,7 +45,7 @@ with d2l.Benchmark('mxnet.np'):
 
 ```{.python .input}
 #@tab pytorch
-# Warmup for GPU computation
+# GPU hesaplaması icin isinma
 device = d2l.try_gpu()
 a = torch.randn(size=(1000, 1000), device=device)
 b = torch.mm(a, a)
@@ -87,14 +87,14 @@ with d2l.Benchmark():
 ```
 
 :begin_tab:`mxnet`
-Genel olarak, MXNet, örneğin Python aracılığıyla kullanıcılarla doğrudan etkileşimler için bir ön işlemciye ve sistem tarafından hesaplamayı gerçekleştirmek için kullanılan bir arka işlemciye sahiptir. :numref:`fig_frontends`'te gösterildiği gibi, kullanıcılar Python, R, Scala ve C++ gibi çeşitli ön işlemci dillerinde MXNet programları yazabilir. Kullanılan ön işlemci programlama dili ne olursa olsun, MXNet programlarının yürütülmesi öncelikle C++ uygulamalarının arka işlemcisinde gerçekleşir. Ön işlemci dili tarafından verilen işlemler yürütme için arka işlemciye iletilir. Arka işlemci, sıraya alınmış görevleri sürekli olarak toplayan ve yürüten kendi iş parçacıklarını yönetir. Bunun çalışması için arka işlemcinin hesaplama çizgesindeki çeşitli adımlar arasındaki bağımlılıkları takip edebilmesi gerektiğini unutmayın. Bu nedenle, birbirine bağlı işlemleri paralel hale getirmek mümkün değildir.
+Genel olarak, MXNet, örneğin Python aracılığıyla kullanıcılarla doğrudan etkileşimler için bir ön işlemciye ve sistem tarafından hesaplamayı gerçekleştirmek için kullanılan bir arka işlemciye sahiptir. :numref:`fig_frontends` içinde gösterildiği gibi, kullanıcılar Python, R, Scala ve C++ gibi çeşitli ön işlemci dillerinde MXNet programları yazabilir. Kullanılan ön işlemci programlama dili ne olursa olsun, MXNet programlarının yürütülmesi öncelikle C++ uygulamalarının arka işlemcisinde gerçekleşir. Ön işlemci dili tarafından verilen işlemler yürütme için arka işlemciye iletilir. Arka işlemci, sıraya alınmış görevleri sürekli olarak toplayan ve yürüten kendi iş parçacıklarını yönetir. Bunun çalışması için arka işlemcinin hesaplama çizgesindeki çeşitli adımlar arasındaki bağımlılıkları takip edebilmesi gerektiğini unutmayın. Bu nedenle, birbirine bağlı işlemleri paralel hale getirmek mümkün değildir.
 :end_tab:
 
 :begin_tab:`pytorch`
-Genel olarak, PyTorch, örneğin Python aracılığıyla kullanıcılarla doğrudan etkileşimler için bir ön işlemciye ve sistem tarafından hesaplamayı gerçekleştirmek için kullanılan bir arka işlemciye sahiptir.  :numref:`fig_frontends`'te gösterildiği gibi, kullanıcılar Python, R, Scala ve C++ gibi çeşitli ön işlemci dillerinde PyTorch programları yazabilir. Kullanılan ön işlemci programlama dili ne olursa olsun, PyTorch programlarının yürütülmesi öncelikle C++ uygulamalarının arka işlemcisinde gerçekleşir. Ön yüz dili tarafından verilen işlemler yürütme için arka işlemciye iletilir. Arka işlemci, sıraya alınmış görevleri sürekli olarak toplayan ve yürüten kendi iş parçacıklarını yönetir. Bunun çalışması için arka işlemcinin hesaplama çizgesindeki çeşitli adımlar arasındaki bağımlılıkları takip edebilmesi gerektiğini unutmayın. Bu nedenle, birbirine bağlı işlemleri paralel hale getirmek mümkün değildir.
+Genel olarak, PyTorch, örneğin Python aracılığıyla kullanıcılarla doğrudan etkileşimler için bir ön işlemciye ve sistem tarafından hesaplamayı gerçekleştirmek için kullanılan bir arka işlemciye sahiptir.  :numref:`fig_frontends` içinde gösterildiği gibi, kullanıcılar Python, R, Scala ve C++ gibi çeşitli ön işlemci dillerinde PyTorch programları yazabilir. Kullanılan ön işlemci programlama dili ne olursa olsun, PyTorch programlarının yürütülmesi öncelikle C++ uygulamalarının arka işlemcisinde gerçekleşir. Ön yüz dili tarafından verilen işlemler yürütme için arka işlemciye iletilir. Arka işlemci, sıraya alınmış görevleri sürekli olarak toplayan ve yürüten kendi iş parçacıklarını yönetir. Bunun çalışması için arka işlemcinin hesaplama çizgesindeki çeşitli adımlar arasındaki bağımlılıkları takip edebilmesi gerektiğini unutmayın. Bu nedenle, birbirine bağlı işlemleri paralel hale getirmek mümkün değildir.
 :end_tab:
 
-![Programming language frontends and deep learning framework backends.](../img/frontends.png)
+![Programlama dili ön işlemcileri ve derin öğrenme çerçevesi arka işlemcileri.](../img/frontends.png)
 :width:`300px`
 :label:`fig_frontends`
 
@@ -115,12 +115,12 @@ z = x * y + 2
 z
 ```
 
-![The backend tracks dependencies between various steps in the computational graph.](../img/asyncgraph.svg)
+![Arka işlemci, hesaplama çizgesindeki çeşitli adımlar arasındaki bağımlılıkları izler.](../img/asyncgraph.svg)
 :label:`fig_asyncgraph`
 
-Yukarıdaki kod parçacığı da :numref:`fig_asyncgraph`'te gösterilmiştir. Python ön işlemci iş parçacığı ilk üç ifadeden birini çalıştırdığında, görevi arka işlemci kuyruğuna döndürür. Son ifadenin sonuçları *yazdırılmış* olması gerektiğinde, Python ön işlemci iş parçacığı C++ arka işlemci iş parçacığının `z` değişkenin sonucunu hesaplamayı tamamlamasını bekler. Bu tasarımın bir avantajı, Python ön işlemci iş parçacığının gerçek hesaplamaları gerçekleştirmesine gerek olmadığıdır. Böylece, Python'un performansından bağımsız olarak programın genel performansı üzerinde çok etkisi yoktur. :numref:`fig_threading`, ön işlemci ve arka işlemcinin nasıl etkileşime girdiğini gösterir. 
+Yukarıdaki kod parçacığı da :numref:`fig_asyncgraph` içinde gösterilmiştir. Python ön işlemci iş parçacığı ilk üç ifadeden birini çalıştırdığında, görevi arka işlemci kuyruğuna döndürür. Son ifadenin sonuçları *yazdırılmış* olması gerektiğinde, Python ön işlemci iş parçacığı C++ arka işlemci iş parçacığının `z` değişkenin sonucunu hesaplamayı tamamlamasını bekler. Bu tasarımın bir avantajı, Python ön işlemci iş parçacığının gerçek hesaplamaları gerçekleştirmesine gerek olmadığıdır. Böylece, Python'un performansından bağımsız olarak programın genel performansı üzerinde çok etkisi yoktur. :numref:`fig_threading`, ön işlemci ve arka işlemcinin nasıl etkileşime girdiğini gösterir. 
 
-![Interactions of the frontend and backend.](../img/threading.svg)
+![Ön ve arka işlemci etkileşimleri.](../img/threading.svg)
 :label:`fig_threading`
 
 ## Engeller ve Engelleyiciler
@@ -145,7 +145,7 @@ with d2l.Benchmark('wait_to_read'):
 ```
 
 :begin_tab:`mxnet`
-Her iki işlemin de tamamlanması yaklaşık aynı zaman alır. Bariz engelleme işlemlerinin yanı sıra, *örtülü* engelleyicilerin farkında olmanızı öneririz. Bir değişkenin yazdırılması, değişkenin kullanılabilir olmasını gerektirir ve bu nedenle bir engelleyicidir.Son olarak, `z.asnumpy()` aracılığıyla NumPy'ye dönüştürmeler ve `z.item()` aracılığıyla skalerlere dönüştürmeler, NumPy'nin eşzamansızlık kavramı olmadığı için engelleniyor. `print` işlevi gibi değerlere erişmesi gerekir.  
+Her iki işlemin de tamamlanması yaklaşık aynı zaman alır. Bariz engelleme işlemlerinin yanı sıra, *örtülü* engelleyicilerin farkında olmanızı öneririz. Bir değişkenin yazdırılması, değişkenin kullanılabilir olmasını gerektirir ve bu nedenle bir engelleyicidir. Son olarak, `z.asnumpy()` aracılığıyla NumPy'ye dönüştürmeler ve `z.item()` aracılığıyla skalerlere dönüştürmeler, NumPy'nin eşzamansızlık kavramı olmadığı için engelleniyor. `print` işlevi gibi değerlere erişmesi gerekir.  
 
 MXNet'in kapsamından NumPy ve geri sık küçük miktarlarda verilerin kopyalanması, aksi takdirde verimli bir kodun performansını yok edebilir, çünkü bu tür her bir işlem, başka bir şey yapılabilmeden *önce* ilgili terimi elde ederken gerekli tüm ara sonuçları değerlendirmek için hesaplama çizgesi gerektirir. 
 :end_tab:

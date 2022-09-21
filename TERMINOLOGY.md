@@ -5,6 +5,8 @@ affine; afin
 
 agent; etmen
 
+aliasing; zamansal örtüşme
+
 analogy; benzeşim, benzetme
 
 anchor; çapa
@@ -164,6 +166,8 @@ indicator; gösterge, belirteç
 information retrieval; bilgi getirimi
 
 initialization; ilkleme
+
+insight; kavrama
 
 internal covariate shift; dahili eşdeğişken kayması
 

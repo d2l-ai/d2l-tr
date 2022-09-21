@@ -1,10 +1,10 @@
 # Eniyileme ve Derin Öğrenme
 
-Bu bölümde, eniyileme ve derin öğrenme arasındaki ilişkiyi ve derin öğrenmede optimizasyonu kullanmanın zorluklarını tartışacağız. Derin öğrenme problemi için, genellikle önce *kayıp fonksiyonu* tanımlarız. Kayıp işlevini aldığımızda kayıpları en aza indirmek için bir optimizasyon algoritması kullanabiliriz. Optimizasyonda, bir kayıp fonksiyonu genellikle optimizasyon sorununun *amaç fonksiyonu* olarak adlandırılır. Geleneksel ve alışılmış olarak çoğu optimizasyon algoritması, *minimizasyon (en aza indirme)* ile ilgilidir. Eğer bir hedefi en üst düzeye çıkarmamız (maximize etmemiz) gerekirse basit bir çözüm vardır: Sadece amaç işlevindeki işareti tersine çevirin. 
+Bu bölümde, eniyileme ve derin öğrenme arasındaki ilişkiyi ve derin öğrenmede optimizasyonu kullanmanın zorluklarını tartışacağız. Derin öğrenme problemi için, genellikle önce *kayıp fonksiyonu* tanımlarız. Kayıp işlevini aldığımızda kayıpları en aza indirmek için bir optimizasyon algoritması kullanabiliriz. Optimizasyonda, bir kayıp fonksiyonu genellikle optimizasyon sorununun *amaç fonksiyonu* olarak adlandırılır. Geleneksel ve alışılmış olarak çoğu optimizasyon algoritması, *minimizasyon (en aza indirme)* ile ilgilidir. Eğer bir hedefi en üst düzeye çıkarmamız (maksimize etmemiz) gerekirse basit bir çözüm vardır: Sadece amaç işlevindeki işareti tersine çevirin. 
 
 ## Eniyilemenin Hedefi
 
-Optimizasyon derin öğrenme için kayıp işlevini en aza indirmenin bir yolunu sağlasa da, özünde optimizasyon ve derin öğrenmenin amaçları temelde farklıdır. Birincisi öncelikle bir amaç işlevini en aza indirmekle ilgiliyken, ikincisi, sınırlı miktarda veri verildiğinde uygun bir model bulmakla ilgilidir. :numref:`sec_model_selection`'te, bu iki hedef arasındaki farkı ayrıntılı olarak tartıştık. Örneğin, eğitim hatası ve genelleme hatası genellikle farklılık gösterir: Optimizasyon algoritmasının amaş işlevi genellikle eğitim veri kümesine dayalı bir kayıp fonksiyonu olduğundan, optimizasyonun amacı eğitim hatasını azaltmaktır. Bununla birlikte, derin öğrenmenin amacı (veya daha geniş bir şekilde istatistiksel çıkarımın) genelleme hatasını azaltmaktır. İkincisini başarmak için, eğitim hatasını azaltmada optimizasyon algoritmasını kullanmanın yanı sıra aşırı öğrenme işlemine de dikkat etmeliyiz.
+Optimizasyon derin öğrenme için kayıp işlevini en aza indirmenin bir yolunu sağlasa da, özünde optimizasyonun ve derin öğrenmenin amaçları temelde farklıdır. Birincisi öncelikle bir amaç işlevini en aza indirmekle ilgiliyken, ikincisi, sınırlı miktarda veri verildiğinde uygun bir model bulmakla ilgilidir. :numref:`sec_model_selection` içinde, bu iki hedef arasındaki farkı ayrıntılı olarak tartıştık. Örneğin, eğitim hatası ve genelleme hatası genellikle farklılık gösterir: Optimizasyon algoritmasının amaç işlevi genellikle eğitim veri kümesine dayalı bir kayıp fonksiyonu olduğundan, optimizasyonun amacı eğitim hatasını azaltmaktır. Bununla birlikte, derin öğrenmenin amacı (veya daha geniş bir şekilde istatistiksel çıkarımın) genelleme hatasını azaltmaktır. İkincisini başarmak için, eğitim hatasını azaltmada optimizasyon algoritmasını kullanmanın yanı sıra aşırı öğrenme işlemine de dikkat etmeliyiz.
 
 ```{.python .input}
 %matplotlib inline
@@ -32,7 +32,7 @@ from mpl_toolkits import mplot3d
 import tensorflow as tf
 ```
 
-Yukarıda belirtilen farklı hedefleri göstermek için, deneysel riski ve riski ele alalım. :numref:`subsec_empirical-risk-and-risk`'te açıklandığı gibi, deneysel risk, eğitim veri kümesinde ortalama bir kayıptır ve risk veri nüfusunun tamamında beklenen kayıptır. Aşağıda iki fonksiyon tanımlıyoruz: Risk fonksiyonu `f` ve deneysel risk fonksiyonu `g`. Sadece sınırlı miktarda eğitim verisi olduğunu varsayalım. Sonuç olarak, burada `g` `f`'den daha az pürüzsüzdür.
+Yukarıda belirtilen farklı hedefleri göstermek için, riski ve deneysel riski ele alalım. :numref:`subsec_empirical-risk-and-risk` içinde açıklandığı gibi, deneysel risk, eğitim veri kümesinde ortalama bir kayıptır ve risk veri nüfusunun tamamında beklenen kayıptır. Aşağıda iki fonksiyon tanımlıyoruz: Risk fonksiyonu `f` ve deneysel risk fonksiyonu `g`. Sadece sınırlı miktarda eğitim verisi olduğunu varsayalım. Sonuç olarak, burada `g` `f`'den daha az pürüzsüzdür.
 
 ```{.python .input}
 #@tab all
@@ -54,13 +54,13 @@ def annotate(text, xy, xytext):  #@save
 x = d2l.arange(0.5, 1.5, 0.01)
 d2l.set_figsize((4.5, 2.5))
 d2l.plot(x, [f(x), g(x)], 'x', 'risk')
-annotate('min of\nempirical risk', (1.0, -1.2), (0.5, -1.1))
-annotate('min of risk', (1.1, -1.05), (0.95, -0.5))
+annotate('min \ndeneysel risk', (1.0, -1.2), (0.5, -1.1))
+annotate('min risk', (1.1, -1.05), (0.95, -0.5))
 ```
 
 ## Derin Öğrenmede Eniyileme Zorlukları
 
-Bu bölümde, özellikle bir modelin genelleme hatası yerine amaç işlevi en aza indirmede optimizasyon algoritmalarının başarımına odaklanacağız. :numref:`sec_linear_regression`'te optimizasyon problemlerinde analitik çözümler ve sayısal çözümler arasında ayrım yaptık. Derin öğrenmede, çoğu amaç fonksiyonu karmaşıktır ve analitik çözümleri yoktur. Bunun yerine, sayısal optimizasyon algoritmaları kullanmalıyız. Bu bölümdeki optimizasyon algoritmaları tüm bu kategoriye girer. 
+Bu bölümde, özellikle bir modelin genelleme hatası yerine amaç işlevini en aza indirmede optimizasyon algoritmalarının başarımına odaklanacağız. :numref:`sec_linear_regression` içinde optimizasyon problemlerinde analitik çözümler ve sayısal çözümler arasında ayrım yaptık. Derin öğrenmede, çoğu amaç fonksiyonu karmaşıktır ve analitik çözümleri yoktur. Bunun yerine, sayısal optimizasyon algoritmaları kullanmalıyız. Bu bölümdeki optimizasyon algoritmalarının tümü bu kategoriye girer. 
 
 Derin öğrenme optimizasyonunda birçok zorluk vardır. En eziyetli olanlardan bazıları yerel minimum, eyer noktaları ve kaybolan gradyanlardır. Onlara bir göz atalım. 
 
@@ -78,8 +78,8 @@ bu fonksiyonun yerel minimum ve küresel minimum değerlerini yaklaşık olarak 
 #@tab all
 x = d2l.arange(-1.0, 2.0, 0.01)
 d2l.plot(x, [f(x), ], 'x', 'f(x)')
-annotate('local minimum', (-0.3, -0.25), (-0.77, -1.0))
-annotate('global minimum', (1.1, -0.95), (0.6, 0.8))
+annotate('yerel minimum', (-0.3, -0.25), (-0.77, -1.0))
+annotate('kuresel minimum', (1.1, -0.95), (0.6, 0.8))
 ```
 
 Derin öğrenme modellerinin amaç işlevi genellikle birçok yerel eniyi değere sahiptir. Bir optimizasyon probleminin sayısal çözümü yerel eniyi seviyesine yakın olduğunda, nihai yineleme ile elde edilen sayısal çözüm, amaç fonksiyonun çözümlerinin gradyanının sıfıra yaklaştığı veya olduğu için, objektif işlevi *küresel* yerine yalnızca *yerel* en aza indirebilir. Parametreyi yalnızca bir dereceye kadar gürültü yerel minimum seviyeden çıkarabilir. Aslında bu, minigrup üzerindeki gradyanların doğal çeşitliliğin parametreleri yerel en düşük yerinden çıkarabildiği minigrup rasgele gradyan inişinin yararlı özelliklerinden biridir. 
@@ -92,10 +92,10 @@ Yerel minimumun yanı sıra eyer noktaları gradyanların kaybolmasının bir ba
 #@tab all
 x = d2l.arange(-2.0, 2.0, 0.01)
 d2l.plot(x, [x**3], 'x', 'f(x)')
-annotate('saddle point', (0, -0.2), (-0.52, -5.0))
+annotate('eyer noktasi', (0, -0.2), (-0.52, -5.0))
 ```
 
-Aşağıdaki örnekte gösterildiği gibi, daha yüksek boyutlardaki eyer noktaları daha da gizli tehlikedir. $f(x, y) = x^2 - y^2$ işlevini düşünün. $(0, 0)$ onun eyer noktası vardır. Bu, $y$'e göre maksimum ve $x$'e göre minimum değerdir. Dahası, bu, matematiksel özelliğin adını aldığı bir eyer gibi *görünür*.
+Aşağıdaki örnekte gösterildiği gibi, daha yüksek boyutlardaki eyer noktaları daha da gizli tehlikedir. $f(x, y) = x^2 - y^2$ işlevini düşünün. $(0, 0)$ onun eyer noktası vardır. Bu, $y$'ye göre maksimum ve $x$'e göre minimum değerdir. Dahası, bu, matematiksel özelliğin adını aldığı bir eyer gibi *görünür*.
 
 ```{.python .input}
 #@tab mxnet
@@ -131,7 +131,7 @@ d2l.plt.xlabel('x')
 d2l.plt.ylabel('y');
 ```
 
-Bir fonksiyonun girdisinin $k$ boyutlu bir vektör olduğunu ve çıktısının bir skaler olduğunu varsayıyoruz, bu nedenle Hessian matrisinin $k$ tane özdeğere sahip olacağını varsayıyoruz ([özayrışımlar üzerine çevrimiçi ek](https://d2l.ai/chapter_appendix-mathematics-for-deep-learning/eigendecomposition.html)'e bakın). Fonksiyonun çözümü yerel minimum, yerel maksimum veya işlev gradyanının sıfır olduğu bir konumda eyer noktası olabilir: 
+Bir fonksiyonun girdisinin $k$ boyutlu bir vektör olduğunu ve çıktısının bir skaler olduğunu varsayıyoruz, bu nedenle Hessian matrisinin $k$ tane özdeğere sahip olacağını varsayıyoruz ([özayrışımlar üzerine çevrimiçi ek](https://tr.d2l.ai/chapter_appendix-mathematics-for-deep-learning/eigendecomposition.html)'e bakın). Fonksiyonun çözümü yerel minimum, yerel maksimum veya işlev gradyanının sıfır olduğu bir konumda eyer noktası olabilir: 
 
 * Sıfır-gradyan konumundaki fonksiyonun Hessian matrisinin özdeğerleri pozitif olduğunda, işlev için yerel minimum değerlere sahibiz.
 * Sıfır-gradyan konumundaki fonksiyonun Hessian matrisinin özdeğerleri negatif olduğunda, işlev için yerel maksimum değerlere sahibiz.
@@ -141,13 +141,13 @@ Yüksek boyutlu problemler için özdeğerlerin en azından *bazılarının* neg
 
 ### Kaybolan Gradyanlar
 
-Muhtemelen karşılaşılması gereken en sinsi sorun kaybolan gradyanlardır. :numref:`subsec_activation-functions`'te yaygın olarak kullanılan etkinleştirme fonksiyonlarımızı ve türevlerini hatırlayın. Örneğin, $f(x) = \tanh(x)$ işlevini en aza indirmek istediğimizi ve $x = 4$'te başladığımızı varsayalım. Gördüğümüz gibi, $f$'nin gradyanı sıfıra yakındır. Daha özel durum olarak, $f'(x) = 1 - \tanh^2(x)$ ve böylece $f'(4) = 0.0013$. Sonuç olarak, ilerleme kaydetmeden önce optimizasyon uzun süre takılıp kalacak. Bunun, derin öğrenme modellerinin, ReLU etkinleştirme işlevinin tanıtılmasından önce oldukça zor olmasının nedenlerinden biri olduğu ortaya çıkıyor.
+Muhtemelen aşılması gereken en sinsi sorun kaybolan gradyanlardır. :numref:`subsec_activation-functions` içinde yaygın olarak kullanılan etkinleştirme fonksiyonlarımızı ve türevlerini hatırlayın. Örneğin, $f(x) = \tanh(x)$ işlevini en aza indirmek istediğimizi ve $x = 4$'te başladığımızı varsayalım. Gördüğümüz gibi, $f$'nin gradyanı sıfıra yakındır. Daha özel durum olarak, $f'(x) = 1 - \tanh^2(x)$'dir ve o yüzden $f'(4) = 0.0013$'tür. Sonuç olarak, ilerleme kaydetmeden önce optimizasyon uzun süre takılıp kalacak. Bunun, derin öğrenme modellerinin, ReLU etkinleştirme işlevinin tanıtılmasından önce oldukça zor olmasının nedenlerinden biri olduğu ortaya çıkıyor.
 
 ```{.python .input}
 #@tab all
 x = d2l.arange(-2.0, 5.0, 0.01)
 d2l.plot(x, [d2l.tanh(x)], 'x', 'f(x)')
-annotate('vanishing gradient', (4, 1), (2, 0.0))
+annotate('kaybolan gradyan', (4, 1), (2, 0.0))
 ```
 
 Gördüğümüz gibi, derin öğrenme için optimizasyon zorluklarla doludur. Neyse ki iyi performans ve yeni başlayanlar için bile kullanımı kolay bir dizi gürbüz algoritma var. Ayrıca, en iyi çözümü bulmak gerçekten gerekli değildir. Yerel en iyi veya hatta yaklaşık çözümler hala çok faydalıdır. 
@@ -165,9 +165,9 @@ Gördüğümüz gibi, derin öğrenme için optimizasyon zorluklarla doludur. Ne
 1. Simetrik bir rastgele $\mathbf{M}$ matrisimiz olduğunu varsayalım, burada $M_{ij} = M_{ji}$ girdilerinin her biri $p_{ij}$ olasılık dağılımından çekilir. Ayrıca, $p_{ij}(x) = p_{ij}(-x)$'nin, yani dağılımın simetrik olduğunu varsayalım (ayrıntılar için bkz. :cite:`Wigner.1958`).
     1. Özdeğerler üzerindeki dağılımın da simetrik olduğunu kanıtlayın. Yani, herhangi bir özvektör $\mathbf{v}$ için, ilişkili özdeğer $\lambda$'nin $P(\lambda > 0) = P(\lambda < 0)$'i karşılama olasılığı.
     1. Yukarıdaki ifade neden $P(\lambda > 0) = 0.5$ anlamına *gelmez*?
-1. Derin öğrenme optimizasyonunda yer alan diğer zorlukları düşünebilirsiniz?
-1. Bir (gerçek) topu (gerçek) bir eyer üzerinde dengelemek istediğinizi varsayalım.
-    1. Neden bu kadar zor?
+1. Derin öğrenme optimizasyonunda yer alan hangi diğer zorlukları düşünebilirsiniz?
+1. (Gerçek) bir topu (gerçek) bir eyer üzerinde dengelemek istediğinizi varsayalım.
+    1. Neden bu kadar zordur?
     1. Optimizasyon algoritmaları için de bu etkiyi kullanabilir misiniz?
 
 :begin_tab:`mxnet`

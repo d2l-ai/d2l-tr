@@ -1,7 +1,7 @@
 # Bu Kitaba Katkıda Bulunmak
 :label:`sec_how_to_contribute`
 
-[readers](https://github.com/d2l-ai/d2l-en/graphs/contributors) tarafından yapılan katkılar bu kitabı geliştirmemize yardımcı olur. Bir yazım hatası, eski bir bağlantı, bir alıntıyı kaçırdığımızı düşündüğünüz, kodun zarif görünmediği veya bir açıklamanın belirsiz olduğu bir şey bulursanız, lütfen geri katkıda bulunun ve okuyucularımıza yardım etmemize yardımcı olun. Düzenli kitaplarda yazdırma çalışmaları arasındaki gecikme (ve dolayısıyla yazım hatası düzeltmeleri arasında) yıllar cinsinden ölçülebilir, ancak bu kitapta bir iyileştirme dahil etmek genellikle saatler ile gün sürer. Tüm bunlar sürüm kontrolü ve sürekli entegrasyon testi nedeniyle mümkündür. Bunu yapmak için GitHub deposuna bir [pull request](https://github.com/d2l-ai/d2l-en/pulls) göndermeniz gerekir. Çekme isteğiniz yazar tarafından kod deposuna birleştirildiğinde, bir katkıda bulunmuş olursunuz. 
+[Okuyucular](https://github.com/d2l-ai/d2l-tr/graphs/contributors) tarafından yapılan katkılar bu kitabı geliştirmemize yardımcı olur. Bir yazım hatası, eski bir bağlantı, bir alıntıyı kaçırdığımızı düşündüğünüz, kodun zarif görünmediği veya bir açıklamanın belirsiz olduğu bir şey bulursanız, lütfen geri katkıda bulunun ve okuyucularımıza yardım etmemize yardımcı olun. Düzenli kitaplarda yazdırma çalışmaları arasındaki gecikme (ve dolayısıyla yazım hatası düzeltmeleri arasında) yıllar cinsinden ölçülebilir, ancak bu kitapta bir iyileştirme dahil etmek genellikle saatler ile gün sürer. Tüm bunlar sürüm kontrolü ve sürekli entegrasyon testi nedeniyle mümkündür. Bunu yapmak için GitHub deposuna bir [çekme isteği (pull request)](https://github.com/d2l-ai/d2l-tr/pulls) göndermeniz gerekir. Çekme isteğiniz yazar tarafından kod deposuna birleştirildiğinde, bir katkıda bulunmuş olursunuz. 
 
 ## Küçük Metin Değişiklikleri
 
@@ -43,7 +43,7 @@ Varsayılan uygulama için değil, MXNet olan yeni bir kod bloğu eklerseniz, l�
 
 ## Yeni Bölüm veya Yeni Çerçeve Uygulaması Ekleme
 
-Eğer takviye öğrenme gibi yeni bir bölüm oluşturmak veya TensorFlow gibi yeni çerçevelerin uygulamalarını eklemek istiyorsanız, lütfen önce e-posta göndererek veya [github issues](https://github.com/d2l-ai/d2l-en/issues)'ü kullanarak yazarlarla iletişime geçin. 
+Eğer takviye öğrenme gibi yeni bir bölüm oluşturmak veya TensorFlow gibi yeni çerçevelerin uygulamalarını eklemek istiyorsanız, lütfen önce e-posta göndererek veya [github meseleleri (github issues)](https://github.com/d2l-ai/d2l-tr/issues)'ni kullanarak yazarlarla iletişime geçin. 
 
 ## Büyük Değişikliği Gönderme
 
@@ -60,7 +60,7 @@ Git açık kaynak kitapta [how to install Git](https://git-scm.com/book/en/v2)'i
 
 ### GitHub'da oturum açma
 
-Kitabın kod deposunun [address](https://github.com/d2l-ai/d2l-en/)'ını tarayıcınıza girin. Bu kitabın deposunun bir kopyasını yapmak için :numref:`fig_git_fork` sağ üst tarafındaki kırmızı kutudaki `Fork` düğmesine tıklayın. Bu artık sizin kopya* ve istediğiniz şekilde değiştirebilirsiniz. 
+Kitabın kod deposunun [address](https://github.com/d2l-ai/d2l-tr/)'ını tarayıcınıza girin. Bu kitabın deposunun bir kopyasını yapmak için :numref:`fig_git_fork` sağ üst tarafındaki kırmızı kutudaki `Fork` düğmesine tıklayın. Bu artık sizin kopya* ve istediğiniz şekilde değiştirebilirsiniz. 
 
 ![The code repository page.](../img/git-fork.png)
 :width:`700px`
@@ -81,8 +81,8 @@ Depoyu klonlamak için (yani yerel bir kopya yapmak için) depo adresini almamı
 :label:`fig_git_clone`
 
 ```
-# Replace your_github_username with your GitHub username
-git clone https://github.com/your_github_username/d2l-en.git
+# your_github_username yerine kendi GitHub kullanıcı adınızı yazınız. 
+git clone https://github.com/your_github_username/d2l-tr.git
 ```
 
 ### Kitabı Düzenleme ve İtme

@@ -1,11 +1,11 @@
 # Adadelta
 :label:`sec_adadelta`
 
-Adadelta, AdaGrad'ın başka bir çeşididir (:numref:`sec_adagrad`). Temel fark, öğrenme oranının koordinatlara uyarlanabilir olduğu miktarı azaltmasıdır. Ayrıca, gelecekteki değişim için kalibrasyon olarak değişiklik miktarını kullandığından, geleneksel olarak bir öğrenme oranına sahip olmamak olarak adlandırılır. Algoritma :cite:`Zeiler.2012`'te önerildi. Şimdiye kadar önceki algoritmaların tartışılması göz önüne alındığında oldukça basittir.  
+Adadelta, AdaGrad'ın başka bir çeşididir (:numref:`sec_adagrad`). Temel fark, öğrenme oranının koordinatlara uyarlanabilir olduğu miktarı azaltmasıdır. Ayrıca, gelecekteki değişim için kalibrasyon olarak değişiklik miktarını kullandığından, geleneksel olarak bir öğrenme oranına sahip olmamak olarak adlandırılır. Algoritma :cite:`Zeiler.2012` çalışmasında önerildi. Şimdiye kadar önceki algoritmaların tartışılması göz önüne alındığında oldukça basittir.  
 
 ## Algoritma
 
-Özetle, Adadelta, gradyanın ikinci momentinin sızıntılı ortalamasını depolamak için $\mathbf{s}_t$ ve modeldeki parametrelerin değişiminin ikinci momentinin sızıntılı ortalamasını depolamak için iki durum değişkeni kullanır. Yazarların orijinal gösterimini ve adlandırmalarını diğer yayınlarla ve uygulamalarla uyumluluk için kullandığımızı unutmayın (momentum, Adagrad, RMSProp ve Adadelta, Adagrad, RMSProp ve Adadelta'da aynı amaca hizmet eden bir parametreyi belirtmek için farklı Yunan değişkenleri kullanmasının başka bir gerçek nedeni yoktur).  
+Özetle, Adadelta, gradyanın ikinci momentinin sızıntılı ortalamasını depolamak için $\mathbf{s}_t$ ve modeldeki parametrelerin değişiminin ikinci momentinin sızıntılı ortalamasını depolamak için $\Delta\mathbf{x}_t$ diye iki durum değişkeni kullanır. Yazarların orijinal gösterimini ve adlandırmalarını diğer yayınlarla ve uygulamalarla uyumluluk için kullandığımızı unutmayın (momentum, Adagrad, RMSProp ve Adadelta, Adagrad, RMSProp ve Adadelta'da aynı amaca hizmet eden bir parametreyi belirtmek için farklı Yunan değişkenleri kullanılmasının başka bir gerçek nedeni yoktur).  
 
 İşte Adadelta'nın teknik detayları verelim. Servis edilen parametre $\rho$ olduğu göz önüne alındığında, :numref:`sec_rmsprop`'a benzer şekilde aşağıdaki sızdıran güncellemeleri elde ediyoruz: 
 
@@ -50,7 +50,7 @@ def init_adadelta_states(feature_dim):
 def adadelta(params, states, hyperparams):
     rho, eps = hyperparams['rho'], 1e-5
     for p, (s, delta) in zip(params, states):
-        # In-place updates via [:]
+        # [:] aracılığıyla yerinde güncellemeler 
         s[:] = rho * s + (1 - rho) * np.square(p.grad)
         g = (np.sqrt(delta + eps) / np.sqrt(s + eps)) * p.grad
         p[:] -= g
@@ -72,7 +72,7 @@ def adadelta(params, states, hyperparams):
     rho, eps = hyperparams['rho'], 1e-5
     for p, (s, delta) in zip(params, states):
         with torch.no_grad():
-            # In-place updates via [:]
+            # [:] aracılığıyla yerinde güncellemeler 
             s[:] = rho * s + (1 - rho) * torch.square(p.grad)
             g = (torch.sqrt(delta + eps) / torch.sqrt(s + eps)) * p.grad
             p[:] -= g
@@ -134,14 +134,14 @@ d2l.train_concise_ch11(trainer, {'learning_rate':5.0, 'rho': 0.9}, data_iter)
 ## Özet
 
 * Adadelta'nın öğrenme oranı parametresi yoktur. Bunun yerine, öğrenme oranını uyarlamak için parametrelerin kendisindeki değişim oranını kullanır. 
-* Adadelta, gradyanın ikinci momentleri ve parametrelerdeki değişikliği depolamak için iki durum değişkeni gerektirir. 
+* Adadelta, gradyanın ikinci momentleri ve parametrelerdeki değişikliği depolamak için iki durum değişkenine ihtiyaç duyar. 
 * Adadelta, uygun istatistiklerin işleyen bir tahminini tutmak için sızdıran ortalamaları kullanır. 
 
 ## Alıştırmalar
 
 1. $\rho$ değerini ayarlayın. Ne olur?
 1. $\mathbf{g}_t'$ kullanmadan algoritmanın nasıl uygulanacağını gösterin. Bu neden iyi bir fikir olabilir?
-1. Adadelta gerçekten oranı bedava mı öğreniyor? Adadelta'yı bozan optimizasyon problemlerini bulabilir misin?
+1. Adadelta gerçekten oranını bedavaya mı öğreniyor? Adadelta'yı bozan optimizasyon problemlerini bulabilir misin?
 1. Yakınsama davranışlarını tartışmak için Adadelta'yı Adagrad ve RMSprop ile karşılaştırın.
 
 :begin_tab:`mxnet`
