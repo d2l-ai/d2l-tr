@@ -1,7 +1,7 @@
 # Nesne Algılama ve Kuşatan Kutular
 :label:`sec_bbox`
 
-Önceki bölümlerde (örn. :numref:`sec_alexnet`—-:numref:`sec_googlenet`), imge sınıflandırma için çeşitli modeller tanıttık. İmge sınıflandırma görevlerinde, resimde sadece *bir* ana nesne olduğunu varsayıyoruz ve sadece kategorisini nasıl tanıyacağımıza odaklanıyoruz. Bununla birlikte, ilgili imgede sıklıkla *çok* nesne vardır. Sadece kategorilerini değil, aynı zamanda imgedeki belirli konumlarını da bilmek istiyoruz. Bilgisayarla görmede, *nesne algılama* (veya *nesne tanıma*) gibi görevlere atıfta bulunuyoruz. 
+Önceki bölümlerde (örn. :numref:`sec_alexnet`—-:numref:`sec_googlenet`), imge sınıflandırma için çeşitli modeller tanıttık. İmge sınıflandırma görevlerinde, resimde sadece *bir* ana nesne olduğunu varsayıyoruz ve sadece kategorisini nasıl tanıyacağımıza odaklanıyoruz. Bununla birlikte, ilgili imgede sıklıkla *çoklu* nesne vardır. Sadece kategorilerini değil, aynı zamanda imgedeki belirli konumlarını da bilmek istiyoruz. Bilgisayarla görmede, *nesne algılama* (veya *nesne tanıma*) gibi görevlere atıfta bulunuyoruz. 
 
 Nesne algılama birçok alanda yaygın olarak uygulanmıştır. Örneğin, kendi kendine sürüş, çekilen video görüntülerinde araçların, yayaların, yolların ve engellerin konumlarını tespit ederek seyahat rotalarını planlamalıdır. Ayrıca, robotlar bu tekniği, bir ortamdaki gezinti boyunca ilgilenen nesneleri tespit etmek ve yerini belirlemek için kullanabilir. Ayrıca, güvenlik sistemlerinin davetsiz misafir veya bomba gibi sıradışı nesneleri algılaması gerekebilir. 
 
@@ -55,7 +55,7 @@ Nesne algılamada, genellikle bir nesnenin uzamsal konumunu tanımlamak için bi
 #@tab all
 #@save
 def box_corner_to_center(boxes):
-    """Convert from (upper-left, lower-right) to (center, width, height)."""
+    """(sol üst, sağ alt) konumundan (merkez, genişlik, yükseklik) konumuna dönüştür."""
     x1, y1, x2, y2 = boxes[:, 0], boxes[:, 1], boxes[:, 2], boxes[:, 3]
     cx = (x1 + x2) / 2
     cy = (y1 + y2) / 2
@@ -66,7 +66,7 @@ def box_corner_to_center(boxes):
 
 #@save
 def box_center_to_corner(boxes):
-    """Convert from (center, width, height) to (upper-left, lower-right)."""
+    """(sol üst, sağ alt) konumundan (merkez, genişlik, yükseklik) konumuna dönüştür."""
     cx, cy, w, h = boxes[:, 0], boxes[:, 1], boxes[:, 2], boxes[:, 3]
     x1 = cx - 0.5 * w
     y1 = cy - 0.5 * h
@@ -76,15 +76,11 @@ def box_center_to_corner(boxes):
     return boxes
 ```
 
-We will [**define the bounding boxes of the dog and the cat in the image**] based
-on the coordinate information.
-The origin of the coordinates in the image
-is the upper-left corner of the image, and to the right and down are the
-positive directions of the $x$ and $y$ axes, respectively.
+Koordinat bilgilerine göre [**resimdeki köpek ve kedinin kuşatan kutularını tanımlayacağız**]. İmgedeki koordinatların orijini imgenin sol üst köşesidir ve sağ ve aşağı sırasıyla $x$ ve $y$ eksenlerinin pozitif yönleridir.
 
 ```{.python .input}
 #@tab all
-# Here `bbox` is the abbreviation for bounding box
+# Burada `bbox` kuşatan kutunun kısaltmasıdır
 dog_bbox, cat_bbox = [60.0, 45.0, 378.0, 516.0], [400.0, 112.0, 655.0, 493.0]
 ```
 
@@ -96,16 +92,14 @@ boxes = d2l.tensor((dog_bbox, cat_bbox))
 box_center_to_corner(box_corner_to_center(boxes)) == boxes
 ```
 
-Doğru olup olmadıklarını kontrol etmek için [**resimdeki kuşatan kutuları çizelim**]. Çizmeden önce, `bbox_to_rect` yardımcı işlevini tanımlayacağız. `matplotlib` paketinin sınırlayıcı kutu biçimindeki sınırlayıcı kutusunu temsil eder.
+Doğru olup olmadıklarını kontrol etmek için [**resimdeki kuşatan kutuları çizelim**]. Çizmeden önce, `bbox_to_rect` yardımcı işlevini tanımlayacağız. `matplotlib` paketinin kuşatan kutu biçimindeki kuşatan kutusunu temsil eder.
 
 ```{.python .input}
 #@tab all
 #@save
 def bbox_to_rect(bbox, color):
-    """Convert bounding box to matplotlib format."""
-    # Convert the bounding box (upper-left x, upper-left y, lower-right x,
-    # lower-right y) format to the matplotlib format: ((upper-left x,
-    # upper-left y), width, height)
+    """Kuşatan kutuyu matplotlib biçimine dönüştürün."""
+    # Kuşatan kutunun (sol üst x, sol üst y, sağ alt x, sağ alt y) biçimini matplotlib biçimine dönüştürün: ((sol üst x, sol üst y), genişlik, yükseklik)
     return d2l.plt.Rectangle(
         xy=(bbox[0], bbox[1]), width=bbox[2]-bbox[0], height=bbox[3]-bbox[1],
         fill=False, edgecolor=color, linewidth=2)
@@ -122,13 +116,13 @@ fig.axes.add_patch(bbox_to_rect(cat_bbox, 'red'));
 
 ## Özet
 
-* Nesne algılama sadece imgede ilgilenen tüm nesneleri değil, aynı zamanda konumlarını da tanır. Pozisyon genellikle dikdörtgen bir kuşatan kutu ile temsil edilir.
+* Nesne algılama sadece imgede ilgili tüm nesneleri değil, aynı zamanda konumlarını da tanır. Pozisyon genellikle dikdörtgen bir kuşatan kutu ile temsil edilir.
 * Yaygın olarak kullanılan iki kuşatan kutu temsili arasında dönüşüm yapabiliriz.
 
 ## Alıştırmalar
 
-1. Başka bir imge bulun ve nesneyi içeren bir kuşatan kutuyu etiketlemeyi deneyin. Kuşatan kutuları ve kategorileri etiketlemeyi karşılaştırın: hangisi genellikle daha uzun sürer?
-1. Neden `box_center_to_corner` ve `box_corner_to_center` girdi bağımsız değişkeninin "kutuları"nın en içteki boyutu her zaman 4'tür?
+1. Başka bir imge bulun ve nesneyi içeren bir kuşatan kutuyu etiketlemeyi deneyin. Kuşatan kutuları ve kategorileri etiketlemeyi karşılaştırın: Hangisi genellikle daha uzun sürer?
+1. Neden `box_center_to_corner` ve `box_corner_to_center` girdi bağımsız değişkeninin "kutuları" nın en içteki boyutu her zaman 4'tür?
 
 :begin_tab:`mxnet`
 [Tartışmalar](https://discuss.d2l.ai/t/369)
