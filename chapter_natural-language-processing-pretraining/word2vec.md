@@ -70,7 +70,7 @@ Eğitimden sonra, sözlükte indeks $i$ olan herhangi bir sözcük için, $\math
 
 ## Sürekli Sözcük Torbası (CBOW) Modeli
 
-*Sürekli sözcük torbası* (CBOW) modeli, skip-gram modeline benzer. Skip-gram modelinden en büyük fark, sürekli sözcük torbası modeli, bir merkez sözcüğün metin dizisindeki çevreleyen bağlam sözcüklerine dayanarak oluşturulduğunu varsaymasıdır. Örneğin, aynı "the", "man", "loves", "his", ve "son" metin dizisinde , "loves" merkez kelimedir ve bağlam penceresi boyutu 2'dir, sürekli sözcük torbası modeli, "the", "man", "his" ve "son" bağlam sözcüklerine dayalı olarak "loves" merkez kelimesini üretme koşullu olasılığını dikkate alır (:numref:`fig_cbow`da gösterildiği gibi), 
+*Sürekli sözcük torbası* (CBOW) modeli, skip-gram modeline benzer. Skip-gram modelinden en büyük fark, sürekli sözcük torbası modeli, bir merkez sözcüğün metin dizisindeki çevreleyen bağlam sözcüklerine dayanarak oluşturulduğunu varsaymasıdır. Örneğin, aynı "the", "man", "loves", "his", ve "son" metin dizisinde , "loves" merkez kelimedir ve bağlam penceresi boyutu 2'dir, sürekli sözcük torbası modeli, "the", "man", "his" ve "son" bağlam sözcüklerine dayalı olarak "loves" merkez kelimesini üretme koşullu olasılığını dikkate alır (:numref:`fig_cbow` içinde gösterildiği gibi), 
 
 $$P(\textrm{"loves"}\mid\textrm{"the"},\textrm{"man"},\textrm{"his"},\textrm{"son"}).$$
 

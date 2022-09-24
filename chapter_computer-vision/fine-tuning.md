@@ -3,18 +3,18 @@
 
 Daha önceki bölümlerde, Fashion-MNIST eğitim veri kümesindeki sadece 60000 resim ile modellerin nasıl eğitileceğini tartıştık. Ayrıca, 10 milyondan fazla imge ve 1000 nesneye sahip olan, akademide en yaygın kullanılan büyük ölçekli imge veri kümesi olan ImageNet'i de tanımladık. Ancak, genellikle karşılaştığımız veri kümesinin boyutu iki veri kümesinin arasındadır. 
 
-İmgelerden farklı sandalye türlerini tanımak istediğimizi ve kullanıcılara satın alma bağlantılarını önerdiğimizi varsayalım. Olası bir yöntem, önce 100 ortak sandalyeyi tanımlamak, her sandalye için farklı açılardan 1000 imge almak ve daha sonra toplanan imge veri kümesinde bir sınıflandırma modeli eğitmektir. Bu sandalye veri kümesi Fashion-MNIST veri kümesinden daha büyük olsa da, örneklerin sayısı hala ImageNet'in onda birinden daha azdır. Bu, bu sandalye veri setinde ImageNet için uygun karmaşık modellerin aşırı öğrenmesine neden olabilir. Ayrıca, sınırlı sayıda eğitim örneği nedeniyle, eğitimli modelin doğruluğu pratik gereklilikleri karşılamayabilir. 
+İmgelerden farklı sandalye türlerini tanımak istediğimizi ve kullanıcılara satın alma bağlantılarını önerdiğimizi varsayalım. Olası bir yöntem, önce 100 ortak sandalyeyi tanımlamak, her sandalye için farklı açılardan 1000 imge almak ve daha sonra toplanan imge veri kümesinde bir sınıflandırma modeli eğitmektir. Bu sandalye veri kümesi Fashion-MNIST veri kümesinden daha büyük olsa da, örneklerin sayısı hala ImageNet'in onda birinden daha azdır. Bu, bu sandalye veri kümesinde ImageNet için uygun karmaşık modellerin aşırı öğrenmesine neden olabilir. Ayrıca, sınırlı sayıda eğitim örneği nedeniyle, eğitimli modelin doğruluğu pratik gereklilikleri karşılamayabilir. 
 
 Yukarıdaki sorunları gidermek için, bariz bir çözüm daha fazla veri toplamaktır. Bununla birlikte, verilerin toplanması ve etiketlenmesi çok zaman ve para alabilir. Örneğin, ImageNet veri kümesini toplamak için, araştırmacılar araştırma fonundan milyonlarca dolar harcadı. Geçerli veri toplama maliyeti önemli ölçüde düşmüş olsa da, bu maliyet yine de göz ardı edilemez. 
 
-Diğer bir çözüm, *kaynak veri kümesinden* öğrenilen bilgileri *hedef veri kümesine* aktarmak için *öğrenme aktarımı* uygulamaktır. Örneğin, ImageNet veri kümelerindeki imgelerin çoğunun sandalyelerle ilgisi olmasa da, bu veri kümesinde eğitilen model, kenarları, dokuları, şekilleri ve nesne bileşimini tanımlamaya yardımcı olabilecek daha genel imge özelliklerini ortaya çıkarasbilir. Bu benzer özellikler sandalyeleri tanımak için de etkili olabilir. 
+Diğer bir çözüm, *kaynak veri kümesinden* öğrenilen bilgileri *hedef veri kümesine* aktarmak için *öğrenme aktarımı* uygulamaktır. Örneğin, ImageNet veri kümelerindeki imgelerin çoğunun sandalyelerle ilgisi olmasa da, bu veri kümesinde eğitilen model, kenarları, dokuları, şekilleri ve nesne bileşimini tanımlamaya yardımcı olabilecek daha genel imge özelliklerini ortaya çıkarabilir. Bu benzer özellikler sandalyeleri tanımak için de etkili olabilir. 
 
 ## Adımlar
 
-Bu bölümde, öğrenme aktarımında yaygın bir teknik tanıtacağız: *ince ayar*. :numref:`fig_finetune` içinde gösterildiği gibi, ince ayar aşağıdaki dört adımdan oluşur: 
+Bu bölümde, öğrenme aktarımında yaygın bir teknik tanıtacağız: *İnce ayar*. :numref:`fig_finetune` içinde gösterildiği gibi, ince ayar aşağıdaki dört adımdan oluşur: 
 
-1. Bir sinir ağı modelini (örn. ImageNet veri kümesi) kaynak veri kümesinde (örn. kaynak modeli*) ön eğitin.
-1. Yeni bir sinir ağı modeli oluşturun, örn. *hedef modeli*. Bu, çıktı katmanı dışındaki tüm model tasarımlarını ve parametrelerini kaynak modelden kopyalar. Bu model parametrelerinin kaynak veri kümesinden öğrenilen bilgileri içerdiğini ve bu bilginin hedef veri kümesine de uygulanacağını varsayıyoruz. Kaynak modelin çıktı katmanının kaynak veri kümesinin etiketleriyle yakından ilişkili olduğunu varsayıyoruz; bu nedenle hedef modelde kullanılmaz.
+1. Bir sinir ağı modelini (yani *kaynak modeli*) kaynak veri kümesinde (örn. ImageNet veri kümesi) ön eğitin.
+1. Yeni bir sinir ağı modeli oluşturun, yani *hedef modeli*. Bu, çıktı katmanı dışındaki tüm model tasarımlarını ve parametrelerini kaynak modelden kopyalar. Bu model parametrelerinin kaynak veri kümesinden öğrenilen bilgileri içerdiğini ve bu bilginin hedef veri kümesine de uygulanacağını varsayıyoruz. Kaynak modelin çıktı katmanının kaynak veri kümesinin etiketleriyle yakından ilişkili olduğunu varsayıyoruz; bu nedenle hedef modelde kullanılmaz.
 1. Hedef modele çıktı sayısı hedef veri kümesindeki kategorilerin sayısı kadar olan bir çıktı katmanı ekleyin. Ardından bu katmanın model parametrelerini rastgele ilkletin.
 1. Hedef modeli hedef veri kümelerinde eğitin, mesela sandalye veri kümesi. Çıktı katmanı sıfırdan eğitilirken, diğer tüm katmanların parametreleri kaynak modelin parametrelerine göre ince ayarlanır.
 
@@ -51,7 +51,7 @@ import os
 
 [**Kullandığımız sosisli sandviç veri kümesi çevrimiçi imgelerden alındı**]. Bu veri kümesi, sosisli sandviç içeren 1400 pozitif etiketli imgeden ve diğer yiyecekleri içeren birçok negatif etiketli imgeden oluşur. Her iki sınıfın 1000 imgesi eğitim için kullanılır ve geri kalanı test içindir.
 
-İndirilen veri kümesini açtıktan sonra, iki klasör, `hotdog/train` ve `hotdog/test`, elde ediyoruz. Her iki klasörde de `hotdog` ve `not-hotdog` alt klasörleri vardır; bunlardan herbiri karşılık gelen sınıfın imgelerini içerir.
+İndirilen veri kümesini açtıktan sonra, iki klasör, `hotdog/train` ve `hotdog/test`, elde ediyoruz. Her iki klasörde de `hotdog` (sosisli sandviç) ve `not-hotdog` (sosisli sandviç olmayan) alt klasörleri vardır; bunlardan herbiri karşılık gelen sınıfın imgelerini içerir.
 
 ```{.python .input}
 #@tab all
@@ -91,8 +91,7 @@ Eğitim sırasında, önce imgeden rastgele boyut ve rastgele en-boy oranına sa
 [~~Veri artırımları~~]
 
 ```{.python .input}
-# Specify the means and standard deviations of the three RGB channels to
-# standardize each channel
+# Her kanalı standartlaştırmak için üç RGB kanalının ortalamalarını ve standart sapmalarını belirtin
 normalize = gluon.data.vision.transforms.Normalize(
     [0.485, 0.456, 0.406], [0.229, 0.224, 0.225])
 
@@ -111,8 +110,7 @@ test_augs = gluon.data.vision.transforms.Compose([
 
 ```{.python .input}
 #@tab pytorch
-# Specify the means and standard deviations of the three RGB channels to
-# standardize each channel
+# Her kanalı standartlaştırmak için üç RGB kanalının ortalamalarını ve standart sapmalarını belirtin
 normalize = torchvision.transforms.Normalize(
     [0.485, 0.456, 0.406], [0.229, 0.224, 0.225])
 
@@ -143,11 +141,11 @@ pretrained_net = torchvision.models.resnet18(pretrained=True)
 ```
 
 :begin_tab:`mxnet`
-Önceden eğitilmiş kaynak model örneği iki üye değişken içerir: `features` ve `output`. Birincisi, çıktı katmanı dışındaki modelin tüm katmanlarını içerir ve ikincisi modelin çıktı katmanıdır. Bu bölümün temel amacı, çıktı katmanı dışındaki tüm katmanların model parametrelerinin ince ayarını kolaylaştırmaktır. Kaynak modelin üye değişkeni `output` (çıktı) aşağıda gösterilmiştir.
+Önceden eğitilmiş kaynak model örneği iki üye değişken içerir: `features` (öznitelikler) ve `output` (çıktı). Birincisi, çıktı katmanı dışındaki modelin tüm katmanlarını içerir ve ikincisi modelin çıktı katmanıdır. Bu bölümün temel amacı, çıktı katmanı dışındaki tüm katmanların model parametrelerinin ince ayarını kolaylaştırmaktır. Kaynak modelin `output` (çıktı) üye değişkeni aşağıda gösterilmiştir.
 :end_tab:
 
 :begin_tab:`pytorch`
-Önceden eğitilmiş kaynak model örneği, bir dizi öznitelik katmanı ve bir çıktı katmanı `fc` içerir. Bu bölümün temel amacı, tüm katmanların ancak çıktı tabakasının model parametrelerinin ince ayarlanmasını kolaylaştırmaktır. Kaynak modelin üye değişkeni `fc` aşağıda verilmiştir.
+Önceden eğitilmiş kaynak model örneği, bir dizi öznitelik katmanı ve bir çıktı katmanı `fc` içerir. Bu bölümün temel amacı, tüm katmanların ancak çıktı tabakasının model parametrelerinin ince ayarlanmasını kolaylaştırmaktır. Kaynak modelin `fc` üye değişkeni aşağıda verilmiştir.
 :end_tab:
 
 ```{.python .input}
@@ -163,7 +161,7 @@ Tam bağlı bir katman olarak ResNet'in son küresel ortalama ortaklama çıktı
 
 Aşağıdaki kodda, hedef model örneğinin üye değişken özniteliklerindeki model parametreleri, kaynak modelin karşılık gelen katmanının model parametrelerine ilkletilir. Özniteliklerdeki model parametreleri ImageNet veri kümesinde önceden eğitildiğinden ve yeterince iyi olduğundan, bu parametrelerin ince ayarlanması için genellikle yalnızca küçük bir öğrenme oranına ihtiyaç vardır.  
 
-Üye değişken çıktısındaki model parametreleri rastgele ilkletilir ve genellikle sıfırdan eğitmek için daha büyük bir öğrenme oranı gerektirir. Trainer örneğindeki öğrenme oranının η olduğunu varsayarsak, üye değişken çıktısındaki model parametrelerinin öğrenme oranını yinelemede 10η olarak ayarlarız. 
+Üye değişken çıktısındaki model parametreleri rastgele ilkletilir ve genellikle sıfırdan eğitmek için daha büyük bir öğrenme oranı gerektirir. Trainer (eğtici) örneğindeki öğrenme oranının η olduğunu varsayarsak, üye değişken çıktısındaki model parametrelerinin öğrenme oranını yinelemede 10η olarak ayarlarız. 
 
 Aşağıdaki kodda, hedef model örneğinin `finetune_net` çıktı katmanından önceki model parametreleri, kaynak modelden karşılık gelen katmanların model parametrelerine ilklenir. Bu model parametreleri ImageNet'te ön eğitim yoluyla elde edildiğinden etkilidir. Bu nedenle, bu tür önceden eğitilmiş parametreleri *ince ayarlamak* için yalnızca küçük bir öğrenme oranını kullanabiliriz. Buna karşılık, çıktı katmanındaki model parametreleri rastgele ilklenir ve genellikle sıfırdan öğrenilmesi için daha büyük bir öğrenme oranı gereklidir. Temel öğrenme oranının $\eta$ olursa, çıktı katmanındaki model parametrelerini yinelemek için $10\eta$ öğrenme oranı kullanılacaktır.
 
@@ -281,7 +279,7 @@ for param in finetune_net.parameters():
     param.requires_grad = False
 ```
 
-4. Aslında, `ImageNet` veri kümesinde bir "sosislisandviç” sınıfı var. Çıktı katmanındaki karşılık gelen ağırlık parametresi aşağıdaki kodla elde edilebilir. Bu ağırlık parametresinden nasıl yararlanabiliriz?
+4. Aslında, `ImageNet` veri kümesinde bir "sosisli sandviç” sınıfı var. Çıktı katmanındaki karşılık gelen ağırlık parametresi aşağıdaki kodla elde edilebilir. Bu ağırlık parametresinden nasıl yararlanabiliriz?
 
 ```{.python .input}
 weight = pretrained_net.output.weight
