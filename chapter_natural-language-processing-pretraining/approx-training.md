@@ -46,7 +46,7 @@ $$
 \end{aligned}
 $$
 
-Artık her eğitim adımındaki gradyanlar için hesaplama maliyetinin sözlük boyutuyla ilgisi olmadığını, ancak doğrusal olarak $K$'ya bağlı olduğunu görebiliyoruz. Hiperparametre $K$'yı daha küçük bir değere ayarlarken, negatif örnekleme ile her eğitim adımındaki gradyanlar için hesaplama maliyeti daha küçüktür. 
+Artık her eğitim adımındaki gradyanlar için hesaplama maliyetinin sözlük boyutuyla ilgisi olmadığını, ancak doğrusal olarak $K$'ya bağlı olduğunu görebiliyoruz. Hiper parametre $K$'yı daha küçük bir değere ayarlarken, negatif örnekleme ile her eğitim adımındaki gradyanlar için hesaplama maliyeti daha küçüktür. 
 
 ## Hiyerarşik Softmaks
 

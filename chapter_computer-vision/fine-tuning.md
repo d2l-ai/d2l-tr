@@ -266,7 +266,7 @@ Gördüğümüz gibi, ince ayarlı model aynı dönem için daha iyi performans 
 ## Alıştırmalar
 
 1. `finetune_net`'in öğrenme oranını artırmaya devam edin. Modelin doğruluğu nasıl değişir?
-2. Karşılaştırmalı deneyde `finetune_net` ve `scratch_net`'in hiperparametrelerini daha detaylı ayarlayın. Hala doğrulukta farklılık gösteriyorlar mı?
+2. Karşılaştırmalı deneyde `finetune_net` ve `scratch_net`'in hiper parametrelerini daha detaylı ayarlayın. Hala doğrulukta farklılık gösteriyorlar mı?
 3. `finetune_net` çıktı katmanından önceki parametreleri kaynak modelininkine ayarlayın ve eğitim sırasında bunları *güncellemeyin*. Modelin doğruluğu nasıl değişir? Aşağıdaki kodu kullanabilirsiniz.
 
 ```{.python .input}

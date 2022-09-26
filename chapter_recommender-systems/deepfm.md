@@ -40,7 +40,7 @@ npx.set_np()
 ```
 
 ## DeepFM Uygulaması 
-DeepFM'in uygulanması FM ile benzerdir. FM kısmını değiştirmeden tutuyoruz ve etkinleştirme fonksiyonu olarak `relu` ile bir MLP bloğu kullanıyoruz. Hattan düşürme modeli düzenlileştirmek için de kullanılır. MLP nöronlarının sayısı `mlp_dims` hiperparametresi ile ayarlanabilir.
+DeepFM'in uygulanması FM ile benzerdir. FM kısmını değiştirmeden tutuyoruz ve etkinleştirme fonksiyonu olarak `relu` ile bir MLP bloğu kullanıyoruz. Hattan düşürme modeli düzenlileştirmek için de kullanılır. MLP nöronlarının sayısı `mlp_dims` hiper parametresi ile ayarlanabilir.
 
 ```{.python .input  n=2}
 class DeepFM(nn.Block):
@@ -71,7 +71,7 @@ class DeepFM(nn.Block):
 ```
 
 ## Model Eğitimi ve Değerlendirilmesi 
-Veri yükleme işlemi FM ile aynıdır. DeepFM'nin MLP bileşenini bir piramit yapısına sahip üç katmanlı yoğun bir ağa ayarladık (30-20-10). Diğer tüm hiperparametreler FM ile aynı kalır.
+Veri yükleme işlemi FM ile aynıdır. DeepFM'nin MLP bileşenini bir piramit yapısına sahip üç katmanlı yoğun bir ağa ayarladık (30-20-10). Diğer tüm hiper parametreler FM ile aynı kalır.
 
 ```{.python .input  n=4}
 batch_size = 2048

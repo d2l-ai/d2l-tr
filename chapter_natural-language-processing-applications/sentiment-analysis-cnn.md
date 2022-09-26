@@ -265,7 +265,7 @@ d2l.predict_sentiment(net, vocab, 'this movie is so bad')
 
 ## Alıştırmalar
 
-1. Hiperparametreleri ayarlayın ve duyarlılık analizi için iki mimariyi, :numref:`sec_sentiment_rnn`'deki ve bu bölümdeki, örneğin sınıflandırma doğruluğu ve hesaplama verimliliği gibi, karşılaştırın.
+1. Hiper parametreleri ayarlayın ve duyarlılık analizi için iki mimariyi, :numref:`sec_sentiment_rnn`'deki ve bu bölümdeki, örneğin sınıflandırma doğruluğu ve hesaplama verimliliği gibi, karşılaştırın.
 1. :numref:`sec_sentiment_rnn`'nin alıştırmalarında tanıtılan yöntemleri kullanarak modelin sınıflandırma doğruluğunu daha da iyileştirebilir misiniz?
 1. Girdi temsillerine konumsal kodlama ekleyin. Sınıflandırma doğruluğunu arttırıyor mu?
 

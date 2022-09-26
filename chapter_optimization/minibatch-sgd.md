@@ -259,7 +259,7 @@ def get_data_ch11(batch_size=10, n=1500):
 
 ## Sıfırdan Uygulama
 
-:numref:`sec_linear_scratch` içindeki minigrup rasgele gradyan inişi uygulamasını hatırlayın. Aşağıda biraz daha genel bir uygulama sağlıyoruz. Kolaylık sağlamak için, bu bölümde daha sonra tanıtılan diğer optimizasyon algoritmalarıyla aynı çağrı imzasına sahiptir. Özellikle, `states` durum girdisini ekliyoruz ve hiperparametreyi `hyperparams` sözlüğüne yerleştiriyoruz. Buna ek olarak, eğitim işlevindeki her minigrup örneğinin kaybını ortalayacağız, böylece optimizasyon algoritmasındaki gradyanın iş boyutuna bölünmesi gerekmez.
+:numref:`sec_linear_scratch` içindeki minigrup rasgele gradyan inişi uygulamasını hatırlayın. Aşağıda biraz daha genel bir uygulama sağlıyoruz. Kolaylık sağlamak için, bu bölümde daha sonra tanıtılan diğer optimizasyon algoritmalarıyla aynı çağrı imzasına sahiptir. Özellikle, `states` durum girdisini ekliyoruz ve hiper parametreyi `hyperparams` sözlüğüne yerleştiriyoruz. Buna ek olarak, eğitim işlevindeki her minigrup örneğinin kaybını ortalayacağız, böylece optimizasyon algoritmasındaki gradyanın iş boyutuna bölünmesi gerekmez.
 
 ```{.python .input}
 def sgd(params, states, hyperparams):

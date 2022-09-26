@@ -151,7 +151,7 @@ encoder = BERTEncoder(vocab_size, num_hiddens, norm_shape, ffn_num_input,
                       ffn_num_hiddens, num_heads, num_layers, dropout)
 ```
 
-`tokens`'ı, her bir belirtecin kelime dağarcığının bir indeksi olduğu, uzunluğu 8 olan 2 BERT girdi dizisi olarak tanımlarız. `BERTEncoder`'ın girdi belirteçleri (`tokens`) ile ileri çıkarımı, her belirtecin, uzunluğu `num_hiddens` hiperparametresi tarafından önceden tanımlanmış bir vektör tarafından temsil edildiği kodlanmış sonucu döndürür. Bu hiperparametre genellikle dönüştürücü kodlayıcının *gizli boyutu* (gizli birim sayısı) olarak adlandırılır.
+`tokens`'ı, her bir belirtecin kelime dağarcığının bir indeksi olduğu, uzunluğu 8 olan 2 BERT girdi dizisi olarak tanımlarız. `BERTEncoder`'ın girdi belirteçleri (`tokens`) ile ileri çıkarımı, her belirtecin, uzunluğu `num_hiddens` hiper parametresi tarafından önceden tanımlanmış bir vektör tarafından temsil edildiği kodlanmış sonucu döndürür. Bu hiper parametre genellikle dönüştürücü kodlayıcının *gizli boyutu* (gizli birim sayısı) olarak adlandırılır.
 
 ```{.python .input}
 tokens = np.random.randint(0, vocab_size, (2, 8))

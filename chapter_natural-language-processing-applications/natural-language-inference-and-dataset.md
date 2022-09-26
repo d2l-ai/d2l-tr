@@ -248,7 +248,7 @@ for X, Y in train_iter:
 ## Alıştırmalar
 
 1. Makine çevirisi uzun zamandır bir çıktı çevirisi ile bir gerçek referans değer çeviri arasındaki yüzeysel $n$-gramlar eşleşmesine dayalı olarak değerlendirilmektedir. Doğal dil çıkarımını kullanarak makine çevirisi sonuçlarını değerlendirmek için bir ölçü tasarlayabilir misiniz?
-1. Kelime dağarcığı boyutunu azaltmak için hiperparametreleri nasıl değiştirebiliriz?
+1. Kelime dağarcığı boyutunu azaltmak için hiper parametreleri nasıl değiştirebiliriz?
 
 :begin_tab:`mxnet`
 [Tartışmalar](https://discuss.d2l.ai/t/394)

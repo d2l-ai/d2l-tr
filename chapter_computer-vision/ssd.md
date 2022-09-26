@@ -238,7 +238,7 @@ def blk_forward(X, blk, size, ratio, cls_predictor, bbox_predictor):
 
 :numref:`fig_ssd` içinde, tepeye daha yakın olan çoklu ölçekli bir öznitelik harita bloğunun daha büyük nesneleri algılamak için olduğunu hatırlayın; bu nedenle, daha büyük çapa kutuları oluşturması gerekir. Yukarıdaki ileri yaymada, her çoklu ölçekli öznitelik harita bloğunda, çağrılan `multibox_prior` işlevinin `sizes` argümanı (:numref:`sec_anchor` içinde açıklanmıştır) vasıtasıyla iki ölçekli değerlerden oluşan bir liste geçeririz. Aşağıda, 0.2 ile 1.05 arasındaki aralık, beş bloktaki daha küçük ölçek değerlerini belirlemek için eşit olarak beş bölüme ayrılmıştır: 0.2, 0.37, 0.54, 0.71 ve 0.88. Daha sonra daha büyük ölçek değerleri $\sqrt{0.2 \times 0.37} = 0.272$, $\sqrt{0.37 \times 0.54} = 0.447$ vb. şeklinde verilir.
 
-[~~Her blok için Hiperparametreler ~~]
+[~~Her blok için Hiper parametreler ~~]
 
 ```{.python .input}
 #@tab all
@@ -571,7 +571,7 @@ display(img, output.cpu(), threshold=0.9)
 
 ## Alıştırmalar
 
-1. Kayıp işlevini geliştirerek tek atışta çoklu kutu algılamasını geliştirebilir misiniz? Örneğin, tahmini ofsetler için pürüzsüz $L_1$ norm kaybı ile $L_1$ norm kaybını değiştirin. Bu kayıp fonksiyonu, hiperparametre $\sigma$ tarafından kontrol edilen pürüzsüzlük için sıfır çevresinde bir kare işlevi kullanır:
+1. Kayıp işlevini geliştirerek tek atışta çoklu kutu algılamasını geliştirebilir misiniz? Örneğin, tahmini ofsetler için pürüzsüz $L_1$ norm kaybı ile $L_1$ norm kaybını değiştirin. Bu kayıp fonksiyonu, hiper parametre $\sigma$ tarafından kontrol edilen pürüzsüzlük için sıfır çevresinde bir kare işlevi kullanır:
 
 $$
 f(x) =
@@ -617,7 +617,7 @@ for l, s in zip(lines, sigmas):
 d2l.plt.legend();
 ```
 
-Ayrıca, deneyde sınıf tahmini için çapraz entropi kaybı kullandık: $p_j$ ile $p_j$ ile gerçek referans değer sınıfı $j$ için tahmin edilen olasılığı ifade edersek, çapraz entropi kaybı $-\log p_j$ olur. Ayrıca odak kaybı :cite:`Lin.Goyal.Girshick.ea.2017` kullanabilirsiniz: $\gamma > 0$ ve $\alpha > 0$ hiperparametre ile, bu kayıp şu şekilde tanımlanır: 
+Ayrıca, deneyde sınıf tahmini için çapraz entropi kaybı kullandık: $p_j$ ile $p_j$ ile gerçek referans değer sınıfı $j$ için tahmin edilen olasılığı ifade edersek, çapraz entropi kaybı $-\log p_j$ olur. Ayrıca odak kaybı :cite:`Lin.Goyal.Girshick.ea.2017` kullanabilirsiniz: $\gamma > 0$ ve $\alpha > 0$ hiper parametre ile, bu kayıp şu şekilde tanımlanır: 
 
 $$ - \alpha (1-p_j)^{\gamma} \log p_j.$$
 
@@ -648,7 +648,7 @@ d2l.plt.legend();
 2. Alan kısıtları nedeniyle, bu bölümdeki tek atışta çoklu kutu algılama modelinin bazı uygulama ayrıntılarını atladık. Modeli aşağıdaki yönlerden daha da geliştirebilir misiniz?
     1. Nesne imgeye kıyasla çok daha küçük olduğunda, model girdi imgesini daha büyük boyutlandırabilir.
     1. Genellikle çok sayıda negatif çapa kutusu vardır. Sınıf dağılımını daha dengeli hale getirmek için negatif çapa kutularını azaltabiliriz.
-    1. Kayıp işlevinde, sınıf kaybına ve ofset kaybına farklı ağırlık hiperparametreleri atayın.
+    1. Kayıp işlevinde, sınıf kaybına ve ofset kaybına farklı ağırlık hiper parametreleri atayın.
     1. Nesne algılama modelini değerlendirmek için, tek atışta çoklu kutu algılama çalışması :cite:`Liu.Anguelov.Erhan.ea.2016` gibi diğer yöntemleri kullanın.
 
 :begin_tab:`mxnet`

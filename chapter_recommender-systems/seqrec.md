@@ -210,7 +210,7 @@ d2l.train_ranking(net, train_iter, test_iter, loss, trainer, test_seq_iter,
 ## Alıştırmalar
 
 * Yatay ve dikey evrişimli ağlardan birini kaldırarak bir çıkarma çalışması yapın, hangi bileşen daha önemlidir?
-* Hiperparametre $L$'yi değiştir. Daha uzun tarihsel etkileşimler daha yüksek doğruluk getirir mi?
+* Hiper parametre $L$'yi değiştir. Daha uzun tarihsel etkileşimler daha yüksek doğruluk getirir mi?
 * Yukarıda tanıttığımız diziye duyarlı tavsiye görevinin yanı sıra, oturum tabanlı tavsiye adı verilen başka bir diziye duyarlı tavsiye görevi türü daha vardır :cite:`Hidasi.Karatzoglou.Baltrunas.ea.2015`. Bu iki görev arasındaki farkları açıklayabilir misiniz?
 
 :begin_tab:`mxnet`

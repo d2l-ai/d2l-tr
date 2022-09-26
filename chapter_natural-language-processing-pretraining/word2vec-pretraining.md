@@ -270,7 +270,7 @@ get_similar_tokens('chip', 3, net[0])
 
 ## Alıştırmalar
 
-1. Eğitilmiş modeli kullanarak, diğer girdi sözcükleri için anlamsal olarak benzer sözcükleri bulun. Hiperparametreleri ayarlayarak sonuçları iyileştirebilir misiniz?
+1. Eğitilmiş modeli kullanarak, diğer girdi sözcükleri için anlamsal olarak benzer sözcükleri bulun. Hiper parametreleri ayarlayarak sonuçları iyileştirebilir misiniz?
 1. Bir eğitim külliyatı çok büyük olduğunda, *model parametrelerini güncellerken* mevcut minigrup içindeki merkez sözcükler için bağlam sözcükleri ve gürültü sözcüklerini sık sık örnekleriz. Başka bir deyişle, aynı merkez sözcük farklı eğitim dönemlerinde farklı bağlam sözcüklerine veya gürültü sözcüklerine sahip olabilir. Bu yöntemin faydaları nelerdir? Bu eğitim yöntemini uygulamaya çalışın.
 
 :begin_tab:`mxnet`

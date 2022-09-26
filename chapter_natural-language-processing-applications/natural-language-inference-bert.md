@@ -311,7 +311,7 @@ d2l.train_ch13(net, train_iter, test_iter, loss, trainer, num_epochs, devices)
 
 ## Alıştırmalar
 
-1. Hesaplama kaynağınız izin veriyorsa, orijinal BERT temel modeli kadar büyük olan çok daha büyük, önceden eğitilmiş BERT modeline ince ayar yapın. `load_pretrained_model` işlevinde bağımsız değişkenleri şu şekilde ayarlayın: 'bert.small' yerine 'bert.base' ile kullanın, sırasıyla `num_hiddens=256`, `ffn_num_hiddens=512`, `num_heads=4` ve `num_layers=2` ile 768, 3072, 12 ve 12 değerlerini değiştirin. İnce ayar dönemlerini artırarak (ve muhtemelen diğer hiperparametreleri ayarlayarak), 0.86'dan daha yüksek bir test doğruluğu elde edebilir misiniz?
+1. Hesaplama kaynağınız izin veriyorsa, orijinal BERT temel modeli kadar büyük olan çok daha büyük, önceden eğitilmiş BERT modeline ince ayar yapın. `load_pretrained_model` işlevinde bağımsız değişkenleri şu şekilde ayarlayın: 'bert.small' yerine 'bert.base' ile kullanın, sırasıyla `num_hiddens=256`, `ffn_num_hiddens=512`, `num_heads=4` ve `num_layers=2` ile 768, 3072, 12 ve 12 değerlerini değiştirin. İnce ayar dönemlerini artırarak (ve muhtemelen diğer hiper parametreleri ayarlayarak), 0.86'dan daha yüksek bir test doğruluğu elde edebilir misiniz?
 1. Bir çift dizi uzunluk oranlarına göre nasıl budanır? Bu çift budama yöntemini ve `SNLIBERTDataset` sınıfında kullanılan yöntemi karşılaştırın. Artıları ve eksileri nelerdir?
 
 :begin_tab:`mxnet`

@@ -166,7 +166,7 @@ def load_data_imdb(batch_size, num_steps=500):
 
 ## Alıştırmalar
 
-1. Duygu analizi modellerinin eğitimi hızlandırmak için bu bölümdeki hangi hiperparametreleri değiştirebiliriz?
+1. Duygu analizi modellerinin eğitimi hızlandırmak için bu bölümdeki hangi hiper parametreleri değiştirebiliriz?
 1. [Amazon incelemeleri](https://snap.stanford.edu/data/web-Amazon.html) veri kümesini duygu analizi için veri yineleyicilerine ve etiketlere yükleme için bir işlev uygulayabilir misiniz?
 
 :begin_tab:`mxnet`

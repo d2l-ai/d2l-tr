@@ -57,7 +57,7 @@ Metin verileri genellikle “the”, “a” ve “in” gibi yüksek frekanslı
 
 $$ P(w_i) = \max\left(1 - \sqrt{\frac{t}{f(w_i)}}, 0\right),$$
 
-burada $f(w_i)$, $w_i$ sözcüklerinin sayısının veri kümelerindeki toplam sözcük sayısına oranıdır ve $t$ sabit (deneyde $10^{-4}$) bir hiperparametredir. Sadece göreli frekans $f(w_i) > t$ (yüksek frekanslı) olursa sözcük $w_i$ atılabilir ve sözcüğün göreli frekansı ne kadar yüksek olursa, atılma olasılığı o kadar yüksektir.
+burada $f(w_i)$, $w_i$ sözcüklerinin sayısının veri kümelerindeki toplam sözcük sayısına oranıdır ve $t$ sabit (deneyde $10^{-4}$) bir hiper parametredir. Sadece göreli frekans $f(w_i) > t$ (yüksek frekanslı) olursa sözcük $w_i$ atılabilir ve sözcüğün göreli frekansı ne kadar yüksek olursa, atılma olasılığı o kadar yüksektir.
 
 ```{.python .input}
 #@tab all
@@ -340,7 +340,7 @@ for batch in data_iter:
 
 1. Alt örnekleme kullanmıyorsa, bu bölümdeki kodun çalışma süresi nasıl değişir?
 1. `RandomGenerator` sınıfı `k` rasgele örnekleme sonuçlarını önbelleğe alır. `k`'yi diğer değerlere ayarlayın ve veri yükleme hızını nasıl etkilediğini görün.
-1. Bu bölümün kodundaki hangi diğer hiperparametreler veri yükleme hızını etkileyebilir?
+1. Bu bölümün kodundaki hangi diğer hiper parametreler veri yükleme hızını etkileyebilir?
 
 :begin_tab:`mxnet`
 [Tartışmalar](https://discuss.d2l.ai/t/383)
