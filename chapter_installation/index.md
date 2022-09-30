@@ -12,7 +12,7 @@ atlayabilirsiniz.
 Miniconda'nın web sitesini ziyaret edin ve Python 3.x sürümünüze ve makine mimarinize göre sisteminiz için uygun sürümü belirleyin. Örneğin, macOS ve Python 3.x kullanıyorsanız, adı "Miniconda3" ve "MacOSX" dizelerini içeren bash betiğini indirin, indirme konumuna gidin ve kurulumu aşağıdaki gibi yürütün:
 
 ```bash
-sh Miniconda3-latest-MacOSX-x86_64.sh -b
+sh Miniconda3-py39_4.12.0-MacOSX-x86_64.sh -b
 ```
 
 Python 3.x'e sahip bir Linux kullanıcısı, adı "Miniconda3" ve "Linux" dizelerini içeren dosyayı indirmeli ve indirme konumunda aşağıda yazılanları yürütmeli:
@@ -125,17 +125,17 @@ pip uninstall mxnet
 
 Şimdi hangi CUDA sürümünü yüklediğinizi bulmamız gerekiyor. 
 Bunu `nvcc --version` veya `cat /usr/local/cuda/version.txt` komutunu çalıştırarak kontrol edebilirsiniz.
-CUDA 10.1'i yüklediğinizi varsayalım, o zaman aşağıdaki komutla kurabilirsiniz:
+CUDA 10.2'i yüklediğinizi varsayalım, o zaman aşağıdaki komutla kurabilirsiniz:
 
 ```bash
 # Windows kullanıcıları için
-pip install mxnet-cu101==1.7.0 -f https://dist.mxnet.io/python
+pip install mxnet-cu102==1.7.0 -f https://dist.mxnet.io/python
 
 # Linux ve macOS kullanıcıları için
-pip install mxnet-cu101==1.7.0
+pip install mxnet-cu102==1.7.0
 ```
 
-Son rakamları CUDA sürümünüze göre değiştirebilirsiniz. Örn. CUDA 10.0 için `cu100` CUDA 9.0 için `cu90`.
+Son rakamları CUDA sürümünüze göre değiştirebilirsiniz. Örn. CUDA 10.1 için `cu101` CUDA 9.0 için `cu90`.
 :end_tab:
 
 
