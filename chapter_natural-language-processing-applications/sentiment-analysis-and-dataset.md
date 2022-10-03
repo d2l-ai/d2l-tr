@@ -1,8 +1,8 @@
 # Duygu Analizi ve Veri Kümesi
 :label:`sec_sentiment`
 
-Çevrimiçi sosyal medya ve inceleme platformlarının çoğalmasıyla birlikte, karar verme süreçlerini desteklemek için büyük bir potansiyel taşıyan bir çok görüşlü veri kaydedildi.
-*Duygu analizi* ürün incelemeleri, blog yorumları ve forum tartışmaları gibi insanların ürettikleri metinlerdeki duyguları inceler. Siyaset (örn. politikalara yönelik kamu duygularının analizi), finans (örneğin, pazarın duygularının analizi) ve pazarlama (örneğin, ürün araştırması ve marka yönetimi) kadar çeşitli alanlara geniş uygulamalara sahiptir. 
+Çevrimiçi sosyal medya ve inceleme platformlarının çoğalmasıyla birlikte, karar verme süreçlerini desteklemek için büyük bir potansiyel taşıyan bir çok görüş içeren veri kaydedildi.
+*Duygu analizi* ürün incelemeleri, blog yorumları ve forum tartışmaları gibi insanların ürettikleri metinlerdeki duyguları inceler. Siyaset (örn. politikalara yönelik kamu duygularının analizi), finans (örneğin, pazarın duygularının analizi) ve pazarlama (örneğin, ürün araştırması ve marka yönetimi) kadar çeşitli alanlarda geniş uygulamalara sahiptir. 
 
 Duygular ayrık kutuplar veya ölçekler (örneğin, pozitif ve negatif) olarak sınıflandırılabileceğinden, duygu analizini, değişen uzunluktaki bir metin dizisini sabit uzunlukta bir metin kategorisine dönüştüren bir metin sınıflandırma görevi olarak düşünebiliriz. Bu bölümde, duygu analizi için Stanford'un [film incelemesi büyük veri kümesini](https://ai.stanford.edu/~amaas/data/sentiment/) kullanacağız. IMDb'den indirilen 25000 film incelemesini içeren bir eğitim kümesi ve bir test kümesinden oluşur. Her iki veri kümesinde de, farklı duygu kutuplarını gösteren eşit sayıda “pozitif” ve “negatif” etiketleri bulunur.
 
@@ -23,7 +23,7 @@ import os
 
 ##  Veri Kümesini Okuma
 
-İlk olarak, bu IMDb inceleme veri kümesini `../data/aclImdb` yoluna indirin ve ayıklayın.
+İlk olarak, bu IMDb inceleme veri kümesini `../data/aclImdb` yoluna indirin ve genişletin.
 
 ```{.python .input}
 #@tab all
@@ -41,7 +41,7 @@ Ardından, eğitim ve test veri kümelerini okuyun. Her örnek bir inceleme ve o
 #@tab all
 #@save
 def read_imdb(data_dir, is_train):
-    """Read the IMDb review dataset text sequences and labels."""
+    """IMDb inceleme veri kümesi metin dizilerini ve etiketlerini okuyun."""
     data, labels = [], []
     for label in ('pos', 'neg'):
         folder_name = os.path.join(data_dir, 'train' if is_train else 'test',
@@ -74,16 +74,16 @@ Belirteçlendirme işleminden sonra, inceleme uzunluklarının belirteçler cins
 ```{.python .input}
 #@tab all
 d2l.set_figsize()
-d2l.plt.xlabel('# tokens per review')
-d2l.plt.ylabel('count')
+d2l.plt.xlabel('inceleme başına belirteç sayısı')
+d2l.plt.ylabel('adet')
 d2l.plt.hist([len(line) for line in train_tokens], bins=range(0, 1000, 50));
 ```
 
-Beklediğimiz gibi, incelemeler değişen uzunluklara sahiptir. Bu tür incelemelerin minigrup işlemlerini her seferinde işlemek için, :numref:`sec_machine_translation`'teki makine çevirisi veri kümesi için ön işleme adımına benzer olan budama ve dolgulama ile her incelemenin uzunluğunu 500 olarak ayarladık.
+Beklediğimiz gibi, incelemeler değişen uzunluklara sahiptir. Bu tür incelemelerin minigrup işlemlerini her seferinde işlemek için, :numref:`sec_machine_translation` içindeki makine çevirisi veri kümesi için ön işleme adımına benzer olan budama ve dolgulama ile her incelemenin uzunluğunu 500 olarak ayarladık.
 
 ```{.python .input}
 #@tab all
-num_steps = 500  # sequence length
+num_steps = 500  # dizi uzunluğu
 train_features = d2l.tensor([d2l.truncate_pad(
     vocab[line], num_steps, vocab['<pad>']) for line in train_tokens])
 print(train_features.shape)
@@ -91,7 +91,7 @@ print(train_features.shape)
 
 ## Veri Yineleyiciler Oluşturma
 
-Şimdi veri yineleyiciler oluşturabiliriz. Her yinelemede, bir örnekler minigrubu döndürülür.
+Şimdi veri yineleyiciler oluşturabiliriz. Her yinelemede, bir örnek minigrubu döndürülür.
 
 ```{.python .input}
 train_iter = d2l.load_array((train_features, train_data[1]), 64)
@@ -119,7 +119,7 @@ Son olarak, yukarıdaki adımları `load_data_imdb` işlevinde sarıyoruz. İşl
 ```{.python .input}
 #@save
 def load_data_imdb(batch_size, num_steps=500):
-    """Return data iterators and the vocabulary of the IMDb review dataset."""
+    """Veri yineleyicilerini ve IMDb inceleme veri kümesinin kelime dağarcığını döndür."""
     data_dir = d2l.download_extract('aclImdb', 'aclImdb')
     train_data = read_imdb(data_dir, True)
     test_data = read_imdb(data_dir, False)
@@ -140,7 +140,7 @@ def load_data_imdb(batch_size, num_steps=500):
 #@tab pytorch
 #@save
 def load_data_imdb(batch_size, num_steps=500):
-    """Return data iterators and the vocabulary of the IMDb review dataset."""
+    """Veri yineleyicilerini ve IMDb inceleme veri kümesinin kelime dağarcığını döndür."""
     data_dir = d2l.download_extract('aclImdb', 'aclImdb')
     train_data = read_imdb(data_dir, True)
     test_data = read_imdb(data_dir, False)
@@ -161,7 +161,7 @@ def load_data_imdb(batch_size, num_steps=500):
 
 ## Özet
 
-* Duygu analizi, değişen uzunluktaki bir metin dizisini sabit uzunlukta bir metin kategorisine dönüştüren bir metin sınıflandırma problemi olarak kabul edilen, üretilmiş metindeki insanların duygularını inceler.
+* Duygu analizi, değişen uzunluktaki bir metin dizisini sabit uzunlukta bir metin kategorisine dönüştüren bir metin sınıflandırma problemi olarak kabul edilen, insanların ürettikleri metindeki duygularını inceler.
 * Ön işlemeden sonra Stanford'un film inceleme büyük veri kümesini (IMDb inceleme veri kümesini) kelime dağarcıklı veri yineleyicilerine yükleyebiliriz.
 
 ## Alıştırmalar
