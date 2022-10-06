@@ -1,6 +1,6 @@
-# AutoRec: Otomatik kodlayıcılar ile Değerlendirme Tahmini
+# AutoRec: Otomatik Kodlayıcılar ile Değerlendirme Tahmini
 
-Matrisi çarpanlara ayırma modeli, derecelendirme tahmini görevinde iyi bir performans elde etmesine rağmen, aslında doğrusal bir modeldir. Bu nedenle, bu tür modeller, kullanıcıların tercihlerini öngörebilecek karmaşık doğrusal olmayan ve dallı budaklı ilişkileri yakalama yeteneğine sahip değildir. Bu bölümde, doğrusal olmayan bir sinir ağı işbirlikçi filtreleme modeli olan AutoRec'i :cite:`Sedhain.Menon.Sanner.ea.2015` tanıtıyoruz. Otomatik kodlayıcı mimarisiyle işbirlikçi filtrelemeyi (CF) tanımlar ve doğrusal olmayan dönüşümleri açık geri bildirim temelinde CF'ye entegre etmeyi amaçlar. Sinir ağlarının herhangi bir sürekli fonksiyona yaklaşabildiği kanıtlanmıştır, bu da onu matris çarpanlarına ayırmanın sınırlamasını ele almaya ve matris çarpanlarına ayırmanın ifadesini zenginleştirmeye uygun hale getirir. 
+Matrisi çarpanlara ayırma modeli, derecelendirme tahmini görevinde iyi bir performans elde etmesine rağmen, aslında doğrusal bir modeldir. Bu nedenle, bu tür modeller, kullanıcıların tercihlerini öngörebilecek karmaşık doğrusal olmayan ve dallı budaklı ilişkileri yakalama yeteneğine sahip değildir. Bu bölümde, doğrusal olmayan bir sinir ağı işbirlikçi filtreleme modeli olan AutoRec'i :cite:`Sedhain.Menon.Sanner.ea.2015` tanıtıyoruz. Otomatik kodlayıcı mimarisiyle işbirlikçi filtrelemeyi (İF) tanımlar ve doğrusal olmayan dönüşümleri açık geri bildirim temelinde İF'ye entegre etmeyi amaçlar. Sinir ağlarının herhangi bir sürekli fonksiyona yaklaşabildiği kanıtlanmıştır, bu da onu matris çarpanlarına ayırmanın sınırlamasını ele almaya ve matris çarpanlarına ayırmanın ifadesini zenginleştirmeye uygun hale getirir. 
 
 Bir yandan AutoRec, girdi katmanı, gizli bir katman ve geri çatma (çıktı) katmanından oluşan bir otomatik kodlayıcı ile aynı yapıya sahiptir. Otomatik kodlayıcı, girdileri gizli (ve genellikle düşük boyutlu) temsillere kodlamak için girdisini çıktısına kopyalamayı öğrenen bir sinir ağıdır. AutoRec'de, kullanıcıları/öğeleri açıkça düşük boyutlu alana gömmek yerine, girdi olarak etkileşim matrisinin sütununu/satırını kullanır ve ardından çıktı katmanındaki etkileşim matrisini geri çatar. 
 
@@ -51,7 +51,7 @@ class AutoRec(nn.Block):
     def forward(self, input):
         hidden = self.dropout(self.encoder(input))
         pred = self.decoder(hidden)
-        if autograd.is_training():  # Mask the gradient during training
+        if autograd.is_training():  # Eğitim sırasında gradyanı maskeleyin
             return pred * np.sign(input)
         else:
             return pred
@@ -68,7 +68,7 @@ def evaluator(network, inter_matrix, test_data, devices):
         feat = gluon.utils.split_and_load(values, devices, even_split=False)
         scores.extend([network(i).asnumpy() for i in feat])
     recons = np.array([item for sublist in scores for item in sublist])
-    # Calculate the test RMSE
+    # test RMSE'sini hesapla
     rmse = np.sqrt(np.sum(np.square(test_data - np.sign(test_data) * recons))
                    / np.sum(np.sign(test_data)))
     return float(rmse)
@@ -80,7 +80,7 @@ def evaluator(network, inter_matrix, test_data, devices):
 
 ```{.python .input  n=4}
 devices = d2l.try_all_gpus()
-# Load the MovieLens 100K dataset
+# MovieLens 100K veri kümesini yükle
 df, num_users, num_items = d2l.read_data_ml100k()
 train_data, test_data = d2l.split_data_ml100k(df, num_users, num_items)
 _, _, _, train_inter_mat = d2l.load_data_ml100k(train_data, num_users,
@@ -93,7 +93,7 @@ train_iter = gluon.data.DataLoader(train_inter_mat, shuffle=True,
 test_iter = gluon.data.DataLoader(np.array(train_inter_mat), shuffle=False,
                                   last_batch="keep", batch_size=1024,
                                   num_workers=d2l.get_dataloader_workers())
-# Model initialization, training, and evaluation
+# Model ilkleme, eğitim ve değerlendirme
 net = AutoRec(500, num_users)
 net.initialize(ctx=devices, force_reinit=True, init=mx.init.Normal(0.01))
 lr, num_epochs, wd, optimizer = 0.002, 25, 1e-5, 'adam'
