@@ -6,7 +6,7 @@ Etkili bir çözüm derin sinir ağları kullanmaktır. Derin sinir ağları, ö
 
 ## Model Mimarileri
 
-DeepFM, bir FM bileşeninden ve paralel bir yapıya entegre edilmiş derin bir bileşenden oluşur. FM bileşeni, düşük mertebeden öznitelik etkileşimlerini modellemek için kullanılan 2 yönlü çarpanlara sahip makinelerle aynıdır. Derin bileşen, yüksek mertebeden öznitelik etkileşimleri ve doğrusal olmayan değerleri yakalamak için kullanılan bir MLP'dir. Bu iki bileşen aynı girdileri/gömmeleri paylaşır ve çıktıları nihai tahmin olarak toplanır. DeepFM özünün hem ezberlemeyi hem de genellemeyi yakalayabilen Wide\ & Deep mimarisine benzediğini belirtmek gerekir. DeepFM'in Wide\ & Deep modeline göre avantajları, öznitelik kombinasyonlarını otomatik olarak belirleyerek el yapımı öznitelik mühendisliğinin çabasını azaltmasıdır. 
+DeepFM, bir FM bileşeninden ve paralel bir yapıya entegre edilmiş derin bir bileşenden oluşur. FM bileşeni, düşük mertebeden öznitelik etkileşimlerini modellemek için kullanılan 2 yönlü çarpanlara sahip makinelerle aynıdır. Derin bileşen, yüksek mertebeden öznitelik etkileşimleri ve doğrusal olmayan değerleri yakalamak için kullanılan bir MLP'dir. Bu iki bileşen aynı girdileri/gömmeleri paylaşır ve çıktıları nihai tahmin olarak toplanır. DeepFM özünün hem ezberlemeyi hem de genellemeyi yakalayabilen Wide \& Deep mimarisine benzediğini belirtmek gerekir. DeepFM'in Wide \& Deep modeline göre avantajları, öznitelik kombinasyonlarını otomatik olarak belirleyerek el yapımı öznitelik mühendisliğinin çabasını azaltmasıdır. 
 
 Kısa olması için FM bileşeninin açıklamasını atlıyoruz ve çıktıyı $\hat{y}^{(FM)}$ olarak belirtiyoruz. Okuyucular daha fazla ayrıntı için son bölüme bakabilirler. $\mathbf{e}_i \in \mathbb{R}^{k}$, $i.$ alanın gizli öznitelik vektörünü göstersin. Derin bileşenin girdisi, seyrek kategorik öznitelik girdisi ile bakılan tüm alanların yoğun gömmelerinin bitiştirilmesiyle, şu şekilde gösterilir: 
 
@@ -20,13 +20,13 @@ $$
 \mathbf{z}^{(l)}  = \alpha(\mathbf{W}^{(l)}\mathbf{z}^{(l-1)} + \mathbf{b}^{(l)}),
 $$
 
-burada $\alpha$ etkinleştirme fonksiyonudur. $\mathbf{W}_{l}$ ve $\mathbf{b}_{l}$, $l.$ katmanındaki ağırlık ve ek girdidir. $y_{DNN}$'nin tahminin çıktısını göstersin. DeepFM'in nihai tahmini hem FM hem de DNN çıktılarının toplamıdır. Yani elimizde şu var: 
+burada $\alpha$ etkinleştirme fonksiyonudur. $\mathbf{W}_{l}$ ve $\mathbf{b}_{l}$, $l.$ katmanındaki ağırlık ve ek girdidir. $y_{DNN}$ tahminin çıktısını göstersin. DeepFM'in nihai tahmini hem FM hem de DNN çıktılarının toplamıdır. Yani elimizde şu var: 
 
 $$
 \hat{y} = \sigma(\hat{y}^{(FM)} + \hat{y}^{(DNN)}),
 $$
 
-burada $\sigma$ sigmoid fonksiyonudur. DeepFM mimarisi aşağıda gösterilmiştir. [DeepFM modelinin resimlendirilmesi](../img/rec-deepfm.svg) 
+burada $\sigma$ sigmoid fonksiyonudur. DeepFM mimarisi aşağıda gösterilmiştir. ,![DeepFM modelinin resimlendirilmesi](../img/rec-deepfm.svg) 
 
 Derin sinir ağlarını FM ile birleştirmenin tek yolunun DeepFM olmadığını belirtmekte fayda var. Ayrıca öznitelik etkileşimleri üzerine doğrusal olmayan katmanlar ekleyebiliriz :cite:`He.Chua.2017`.
 
