@@ -399,7 +399,7 @@ Now we specify the hyperparameters to fit the Gaussian distribution.
 #@tab all
 lr_D, lr_G, latent_dim, num_epochs = 0.05, 0.005, 2, 20
 train(net_D, net_G, data_iter, num_epochs, lr_D, lr_G,
-      latent_dim, data[:100].asnumpy())
+      latent_dim, d2l.numpy(data[:100]))
 ```
 
 ## Summary
