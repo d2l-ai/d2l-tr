@@ -420,10 +420,10 @@ $$
 \end{bmatrix}.
 $$
 
-Bu, tüm düzlemi $y = 2x$ tek doğruda yaşamak için sıkıştırır. Şimdi şu soru ortaya çıkıyor: Bunu sadece matrise bakarak tespit etmemizin bir yolu var mı?
+Bu, tüm düzlemi $y = 2x$ tek doğruda yaşaması için sıkıştırır. Şimdi şu soru ortaya çıkıyor: Bunu sadece matrise bakarak tespit etmemizin bir yolu var mı?
 Cevap, gerçekten edebiliriz.
 $\mathbf{b}_1 = [2,4]^\top$ ve $\mathbf{b}_2 = [-1,-2]^\top$, $\mathbf {B}$'nin iki sütunu olsun.
-$\mathbf{B}$ matrisi tarafından dönüştürülen her şeyi, matrisin sütunlarının ağırlıklı toplamı olarak yazabileceğimizi unutmayın: $a_1\ mathbf{b}_1 + a_2\mathbf{b}_2$ gibi.
+$\mathbf{B}$ matrisi tarafından dönüştürülen her şeyi, matrisin sütunlarının ağırlıklı toplamı olarak yazabileceğimizi unutmayın: $a_1\mathbf{b}_1 + a_2\mathbf{b}_2$ gibi.
 Buna *doğrusal birleşim (kombinasyon)* diyoruz.
 $\mathbf{b}_1 = -2\cdot\mathbf{b}_2$ olması, bu iki sütunun herhangi bir doğrusal kombinasyonunu tamamen, mesela, $\mathbf{b}_2$ cinsinden yazabileceğimiz anlamına gelir, çünkü
 
@@ -440,7 +440,7 @@ $$
 \mathbf{b}_1  + 2\cdot\mathbf{b}_2 = 0.
 $$
 
-Genel olarak, $\mathbf{v}_1, \ldots, \mathbf{v}_k$ vektörlerinin bir topluluğunun *doğrusal olarak bağımlı* olduğunu söyleyeceğiz, eğer öyleki aşağıdaki denklem için *hepsi sıfıra eşit olmayan* $a_1, \ldots, a_k$ katsayıları varsa.
+Genel olarak, eğer aşağıdaki denklem için *hepsi sıfıra eşit olmayan* $a_1, \ldots, a_k$ katsayıları varsa, bir $\mathbf{v}_1, \ldots, \mathbf{v}_k$ vektörler topluluğunun *doğrusal olarak bağımlı* olduğunu söyleyeceğiz:
 
 $$
 \sum_{i=1}^k a_i\mathbf{v_i} = 0.
@@ -479,12 +479,12 @@ $$
 ve $\mathbf{C}$'nin kertesinin iki olduğunu gösterebiliriz, çünkü örneğin ilk iki sütun doğrusal olarak bağımsızdır, ancak herhangi bir dört sütunlu toplulukta üç sütun bağımlıdır.
 
 Bu prosedür, açıklandığı gibi, çok verimsizdir.
-Verdiğimiz matrisin sütunlarının her alt kümesine bakmayı gerektirir ve bu nedenle sütun sayısına bağlı, potansiyel olarak üsteldir.
+Verdiğimiz matrisin sütunlarının her alt kümesine bakmayı gerektirir ve bu nedenle sütun sayısına bağlı, potansiyel olarak üsseldir.
 Daha sonra bir matrisin kertesini hesaplamanın hesaplama açısından daha verimli bir yolunu göreceğiz, ancak şimdilik, kavramın iyi tanımlandığını görmek ve anlamı anlamak yeterlidir.
 
 ## Tersinirlik (Invertibility)
 
-Yukarıda doğrusal olarak bağımlı sütunları olan bir matris ile çarpmanın geri alınamayacağını gördük, yani girdiyi her zaman kurtarabilecek ters işlem yoktur. Bununla birlikte, tam kerteli bir matrisle çarpma durumunda (yani, $\mathbf{A}$ yani $n\times n$, $n$ kerteli matris), bunu her zaman geri alabilmeliyiz. Şu matrisi düşünün
+Yukarıda doğrusal olarak bağımlı sütunları olan bir matris ile çarpmanın geri alınamayacağını gördük, yani girdiyi her zaman kurtarabilecek ters işlem yoktur. Bununla birlikte, tam kerteli bir matrisle çarpma durumunda (yani, $\mathbf{A}$, $n\times n$'lik $n$ kerteli matristir), bunu her zaman geri alabilmeliyiz. Şu matrisi düşünün:
 
 $$
 \mathbf{I} = \begin{bmatrix}
@@ -498,7 +498,7 @@ $$
 Bu, köşegen boyunca birlerin ve başka yerlerde sıfırların bulunduğu matristir.
 Buna *birim* matris diyoruz.
 Uygulandığında verilerimizi değiştirmeden bırakan matristir.
-$\mathbf{A}$ matrisimizin yaptıklarını geri alan bir matris bulmak için, şu şekilde bir $\mathbf{A}^{-1}$ matrisi bulmak istiyoruz
+$\mathbf{A}$ matrisimizin yaptıklarını geri alan bir matris bulmak için, şu şekilde bir $\mathbf{A}^{-1}$ matrisi bulmak istiyoruz:
 
 $$
 \mathbf{A}^{-1}\mathbf{A} = \mathbf{A}\mathbf{A}^{-1} =  \mathbf{I}.
@@ -515,7 +515,7 @@ c & d
 \end{bmatrix},
 $$
 
-o zaman tersinin şöyle olduğunu görebiliriz
+o zaman tersinin şöyle olduğunu görebiliriz:
 
 $$
  \frac{1}{ad-bc}  \begin{bmatrix}
@@ -548,13 +548,13 @@ tf.matmul(M_inv, M)
 
 ### Sayısal (Numerik) Sorunlar
 Bir matrisin tersi teoride yararlı olsa da, pratikte bir problemi çözmek için çoğu zaman matris tersini *kullanmak* istemediğimizi söylemeliyiz.
-Genel olarak, doğrusal denklemleri çözmek için sayısal olarak çok daha kararlı algoritmalar vardır,
+Genel olarak,
 
 $$
 \mathbf{A}\mathbf{x} = \mathbf{b},
 $$
 
-tersini hesaplamaktan ve çarpmaktan daha tercih edebileceğimiz.
+gibi doğrusal denklemleri çözmek için sayısal olarak çok daha kararlı algoritmalar vardır, aşağıdaki gibi tersini hesaplamaktan ve çarpmaktan daha çok tercih edebileceğimiz yöntemlerdir.
 
 $$
 \mathbf{x} = \mathbf{A}^{-1}\mathbf{b}.
@@ -564,9 +564,9 @@ Küçük bir sayıya bölünmenin sayısal kararsızlığa yol açması gibi, d�
 
 Dahası, $\mathbf{A}$ matrisinin *seyrek* olması yaygındır, yani sadece az sayıda sıfır olmayan değer içerir.
 Örnekleri araştıracak olsaydık, bunun tersin de seyrek olduğu anlamına gelmediğini görürdük.
-$\mathbf{A}$, yalnızca $5$ milyon tanesi sıfır olmayan girdileri olan $1$ milyona $1$milyonluk bir matris olsa bile (ve bu nedenle yalnızca bu $5$ milyon girdiyi saklamamız gerekir), tersi genellikle hemen hemen hepsi eksi değer olmayan tüm girdilere sahip olacaktır ki tüm $1\text{M}^2$ girdiyi saklamamızı gerektirir --- bu da $1$ trilyon girdidir!
+$\mathbf{A}$, yalnızca $5$ milyon tanesi sıfır olmayan girdileri olan $1$ milyona $1$ milyonluk bir matris olsa bile (ve bu nedenle yalnızca bu $5$ milyon girdiyi saklamamız gerekir), tersi genellikle hemen hemen hepsi eksi değer olmayan tüm girdilere sahip olacaktır ki tüm $1\text{M}^2$ girdiyi saklamamızı gerektirir --- bu da $1$ trilyon girdidir!
 
-Doğrusal cebir ile çalışırken sıkça karşılaşılan çetrefilli sayısal sorunlara tam olarak dalacak vaktimiz olmasa da, ne zaman dikkatli bir şekilde ilerlemeniz gerektiği konusunda size biraz önsezi sağlamak istiyoruz ve pratikte genellikle ters çevirmekten kaçınmak iyi bir ampirik kuraldır.
+Doğrusal cebir ile çalışırken sıkça karşılaşılan çetrefilli sayısal sorunlara tam olarak dalacak vaktimiz olmasa da, ne zaman dikkatli bir şekilde ilerlemeniz gerektiği konusunda size biraz önsezi sağlamak istiyoruz ve pratikte genellikle ters çevirmekten kaçınmak yararlı bir kuraldır.
 
 ## Determinant
 Doğrusal cebirin geometrik görünümü, *determinant* olarak bilinen temel bir miktarı yorumlamanın sezgisel bir yolunu sunar.
@@ -691,37 +691,37 @@ Bu şekilde, çok sayıda özel gösterimi kısa tensör ifadeleriyle değiştir
 
 ### Kodla İfade Etme
 Tensörler de kod içinde esnek bir şekilde çalıştırılabilir.
-:numref:`sec_linear-algebra`'da görüldüğü gibi, aşağıda gösterildiği gibi tensörler oluşturabiliriz.
+:numref:`sec_linear-algebra` içinde görüldüğü gibi, aşağıda gösterildiği gibi tensörler oluşturabiliriz.
 
 ```{.python .input}
-# Define tensors
+# Tensörleri tanımla
 B = np.array([[[1, 2, 3], [4, 5, 6]], [[7, 8, 9], [10, 11, 12]]])
 A = np.array([[1, 2], [3, 4]])
 v = np.array([1, 2])
 
-# Print out the shapes
+# Şekilleri yazdır
 A.shape, B.shape, v.shape
 ```
 
 ```{.python .input}
 #@tab pytorch
-# Define tensors
+# Tensörleri tanımla
 B = torch.tensor([[[1, 2, 3], [4, 5, 6]], [[7, 8, 9], [10, 11, 12]]])
 A = torch.tensor([[1, 2], [3, 4]])
 v = torch.tensor([1, 2])
 
-# Print out the shapes
+# Şekilleri yazdır
 A.shape, B.shape, v.shape
 ```
 
 ```{.python .input}
 #@tab tensorflow
-# Define tensors
+# Tensörleri tanımla
 B = tf.constant([[[1, 2, 3], [4, 5, 6]], [[7, 8, 9], [10, 11, 12]]])
 A = tf.constant([[1, 2], [3, 4]])
 v = tf.constant([1, 2])
 
-# Print out the shapes
+# Şekilleri yazdır
 A.shape, B.shape, v.shape
 ```
 
@@ -730,19 +730,19 @@ Einstein toplamında ortaya çıkan indisler bir dizi olarak aktarılabilir ve a
 Örneğin, matris çarpımını uygulamak için, yukarıda görülen Einstein toplamını ($\mathbf{A}\mathbf{v} = a_{ij}v_j$) düşünebilir ve uygulamayı (gerçeklemeyi) elde etmek için indisleri söküp atabiliriz:
 
 ```{.python .input}
-# Reimplement matrix multiplication
+# Matris çarpımını yeniden uygula
 np.einsum("ij, j -> i", A, v), A.dot(v)
 ```
 
 ```{.python .input}
 #@tab pytorch
-# Reimplement matrix multiplication
+# Matris çarpımını yeniden uygula
 torch.einsum("ij, j -> i", A, v), A@v
 ```
 
 ```{.python .input}
 #@tab tensorflow
-# Reimplement matrix multiplication
+# Matris çarpımını yeniden uygula
 tf.einsum("ij, j -> i", A, v), tf.matmul(A, tf.reshape(v, (2, 1)))
 ```
 
@@ -779,12 +779,12 @@ np.einsum(B, [0, 1, 2], A, [0, 3], v, [1], [2, 3])
 
 ```{.python .input}
 #@tab pytorch
-# PyTorch doesn't support this type of notation.
+# PyTorch bu tür gösterimi desteklemez.
 ```
 
 ```{.python .input}
 #@tab tensorflow
-# TensorFlow doesn't support this type of notation.
+# TensorFlow bu tür gösterimi desteklemez.
 ```
 
 Her iki gösterim, tensör daralmalarının kodda kısa ve verimli bir şekilde temsiline izin verir.
@@ -806,10 +806,10 @@ $$
 1 \\ 0 \\ -1 \\ 2
 \end{bmatrix}, \qquad \vec v_2 = \begin{bmatrix}
 3 \\ 1 \\ 0 \\ 1
-\end{bmatrix}?
+\end{bmatrix}
 $$
 2. Doğru veya yanlış: $\begin{bmatrix}1 & 2\\0&1\end{bmatrix}$ ve $\begin{bmatrix}1 & -2\\0&1\end{bmatrix}$ birbirinin tersi mi?
-3. Düzlemde $100\mathrm{m}^2$ alanına sahip bir şekil çizdiğimizi varsayalım. Şeklin aşağıdaki matrise göre dönüştükten sonraki alanı nedir?
+3. Düzlemde $100\mathrm{m}^2$ alanına sahip bir şekil çizdiğimizi varsayalım. Şeklin aşağıdaki matrise göre dönüştürüldükten sonraki alanı nedir?
 $$
 \begin{bmatrix}
 2 & 3\\

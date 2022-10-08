@@ -405,6 +405,7 @@ train(net_D, net_G, data_iter, num_epochs, lr_D, lr_G,
 * Çekişmeli üretici ağlar (GAN'lar), iki derin ağdan oluşur: Üretici ve ayrımcı.
 * Üretici, çapraz entropi kaybını en yükseğe çıkararak *yani*, $\max \log(D(\mathbf{x'}))$ yoluyla, ayrımcıyı kandırmak için gerçek imgeye olabildiğince yakın imgeler oluşturur.
 * Ayrımcı, çapraz entropi kaybını en aza indirerek, oluşturulan imgeleri gerçek imgelerden ayırt etmeye çalışır, *yani*, $\min - y \log D(\mathbf{x}) - (1-y)\log(1-D(\mathbf{x}))$ optimize edilir.
+
 ## Alıştırmalar
 
 * Üreticinin kazandığı yerde bir denge var mıdır, *mesela* ayrımcının sonlu örnekler üzerinden iki dağılımı ayırt edemediği gibi?
