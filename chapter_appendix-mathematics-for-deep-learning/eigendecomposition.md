@@ -13,30 +13,30 @@ $$
 \end{bmatrix}.
 $$
 
-Herhangi bir $\mathbf{v} = [x, y]^\top$ vektörüne $A$ uygularsak, bir $\mathbf{v}A = [2x, -y]^\top$ vektörü elde ederiz.
-Bunun sezgisel bir yorumu var: vektörü $x$ yönünde iki kat geniş olacak şekilde uzatın ve ardından $y$ yönünde ters çevirin.
+Herhangi bir $\mathbf{v} = [x, y]^\top$ vektörüne $A$ uygularsak, bir $\mathbf{A}\mathbf{v} = [2x, -y]^\top$ vektörü elde ederiz.
+Bunun sezgisel bir yorumu var: Vektörü $x$ yönünde iki kat geniş olacak şekilde uzatın ve ardından $y$ yönünde ters çevirin.
 
 Ancak, bir şeyin değişmeden kaldığı *bazı* vektörler vardır.
 Yani $[1, 0]^\top$, $[2, 0]^\top$'e ve $[0, 1]^\top$, $[0, -1]^\top$'e gönderilir.
 Bu vektörler hala aynı doğrudadır ve tek değişiklik, matrisin onları sırasıyla $2$ ve $-1$ çarpanı ile genişletmesidir.
-Bu tür vektörlere *özvektörler* diyoruz ve bunların uzatıldıkları çarpan da *özdeğerler*dir .
+Bu tür vektörlere *özvektörler* diyoruz ve bunların uzatıldıkları çarpan da *özdeğerler*dir.
 
 Genel olarak, bir $\lambda$ sayısı ve şöyle bir $\mathbf{v}$ vektörü bulabilirsek
 
 $$
-\mathbf{A}\mathbf{v} = \lambda \mathbf{v}.
+\mathbf{A}\mathbf{v} = \lambda \mathbf{v}
 $$
 
 $\mathbf{v}$ $A$ için bir özvektör ve $\lambda$ bir özdeğerdir deriz.
 
 ## Özdeğerleri Bulma
 Onları nasıl bulacağımızı anlayalım.
-Her iki taraftan $\lambda \vec v$ çıkararak ve ardından vektörü dışarıda bırakarak, yukarıdakinin şuna eşdeğer olduğunu görürüz:
+Her iki taraftan $\lambda \mathbf{v}$ çıkararak ve ardından vektörü dışarıda bırakarak, yukarıdakinin şuna eşdeğer olduğunu görürüz:
 
 $$(\mathbf{A} - \lambda \mathbf{I})\mathbf{v} = 0.$$
 :eqlabel:`eq_eigvalue_der`
 
-:eqref:`eq_eigvalue_der`'in gerçekleşmesi için, $(\mathbf{A} - \lambda \mathbf{I})$'nın bir yönü sıfıra kadar sıkıştırması gerektiğini görüyoruz, bu nedenle tersinir değildir ve bu nedenle determinant sıfırdır .
+:eqref:`eq_eigvalue_der` denkleminin gerçekleşmesi için, $(\mathbf{A} - \lambda \mathbf{I})$'nın bir yönü sıfıra kadar sıkıştırması gerektiğini görüyoruz, bu nedenle tersinir değildir ve bu nedenle determinant sıfırdır.
 Böylece, *özdeğerleri*, $\lambda$ değerinin ne zaman $\det(\mathbf{A}-\lambda \mathbf{I}) = 0$ olduğunu bularak bulabiliriz.
 Özdeğerleri bulduktan sonra, ilişkili *özvektör(leri)* bulmak için $\mathbf{A}\mathbf{v} = \lambda \mathbf{v}$'yı çözebiliriz.
 
@@ -58,10 +58,10 @@ $$
 \begin{bmatrix}
 2 & 1\\
 2 & 3 
-\end{bmatrix}\begin{bmatrix}x \\ y\end{bmatrix} = \begin{bmatrix}x \\ y\end{bmatrix}  \; \text{and} \;
+\end{bmatrix}\begin{bmatrix}x \\ y\end{bmatrix} = \begin{bmatrix}x \\ y\end{bmatrix}  \; \text{ve} \;
 \begin{bmatrix}
-2 & 2\\
-1 & 3 
+2 & 1\\
+2 & 3 
 \end{bmatrix}\begin{bmatrix}x \\ y\end{bmatrix}  = \begin{bmatrix}4x \\ 4y\end{bmatrix} .
 $$
 
@@ -89,7 +89,17 @@ torch.eig(torch.tensor([[2, 1], [2, 3]], dtype=torch.float64),
           eigenvectors=True)
 ```
 
-`numpy`'ın özvektörleri bir uzunlukta normalleştirdiğini, oysa bizimkileri keyfi uzunlukta kabul ettiğimizi unutmayın.
+```{.python .input}
+#@tab tensorflow
+%matplotlib inline
+from d2l import tensorflow as d2l
+from IPython import display
+import tensorflow as tf
+
+tf.linalg.eig(tf.constant([[2, 1], [2, 3]], dtype=tf.float64))
+```
+
+`numpy` kütüphanesinin özvektörleri bir uzunluğunda normalleştirdiğini, oysa bizimkileri keyfi uzunlukta kabul ettiğimizi unutmayın.
 Ek olarak, işaret seçimi keyfidir.
 Bununla birlikte, hesaplanan vektörler, aynı özdeğerlerle elle bulduklarımıza paraleldir.
 
@@ -126,12 +136,12 @@ $$\mathbf{A} = \mathbf{W} \boldsymbol{\Sigma} \mathbf{W}^{-1}.$$
 
 Bir sonraki bölümde bunun bazı güzel sonuçlarını göreceğiz, ancak şimdilik sadece, doğrusal olarak bağımsız özvektörlerin tam bir topluluğunu bulabildiğimiz sürece böyle bir ayrışmanın var olacağını bilmemiz gerekiyor (böylece $W$ tersinirdir).
 
-## Özayrışmalar üzerinde işlemler
-Özayrışmalar ilgili güzel bir şey :eqref:`eq_eig_decomp`, genellikle karşılaştığımız birçok işlemi özayrışmalar açısından temiz bir şekilde yazabilmemizdir.
+## Özayrışmalar Üzerinde İşlemler
+Özayrışmalar, :eqref:`eq_eig_decomp`, ilgili güzel bir şey, genellikle karşılaştığımız birçok işlemi özayrışmalar açısından temiz bir şekilde yazabilmemizdir.
 İlk örnek olarak şunları düşünün:
 
 $$
-\mathbf{A}^n = \overbrace{\mathbf{A}\cdots \mathbf{A}}^{\text{$n$ times}} = \overbrace{(\mathbf{W}\boldsymbol{\Sigma} \mathbf{W}^{-1})\cdots(\mathbf{W}\boldsymbol{\Sigma} \mathbf{W}^{-1})}^{\text{$n$ times}} =  \mathbf{W}\overbrace{\boldsymbol{\Sigma}\cdots\boldsymbol{\Sigma}}^{\text{$n$ times}}\mathbf{W}^{-1} = \mathbf{W}\boldsymbol{\Sigma}^n \mathbf{W}^{-1}.
+\mathbf{A}^n = \overbrace{\mathbf{A}\cdots \mathbf{A}}^{\text{$n$ kere}} = \overbrace{(\mathbf{W}\boldsymbol{\Sigma} \mathbf{W}^{-1})\cdots(\mathbf{W}\boldsymbol{\Sigma} \mathbf{W}^{-1})}^{\text{$n$ kere}} =  \mathbf{W}\overbrace{\boldsymbol{\Sigma}\cdots\boldsymbol{\Sigma}}^{\text{$n$ kere}}\mathbf{W}^{-1} = \mathbf{W}\boldsymbol{\Sigma}^n \mathbf{W}^{-1}.
 $$
 
 Bu bize, bir matrisin herhangi bir pozitif kuvveti için, özayrışmasının özdeğerlerin sadece aynı kuvvete yükseltilmesiyle elde edildiğini söyler.
@@ -150,13 +160,13 @@ $$
 \det(\mathbf{A}) = \lambda_1 \cdots \lambda_n,
 $$
 
-veya tüm özdeğerlerin çarpımı.
+veya tüm özdeğerlerin çarpımıdır.
 Bu sezgisel olarak mantıklıdır, çünkü $\mathbf{W}$ ne kadar esnetme yaparsa, $W^{-1}$ bunu geri alır, dolayısıyla sonunda gerçekleşen tek uzatma köşegen matris $\boldsymbol{\Sigma}$ ile çarpma yoluyla olur, ki o da köşegen elemanların çarpımına göre hacimleri uzatır.
 
-Son olarak, kertenin matrisinizin doğrusal olarak bağımsız sütunlarının en fazla sayısı olduğunu hatırlayın.
-Özayrışmayı yakından inceleyerek, kertenin $\mathbf{A}$ 'ın sıfır olmayan özdeğerlerinin sayısıyla aynı olduğunu görebiliriz.
+Son olarak, kertenin matrisinizin en büyük doğrusal olarak bağımsız sütunlarının sayısı olduğunu hatırlayın.
+Özayrışmayı yakından inceleyerek, kertenin $\mathbf{A}$'nın sıfır olmayan özdeğerlerinin sayısıyla aynı olduğunu görebiliriz.
 
-Örnekler devam edebilirdi, ancak umarız ki mesele açıktır: Özayrışmalar, birçok lineer-cebirsel hesaplamayı basitleştirebilir ve birçok sayısal (numerik) algoritmanın ve lineer cebirde yaptığımız analizlerin çoğunun altında yatan temel bir işlemdir.
+Örnekler devam edebilirdi, ancak umarız ki mesele açıktır: Özayrışmalar, birçok doğrusal-cebirsel hesaplamayı basitleştirebilir ve birçok sayısal (numerik) algoritmanın ve doğrusal cebirde yaptığımız analizlerin çoğunun altında yatan temel bir işlemdir.
 
 ## Simetrik Matrislerin Özayrışmaları
 Yukarıdaki işlemin çalışması için yeterli doğrusal olarak bağımsız özvektör bulmak her zaman mümkün değildir. Örneğin matris
@@ -168,13 +178,13 @@ $$
 \end{bmatrix},
 $$
 
-tek bir özvektöre, $(0, 1)$, sahiptir.
+tek bir özvektöre, $(1, 0)^\top$, sahiptir.
 Bu tür matrisleri işlemek için, ele alabileceğimizden daha gelişmiş tekniklere ihtiyacımız var (Jordan Normal Formu veya Tekil Değer Ayrıştırması gibi).
 Dikkatimizi sık sık tam bir özvektörler kümesinin varlığını garanti edebileceğimiz matrislere sınırlamamız gerekecek.
 
 En sık karşılaşılan aile, $\mathbf{A} = \mathbf{A}^\top$ olan *simetrik matrislerdir*.
-Bu durumda, $W$'i bir *dikgen (ortogonal) matris* olarak alabiliriz — sütunlarının tümü birbirine dik açıda birim uzunluklu vektörler olan bir matris, burada $\mathbf{W}^\top = \mathbf{W}^{-1}$ - ve tüm özdeğerler gerçel olacaktır.
-Böylece, bu özel durumda şöyle yazabiliriz :eqref:`eq_eig_decomp`
+Bu durumda, $W$'i bir *dikgen (ortogonal) matris* olarak alabiliriz — sütunlarının tümü birbirine dik açıda birim uzunluklu vektörler olan bir matris, burada $\mathbf{W}^\top = \mathbf{W}^{-1}$'dir - ve tüm özdeğerler gerçel olacaktır.
+Böylece, bu özel durumda :eqref:`eq_eig_decomp` denklemini şöyle yazabiliriz 
 
 $$
 \mathbf{A} = \mathbf{W}\boldsymbol{\Sigma}\mathbf{W}^\top .
@@ -187,8 +197,8 @@ Bununla birlikte, en büyük değerler köşegen üzerindeyse, iyi bir tahmin ya
 
 $\mathbf{A} = (a_{ij})$ herhangi bir ($n\times n$) kare matris olsun.
 Şöyle tanımlayalım: $r_i = \sum_{j \neq i} |a_{ij}|$.
-$\mathcal{D}_i$ karmaşık düzlemde $a_ {ii}$ merkezli $r_i$ yarıçaplı diski temsil etsin.
-Daha sonra, $\mathbf{A}$'nın her özdeğeri $\mathcal{D}_i $'dan birinin içinde bulunur.
+$\mathcal{D}_i$ karmaşık düzlemde $a_{ii}$ merkezli $r_i$ yarıçaplı diski temsil etsin.
+Daha sonra, $\mathbf{A}$'nın her özdeğeri $\mathcal{D}_i$'den birinin içinde bulunur.
 
 Bunu açmak biraz zaman alabilir, o yüzden bir örneğe bakalım.
 Şu matrisi düşünün:
@@ -214,7 +224,7 @@ $$[a_{33}-r_3, a_{33}+r_3] = [4.2, 5.8], $$
 
 $$[a_{44}-r_4, a_{44}+r_4] = [8.1, 9.9]. $$
 
-Sayısal hesaplamanın gerçekleştirilmesi, özdeğerlerin yaklaşık $0,99$, $2,97$, $4,95$, $9,08$ olduğunu ve rahatlıkla sağlanan aralıklar içinde olduğunu gösterir.
+Sayısal hesaplamanın gerçekleştirilmesi, özdeğerlerin yaklaşık $0.99$, $2.97$, $4.95$, $9.08$ olduğunu ve rahatlıkla sağlanan aralıklar içinde olduğunu gösterir.
 
 ```{.python .input}
 A = np.array([[1.0, 0.1, 0.1, 0.1],
@@ -237,17 +247,28 @@ v, _ = torch.eig(A)
 v
 ```
 
+```{.python .input}
+#@tab tensorflow
+A = tf.constant([[1.0, 0.1, 0.1, 0.1],
+                [0.1, 3.0, 0.2, 0.3],
+                [0.1, 0.2, 5.0, 0.5],
+                [0.1, 0.3, 0.5, 9.0]])
+
+v, _ = tf.linalg.eigh(A)
+v
+```
+
 Bu şekilde, özdeğerler yaklaşık olarak tahmin edilebilir ve köşegenin diğer tüm öğelerden önemli ölçüde daha büyük olması durumunda yaklaşımlar oldukça doğru olacaktır.
 
 Bu küçük bir şey, ancak özayrışma gibi karmaşık ve incelikli bir konuda, yapabileceğimiz herhangi bir sezgisel kavrayışa sahip olmak iyidir.
 
 ## Yararlı Bir Uygulama: Yinelenen Eşlemelerin Gelişimi
 
-Artık özvektörlerin prensipte ne olduğunu anladığımıza göre, bunların sinir ağı davranışının merkezinde olan bir problemin derinlemesine anlaşılmasını sağlamak için nasıl kullanılabileceklerini görelim: Uygun ağırlık ilklenmesi (başlatma).
+Artık özvektörlerin prensipte ne olduğunu anladığımıza göre, bunların sinir ağı davranışının merkezinde olan bir problemin derinlemesine anlaşılmasını sağlamak için nasıl kullanılabileceklerini görelim: Uygun ağırlık ilklenmesi.
 
 ### Uzun Vadeli Davranış Olarak Özvektörler
 
-Derin sinir ağlarının başlatılmasının (ilklenmesi) tam matematiksel araştırması, metnin kapsamı dışındadır, ancak özdeğerlerin bu modellerin nasıl çalıştığını görmemize nasıl yardımcı olabileceğini anlamak için burada bir oyuncak sürümünü görebiliriz.
+Derin sinir ağlarının ilklenmesinin tam matematiksel araştırması, metnin kapsamı dışındadır, ancak özdeğerlerin bu modellerin nasıl çalıştığını görmemize nasıl yardımcı olabileceğini anlamak için burada bir basit örnek sürümünü görebiliriz.
 Bildiğimiz gibi, sinir ağları, doğrusal olmayan işlemlerle doğrusal dönüşüm katmanlarını serpiştirerek çalışır.
 Burada basitleştirmek için, doğrusal olmayanlığın olmadığını ve dönüşümün tek bir tekrarlanan matris işlemi $A$ olduğunu varsayacağız, böylece modelimizin çıktısı şu şekildedir:
 
@@ -275,11 +296,18 @@ A = torch.randn(k, k, dtype=torch.float64)
 A
 ```
 
+```{.python .input}
+#@tab tensorflow
+k = 5
+A = tf.random.normal((k, k), dtype=tf.float64)
+A
+```
+
 ### Rastgele Verilerde Davranış
 Oyuncak modelimizde basitlik sağlamak için, $\mathbf{v}_{in}$ ile beslediğimiz veri vektörünün rastgele beş boyutlu bir Gauss vektörü olduğunu varsayacağız.
 Ne olmasını istediğimizi düşünelim.
-Bağlam için, bir görüntü gibi girdi verilerini, görüntünün bir kedi resmi olma olasılığı gibi bir tahmine dönüştürmeye çalıştığımız genel bir makine öğrenmesi problemini düşünelim.
-Tekrarlanan $\mathbf{A}$ uygulaması rastgele bir vektörü çok uzun olacak şekilde esnetirse, o zaman girdideki küçük değişiklikler çıktıdaki büyük değişikliklere yükseltilir --- girdi görüntüsündeki küçük değişiklikler çok farklı tahminlere yol açar.
+Bağlam için, bir imge gibi girdi verilerini, imgenin bir kedi resmi olma olasılığı gibi bir tahmine dönüştürmeye çalıştığımız genel bir makine öğrenmesi problemini düşünelim.
+Tekrarlanan $\mathbf{A}$ uygulaması rastgele bir vektörü çok uzun olacak şekilde esnetirse, o zaman girdideki küçük değişiklikler çıktıdaki büyük değişikliklere yükseltilir --- girdi imgesindeki küçük değişiklikler çok farklı tahminlere yol açar.
 Bu doğru görünmüyor!
 
 Diğer taraftan, $\mathbf{A}$ rasgele vektörleri daha kısa olacak şekilde küçültürse, o zaman birçok katmandan geçtikten sonra, vektör esasen hiçbir şeye (sıfıra yakın) küçülür ve çıktı girdiye bağlı olmaz. Bu da açıkça doğru değil!
@@ -289,7 +317,7 @@ Diğer taraftan, $\mathbf{A}$ rasgele vektörleri daha kısa olacak şekilde kü
 $\mathbf{A}$ matrisimizi rastgele bir girdi vektörüyle tekrar tekrar çarptığımızda ne olacağını görelim ve normunu takip edelim.
 
 ```{.python .input}
-# Calculate the sequence of norms after repeatedly applying `A`
+# `A`'yı tekrar tekrar uyguladıktan sonra normların dizisini hesapla
 v_in = np.random.randn(k, 1)
 
 norm_list = [np.linalg.norm(v_in)]
@@ -302,7 +330,7 @@ d2l.plot(np.arange(0, 100), norm_list, 'Iteration', 'Value')
 
 ```{.python .input}
 #@tab pytorch
-# Calculate the sequence of norms after repeatedly applying `A`
+# `A`'yı tekrar tekrar uyguladıktan sonra normların dizisini hesapla
 v_in = torch.randn(k, 1, dtype=torch.float64)
 
 norm_list = [torch.norm(v_in).item()]
@@ -313,11 +341,24 @@ for i in range(1, 100):
 d2l.plot(torch.arange(0, 100), norm_list, 'Iteration', 'Value')
 ```
 
+```{.python .input}
+#@tab tensorflow
+# `A`'yı tekrar tekrar uyguladıktan sonra normların dizisini hesapla
+v_in = tf.random.normal((k, 1), dtype=tf.float64)
+
+norm_list = [tf.norm(v_in).numpy()]
+for i in range(1, 100):
+    v_in = tf.matmul(A, v_in)
+    norm_list.append(tf.norm(v_in).numpy())
+
+d2l.plot(tf.range(0, 100), norm_list, 'Iteration', 'Value')
+```
+
 Norm kontrolsüz bir şekilde büyüyor!
 Nitekim bölüm listesini alırsak, bir desen göreceğiz.
 
 ```{.python .input}
-# Compute the scaling factor of the norms
+# Normların ölçeklendirme çarpanını hesapla
 norm_ratio_list = []
 for i in range(1, 100):
     norm_ratio_list.append(norm_list[i]/norm_list[i - 1])
@@ -327,7 +368,7 @@ d2l.plot(np.arange(1, 100), norm_ratio_list, 'Iteration', 'Ratio')
 
 ```{.python .input}
 #@tab pytorch
-# Compute the scaling factor of the norms
+# Normların ölçeklendirme çarpanını hesapla
 norm_ratio_list = []
 for i in range(1, 100):
     norm_ratio_list.append(norm_list[i]/norm_list[i - 1])
@@ -335,7 +376,17 @@ for i in range(1, 100):
 d2l.plot(torch.arange(1, 100), norm_ratio_list, 'Iteration', 'Ratio')
 ```
 
-Yukarıdaki hesaplamanın son kısmına bakarsak, rastgele vektörün, sondaki kısmın biraz kaydığı, ancak esneme faktörünün sabit olduğu bir faktör olan `1.974459321485[...]`'lik bir faktör kadar esnediğini görürüz.
+```{.python .input}
+#@tab tensorflow
+# Normların ölçeklendirme çarpanını hesapla
+norm_ratio_list = []
+for i in range(1, 100):
+    norm_ratio_list.append(norm_list[i]/norm_list[i - 1])
+
+d2l.plot(tf.range(1, 100), norm_ratio_list, 'Iteration', 'Ratio')
+```
+
+Yukarıdaki hesaplamanın son kısmına bakarsak, rastgele vektörün `1.974459321485[...]` çarpanı ile esnediğini görürüz, burada son kısım biraz kayar, ancak esneme çarpanı sabittir.
 
 ### Özvektörlerle İlişkilendirme
 
@@ -343,10 +394,10 @@ Yukarıdaki hesaplamanın son kısmına bakarsak, rastgele vektörün, sondaki k
 $\mathbf{A}$ için ne olduklarına bir göz atalım.
 Burada bir uyarı: Hepsini görmek için karmaşık sayılara gitmemiz gerekeceği ortaya çıkıyor.
 Bunları esnemeler ve dönüşler olarak düşünebilirsiniz.
-Karmaşık sayının normunu (gerçek ve sanal kısımların karelerinin toplamının karekökü) alarak, bu germe faktörünü ölçebiliriz. Bunları da sıralayabiliriz.
+Karmaşık sayının normunu (gerçek ve sanal kısımların karelerinin toplamının karekökü) alarak, bu esneme çarpanını ölçebiliriz. Bunları da sıralayabiliriz.
 
 ```{.python .input}
-# Compute the eigenvalues
+# Özdeğerleri hesapla
 eigs = np.linalg.eigvals(A).tolist()
 norm_eigs = [np.absolute(x) for x in eigs]
 norm_eigs.sort()
@@ -355,9 +406,18 @@ print(f'norms of eigenvalues: {norm_eigs}')
 
 ```{.python .input}
 #@tab pytorch
-# Compute the eigenvalues
+# Özdeğerleri hesapla
 eigs = torch.eig(A)[0][:,0].tolist()
 norm_eigs = [torch.abs(torch.tensor(x)) for x in eigs]
+norm_eigs.sort()
+print(f'norms of eigenvalues: {norm_eigs}')
+```
+
+```{.python .input}
+#@tab tensorflow
+# Özdeğerleri hesapla
+eigs = tf.linalg.eigh(A)[0].numpy().tolist()
+norm_eigs = [tf.abs(tf.constant(x, dtype=tf.float64)) for x in eigs]
 norm_eigs.sort()
 print(f'norms of eigenvalues: {norm_eigs}')
 ```
@@ -382,10 +442,10 @@ Bunu yapmak için, şimdi matrisimizi bu ana özdeğere göre yeniden ölçeklen
 Bakalım bu durumda ne olacak.
 
 ```{.python .input}
-# Rescale the matrix `A`
+# `A` matrisini yeniden ölçeklendir
 A /= norm_eigs[-1]
 
-# Do the same experiment again
+# Aynı deneyi tekrar yapın
 v_in = np.random.randn(k, 1)
 
 norm_list = [np.linalg.norm(v_in)]
@@ -398,10 +458,10 @@ d2l.plot(np.arange(0, 100), norm_list, 'Iteration', 'Value')
 
 ```{.python .input}
 #@tab pytorch
-# Rescale the matrix `A`
+# `A` matrisini yeniden ölçeklendir
 A /= norm_eigs[-1]
 
-# Do the same experiment again
+# Aynı deneyi tekrar yapın
 v_in = torch.randn(k, 1, dtype=torch.float64)
 
 norm_list = [torch.norm(v_in).item()]
@@ -412,10 +472,26 @@ for i in range(1, 100):
 d2l.plot(torch.arange(0, 100), norm_list, 'Iteration', 'Value')
 ```
 
+```{.python .input}
+#@tab tensorflow
+# `A` matrisini yeniden ölçeklendir
+A /= norm_eigs[-1]
+
+# Aynı deneyi tekrar yapın
+v_in = tf.random.normal((k, 1), dtype=tf.float64)
+
+norm_list = [tf.norm(v_in).numpy()]
+for i in range(1, 100):
+    v_in = tf.matmul(A, v_in)
+    norm_list.append(tf.norm(v_in).numpy())
+
+d2l.plot(tf.range(0, 100), norm_list, 'Iteration', 'Value')
+```
+
 Aynı zamanda ardışık normlar arasındaki oranı daha önce olduğu gibi çizebiliriz ve gerçekten dengelendiğini görebiliriz.
 
 ```{.python .input}
-# Also plot the ratio
+# Oranı da çiz
 norm_ratio_list = []
 for i in range(1, 100):
     norm_ratio_list.append(norm_list[i]/norm_list[i-1])
@@ -425,12 +501,22 @@ d2l.plot(np.arange(1, 100), norm_ratio_list, 'Iteration', 'Ratio')
 
 ```{.python .input}
 #@tab pytorch
-# Also plot the ratio
+# Oranı da çiz
 norm_ratio_list = []
 for i in range(1, 100):
     norm_ratio_list.append(norm_list[i]/norm_list[i-1])
 
 d2l.plot(torch.arange(1, 100), norm_ratio_list, 'Iteration', 'Ratio')
+```
+
+```{.python .input}
+#@tab tensorflow
+# Oranı da çiz
+norm_ratio_list = []
+for i in range(1, 100):
+    norm_ratio_list.append(norm_list[i]/norm_list[i-1])
+
+d2l.plot(tf.range(1, 100), norm_ratio_list, 'Iteration', 'Ratio')
 ```
 
 ## Sonuçlar
@@ -441,7 +527,7 @@ Bunları ilk ana özdeğerlerden yapabilmek güzel olurdu ve matematiğine derin
 Rastgele matrislerin özdeğerlerinin (ve tekil değerler olarak adlandırılan ilgili bir konunun) arasındaki ilişkinin, şu adreste :cite:`Pennington.Schoenholz.Ganguli.2017` ve sonraki çalışmalarda tartışıldığı gibi sinir ağlarının uygun şekilde ilklendirilmesiyle derin bağlantıları olduğu gösterilmiştir.
 
 ## Özet
-* Özvektörler, yön değiştirmeden bir matris tarafından uzatılan vektörlerdir.
+* Özvektörler, yön değiştirmeden bir matris tarafından esnetilen vektörlerdir.
 * Özdeğerler, özvektörlerin matris uygulamasıyla gerildikleri miktardır.
 * Bir matrisin özayrışımı, birçok işlemin özdeğerler üzerindeki işlemlere indirgenmesine izin verebilir.
 * Gershgorin Çember Teoremi, bir matrisin özdeğerleri için yaklaşık değerler sağlayabilir.
@@ -453,16 +539,16 @@ $$
 \mathbf{A} = \begin{bmatrix}
 2 & 1 \\
 1 & 2
-\end{bmatrix}?
+\end{bmatrix}
 $$
 1.  Aşağıdaki matrisin özdeğerleri ve özvektörleri nelerdir ve bu örnekte bir öncekine kıyasla garip olan nedir?
 $$
 \mathbf{A} = \begin{bmatrix}
 2 & 1 \\
 0 & 2
-\end{bmatrix}.
+\end{bmatrix}
 $$
-1. Özdeğerleri hesaplamadan, aşağıdaki matrisin en küçük özdeğerinin $0,5$'den az olması mümkün müdür? *Not*: Bu problemi kafanızda yapılabilirsiniz.
+1. Özdeğerleri hesaplamadan, aşağıdaki matrisin en küçük özdeğerinin $0.5$'den az olması mümkün müdür? *Not*: Bu problemi kafanızda yapılabilirsiniz.
 $$
 \mathbf{A} = \begin{bmatrix}
 3.0 & 0.1 & 0.3 & 1.0 \\
@@ -474,4 +560,13 @@ $$
 
 :begin_tab:`mxnet`
 [Tartışmalar](https://discuss.d2l.ai/t/411)
+:end_tab:
+
+:begin_tab:`pytorch`
+[Tartışmalar](https://discuss.d2l.ai/t/1086)
+:end_tab:
+
+
+:begin_tab:`tensorflow`
+[Tartışmalar](https://discuss.d2l.ai/t/1087)
 :end_tab:
