@@ -1,4 +1,4 @@
- # Çok Değişkenli Kalkülüs
+ # Çok Değişkenli Hesap
 :label:`sec_multivariable_calculus`
 
 Artık tek değişkenli bir fonksiyonun türevleri hakkında oldukça güçlü bir anlayışa sahip olduğumuza göre, potansiyel olarak milyarlarca ağırlığa sahip bir kayıp (yitim) fonksiyonunu düşündüğümüz esas sorumuza dönelim.
@@ -9,13 +9,13 @@ Artık tek değişkenli bir fonksiyonun türevleri hakkında oldukça güçlü b
 $$L(w_1+\epsilon_1, w_2, \ldots, w_N) \approx L(w_1, w_2, \ldots, w_N) + \epsilon_1 \frac{d}{dw_1} L(w_1, w_2, \ldots, w_N).$$
 :eqlabel:`eq_part_der`
 
-Diğerlerini sabit tutarken bir değişkenin türevine *kısmi türev* diyeceğiz ve :eqref:`eq_part_der`deki türev için $\frac{\partial}{\partial w_1}$ gösterimini kullanacağız.
+Diğer değişkenleri sabit tutarken bir değişkendeki türeve *kısmi türev* diyeceğiz ve :eqref:`eq_part_der`deki türev için $\frac{\partial}{\partial w_1}$ gösterimini kullanacağız.
 
 Şimdi bunu alalım ve $w_2$'yi biraz $w_2 + \epsilon_2$ olarak değiştirelim:
 
 $$
 \begin{aligned}
-L(w_1+\epsilon_1, w_2+\epsilon_2, \ldots, w_N) & \approx L(w_1, w_2+\epsilon_2, \ldots, w_N) + \epsilon_1 \frac{\partial}{\partial w_1} L(w_1, w_2+\epsilon_2, \ldots, w_N) \\
+L(w_1+\epsilon_1, w_2+\epsilon_2, \ldots, w_N) & \approx L(w_1, w_2+\epsilon_2, \ldots, w_N) + \epsilon_1 \frac{\partial}{\partial w_1} L(w_1, w_2+\epsilon_2, \ldots, w_N+\epsilon_N) \\
 & \approx L(w_1, w_2, \ldots, w_N) \\
 & \quad + \epsilon_2\frac{\partial}{\partial w_2} L(w_1, w_2, \ldots, w_N) \\
 & \quad + \epsilon_1 \frac{\partial}{\partial w_1} L(w_1, w_2, \ldots, w_N) \\
@@ -104,15 +104,40 @@ def grad_f(x, y):
                      torch.exp(y) / (torch.exp(x) + torch.exp(y))])
 
 epsilon = torch.tensor([0.01, -0.03])
-grad_approx = f(torch.tensor([0.]), torch.log(torch.tensor([2.]))) + epsilon.dot(
+grad_approx = f(torch.tensor([0.]), torch.log(
+    torch.tensor([2.]))) + epsilon.dot(
     grad_f(torch.tensor([0.]), torch.log(torch.tensor(2.))))
 true_value = f(torch.tensor([0.]) + epsilon[0], torch.log(
     torch.tensor([2.])) + epsilon[1])
 f'approximation: {grad_approx}, true Value: {true_value}'
 ```
 
+```{.python .input}
+#@tab tensorflow
+%matplotlib inline
+from d2l import tensorflow as d2l
+from IPython import display
+from mpl_toolkits import mplot3d
+import tensorflow as tf
+import numpy as np
+
+def f(x, y):
+    return tf.math.log(tf.exp(x) + tf.exp(y))
+def grad_f(x, y):
+    return tf.constant([(tf.exp(x) / (tf.exp(x) + tf.exp(y))).numpy(),
+                        (tf.exp(y) / (tf.exp(x) + tf.exp(y))).numpy()])
+
+epsilon = tf.constant([0.01, -0.03])
+grad_approx = f(tf.constant([0.]), tf.math.log(
+    tf.constant([2.]))) + tf.tensordot(
+    epsilon, grad_f(tf.constant([0.]), tf.math.log(tf.constant(2.))), axes=1)
+true_value = f(tf.constant([0.]) + epsilon[0], tf.math.log(
+    tf.constant([2.])) + epsilon[1])
+f'approximation: {grad_approx}, true Value: {true_value}'
+```
+
 ## Gradyanların Geometrisi ve Gradyan (Eğim) İnişi
-Tekrar düşünün: :eqref:`eq_nabla_use`
+:eqref:`eq_nabla_use` denklemindeki ifadeyi tekrar düşünün: 
 
 $$
 L(\mathbf{w} + \boldsymbol{\epsilon}) \approx L(\mathbf{w}) + \boldsymbol{\epsilon}\cdot \nabla_{\mathbf{w}} L(\mathbf{w}).
@@ -128,7 +153,7 @@ Diyelim ki, bunu $L$ kaybımızı en aza indirmeye yardımcı olmak için kullan
 Tam olarak nasıl yapılacağını bilmediğimiz tek şey, ikinci adımdaki $\mathbf{v}$ vektörünü hesaplamaktır. Böyle bir yöne *en dik iniş yönü* diyeceğiz. :numref:`sec_geometry-linear-algebraic-ops` konusundan nokta çarpımlarının geometrik anlamını kullanarak, şunu, :eqref:`eq_nabla_use`, yeniden yazabileceğimizi görüyoruz:
 
 $$
-L(\mathbf{w} + \mathbf{v}) \approx L(\mathbf{w}) + \mathbf{v}\cdot \nabla_{\mathbf{w}} L(\mathbf{w}) = \|\nabla_{\mathbf{w}} L(\mathbf{w})\|\cos(\theta).
+L(\mathbf{w} + \mathbf{v}) \approx L(\mathbf{w}) + \mathbf{v}\cdot \nabla_{\mathbf{w}} L(\mathbf{w}) = L(\mathbf{w}) + \|\nabla_{\mathbf{w}} L(\mathbf{w})\|\cos(\theta).
 $$
 
 Kolaylık olması açısından yönümüzü birim uzunluğa sahip olacak şekilde aldığımızı ve $\mathbf{v}$ ile $\nabla_{\mathbf{w}} L(\mathbf{w})$ arasındaki açı için $\theta$ kullandığımızı unutmayın. $L$'nin olabildiğince hızlı azalan yönünü bulmak istiyorsak, bu ifadeyi olabildiğince negatif olarak ifade etmek isteriz. Seçtiğimiz yönün bu denkleme girmesinin tek yolu $\cos(\theta)$ sayesindedir ve bu yüzden bu kosinüsü olabildiğince negatif yapmak istiyoruz. Şimdi, kosinüs şeklini hatırlarsak, bunu mümkün olduğunca negatif yapmak için $\cos(\theta) = -1$ yapmamız veya eşdeğer olarak gradyan ile seçtiğimiz yön arasındaki açıyı $\pi$ radyan olacak şekilde, diğer anlamda $180$ derece yapmamız gerekecektir. Bunu başarmanın tek yolu, tam ters yöne gitmektir: $\nabla_{\mathbf{w}} L(\mathbf{w})$ yönünün tam tersini gösteren $\mathbf{v}$'yi seçin !
@@ -185,6 +210,14 @@ f = (3 * x**4) - (4 * x**3) - (12 * x**2)
 d2l.plot(x, f, 'x', 'f(x)')
 ```
 
+```{.python .input}
+#@tab tensorflow
+x = tf.range(-2, 3, 0.01)
+f = (3 * x**4) - (4 * x**3) - (12 * x**2)
+
+d2l.plot(x, f, 'x', 'f(x)')
+```
+
 Bu, teorik veya sayısal olarak çalışırken bilinmesi gereken önemli bir gerçeğin altını çiziyor: Bir işlevi en aza indirebileceğimiz (veya maksimize edebileceğimiz) olası noktalar sıfıra eşit bir gradyana sahip olacaktır, ancak sıfır gradyanlı her nokta gerçek *küresel (global)* minimum (veya maksimum) değildir.
 
 ## Çok Değişkenli Zincir Kuralı
@@ -234,7 +267,7 @@ $$
  
 Sürecin anlamını düşünmekte fayda var. $f(u (a, b), v(a, b))$ biçimindeki bir fonksiyonun $a$'daki bir değişiklikle değerini nasıl değiştirdiğini anlamaya çalışıyoruz. Bunun meydana gelebileceği iki yol vardır: $a \rightarrow u \rightarrow f$ ve $a \rightarrow v \rightarrow f$. Bu katkıların her ikisini de zincir kuralı aracılığıyla hesaplayabiliriz: $\frac{\partial w}{\partial u} \cdot \frac{\partial u}{\partial x}$ ve $\frac{\partial w}{\partial v} \cdot \frac{\partial v}{\partial x}$ hesaplanırlar ve toplanırlar.
 
-Sağdaki işlevlerin soldakilere, şekilde gösterildiği gibi, bağlı oldukları farklı bir işlev ağına sahip olduğumuzu düşünün :numref:`fig_chain-2`.
+Imagine we have a different network of functions where the functions on the right depend on those that are connected to on the left as is shown in :numref:`fig_chain-2`.
 
 ![Zincir kuralının daha ince bir başka örneği.](../img/chain-net2.svg)
 :label:`fig_chain-2`
@@ -314,7 +347,7 @@ $$
 \end{aligned}
 $$
 
-Zincir kuralının bu uygulaması bizim açıkça $\frac{\partial f}{\partial u}, \frac{\partial f}{\partial u}, \frac{\partial f}{\partial u}, \frac{\partial f}{\partial u}, \; \text{ve} \; \frac{\partial f}{\partial u}$'ları hesaplamamızı gerektirir. Aşağıdaki denklemleri de dahil etmekten bizi hiçbir şey alıkoyamaz:
+Zincir kuralının bu uygulaması bizim açıkça $\frac{\partial f}{\partial u}, \frac{\partial f}{\partial v}, \frac{\partial f}{\partial a}, \frac{\partial f}{\partial b}, \; \text{ve} \; \frac{\partial f}{\partial w}$'ları hesaplamamızı gerektirir. Aşağıdaki denklemleri de dahil etmekten bizi hiçbir şey alıkoyamaz:
 
 $$
 \begin{aligned}
@@ -361,7 +394,7 @@ Türevleri, girdilerden çıktılara, ileriye doğru, hesaplamaktansa, $f$'den g
 
 Bu, her derin öğrenme algoritmasının, bir geçişte ağdaki her ağırlığa göre kaybın gradyanının hesaplanmasına izin vermek, uyguladığı şeydir. Böyle bir ayrışmaya sahip olmamız şaşırtıcı bir gerçektir.
 
-MXNet'in bunu nasıl içerdiğini görmek için bu örneğe hızlıca bir göz atalım.
+Bunu nasıl içeri işlediğimizi görmek için bu örneğe hızlıca bir göz atalım.
 
 ```{.python .input}
 # Initialize as ndarrays, then attach gradients
@@ -391,7 +424,7 @@ print(f'df/dz at {w}, {x}, {y}, {z} is {z.grad}')
 #@tab pytorch
 # Initialize as ndarrays, then attach gradients
 w = torch.tensor([-1.], requires_grad=True)
-x = torch.tensor([0.], requires_grad=True) 
+x = torch.tensor([0.], requires_grad=True)
 y = torch.tensor([-2.], requires_grad=True)
 z = torch.tensor([1.], requires_grad=True)
 # Do the computation like usual, tracking gradients
@@ -403,13 +436,42 @@ f = (u + v)**2
 f.backward()
 
 print(f'df/dw at {w.data.item()}, {x.data.item()}, {y.data.item()}, '
-      f'{z.data.item()} is {y.grad.data.item()}')
+      f'{z.data.item()} is {w.grad.data.item()}')
 print(f'df/dx at {w.data.item()}, {x.data.item()}, {y.data.item()}, '
       f'{z.data.item()} is {x.grad.data.item()}')
 print(f'df/dy at {w.data.item()}, {x.data.item()}, {y.data.item()}, '
-      f'{z.data.item()} is {x.grad.data.item()}')
+      f'{z.data.item()} is {y.grad.data.item()}')
 print(f'df/dz at {w.data.item()}, {x.data.item()}, {y.data.item()}, '
-      f'{z.data.item()} is {x.grad.data.item()}')
+      f'{z.data.item()} is {z.grad.data.item()}')
+```
+
+```{.python .input}
+#@tab tensorflow
+# Initialize as ndarrays, then attach gradients
+w = tf.Variable(tf.constant([-1.]))
+x = tf.Variable(tf.constant([0.]))
+y = tf.Variable(tf.constant([-2.]))
+z = tf.Variable(tf.constant([1.]))
+# Do the computation like usual, tracking gradients
+with tf.GradientTape(persistent=True) as t:
+    a, b = (w + x + y + z)**2, (w + x - y - z)**2
+    u, v = (a + b)**2, (a - b)**2
+    f = (u + v)**2
+
+# Execute backward pass
+w_grad = t.gradient(f, w).numpy()
+x_grad = t.gradient(f, x).numpy()
+y_grad = t.gradient(f, y).numpy()
+z_grad = t.gradient(f, z).numpy()
+
+print(f'df/dw at {w.numpy()}, {x.numpy()}, {y.numpy()}, '
+      f'{z.numpy()} is {w_grad}')
+print(f'df/dx at {w.numpy()}, {x.numpy()}, {y.numpy()}, '
+      f'{z.numpy()} is {x_grad}')
+print(f'df/dy at {w.numpy()}, {x.numpy()}, {y.numpy()}, '
+      f'{z.numpy()} is {y_grad}')
+print(f'df/dz at {w.numpy()}, {x.numpy()}, {y.numpy()}, '
+      f'{z.numpy()} is {z_grad}')
 ```
 
 Yukarıda yaptığımız şeylerin tümü, `f.backwards()` çağrısıyla otomatik olarak yapılabilir.
@@ -444,11 +506,11 @@ $$
 \begin{aligned}
 f(0,0) & = a, \\
 \nabla f (0,0) & = \begin{bmatrix}b_1 \\ b_2\end{bmatrix}, \\
-\mathbf{H} f (0,0) & = \begin{bmatrix}2 c_{11} & c_{12} \\ c_{12} & 2c_{22}\end{bmatrix}.
+\mathbf{H} f (0,0) & = \begin{bmatrix}2 c_{11} & c_{12} \\ c_{12} & 2c_{22}\end{bmatrix},
 \end{aligned}
 $$
 
-Bundan yola çıkarsak, esas polinomumuzu şöyle diyerek geri alabileceğimizi görürüz;
+esas polinomumuzu şöyle diyerek geri elde edebiliriz;
 
 $$
 f(\mathbf{x}) = f(0) + \nabla f (0) \cdot \mathbf{x} + \frac{1}{2}\mathbf{x}^\top \mathbf{H} f (0) \mathbf{x}.
@@ -474,7 +536,7 @@ $$
 Böylece, biraz cebirle, $[-1,0]^\top$'deki yaklaşık ikinci dereceden polinomu görebiliriz:
 
 $$
-f(x, y) \approx e^{-1}\left(-1 - (x+1) +2(x+1)^2+2y^2\right).
+f(x, y) \approx e^{-1}\left(-1 - (x+1) +(x+1)^2+y^2\right).
 $$
 
 ```{.python .input}
@@ -483,8 +545,8 @@ x, y = np.meshgrid(np.linspace(-2, 2, 101),
                    np.linspace(-2, 2, 101), indexing='ij')
 z = x*np.exp(- x**2 - y**2)
 
-# Compute gradient and Hessian at (1, 0)
-w = np.exp(-1)*(-1 - (x + 1) + 2 * (x + 1)**2 + 2 * y**2)
+# Compute approximating quadratic with gradient and Hessian at (1, 0)
+w = np.exp(-1)*(-1 - (x + 1) + (x + 1)**2 + y**2)
 
 # Plot function
 ax = d2l.plt.figure().add_subplot(111, projection='3d')
@@ -509,8 +571,34 @@ x, y = torch.meshgrid(torch.linspace(-2, 2, 101),
 
 z = x*torch.exp(- x**2 - y**2)
 
-# Compute gradient and Hessian at (1, 0)
+# Compute approximating quadratic with gradient and Hessian at (1, 0)
 w = torch.exp(torch.tensor([-1.]))*(-1 - (x + 1) + 2 * (x + 1)**2 + 2 * y**2)
+
+# Plot function
+ax = d2l.plt.figure().add_subplot(111, projection='3d')
+ax.plot_wireframe(x.numpy(), y.numpy(), z.numpy(),
+                  **{'rstride': 10, 'cstride': 10})
+ax.plot_wireframe(x.numpy(), y.numpy(), w.numpy(),
+                  **{'rstride': 10, 'cstride': 10}, color='purple')
+d2l.plt.xlabel('x')
+d2l.plt.ylabel('y')
+d2l.set_figsize()
+ax.set_xlim(-2, 2)
+ax.set_ylim(-2, 2)
+ax.set_zlim(-1, 1)
+ax.dist = 12
+```
+
+```{.python .input}
+#@tab tensorflow
+# Construct grid and compute function
+x, y = tf.meshgrid(tf.linspace(-2., 2., 101),
+                   tf.linspace(-2., 2., 101))
+
+z = x*tf.exp(- x**2 - y**2)
+
+# Compute approximating quadratic with gradient and Hessian at (1, 0)
+w = tf.exp(tf.constant([-1.]))*(-1 - (x + 1) + 2 * (x + 1)**2 + 2 * y**2)
 
 # Plot function
 ax = d2l.plt.figure().add_subplot(111, projection='3d')
@@ -532,7 +620,7 @@ Bu, :numref:`sec_gd`'de tartışılan Newton Algoritmasının temelini oluşturu
 ## Biraz Matris Kalkülüsü
 Matrisleri içeren fonksiyonların türevlerinin oldukça iyi olduğu ortaya çıktı. Bu bölüm gösterimsel olarak ağır hale gelebilir, bu nedenle ilk okumada atlanabilir, ancak genel matris işlemlerini içeren fonksiyonların türevlerinin genellikle başlangıçta tahmin edebileceğinden çok daha temiz olduğunu bilmek yararlıdır, özellikle de merkezi matris işlemlerinin derin öğrenme uygulamaları için ne kadar olduğu göz önüne alındığında.
 
-Bir örnekle başlayalım. Bir sabit satır vektörümüz $\boldsymbol{\beta}$ olduğunu ve $f(\mathbf{x}) = \boldsymbol{\beta}\mathbf{x}$ çarpım fonksiyonunu almak ve $\mathbf{x}$'i değiştirdiğimizde iç çarpım nasıl değişir anlamak istediğimizi varsayalım.
+Bir örnekle başlayalım. Bir sabit sütun vektörümüz $\boldsymbol{\beta}$ olduğunu ve $f(\mathbf{x}) = \boldsymbol{\beta}^\top\mathbf{x}$ çarpım fonksiyonunu almak ve $\mathbf{x}$'i değiştirdiğimizde iç çarpım nasıl değişir anlamak istediğimizi varsayalım.
 
 Makine öğrenmesinde matris türevleriyle çalışırken faydalı olacak bir gösterim parçası, kısmi türevlerimizi türevin paydada bulunduğu vektör, matris veya tensörün şekline dönüştürdüğümüz *payda düzenli matris türevi* olarak adlandırılır. Bu durumda şöyle yazacağız
 
@@ -541,7 +629,7 @@ $$
 \frac{df}{dx_1} \\
 \vdots \\
 \frac{df}{dx_n}
-\end{bmatrix}.
+\end{bmatrix},
 $$
 
 Burada $\mathbf{x}$ sütun vektörünün şekline eşleştirdik.
@@ -575,13 +663,13 @@ $$
 \beta_1 \\
 \vdots \\
 \beta_n
-\end{bmatrix} = \boldsymbol{\beta}^\top.
+\end{bmatrix} = \boldsymbol{\beta}.
 $$
 
 Bu, matris kalkülüsü ile ilgili olarak bu bölümde sık sık karşılaşacağımız birkaç etkeni göstermektedir:
 
 * İlk olarak, hesaplamalar daha çok işin içine girecek.
-* İkinci olarak, nihai sonuçlar ara süreçten çok daha temizdir ve her zaman tek değişkenli duruma benzer görünecektir. Bu durumda, $\frac{d}{dx}(bx) = b$ ve $\frac{d}{d\mathbf{x}} (\boldsymbol{\beta}\mathbf{x}) = \boldsymbol{\beta}^\top$'nin ikisi de benzerdir.
+* İkinci olarak, nihai sonuçlar ara süreçten çok daha temizdir ve her zaman tek değişkenli duruma benzer görünecektir. Bu durumda, $\frac{d}{dx}(bx) = b$ ve $\frac{d}{d\mathbf{x}} (\boldsymbol{\beta}^\top\mathbf{x}) = \boldsymbol{\beta}$'nin ikisi de benzerdir.
 * Üçüncüsü, devrikler genellikle herhangi bir yerden ortaya çıkabilirler. Bunun temel nedeni, paydanın şeklini eşleştirmemizdir, böylece matrisleri çarptığımızda, esas terimin şekline geri dönmek için devrikler almamız gerekecek.
 
 Önsezi oluşturmaya devam etmek için biraz daha zor bir hesaplama deneyelim. Bir sütun vektörümüz $\mathbf{x}$ ve kare matrisimiz $A$ olduğunu ve şunu hesaplamak istediğimizi varsayalım.
@@ -655,21 +743,21 @@ $$\frac{d}{d\mathbf{V}} \|\mathbf{X} - \mathbf{U}\mathbf{V}\|_2^{2} = \;?$$
 Bu hesaplama, matris çarpanlarına ayırma adı verilen bir alanda önemlidir. Ancak bizim için bu, hesaplanması gereken bir türevdir. Bunun $1\times 1$ matrisler için ne olacağını hayal etmeye çalışalım. Bu durumda ifadeyi alırız
 
 $$ 
-\frac{d}{dv} (x-uv)^{2}= 2(x-uv)u,
+\frac{d}{dv} (x-uv)^{2}= -2(x-uv)u,
 $$
 
 Burada türev oldukça standarttır. Bunu tekrar bir matris ifadesine dönüştürmeye çalışırsak,
 
 $$
-\frac{d}{d\mathbf{V}} \|\mathbf{X} - \mathbf{U}\mathbf{V}\|_2^{2}= 2(\mathbf{X} - \mathbf{U}\mathbf{V})\mathbf{U}.
+\frac{d}{d\mathbf{V}} \|\mathbf{X} - \mathbf{U}\mathbf{V}\|_2^{2}= -2(\mathbf{X} - \mathbf{U}\mathbf{V})\mathbf{U}.
 $$
 
 Ancak buna bakarsak pek işe yaramıyor. $\mathbf{X}$'in $n\times m$ olduğunu ve $\mathbf{U}\mathbf{V}$ öyle olduğunu hatırlayın, dolayısıyla $2(\mathbf{X} - \mathbf{U}\mathbf{V})$, $n\times m$'dir. Öte yandan, $\mathbf{U}$, $n\times r$'dir ve boyutlar eşleşmediğinden, $n\times m$ ve a $n\times r$ matrisleri çarpamayız!
 
-$\frac{d}{d\mathbf{V}}$'i elde etmek istiyoruz, bu $\mathbf{V}$ ile aynı şekle sahip, ki bu $r\times m$. Öyleyse bir şekilde bir $n\times m$ matrisi ve bir $n\times r$ matrisi almalıyız, bunları bir $r\times m$ matris elde etmek için birbirleriyle çarpmalıyız (belki bazı devriklerle). Bunu $U^\top$'yu $(\mathbf{X} - \mathbf{U}\mathbf{V})$ ile çarparak yapabiliriz. Böylelikle, :eqref:`eq_mat_goal_2` için çözümü tahmin edebiliriz:
+$\frac{d}{d\mathbf{V}}$'i elde etmek istiyoruz, bu $\mathbf{V}$ ile aynı şekle sahip, ki bu $r \times m$. Öyleyse bir şekilde bir $n\times m$ matrisi ve bir $n\times r$ matrisi almalıyız, bunları bir $r \times m$ matris elde etmek için birbirleriyle çarpmalıyız (belki bazı devriklerle). Bunu $U^\top$'yu $(\mathbf{X} - \mathbf{U}\mathbf{V})$ ile çarparak yapabiliriz. Böylelikle, :eqref:`eq_mat_goal_2` için çözümü tahmin edebiliriz:
 
 $$
-\frac{d}{d\mathbf{V}} \|\mathbf{X} - \mathbf{U}\mathbf{V}\|_2^{2}= 2\mathbf{U}^\top(\mathbf{X} - \mathbf{U}\mathbf{V}).
+\frac{d}{d\mathbf{V}} \|\mathbf{X} - \mathbf{U}\mathbf{V}\|_2^{2}= -2\mathbf{U}^\top(\mathbf{X} - \mathbf{U}\mathbf{V}).
 $$ 
 
 Bunun işe yaradığını göstermek için, ayrıntılı bir hesaplama sağlamazsak ihmal etmiş oluruz. Bu pratik kuralın işe yaradığına zaten inanıyorsanız, bu türetmeyi atlamaktan çekinmeyin. Hesaplayalım:
@@ -687,13 +775,13 @@ $$
 $\mathbf{X}$ and $\mathbf{U}$'nin tüm girdilerinin $\frac{d}{dv_{ab}}$ bakımında sabitler olduğunu hatırlayarak, türevi toplamın içine itebiliriz, ve zincir kuralını kareye uygularız:
 
 $$
-\frac{d}{dv_{ab}} \|\mathbf{X} - \mathbf{U}\mathbf{V}\|_2^{2}= \sum_{i, j}2\left(x_{ij} - \sum_k u_{ik}v_{kj}\right)\left(\sum_k u_{ik}\frac{dv_{kj}}{dv_{ab}} \right).
+\frac{d}{dv_{ab}} \|\mathbf{X} - \mathbf{U}\mathbf{V}\|_2^{2}= \sum_{i, j}2\left(x_{ij} - \sum_k u_{ik}v_{kj}\right)\left(-\sum_k u_{ik}\frac{dv_{kj}}{dv_{ab}} \right).
 $$
 
 Önceki türetmede olduğu gibi, $\frac{dv_{kj}}{dv_{ab}}$’nın yalnızca $k = a$ ve $j = b$ ise sıfırdan farklı olduğunu görebiliriz. Bu koşullardan herhangi biri geçerli değilse, toplamdaki terim sıfırdır ve onu özgürce atabiliriz. Bunu görüyoruz:
 
 $$
-\frac{d}{dv_{ab}} \|\mathbf{X} - \mathbf{U}\mathbf{V}\|_2^{2}= \sum_{i}2\left(x_{ib} - \sum_k u_{ik}v_{kb}\right)u_{ia}.
+\frac{d}{dv_{ab}} \|\mathbf{X} - \mathbf{U}\mathbf{V}\|_2^{2}= -2\sum_{i}\left(x_{ib} - \sum_k u_{ik}v_{kb}\right)u_{ia}.
 $$
 
 Buradaki önemli bir incelik, $k = a$ şartının iç toplamın içinde oluşmamasıdır, çünkü $k$ iç terimin içinde topladığımız yapay bir değişken. Gösterimsel olarak daha temiz bir örnek için nedenini düşünelim:
@@ -717,25 +805,25 @@ $$
 Bu, artık türevimizi şu şekilde yazabileceğimiz anlamına gelir:
 
 $$
-\frac{d}{dv_{ab}} \|\mathbf{X} - \mathbf{U}\mathbf{V}\|_2^{2}= 2\sum_{i}[\mathbf{X}-\mathbf{U}\mathbf{V}]_{ib}u_{ia}.
+\frac{d}{dv_{ab}} \|\mathbf{X} - \mathbf{U}\mathbf{V}\|_2^{2}= -2\sum_{i}[\mathbf{X}-\mathbf{U}\mathbf{V}]_{ib}u_{ia}.
 $$
 
 Bunun bir matrisin $a, b$ öğesi gibi görünmesini istiyoruz ki böylece bir matris ifadesine ulaşmak için önceki örnekte olduğu gibi tekniği kullanabilelim, bu da indislerin sırasını $u_{ia}$ üzerinden değiştirmemiz gerektiği anlamına gelir. $u_{ia} = [\mathbf{U}^\top]_{ai}$ olduğunu fark edersek, bunu yazabiliriz:
 
 $$
-\frac{d}{dv_{ab}} \|\mathbf{X} - \mathbf{U}\mathbf{V}\|_2^{2}= 2\sum_{i} [\mathbf{U}^\top]_{ai}[\mathbf{X}-\mathbf{U}\mathbf{V}]_{ib}.
+\frac{d}{dv_{ab}} \|\mathbf{X} - \mathbf{U}\mathbf{V}\|_2^{2}= -2\sum_{i} [\mathbf{U}^\top]_{ai}[\mathbf{X}-\mathbf{U}\mathbf{V}]_{ib}.
 $$
 
 Bu bir matris çarpımıdır ve dolayısıyla şu sonuca varabiliriz:
 
 $$
-\frac{d}{dv_{ab}} \|\mathbf{X} - \mathbf{U}\mathbf{V}\|_2^{2}= [2\mathbf{U}^\top(\mathbf{X}-\mathbf{U}\mathbf{V})]_{ab}.
+\frac{d}{dv_{ab}} \|\mathbf{X} - \mathbf{U}\mathbf{V}\|_2^{2}= -2[\mathbf{U}^\top(\mathbf{X}-\mathbf{U}\mathbf{V})]_{ab}.
 $$
 
 Böylece çözümü şu şekilde yazabiliriz :eqref:`eq_mat_goal_2`
 
 $$
-\frac{d}{d\mathbf{V}} \|\mathbf{X} - \mathbf{U}\mathbf{V}\|_2^{2}= 2\mathbf{U}^\top(\mathbf{X} - \mathbf{U}\mathbf{V}).
+\frac{d}{d\mathbf{V}} \|\mathbf{X} - \mathbf{U}\mathbf{V}\|_2^{2}= -2\mathbf{U}^\top(\mathbf{X} - \mathbf{U}\mathbf{V}).
 $$
 
 Bu, yukarıda tahmin ettiğimiz çözüme uyuyor!
@@ -749,7 +837,7 @@ Bu noktada şunu sormak mantıklıdır, "Neden öğrendiğim tüm kalkülüs kur
 * Matris kalkülüsü, matris ifadelerinin türevlerini öz olarak yazmamızı sağlar.
 
 ## Alıştırmalar
-1. $\boldsymbol{\beta}$ satır vektörü verildiğinde, hem $f(\mathbf{x}) = \boldsymbol{\beta}\mathbf{x}$ hem de $g(\mathbf{x}) = \mathbf{x}^\top\boldsymbol{\beta}^\top$ türevlerini hesaplayınız. Neden aynı cevabı alıyorsunuz?
+1. $\boldsymbol{\beta}$ sütun vektörü verildiğinde, hem $f(\mathbf{x}) = \boldsymbol{\beta}^\top\mathbf{x}$ hem de $g(\mathbf{x}) = \mathbf{x}^\top\boldsymbol{\beta}$ türevlerini hesaplayınız. Neden aynı cevabı alıyorsunuz?
 2. $\mathbf{v}$ bir $n$ boyutlu vektör olsun. $\frac{\partial}{\partial\mathbf{v}}\|\mathbf{v}\|_2$ nedir?
 3. $L(x, y) = \log(e^x + e^y)$ olsun. Gradyanı hesaplayınız. Gradyanın bileşenlerinin toplamı nedir?
 4. $f(x, y) = x^2y + xy^2$ olsun. Tek kritik noktanın $(0,0)$ olduğunu gösterin. $f(x, x)$'i dikkate alarak, $(0,0)$'ın maksimum mu, minimum mu olduğunu veya hiçbiri olmadığını belirleyin.
@@ -758,4 +846,13 @@ Bu noktada şunu sormak mantıklıdır, "Neden öğrendiğim tüm kalkülüs kur
 
 :begin_tab:`mxnet`
 [Tartışmalar](https://discuss.d2l.ai/t/413)
+:end_tab:
+
+:begin_tab:`pytorch`
+[Tartışmalar](https://discuss.d2l.ai/t/1090)
+:end_tab:
+
+
+:begin_tab:`tensorflow`
+[Tartışmalar](https://discuss.d2l.ai/t/1091)
 :end_tab:
