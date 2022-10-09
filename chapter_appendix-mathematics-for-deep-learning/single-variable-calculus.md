@@ -466,7 +466,7 @@ P5 = 1 + xs + xs**2 / 2 + xs**3 / 6 + xs**4 / 24 + xs**5 / 120
 d2l.plot(xs, [ys, P1, P2, P5], 'x', 'f(x)', legend=[
     "Exponential", "Degree 1 Taylor Series", "Degree 2 Taylor Series",
     "Degree 5 Taylor Series"])
-``` 
+```
 
 ```{.python .input}
 #@tab tensorflow
