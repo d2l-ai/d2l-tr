@@ -1,7 +1,7 @@
 # Rastgele Değişkenler
 :label:`sec_random_variables`
 
-:numref:`sec_prob`'de, bizim durumumuzda ya sonlu olası değerler kümesini ya da tamsayıları alan rastgele değişkenlere atıfta bulunan ayrık rastgele değişkenlerle nasıl çalışılacağının temellerini gördük. Bu bölümde, herhangi bir gerçel değeri alabilen rastgele değişkenler olan *sürekli rastgele değişkenler* teorisini geliştiriyoruz.
+:numref:`sec_prob` içinde, bizim durumumuzda ya sonlu olası değerler kümesini ya da tamsayıları alan rastgele değişkenlere atıfta bulunan ayrık rastgele değişkenlerle nasıl çalışılacağının temellerini gördük. Bu bölümde, herhangi bir gerçel değeri alabilen rastgele değişkenler olan *sürekli rastgele değişkenler* teorisini geliştiriyoruz.
 
 ## Sürekli Rastgele Değişkenler
 
@@ -13,29 +13,29 @@ Sürekli rastgele değişkenlerle çalışırken karşılaşılan ek teknik zorl
 
 Başlangıç ​​olarak, tek basamaklı bir doğrulukla, yani $0 \text{cm}$, $1 \text{cm}$, $2 \text{cm}$ gibi bölmeler kullanarak ölçtüğümüzü hayal ediyoruz. Dart tahtasına diyelim ki $100$ dart atıyoruz ve eğer bunlardan $20$'si $2 \text{cm}$ bölmesine düşerse, attığımız dartların $\% 20$'sinin tahtada merkezden $2 \text{cm}$ uzağa saplandığı sonucuna varıyoruz.
 
-Ancak daha yakından baktığımızda, bu sorumuzla örtüşmüyor! Tam eşitlik istiyorduk, oysa bu bölmeler diyelim ki $1,5 \text{cm}$ ile $2,5 \text{cm}$ arasındaki her şeyi tutuyor.
+Ancak daha yakından baktığımızda, bu sorumuzla örtüşmüyor! Tam eşitlik istiyorduk, oysa bu bölmeler diyelim ki $1.5 \text{cm}$ ile $2.5 \text{cm}$ arasındaki her şeyi tutuyor.
 
-Kesintisiz, daha ileriye devam edelim. Daha da keskin bir şekilde ölçüyoruz, diyelim ki $1,9 \text{cm}$, $2,0 \text{cm}$, $2,1 \text{cm}$ ve şimdi, belki de $100$ darttan $3$'ünün $2.0 \text{cm}$ hattında tahtaya saplandığını görüyoruz. Böylece olasılığın $\% 3$ olduğu sonucuna vardık.
+Kesintisiz, daha ileriye devam edelim. Daha da keskin bir şekilde ölçüyoruz, diyelim ki $1.9 \text{cm}$, $2.0 \text{cm}$, $2.1 \text{cm}$ ve şimdi, belki de $100$ darttan $3$'ünün $2.0 \text{cm}$ hattında tahtaya saplandığını görüyoruz. Böylece olasılığın $\% 3$ olduğu sonucuna vardık.
 
-Ancak bu hiçbir şeyi çözmez! Sorunu bir basamak daha aşağıya ittik. Biraz soyutlayalım. İlk $k$ hanesinin $2,00000 \ldots$ ile eşleşme olasılığını bildiğimizi ve ilk $k + 1$ hanesi için eşleşme olasılığını bilmek istediğimizi düşünün. ${k + 1}.$ basamağının aslında $\{0, 1, 2, \ ldots, 9 \}$ kümesinden rastgele bir seçim olduğunu varsaymak oldukça mantıklıdır. En azından, mikrometre mertebesindeki değeri merkezden uzaklaşarak $7$ veya $3$'e karşılık gelmeye tercih etmeye zorlayacak fiziksel olarak anlamlı bir süreç düşünemiyoruz.
+Ancak bu hiçbir şeyi çözmez! Sorunu bir basamak daha aşağıya ittik. Biraz soyutlayalım. İlk $k$ hanesinin $2.00000 \ldots$ ile eşleşme olasılığını bildiğimizi ve ilk $k + 1$ hanesi için eşleşme olasılığını bilmek istediğimizi düşünün. ${k + 1}.$ basamağının aslında $\{0, 1, 2, \ldots, 9 \}$ kümesinden rastgele bir seçim olduğunu varsaymak oldukça mantıklıdır. En azından, mikrometre mertebesindeki değeri merkezden uzaklaşarak $7$ veya $3$'e karşılık gelmeye tercih etmeye zorlayacak fiziksel olarak anlamlı bir süreç düşünemiyoruz.
 
 Bunun anlamı, özünde ihtiyaç duyduğumuz her ek doğruluk basamağının eşleştirme olasılığını $10$'luk bir faktörle azaltması gerektiğidir. Ya da başka bir deyişle, bunu beklerdik:
 
 $$
-P(\text{distance is}\; 2.00\ldots, \;\text{to}\; k \;\text{digits} ) \approx p\cdot10^{-k}.
+P(\text{mesafe}\; 2.00\ldots, \;\text{'ye}\; k \;\text{basamak yakın} ) \approx p\cdot10^{-k}.
 $$
 
 Değer $p$ esasen ilk birkaç basamakta olanları kodlar ve $10^{-k}$ gerisini halleder.
 
-Ondalık sayıdan sonra konumu $k = 4$ basamağa kadar doğru bildiğimize dikkat edin. Bu, değerin $[(1.99995,2.00005]$ aralığında olduğunu bildiğimiz anlamına gelir, bu da $2.00005-1.99995 = 10^{-4}$ uzunluğunda bir aralıktır. Dolayısıyla, bu aralığın uzunluğunu $\epsilon$ olarak adlandırırsak, diyebiliriz ki
+Ondalık sayıdan sonra konumu $k = 4$ basamağa kadar doğru bildiğimize dikkat edin. Bu, değerin $[1.99995,2.00005]$ aralığında olduğunu bildiğimiz anlamına gelir, bu da $2.00005-1.99995 = 10^{-4}$ uzunluğunda bir aralıktır. Dolayısıyla, bu aralığın uzunluğunu $\epsilon$ olarak adlandırırsak, diyebiliriz ki
 
 $$
-P(\text{distance is in an}\; \epsilon\text{-sized interval around}\; 2 ) \approx \epsilon \cdot p.
+P(2\text{'ye}\; \epsilon\text{-ebatlı aralık mesafesinde}) \approx \epsilon \cdot p.
 $$
 
 Bunu son bir adım daha ileri götürelim. Bunca zamandır $2$ noktasını düşünüyorduk, ama diğer noktaları asla düşünmedik. Orada temelde hiçbir şey farklı değildir, ancak $p$ değeri muhtemelen farklı olacaktır. En azından bir dart atıcısının, $20 \text{cm}$ yerine $2 \text{cm}$ gibi merkeze daha yakın bir noktayı vurma olasılığının daha yüksek olduğunu umuyoruz. Bu nedenle, $p$ değeri sabit değildir, bunun yerine $x$ noktasına bağlı olmalıdır. Bu da bize şunu beklememiz gerektiğini söylüyor:
 
-$$P(\text{distance is in an}\; \epsilon \text{-sized interval around}\; x ) \approx \epsilon \cdot p(x).$$
+$$P(x\text{'ye}\; \epsilon\text{-ebatlı aralık mesafesinde}) \approx \epsilon \cdot p(x).$$
 :eqlabel:`eq_pdf_deriv`
 
 Aslında, :eqref:`eq_pdf_deriv` tam olarak *olasılık yoğunluk fonksiyonunu* tanımlar. Bu, bir noktayı başka yakın bir noktaya göre vurma olasılığını kodlayan bir $p(x)$ fonksiyonudur. Böyle bir fonksiyonun neye benzeyebileceğini görselleştirelim.
@@ -47,7 +47,7 @@ from IPython import display
 from mxnet import np, npx
 npx.set_np()
 
-# Plot the probability density function for some random variable
+# Bazı rastgele değişkenler için olasılık yoğunluk fonksiyonunu çiz
 x = np.arange(-5, 5, 0.01)
 p = 0.2*np.exp(-(x - 3)**2 / 2)/np.sqrt(2 * np.pi) + \
     0.8*np.exp(-(x + 1)**2 / 2)/np.sqrt(2 * np.pi)
@@ -61,12 +61,28 @@ d2l.plot(x, p, 'x', 'Density')
 from d2l import torch as d2l
 from IPython import display
 import torch
-torch.pi = torch.acos(torch.zeros(1)).item() * 2  # Define pi in torch
+torch.pi = torch.acos(torch.zeros(1)).item() * 2  # Pi'yi tanımla
 
-# Plot the probability density function for some random variable
+# Bazı rastgele değişkenler için olasılık yoğunluk fonksiyonunu çiz
 x = torch.arange(-5, 5, 0.01)
 p = 0.2*torch.exp(-(x - 3)**2 / 2)/torch.sqrt(2 * torch.tensor(torch.pi)) + \
     0.8*torch.exp(-(x + 1)**2 / 2)/torch.sqrt(2 * torch.tensor(torch.pi))
+
+d2l.plot(x, p, 'x', 'Density')
+```
+
+```{.python .input}
+#@tab tensorflow
+%matplotlib inline
+from d2l import tensorflow as d2l
+from IPython import display
+import tensorflow as tf
+tf.pi = tf.acos(tf.zeros(1)).numpy() * 2  # Pi'yi tanımla
+
+# Bazı rastgele değişkenler için olasılık yoğunluk fonksiyonunu çiz
+x = tf.range(-5, 5, 0.01)
+p = 0.2*tf.exp(-(x - 3)**2 / 2)/tf.sqrt(2 * tf.constant(tf.pi)) + \
+    0.8*tf.exp(-(x + 1)**2 / 2)/tf.sqrt(2 * tf.constant(tf.pi))
 
 d2l.plot(x, p, 'x', 'Density')
 ```
@@ -77,17 +93,17 @@ d2l.plot(x, p, 'x', 'Density')
 
 Şimdi bunu daha ayrıntılı inceleyelim. Bir rastgele değişken $X$ için olasılık yoğunluk fonksiyonunun sezgisel olarak ne olduğunu daha önce görmüştük, yani yoğunluk fonksiyonu bir $p(x)$ fonksiyonudur.
 
-$$P(X \; \text{is in an}\; \epsilon \text{-sized interval around}\; x ) \approx \epsilon \cdot p(x).$$
+$$P(X\; x\text{'ye}\; \epsilon\text{-ebatlı aralık mesafesinde}) \approx \epsilon \cdot p(x).$$
 :eqlabel:`eq_pdf_def`
 
 Peki bu $p(x)$'nin özellikleri için ne anlama geliyor?
 
 Birincisi, olasılıklar asla negatif değildir, dolayısıyla $p(x)\ge 0$ olmasını bekleriz.
 
-İkinci olarak, $\mathbb{R}$'yi $\epsilon$ genişliğinde sonsuz sayıda dilime böldüğümüzü varsayalım, diyelim ki $(\epsilon\cdot i, \epsilon \cdot (i+1)]$ gibi. Bunların her biri için, :eqref:`eq_pdf_def`'den biliyoruz, olasılık yaklaşık olarak
+İkinci olarak, $\mathbb{R}$'yi $\epsilon$ genişliğinde sonsuz sayıda dilime böldüğümüzü varsayalım, diyelim ki $(\epsilon\cdot i, \epsilon \cdot (i+1)]$ gibi. Bunların her biri için, :eqref:`eq_pdf_def` denkleminden biliyoruz, olasılık yaklaşık olarak
 
 $$
-P(X \; \text{is in an}\; \epsilon\text{-sized interval around}\; x ) \approx \epsilon \cdot p(\epsilon \cdot i),
+P(X\; x\text{'ye}\; \epsilon\text{-ebatlı aralık mesafesinde}) \approx \epsilon \cdot p(\epsilon \cdot i),
 $$
 
 bu yüzden hepsi üzerinden toplanabilmeli
@@ -96,7 +112,7 @@ $$
 P(X\in\mathbb{R}) \approx \sum_i \epsilon \cdot p(\epsilon\cdot i).
 $$
 
-Bu, :numref:`sec_integral_calculus`da tartışılan bir integral yaklaşımından başka bir şey değildir, dolayısıyla şunu söyleyebiliriz
+Bu, :numref:`sec_integral_calculus` içinde tartışılan bir integral yaklaşımından başka bir şey değildir, dolayısıyla şunu söyleyebiliriz:
 
 $$
 P(X\in\mathbb{R}) = \int_{-\infty}^{\infty} p(x) \; dx.
@@ -117,7 +133,7 @@ $$
 Bunu, daha önce olduğu gibi aynı ayrık yaklaşıklama yöntemlerini kullanarak kodda yaklaşıklaştırabiliriz. Bu durumda mavi bölgeye düşme olasılığını tahmin edebiliriz.
 
 ```{.python .input}
-# Approximate probability using numerical integration
+# Sayısal integral alma kullanarak olasılığı yaklaşıkla
 epsilon = 0.01
 x = np.arange(-5, 5, 0.01)
 p = 0.2*np.exp(-(x - 3)**2 / 2) / np.sqrt(2 * np.pi) + \
@@ -133,7 +149,7 @@ f'approximate Probability: {np.sum(epsilon*p[300:800])}'
 
 ```{.python .input}
 #@tab pytorch
-# Approximate probability using numerical integration
+# Sayısal integral alma kullanarak olasılığı yaklaşıkla
 epsilon = 0.01
 x = torch.arange(-5, 5, 0.01)
 p = 0.2*torch.exp(-(x - 3)**2 / 2) / torch.sqrt(2 * torch.tensor(torch.pi)) +\
@@ -147,6 +163,22 @@ d2l.plt.show()
 f'approximate Probability: {torch.sum(epsilon*p[300:800])}'
 ```
 
+```{.python .input}
+#@tab tensorflow
+# Sayısal integral alma kullanarak olasılığı yaklaşıkla
+epsilon = 0.01
+x = tf.range(-5, 5, 0.01)
+p = 0.2*tf.exp(-(x - 3)**2 / 2) / tf.sqrt(2 * tf.constant(tf.pi)) +\
+    0.8*tf.exp(-(x + 1)**2 / 2) / tf.sqrt(2 * tf.constant(tf.pi))
+
+d2l.set_figsize()
+d2l.plt.plot(x, p, color='black')
+d2l.plt.fill_between(x.numpy().tolist()[300:800], p.numpy().tolist()[300:800])
+d2l.plt.show()
+
+f'approximate Probability: {tf.reduce_sum(epsilon*p[300:800])}'
+```
+
 Bu iki özelliğin, olası olasılık yoğunluk fonksiyonlarının (veya yaygın olarak karşılaşılan kısaltma için *o.y.f. (p.d.f)*'ler) uzayını tastamam tanımladığı ortaya çıkar. Negatif olmayan fonksiyonlar $p(x) \ge 0$ için
 
 $$\int_{-\infty}^{\infty} p(x) \; dx = 1.$$
@@ -157,11 +189,11 @@ Bu işlevi, rastgele değişkenimizin belirli bir aralıkta olma olasılığın�
 $$P(X\in(a, b]) = \int _ {a}^{b} p(x) \; dx.$$
 :eqlabel:`eq_pdf_int_int`
 
-:numref:`sec_distributions`'da bir dizi yaygın dağılımı göreceğiz, ancak soyut oalrak çalışmaya devam edelim.
+:numref:`sec_distributions` içinde bir dizi yaygın dağılımı göreceğiz, ancak soyut olarak çalışmaya devam edelim.
 
 ### Birikimli (Kümülatif) Dağılım Fonksiyonları
 
-Önceki bölümde, o.y.f kavramını gördük. Uygulamada, bu sürekli rastgele değişkenleri tartışmak için yaygın olarak karşılaşılan bir yöntemdir, ancak önemli bir görünmez tuzak vardır: o.y.f.'nin değerlerinin kendileri olasılıklar değil, olasılıkları elde etmek için integralini almamız gereken bir fonksiyondur. $1/10$'dan daha uzun bir aralık için $10$'dan fazla olmadığı sürece, yoğunluğun $10$'dan büyük olmasının yanlış bir tarafı yoktur. Bu sezgiye aykırı olabilir, bu nedenle insanlar genellikle *birikimli dağılım işlevi* veya *bir olasılık olan* b.d.f. açısından düşünürler.
+Önceki bölümde, o.y.f. kavramını gördük. Uygulamada, bu sürekli rastgele değişkenleri tartışmak için yaygın olarak karşılaşılan bir yöntemdir, ancak önemli bir görünmez tuzak vardır: o.y.f.'nin değerlerinin kendileri olasılıklar değil, olasılıkları elde etmek için integralini almamız gereken bir fonksiyondur. $1/10$'dan daha uzun bir aralık için $10$'dan fazla olmadığı sürece, yoğunluğun $10$'dan büyük olmasının yanlış bir tarafı yoktur. Bu sezgiye aykırı olabilir, bu nedenle insanlar genellikle *birikimli dağılım işlevi* veya *bir olasılık olan* b.d.f. açısından düşünürler.
 
 Özellikle :eqref:`eq_pdf_int_int` kullanarak b.d.f'yi tanımlarız. $p(x)$ yoğunluğuna sahip rastgele bir değişken $X$ için
  
@@ -186,7 +218,7 @@ F(x) = \begin{cases}
 \end{cases}
 $$
 
-Bu örnekte, bdf ile çalışmanın faydalarından birini, aynı çerçevede sürekli veya ayrık rastgele değişkenlerle veya ötesi ikisinin karışımlarıyla başa çıkma becerisini görüyoruz (Yazı tura atın: tura gerlirse zar atın, yazı gelirse bir dart atışının dart tahtasının merkezinden mesafesini ölçün).
+Bu örnekte, bdf ile çalışmanın faydalarından birini, aynı çerçevede sürekli veya ayrık rastgele değişkenlerle veya ötesi ikisinin karışımlarıyla başa çıkma becerisini görüyoruz (Yazı tura atın: Tura gerlirse zar atın, yazı gelirse bir dart atışının dart tahtasının merkezinden mesafesini ölçün).
 
 ### Ortalama
 
@@ -199,7 +231,7 @@ $$\mu_X = E[X] = \sum_i x_i p_i.$$
 
 Ortalamayı yorumlamamız gereken anlam (dikkatli olarak), bize rastgele değişkenin nerede bulunma eğiliminde olduğunu söylemesidir.
 
-Bu bölümde inceleyeceğimiz minimalist bir örnek olarak, $a-2$ değerini $p$, $a + 2$ değerini $p$ ve $a$ değerini $1-2p$ olasılıkla alan rastgele değişken olarak $X$'i alalım. :eqref:`eq_exp_def`'yi kullanarak, olası herhangi bir $a$ ve $p$ seçimi için ortalama hesaplayabiliriz:
+Bu bölümde inceleyeceğimiz minimalist bir örnek olarak, $a-2$ değerini $p$, $a + 2$ değerini $p$ ve $a$ değerini $1-2p$ olasılıkla alan rastgele değişken olarak $X$'i alalım. :eqref:`eq_exp_def` denklemini kullanarak, olası herhangi bir $a$ ve $p$ seçimi için ortalama hesaplayabiliriz:
 
 $$
 \mu_X = E[X] = \sum_i x_i p_i = (a-2)p + a(1-2p) + (a+2)p = a.
@@ -209,10 +241,10 @@ Böylece ortalamanın $a$ olduğunu görüyoruz. Rastgele değişkenimizi ortala
 
 Yararlı oldukları için birkaç özelliği özetleyelim.
 
-* Herhangi bir rastgele değişken $X$ ve $a$ ve $b$ sayıları için, $\mu_{aX + b} = a\mu_X + b$ var.
+* Herhangi bir rastgele değişken $X$ ve $a$ ve $b$ sayıları için, $\mu_{aX + b} = a\mu_X + b$ olur.
 * İki rastgele değişkenimiz varsa $X$ ve $Y$, $\mu_{X + Y} = \mu_X + \mu_Y$ olur.
 
-Ortalamalar, rastgele bir değişkenin ortalama davranışını anlamak için yararlıdır, ancak ortalama, tam bir sezgisel anlayışa sahip olmak için bile yeterli değildir. Satış başına $\$10 \pm \$1$ kar etmek, aynı ortalama değere sahip olmasına rağmen satış başına $\$10 \pm \$15$ kar etmekten çok farklıdır. İkincisi çok daha büyük bir dalgalanma derecesine sahiptir ve bu nedenle çok daha büyük bir riski temsil eder. Bu nedenle, rastgele bir değişkenin davranışını anlamak için en az bir ölçüye daha ihtiyacımız olacak: Bir rasgele değişkenin ne kadar geniş dalgalandığına dair bir ölçü.
+Ortalamalar, rastgele bir değişkenin ortalama davranışını anlamak için yararlıdır, ancak ortalama, tam bir sezgisel anlayışa sahip olmak için bile yeterli değildir. Satış başına $10\$ \pm 1\$$ kar etmek, aynı ortalama değere sahip olmasına rağmen satış başına $10\$ \pm 15\$$ kar etmekten çok farklıdır. İkincisi çok daha büyük bir dalgalanma derecesine sahiptir ve bu nedenle çok daha büyük bir riski temsil eder. Bu nedenle, rastgele bir değişkenin davranışını anlamak için en az bir ölçüye daha ihtiyacımız olacak: Bir rasgele değişkenin ne kadar geniş dalgalandığına dair bir ölçü.
 
 ### Varyanslar
 
@@ -230,7 +262,7 @@ $$\sigma_X^2 = \mathrm{Var}(X) = E\left[(X-\mu_X)^2\right] = E[X^2] - \mu_X^2.$$
 $X$'in $p$ olasılıkla $a-2$ değerini, $p$ olasılıkla $a + 2$ ve $1-2p$ olasılıkla $a$ değerini alan rastgele değişken olduğu örneğimize bakalım. Bu durumda $\mu_X = a$'dır, dolayısıyla hesaplamamız gereken tek şey $E\left[X^2\right]$'dir. Bu kolaylıkla yapılabilir:
 
 $$
-E\left[X^2\right] = (a-2)^2p + a^2(1-2p) + (a+2)p = a^2 + 8p.
+E\left[X^2\right] = (a-2)^2p + a^2(1-2p) + (a+2)^2p = a^2 + 8p.
 $$
 
 Böylece görürüz ki :eqref:`eq_var_def` tanımıyla varyansımız:
@@ -325,6 +357,28 @@ def plot_chebyshev(a, p):
 plot_chebyshev(0.0, torch.tensor(0.2))
 ```
 
+```{.python .input}
+#@tab tensorflow
+# Define a helper to plot these figures
+def plot_chebyshev(a, p):
+    d2l.set_figsize()
+    d2l.plt.stem([a-2, a, a+2], [p, 1-2*p, p], use_line_collection=True)
+    d2l.plt.xlim([-4, 4])
+    d2l.plt.xlabel('x')
+    d2l.plt.ylabel('p.m.f.')
+
+    d2l.plt.hlines(0.5, a - 4 * tf.sqrt(2 * p),
+                   a + 4 * tf.sqrt(2 * p), 'black', lw=4)
+    d2l.plt.vlines(a - 4 * tf.sqrt(2 * p), 0.53, 0.47, 'black', lw=1)
+    d2l.plt.vlines(a + 4 * tf.sqrt(2 * p), 0.53, 0.47, 'black', lw=1)
+    d2l.plt.title(f'p = {p:.3f}')
+
+    d2l.plt.show()
+
+# Plot interval when p > 1/8
+plot_chebyshev(0.0, tf.constant(0.2))
+```
+
 İkinci görsel, $p = 1/8$'de aralığın tam olarak iki noktaya dokunduğunu gösterir. Bu, eşitsizliğin doğru tutulurken daha küçük bir aralık alınamayacağı için eşitsizliğin *keskin* olduğunu gösterir.
 
 ```{.python .input}
@@ -336,6 +390,12 @@ plot_chebyshev(0.0, 0.125)
 #@tab pytorch
 # Plot interval when p = 1/8
 plot_chebyshev(0.0, torch.tensor(0.125))
+```
+
+```{.python .input}
+#@tab tensorflow
+# Plot interval when p = 1/8
+plot_chebyshev(0.0, tf.constant(0.125))
 ```
 
 Üçüncüsü, $p < 1/8$ için aralığın yalnızca merkezi içerdiğini gösterir. Bu, eşitsizliği geçersiz kılmaz, çünkü yalnızca olasılığın $1/4$'ten fazlasının aralığın dışında kalmamasını sağlamamız gerekiyor, yani $p < 1/8$ olduğunda, iki nokta $a-2$ ve $a + 2$ yok sayılabilir edilebilir.
@@ -418,6 +478,15 @@ p = 1 / (1 + x**2)
 d2l.plot(x, p, 'x', 'p.d.f.')
 ```
 
+```{.python .input}
+#@tab tensorflow
+# Plot the Cauchy distribution p.d.f.
+x = tf.range(-5, 5, 0.01)
+p = 1 / (1 + x**2)
+
+d2l.plot(x, p, 'x', 'p.d.f.')
+```
+
 Bu fonksiyon masum görünür ve bir integral tablosuna başvurmak, onun altında birim alan olduğunu gösterecek ve böylece sürekli bir rastgele değişken tanımlayacaktır.
 
 Neyin yanlış gittiğini görmek için, bunun varyansını hesaplamaya çalışalım. Hesaplama şunu kullanmayı içerir :eqref:`eq_var_def` 
@@ -440,6 +509,15 @@ d2l.plot(x, p, 'x', 'integrand')
 #@tab pytorch
 # Plot the integrand needed to compute the variance
 x = torch.arange(-20, 20, 0.01)
+p = x**2 / (1 + x**2)
+
+d2l.plot(x, p, 'x', 'integrand')
+```
+
+```{.python .input}
+#@tab tensorflow
+# Plot the integrand needed to compute the variance
+x = tf.range(-20, 20, 0.01)
 p = x**2 / (1 + x**2)
 
 d2l.plot(x, p, 'x', 'integrand')
@@ -608,6 +686,23 @@ for i in range(3):
 d2l.plt.show()
 ```
 
+```{.python .input}
+#@tab tensorflow
+# Plot a few random variables adjustable covariance
+covs = [-0.9, 0.0, 1.2]
+d2l.plt.figure(figsize=(12, 3))
+for i in range(3):
+    X = tf.random.normal((500, ))
+    Y = covs[i]*X + tf.random.normal((500, ))
+
+    d2l.plt.subplot(1, 4, i+1)
+    d2l.plt.scatter(X.numpy(), Y.numpy())
+    d2l.plt.xlabel('X')
+    d2l.plt.ylabel('Y')
+    d2l.plt.title(f'cov = {covs[i]}')
+d2l.plt.show()
+```
+
 Kovaryansların bazı özelliklerini görelim:
 
 * Herhangi bir rastgele değişken $X$ için, $\mathrm{Cov}(X, X) = \mathrm{Var}(X)$'dir.
@@ -697,6 +792,24 @@ for i in range(3):
 d2l.plt.show()
 ```
 
+```{.python .input}
+#@tab tensorflow
+# Plot a few random variables adjustable correlations
+cors = [-0.9, 0.0, 1.0]
+d2l.plt.figure(figsize=(12, 3))
+for i in range(3):
+    X = tf.random.normal((500, ))
+    Y = cors[i] * X + tf.sqrt(tf.constant(1.) -
+                                 cors[i]**2) * tf.random.normal((500, ))
+
+    d2l.plt.subplot(1, 4, i + 1)
+    d2l.plt.scatter(X.numpy(), Y.numpy())
+    d2l.plt.xlabel('X')
+    d2l.plt.ylabel('Y')
+    d2l.plt.title(f'cor = {cors[i]}')
+d2l.plt.show()
+```
+
 Korelasyonun birkaç özelliğini aşağıda listeleyelim.
 
 * Herhangi bir rastgele değişken $X$ için , $\rho(X, X) = 1$.
@@ -736,4 +849,13 @@ Aslında, normların standart sapmalarla ilişkili olduğunu ve korelasyonların
 
 :begin_tab:`mxnet`
 [Tartışmalar](https://discuss.d2l.ai/t/415)
+:end_tab:
+
+:begin_tab:`pytorch`
+[Tartışmalar](https://discuss.d2l.ai/t/1094)
+:end_tab:
+
+
+:begin_tab:`tensorflow`
+[Tartışmalar](https://discuss.d2l.ai/t/1095)
 :end_tab:
