@@ -19,12 +19,24 @@ from IPython import display
 from math import erf, factorial
 import torch
 
-torch.pi = torch.acos(torch.zeros(1)) * 2  # Define pi in torch
+torch.pi = torch.acos(torch.zeros(1)) * 2  # Pi'yi tanımla
+```
+
+```{.python .input}
+#@tab tensorflow
+%matplotlib inline
+from d2l import tensorflow as d2l
+from IPython import display
+from math import erf, factorial
+import tensorflow as tf
+import tensorflow_probability as tfp
+
+tf.pi = tf.acos(tf.zeros(1)) * 2  # Pi'yi tanımla
 ```
 
 ## Bernoulli
 
-Bu, genellikle karşılaşılan en basit rastgele değişkendir. Bu rastgele değişken, $p$ olasılıkla $1$ ve $1-p$ olasılıkla $0$ gelen bir yazı tura atmayı kodlar. Bu dağılımla rastgele bir değişkenimiz $X$ varsa, sunu yazacağız:
+Bu, genellikle karşılaşılan en basit rastgele değişkendir. Bu rastgele değişken, $p$ olasılıkla $1$ ve $1-p$ olasılıkla $0$ gelen bir yazı tura atmayı kodlar. Bu dağılımla rastgele bir değişkenimiz $X$ varsa, şunu yazacağız:
 
 $$
 X \sim \mathrm{Bernoulli}(p).
@@ -48,7 +60,7 @@ d2l.plt.ylabel('p.m.f.')
 d2l.plt.show()
 ```
 
-Şimdi, birikimli dağılım fonksiyonunu çizelim :eqref:`eq_bernoulli_cdf`.
+Şimdi, :eqref:`eq_bernoulli_cdf` birikimli dağılım fonksiyonunu çizelim.
 
 ```{.python .input}
 x = np.arange(-1, 2, 0.01)
@@ -69,12 +81,22 @@ def F(x):
 d2l.plot(x, torch.tensor([F(y) for y in x]), 'x', 'c.d.f.')
 ```
 
+```{.python .input}
+#@tab tensorflow
+x = tf.range(-1, 2, 0.01)
+
+def F(x):
+    return 0 if x < 0 else 1 if x > 1 else 1 - p
+
+d2l.plot(x, tf.constant([F(y) for y in x]), 'x', 'c.d.f.')
+```
+
 Eğer $X \sim \mathrm{Bernoulli}(p)$ ise, o zaman:
 
 * $\mu_X = p$,
 * $\sigma_X^2 = p(1-p)$.
 
-Bir Bernoulli rastgele değişkeninden keyfi bir şekil dizisini aşağıdaki gibi örnekleyebiliriz.
+Bir Bernoulli rastgele değişkeninden keyfi şekilli bir diziyi aşağıdaki gibi örnekleyebiliriz.
 
 ```{.python .input}
 1*(np.random.rand(10, 10) < p)
@@ -85,20 +107,25 @@ Bir Bernoulli rastgele değişkeninden keyfi bir şekil dizisini aşağıdaki gi
 1*(torch.rand(10, 10) < p)
 ```
 
+```{.python .input}
+#@tab tensorflow
+tf.cast(tf.random.uniform((10, 10)) < p, dtype=tf.float32)
+```
+
 ## Ayrık Tekdüze Dağılım
 
-Karşılaşılan bir sonraki yaygın karşılaşılan rastgele değişken, ayrık bir tekdüzedir. Buradaki tartışmamız için, $\{1, 2, \ldots, n\}$ tam sayılarında desteklendiğini varsayacağız, ancak herhangi bir tüm değerler kümesi serbestçe seçilebilir. Bu bağlamda *tekdüze* kelimesinin anlamı, olabilir her değerin eşit derecede olası olmasıdır. $i \in \{1, 2, 3, \ldots, n\}$ değerinin olasılığı $p_i = \frac{1}{n}$'dir. Bu dağılımla $X$ rastgele değişkenini şu şekilde göstereceğiz:
+Bir sonraki yaygın karşılaşılan rastgele değişken, ayrık bir tekdüzedir. Buradaki tartışmamız için, $\{1, 2, \ldots, n\}$ tam sayılarında desteklendiğini varsayacağız, ancak herhangi bir tüm değerler kümesi serbestçe seçilebilir. Bu bağlamda *tekdüze* kelimesinin anlamı, olabilir her değerin eşit derecede olası olmasıdır. $i \in \{1, 2, 3, \ldots, n\}$ değerinin olasılığı $p_i = \frac{1}{n}$'dir. Bu dağılımla $X$ rastgele değişkenini şu şekilde göstereceğiz:
 
 $$
-X \sim \mathrm{Uniform}(n).
+X \sim U(n).
 $$
 
 Birikimli dağılım fonksiyonunu böyledir:
 
-$$F(x) = \begin{cases} 0 & x < 1, \\ \frac{k}{n} & k \le x < k+1 \text{ with } 1 \le k < n, \\ 1 & x >= n . \end{cases}$$
+$$F(x) = \begin{cases} 0 & x < 1, \\ \frac{k}{n} & k \le x < k+1 \text{ öyleki } 1 \le k < n, \\ 1 & x >= n . \end{cases}$$
 :eqlabel:`eq_discrete_uniform_cdf`
 
-İlk olarak olasılık kütle fonksiyonu çizelim.
+İlk olarak olasılık kütle fonksiyonunu çizelim.
 
 ```{.python .input}
 #@tab all
@@ -110,7 +137,7 @@ d2l.plt.ylabel('p.m.f.')
 d2l.plt.show()
 ```
 
-Şimdi, birikimli dağılım fonksiyonunu çizelim :eqref:`eq_discrete_uniform_cdf`.
+Şimdi, :eqref:`eq_discrete_uniform_cdf` birikimli dağılım fonksiyonunu çizelim.
 
 ```{.python .input}
 x = np.arange(-1, 6, 0.01)
@@ -131,12 +158,22 @@ def F(x):
 d2l.plot(x, torch.tensor([F(y) for y in x]), 'x', 'c.d.f.')
 ```
 
-Eğer $X \sim \mathrm{Uniform}(n)$ ise, o zaman:
+```{.python .input}
+#@tab tensorflow
+x = tf.range(-1, 6, 0.01)
+
+def F(x):
+    return 0 if x < 1 else 1 if x > n else tf.floor(x) / n
+
+d2l.plot(x, [F(y) for y in x], 'x', 'c.d.f.')
+```
+
+Eğer $X \sim U(n)$ ise, o zaman:
 
 * $\mu_X = \frac{1+n}{2}$,
 * $\sigma_X^2 = \frac{n^2-1}{12}$.
 
-Aşağıdaki gibi, ayrık bir tekdüze rastgele değişkenden keyfi bir şekil dizisini örnekleyebiliriz.
+Aşağıdaki gibi, ayrık bir tekdüze rastgele değişkenden keyfi şekilli bir diziyi örnekleyebiliriz.
 
 ```{.python .input}
 np.random.randint(1, n, size=(10, 10))
@@ -147,12 +184,17 @@ np.random.randint(1, n, size=(10, 10))
 torch.randint(1, n, size=(10, 10))
 ```
 
+```{.python .input}
+#@tab tensorflow
+tf.random.uniform((10, 10), 1, n, dtype=tf.int32)
+```
+
 ## Sürekli Tekdüze Dağılım
 
 Şimdi, sürekli tekdüze dağılımı tartışalım. Bu rastgele değişkenin arkasındaki fikir şudur: Ayrık tekdüze dağılımdaki $n$'yi arttırırsak ve bunu $[a, b]$ aralığına sığacak şekilde ölçeklendirirsek; sadece $[a, b]$ aralığında, hepsi eşit olasılıkla, keyfi bir değer seçen sürekli bir rastgele değişkene yaklaşacağız. Bu dağılımı şu şekilde göstereceğiz
 
 $$
-X \sim \mathrm{Uniform}([a, b]).
+X \sim U(a, b).
 $$
 
 Olasılık yoğunluk fonksiyonu şöyledir: 
@@ -165,7 +207,7 @@ Birikimli dağılım fonksiyonunu şöyledir:
 $$F(x) = \begin{cases} 0 & x < a, \\ \frac{x-a}{b-a} & x \in [a, b], \\ 1 & x >= b . \end{cases}$$
 :eqlabel:`eq_cont_uniform_cdf`
 
-Önce, olasılık yoğunluk dağılım fonksiyonunu çizelim :eqref:`eq_cont_uniform_pdf`.
+Önce, :eqref:`eq_cont_uniform_pdf` olasılık yoğunluk dağılımı fonksiyonunu çizelim.
 
 ```{.python .input}
 a, b = 1, 3
@@ -185,7 +227,17 @@ p = (x > a).type(torch.float32)*(x < b).type(torch.float32)/(b-a)
 d2l.plot(x, p, 'x', 'p.d.f.')
 ```
 
-Şimdi, birikimli dağılım fonksiyonunu çizelim :eqref:`eq_cont_uniform_cdf`.
+```{.python .input}
+#@tab tensorflow
+a, b = 1, 3
+
+x = tf.range(0, 4, 0.01)
+p = tf.cast(x > a, tf.float32) * tf.cast(x < b, tf.float32) / (b - a)
+d2l.plot(x, p, 'x', 'p.d.f.')
+```
+
+
+Şimdi, :eqref:`eq_cont_uniform_cdf` birikimli dağılım fonksiyonunu çizelim.
 
 ```{.python .input}
 def F(x):
@@ -202,12 +254,20 @@ def F(x):
 d2l.plot(x, torch.tensor([F(y) for y in x]), 'x', 'c.d.f.')
 ```
 
-Eğer $X \sim \mathrm{Uniform}([a, b])$ ise, o zaman:
+```{.python .input}
+#@tab tensorflow
+def F(x):
+    return 0 if x < a else 1 if x > b else (x - a) / (b - a)
+
+d2l.plot(x, [F(y) for y in x], 'x', 'c.d.f.')
+```
+
+Eğer $X \sim U(a, b)$ ise, o zaman:
 
 * $\mu_X = \frac{a+b}{2}$,
 * $\sigma_X^2 = \frac{(b-a)^2}{12}$.
 
-Aşağıdaki gibi tekdüze bir rastgele değişkenden keyfi bir şekil dizisini örnekleyebiliriz. Bunun $\mathrm{Uniform}([0,1])$'den varsayılan örnekler olduğuna dikkat edin, bu nedenle farklı bir aralık istiyorsak, onu ölçeklendirmemiz gerekir.
+Aşağıdaki gibi tekdüze bir rastgele değişkenden keyfi şekilli bir diziyi örnekleyebiliriz. Bunun $U(0,1)$'den varsayılan örnekler olduğuna dikkat edin, bu nedenle farklı bir aralık istiyorsak, onu ölçeklendirmemiz gerekir.
 
 ```{.python .input}
 (b - a) * np.random.rand(10, 10) + a
@@ -216,6 +276,11 @@ Aşağıdaki gibi tekdüze bir rastgele değişkenden keyfi bir şekil dizisini 
 ```{.python .input}
 #@tab pytorch
 (b - a) * torch.rand(10, 10) + a
+```
+
+```{.python .input}
+#@tab tensorflow
+(b - a) * tf.random.uniform((10, 10)) + a
 ```
 
 ## Binom (İki Terimli) Dağılım
@@ -270,7 +335,26 @@ def binom(n, k):
         comb = comb * (n - i) // (i + 1)
     return comb
 
-pmf = torch.tensor([p**i * (1-p)**(n - i) * binom(n, i) for i in range(n + 1)])
+pmf = d2l.tensor([p**i * (1-p)**(n - i) * binom(n, i) for i in range(n + 1)])
+
+d2l.plt.stem([i for i in range(n + 1)], pmf, use_line_collection=True)
+d2l.plt.xlabel('x')
+d2l.plt.ylabel('p.m.f.')
+d2l.plt.show()
+```
+
+```{.python .input}
+#@tab tensorflow
+n, p = 10, 0.2
+
+# Compute binomial coefficient
+def binom(n, k):
+    comb = 1
+    for i in range(min(k, n - k)):
+        comb = comb * (n - i) // (i + 1)
+    return comb
+
+pmf = tf.constant([p**i * (1-p)**(n - i) * binom(n, i) for i in range(n + 1)])
 
 d2l.plt.stem([i for i in range(n + 1)], pmf, use_line_collection=True)
 d2l.plt.xlabel('x')
@@ -301,12 +385,23 @@ def F(x):
 d2l.plot(x, torch.tensor([F(y) for y in x.tolist()]), 'x', 'c.d.f.')
 ```
 
-Bu sonuç basit değildir, ortalamalar ve varyanslar da öyle. If $X \sim \mathrm{Binomial}(n, p)$ ise, o zaman:
+```{.python .input}
+#@tab tensorflow
+x = tf.range(-1, 11, 0.01)
+cmf = tf.cumsum(pmf)
+
+def F(x):
+    return 0 if x < 0 else 1 if x > n else cmf[int(x)]
+
+d2l.plot(x, [F(y) for y in x.numpy().tolist()], 'x', 'c.d.f.')
+```
+
+If $X \sim \mathrm{Binomial}(n, p)$ ise, o zaman:
 
 * $\mu_X = np$,
 * $\sigma_X^2 = np(1-p)$.
 
-Bu aşağıdaki gibi örneklenebilir.
+This follows from the linearity of expected value over the sum of $n$ Bernoulli random variables, and the fact that the variance of the sum of independent random variables is the sum of the variances. This can be sampled as follows.
 
 ```{.python .input}
 np.random.binomial(n, p, size=(10, 10))
@@ -315,6 +410,12 @@ np.random.binomial(n, p, size=(10, 10))
 ```{.python .input}
 #@tab pytorch
 m = torch.distributions.binomial.Binomial(n, p)
+m.sample(sample_shape=(10, 10))
+```
+
+```{.python .input}
+#@tab tensorflow
+m = tfp.distributions.Binomial(n, p)
 m.sample(sample_shape=(10, 10))
 ```
 
@@ -379,6 +480,20 @@ d2l.plt.ylabel('p.m.f.')
 d2l.plt.show()
 ```
 
+```{.python .input}
+#@tab tensorflow
+lam = 5.0
+
+xs = [i for i in range(20)]
+pmf = tf.constant([tf.exp(tf.constant(-lam)).numpy() * lam**k
+                    / factorial(k) for k in xs])
+
+d2l.plt.stem(xs, pmf, use_line_collection=True)
+d2l.plt.xlabel('x')
+d2l.plt.ylabel('p.m.f.')
+d2l.plt.show()
+```
+
 Şimdi, birikimli dağılım fonksiyonunu çizelim :eqref:`eq_poisson_cdf`.
 
 ```{.python .input}
@@ -400,6 +515,16 @@ def F(x):
 d2l.plot(x, torch.tensor([F(y) for y in x.tolist()]), 'x', 'c.d.f.')
 ```
 
+```{.python .input}
+#@tab tensorflow
+x = tf.range(-1, 21, 0.01)
+cmf = tf.cumsum(pmf)
+def F(x):
+    return 0 if x < 0 else 1 if x > n else cmf[int(x)]
+
+d2l.plot(x, [F(y) for y in x.numpy().tolist()], 'x', 'c.d.f.')
+```
+
 Yukarıda gördüğümüz gibi, ortalamalar ve varyanslar özellikle nettir. Eğer $X \sim \mathrm{Poisson}(\lambda)$ ise, o zaman:
 
 * $\mu_X = \lambda$,
@@ -414,6 +539,12 @@ np.random.poisson(lam, size=(10, 10))
 ```{.python .input}
 #@tab pytorch
 m = torch.distributions.poisson.Poisson(lam)
+m.sample((10, 10))
+```
+
+```{.python .input}
+#@tab tensorflow
+m = tfp.distributions.Poisson(lam)
 m.sample((10, 10))
 ```
 
@@ -466,6 +597,26 @@ for i in range(4):
 d2l.plt.show()
 ```
 
+```{.python .input}
+#@tab tensorflow
+p = 0.2
+ns = [1, 10, 100, 1000]
+d2l.plt.figure(figsize=(10, 3))
+for i in range(4):
+    n = ns[i]
+    pmf = tf.constant([p**i * (1-p)**(n-i) * binom(n, i)
+                        for i in range(n + 1)])
+    d2l.plt.subplot(1, 4, i + 1)
+    d2l.plt.stem([(i - n*p)/tf.sqrt(tf.constant(n*p*(1 - p)))
+                  for i in range(n + 1)], pmf,
+                 use_line_collection=True)
+    d2l.plt.xlim([-4, 4])
+    d2l.plt.xlabel('x')
+    d2l.plt.ylabel('p.m.f.')
+    d2l.plt.title("n = {}".format(n))
+d2l.plt.show()
+```
+
 Unutulmaması gereken bir şey: Poisson durumu ile karşılaştırıldığında, şimdi standart sapmaya bölüyoruz, bu da olası sonuçları gittikçe daha küçük alanlara sıkıştırdığımız anlamına gelir. Bu, limitimizin artık ayrık olmayacağının, bilakis sürekli olacağının bir göstergesidir.
 
 Burada oluşan şeyin türetilmesi bu kitabın kapsamı dışındadır, ancak *merkezi limit teoremi*, $n \rightarrow \infty$ iken bunun Gauss Dağılımını (veya bazen normal dağılımı) vereceğini belirtir. Daha açık bir şekilde, herhangi bir $a, b$ için:
@@ -501,6 +652,17 @@ p = 1 / torch.sqrt(2 * torch.pi * sigma**2) * torch.exp(
 d2l.plot(x, p, 'x', 'p.d.f.')
 ```
 
+```{.python .input}
+#@tab tensorflow
+mu, sigma = 0, 1
+
+x = tf.range(-3, 3, 0.01)
+p = 1 / tf.sqrt(2 * tf.pi * sigma**2) * tf.exp(
+    -(x - mu)**2 / (2 * sigma**2))
+
+d2l.plot(x, p, 'x', 'p.d.f.')
+```
+
 Şimdi, birikimli dağılım fonksiyonunu çizelim. Bu ek bölümün kapsamı dışındadır, ancak Gauss b.d.f.'nun daha temel işlevlerden tanımlı kapalı-şekil formülü yoktur. Bu integrali sayısal olarak hesaplamanın bir yolunu sağlayan `erf`'i kullanacağız.
 
 ```{.python .input}
@@ -513,9 +675,17 @@ d2l.plot(x, np.array([phi(y) for y in x.tolist()]), 'x', 'c.d.f.')
 ```{.python .input}
 #@tab pytorch
 def phi(x):
-    return (1.0 + erf((x - mu) / (sigma * torch.sqrt(torch.tensor(2.))))) / 2.0
+    return (1.0 + erf((x - mu) / (sigma * torch.sqrt(d2l.tensor(2.))))) / 2.0
 
 d2l.plot(x, torch.tensor([phi(y) for y in x.tolist()]), 'x', 'c.d.f.')
+```
+
+```{.python .input}
+#@tab tensorflow
+def phi(x):
+    return (1.0 + erf((x - mu) / (sigma * tf.sqrt(tf.constant(2.))))) / 2.0
+
+d2l.plot(x, [phi(y) for y in x.numpy().tolist()], 'x', 'c.d.f.')
 ```
 
 Meraklı okuyucular bu terimlerin bazılarını tanıyacaktır. Aslında, bu integralla :numref:`sec_integral_calculus` içinde karşılaştık. Aslında, $p_X(x)$'nin toplamda bir birim alana sahip olduğunu ve dolayısıyla geçerli bir yoğunluk olduğunu görmek için tam olarak bu hesaplamaya ihtiyacımız var.
@@ -554,6 +724,80 @@ np.random.normal(mu, sigma, size=(10, 10))
 torch.normal(mu, sigma, size=(10, 10))
 ```
 
+```{.python .input}
+#@tab tensorflow
+tf.random.normal((10, 10), mu, sigma)
+```
+
+## Exponential Family
+:label:`subsec_exponential_family`
+
+One shared property for all the distributions listed above is that they all 
+belong to which is known as the *exponential family*. The exponential family 
+is a set of distributions whose density can be expressed in the following 
+form:
+
+$$p(\mathbf{x} | \boldsymbol{\eta}) = h(\mathbf{x}) \cdot \mathrm{exp} \left( \boldsymbol{\eta}^{\top} \cdot T(\mathbf{x}) - A(\boldsymbol{\eta}) \right)$$
+:eqlabel:`eq_exp_pdf`
+
+As this definition can be a little subtle, let us examine it closely.  
+
+First, $h(\mathbf{x})$ is known as the *underlying measure* or the 
+*base measure*.  This can be viewed as an original choice of measure we are 
+modifying with our exponential weight.  
+
+Second, we have the vector $\boldsymbol{\eta} = (\eta_1, \eta_2, ..., \eta_l) \in
+\mathbb{R}^l$ called the *natural parameters* or *canonical parameters*.  These
+define how the base measure will be modified.  The natural parameters enter 
+into the new measure by taking the dot product of these parameters against 
+some function $T(\cdot)$ of $\mathbf{x}= (x_1, x_2, ..., x_n) \in
+\mathbb{R}^n$ and exponentiated. The vector $T(\mathbf{x})= (T_1(\mathbf{x}),
+T_2(\mathbf{x}), ..., T_l(\mathbf{x}))$ 
+is called the *sufficient statistics* for $\boldsymbol{\eta}$. This name is used since the 
+information represented by $T(\mathbf{x})$ is sufficient to calculate the 
+probability density and no other information from the sample $\mathbf{x}$'s 
+are required.
+
+Third, we have $A(\boldsymbol{\eta})$, which is referred to as the *cumulant 
+function*, which ensures that the above distribution :eqref:`eq_exp_pdf` 
+integrates to one, i.e.,
+
+$$A(\boldsymbol{\eta})  = \log \left[\int h(\mathbf{x}) \cdot \mathrm{exp}
+\left(\boldsymbol{\eta}^{\top} \cdot T(\mathbf{x}) \right) d\mathbf{x} \right].$$
+
+To be concrete, let us consider the Gaussian. Assuming that $\mathbf{x}$ is 
+an univariate variable, we saw that it had a density of
+
+$$
+\begin{aligned}
+p(x | \mu, \sigma) &= \frac{1}{\sqrt{2 \pi \sigma^2}} \cdot \mathrm{exp} 
+\left\{ \frac{-(x-\mu)^2}{2 \sigma^2} \right\} \\
+&= \frac{1}{\sqrt{2 \pi}} \cdot \mathrm{exp} \left\{ \frac{\mu}{\sigma^2}x
+-\frac{1}{2 \sigma^2} x^2 - \left( \frac{1}{2 \sigma^2} \mu^2
++\log(\sigma) \right) \right\}.
+\end{aligned}
+$$
+
+This matches the definition of the exponential family with:
+
+* *underlying measure*: $h(x) = \frac{1}{\sqrt{2 \pi}}$,
+* *natural parameters*: $\boldsymbol{\eta} = \begin{bmatrix} \eta_1 \\ \eta_2
+\end{bmatrix} = \begin{bmatrix} \frac{\mu}{\sigma^2} \\
+\frac{1}{2 \sigma^2} \end{bmatrix}$,
+* *sufficient statistics*: $T(x) = \begin{bmatrix}x\\-x^2\end{bmatrix}$, and
+* *cumulant function*: $A({\boldsymbol\eta}) = \frac{1}{2 \sigma^2} \mu^2 + \log(\sigma)
+= \frac{\eta_1^2}{4 \eta_2} - \frac{1}{2}\log(2 \eta_2)$.
+
+It is worth noting that the exact choice of each of above terms is somewhat 
+arbitrary.  Indeed, the important feature is that the distribution can be 
+expressed in this form, not the exact form itself.
+
+As we allude to in :numref:`subsec_softmax_and_derivatives`, a widely used 
+technique is to assume that the  final output $\mathbf{y}$ follows an 
+exponential family distribution. The exponential family is a common and 
+powerful family of distributions encountered frequently in machine learning.
+
+
 ## Özet
 * Bernoulli rastgele değişkenleri, evet/hayır sonucu olan olayları modellemek için kullanılabilir.
 * Ayrık tekdüze dağılım modeli, bir küme sınırlı olasılıktan seçim yapar.
@@ -561,6 +805,7 @@ torch.normal(mu, sigma, size=(10, 10))
 * Binom dağılımları bir dizi Bernoulli rasgele değişkeni modeller ve başarıların sayısını sayar.
 * Poisson rastgele değişkenleri, nadir olayların oluşunu modeller.
 * Gauss rastgele değişkenleri, çok sayıda bağımsız rastgele değişkenin toplam sonucunu modeller.
+* All the above distributions belong to exponential family.
 
 ## Alıştırmalar
 1. İki bağımsız iki terimli rastgele değişken $X, Y \sim \mathrm{Binomial}(16, 1/2)$ arasındaki $X-Y$ farkı olan rastgele bir değişkenin standart sapması nedir?
@@ -569,4 +814,12 @@ torch.normal(mu, sigma, size=(10, 10))
 
 :begin_tab:`mxnet`
 [Tartışmalar](https://discuss.d2l.ai/t/417)
+:end_tab:
+
+:begin_tab:`pytorch`
+[Tartışmalar](https://discuss.d2l.ai/t/1098)
+:end_tab:
+
+:begin_tab:`tensorflow`
+[Tartışmalar](https://discuss.d2l.ai/t/1099)
 :end_tab:
