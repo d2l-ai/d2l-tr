@@ -257,7 +257,7 @@ Denenecek makul bir şey, $\left|X-\mu_X\right|$'a bakmaktır ve bu gerçekten d
 $$\sigma_X^2 = \mathrm{Var}(X) = E\left[(X-\mu_X)^2\right] = E[X^2] - \mu_X^2.$$
 :eqlabel:`eq_var_def`
 
-:eqref:`eq_var_def`'deki son eşitlik ortadaki tanımı genişleterek ve beklentinin özelliklerini uygulayarak devam eder.
+:eqref:`eq_var_def` denklemindeki son eşitlik, ortadaki tanımı genişleterek ve beklentinin özelliklerini uygulayarak devam eder.
 
 $X$'in $p$ olasılıkla $a-2$ değerini, $p$ olasılıkla $a + 2$ ve $1-2p$ olasılıkla $a$ değerini alan rastgele değişken olduğu örneğimize bakalım. Bu durumda $\mu_X = a$'dır, dolayısıyla hesaplamamız gereken tek şey $E\left[X^2\right]$'dir. Bu kolaylıkla yapılabilir:
 
@@ -275,7 +275,7 @@ Bu sonuç yine mantıklıdır. $p$ en büyük  $1/2$ olabilir ve bu da yazı tur
 
 Aşağıda varyansın birkaç özelliğini listeleyeceğiz:
 
-* Herhangi bir rastgele değişken için $X$, $\mathrm{Var}(X) \ge 0$, ancak ve ancak $X$ bir sabitse $\mathrm {Var}(X) = 0$'dır.
+* Herhangi bir rastgele değişken $X$ için, $\mathrm{Var}(X) \ge 0$, ancak ve ancak $X$ bir sabitse $\mathrm {Var}(X) = 0$'dır.
 * Herhangi bir rastgele değişken $X$ ve $a$ ve $b$ sayıları için, $\mathrm{Var}(aX + b) = a^2 \mathrm{Var}(X)$'dır.
 * İki *bağımsız* rastgele değişkenimiz varsa, $X$ ve $Y$, $\mathrm{Var}(X + Y) = \mathrm{Var}(X) + \mathrm{Var}(Y)$'dir.
 
@@ -315,7 +315,7 @@ Bu, zamanın $\%75$'inde, bu rastgele değişkenin herhangi bir $p$ değeri içi
 Bunu görselleştirelim. Üç değeri alma olasılığını olasılıkla orantılı yüksekliği olan üç dikey çubuk olarak göstereceğiz. Aralık ortada yatay bir çizgi olarak çizilecektir. İlk grafik, aralığın güvenli bir şekilde tüm noktaları içerdiği $p > 1/8$ için ne olduğunu gösterir.
 
 ```{.python .input}
-# Define a helper to plot these figures
+# Bu rakamları çizmek için bir yardımcı tanımla
 def plot_chebyshev(a, p):
     d2l.set_figsize()
     d2l.plt.stem([a-2, a, a+2], [p, 1-2*p, p], use_line_collection=True)
@@ -331,13 +331,13 @@ def plot_chebyshev(a, p):
 
     d2l.plt.show()
 
-# Plot interval when p > 1/8
+# p > 1/8 olduğundaki aralığı çiz
 plot_chebyshev(0.0, 0.2)
 ```
 
 ```{.python .input}
 #@tab pytorch
-# Define a helper to plot these figures
+# Bu rakamları çizmek için bir yardımcı tanımlayın
 def plot_chebyshev(a, p):
     d2l.set_figsize()
     d2l.plt.stem([a-2, a, a+2], [p, 1-2*p, p], use_line_collection=True)
@@ -353,13 +353,13 @@ def plot_chebyshev(a, p):
 
     d2l.plt.show()
 
-# Plot interval when p > 1/8
+# p > 1/8 olduğundaki aralığı çiz
 plot_chebyshev(0.0, torch.tensor(0.2))
 ```
 
 ```{.python .input}
 #@tab tensorflow
-# Define a helper to plot these figures
+# Bu rakamları çizmek için bir yardımcı tanımlayın
 def plot_chebyshev(a, p):
     d2l.set_figsize()
     d2l.plt.stem([a-2, a, a+2], [p, 1-2*p, p], use_line_collection=True)
@@ -375,45 +375,52 @@ def plot_chebyshev(a, p):
 
     d2l.plt.show()
 
-# Plot interval when p > 1/8
+# p > 1/8 olduğundaki aralığı çiz
 plot_chebyshev(0.0, tf.constant(0.2))
 ```
 
 İkinci görsel, $p = 1/8$'de aralığın tam olarak iki noktaya dokunduğunu gösterir. Bu, eşitsizliğin doğru tutulurken daha küçük bir aralık alınamayacağı için eşitsizliğin *keskin* olduğunu gösterir.
 
 ```{.python .input}
-# Plot interval when p = 1/8
+# p = 1/8 olduğundaki aralığı çiz
 plot_chebyshev(0.0, 0.125)
 ```
 
 ```{.python .input}
 #@tab pytorch
-# Plot interval when p = 1/8
+# p = 1/8 olduğundaki aralığı çiz
 plot_chebyshev(0.0, torch.tensor(0.125))
 ```
 
 ```{.python .input}
 #@tab tensorflow
-# Plot interval when p = 1/8
+# p = 1/8 olduğundaki aralığı çiz
 plot_chebyshev(0.0, tf.constant(0.125))
 ```
 
-Üçüncüsü, $p < 1/8$ için aralığın yalnızca merkezi içerdiğini gösterir. Bu, eşitsizliği geçersiz kılmaz, çünkü yalnızca olasılığın $1/4$'ten fazlasının aralığın dışında kalmamasını sağlamamız gerekiyor, yani $p < 1/8$ olduğunda, iki nokta $a-2$ ve $a + 2$ yok sayılabilir edilebilir.
+Üçüncüsü, $p < 1/8$ için aralığın yalnızca merkezi içerdiğini gösterir. Bu, eşitsizliği geçersiz kılmaz, çünkü yalnızca olasılığın $1/4$'ten fazlasının aralığın dışında kalmamasını sağlamamız gerekiyor, bu da bir kez $p < 1/8$ olduğunda,dır iki nokta $a-2$  ve $a+2$ yok sayılabilir.
 
 ```{.python .input}
-# Plot interval when p < 1/8
+# p < 1/8 olduğundaki aralığı çiz
 plot_chebyshev(0.0, 0.05)
 ```
 
 ```{.python .input}
 #@tab pytorch
-# Plot interval when p < 1/8
+# p < 1/8 olduğundaki aralığı çiz
 plot_chebyshev(0.0, torch.tensor(0.05))
 ```
 
+```{.python .input}
+#@tab tensorflow
+# p < 1/8 olduğundaki aralığı çiz
+plot_chebyshev(0.0, tf.constant(0.05))
+```
+
+
 ### Süreklilikteki Ortalamalar ve Varyanslar
 
-Bunların tümü ayrık rastgele değişkenler açısından olmuştur, ancak sürekli rastgele değişkenler durumu benzerdir. Bunun nasıl çalıştığını sezgisel olarak anlamak için, $(\epsilon i, \epsilon (i+1)]$ ile verilen gerçel sayı doğrusunu $\epsilon$ uzunluğundaki aralıklara böldüğümüzü hayal edin. Bunu yaptıktan sonra, sürekli rastgele değişkenimiz artık ayrık sayılır ve şunu kullanabiliriz :eqref:`eq_exp_def` .
+Bunların tümü ayrık rastgele değişkenler açısından olmuştur, ancak sürekli rastgele değişkenler durumu benzerdir. Bunun nasıl çalıştığını sezgisel olarak anlamak için, $(\epsilon i, \epsilon (i+1)]$ ile verilen gerçel sayı doğrusunu $\epsilon$ uzunluğundaki aralıklara böldüğümüzü hayal edin. Bunu yaptıktan sonra, sürekli rastgele değişkenimiz artık ayrık sayılır ve :eqref:`eq_exp_def` kullanarak şunu söyleyebiliriz:
 
 $$
 \begin{aligned}
@@ -439,7 +446,7 @@ Yukarıda ortalama, varyans ve standart sapma hakkında belirtilen her şey bu d
 $$
 p(x) = \begin{cases}
 1 & x \in [0,1], \\
-0 & \text{otherwise}.
+0 & \text{diğer türlü}.
 \end{cases}
 $$
 
@@ -462,7 +469,7 @@ p(x) = \frac{1}{1+x^2}.
 $$
 
 ```{.python .input}
-# Plot the Cauchy distribution p.d.f.
+# Cauchy dağılımınının oyf'sini çiz
 x = np.arange(-5, 5, 0.01)
 p = 1 / (1 + x**2)
 
@@ -471,7 +478,7 @@ d2l.plot(x, p, 'x', 'p.d.f.')
 
 ```{.python .input}
 #@tab pytorch
-# Plot the Cauchy distribution p.d.f.
+# Cauchy dağılımınının oyf'sini çiz
 x = torch.arange(-5, 5, 0.01)
 p = 1 / (1 + x**2)
 
@@ -480,7 +487,7 @@ d2l.plot(x, p, 'x', 'p.d.f.')
 
 ```{.python .input}
 #@tab tensorflow
-# Plot the Cauchy distribution p.d.f.
+# Cauchy dağılımınının oyf'sini çiz
 x = tf.range(-5, 5, 0.01)
 p = 1 / (1 + x**2)
 
@@ -498,7 +505,7 @@ $$
 İç kısımdaki işlev şuna benzer:
 
 ```{.python .input}
-# Plot the integrand needed to compute the variance
+# Varyansı hesaplamak için gereken integrali çiz
 x = np.arange(-20, 20, 0.01)
 p = x**2 / (1 + x**2)
 
@@ -507,7 +514,7 @@ d2l.plot(x, p, 'x', 'integrand')
 
 ```{.python .input}
 #@tab pytorch
-# Plot the integrand needed to compute the variance
+# Varyansı hesaplamak için gereken integrali çiz
 x = torch.arange(-20, 20, 0.01)
 p = x**2 / (1 + x**2)
 
@@ -516,7 +523,7 @@ d2l.plot(x, p, 'x', 'integrand')
 
 ```{.python .input}
 #@tab tensorflow
-# Plot the integrand needed to compute the variance
+# Varyansı hesaplamak için gereken integrali çiz
 x = tf.range(-20, 20, 0.01)
 p = x**2 / (1 + x**2)
 
@@ -531,7 +538,7 @@ $$
 
 Bu, iyi tanımlanmış bir sonlu varyansa sahip olmadığı anlamına gelir.
 
-Ancak daha derin bakmak daha da rahatsız edici bir sonuç gösterir. Ortalama değerini :eqref:`eq_exp_def` kullanarak hesaplamaya çalışalım. Değişken değişikliği formülünü kullanalım,
+Ancak daha derin bakmak daha da rahatsız edici bir sonuç gösterir. Ortalama değerini :eqref:`eq_exp_def` kullanarak hesaplamaya çalışalım. Değişken değişiğimi formülünü kullanalım,
 
 $$
 \mu_X = \int_{-\infty}^{\infty} \frac{x}{1+x^2} \; dx = \frac{1}{2}\int_1^\infty \frac{1}{u} \; du.
@@ -539,25 +546,25 @@ $$
 
 İçerideki integral, logaritmanın tanımıdır, dolayısıyla bu özünde $\log(\infty) = \infty$'dur, dolayısıyla iyi tanımlanmış bir ortalama değer de yoktur!
 
-Makine öğrenmesi bilimcileri, modellerini, çoğu zaman bu sorunlarla uğraşmamıza gerek kalmayacak şekilde tanımlarlar, öyle ki vakaların büyük çoğunluğunda iyi tanımlanmış araçlar ve varyanslarla rastgele değişkenlerle ilgileneceğiz. Bununla birlikte, *ağır kuyruklu* rastgele değişkenler (yani, büyük değerler alma olasılıklarının ortalama veya varyans gibi şeyleri tanımlanmamış hale getirecek kadar büyük olduğu rastgele değişkenler) fiziksel sistemleri modellemede yardımcı olur, bu nedenle var olduklarını bilmeye değerdir.
+Makine öğrenmesi bilimcileri, modellerini, çoğu zaman bu sorunlarla uğraşmamıza gerek kalmayacak şekilde tanımlarlar, öyle ki vakaların büyük çoğunluğunda iyi tanımlanmış ortalamalara ve varyanslara sahip rastgele değişkenlerle ilgileneceğiz. Bununla birlikte, *ağır kuyruklu* rastgele değişkenler (yani, büyük değerler alma olasılıklarının ortalama veya varyans gibi şeyleri tanımlanmamış hale getirecek kadar büyük olduğu rastgele değişkenler) fiziksel sistemleri modellemede yardımcı olur, bu nedenle var olduklarını bilmeye değerdir.
 
 ### Bileşik Yoğunluk İşlevleri
 
-Yukarıdaki çalışmanın tümü, tek bir gerçel değerli rastgele değişkenle çalıştığımızı varsayar. Peki ya iki veya daha fazla potansiyel olarak yüksek düzeyde ilişkili rastgele değişkenle uğraşıyorsak? Bu durum, makine öğrenmesinde normaldir: Bir görüntüdeki $(i, j)$ koordinatındaki pikselin kırmızı değerini kodlayan $R_{i, j}$ gibi rastgele değişkenler veya $t$ zamanında hisse senedi fiyatı tarafından verilen rastgele değişken olan $P_t$. Yakındaki pikseller benzer renge sahip olma eğilimindedir ve yakın zamanlardakiler benzer fiyatlara sahip olma eğilimindedir. Bunları ayrı rastgele değişkenler olarak ele alamayız ve başarılı bir model oluşturmayı bekleyemeyiz (:numref:`sec_naive_bayes`da böyle bir varsayım nedeniyle düşük performans gösteren bir model göreceğiz). Bu ilişkili sürekli rastgele değişkenleri işlemek için matematik dili geliştirmemiz gerekiyor.
+Yukarıdaki çalışmanın tümü, tek bir gerçel değerli rastgele değişkenle çalıştığımızı varsayar. Peki ya iki veya daha fazla potansiyel olarak yüksek düzeyde ilişkili rastgele değişkenle uğraşıyorsak? Bu durum, makine öğrenmesinde normaldir: Bir imgedeki $(i, j)$ koordinatındaki pikselin kırmızı değerini kodlayan $R_{i, j}$ gibi rastgele değişkenler veya $t$ zamanında hisse senedi fiyatı tarafından verilen rastgele değişken olan $P_t$. Yakındaki pikseller benzer renge sahip olma eğilimindedir ve yakın zamanlardakiler benzer fiyatlara sahip olma eğilimindedir. Bunları ayrı rastgele değişkenler olarak ele alamayız ve başarılı bir model oluşturmayı bekleyemeyiz (:numref:`sec_naive_bayes` içinde böyle bir varsayım nedeniyle düşük performans gösteren bir model göreceğiz). Bu ilişkili sürekli rastgele değişkenleri işlemek için matematik dili geliştirmemiz gerekiyor.
 
-Neyse ki :numref:`sec_integral_calculus`deki çoklu integraller ile böyle bir dil geliştirebiliriz. Basitlik açısından, ilişkilendirilebilecek iki $X, Y$ rastgele değişkenimiz olduğunu varsayalım. Sonra, tek bir değişken durumunda olduğu gibi, şu soruyu sorabiliriz:
+Neyse ki :numref:`sec_integral_calculus` içindeki çoklu integraller ile böyle bir dil geliştirebiliriz. Basitlik açısından, ilişkilendirilebilecek iki $X, Y$ rastgele değişkenimiz olduğunu varsayalım. Sonra, tek bir değişken durumunda olduğu gibi, şu soruyu sorabiliriz:
 
 $$
-P(X \;\text{is in an}\; \epsilon \text{-sized interval around}\; x \; \text{and} \;Y \;\text{is in an}\; \epsilon \text{-sized interval around}\; y ).
+P(X\; x\text{'ye}\; \epsilon\text{-ebatlı aralık mesafesinde} \text{ve} Y\; y\text{'ye}\; \epsilon\text{-ebatlı aralık mesafesinde}).
 $$
 
 Tek değişkenli duruma benzer akıl yürütme, bunun yaklaşık olması gerektiğini gösterir:
 
 $$
-P(X \;\text{is in an}\; \epsilon \text{-sized interval around}\; x \; \text{and} \;Y \;\text{is in an}\; \epsilon \text{-sized interval around}\; y ) \approx \epsilon^{2}p(x, y),
+P(X\; x\text{'ye}\; \epsilon\text{-ebatlı aralık mesafesinde} \text{ve} Y\; y\text{'ye}\; \epsilon\text{-ebatlı aralık mesafesinde}) \approx \epsilon^{2}p(x, y),
 $$
 
-bu bazı işlevler, $p(x, y)$, içindir. Bu, $X$ ve $Y$ bileşik yoğunluğu olarak adlandırılır. Tek değişken durumunda gördüğümüz gibi benzer özellikler bunun için doğrudur. Yani:
+bu bazı $p(x, y)$ işlevleri içindir. Bu, $X$ ve $Y$ bileşik yoğunluğu olarak adlandırılır. Tek değişken durumunda gördüğümüz gibi benzer özellikler bunun için doğrudur. Yani:
 
 * $p(x, y) \ge 0$;
 * $\int _ {\mathbb{R}^2} p(x, y) \;dx \;dy = 1$;
@@ -579,14 +586,14 @@ $$
 $Y$'den söz edilmiyor, ancak bize verilen tek şey $p_{X, Y}$ ise, bir şekilde $Y$ eklememiz gerekir. İlk önce bunun aynı olduğunu gözlemleyelim:
 
 $$
-P(X \in [x, x+\epsilon] \text{, and } Y \in \mathbb{R}) \approx \epsilon \cdot p _ X(x).
+P(X \in [x, x+\epsilon] \text{, ve } Y \in \mathbb{R}) \approx \epsilon \cdot p _ X(x).
 $$
 
 Yoğunluğumuz bize bu durumda ne olduğunu doğrudan söylemiyor, $y$ cinsinden de küçük aralıklara bölmemiz gerekiyor, böylece bunu şu şekilde yazabiliriz:
 
 $$
 \begin{aligned}
-\epsilon \cdot p _ X(x) & \approx \sum _ {i} P(X \in [x, x+\epsilon] \text{, and } Y \in [\epsilon \cdot i, \epsilon \cdot (i+1)]) \\
+\epsilon \cdot p _ X(x) & \approx \sum _ {i} P(X \in [x, x+\epsilon] \text{, ve } Y \in [\epsilon \cdot i, \epsilon \cdot (i+1)]) \\
 & \approx \sum _ {i} \epsilon^{2} p _ {X, Y}(x, \epsilon\cdot i).
 \end{aligned}
 $$
@@ -594,7 +601,7 @@ $$
 ![Olasılık dizimizin sütunları boyunca toplayarak, sadece $x$ ekseni boyunca temsil edilen rastgele değişken için marjinal dağılımı elde edebiliriz.](../img/marginal.svg)
 :label:`fig_marginal`
 
-Bu bize, :numref:`fig_marginal`'deki gibi bir satırdaki bir dizi kare boyunca yoğunluk değerini toplamamızı söyler. Aslında, her iki taraftan bir epsilon çarpanı iptal ettikten ve sağdaki toplamın $y$'nin üzerindeki integral olduğunu gördükten sonra, şu sonuca varabiliriz:
+Bu bize, :numref:`fig_marginal` şeklindeki gibi bir satırdaki bir dizi kare boyunca yoğunluk değerini toplamamızı söyler. Aslında, her iki taraftan bir epsilon çarpanı iptal ettikten ve sağdaki toplamın $y$'nin üzerindeki integral olduğunu gördükten sonra, şu sonuca varabiliriz:
 
 $$
 \begin{aligned}
@@ -613,7 +620,7 @@ Bu bize, marjinal bir dağılım elde etmek için umursamadığımız değişken
 
 ### Kovaryans (Eşdeğişirlik)
 
-Birden fazla rastgele değişkenle uğraşırken, bilinmesinin ileride yardımcı olacağı ek bir özet istatistik vardır: *kovaryans*. Bu, iki rastgele değişkenin birlikte dalgalanma derecesini ölçer.
+Birden fazla rastgele değişkenle uğraşırken, bilinmesinin ileride yardımcı olacağı ek bir özet istatistik vardır: *Kovaryans*. Bu, iki rastgele değişkenin birlikte dalgalanma derecesini ölçer.
 
 Başlamak için $X$ ve $Y$ olmak üzere iki rasgele değişkenimiz olduğunu varsayalım, bunların ayrık olduklarını varsayalım, $p_{ij}$ olasılıkla $(x_i, y_j)$ değerlerini alalım. Bu durumda kovaryans şu şekilde tanımlanır:
 
@@ -624,14 +631,14 @@ Bunu sezgisel olarak düşünmek için: Aşağıdaki rastgele değişken çiftin
 
 $$
 \begin{aligned}
-P(X = 1 \; \text{and} \; Y = -1) & = \frac{p}{2}, \\
-P(X = 1 \; \text{and} \; Y = 3) & = \frac{1-p}{2}, \\
-P(X = 3 \; \text{and} \; Y = -1) & = \frac{1-p}{2}, \\
-P(X = 3 \; \text{and} \; Y = 3) & = \frac{p}{2},
+P(X = 1 \; \text{ve} \; Y = -1) & = \frac{p}{2}, \\
+P(X = 1 \; \text{ve} \; Y = 3) & = \frac{1-p}{2}, \\
+P(X = 3 \; \text{ve} \; Y = -1) & = \frac{1-p}{2}, \\
+P(X = 3 \; \text{ve} \; Y = 3) & = \frac{p}{2},
 \end{aligned}
 $$
 
-Burada $p$, $[0,1]$ içinde bir parametredir. $p = 1$ ise her ikisi de her zaman aynı anda minimum veya maksimum değerlerdedir ve $p = 0$ ise çevrilmiş değerlerini aynı anda almaları garanti edilir (biri küçükken diğeri büyüktür). $p = 1/2$ ise, bu durumda dört olasılığın tümü eşit olasılıktadır ve ikisi de ilişkili olmamalıdır. Kovaryansı hesaplayalım. İlk olarak, $\mu_X = 2$ ve $\mu_Y = 1$ olduğuna not edin, böylece şunu kullanarak hesaplama yapabiliriz :eqref:`eq_cov_def`:
+Burada $p$, $[0,1]$ içinde bir parametredir. $p = 1$ ise her ikisi de her zaman aynı anda minimum veya maksimum değerlerdedir ve $p = 0$ ise çevrilmiş değerlerini aynı anda almaları garanti edilir (biri küçükken diğeri büyüktür). $p = 1/2$ ise, bu durumda dört olasılığın tümü eşit olasılıktadır ve ikisi de ilişkili olmamalıdır. Kovaryansı hesaplayalım. İlk olarak, $\mu_X = 2$ ve $\mu_Y = 1$ olduğuna not edin, böylece :eqref:`eq_cov_def` kullanarak hesaplama yapabiliriz:
 
 $$
 \begin{aligned}
@@ -645,7 +652,7 @@ $p = 1$ olduğunda (her ikisinin de aynı anda maksimum pozitif veya negatif old
 
 Kovaryansla ilgili bir not, yalnızca bu doğrusal ilişkileri ölçmesidir. $X = Y^2$ gibi daha karmaşık ilişkiler, $Y$'nin $\{- 2, -1, 0, 1, 2 \}$'dan eşit olasılıkla rastgele seçildiği durumlarda, gözden kaçabilir. Aslında hızlı bir hesaplama, biri diğerinin deterministik bir fonksiyonu olmasına rağmen, bu rastgele değişkenlerin kovaryansının sıfır olduğunu gösterir.
 
-Sürekli rastgele değişkenler için, hemen hemen aynı hikaye geçerlidir. Bu noktada, ayrık ve sürekli arasındaki geçişi yapmakta oldukça rahatız, bu nedenle herhangi bir türetme olmaksızın :eqref:`eq_cov_def`in sürekli benzerini sağlayacağız.
+Sürekli rastgele değişkenler için, hemen hemen aynı hikaye geçerlidir. Bu noktada, ayrık ve sürekli arasındaki geçişi yapmakta oldukça rahatız, bu nedenle herhangi bir türetme olmaksızın :eqref:`eq_cov_def` denkleminin sürekli benzerini sağlayacağız.
 
 $$
 \sigma_{XY} = \int_{\mathbb{R}^2} (x-\mu_X)(y-\mu_Y)p(x, y) \;dx \;dy.
@@ -654,7 +661,7 @@ $$
 Görselleştirme için, ayarlanabilir kovaryanslı rastgele değişkenlerinden bir topluluğa bakalım.
 
 ```{.python .input}
-# Plot a few random variables adjustable covariance
+# Birkaç rastgele değişken ayarlanabilir kovaryansı çiz
 covs = [-0.9, 0.0, 1.2]
 d2l.plt.figure(figsize=(12, 3))
 for i in range(3):
@@ -671,7 +678,7 @@ d2l.plt.show()
 
 ```{.python .input}
 #@tab pytorch
-# Plot a few random variables adjustable covariance
+# Birkaç rastgele değişken ayarlanabilir kovaryansı çiz
 covs = [-0.9, 0.0, 1.2]
 d2l.plt.figure(figsize=(12, 3))
 for i in range(3):
@@ -688,7 +695,7 @@ d2l.plt.show()
 
 ```{.python .input}
 #@tab tensorflow
-# Plot a few random variables adjustable covariance
+# Birkaç rastgele değişken ayarlanabilir kovaryansı çiz
 covs = [-0.9, 0.0, 1.2]
 d2l.plt.figure(figsize=(12, 3))
 for i in range(3):
@@ -725,16 +732,16 @@ Bu, ilişkili rastgele değişkenler için varyans toplama kuralını genelleşt
 
 ### Korelasyon
 
-Ortalamalar ve varyanslar durumunda yaptığımız gibi, şimdi birimleri ele alalım. $X$ bir birimde ölçülürse (inç diyelim) ve $Y$ başka bir birimde ölçülürse (dolar diyelim), kovaryans bu iki birimin çarpımı $\text{inches} \times \text{dollars}$ cinsinden ölçülür. Bu birimleri yorumlamak zor olabilir. Bu durumda sık sık isteyeceğimiz şey, birimsiz ilişkililik ölçümüdür. Aslında, çoğu zaman kesin nicel korelasyonu önemsemiyoruz, bunun yerine korelasyonun aynı yönde olup olmadığını ve ilişkinin ne kadar güçlü olduğunu soruyoruz.
+Ortalamalar ve varyanslar durumunda yaptığımız gibi, şimdi birimleri ele alalım. $X$ bir birimde ölçülürse (inç diyelim) ve $Y$ başka bir birimde ölçülürse (dolar diyelim), kovaryans bu iki birimin çarpımı $\text{in\c{c}} \times \text{dolar}$ cinsinden ölçülür. Bu birimleri yorumlamak zor olabilir. Bu durumda sık sık isteyeceğimiz şey, birimsiz ilişkililik ölçümüdür. Aslında, çoğu zaman kesin nicel korelasyonu önemsemiyoruz, bunun yerine korelasyonun aynı yönde olup olmadığını ve ilişkinin ne kadar güçlü olduğunu soruyoruz.
 
-Neyin mantıklı olduğunu görmek için bir düşünce deneyi yapalım. Rastgele değişkenlerimizi inç ve dolar cinsinden inç ve sent olarak dönüştürdüğümüzü varsayalım. Bu durumda rastgele $Y$ değişkeni $100$ ile çarpılır. Tanım üzerinde çalışırsak bu, $\mathrm{Cov}(X, Y)$'nın $100$ ile çarpılacağı anlamına gelir. Böylece, bu durumda birimlerin değişmesinin kovaryansı $100$lük bir çarpan kadar değiştirdiğini görüyoruz. Bu nedenle, birim değişmez korelasyon ölçümümüzü bulmak için, yine $100$ ile ölçeklenen başka bir şeye bölmemiz gerekecek. Gerçekten de bariz bir adayımız var, standart sapma! Böylece, *korelasyon katsayısını* tanımlarsak
+Neyin mantıklı olduğunu görmek için bir düşünce deneyi yapalım. Rastgele değişkenlerimizi inç ve dolar cinsinden inç ve sent olarak dönüştürdüğümüzü varsayalım. Bu durumda rastgele $Y$ değişkeni 100\$ ile çarpılır. Tanım üzerinde çalışırsak bu, $\mathrm{Cov}(X, Y)$'nın 100\$ ile çarpılacağı anlamına gelir. Böylece, bu durumda birimlerin değişmesinin kovaryansı 100\$lık bir çarpan kadar değiştirdiğini görüyoruz. Bu nedenle, birim değişmez korelasyon ölçümümüzü bulmak için, yine 100\$ ile ölçeklenen başka bir şeye bölmemiz gerekecek. Gerçekten de bariz bir adayımız var, standart sapma! Böylece, *korelasyon katsayısını* tanımlarsak
 
 $$\rho(X, Y) = \frac{\mathrm{Cov}(X, Y)}{\sigma_{X}\sigma_{Y}},$$
 :eqlabel:`eq_cor_def`
 
 Bunun birimsiz bir değer olduğunu görüyoruz. Biraz matematik, bu sayının $-1$ ile $1$ arasında olduğunu ve $1$'in maksimum pozitif korelasyona sahip olduğunu, $-1$'in ise maksimum negatif korelasyon olduğunu gösterebilir.
 
-Yukarıdaki açık ayrık örneğimize dönersek, $\sigma_X = 1$ ve $\sigma_Y = 2$ olduğunu görebiliriz, böylece iki rastgele değişken arasındaki korelasyonu şunu kullanarak hesaplayabiliriz :eqref:`eq_cor_def`
+Yukarıdaki açık ayrık örneğimize dönersek, $\sigma_X = 1$ ve $\sigma_Y = 2$ olduğunu görebiliriz, böylece iki rastgele değişken arasındaki korelasyonu :eqref:`eq_cor_def` kullanarak hesaplayabiliriz:
 
 $$
 \rho(X, Y) = \frac{4p-2}{1\cdot 2} = 2p-1.
@@ -759,7 +766,7 @@ Böylece korelasyonun herhangi bir $a > 0$ için $+ 1$ olduğunu ve herhangi bir
 Yine ayarlanabilir korelasyonlu rastgele değişkenlerin bir koleksiyonunu çizelim.
 
 ```{.python .input}
-# Plot a few random variables adjustable correlations
+# Birkaç rastgele değişken ayarlanabilir korelasyonu çiz
 cors = [-0.9, 0.0, 1.0]
 d2l.plt.figure(figsize=(12, 3))
 for i in range(3):
@@ -776,7 +783,7 @@ d2l.plt.show()
 
 ```{.python .input}
 #@tab pytorch
-# Plot a few random variables adjustable correlations
+# Birkaç rastgele değişken ayarlanabilir korelasyonu çiz
 cors = [-0.9, 0.0, 1.0]
 d2l.plt.figure(figsize=(12, 3))
 for i in range(3):
@@ -794,7 +801,7 @@ d2l.plt.show()
 
 ```{.python .input}
 #@tab tensorflow
-# Plot a few random variables adjustable correlations
+# Birkaç rastgele değişken ayarlanabilir korelasyonu çiz
 cors = [-0.9, 0.0, 1.0]
 d2l.plt.figure(figsize=(12, 3))
 for i in range(3):
@@ -814,7 +821,7 @@ Korelasyonun birkaç özelliğini aşağıda listeleyelim.
 
 * Herhangi bir rastgele değişken $X$ için , $\rho(X, X) = 1$.
 * $X, Y$ rasgele değişkenleri ve $a$ ve $b$ sayıları için, $\rho(aX + b, Y) = \rho(X, aY + b) = \rho(X, Y)$.
-* $X$ ve $Y$, sıfır olmayan farkla bağımsızsa, $\rho(X, Y) = 0$.
+* $X$ ve $Y$, sıfır olmayan varyansla bağımsızsa, $\rho(X, Y) = 0$.
 
 Son bir not olarak, bu formüllerden bazılarının tanıdık geldiğini hissedebilirsiniz. Gerçekten, her şeyi $\mu_X =\mu_Y = 0$ varsayarak genişletirsek, görürüz ki
 
@@ -843,7 +850,7 @@ Aslında, normların standart sapmalarla ilişkili olduğunu ve korelasyonların
 
 ## Alıştırmalar
 1. $x \ge 1$ için yoğunluğu $p(x) = \frac{1}{x ^ 2}$ ve aksi takdirde $p(x) = 0$ ile verilen rastgele değişkenimiz olduğunu varsayalım. $P(X> 2)$ nedir?
-2. Laplace dağılımı, yoğunluğu $p(x = \frac{1}{2}e^{-|x|}$ ile verilen rastgele bir değişkendir. Bu fonksiyonun ortalaması ve standart sapması nedir? Bir ipucu, $\int_0^\infty xe^{-x} \; dx = 1$ ve $\int_0^\infty x^2e^{-x} \; dx = 2$.
+2. Laplace dağılımı, yoğunluğu $p(x) = \frac{1}{2}e^{-|x|}$ ile verilen rastgele bir değişkendir. Bu fonksiyonun ortalaması ve standart sapması nedir? Bir ipucu, $\int_0^\infty xe^{-x} \; dx = 1$ ve $\int_0^\infty x^2e^{-x} \; dx = 2$.
 3. Sokakta size doğru yürüyorum ve "Ortalaması $1 $, standart sapması $2$ olan rastgele bir değişkenim var ve örneklerimin $\% 25$'inin $9$'dan daha büyük bir değer aldığını gözlemledim." dedim. Bana inanır mısınız? Neden evet ya da neden hayır?
 4. $x, y \in [0,1]$ için $p_{XY}(x, y) = 4xy$ ve aksi takdirde $p_{XY}(x, y) = 0$ ile bileşik yoğunlukları verilen iki rastgele değişkenimizin $X, Y$ olduğunu varsayalım. $X$ ve $Y$'nin kovaryansı nedir?
 
