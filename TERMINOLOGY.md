@@ -117,6 +117,8 @@ exhaustive search; kapsamlı arama
 
 extrapolation; dışdeğerleme
 
+exponential; üstel
+
 feature; öznitelik
 
 firmware; bellenim
