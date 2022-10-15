@@ -3,13 +3,13 @@
 
 Kuşkusuz, en iyi derin öğrenme uygulayıcılarından biri olmak için son teknoloji ürünü ve yüksek doğrulukta modelleri eğitme yeteneği çok önemlidir. Bununla birlikte, iyileştirmelerin ne zaman önemli olduğu veya yalnızca eğitim sürecindeki rastgele dalgalanmaların sonucu olduğu genellikle belirsizdir. Tahmini değerlerdeki belirsizliği tartışabilmek için biraz istatistik öğrenmemiz gerekir.
 
-*İstatistiğin* en eski referansı, şifrelenmiş mesajları deşifre etmek için istatistiklerin ve sıklık analizinin nasıl kullanılacağına dair ayrıntılı bir açıklama veren $9.$-yüzyıldaki Arap bilim adamı Al-Kindi'ye kadar uzanabilir. 800 yıl sonra, modern istatistik, araştırmacıların demografik ve ekonomik veri toplama ve analizine odaklandığı 1700'lerde Almanya'da ortaya çıktı. Günümüzde istatistik, verilerin toplanması, işlenmesi, analizi, yorumlanması ve görselleştirilmesi ile ilgili bilim konusudur. Dahası, temel istatistik teorisi akademi, endüstri ve hükümet içindeki araştırmalarda yaygın olarak kullanılmaktadır.
+*İstatistiğin* en eski referansı, şifrelenmiş mesajları deşifre etmek için istatistiklerin ve sıklık analizinin nasıl kullanılacağına dair ayrıntılı bir açıklama veren $9.$ yüzyıldaki Arap bilim adamı Al-Kindi'ye kadar uzanabilir. 800 yıl sonra, modern istatistik, araştırmacıların demografik ve ekonomik veri toplama ve analizine odaklandığı 1700'lerde Almanya'da ortaya çıktı. Günümüzde istatistik, verilerin toplanması, işlenmesi, analizi, yorumlanması ve görselleştirilmesi ile ilgili bilim konusudur. Dahası, temel istatistik teorisi akademi, endüstri ve hükümet içindeki araştırmalarda yaygın olarak kullanılmaktadır.
 
-Daha özel olarak, istatistik *tanımlayıcı istatistik* ve *istatistiksel çıkarım* diye bölünebilir. İlki, *örneklem* olarak adlandırılan gözlemlenen verilerden bir koleksiyonunun özelliklerini özetlemeye ve göstermeye odaklanır. Örneklem bir *popülasyondan* alınmıştır, benzer bireyler, öğeler veya deneysel ilgi alanlarımıza ait olayların toplam kümesini belirtir. Tanımlayıcı istatistiğin aksine *istatistiksel çıkarım*, örneklem dağılımının popülasyon dağılımını bir dereceye kadar kopyalayabileceği varsayımlarına dayanarak, bir popülasyonun özelliklerini verilen *örneklemlerden* çıkarsar.
+Daha özel olarak, istatistik *tanımlayıcı istatistik* ve *istatistiksel çıkarım* diye bölünebilir. İlki, *örneklem* olarak adlandırılan gözlemlenen verilerden bir koleksiyonunun özniteliklerini özetlemeye ve göstermeye odaklanır. Örneklem bir *popülasyondan* alınmıştır, benzer bireyler, öğeler veya deneysel ilgi alanlarımıza ait olayların toplam kümesini belirtir. Tanımlayıcı istatistiğin aksine *istatistiksel çıkarım*, örneklem dağılımının popülasyon dağılımını bir dereceye kadar kopyalayabileceği varsayımlarına dayanarak, bir popülasyonun özelliklerini verilen *örneklemlerden* çıkarsar.
 
 Merak edebilirsiniz: "Makine öğrenmesi ile istatistik arasındaki temel fark nedir?" Temel olarak, istatistik çıkarım sorununa odaklanır. Bu tür problemler, nedensel çıkarım gibi değişkenler arasındaki ilişkiyi modellemeyi ve A/B testi gibi model parametrelerinin istatistiksel olarak anlamlılığını test etmeyi içerir. Buna karşılık, makine öğrenmesi, her bir parametrenin işlevselliğini açıkça programlamadan ve anlamadan doğru tahminler yapmaya vurgu yapar.
 
-Bu bölümde, üç tür istatistik çıkarım yöntemini tanıtacağız: tahmin edicileri değerlendirme ve karşılaştırma, hipotez (denence) testleri yürütme ve güven aralıkları oluşturma. Bu yöntemler, belirli bir popülasyonun özelliklerini, yani gerçek $\theta$ parametresi gibi, anlamamıza yardımcı olabilir. Kısacası, belirli bir popülasyonun gerçek parametresinin, $\theta$, skaler bir değer olduğunu varsayıyoruz. $\theta$'nin bir vektör veya tensör olduğu durumu genişletmek basittir, bu nedenle tartışmamızda onu es geçiyoruz.
+Bu bölümde, üç tür istatistik çıkarım yöntemini tanıtacağız: Tahmin edicileri değerlendirme ve karşılaştırma, hipotez (denence) testleri yürütme ve güven aralıkları oluşturma. Bu yöntemler, belirli bir popülasyonun özelliklerini, yani gerçek $\theta$ parametresi gibi, anlamamıza yardımcı olabilir. Kısacası, belirli bir popülasyonun gerçek parametresinin, $\theta$, skaler bir değer olduğunu varsayıyoruz. $\theta$'nin bir vektör veya tensör olduğu durumu genişletmek basittir, bu nedenle tartışmamızda onu es geçiyoruz.
 
 ## Tahmincileri Değerlendirme ve Karşılaştırma
 
@@ -30,7 +30,7 @@ epsilon = 0.1
 random.seed(8675309)
 xs = np.random.normal(loc=0, scale=1, size=(300,))
 
-ys = [np.sum(np.exp(-(xs[0:i] - xs[i])**2 / (2 * epsilon**2))
+ys = [np.sum(np.exp(-(xs[:i] - xs[i])**2 / (2 * epsilon**2))
              / np.sqrt(2*np.pi*epsilon**2)) / len(xs) for i in range(len(xs))]
 
 # Compute true density
@@ -59,7 +59,7 @@ torch.manual_seed(8675309)
 xs = torch.randn(size=(300,))
 
 ys = torch.tensor(
-    [torch.sum(torch.exp(-(xs[0:i] - xs[i])**2 / (2 * epsilon**2))\
+    [torch.sum(torch.exp(-(xs[:i] - xs[i])**2 / (2 * epsilon**2))\
                / torch.sqrt(2*torch.pi*epsilon**2)) / len(xs)\
      for i in range(len(xs))])
 
@@ -73,6 +73,36 @@ d2l.plt.scatter(xs, ys)
 d2l.plt.axvline(x=0)
 d2l.plt.axvline(x=torch.mean(xs), linestyle='--', color='purple')
 d2l.plt.title(f'sample mean: {float(torch.mean(xs).item()):.2f}')
+d2l.plt.show()
+```
+
+```{.python .input}
+#@tab tensorflow
+from d2l import tensorflow as d2l
+import tensorflow as tf
+
+tf.pi = tf.acos(tf.zeros(1)) * 2  # define pi in TensorFlow
+
+# Sample datapoints and create y coordinate
+epsilon = 0.1
+xs = tf.random.normal((300,))
+
+ys = tf.constant(
+    [(tf.reduce_sum(tf.exp(-(xs[:i] - xs[i])**2 / (2 * epsilon**2)) \
+               / tf.sqrt(2*tf.pi*epsilon**2)) / tf.cast(
+        tf.size(xs), dtype=tf.float32)).numpy() \
+     for i in range(tf.size(xs))])
+
+# Compute true density
+xd = tf.range(tf.reduce_min(xs), tf.reduce_max(xs), 0.01)
+yd = tf.exp(-xd**2/2) / tf.sqrt(2 * tf.pi)
+
+# Plot the results
+d2l.plot(xd, yd, 'x', 'density')
+d2l.plt.scatter(xs, ys)
+d2l.plt.axvline(x=0)
+d2l.plt.axvline(x=tf.reduce_mean(xs), linestyle='--', color='purple')
+d2l.plt.title(f'sample mean: {float(tf.reduce_mean(xs).numpy()):.2f}')
 d2l.plt.show()
 ```
 
@@ -111,21 +141,24 @@ $$\sigma_{\hat{\theta}_n} = \sqrt{\mathrm{Var} (\hat{\theta}_n )} = \sqrt{E[(\ha
 
 ### Yanlılık-Varyans Takası
 
-Bu iki bileşenin ortalama hata karesine katkıda bulunduğu sezgisel olarak açıktır. Biraz şok edici olan şey, bunun aslında ortalama hata karesinin iki parçaya *ayrıştırılması* olduğunu gösterebilmemizdir. Yani, ortalama hata karesini varyansın ve yanlılığın karesi toplamı olarak yazabiliriz.
+Bu iki ana bileşenin ortalama hata karesine katkıda bulunduğu sezgisel olarak açıktır. Biraz şok edici olan şey, bunun aslında ortalama hata karesinin bu iki ve ek üçüncü bir parçaya *ayrıştırılması* olduğunu gösterebilmemizdir. Yani, ortalama hata karesini yanlılığın (ek girdi) karesinin, varyansın ve indirgenemeyen hatanın toplamı olarak yazabiliriz.
 
 $$
 \begin{aligned}
-\mathrm{MSE} (\hat{\theta}_n, \theta) &= E[(\hat{\theta}_n - E(\hat{\theta}_n) + E(\hat{\theta}_n) - \theta)^2] \\
- &= E[(\hat{\theta}_n - E(\hat{\theta}_n))^2] + E[(E(\hat{\theta}_n) - \theta)^2] \\
- &= \mathrm{Var} (\hat{\theta}_n) + [\mathrm{bias} (\hat{\theta}_n)]^2.\\
+\mathrm{MSE} (\hat{\theta}_n, \theta) &= E[(\hat{\theta}_n - \theta)^2] \\
+ &= E[(\hat{\theta}_n)^2] + E[\theta^2] - 2E[\hat{\theta}_n\theta] \\
+ &= \mathrm{Var} [\hat{\theta}_n] + E[\hat{\theta}_n]^2 + \mathrm{Var} [\theta] + E[\theta]^2 - 2E[\hat{\theta}_n]E[\theta] \\
+ &= (E[\hat{\theta}_n] - E[\theta])^2 + \mathrm{Var} [\hat{\theta}_n] + \mathrm{Var} [\theta] \\
+ &= (E[\hat{\theta}_n - \theta])^2 + \mathrm{Var} [\hat{\theta}_n] + \mathrm{Var} [\theta] \\
+ &= (\mathrm{bias} [\hat{\theta}_n])^2 + \mathrm{Var} (\hat{\theta}_n) + \mathrm{Var} [\theta].\\
 \end{aligned}
 $$
 
-Yukarıdaki formülü *yanlılık-varyans takası* olarak adlandırıyoruz. Ortalama hata karesi kesin olarak iki hata kaynağına bölünebilir: Yüksek yanlılıktan kaynaklanan hata ve yüksek varyans kaynaklı hata. Bir yandan, yanlılık hatası genellikle basit bir modelde (doğrusal bağlanım modeli gibi) görülür, çünkü özellikler ve çıktılar arasındaki yüksek boyutsal ilişkileri çıkaramaz. Bir model yüksek yanlılık hatasından muzdaripse, (:numref:`sec_model_selection`) bölümünde açıklandığı gibi genellikle *eksik öğrenme* veya *genelleme* eksikliği olduğunu söylüyoruz. Diğer taraftan, diğer hata kaynağı---yüksek varyans, genellikle eğitim verilerine öğrenen çok karmaşık bir modelden kaynaklanır. Sonuç olarak, *aşırı öğrenen* bir model, verilerdeki küçük dalgalanmalara duyarlıdır. Bir modelin varyansı yüksekse, genellikle (:numref:`sec_model_selection`)'de tanıtıldığı gibi *aşırı öğrenme* ve *esneklik* yoksunluğu olduğunu söyleriz.
+Yukarıdaki formülü *yanlılık-varyans takası* olarak adlandırıyoruz. Ortalama hata karesi kesin olarak üç hata kaynağına bölünebilir: Yüksek yanlılıktan, yüksek varyanstan ve indirgenemez hatadan kaynaklı hata. Yanlılık hatası genellikle basit bir modelde (doğrusal bağlanım modeli gibi) görülür, çünkü özellikler ve çıktılar arasındaki yüksek boyutsal ilişkileri çıkaramaz. Bir model yüksek yanlılık hatasından muzdaripse, (:numref:`sec_model_selection`) bölümünde açıklandığı gibi genellikle *eksik öğrenme* veya *esneklik* eksikliği olduğunu söylüyoruz. Yüksek varyans, genellikle eğitim verilerine öğrenen çok karmaşık bir modelden kaynaklanır. Sonuç olarak, *aşırı öğrenen* bir model, verilerdeki küçük dalgalanmalara duyarlıdır. Bir modelin varyansı yüksekse, genellikle (:numref:`sec_model_selection`)'de tanıtıldığı gibi *aşırı öğrenme* ve *genelleme* yoksunluğu olduğunu söyleriz. The irreducible error is the result from noise in the $\theta$ itself.
 
 ### Kodda Tahmincileri Değerlendirme
 
-Bir tahmincinin standart sapması, MXNet'te bir tensör `a` için basitçe `a.std()` çağırarak uygulandığından, onu atlayacağız ancak MXNet'te istatistiksel yanlılık ve ortalama hata karesini uygulayacağız.
+Bir tahmincinin standart sapması, bir tensör `a` için basitçe `a.std()` çağırarak uygulandığından, onu atlayacağız ancak istatistiksel yanlılık ve ortalama hata karesini uygulayacağız.
 
 ```{.python .input}
 # Statistical bias
@@ -146,6 +179,17 @@ def stat_bias(true_theta, est_theta):
 # Mean squared error
 def mse(data, true_theta):
     return(torch.mean(torch.square(data - true_theta)))
+```
+
+```{.python .input}
+#@tab tensorflow
+# Statistical bias
+def stat_bias(true_theta, est_theta):
+    return(tf.reduce_mean(est_theta) - true_theta)
+
+# Mean squared error
+def mse(data, true_theta):
+    return(tf.reduce_mean(tf.square(data - true_theta)))
 ```
 
 Yanlılık-varyans takasının denklemini görsellemek için, $\mathcal{N}(\theta, \sigma^2)$ normal dağılımını $10.000$ örnekle canlandıralım. Burada bir $\theta = 1$ ve $\sigma = 4$ kullanıyoruz. Tahminci verilen örneklerin bir fonksiyonu olduğu için, burada örneklerin ortalamasını bu normal dağılımdaki, $\mathcal{N}(\theta, \sigma^2)$, gerçek $\theta$ için bir tahminci olarak kullanıyoruz.
@@ -169,14 +213,20 @@ theta_est = torch.mean(samples)
 theta_est
 ```
 
+```{.python .input}
+#@tab tensorflow
+theta_true = 1
+sigma = 4
+sample_len = 10000
+samples = tf.random.normal((sample_len, 1), theta_true, sigma)
+theta_est = tf.reduce_mean(samples)
+theta_est
+```
+
 Tahmincimizin yanlılık karesi ve varyansının toplamını hesaplayarak takas denklemini doğrulayalım. İlk önce, tahmincimizin MSE'sini hesaplayın.
 
 ```{.python .input}
-mse(samples, theta_true)
-```
-
-```{.python .input}
-#@tab pytorch
+#@tab all
 mse(samples, theta_true)
 ```
 
@@ -191,6 +241,12 @@ np.square(samples.std()) + np.square(bias)
 #@tab pytorch
 bias = stat_bias(theta_true, theta_est)
 torch.square(samples.std(unbiased=False)) + torch.square(bias)
+```
+
+```{.python .input}
+#@tab tensorflow
+bias = stat_bias(theta_true, theta_est)
+tf.square(tf.math.reduce_std(samples)) + tf.square(bias)
 ```
 
 ## Hipotez (Denence) Testleri Yürütme
@@ -217,18 +273,18 @@ Hipotez testiyle nasıl çalışılacağına dair hikayeyi tamamlamak için, şi
 
 $$\text{istatistiksel anlamlılık} = 1 - \ alpha = P (\text{reddet } H_0 \mid H_0 \text{ doğru})$$.
 
-Aynı zamanda *1. tür hata* veya *yanlış pozitif* olarak da anılır. $\alpha$, *anlamlılık düzeyi* olarak adlandırılır ve yaygın olarak kullanılan değeri $\% 5$, yani $1- \alpha = \% 95$ şeklindedir. İstatistiksel anlamlılık düzeyi, gerçek bir sıfır hipotezi reddettiğimizde almaya istekli olduğumuz risk seviyesi olarak açıklanabilir.
+Aynı zamanda *1. tür hata* veya *yanlış pozitif* olarak da anılır. $\alpha$, *anlamlılık düzeyi* olarak adlandırılır ve yaygın olarak kullanılan değeri $\% 5$, yani $1- \alpha = \% 95$ şeklindedir. Anlamlılık düzeyi, gerçek bir sıfır hipotezi reddettiğimizde almaya istekli olduğumuz risk seviyesi olarak açıklanabilir.
 
-:numref:`fig_statistical_significance`, iki örneklemli bir hipotez testinde gözlemlerin değerlerini ve belirli bir normal dağılımın gelme olasılığını gösterir. Gözlem veri noktası $\% 95$ eşiğinin dışında yer alırsa, sıfır hipotez varsayımı altında çok olası olmayan bir gözlem olacaktır. Dolayısıyla, sıfır hipotezde yanlış bir şeyler olabilir ve onu reddedeceğiz.
+:numref:`fig_statistical_significance`, iki örneklemli bir hipotez testinde gözlemlerin değerlerini ve belirli bir normal dağılımın gelme olasılığını gösterir. Gözlem veri örneği $\% 95$ eşiğinin dışında yer alırsa, sıfır hipotez varsayımı altında çok olası olmayan bir gözlem olacaktır. Dolayısıyla, sıfır hipotezde yanlış bir şeyler olabilir ve onu reddedeceğiz.
 
-![İstatistiksel anlamlılık.](../img/statistical_significance.svg)
+![İstatistiksel anlamlılık.](../img/statistical-significance.svg)
 :label:`fig_statistical_significance`
 
 ### İstatistiksel Güç
 
 *İstatistiksel Güç* (veya *duyarlılık*), reddedilmesi gerektiğinde sıfır hipotezin, $H_0$, reddedilme olasılığını ölçer, yani,
 
-$$\text{istatistiksel güç} = P(\text{reddet } H_0 \mid H_0 \text{ yanlış}). $$
+$$ \text{istatistiksel güç }= 1 - \beta = 1 - P(\text{ rededememe } H_0  \mid H_0 \text{ yanlış} ).$$
 
 Bir *1. tür hata*nın, doğru olduğunda sıfır hipotezin reddedilmesinden kaynaklanan bir hata olduğunu hatırlayın, oysa *2. tür hata* yanlış olduğunda sıfır hipotezin reddedilmemesinden kaynaklanır. 2. tür hata genellikle $\beta$ olarak belirtilir ve bu nedenle ilgili istatistiksel güç $1-\beta$ olur.
 
@@ -371,6 +427,24 @@ sigma_hat = samples.std(unbiased=True)
  mu_hat + t_star*sigma_hat/torch.sqrt(torch.tensor(N, dtype=torch.float32)))
 ```
 
+```{.python .input}
+#@tab tensorflow
+# Number of samples
+N = 1000
+
+# Sample dataset
+samples = tf.random.normal((N,), 0, 1)
+
+# Lookup Students's t-distribution c.d.f.
+t_star = 1.96
+
+# Construct interval
+mu_hat = tf.reduce_mean(samples)
+sigma_hat = tf.math.reduce_std(samples)
+(mu_hat - t_star*sigma_hat/tf.sqrt(tf.constant(N, dtype=tf.float32)), \
+ mu_hat + t_star*sigma_hat/tf.sqrt(tf.constant(N, dtype=tf.float32)))
+```
+
 ## Özet
 
 * İstatistik, çıkarım sorunlarına odaklanırken, derin öğrenme, açıkça programlamadan ve anlamadan doğru tahminler yapmaya vurgu yapar.
@@ -392,4 +466,12 @@ $$\tilde{\theta} = 2 \bar{X_n} = \frac{2}{n} \sum_{i=1}^n X_i.$$
 
 :begin_tab:`mxnet`
 [Tartışmalar](https://discuss.d2l.ai/t/419)
+:end_tab:
+
+:begin_tab:`pytorch`
+[Tartışmalar](https://discuss.d2l.ai/t/1102)
+:end_tab:
+
+:begin_tab:`tensorflow`
+[Tartışmalar](https://discuss.d2l.ai/t/1103)
 :end_tab:
