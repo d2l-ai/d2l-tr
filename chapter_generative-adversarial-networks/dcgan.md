@@ -461,7 +461,7 @@ net_D(x).shape
 
 ## Eğitim
 
-Temel GAN, :numref:`sec_basic_gan`, ile karşılaştırıldığında, birbirlerine benzer olduklarından hem üretici hem de ayrımcı için aynı öğrenme oranını kullanıyoruz. Ek olarak, Adam'daki (:numref:`sec_adam`) $\beta_1$'yı $0.9$'dan $0.5$'e değiştiriyoruz. Üretici ve ayrımcı birbiriyle çekiştiği için, hızlı değişen gradyanlarla ilgilenmek için momentumun, ki geçmiş gradyanların üssel ağırlıklı hareketli ortalamasıdır, düzgünlüğünü azaltır. Ayrıca, rastgele üretilen `Z` gürültüsü bir 4B tensördür ve bu nedenle hesaplamayı hızlandırmak için GPU kullanırız.
+Temel GAN, :numref:`sec_basic_gan`, ile karşılaştırıldığında, birbirlerine benzer olduklarından hem üretici hem de ayrımcı için aynı öğrenme oranını kullanıyoruz. Ek olarak, Adam'daki (:numref:`sec_adam`) $\beta_1$'yı $0.9$'dan $0.5$'e değiştiriyoruz. Üretici ve ayrımcı birbiriyle çekiştiği için, hızlı değişen gradyanlarla ilgilenmek için momentumun, ki geçmiş gradyanların üstel ağırlıklı hareketli ortalamasıdır, düzgünlüğünü azaltır. Ayrıca, rastgele üretilen `Z` gürültüsü bir 4B tensördür ve bu nedenle hesaplamayı hızlandırmak için GPU kullanırız.
 
 ```{.python .input}
 def train(net_D, net_G, data_iter, num_epochs, lr, latent_dim,

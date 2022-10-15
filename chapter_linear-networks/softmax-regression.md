@@ -128,7 +128,7 @@ $$
 \partial_{o_j} l(\mathbf{y}, \hat{\mathbf{y}}) = \frac{\exp(o_j)}{\sum_{k=1}^q \exp(o_k)} - y_j = \mathrm{softmax}(\mathbf{o})_j - y_j.
 $$
 
-Başka bir deyişle, türev, softmax işlemiyle ifade edildiği gibi modelimiz tarafından atanan olasılık ile bire-bir etiket vektöründeki öğeler tarafından ifade edildiği gibi gerçekte ne olduğu arasındaki farktır. Bu anlamda, regresyonda gördüğümüze çok benzerdir; gradyan $y$ gözlemi ile $\hat{y}$ tahmini arasındaki farktır. Bu bir tesadüf değil. Herhangi bir üssel aile (bkz. [dağılımlar üzerine çevrimiçi ek](https://tr.d2l.ai/chapter_appendix-mathematics-for-deep-learning/distributions.html)) modelinde, log-olabilirlik gradyanları tam olarak bu terim tarafından verilmektedir. Bu gerçek, gradyanları hesaplamayı pratikte kolaylaştırır.
+Başka bir deyişle, türev, softmax işlemiyle ifade edildiği gibi modelimiz tarafından atanan olasılık ile bire-bir etiket vektöründeki öğeler tarafından ifade edildiği gibi gerçekte ne olduğu arasındaki farktır. Bu anlamda, regresyonda gördüğümüze çok benzerdir; gradyan $y$ gözlemi ile $\hat{y}$ tahmini arasındaki farktır. Bu bir tesadüf değil. Herhangi bir üstel aile (bkz. [dağılımlar üzerine çevrimiçi ek](https://tr.d2l.ai/chapter_appendix-mathematics-for-deep-learning/distributions.html)) modelinde, log-olabilirlik gradyanları tam olarak bu terim tarafından verilmektedir. Bu gerçek, gradyanları hesaplamayı pratikte kolaylaştırır.
 
 ### Çapraz Entropi Kaybı
 

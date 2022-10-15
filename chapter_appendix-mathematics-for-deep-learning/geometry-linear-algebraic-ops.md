@@ -479,7 +479,7 @@ $$
 ve $\mathbf{C}$'nin kertesinin iki olduğunu gösterebiliriz, çünkü örneğin ilk iki sütun doğrusal olarak bağımsızdır, ancak herhangi bir dört sütunlu toplulukta üç sütun bağımlıdır.
 
 Bu prosedür, açıklandığı gibi, çok verimsizdir.
-Verdiğimiz matrisin sütunlarının her alt kümesine bakmayı gerektirir ve bu nedenle sütun sayısına bağlı, potansiyel olarak üsseldir.
+Verdiğimiz matrisin sütunlarının her alt kümesine bakmayı gerektirir ve bu nedenle sütun sayısına bağlı, potansiyel olarak üsteldir.
 Daha sonra bir matrisin kertesini hesaplamanın hesaplama açısından daha verimli bir yolunu göreceğiz, ancak şimdilik, kavramın iyi tanımlandığını görmek ve anlamı anlamak yeterlidir.
 
 ## Tersinirlik (Invertibility)

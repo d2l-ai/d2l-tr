@@ -287,7 +287,7 @@ Aşağıdaki gibi tekdüze bir rastgele değişkenden keyfi şekilli bir diziyi 
 
 İşleri biraz daha karmaşık hale getirelim ve *iki terimli (binom)* rastgele değişkeni inceleyelim. Bu rastgele değişken, her birinin başarılı olma olasılığı $p$ olan $n$ bağımsız deneyler dizisi gerçekleştirmekten ve kaç tane başarı görmeyi beklediğimizi sormaktan kaynaklanır.
 
-Bunu matematiksel olarak ifade edelim. Her deney, başarıyı kodlamak için $1$ ve başarısızlığı kodlamak için $0$ kullanacağımız bağımsız bir rastgele değişken $X_i$'dir. Her biri $p$ olasılığı ile başarılı olan bağımsız bir yazı tura olduğu için, $X_i \sim \mathrm{Bernoulli}(p)$ diyebiliriz. Sonra, iki terimli rastgele değişken asağıdaki gibidir:
+Bunu matematiksel olarak ifade edelim. Her deney, başarıyı kodlamak için $1$ ve başarısızlığı kodlamak için $0$ kullanacağımız bağımsız bir rastgele değişken $X_i$'dir. Her biri $p$ olasılığı ile başarılı olan bağımsız bir yazı tura olduğu için, $X_i \sim \mathrm{Bernoulli}(p)$ diyebiliriz. Sonra, iki terimli rastgele değişken aşağıdaki gibidir:
 
 $$
 X = \sum_{i=1}^n X_i.
@@ -301,7 +301,7 @@ $$
 
 Birikimli dağılım işlevini elde etmek için, tam olarak $k$ başarı elde etmenin gerçekleşebileceği hepsi $ p^k(1-p)^{nk}$ olasılıklı $\binom{n}{k} = \frac{n!}{k!(n-k)!}$ yolu olduğunu fark etmemiz gerekir. Böylece birikimli dağılım işlevi bu olur:
 
-$$F(x) = \begin{cases} 0 & x < 0, \\ \sum_{m \le k} \binom{n}{m} p^m(1-p)^{n-m}  & k \le x < k+1 \text{ with } 0 \le k < n, \\ 1 & x >= n . \end{cases}$$
+$$F(x) = \begin{cases} 0 & x < 0, \\ \sum_{m \le k} \binom{n}{m} p^m(1-p)^{n-m}  & k \le x < k+1 \text{ öyleki } 0 \le k < n, \\ 1 & x >= n . \end{cases}$$
 :eqlabel:`eq_binomial_cdf`
 
 İlk olarak olasılık kütle fonksiyonu çizelim.
@@ -309,7 +309,7 @@ $$F(x) = \begin{cases} 0 & x < 0, \\ \sum_{m \le k} \binom{n}{m} p^m(1-p)^{n-m} 
 ```{.python .input}
 n, p = 10, 0.2
 
-# Compute binomial coefficient
+# Binom katsayısını hesapla
 def binom(n, k):
     comb = 1
     for i in range(min(k, n - k)):
@@ -328,7 +328,7 @@ d2l.plt.show()
 #@tab pytorch
 n, p = 10, 0.2
 
-# Compute binomial coefficient
+# Binom katsayısını hesapla
 def binom(n, k):
     comb = 1
     for i in range(min(k, n - k)):
@@ -347,7 +347,7 @@ d2l.plt.show()
 #@tab tensorflow
 n, p = 10, 0.2
 
-# Compute binomial coefficient
+# Binom katsayısını hesapla
 def binom(n, k):
     comb = 1
     for i in range(min(k, n - k)):
@@ -362,7 +362,7 @@ d2l.plt.ylabel('p.m.f.')
 d2l.plt.show()
 ```
 
-Şimdi, birikimli dağılım fonksiyonunu çizelim :eqref:`eq_binomial_cdf`.
+Şimdi, :eqref:`eq_binomial_cdf` birikimli dağılım fonksiyonunu çizelim.
 
 ```{.python .input}
 x = np.arange(-1, 11, 0.01)
@@ -396,12 +396,12 @@ def F(x):
 d2l.plot(x, [F(y) for y in x.numpy().tolist()], 'x', 'c.d.f.')
 ```
 
-If $X \sim \mathrm{Binomial}(n, p)$ ise, o zaman:
+Eğer $X \sim \mathrm{Binomial}(n, p)$ ise, o zaman:
 
 * $\mu_X = np$,
 * $\sigma_X^2 = np(1-p)$.
 
-This follows from the linearity of expected value over the sum of $n$ Bernoulli random variables, and the fact that the variance of the sum of independent random variables is the sum of the variances. This can be sampled as follows.
+Bu, $n$ Bernoulli rastgele değişkenlerinin toplamı üzerindeki beklenen değerin doğrusallığından ve bağımsız rastgele değişkenlerin toplamının varyansının varyansların toplamı olduğu gerçeğinden kaynaklanır. Bu aşağıdaki gibi örneklenebilir.
 
 ```{.python .input}
 np.random.binomial(n, p, size=(10, 10))
@@ -440,7 +440,7 @@ Bu rastgele değişkenleri düşünün. Önceki bölümden şunu biliyoruz :eqre
 
 Bu çok fazla sürpriz olmamalı, çünkü gerçek dünyada sadece otobüslerin geliş sayısını sayabiliyoruz, ancak matematiksel modelimizin iyi tanımlandığını görmek güzel. Bu tartışma, *nadir olaylar yasası* olarak kurallı yapılabilir.
 
-Bu akıl yürütmeyi dikkatlice takip ederek aşağıdaki modele ulaşabiliriz. $\{0,1,2, \ldots \}$ değerlerini asağıdaki olasılıkla  alan rastgele bir değişken ise $X \sim \mathrm{Poisson}(\lambda)$ diyeceğiz.
+Bu akıl yürütmeyi dikkatlice takip ederek aşağıdaki modele ulaşabiliriz. $\{0,1,2, \ldots \}$ değerlerini aşağıdaki olasılıkla alan rastgele bir değişken ise $X \sim \mathrm{Poisson}(\lambda)$ diyeceğiz.
 
 $$p_k = \frac{\lambda^ke^{-\lambda}}{k!}.$$
 :eqlabel:`eq_poisson_mass` 
@@ -449,10 +449,10 @@ $\lambda > 0$ değeri *oran* (veya *şekil* parametresi) olarak bilinir ve bir z
 
 Birikimli dağılım işlevini elde etmek için bu olasılık kütle işlevini toplayabiliriz.
 
-$$F(x) = \begin{cases} 0 & x < 0, \\ e^{-\lambda}\sum_{m = 0}^k \frac{\lambda^m}{m!} & k \le x < k+1 \text{ with } 0 \le k. \end{cases}$$
+$$F(x) = \begin{cases} 0 & x < 0, \\ e^{-\lambda}\sum_{m = 0}^k \frac{\lambda^m}{m!} & k \le x < k+1 \text{ öyleki } 0 \le k. \end{cases}$$
 :eqlabel:`eq_poisson_cdf`
 
-İlk olarak olasılık kütle fonksiyonu çizelim :eqref:`eq_poisson_mass`.
+İlk olarak :eqref:`eq_poisson_mass` olasılık kütle fonksiyonu çizelim.
 
 ```{.python .input}
 lam = 5.0
@@ -494,7 +494,7 @@ d2l.plt.ylabel('p.m.f.')
 d2l.plt.show()
 ```
 
-Şimdi, birikimli dağılım fonksiyonunu çizelim :eqref:`eq_poisson_cdf`.
+Şimdi, :eqref:`eq_poisson_cdf` birikimli dağılım fonksiyonunu çizelim.
 
 ```{.python .input}
 x = np.arange(-1, 21, 0.01)
@@ -550,9 +550,9 @@ m.sample((10, 10))
 
 ## Gauss Dağılımı
 
-Şimdi farklı ama ilişkili bir deney deneyelim. Tekrar $n$ bağımsız $\mathrm{Bernoulli}(p)$ ölçümlerini, $X_i$'yi, gerçekleştirdiğimizi varsayalım. Bunların toplamının dağılımı $X^{(n)} \sim \mathrm{Binomial}(n, p)$ şeklindedir.Burada $n$ arttıkça ve $p$ azaldıkça bir limit almak yerine, $p$'yi düzeltelim ve sonra $n \rightarrow \infty$ diyelim. Bu durumda $\mu_{X^{(n)}} = np \rightarrow \infty$ ve $\sigma_{X^{(n)}}^2 = np(1-p) \rightarrow \infty$ olur, bu nedenle bu limitin iyi tanımlanması gerektiğini düşünmek için hiçbir neden yoktur.
+Şimdi farklı ama ilişkili bir deney yapalım. Tekrar $n$ bağımsız $\mathrm{Bernoulli}(p)$ ölçümlerini, $X_i$'yi, gerçekleştirdiğimizi varsayalım. Bunların toplamının dağılımı $X^{(n)} \sim \mathrm{Binomial}(n, p)$ şeklindedir. Burada $n$ arttıkça ve $p$ azaldıkça bir limit almak yerine, $p$'yi düzeltelim ve sonra $n \rightarrow \infty$ diyelim. Bu durumda $\mu_{X^{(n)}} = np \rightarrow \infty$ ve $\sigma_{X^{(n)}}^2 = np(1-p) \rightarrow \infty$ olur, bu nedenle bu limitin iyi tanımlanması gerektiğini düşünmek için hiçbir neden yoktur.
 
-Ancak, tüm umudumuzu kaybetmeyelim! Onları tanımlayarak ortalama ve varyansın iyi davranmasını sağlayalım
+Ancak, tüm umudumuzu kaybetmeyelim! Onları tanımlayarak ortalama ve varyansın iyi davranmasını sağlayalım:
 
 $$
 Y^{(n)} = \frac{X^{(n)} - \mu_{X^{(n)}}}{\sigma_{X^{(n)}}}.
@@ -630,7 +630,7 @@ burada rastgele bir değişkenin normalde verilen ortalama $\mu$ ve varyans $\si
 $$p_X(x) = \frac{1}{\sqrt{2\pi\sigma^2}}e^{-\frac{(x-\mu)^2}{2\sigma^2}}.$$
 :eqlabel:`eq_gaussian_pdf`
 
-Önce, olasılık yoğunluk dağılım fonksiyonunu çizelim :eqref:`eq_gaussian_pdf`.
+Önce, :eqref:`eq_gaussian_pdf` olasılık yoğunluk dağılım fonksiyonunu çizelim.
 
 ```{.python .input}
 mu, sigma = 0, 1
@@ -669,7 +669,7 @@ d2l.plot(x, p, 'x', 'p.d.f.')
 def phi(x):
     return (1.0 + erf((x - mu) / (sigma * np.sqrt(2)))) / 2.0
 
-d2l.plot(x, np.array([phi(y) for y in x.tolist()]), 'x', 'c.d.f.')
+d2l.plot(x, np.array([phi(y) for y in x.tolist()]), 'x', 'b.d.f.')
 ```
 
 ```{.python .input}
@@ -677,7 +677,7 @@ d2l.plot(x, np.array([phi(y) for y in x.tolist()]), 'x', 'c.d.f.')
 def phi(x):
     return (1.0 + erf((x - mu) / (sigma * torch.sqrt(d2l.tensor(2.))))) / 2.0
 
-d2l.plot(x, torch.tensor([phi(y) for y in x.tolist()]), 'x', 'c.d.f.')
+d2l.plot(x, torch.tensor([phi(y) for y in x.tolist()]), 'x', 'b.d.f.')
 ```
 
 ```{.python .input}
@@ -685,7 +685,7 @@ d2l.plot(x, torch.tensor([phi(y) for y in x.tolist()]), 'x', 'c.d.f.')
 def phi(x):
     return (1.0 + erf((x - mu) / (sigma * tf.sqrt(tf.constant(2.))))) / 2.0
 
-d2l.plot(x, [phi(y) for y in x.numpy().tolist()], 'x', 'c.d.f.')
+d2l.plot(x, [phi(y) for y in x.numpy().tolist()], 'x', 'b.d.f.')
 ```
 
 Meraklı okuyucular bu terimlerin bazılarını tanıyacaktır. Aslında, bu integralla :numref:`sec_integral_calculus` içinde karşılaştık. Aslında, $p_X(x)$'nin toplamda bir birim alana sahip olduğunu ve dolayısıyla geçerli bir yoğunluk olduğunu görmek için tam olarak bu hesaplamaya ihtiyacımız var.
@@ -706,7 +706,7 @@ yaklaşık olarak Gauss olacak. Çalışması için ek gereksinimler vardır, en
 
 Merkezi limit teoremi, Gauss'un olasılık, istatistik ve makine öğrenmesi için temel olmasının nedenidir. Ölçtüğümüz bir şeyin birçok küçük bağımsız katkının toplamı olduğunu söyleyebildiğimizde, ölçülen şeyin Gauss'a yakın olacağını varsayabiliriz.
 
-Gauss'ların daha birçok büyüleyici özelliği var ve burada bir tanesini daha tartışmak istiyoruz. Gauss, *maksimum entropi dağılımı* olarak bilinen şeydir. Entropiye daha derinlemesine :numref:`sec_information_theory`'de gireceğiz, ancak bu noktada bilmemiz gereken tek şey bunun bir rastgelelik ölçüsü olduğudur. Titiz bir matematiksel anlamda, Gauss'u sabit ortalama ve varyanslı rastgele değişkenin *en* rastgele seçimi olarak düşünebiliriz. Bu nedenle, rastgele değişkenimizin herhangi bir ortalama ve varyansa sahip olduğunu bilirsek, Gauss bir anlamda yapabileceğimiz en muhafazakar dağılım seçimidir.
+Gauss'ların daha birçok büyüleyici özelliği var ve burada bir tanesini daha tartışmak istiyoruz. Gauss, *maksimum entropi dağılımı* olarak bilinen şeydir. Entropiye daha derinlemesine :numref:`sec_information_theory` içinde gireceğiz, ancak bu noktada bilmemiz gereken tek şey bunun bir rastgelelik ölçüsü olduğudur. Titiz bir matematiksel anlamda, Gauss'u sabit ortalama ve varyanslı rastgele değişkenin *en* rastgele seçimi olarak düşünebiliriz. Bu nedenle, rastgele değişkenimizin herhangi bir ortalama ve varyansa sahip olduğunu bilirsek, Gauss bir anlamda yapabileceğimiz en muhafazakar dağılım seçimidir.
 
 Bölümü kapatırken, $X \sim \mathcal{N}(\mu, \sigma^2)$ ise şunu hatırlayalım:
 
@@ -729,44 +729,26 @@ torch.normal(mu, sigma, size=(10, 10))
 tf.random.normal((10, 10), mu, sigma)
 ```
 
-## Exponential Family
+## Üstel Ailesi
 :label:`subsec_exponential_family`
 
-One shared property for all the distributions listed above is that they all 
-belong to which is known as the *exponential family*. The exponential family 
-is a set of distributions whose density can be expressed in the following 
-form:
+Yukarıda listelenen tüm dağılımlar için ortak bir özellik, hepsinin ait olduğu *üstel aile* olarak bilinmesidir. Üstel aile, yoğunluğu aşağıdaki biçimde ifade edilebilen bir dizi dağılımdır:
 
 $$p(\mathbf{x} | \boldsymbol{\eta}) = h(\mathbf{x}) \cdot \mathrm{exp} \left( \boldsymbol{\eta}^{\top} \cdot T(\mathbf{x}) - A(\boldsymbol{\eta}) \right)$$
 :eqlabel:`eq_exp_pdf`
 
-As this definition can be a little subtle, let us examine it closely.  
+Bu tanım biraz incelikli olabileceğinden, onu yakından inceleyelim.
 
-First, $h(\mathbf{x})$ is known as the *underlying measure* or the 
-*base measure*.  This can be viewed as an original choice of measure we are 
-modifying with our exponential weight.  
+İlk olarak, $h(\mathbf{x})$, *altta yatan ölçü* veya *temel ölçü* olarak bilinir. Bu, üstel ağırlığımızla değiştirdiğimiz orijinal bir ölçü seçimi olarak görülebilir.
 
-Second, we have the vector $\boldsymbol{\eta} = (\eta_1, \eta_2, ..., \eta_l) \in
-\mathbb{R}^l$ called the *natural parameters* or *canonical parameters*.  These
-define how the base measure will be modified.  The natural parameters enter 
-into the new measure by taking the dot product of these parameters against 
-some function $T(\cdot)$ of $\mathbf{x}= (x_1, x_2, ..., x_n) \in
-\mathbb{R}^n$ and exponentiated. The vector $T(\mathbf{x})= (T_1(\mathbf{x}),
-T_2(\mathbf{x}), ..., T_l(\mathbf{x}))$ 
-is called the *sufficient statistics* for $\boldsymbol{\eta}$. This name is used since the 
-information represented by $T(\mathbf{x})$ is sufficient to calculate the 
-probability density and no other information from the sample $\mathbf{x}$'s 
-are required.
+İkinci olarak, *doğal parametreler* veya *kanonik parametreler* olarak adlandırılan $\boldsymbol{\eta} = (\eta_1, \eta_2, ..., \eta_l) \in \mathbb{R}^l$ vektörüne sahibiz. Bunlar, temel ölçünün nasıl değiştirileceğini tanımlar. Doğal parametreler, $\mathbf{x}= (x_1, x_2, ..., x_n) \in \mathbb{R}^n$ değişkeninin bazı $T(\cdot)$ fonksiyonlarına karşı bu parametrelerin nokta çarpımını ve üstünü alarak yeni ölçüye girerler. $T(\mathbf{x})= (T_1(\mathbf{x}), T_2(\mathbf{x}), ..., T_l(\mathbf{x}))$ vektörüne *$\boldsymbol{\eta}$ için yeterli istatistikler* denir. Bu ad, $T(\mathbf{x})$ tarafından temsil edilen bilgiler olasılık yoğunluğunu hesaplamak için yeterli olduğundan ve $\mathbf{x}$'in örnekleminden başka hiçbir bilgi gerekmediğinden kullanılır.
 
-Third, we have $A(\boldsymbol{\eta})$, which is referred to as the *cumulant 
-function*, which ensures that the above distribution :eqref:`eq_exp_pdf` 
-integrates to one, i.e.,
+Üçüncü olarak, elimizde yukarıdaki :eqref:`eq_exp_pdf` dağılımının intergralinin bir olmasını sağlayan, birikim fonksiyonu olarak adlandırılan $A(\boldsymbol{\eta})$ var, yani:
 
 $$A(\boldsymbol{\eta})  = \log \left[\int h(\mathbf{x}) \cdot \mathrm{exp}
 \left(\boldsymbol{\eta}^{\top} \cdot T(\mathbf{x}) \right) d\mathbf{x} \right].$$
 
-To be concrete, let us consider the Gaussian. Assuming that $\mathbf{x}$ is 
-an univariate variable, we saw that it had a density of
+Somut olmak için Gauss'u ele alalım. $\mathbf{x}$ öğesinin tek değişkenli bir değişken olduğunu varsayarsak, yoğunluğunun şu olduğunu gördük:
 
 $$
 \begin{aligned}
@@ -778,25 +760,19 @@ p(x | \mu, \sigma) &= \frac{1}{\sqrt{2 \pi \sigma^2}} \cdot \mathrm{exp}
 \end{aligned}
 $$
 
-This matches the definition of the exponential family with:
+Bu, üstel ailenin tanımıyla eşleşir:
 
-* *underlying measure*: $h(x) = \frac{1}{\sqrt{2 \pi}}$,
-* *natural parameters*: $\boldsymbol{\eta} = \begin{bmatrix} \eta_1 \\ \eta_2
+* *Temel ölçü*: $h(x) = \frac{1}{\sqrt{2 \pi}}$,
+* *Doğal parametreler*: $\boldsymbol{\eta} = \begin{bmatrix} \eta_1 \\ \eta_2
 \end{bmatrix} = \begin{bmatrix} \frac{\mu}{\sigma^2} \\
 \frac{1}{2 \sigma^2} \end{bmatrix}$,
-* *sufficient statistics*: $T(x) = \begin{bmatrix}x\\-x^2\end{bmatrix}$, and
-* *cumulant function*: $A({\boldsymbol\eta}) = \frac{1}{2 \sigma^2} \mu^2 + \log(\sigma)
+* *Yeterli istatistikler*: $T(x) = \begin{bmatrix}x\\-x^2\end{bmatrix}$, and
+* *Birikim işlevi*: $A({\boldsymbol\eta}) = \frac{1}{2 \sigma^2} \mu^2 + \log(\sigma)
 = \frac{\eta_1^2}{4 \eta_2} - \frac{1}{2}\log(2 \eta_2)$.
 
-It is worth noting that the exact choice of each of above terms is somewhat 
-arbitrary.  Indeed, the important feature is that the distribution can be 
-expressed in this form, not the exact form itself.
+Yukarıdaki terimlerin her birinin kesin seçiminin biraz keyfi olduğunu belirtmekte fayda var. Gerçekten de önemli olan özellik, dağılımın tam formunun kendisi değil, bu formda ifade edilebilmesidir.
 
-As we allude to in :numref:`subsec_softmax_and_derivatives`, a widely used 
-technique is to assume that the  final output $\mathbf{y}$ follows an 
-exponential family distribution. The exponential family is a common and 
-powerful family of distributions encountered frequently in machine learning.
-
+:numref:`subsec_softmax_and_derivatives` içinde bahsettiğimiz gibi, yaygın olarak kullanılan bir teknik, $\mathbf{y}$ nihai çıktısının üstel bir aile dağılımını takip ettiğini varsaymaktır. Üstel aile, makine öğrenmesinde sıkça karşılaşılan yaygın ve güçlü bir dağılım ailesidir.
 
 ## Özet
 * Bernoulli rastgele değişkenleri, evet/hayır sonucu olan olayları modellemek için kullanılabilir.
@@ -805,10 +781,10 @@ powerful family of distributions encountered frequently in machine learning.
 * Binom dağılımları bir dizi Bernoulli rasgele değişkeni modeller ve başarıların sayısını sayar.
 * Poisson rastgele değişkenleri, nadir olayların oluşunu modeller.
 * Gauss rastgele değişkenleri, çok sayıda bağımsız rastgele değişkenin toplam sonucunu modeller.
-* All the above distributions belong to exponential family.
+* Yukarıdaki tüm dağılımlar üstel aileye aittir.
 
 ## Alıştırmalar
-1. İki bağımsız iki terimli rastgele değişken $X, Y \sim \mathrm{Binomial}(16, 1/2)$ arasındaki $X-Y$ farkı olan rastgele bir değişkenin standart sapması nedir?
+1. İki bağımsız iki terimli rastgele değişkenin, $X, Y \sim \mathrm{Binomial}(16, 1/2)$ arasındaki $X-Y$ farkı olan rastgele bir değişkenin standart sapması nedir?
 2. Poisson rastgele değişkenini, $X \sim \mathrm{Poisson}(\lambda)$, alırsak ve $(X - \lambda)/\sqrt{\lambda}$'i $\lambda \rightarrow \infty$ olarak kabul edersek, bunun yaklaşık olarak Gauss olduğunu gösterebiliriz. Bu neden anlamlıdır?
 3. $n$ elemanda tanımlı iki tane ayrık tekdüze rasgele değişkenin toplamı için olasılık kütle fonksiyonu nedir?
 

@@ -171,7 +171,7 @@ Bu şekilde türevi, girdideki bir değişiklikten çıktıda ne kadar büyük d
 * **Sabitlerin türevi.** $\frac{d}{dx}c = 0$.
 * **Doğrusal fonksiyonların türevi.** $\frac{d}{dx}(ax) = a$.
 * **Kuvvet kuralı.** $\frac{d}{dx}x^n = nx^{n-1}$.
-* **Üssellerin türevi.** $\frac{d}{dx}e^x = e^x$.
+* **Üstellerin türevi.** $\frac{d}{dx}e^x = e^x$.
 * **Logaritmanın türevi.** $\frac{d}{dx}\log(x) = \frac{1}{x}$.
 
 ### Türev Kuralları
@@ -248,7 +248,7 @@ Her satırda sırasıyla aşağıdaki kurallar kullanmıştır:
 
 Bu örneği yaptıktan sonra iki şey netleşmiş olmalıdır:
 
-1. Toplamları, çarpımları, sabitleri, üsleri, üsselleri ve logaritmaları kullanarak yazabileceğimiz herhangi bir fonksiyonun türevi bu kuralları takip ederek mekanik olarak hesaplanabilir.
+1. Toplamları, çarpımları, sabitleri, üsleri, üstelleri ve logaritmaları kullanarak yazabileceğimiz herhangi bir fonksiyonun türevi bu kuralları takip ederek mekanik olarak hesaplanabilir.
 2. Bir insanın bu kuralları takip etmesi yorucu ve hataya açık olabilir!
 
 Neyse ki, bu iki gerçek birlikte ileriye doğru bir yol gösteriyor: Bu, mekanikleştirme için mükemmel bir aday! Aslında bu bölümde daha sonra tekrar ele alacağımız geri yayma tam olarak da budur. 
@@ -438,7 +438,7 @@ $$
 Bunun kodda nasıl çalıştığını görelim ve Taylor yaklaşımının derecesini artırmanın bizi istenen $e^x$ fonksiyonuna nasıl yaklaştırdığını görelim.
 
 ```{.python .input}
-# Üssel işlevi hesaplayın
+# Üstel işlevi hesaplayın
 xs = np.arange(0, 3, 0.01)
 ys = np.exp(xs)
 
@@ -454,7 +454,7 @@ d2l.plot(xs, [ys, P1, P2, P5], 'x', 'f(x)', legend=[
 
 ```{.python .input}
 #@tab pytorch
-# Üssel işlevi hesaplayın
+# Üstel işlevi hesaplayın
 xs = torch.arange(0, 3, 0.01)
 ys = torch.exp(xs)
 
@@ -470,7 +470,7 @@ d2l.plot(xs, [ys, P1, P2, P5], 'x', 'f(x)', legend=[
 
 ```{.python .input}
 #@tab tensorflow
-# Üssel işlevi hesaplayın
+# Üstel işlevi hesaplayın
 xs = tf.range(0, 3, 0.01)
 ys = tf.exp(xs)
 

@@ -13,7 +13,7 @@ Adam :cite:`Kingma.Ba.2014`, tüm bu teknikleri tek bir verimli öğrenme algori
 
 ## Algoritma
 
-Adam'ın temel bileşenlerinden biri, hem momentumu hem de gradyanın ikinci momentini tahmin etmek için üssel ağırlıklı hareketli ortalamaları (sızdıran ortalama olarak da bilinir) kullanmasıdır. Yani, durum değişkenleri kullanır 
+Adam'ın temel bileşenlerinden biri, hem momentumu hem de gradyanın ikinci momentini tahmin etmek için üstel ağırlıklı hareketli ortalamaları (sızdıran ortalama olarak da bilinir) kullanmasıdır. Yani, durum değişkenleri kullanır 
 
 $$\begin{aligned}
     \mathbf{v}_t & \leftarrow \beta_1 \mathbf{v}_{t-1} + (1 - \beta_1) \mathbf{g}_t, \\

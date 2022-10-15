@@ -103,12 +103,12 @@ $\eta$'nın zamana bağlı öğrenme hızı $\eta(t)$ ile değiştirilmesi, opti
 $$
 \begin{aligned}
     \eta(t) & = \eta_i \text{ eğer } t_i \leq t \leq t_{i+1}  && \text{parçalı sabit} \\
-    \eta(t) & = \eta_0 \cdot e^{-\lambda t} && \text{üssel sönüm} \\
+    \eta(t) & = \eta_0 \cdot e^{-\lambda t} && \text{üstel sönüm} \\
     \eta(t) & = \eta_0 \cdot (\beta t + 1)^{-\alpha} && \text{polinomsal sönüm}
 \end{aligned}
 $$
 
-İlk *parçalı sabit* senaryosunda, öğrenme oranını düşürüyoruz, mesela optimizasyondaki ilerleme durduğunda. Bu, derin ağları eğitmek için yaygın bir stratejidir. Alternatif olarak çok daha saldırgan bir *üssel sönüm* ile azaltabiliriz. Ne yazık ki bu genellikle algoritma yakınsamadan önce erken durmaya yol açar. Popüler bir seçim, $\alpha = 0.5$ ile *polinom sönüm*dür. Dışbükey optimizasyon durumunda, bu oranın iyi davrandığını gösteren bir dizi kanıt vardır. 
+İlk *parçalı sabit* senaryosunda, öğrenme oranını düşürüyoruz, mesela optimizasyondaki ilerleme durduğunda. Bu, derin ağları eğitmek için yaygın bir stratejidir. Alternatif olarak çok daha saldırgan bir *üstel sönüm* ile azaltabiliriz. Ne yazık ki bu genellikle algoritma yakınsamadan önce erken durmaya yol açar. Popüler bir seçim, $\alpha = 0.5$ ile *polinom sönüm*dür. Dışbükey optimizasyon durumunda, bu oranın iyi davrandığını gösteren bir dizi kanıt vardır. 
 
 Üstel sönmenin pratikte neye benzediğini görelim.
 
