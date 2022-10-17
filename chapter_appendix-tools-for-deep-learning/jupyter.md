@@ -103,7 +103,7 @@ jupyter nbextension enable execute_time/ExecuteTime
 * Kitap bölümlerini düzenlemek için Jupyter'da markdown formatını etkinleştirmeniz gerekir.
 * Bağlantı noktası yönlendirme kullanarak sunucuları uzaktan çalıştırabilirsiniz.
 
-## Egzersizler
+## Alıştırmalar
 
 1. Bu kitaptaki kodu yerel olarak düzenlemeyi ve çalıştırmayı deneyin.
 1. Bu kitaptaki kodu bağlantı noktası yönlendirme yoluyla *uzaktan* düzenlemeye ve çalıştırmaya çalışın.
