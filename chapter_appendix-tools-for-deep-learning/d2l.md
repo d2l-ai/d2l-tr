@@ -1,7 +1,7 @@
 # `d2l` API Belgesi
 :label:`sec_d2l`
 
-`d2l` paketinin aşağıdaki üyelerinin ve tanımlandığı ve açıklandığı bölümlerin uygulamaları [kaynak dosya (source file)](https://github.com/d2l-ai/d2l-en/tree/master/d2l)'da bulunabilir.
+`d2l` paketinin aşağıdaki üyelerinin tanımlandığı ve açıklandığı bölümlerin uygulamaları [(source file) kaynak dosya](https://github.com/d2l-ai/d2l-tr/tree/master/d2l)sında bulunabilir.
 
 :begin_tab:`mxnet`
 ```eval_rst

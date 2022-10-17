@@ -1,106 +1,109 @@
 # AWS EC2 Örneklerini Kullanma
 :label:`sec_aws`
 
-Bu bölümde, tüm kütüphaneleri ham Linux makinesine nasıl yükleyeceğinizi göstereceğiz. :numref:`sec_sagemaker`'te Amazon SageMaker'ı nasıl kullanacağınızı tartıştığımızı, kendi başınıza bir örnek oluşturmanın AWS'de daha az maliyeti olduğunu unutmayın. Walkthrough bir dizi adım içerir: 
+Bu bölümde, tüm kütüphaneleri ham Linux makinesine nasıl yükleyeceğinizi göstereceğiz. :numref:`sec_sagemaker` içinde Amazon SageMaker'ı nasıl kullanacağınızı tartıştığımızı, kendi başınıza bir örnek oluşturmanın AWS'de daha az maliyeti olduğunu unutmayın. İzlenecek yol bir dizi adım içerir: 
 
-1. AWS EC2'den bir GPU Linux örneği isteği.
+1. AWS EC2'den bir GPU Linux örneği talebi.
 1. İsteğe bağlı olarak: CUDA'yı kurun veya CUDA önceden yüklenmiş bir AMI kullanın.
 1. İlgili MXNet GPU sürümünü ayarlayın.
 
-Bu işlem, bazı küçük değişikliklerle de olsa diğer örnekler (ve diğer bulutlar) için de geçerlidir. İleriye gitmeden önce, bir AWS hesabı oluşturmanız gerekir, daha fazla ayrıntı için :numref:`sec_sagemaker`'e bakın. 
+Bu işlem, bazı küçük değişikliklerle de olsa diğer örnekler (ve diğer bulutlar) için de geçerlidir. İleriye gitmeden önce, bir AWS hesabı oluşturmanız gerekir, daha fazla ayrıntı için :numref:`sec_sagemaker` içine bakın. 
 
 ## EC2 Örneği Oluşturma ve Çalıştırma
 
-AWS hesabınıza giriş yaptıktan sonra EC2 paneline gitmek için “EC2" (:numref:`fig_aws`'te kırmızı kutuyla işaretlenmiş) tıklayın. 
+AWS hesabınıza giriş yaptıktan sonra EC2 paneline gitmek için "EC2"'ye (:numref:`fig_aws` içinde kırmızı kutuyla işaretlenmiş) tıklayın. 
 
-![Open the EC2 console.](../img/aws.png)
+![EC2 konsolunu açma.](../img/aws.png)
 :width:`400px`
 :label:`fig_aws`
 
 :numref:`fig_ec2`, hassas hesap bilgilerinin gri renkte olduğu EC2 panelini gösterir. 
 
-![EC2 panel.](../img/ec2.png)
+![EC2 paneli.](../img/ec2.png)
 :width:`700px`
 :label:`fig_ec2`
 
-### Yer Ön Ayar Gecikmeyi azaltmak için yakındaki bir veri merkezi seçin, örneğin “Oregon” (:numref:`fig_ec2`'ün sağ üstündeki kırmızı kutuyla işaretlenmiştir). Çin'de bulunuyorsanız, Seul veya Tokyo gibi yakındaki Asya Pasifik bölgesini seçebilirsiniz. Bazı veri merkezlerinin GPU örneklerine sahip olmayabileceğini lütfen unutmayın. 
+### Yer Ön Ayarı 
+Gecikmeyi azaltmak için yakındaki bir veri merkezi seçin, örneğin "Oregon" (:numref:`fig_ec2` figürünün sağ üstündeki kırmızı kutuyla işaretlenmiştir). Çin'de bulunuyorsanız, Seul veya Tokyo gibi yakındaki Asya Pasifik bölgesini seçebilirsiniz. Bazı veri merkezlerinin GPU örneklerine sahip olmayabileceğini lütfen unutmayın. 
 
-### Sınırları Artırmak Bir örneği seçmeden önce, :numref:`fig_ec2`'te gösterildiği gibi soldaki çubuktaki “Limitler” etiketine tıklayarak miktar kısıtlamaları olup olmadığını kontrol edin. :numref:`fig_limits`, bu tür bir sınırlamanın bir örneğini gösterir. Hesap şu anda bölge başına “p2.xlarge” örneğini açamıyor. Bir veya daha fazla örnek açmanız gerekiyorsa, daha yüksek bir örnek kotasına başvurmak için “Limit artışı iste” bağlantısına tıklayın. Genellikle, bir uygulamanın işlenmesi bir iş günü sürer. 
+### Kısıtları Artırmak 
+Bir örneği seçmeden önce, :numref:`fig_ec2` içinde gösterildiği gibi soldaki çubuktaki "Limits - Kısıtlar" etiketine tıklayarak miktar kısıtlamaları olup olmadığını kontrol edin. :numref:`fig_limits`, bu tür bir kısıtlamanın bir örneğini gösterir. Hesap şu anda bölge başına "p2.xlarge" örneğini açamıyor. Bir veya daha fazla örnek açmanız gerekiyorsa, daha yüksek bir örnek kotasına başvurmak için "Request limit increase - Limit artışı iste" bağlantısına tıklayın. Genellikle, bir uygulamanın işlenmesi bir iş günü sürer. 
 
-![Instance quantity restrictions.](../img/limits.png)
+![Örnek miktarı kısıtlamaları.](../img/limits.png)
 :width:`700px`
 :label:`fig_limits`
 
-### Örnek Sonraki Başlatma, örneğinizi başlatmak için :numref:`fig_ec2`'te kırmızı kutuyla işaretlenmiş “Örneği Başlat” düğmesine tıklayın. 
+### Örneği Başlatma 
+Sonrasında örneğinizi başlatmak için :numref:`fig_ec2` içinde kırmızı kutuyla işaretlenmiş "Launch Instance - Örneği Başlat" düğmesine tıklayın. 
 
-Uygun bir AMI (AWS Machine Image) seçerek başlıyoruz. Arama kutusuna “Ubuntu” girin (:numref:`fig_ubuntu`'te kırmızı kutu ile işaretlenmiş). 
+Uygun bir AMI (AWS Machine Image) seçerek başlıyoruz. Arama kutusuna "Ubuntu" girin (:numref:`fig_ubuntu` içinde kırmızı kutu ile işaretlenmiş). 
 
-![Choose an operating system.](../img/ubuntu-new.png)
+![Bir işletim sistemi seçme](../img/ubuntu-new.png)
 :width:`700px`
 :label:`fig_ubuntu`
 
-EC2, aralarından seçim yapabileceğiniz birçok farklı örnek yapılandırması sağlar. Bu bazen bir acemi için ezici hissedebilir. İşte uygun makinelerin bir tablosu: 
+EC2, aralarından seçim yapabileceğiniz birçok farklı örnek yapılandırması sağlar. Bu bazen bir acemi için ezici hissedilebilir. İşte uygun makinelerin bir tablosu: 
 
-| Name | GPU         | Notes                         |
-|------|-------------|-------------------------------|
-| g2   | Grid K520   | ancient                       |
-| p2   | Kepler K80  | old but often cheap as spot   |
-| g3   | Maxwell M60 | good trade-off                |
-| p3   | Volta V100  | high performance for FP16     |
-| g4   | Turing T4   | inference optimized FP16/INT8 |
+| Name | GPU         | Notlar                                    |
+|------|-------------|-------------------------------------------|
+| g2   | Grid K520   | eski                                      |
+| p2   | Kepler K80  | eski ama genellikle anlık olarak ucuz     | 
+| g3   | Maxwell M60 | iyi ödünleşme                             |
+| p3   | Volta V100  | FP16 için yüksek performans               |
+| g4   | Turing T4   | FP16/INT8 çıkarsama için optimize edilmiş |
 
-Yukarıdaki tüm sunucular, kullanılan GPU sayısını belirten birden fazla lezzet sunar. Örneğin, bir p2.xlarge 1 GPU'ya ve p2.16xlarge 16 GPU'ya ve daha fazla belleğe sahiptir. Daha fazla ayrıntı için bkz. [AWS EC2 documentation](https732293614). 
+Yukarıdaki tüm sunucular, kullanılan GPU sayısını belirten birden fazla seçenek sunar. Örneğin, bir p2.xlarge 1 GPU'ya ve p2.16xlarge 16 GPU'ya ve daha fazla belleğe sahiptir. Daha fazla ayrıntı için bkz. [AWS EC2 belegeleri](https://aws.amazon.com/ec2/instance-types/) veya [özet sayfası](https://www.ec2instances.info). Örnekleme amacıyla, bir p2.xlarge yeterli olacaktır (:numref:`fig_p2x` içinde kırmızı kutu olarak işaretlenmiştir).
 
-**Not: ** uygun sürücülere sahip bir GPU etkin örneği ve GPU etkin bir MXNet sürümünü kullanmanız gerekir. Aksi takdirde GPU'ları kullanmaktan herhangi bir fayda görmezsiniz.
+**Not:** Uygun sürücülere sahip bir GPU etkin örneği ve GPU etkin bir MXNet sürümünü kullanmanız gerekir. Aksi takdirde GPU'ları kullanmaktan herhangi bir fayda görmezsiniz.
 
-![Choose an instance.](../img/p2x.png)
+![Bir örnek seçme.](../img/p2x.png)
 :width:`700px`
 :label:`fig_p2x`
 
-Şimdiye kadar, :numref:`fig_disk`'ün üstünde gösterildiği gibi, bir EC2 örneğini başlatmak için yedi adımdan ilk ikisini tamamladık. Bu örnekte, “3 adımları için varsayılan yapılandırmaları saklıyoruz. Örneği Yapılandır”, “5. Etiket Ekle” ve “6. Güvenlik Grubunu Yapılandır”. “4'e dokun. Depolama Ekle” ve varsayılan sabit disk boyutunu 64 GB'a yükseltin (:numref:`fig_disk` kırmızı kutuda işaretlenmiş). CUDA'nın kendi başına zaten 4 GB aldığını unutmayın. 
+Şimdiye kadar, :numref:`fig_disk` figürünün üstünde gösterildiği gibi, bir EC2 örneğini başlatmak için yedi adımdan ilk ikisini tamamladık. Bu örnekte, "3.Örneği Yapılandır - Configure Instance", "5. Etiket Ekle - Add Tags" ve "6. Güvenlik Grubunu Yapılandır - Configure Security Group" adımları için varsayılan yapılandırmaları saklıyoruz. "4. Depolama Ekle - Add Storage"'ye dokunun ve varsayılan sabit disk boyutunu 64 GB'a yükseltin (:numref:`fig_disk` kırmızı kutuda işaretlenmiş). CUDA'nın kendi başına zaten 4 GB aldığını unutmayın. 
 
 ![Modify instance hard disk size.](../img/disk.png)
 :width:`700px`
 :label:`fig_disk`
 
-Son olarak, 7'ye git. İnceleyin” ve yapılandırılmış örneği başlatmak için “Başlat” ı tıklayın. Sistem artık örneğe erişmek için kullanılan anahtar çiftini seçmenizi ister. Anahtar çiftiniz yoksa, anahtar çifti oluşturmak için :numref:`fig_keypair`'teki ilk açılır menüden “Yeni bir anahtar çifti oluştur” u seçin. Daha sonra, bu menü için “Varolan bir anahtar çiftini seç” i seçip daha önce oluşturulmuş anahtar çiftini seçebilirsiniz. Oluşturulan örneği başlatmak için “Örnekleri Başlat” ı tıklayın. 
+Son olarak, "7. Gözden geçir - Review”'ye gidin ve yapılandırılmış örneği başlatmak için “Başlat - Launch”'ı tıklayın. Sistem artık örneğe erişmek için kullanılan anahtar çiftini seçmenizi isteyecek. Anahtar çiftiniz yoksa, anahtar çifti oluşturmak için :numref:`fig_keypair` içindeki ilk açılır menüden “Yeni bir anahtar çifti oluştur - Create a new key pair”'u seçin. Daha sonra, bu menü için “Varolan bir anahtar çiftini seç - Choose an existing key pair”'i seçip daha önce oluşturulmuş anahtar çiftini seçebilirsiniz. Oluşturulan örneği başlatmak için “Örnekleri Başlat - Launch Instances”'ı tıklayın. 
 
-![Select a key pair.](../img/keypair.png)
+![Bir anahtar çifti seçme.](../img/keypair.png)
 :width:`500px`
 :label:`fig_keypair`
 
-Yeni bir tane oluşturduysanız anahtar çiftini indirdiğinizden ve güvenli bir konumda sakladığınızdan emin olun. Bu sunucuya SSH için tek yoldur. Bu örneğin durumunu görüntülemek için :numref:`fig_launching`'te gösterilen örnek kimliğini tıklatın. 
+Yeni bir tane oluşturduysanız anahtar çiftini indirdiğinizden ve güvenli bir konumda sakladığınızdan emin olun. Bu sunucuya tek yol SSH'dir. Bu örneğin durumunu görüntülemek için :numref:`fig_launching` içinde gösterilen örnek kimliğini tıklatın. 
 
-![Click the instance ID.](../img/launching.png)
+![Örnek kimliğini tıklama.](../img/launching.png)
 :width:`700px`
 :label:`fig_launching`
 
-### Örnek Bağlanma
+### Örneğe Bağlanma
 
-:numref:`fig_connect`'te gösterildiği gibi, örnek durumu yeşile döndükten sonra örneği sağ tıklatın ve örnek erişim yöntemini görüntülemek için `Connect`'i seçin. 
+:numref:`fig_connect` içinde gösterildiği gibi, örnek durumu yeşile döndükten sonra örneği sağ tıklatın ve örnek erişim yöntemini görüntülemek için `Connect`'i seçin. 
 
-![View instance access and startup method.](../img/connect.png)
+![Örnek erişimini ve başlatma yöntemini görüntüleme.](../img/connect.png)
 :width:`700px`
 :label:`fig_connect`
 
 Bu yeni bir anahtarsa, SSH'nin çalışması için herkese açık bir şekilde görüntülenmemelidir. `D2L_key.pem`'ü sakladığınız klasöre gidin (örn. İndirilenler klasörü) ve anahtarın genel olarak görüntülenmediğinden emin olun.
 
 ```bash
-cd /Downloads  ## if D2L_key.pem is stored in Downloads folder
+cd /Downloads  ## D2L_key.pem İndirilenler klasöründe depolanıyorsa
 chmod 400 D2L_key.pem
 ```
 
-![View instance access and startup method.](../img/chmod.png)
+![Örnek erişimini ve başlatma yöntemini görüntüleme.](../img/chmod.png)
 :width:`400px`
 :label:`fig_chmod`
 
-Şimdi, :numref:`fig_chmod`'ün alt kırmızı kutusuna ssh komutunu kopyalayın ve komut satırına yapıştırın:
+Şimdi, :numref:`fig_chmod`' figürunun alt kırmızı kutusuna ssh komutunu kopyalayın ve komut satırına yapıştırın:
 
 ```bash
 ssh -i "D2L_key.pem" ubuntu@ec2-xx-xxx-xxx-xxx.y.compute.amazonaws.com
 ```
 
-Komut satırı “Bağlanmaya devam etmek istediğinizden emin misiniz (evet/hayır)” sorduğunda, “evet” yazın ve örneğe giriş yapmak için Enter tuşuna basın. 
+Komut satırı "Are you sure you want to continue connecting (yes/no) - Bağlanmaya devam etmek istediğinizden emin misiniz (evet/hayır)" sorduğunda, "yes - evet" yazın ve örneğe giriş yapmak için Enter tuşuna basın. 
 
 Sunucunuz şimdi hazır. 
 
@@ -112,16 +115,17 @@ CUDA'yı yüklemeden önce, örneği en son sürücülerle güncellediğinizden 
 sudo apt-get update && sudo apt-get install -y build-essential git libgfortran3
 ```
 
-Burada CUDA 10.1'i indiriyoruz. NVIDIA'nın [resmi deposu](https://developer.nvidia.com/cuda-downloads) to find the download link of CUDA 10.1 as shown in :numref:`fig_cuda`'ü ziyaret edin. 
 
-![Find the CUDA 10.1 download address.](../img/cuda101.png)
+Burada CUDA 10.1'i indiriyoruz. :numref:`fig_cuda` içinde gösterildiği gibi CUDA 10.1'in indirme bağlantısını bulmak için NVIDIA'nın [resmi deposu](https://developer.nvidia.com/cuda-downloads)nu ziyaret edin.
+
+![CUDA 10.1 indirme adresini bulma.](../img/cuda101.png)
 :width:`500px`
 :label:`fig_cuda`
 
 Talimatları kopyalayın ve CUDA 10.1'i yüklemek için terminale yapıştırın.
 
 ```bash
-## Paste the copied link from CUDA website
+## CUDA web sitesinden kopyalanan bağlantıyı yapıştırın
 wget https://developer.download.nvidia.com/compute/cuda/repos/ubuntu1804/x86_64/cuda-ubuntu1804.pin
 sudo mv cuda-ubuntu1804.pin /etc/apt/preferences.d/cuda-repository-pin-600
 wget http://developer.download.nvidia.com/compute/cuda/10.1/Prod/local_installers/cuda-repo-ubuntu1804-10-1-local-10.1.243-418.87.00_1.0-1_amd64.deb
@@ -143,16 +147,16 @@ Son olarak, diğer kütüphanelerin bulmasına yardımcı olmak için kütüphan
 echo "export LD_LIBRARY_PATH=\${LD_LIBRARY_PATH}:/usr/local/cuda/lib64" >> ~/.bashrc
 ```
 
-## MXNet'i Yükleme ve D2L Dizüstü Bilgisayarları İndirme
+## MXNet'i Yükleme ve D2L Not Defterlerini İndirme
 
-Öncelikle, kurulumu basitleştirmek için Linux için [Miniconda](https://conda.io/en/latest/miniconda.html)'i yüklemeniz gerekir. İndirme bağlantısı ve dosya adı değişikliklere tabidir, bu nedenle lütfen Miniconda web sitesine gidin ve :numref:`fig_miniconda`'te gösterildiği gibi “Bağlantı Adresini Kopyala” düğmesine tıklayın. 
+Öncelikle, kurulumu basitleştirmek için Linux için [Miniconda](https://conda.io/en/latest/miniconda.html)'yı yüklemeniz gerekir. İndirme bağlantısı ve dosya adı değişikliklere tabidir, bu nedenle lütfen Miniconda web sitesine gidin ve :numref:`fig_miniconda`'te gösterildiği gibi “Copy Link Address - Bağlantı Adresini Kopyala” düğmesine tıklayın. 
 
-![Download Miniconda.](../img/miniconda.png)
+![Miniconda'yı indirme.](../img/miniconda.png)
 :width:`700px`
 :label:`fig_miniconda`
 
 ```bash
-# The link and file name are subject to changes
+# Bağlantı ve dosya adı değişebilir
 wget https://repo.anaconda.com/miniconda/Miniconda3-latest-Linux-x86_64.sh
 sh Miniconda3-latest-Linux-x86_64.sh -b
 ```
@@ -186,7 +190,7 @@ conda activate d2l
 conda install python=3.7 pip -y
 ```
 
-Son olarak, MXNet ve `d2l` paketini yükleyin. Soneki `cu101`, bunun CUDA 10.1 varyantı olduğu anlamına gelir. Farklı sürümler için, sadece CUDA 10.0 deyin, bunun yerine `cu100`'yı seçmek istersiniz.
+Son olarak, MXNet ve `d2l` paketini yükleyin. `cu101` soneki, bunun CUDA 10.1 varyantı olduğu anlamına gelir. Farklı sürümler için, mesela CUDA 10.0, `cu100`'yı seçmek isteyebirlirsiniz.
 
 ```bash
 pip install mxnet-cu101==1.7.0
@@ -201,40 +205,40 @@ $ python
 >>> np.zeros((1024, 1024), ctx=npx.gpu())
 ```
 
-## Jupyter Koşu
+## Jupyter'i Çalıştırma
 
 Jupyter'ı uzaktan çalıştırmak için SSH bağlantı noktası yönlendirme kullanmanız gerekir. Sonuçta, buluttaki sunucunun bir monitörü veya klavyesi yoktur. Bunun için sunucunuza masaüstünüzden (veya dizüstü bilgisayarınızdan) aşağıdaki gibi oturum açın.
 
 ```
-# This command must be run in the local command line
+# Bu komut yerel komut satırında çalıştırılmalıdır
 ssh -i "/path/to/key.pem" ubuntu@ec2-xx-xxx-xxx-xxx.y.compute.amazonaws.com -L 8889:localhost:8888
 conda activate d2l
 jupyter notebook
 ```
 
-:numref:`fig_jupyter`, Jupyter Notebook çalıştırdıktan sonra olası çıktıyı gösterir. Son satır 8888 numaralı bağlantı noktasının URL'sini oluşturur. 
+:numref:`fig_jupyter`, Jupyter Notebook çalıştırdıktan sonra olası çıktıyı gösterir. Son satır 8888 numaralı bağlantı noktası için URL'dir. 
 
 ![Output after running Jupyter Notebook. The last row is the URL for port 8888.](../img/jupyter.png)
 :width:`700px`
 :label:`fig_jupyter`
 
-Bağlantı noktası 8889 numaralı bağlantı noktasına yönlendirmeyi kullandığınız için bağlantı noktası numarasını değiştirmeniz ve yerel tarayıcınızda URL'yi açarken Jupyter tarafından verilen sırrı kullanmanız gerekir. 
+Bağlantı noktası 8889 numaralı bağlantı noktasına yönlendirmeyi kullandığınız için bağlantı noktası numarasını değiştirmeniz ve yerel tarayıcınızda URL'yi açarken Jupyter tarafından verilen sırrı (secret) kullanmanız gerekir. 
 
 ## Kullanılmayan Örnekleri Kapatma
 
-Bulut hizmetleri kullanım süresine göre faturalandırıldığından, kullanılmayan örnekleri kapatmanız gerekir. Alternatifler olduğunu unutmayın: Bir örneği “durdurmak”, yeniden başlatabilmeniz anlamına gelir. Bu, normal sunucunuzun gücünü kapatmaya benzer. Ancak durdurulan örnekler, korunan sabit disk alanı için küçük bir miktar faturalandırılır. “Sonlandır”, onunla ilişkili tüm verileri siler. Bu diski içerir, bu nedenle yeniden başlatamazsınız. Sadece gelecekte ihtiyacınız olmayacağını biliyorsanız bunu yapın. 
+Bulut hizmetleri kullanım süresine göre faturalandırıldığından, kullanılmayan örnekleri kapatmanız gerekir. Alternatifler olduğunu unutmayın: Bir örneği "durdurmak", yeniden başlatabilmeniz anlamına gelir. Bu, normal sunucunuzun gücünü kapatmaya benzer. Ancak durdurulan örnekler, korunan sabit disk alanı için küçük bir miktar faturalandırılır. "Sonlandır - Terminate", onunla ilişkili tüm verileri siler. Bu diski içerir, bu nedenle yeniden başlatamazsınız. Sadece gelecekte ihtiyacınız olmayacağını biliyorsanız bunu yapın. 
 
-Örneği daha birçok örnek için şablon olarak kullanmak istiyorsanız, :numref:`fig_connect`'te örneğe sağ tıklayın ve örneğin görüntüsünü oluşturmak için “Görüntü” $\rightarrow$ “Oluştur” u seçin. Bu işlem tamamlandıktan sonra örneği sonlandırmak için “Örnek Durumu” $\rightarrow$ “Sonlandır"ı seçin. Bu örneği bir sonraki kullanmak istediğinizde, kaydedilen görüntüye dayalı bir örnek oluşturmak için bu bölümde açıklanan bir EC2 örneği oluşturma ve çalıştırma adımlarını uygulayabilirsiniz. Tek fark, “1 “deki. :numref:`fig_ubuntu`'te gösterilen AMI” seçeneğini seçin, kayıtlı resminizi seçmek için soldaki “AMI'lerim” seçeneğini kullanmanız gerekir. Oluşturulan örnek, görüntü sabit diskinde depolanan bilgileri saklar. Örneğin, CUDA ve diğer çalışma zamanı ortamlarını yeniden yüklemeniz gerekmez. 
+Örneği daha birçok örnek için şablon olarak kullanmak istiyorsanız, :numref:`fig_connect` içindeki örnekte sağ tıklayın ve örneğin görüntüsünü oluşturmak için "İmage - Görüntü" $\rightarrow$ "Create - Oluştur"'u seçin. Bu işlem tamamlandıktan sonra örneği sonlandırmak için "Instance State - Örnek Durumu" $\rightarrow$ "Termiante - Sonlandır"'ı seçin. Bu örneği daha sonra kullanmak istediğinizde, kaydedilen görüntüye dayalı bir örnek oluşturmak için bu bölümde açıklanan bir EC2 örneği oluşturma ve çalıştırma adımlarını uygulayabilirsiniz. Tek fark, :numref:`fig_ubuntu` içinde gösterilen "1. Choose AMI - AMI Seç" bölümünde, kayıtlı görüntünüzü seçmek için soldaki "My AMIs - AMI'lerim" seçeneğini kullanmanız gerektiğidir. Oluşturulan örnek, görüntü sabit diskinde depolanan bilgileri saklar. Örneğin, CUDA ve diğer çalışma zamanı ortamlarını yeniden yüklemeniz gerekmez. 
 
 ## Özet
 
 * Kendi bilgisayarınızı satın almak ve oluşturmak zorunda kalmadan isteğe bağlı örnekleri başlatabilir ve durdurabilirsiniz.
 * Kullanabilmeniz için uygun GPU sürücülerini yüklemeniz gerekir.
 
-## Egzersizler
+## Alıştırmalar
 
-1. Bulut kolaylık sağlar, ancak ucuza gelmez. Fiyatları nasıl düşüreceğinizi görmek için [spot instances](https://aws.amazon.com/ec2/spot/)'ü nasıl başlatacağınızı öğrenin.
+1. Bulut kolaylık sağlar, ancak ucuza gelmez. Fiyatları nasıl düşüreceğinizi görmek için [anlık örnekler](https://aws.amazon.com/ec2/spot/)i nasıl başlatacağınızı öğrenin.
 1. Farklı GPU sunucuları ile deney yapın. Ne kadar hızlılar?
-1. Çoklu GPU sunucuları ile deney yapın. İşleri ne kadar iyi büyütebilirsin?
+1. Çoklu GPU sunucuları ile deney yapın. İşleri ne kadar iyi ölçeklendirebilirsiniz?
 
-[Discussions](https://discuss.d2l.ai/t/423)
+[Tartışmalar](https://discuss.d2l.ai/t/423)

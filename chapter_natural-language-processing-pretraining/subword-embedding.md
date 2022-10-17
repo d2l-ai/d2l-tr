@@ -7,7 +7,7 @@
 
 Kelimelerin word2vec içinde nasıl temsil edildiğini hatırlayın. Hem skip-gram modelinde hem de sürekli sözcük torbası modelinde, aynı sözcüğün farklı bükülmüş biçimleri, paylaşılan parametreler olmadan farklı vektörler tarafından doğrudan temsil edilir. Şekilbilimsel bilgileri kullanmak için, *fastText* modeli, bir alt sözcüğün $n$-gram karakteri olduğu bir *alt sözcük gömme* yaklaşımı önerdi :cite:`Bojanowski.Grave.Joulin.ea.2017`. FastText, sözcük düzeyinde vektör temsillerini öğrenmek yerine, her *merkez sözcüğün* alt sözcük vektörlerinin toplamıyla temsil edildiği alt sözcük düzeyinde skip-gram modeli olarak düşünülebilir. 
 
-“Where” sözcüğünü kullanarak fastText'te her merkez sözcük için alt sözcüklerin nasıl elde edileceğini gösterelim. İlk olarak, diğer alt sözcüklerden önekleri ve sonekleri ayırt etmek için sözcüğün başına ve sonuna “&lt;” ve “&gt;” özel karakterlerini ekleyin. Daha sonra $n$-gram karakterini sözcükten ayıklayın. Örneğin, $n=3$ olduğunda, 3 uzunluğundaki tüm alt sözcükleri, "&lt;wh", "whe", "her", "ere", "re&gt;" ve "&lt;where&gt;" özel alt sözcüğünü elde ederiz. 
+“Where” (nerede) sözcüğünü kullanarak fastText'te her merkez sözcük için alt sözcüklerin nasıl elde edileceğini gösterelim. İlk olarak, diğer alt sözcüklerden önekleri ve sonekleri ayırt etmek için sözcüğün başına ve sonuna “&lt;” ve “&gt;” özel karakterlerini ekleyin. Daha sonra $n$-gram karakterini sözcükten ayıklayın. Örneğin, $n=3$ olduğunda, 3 uzunluğundaki tüm alt sözcükleri, "&lt;wh", "whe", "her", "ere", "re&gt;" ve "&lt;where&gt;" özel alt sözcüğünü elde ederiz. 
 
 fastText'te, herhangi bir sözcük $w$ için, $\mathcal{G}_w$ ile 3 ve 6 arasında uzunluğa sahip tüm alt sözcüklerin ve özel alt sözcüğünün birleşimini belirtiriz. Sözcük dağarcığı, tüm sözcüklerin alt sözcüklerinin birleşimidir. Sözlükte $\mathbf{z}_g$ $g$ alt kelimesinin vektörü olsun, skip-gram modelinde merkez kelime olarak $w$ kelimesi için $\mathbf{v}_w$ vektörü onun alt kelime vektörlerinin toplamıdır: 
 
@@ -53,9 +53,9 @@ def get_max_freq_pair(token_freqs):
     for token, freq in token_freqs.items():
         symbols = token.split()
         for i in range(len(symbols) - 1):
-            # Key of `pairs` is a tuple of two consecutive symbols
+            # `pairs`'in anahtarı, iki ardışık sembolden oluşan bir çokludur
             pairs[symbols[i], symbols[i + 1]] += freq
-    return max(pairs, key=pairs.get)  # Key of `pairs` with the max value
+    return max(pairs, key=pairs.get)  # Maksimum değere sahip `pairs` anahtarı
 ```
 
 Ardışık sembollerin sıklığına dayanan açgözlü bir yaklaşım olarak, sekizli çifti kodlaması, yeni semboller üretmek için en sık ardışık semboller çiftini birleştirmek için aşağıdaki `merge_symbols` işlevini kullanır.
@@ -106,7 +106,7 @@ def segment_BPE(tokens, symbols):
     for token in tokens:
         start, end = 0, len(token)
         cur_output = []
-        # Segment token with the longest possible subwords from symbols
+        # Sembollerden mümkün olan en uzun alt kelimelere sahip bölüm belirteci
         while start < len(token) and start < end:
             if token[start: end] in symbols:
                 cur_output.append(token[start: end])

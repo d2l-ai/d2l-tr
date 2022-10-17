@@ -1,9 +1,9 @@
-# Derin Evrişimli Çekişmeli Üretici Ağlar
+# Deep Convolutional Generative Adversarial Networks
 :label:`sec_dcgan`
 
-:numref:`sec_basic_gan` içinde, GAN'ların nasıl çalıştığına dair temel fikirleri tanıttık. Tekdüze veya normal dağılım gibi basit, örneklenmesi kolay bir dağılımdan örnekler alabileceklerini ve bunları bazı veri kümelerinin dağılımıyla eşleşiyor gibi görünen örneklere dönüştürebileceklerini gösterdik. Burada bir 2B Gauss dağılımını eşleştirme örneğimiz amaca uygunken, özellikle heyecan verici bir örnek değil.
+In :numref:`sec_basic_gan`, we introduced the basic ideas behind how GANs work. We showed that they can draw samples from some simple, easy-to-sample distribution, like a uniform or normal distribution, and transform them into samples that appear to match the distribution of some dataset. And while our example of matching a 2D Gaussian distribution got the point across, it is not especially exciting.
 
-Bu bölümde, foto-gerçekçi imgeler oluşturmak için GAN'ları nasıl kullanabileceğinizi göstereceğiz. Modellerimizi derin evrişimli GAN'lara (DCGAN) dayandıracağız :cite:`Radford.Metz.Chintala.2015`. Ayrımcı bilgisayarla görme problemleri için çok başarılı olduğu kanıtlanmış evrişimli mimariyi ödünç alacağız ve GAN'lar aracılığıyla foto-gerçekçi imgeler oluşturmak için nasıl kullanılabileceklerini göstereceğiz.
+In this section, we will demonstrate how you can use GANs to generate photorealistic images. We will be basing our models on the deep convolutional GANs (DCGAN) introduced in :cite:`Radford.Metz.Chintala.2015`. We will borrow the convolutional architecture that have proven so successful for discriminative computer vision problems and show how via GANs, they can be leveraged to generate photorealistic images.
 
 ```{.python .input}
 from mxnet import gluon, init, np, npx
@@ -28,11 +28,11 @@ from d2l import tensorflow as d2l
 import tensorflow as tf
 ```
 
-## Pokemon Veri Kümesi
+## The Pokemon Dataset
 
-Kullanacağımız veri kümesi, [pokemondb](https://pokemondb.net/sprites) adresinden elde edilen Pokemon görselleri koleksiyonudur. İlk önce bu veri kümesini indirelim, çıkaralım ve yükleyelim.
+The dataset we will use is a collection of Pokemon sprites obtained from [pokemondb](https://pokemondb.net/sprites). First download, extract and load this dataset.
 
-```{.python .input  n=2}
+```{.python .input}
 #@save
 d2l.DATA_HUB['pokemon'] = (d2l.DATA_URL + 'pokemon.zip',
                            'c065c0e2593b8b161a2d7873e42418bf6a21106c')
@@ -63,7 +63,7 @@ pokemon = tf.keras.preprocessing.image_dataset_from_directory(
     data_dir, batch_size=batch_size, image_size=(64, 64))
 ```
 
-Her bir imgeyi $64 \times 64$ şekilde yeniden boyutlandırıyoruz. `ToTensor` dönüşümü piksel değerini $[0, 1]$ aralığına izdüşürürken bizim üreticimiz $[- 1, 1]$ aralığından çıktılar elde etmek için tanh işlevini kullanacak. Bu nedenle, verileri değer aralığına uyması için $0.5$ ortalama ve $0.5$ standart sapma ile normalize ediyoruz.
+We resize each image into $64\times 64$. The `ToTensor` transformation will project the pixel value into $[0, 1]$, while our generator will use the tanh function to obtain outputs in $[-1, 1]$. Therefore we normalize the data with $0.5$ mean and $0.5$ standard deviation to match the value range.
 
 ```{.python .input}
 batch_size = 256
@@ -105,7 +105,7 @@ data_iter = data_iter.cache().shuffle(buffer_size=1000).prefetch(
     buffer_size=tf.data.experimental.AUTOTUNE)
 ```
 
-İlk 20 imgeyi görselleştirelim.
+Let us visualize the first 20 images.
 
 ```{.python .input}
 d2l.set_figsize((4, 4))
@@ -133,9 +133,9 @@ for X, y in data_iter.take(1):
     d2l.show_images(imgs, num_rows=4, num_cols=5)
 ```
 
-## Üretici
+## The Generator
 
-Üreticinin, $d$-uzunluklu vektör olan $\mathbf z \in \mathbb R^d$ gürültü değişkenini, genişliği ve yüksekliği $64 \times 64$ olan bir RGB imgesine eşlemesi gerekir. :numref:`sec_fcn` bölümünde, girdi boyutunu büyütmek için devrik evrişim katmanı (bkz. :numref:`sec_transposed_conv`) kullanan tam evrişimli ağı tanıttık. Üreticinin temel bloğu, devrik bir evrişim katmanı, ardından toptan normalleştirme ve ReLU etkinleştirmesi içerir.
+The generator needs to map the noise variable $\mathbf z\in\mathbb R^d$, a length-$d$ vector, to a RGB image with width and height to be $64\times 64$ . In :numref:`sec_fcn` we introduced the fully convolutional network that uses transposed convolution layer (refer to :numref:`sec_transposed_conv`) to enlarge input size. The basic block of the generator contains a transposed convolution layer followed by the batch normalization and ReLU activation.
 
 ```{.python .input}
 class G_block(nn.Block):
@@ -181,7 +181,7 @@ class G_block(tf.keras.layers.Layer):
         return self.activation(self.batch_norm(self.conv2d_trans(X)))
 ```
 
-Varsayılan olarak, devrik evrişim katmanı $k_h = k_w = 4$'lük çekirdek, $s_h = s_w = 2$'lik uzun adımlar (stride) ve $p_h = p_w = 1$'lik dolgu (padding) kullanır. $n_h^{'} \times n_w^{'} = 16 \times 16$ girdi şekli ile, üretici bloğu girdinin genişliğini ve yüksekliğini iki katına çıkaracaktır.
+In default, the transposed convolution layer uses a $k_h = k_w = 4$ kernel, a $s_h = s_w = 2$ strides, and a $p_h = p_w = 1$ padding. With a input shape of $n_h^{'} \times n_w^{'} = 16 \times 16$, the generator block will double input's width and height.
 
 $$
 \begin{aligned}
@@ -213,7 +213,7 @@ g_blk = G_block(20)
 g_blk(x).shape
 ```
 
-Devrik evrişim katmanını $4 \times 4$ çekirdek, $1 \times 1$ uzun adımları ve sıfır dolgu olarak değiştirelim. $1 \times 1$ girdi boyutuyla çıktının genişliği ve yüksekliği sırasıyla 3 artar.
+If changing the transposed convolution layer to a $4\times 4$ kernel, $1\times 1$ strides and zero padding. With a input size of $1 \times 1$, the output will have its width and height increased by 3 respectively.
 
 ```{.python .input}
 x = np.zeros((2, 3, 1, 1))
@@ -232,23 +232,23 @@ g_blk(x).shape
 ```{.python .input}
 #@tab tensorflow
 x = tf.zeros((2, 1, 1, 3))
-# `padding="valid"` dolgu olmamasına karşılık gelir
+# `padding="valid"` corresponds to no padding
 g_blk = G_block(20, strides=1, padding="valid")
 g_blk(x).shape
 ```
 
-Üretici, girdinin hem genişliğini hem de yüksekliğini 1'den 32'ye çıkaran dört temel bloktan oluşur. Aynı zamanda, önce saklı değişkeni $64 \times 8$ kanala izdüşürür ve ardından her seferinde kanalları yarıya indirir. Sonunda, çıktının üretilmesi için bir devrik evrişim katmanı kullanılır. Genişliği ve yüksekliği istenen $64 \times 64$ şekline uyacak şekilde ikiye katlar ve kanal sayısını $3$'e düşürür. Çıktı değerlerini $(- 1, 1)$ aralığına yansıtmak için tanh etkinleştirme işlevi uygulanır.
+The generator consists of four basic blocks that increase input's both width and height from 1 to 32. At the same time, it first projects the latent variable into $64\times 8$ channels, and then halve the channels each time. At last, a transposed convolution layer is used to generate the output. It further doubles the width and height to match the desired $64\times 64$ shape, and reduces the channel size to $3$. The tanh activation function is applied to project output values into the $(-1, 1)$ range.
 
 ```{.python .input}
 n_G = 64
 net_G = nn.Sequential()
-net_G.add(G_block(n_G*8, strides=1, padding=0),  # Çıktı: (64 * 8, 4, 4)
-          G_block(n_G*4),  # Çıktı: (64 * 4, 8, 8)
-          G_block(n_G*2),  # Çıktı: (64 * 2, 16, 16)
-          G_block(n_G),    # Çıktı: (64, 32, 32)
+net_G.add(G_block(n_G*8, strides=1, padding=0),  # Output: (64 * 8, 4, 4)
+          G_block(n_G*4),  # Output: (64 * 4, 8, 8)
+          G_block(n_G*2),  # Output: (64 * 2, 16, 16)
+          G_block(n_G),    # Output: (64, 32, 32)
           nn.Conv2DTranspose(
               3, kernel_size=4, strides=2, padding=1, use_bias=False,
-              activation='tanh'))  # Çıktı: (3, 64, 64)
+              activation='tanh'))  # Output: (3, 64, 64)
 ```
 
 ```{.python .input}
@@ -256,32 +256,32 @@ net_G.add(G_block(n_G*8, strides=1, padding=0),  # Çıktı: (64 * 8, 4, 4)
 n_G = 64
 net_G = nn.Sequential(
     G_block(in_channels=100, out_channels=n_G*8,
-            strides=1, padding=0),                  # Çıktı: (64 * 8, 4, 4)
-    G_block(in_channels=n_G*8, out_channels=n_G*4), # Çıktı: (64 * 4, 8, 8)
-    G_block(in_channels=n_G*4, out_channels=n_G*2), # Çıktı: (64 * 2, 16, 16)
-    G_block(in_channels=n_G*2, out_channels=n_G),   # Çıktı: (64, 32, 32)
+            strides=1, padding=0),                  # Output: (64 * 8, 4, 4)
+    G_block(in_channels=n_G*8, out_channels=n_G*4), # Output: (64 * 4, 8, 8)
+    G_block(in_channels=n_G*4, out_channels=n_G*2), # Output: (64 * 2, 16, 16)
+    G_block(in_channels=n_G*2, out_channels=n_G),   # Output: (64, 32, 32)
     nn.ConvTranspose2d(in_channels=n_G, out_channels=3, 
                        kernel_size=4, stride=2, padding=1, bias=False),
-    nn.Tanh())  # Çıktı: (3, 64, 64)
+    nn.Tanh())  # Output: (3, 64, 64)
 ```
 
 ```{.python .input}
 #@tab tensorflow
 n_G = 64
 net_G = tf.keras.Sequential([
-    # Çıktı: (4, 4, 64 * 8)
+    # Output: (4, 4, 64 * 8)
     G_block(out_channels=n_G*8, strides=1, padding="valid"),
-    G_block(out_channels=n_G*4), # Çıktı: (8, 8, 64 * 4)
-    G_block(out_channels=n_G*2), # Çıktı: (16, 16, 64 * 2)
-    G_block(out_channels=n_G), # Çıktı: (32, 32, 64)
-    # Çıktı: (64, 64, 3)
+    G_block(out_channels=n_G*4), # Output: (8, 8, 64 * 4)
+    G_block(out_channels=n_G*2), # Output: (16, 16, 64 * 2)
+    G_block(out_channels=n_G), # Output: (32, 32, 64)
+    # Output: (64, 64, 3)
     tf.keras.layers.Conv2DTranspose(
         3, kernel_size=4, strides=2, padding="same", use_bias=False,
         activation="tanh") 
 ])
 ```
 
-Üreticinin çıktı şeklini doğrulamak için 100 boyutlu bir saklı değişken oluşturalım.
+Generate a 100 dimensional latent variable to verify the generator's output shape.
 
 ```{.python .input}
 x = np.zeros((1, 100, 1, 1))
@@ -301,13 +301,13 @@ x = tf.zeros((1, 1, 1, 100))
 net_G(x).shape
 ```
 
-## Ayrımcı
+## Discriminator
 
-Ayrımcı, etkinleştirme işlevi olarak sızıntılı (leaky) ReLU kullanması dışında normal bir evrişimli ağdır. $\alpha \in[0, 1]$ verildiğinde, tanım şöyledir:
+The discriminator is a normal convolutional network network except that it uses a leaky ReLU as its activation function. Given $\alpha \in[0, 1]$, its definition is
 
-$$\textrm{sızıntılı ReLU}(x) = \begin{cases}x & \text{eğer}\ x > 0\\ \alpha x &\text{diğer türlü}\end{cases}.$$
+$$\textrm{leaky ReLU}(x) = \begin{cases}x & \text{if}\ x > 0\\ \alpha x &\text{otherwise}\end{cases}.$$
 
-Görüldüğü gibi, $\alpha = 0$ ise normal ReLU, $\alpha = 1$ ise bir birim fonksiyondur. $\alpha \in (0, 1)$ için, sızıntılı ReLU, negatif bir girdi için sıfır olmayan bir çıktı veren doğrusal olmayan bir fonksiyondur. Bir nöronun her zaman negatif bir değer verebileceği ve bu nedenle ReLU'nun gradyanı 0 olduğu için herhangi bir ilerleme kaydedemeyeceği "ölmekte olan ReLU" (dying ReLU) problemini çözmeyi amaçlamaktadır.
+As it can be seen, it is normal ReLU if $\alpha=0$, and an identity function if $\alpha=1$. For $\alpha \in (0, 1)$, leaky ReLU is a nonlinear function that give a non-zero output for a negative input. It aims to fix the "dying ReLU" problem that a neuron might always output a negative value and therefore cannot make any progress since the gradient of ReLU is 0.
 
 ```{.python .input}
 #@tab mxnet,pytorch
@@ -325,7 +325,7 @@ Y = [tf.keras.layers.LeakyReLU(alpha)(x).numpy() for alpha in alphas]
 d2l.plot(x.numpy(), Y, 'x', 'y', alphas)
 ```
 
-Ayrımcının temel bloğu, bir evrişim katmanı ve ardından bir toptan normalleştirme katmanı ve bir sızıntılı ReLU etkinleştirmesidir. Evrişim katmanının hiper parametreleri, üretici bloğundaki devrik evrişim katmanına benzer.
+The basic block of the discriminator is a convolution layer followed by a batch normalization layer and a leaky ReLU activation. The hyperparameters of the convolution layer are similar to the transpose convolution layer in the generator block.
 
 ```{.python .input}
 class D_block(nn.Block):
@@ -371,7 +371,7 @@ class D_block(tf.keras.layers.Layer):
         return self.activation(self.batch_norm(self.conv2d(X)))
 ```
 
-Varsayılan ayarlara sahip temel bir blok, girdilerin genişliğini ve yüksekliğini, :numref:`sec_padding` içinde gösterdiğimiz gibi, yarıya düşürecektir. Örneğin, $k_h = k_w = 4$ çekirdek, $s_h = s_w = 2$ uzun adım, $p_h = p_w = 1$ dolgu ve $n_h = n_w = 16$ girdi şekli verildiğinde, çıktının şekli şöyle olacaktır:
+A basic block with default settings will halve the width and height of the inputs, as we demonstrated in :numref:`sec_padding`. For example, given a input shape $n_h = n_w = 16$, with a kernel shape $k_h = k_w = 4$, a stride shape $s_h = s_w = 2$, and a padding shape $p_h = p_w = 1$, the output shape will be:
 
 $$
 \begin{aligned}
@@ -402,44 +402,44 @@ d_blk = D_block(20)
 d_blk(x).shape
 ```
 
-Ayrımcı üreticinin bir yansımasıdır.
+The discriminator is a mirror of the generator.
 
 ```{.python .input}
 n_D = 64
 net_D = nn.Sequential()
-net_D.add(D_block(n_D),   # Çıktı: (64, 32, 32)
-          D_block(n_D*2),  # Çıktı: (64 * 2, 16, 16)
-          D_block(n_D*4),  # Çıktı: (64 * 4, 8, 8)
-          D_block(n_D*8),  # Çıktı: (64 * 8, 4, 4)
-          nn.Conv2D(1, kernel_size=4, use_bias=False))  # Çıktı: (1, 1, 1)
+net_D.add(D_block(n_D),   # Output: (64, 32, 32)
+          D_block(n_D*2),  # Output: (64 * 2, 16, 16)
+          D_block(n_D*4),  # Output: (64 * 4, 8, 8)
+          D_block(n_D*8),  # Output: (64 * 8, 4, 4)
+          nn.Conv2D(1, kernel_size=4, use_bias=False))  # Output: (1, 1, 1)
 ```
 
 ```{.python .input}
 #@tab pytorch
 n_D = 64
 net_D = nn.Sequential(
-    D_block(n_D),  # Çıktı: (64, 32, 32)
-    D_block(in_channels=n_D, out_channels=n_D*2),  # Çıktı: (64 * 2, 16, 16)
-    D_block(in_channels=n_D*2, out_channels=n_D*4),  # Çıktı: (64 * 4, 8, 8)
-    D_block(in_channels=n_D*4, out_channels=n_D*8),  # Çıktı: (64 * 8, 4, 4)
+    D_block(n_D),  # Output: (64, 32, 32)
+    D_block(in_channels=n_D, out_channels=n_D*2),  # Output: (64 * 2, 16, 16)
+    D_block(in_channels=n_D*2, out_channels=n_D*4),  # Output: (64 * 4, 8, 8)
+    D_block(in_channels=n_D*4, out_channels=n_D*8),  # Output: (64 * 8, 4, 4)
     nn.Conv2d(in_channels=n_D*8, out_channels=1,
-              kernel_size=4, bias=False))  # Çıktı: (1, 1, 1)
+              kernel_size=4, bias=False))  # Output: (1, 1, 1)
 ```
 
 ```{.python .input}
 #@tab tensorflow
 n_D = 64
 net_D = tf.keras.Sequential([
-    D_block(n_D), # Çıktı: (32, 32, 64)
-    D_block(out_channels=n_D*2), # Çıktı: (16, 16, 64 * 2)
-    D_block(out_channels=n_D*4), # Çıktı: (8, 8, 64 * 4)
-    D_block(out_channels=n_D*8), # Çıktı: (4, 4, 64 * 64)
-    # Çıktı: (1, 1, 1)
+    D_block(n_D), # Output: (32, 32, 64)
+    D_block(out_channels=n_D*2), # Output: (16, 16, 64 * 2)
+    D_block(out_channels=n_D*4), # Output: (8, 8, 64 * 4)
+    D_block(out_channels=n_D*8), # Outupt: (4, 4, 64 * 64)
+    # Output: (1, 1, 1)
     tf.keras.layers.Conv2D(1, kernel_size=4, use_bias=False)
 ])
 ```
 
-Tek bir tahmin değeri elde etmek için son katmanda çıktı kanalı $1$ olan bir evrişim katmanı kullanır.
+It uses a convolution layer with output channel $1$ as the last layer to obtain a single prediction value.
 
 ```{.python .input}
 x = np.zeros((1, 3, 64, 64))
@@ -459,9 +459,9 @@ x = tf.zeros((1, 64, 64, 3))
 net_D(x).shape
 ```
 
-## Eğitim
+## Training
 
-Temel GAN, :numref:`sec_basic_gan`, ile karşılaştırıldığında, birbirlerine benzer olduklarından hem üretici hem de ayrımcı için aynı öğrenme oranını kullanıyoruz. Ek olarak, Adam'daki (:numref:`sec_adam`) $\beta_1$'yı $0.9$'dan $0.5$'e değiştiriyoruz. Üretici ve ayrımcı birbiriyle çekiştiği için, hızlı değişen gradyanlarla ilgilenmek için momentumun, ki geçmiş gradyanların üstel ağırlıklı hareketli ortalamasıdır, düzgünlüğünü azaltır. Ayrıca, rastgele üretilen `Z` gürültüsü bir 4B tensördür ve bu nedenle hesaplamayı hızlandırmak için GPU kullanırız.
+Compared to the basic GAN in :numref:`sec_basic_gan`, we use the same learning rate for both generator and discriminator since they are similar to each other. In addition, we change $\beta_1$ in Adam (:numref:`sec_adam`) from $0.9$ to $0.5$. It decreases the smoothness of the momentum, the exponentially weighted moving average of past gradients, to take care of the rapid changing gradients because the generator and the discriminator fight with each other. Besides, the random generated noise `Z`, is a 4-D tensor and we are using GPU to accelerate the computation.
 
 ```{.python .input}
 def train(net_D, net_G, data_iter, num_epochs, lr, latent_dim,
@@ -477,7 +477,7 @@ def train(net_D, net_G, data_iter, num_epochs, lr, latent_dim,
                             legend=['discriminator', 'generator'])
     animator.fig.subplots_adjust(hspace=0.3)
     for epoch in range(1, num_epochs + 1):
-        # Bir dönem eğit
+        # Train one epoch
         timer = d2l.Timer()
         metric = d2l.Accumulator(3)  # loss_D, loss_G, num_examples
         for X, _ in data_iter:
@@ -487,16 +487,16 @@ def train(net_D, net_G, data_iter, num_epochs, lr, latent_dim,
             metric.add(d2l.update_D(X, Z, net_D, net_G, loss, trainer_D),
                        d2l.update_G(Z, net_D, net_G, loss, trainer_G),
                        batch_size)
-        # Üretilen örnekleri göster
+        # Show generated examples
         Z = np.random.normal(0, 1, size=(21, latent_dim, 1, 1), ctx=device)
-        # Yapay verileri N(0, 1) olarak normalleştirin
+        # Normalize the synthetic data to N(0, 1)
         fake_x = net_G(Z).transpose(0, 2, 3, 1) / 2 + 0.5
         imgs = np.concatenate(
             [np.concatenate([fake_x[i * 7 + j] for j in range(7)], axis=1)
              for i in range(len(fake_x)//7)], axis=0)
         animator.axes[1].cla()
         animator.axes[1].imshow(imgs.asnumpy())
-        # Kayıpları göster
+        # Show the losses
         loss_D, loss_G = metric[0] / metric[2], metric[1] / metric[2]
         animator.add(epoch, (loss_D, loss_G))
     print(f'loss_D {loss_D:.3f}, loss_G {loss_G:.3f}, '
@@ -521,7 +521,7 @@ def train(net_D, net_G, data_iter, num_epochs, lr, latent_dim,
                             legend=['discriminator', 'generator'])
     animator.fig.subplots_adjust(hspace=0.3)
     for epoch in range(1, num_epochs + 1):
-        # Bir dönem eğit
+        # Train one epoch
         timer = d2l.Timer()
         metric = d2l.Accumulator(3)  # loss_D, loss_G, num_examples
         for X, _ in data_iter:
@@ -531,9 +531,9 @@ def train(net_D, net_G, data_iter, num_epochs, lr, latent_dim,
             metric.add(d2l.update_D(X, Z, net_D, net_G, loss, trainer_D),
                        d2l.update_G(Z, net_D, net_G, loss, trainer_G),
                        batch_size)
-        # Üretilen örnekleri göster
+        # Show generated examples
         Z = torch.normal(0, 1, size=(21, latent_dim, 1, 1), device=device)
-        # Yapay verileri N(0, 1) olarak normalleştirin
+        # Normalize the synthetic data to N(0, 1)
         fake_x = net_G(Z).permute(0, 2, 3, 1) / 2 + 0.5
         imgs = torch.cat(
             [torch.cat([
@@ -541,7 +541,7 @@ def train(net_D, net_G, data_iter, num_epochs, lr, latent_dim,
              for i in range(len(fake_x)//7)], dim=0)
         animator.axes[1].cla()
         animator.axes[1].imshow(imgs)
-        # Kayıpları göster
+        # Show the losses
         loss_D, loss_G = metric[0] / metric[2], metric[1] / metric[2]
         animator.add(epoch, (loss_D, loss_G))
     print(f'loss_D {loss_D:.3f}, loss_G {loss_G:.3f}, '
@@ -570,7 +570,7 @@ def train(net_D, net_G, data_iter, num_epochs, lr, latent_dim,
     animator.fig.subplots_adjust(hspace=0.3)
     
     for epoch in range(1, num_epochs + 1):
-        # Bir dönem eğit
+        # Train one epoch
         timer = d2l.Timer()
         metric = d2l.Accumulator(3) # loss_D, loss_G, num_examples
         for X, _ in data_iter:
@@ -581,23 +581,25 @@ def train(net_D, net_G, data_iter, num_epochs, lr, latent_dim,
                        d2l.update_G(Z, net_D, net_G, loss, optimizer_G),
                        batch_size)
             
-        # Üretilen örnekleri göster
+        # Show generated examples
         Z = tf.random.normal(mean=0, stddev=1, shape=(21, 1, 1, latent_dim))
-        # Yapay verileri N(0, 1) olarak normalleştirin
+        # Normalize the synthetic data to N(0, 1)
         fake_x = net_G(Z) / 2 + 0.5
         imgs = tf.concat([tf.concat([fake_x[i * 7 + j] for j in range(7)],
                                     axis=1) 
                           for i in range(len(fake_x) // 7)], axis=0)
         animator.axes[1].cla()
         animator.axes[1].imshow(imgs)
-        # Kayıpları göster
+        # Show the losses
         loss_D, loss_G = metric[0] / metric[2], metric[1] / metric[2]
         animator.add(epoch, (loss_D, loss_G))
     print(f'loss_D {loss_D:.3f}, loss_G {loss_G:.3f}, '
           f'{metric[2] / timer.stop():.1f} examples/sec on {str(device)}')
 ```
 
-Modeli sadece gösterim amaçlı az sayıda dönemle eğitiyoruz. Daha iyi performans için, `num_epochs` değişkeni daha büyük bir sayıya ayarlayabiliriz.
+We train the model with a small number of epochs just for demonstration.
+For better performance,
+the variable `num_epochs` can be set to a larger number.
 
 ```{.python .input}
 #@tab mxnet, pytorch
@@ -611,22 +613,22 @@ latent_dim, lr, num_epochs = 100, 0.0005, 40
 train(net_D, net_G, data_iter, num_epochs, lr, latent_dim)
 ```
 
-## Özet
+## Summary
 
-* DCGAN mimarisi, ayrımcı için dört evrişimli katmana ve üretici için dört "kesirli uzun adımlı" evrişimli katmana sahiptir.
-* Ayrımcı, toptan normalleştirme (girdi katmanı hariç) ve sızıntılı ReLU etkinleştirmeleri olan 4 katman uzun adımlı evrişimlerdir.
-* Sızıntılı ReLU, negatif bir girdi için sıfır olmayan bir çıktı veren doğrusal olmayan bir fonksiyondur. "Ölen ReLU" sorununu çözmeyi amaçlar ve gradyanların mimari boyunca daha kolay akmasına yardımcı olur.
+* DCGAN architecture has four convolutional layers for the Discriminator and four "fractionally-strided" convolutional layers for the Generator.
+* The Discriminator is a 4-layer strided convolutions with batch normalization (except its input layer) and leaky ReLU activations.
+* Leaky ReLU is a nonlinear function that give a non-zero output for a negative input. It aims to fix the “dying ReLU” problem and helps the gradients flow easier through the architecture.
 
-## Alıştırmalar
 
-1. Sızıntılı ReLU yerine standart ReLU etkinleştirmesi kullanırsak ne olur?
-1. DCGAN'ı Fashion-MNIST'e uygulayın ve hangi kategorinin işe yarayıp hangilerinin yaramadığını görün.
+## Exercises
 
+1. What will happen if we use standard ReLU activation rather than leaky ReLU?
+1. Apply DCGAN on Fashion-MNIST and see which category works well and which does not.
 
 :begin_tab:`mxnet`
-[Tartışmalar](https://discuss.d2l.ai/t/409)
+[Discussions](https://discuss.d2l.ai/t/409)
 :end_tab:
 
 :begin_tab:`pytorch`
-[Tartışmalar](https://discuss.d2l.ai/t/1083)
+[Discussions](https://discuss.d2l.ai/t/1083)
 :end_tab:

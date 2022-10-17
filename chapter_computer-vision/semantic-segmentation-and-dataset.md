@@ -1,17 +1,17 @@
 # Anlamsal Bölümleme ve Veri Kümesi
 :label:`sec_semantic_segmentation`
 
-:numref:`sec_bbox`—:numref:`sec_rcnn`'te nesne algılama görevleri tartışılırken, imgelerdeki nesneleri etiketlemek ve tahmin etmek için dikdörtgen kuşatan kutular kullanıldı. Bu bölümde, bir imgenin farklı anlamsal sınıflara ait bölgelere nasıl bölüneceğine odaklanan *anlamsal bölümleme* sorununu tartışacaktır. Nesne algılamasından farklı olarak, anlamsal bölümleme piksel düzeyinde imgelerde ne olduğunu tanır ve anlar: Anlamsal bölgelerin etiketlenmesi ve tahmini piksel düzeydedir. :numref:`fig_segmentation`, anlamsal bölümlemede imgenin köpek, kedi ve arkaplanının etiketlerini gösterir. Nesne algılama ile karşılaştırıldığında, anlamsal bölümlemede etiketlenmiş piksel düzeyinde sınırlar açıkça daha ince tanelidir. 
+:numref:`sec_bbox`—:numref:`sec_rcnn` içinde nesne algılama görevleri tartışılırken, imgelerdeki nesneleri etiketlemek ve tahmin etmek için dikdörtgen kuşatan kutular kullanıldı. Bu bölümde, bir imgenin farklı anlamsal sınıflara ait bölgelere nasıl bölüneceğine odaklanan *anlamsal bölümleme* sorununu tartışacaktır. Nesne algılamasından farklı olarak, anlamsal bölümleme piksel düzeyinde imgelerde ne olduğunu tanır ve anlar: Anlamsal bölgelerin etiketlenmesi ve tahmini piksel düzeydedir. :numref:`fig_segmentation`, anlamsal bölümlemede imgenin köpek, kedi ve arkaplanının etiketlerini gösterir. Nesne algılama ile karşılaştırıldığında, anlamsal bölümlemede etiketlenmiş piksel düzeyinde sınırlar açıkça daha ince tanelidir. 
 
 ![Anlamsal bölümlemede köpek, kedi ve görüntünün arka planının etiketleri.](../img/segmentation.svg)
 :label:`fig_segmentation`
 
-## Görüntü Bölümleme ve Örnek Bölümleme
+## İmge Bölümleme ve Örnek Bölümleme
 
 Bilgisayarla görme alanında anlamsal bölümlemeye benzer iki önemli görev vardır, yani imge bölümleme ve örnek bölümleme. Onları anlamsal bölümlemeden kısaca aşağıdaki gibi ayırt edeceğiz. 
 
-* *İmge bölümleme* bir imgeyi birkaç kurucu bölgeye böler. Bu tür bir soruna yönelik yöntemler genellikle imgedeki pikseller arasındaki korelasyonu kullanır. Eğitim sırasında imge pikselleri hakkında etiket bilgisine ihtiyaç duymaz ve bölümlere ayrılmış bölgelerin tahmin sırasında elde etmeyi umduğumuz anlamsal bilgilere sahip olacağını garanti edemez. İmgeyi :numref:`fig_segmentation`'te girdi olarak alarak, imge bölümleme köpeği iki bölgeye bölebilir: Biri ağırlıklı olarak siyah olan ağız ve gözleri kaplar, diğeri ise esas olarak sarı olan vücudun geri kalanını kaplar.
-* *Örnek bölümleme* aynı zamanda *eşzamanlı algılama ve bölümleme* olarak da adlandırılır. İmgedeki her nesne örneğinin piksel düzeyinde bölgelerinin nasıl tanınacağını inceler. Anlamsal bölümlemeden farklı olarak, örnek bölümlemenin yalnızca anlamı değil, aynı zamanda farklı nesne örneklerini de ayırt etmesi gerekir.Örneğin, görüntüde iki köpek varsa, örnek bölümlemenin bir pikselin iki köpekten hangisine ait olduğunu ayırt etmesi gerekir.
+* *İmge bölümleme* bir imgeyi birkaç kurucu bölgeye böler. Bu tür bir soruna yönelik yöntemler genellikle imgedeki pikseller arasındaki korelasyonu kullanır. Eğitim sırasında imge pikselleri hakkında etiket bilgisine ihtiyaç duymaz ve bölümlere ayrılmış bölgelerin tahmin sırasında elde etmeyi umduğumuz anlamsal bilgilere sahip olacağını garanti edemez. :numref:`fig_segmentation` içindeki imgeyi girdi olarak alarak, imge bölümleme köpeği iki bölgeye bölebilir: Biri ağırlıklı olarak siyah olan ağız ve gözleri kaplar, diğeri ise esas olarak sarı olan vücudun geri kalanını kaplar.
+* *Örnek bölümleme* aynı zamanda *eşzamanlı algılama ve bölümleme* olarak da adlandırılır. İmgedeki her nesne örneğinin piksel düzeyinde bölgelerinin nasıl tanınacağını inceler. Anlamsal bölümlemeden farklı olarak, örnek bölümlemenin yalnızca anlamı değil, aynı zamanda farklı nesne örneklerini de ayırt etmesi gerekir. Örneğin, görüntüde iki köpek varsa, örnek bölümlemenin bir pikselin iki köpekten hangisine ait olduğunu ayırt etmesi gerekir.
 
 ## Pascal VOC2012 Anlamsal Bölümleme Veri Kümesi
 
@@ -51,7 +51,7 @@ voc_dir = d2l.download_extract('voc2012', 'VOCdevkit/VOC2012')
 ```{.python .input}
 #@save
 def read_voc_images(voc_dir, is_train=True):
-    """Read all VOC feature and label images."""
+    """Tüm VOC özniteliklerini okuyun ve resimleri etiketleyin."""
     txt_fname = os.path.join(voc_dir, 'ImageSets', 'Segmentation',
                              'train.txt' if is_train else 'val.txt')
     with open(txt_fname, 'r') as f:
@@ -71,7 +71,7 @@ train_features, train_labels = read_voc_images(voc_dir, True)
 #@tab pytorch
 #@save
 def read_voc_images(voc_dir, is_train=True):
-    """Read all VOC feature and label images."""
+    """Tüm VOC özniteliklerini okuyun ve resimleri etiketleyin."""
     txt_fname = os.path.join(voc_dir, 'ImageSets', 'Segmentation',
                              'train.txt' if is_train else 'val.txt')
     mode = torchvision.io.image.ImageReadMode.RGB
@@ -128,7 +128,7 @@ Yukarıda tanımlanan iki sabit ile [**etiketteki her piksel için sınıf dizin
 ```{.python .input}
 #@save
 def voc_colormap2label():
-    """Build the mapping from RGB to class indices for VOC labels."""
+    """VOC etiketleri için RGB'den sınıf dizinlerine eşleme oluşturun."""
     colormap2label = np.zeros(256 ** 3)
     for i, colormap in enumerate(VOC_COLORMAP):
         colormap2label[
@@ -137,7 +137,7 @@ def voc_colormap2label():
 
 #@save
 def voc_label_indices(colormap, colormap2label):
-    """Map any RGB values in VOC labels to their class indices."""
+    """VOC etiketlerindeki tüm RGB değerlerini sınıf dizinleriyle eşleyin."""
     colormap = colormap.astype(np.int32)
     idx = ((colormap[:, :, 0] * 256 + colormap[:, :, 1]) * 256
            + colormap[:, :, 2])
@@ -148,7 +148,7 @@ def voc_label_indices(colormap, colormap2label):
 #@tab pytorch
 #@save
 def voc_colormap2label():
-    """Build the mapping from RGB to class indices for VOC labels."""
+    """VOC etiketleri için RGB'den sınıf dizinlerine eşleme oluşturun."""
     colormap2label = torch.zeros(256 ** 3, dtype=torch.long)
     for i, colormap in enumerate(VOC_COLORMAP):
         colormap2label[
@@ -157,7 +157,7 @@ def voc_colormap2label():
 
 #@save
 def voc_label_indices(colormap, colormap2label):
-    """Map any RGB values in VOC labels to their class indices."""
+    """VOC etiketlerindeki tüm RGB değerlerini sınıf dizinleriyle eşleyin."""
     colormap = colormap.permute(1, 2, 0).numpy().astype('int32')
     idx = ((colormap[:, :, 0] * 256 + colormap[:, :, 1]) * 256
            + colormap[:, :, 2])
@@ -179,7 +179,7 @@ y[105:115, 130:140], VOC_CLASSES[1]
 ```{.python .input}
 #@save
 def voc_rand_crop(feature, label, height, width):
-    """Randomly crop both feature and label images."""
+    """Hem öznitelik hem de etiket resimlerini rastgele kırpın."""
     feature, rect = image.random_crop(feature, (width, height))
     label = image.fixed_crop(label, *rect)
     return feature, label
@@ -189,7 +189,7 @@ def voc_rand_crop(feature, label, height, width):
 #@tab pytorch
 #@save
 def voc_rand_crop(feature, label, height, width):
-    """Randomly crop both feature and label images."""
+    """Hem öznitelik hem de etiket resimlerini rastgele kırpın."""
     rect = torchvision.transforms.RandomCrop.get_params(
         feature, (height, width))
     feature = torchvision.transforms.functional.crop(feature, *rect)
@@ -221,7 +221,7 @@ Yüksek düzey API'ler tarafından sağlanan `Dataset` sınıfını devralarak �
 ```{.python .input}
 #@save
 class VOCSegDataset(gluon.data.Dataset):
-    """A customized dataset to load the VOC dataset."""
+    """VOC veri kümesini yüklemek için özelleştirilmiş bir veri kümesi."""
     def __init__(self, is_train, crop_size, voc_dir):
         self.rgb_mean = np.array([0.485, 0.456, 0.406])
         self.rgb_std = np.array([0.229, 0.224, 0.225])
@@ -255,7 +255,7 @@ class VOCSegDataset(gluon.data.Dataset):
 #@tab pytorch
 #@save
 class VOCSegDataset(torch.utils.data.Dataset):
-    """A customized dataset to load the VOC dataset."""
+    """VOC veri kümesini yüklemek için özelleştirilmiş bir veri kümesi."""
 
     def __init__(self, is_train, crop_size, voc_dir):
         self.transform = torchvision.transforms.Normalize(
@@ -367,7 +367,7 @@ def load_data_voc(batch_size, crop_size):
 ## Alıştırmalar
 
 1. Otonom araçlarda ve tıbbi imge teşhislerinde anlamsal bölümleme nasıl uygulanabilir? Başka uygulamalar düşünebiliyor musun?
-1. :numref:`sec_image_augmentation`'teki veri artırımı açıklamalarını hatırlayın. İmge sınıflandırmasında kullanılan imge artırma yöntemlerinden hangisinin anlamsal bölümlemede uygulanması mümkün olmayacaktır?
+1. :numref:`sec_image_augmentation` içindeki veri artırımı açıklamalarını hatırlayın. İmge sınıflandırmasında kullanılan imge artırma yöntemlerinden hangisinin anlamsal bölümlemede uygulanması mümkün olmayacaktır?
 
 :begin_tab:`mxnet`
 [Tartışmalar](https://discuss.d2l.ai/t/375)

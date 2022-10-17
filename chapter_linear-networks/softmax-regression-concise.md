@@ -79,7 +79,7 @@ $$
 
 Çıkarma ve normalleştirme adımından sonra, bazı $o_j - \max(o_k)$ büyük negatif değerlere sahip olabilir ve bu nedenle karşılık gelen $\exp(o_j - \max(o_k))$ sıfıra yakın değerler alacaktır. Bunlar, sonlu kesinlik (yani, *küçümenlik*) nedeniyle sıfıra yuvarlanabilir, $\hat y_j$ sıfır yapar ve $\log(\hat y_j)$ için bize `-inf` verir. Geri yaymada yolun birkaç adım aşağısında, kendimizi korkutucu `nan` sonuçlarıyla karşı karşıya bulabiliriz.
 
-Neyse ki, üssel fonksiyonları hesaplasak bile, nihayetinde onların loglarını (çapraz entropi kaybını hesaplarken) almayı planladığımız gerçeğiyle kurtulduk. Bu iki softmaks ve çapraz entropi operatörünü bir araya getirerek, aksi takdirde geri yayma sırasında başımıza bela olabilecek sayısal kararlılık sorunlarından kaçabiliriz. Aşağıdaki denklemde gösterildiği gibi, $\exp(o_j - \max(o_k))$'yi hesaplamaktan kaçınırız ve bunun yerine $\log(\exp(\cdot))$ içini iptal ederek doğrudan $o_j - \max(o_k)$ kullanabiliriz:
+Neyse ki, üstel fonksiyonları hesaplasak bile, nihayetinde onların loglarını (çapraz entropi kaybını hesaplarken) almayı planladığımız gerçeğiyle kurtulduk. Bu iki softmaks ve çapraz entropi operatörünü bir araya getirerek, aksi takdirde geri yayma sırasında başımıza bela olabilecek sayısal kararlılık sorunlarından kaçabiliriz. Aşağıdaki denklemde gösterildiği gibi, $\exp(o_j - \max(o_k))$'yi hesaplamaktan kaçınırız ve bunun yerine $\log(\exp(\cdot))$ içini iptal ederek doğrudan $o_j - \max(o_k)$ kullanabiliriz:
 
 $$
 \begin{aligned}

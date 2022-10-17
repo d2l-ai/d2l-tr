@@ -42,7 +42,7 @@ Aşağıdaki `read_data_bananas` işlevinde [**muz algılama veri kümesini okuy
 ```{.python .input}
 #@save
 def read_data_bananas(is_train=True):
-    """Read the banana detection dataset images and labels."""
+    """Muz algılama veri kümesi imgelerini ve etiketlerini okuyun."""
     data_dir = d2l.download_extract('banana-detection')
     csv_fname = os.path.join(data_dir, 'bananas_train' if is_train
                              else 'bananas_val', 'label.csv')
@@ -53,9 +53,9 @@ def read_data_bananas(is_train=True):
         images.append(image.imread(
             os.path.join(data_dir, 'bananas_train' if is_train else
                          'bananas_val', 'images', f'{img_name}')))
-        # Here `target` contains (class, upper-left x, upper-left y,
-        # lower-right x, lower-right y), where all the images have the same
-        # banana class (index 0)
+        # Burada `target` (hedef), tüm imgelerin aynı muz sınıfına 
+        # sahip olduğu (sınıf, sol üst x, sol üst y, sağ alt x, sağ alt y) 
+        # içerir (indeks 0)
         targets.append(list(target))
     return images, np.expand_dims(np.array(targets), 1) / 256
 ```
@@ -64,7 +64,7 @@ def read_data_bananas(is_train=True):
 #@tab pytorch
 #@save
 def read_data_bananas(is_train=True):
-    """Read the banana detection dataset images and labels."""
+    """Muz algılama veri kümesi imgelerini ve etiketlerini okuyun."""
     data_dir = d2l.download_extract('banana-detection')
     csv_fname = os.path.join(data_dir, 'bananas_train' if is_train
                              else 'bananas_val', 'label.csv')
@@ -75,9 +75,9 @@ def read_data_bananas(is_train=True):
         images.append(torchvision.io.read_image(
             os.path.join(data_dir, 'bananas_train' if is_train else
                          'bananas_val', 'images', f'{img_name}')))
-        # Here `target` contains (class, upper-left x, upper-left y,
-        # lower-right x, lower-right y), where all the images have the same
-        # banana class (index 0)
+        # Burada `target` (hedef), tüm imgelerin aynı muz sınıfına 
+        # sahip olduğu (sınıf, sol üst x, sol üst y, sağ alt x, sağ alt y) 
+        # içerir (indeks 0)
         targets.append(list(target))
     return images, torch.tensor(targets).unsqueeze(1) / 256
 ```
@@ -87,7 +87,7 @@ def read_data_bananas(is_train=True):
 ```{.python .input}
 #@save
 class BananasDataset(gluon.data.Dataset):
-    """A customized dataset to load the banana detection dataset."""
+    """Muz algılama veri kümesini yüklemek için özelleştirilmiş bir veri kümesi."""
     def __init__(self, is_train):
         self.features, self.labels = read_data_bananas(is_train)
         print('read ' + str(len(self.features)) + (f' training examples' if
@@ -105,7 +105,7 @@ class BananasDataset(gluon.data.Dataset):
 #@tab pytorch
 #@save
 class BananasDataset(torch.utils.data.Dataset):
-    """A customized dataset to load the banana detection dataset."""
+    """Muz algılama veri kümesini yüklemek için özelleştirilmiş bir veri kümesi."""    
     def __init__(self, is_train):
         self.features, self.labels = read_data_bananas(is_train)
         print('read ' + str(len(self.features)) + (f' training examples' if
@@ -118,16 +118,12 @@ class BananasDataset(torch.utils.data.Dataset):
         return len(self.features)
 ```
 
-Finally, we define
-the `load_data_bananas` function to [**return two
-data iterator instances for both the training and test sets.**]
-For the test dataset,
-there is no need to read it in random order.
+Son olarak, `load_data_bananas` fonksiyonunu [**hem eğitim hem de test kümeleri için iki veri yineleyici örneği döndürecek şekilde tanımlarız.**] Test veri kümesi için onu rastgele sırayla okumaya gerek yoktur.
 
 ```{.python .input}
 #@save
 def load_data_bananas(batch_size):
-    """Load the banana detection dataset."""
+    """Muz algılama veri kümesini yükleyin."""
     train_iter = gluon.data.DataLoader(BananasDataset(is_train=True),
                                        batch_size, shuffle=True)
     val_iter = gluon.data.DataLoader(BananasDataset(is_train=False),
@@ -139,7 +135,7 @@ def load_data_bananas(batch_size):
 #@tab pytorch
 #@save
 def load_data_bananas(batch_size):
-    """Load the banana detection dataset."""
+    """Muz algılama veri kümesini yükleyin."""
     train_iter = torch.utils.data.DataLoader(BananasDataset(is_train=True),
                                              batch_size, shuffle=True)
     val_iter = torch.utils.data.DataLoader(BananasDataset(is_train=False),
@@ -147,16 +143,7 @@ def load_data_bananas(batch_size):
     return train_iter, val_iter
 ```
 
-Let us [**read a minibatch and print the shapes of
-both images and labels**] in this minibatch.
-The shape of the image minibatch,
-(batch size, number of channels, height, width),
-looks familiar:
-it is the same as in our earlier image classification tasks.
-The shape of the label minibatch is
-(batch size, $m$, 5),
-where $m$ is the largest possible number of bounding boxes
-that any image has in the dataset.
+[**Bir minigrup okuyalım ve bu minigruptaki hem imgelerin hem de etiketlerin şekillerini yazdıralım**]. İmge minigrubunun şekli (grup boyutu, kanal sayısı, yükseklik, genişlik) tanıdık görünüyor: Önceki imge sınıflandırma görevlerimizle aynı. Minigrup etiketinin şekli (parti boyutu, $m$, 5) şeklindedir; burada $m$, veri kümesinde herhangi bir imgenin sahip olabileceği mümkün olan en büyük kuşatan kutu sayısıdır.
 
 Minigruplarda hesaplama daha verimli olmasına rağmen, tüm imge örneklerinin bitiştirme yoluyla bir minigrup oluşturması için aynı sayıda kuşatan kutu içermeleri gerektirir. Genel olarak, imgeler farklı sayıda kuşatan kutuya sahip olabilir; bu nedenle $m$'den daha az kuşatan kutuya sahip imgeler, $m$'e ulaşılana kadar geçersiz kuşatan kutularla doldurulacaktır. Daha sonra her kuşatan kutunun etiketi 5 uzunluğunda bir dizi ile temsil edilir. Dizideki ilk öğe, kuşatan kutudaki nesnenin sınıfıdır ve burada -1 dolgu için geçersiz bir kuşatan kutusunu gösterir. Dizinin kalan dört öğesi, kuşatan kutunun sol üst köşesinin ve sağ alt köşesinin ($x$, $y$) koordinat değerleridir (aralık 0 ile 1 arasındadır). Muz veri kümesi için, her imgede sadece bir kuşatan kutu olduğundan elimizde $m=1$ var.
 
@@ -168,7 +155,7 @@ batch = next(iter(train_iter))
 batch[0].shape, batch[1].shape
 ```
 
-## [**Gösterme**]
+## [**Kanıtlama**]
 
 Gerçek referans değeri etiketli kuşatan kutularıyla on imge gösterelim. Muzun dönüşlerinin, boyutlarının ve konumlarının tüm bu imgelerde değiştiğini görebiliyoruz. Tabii ki, bu sadece basit bir yapay veri kümesidir. Uygulamada, gerçek dünya veri kümeleri genellikle çok daha karmaşıktır.
 
