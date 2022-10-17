@@ -520,12 +520,12 @@ Tüm bunlar, maksimum olabilirlik üzerinde çalışılarak elde edildi. Bununla
 
 KL ıraksaması gibi, rastgele bir değişken $X$ için, tahmini dağılım $Q$ ile gerçek dağılım $P$ arasındaki ıraksamayı (sapmayı) *çapraz entropi (ÇE)* aracılığıyla ölçebiliriz,
 
-$$\mathrm{\c{C}E}(P, Q) = - E_{x \sim P} [\log(q(x))].$$
+$$\mathrm{ÇE}(P, Q) = - E_{x \sim P} [\log(q(x))].$$
 :eqlabel:`eq_ce_def`
 
 Yukarıda tartışılan entropinin özelliklerini kullanarak, bunu $H(P)$ entropisinin $P$ ve $Q$ arasındaki KL ıraksaması ile toplamı olarak da yorumlayabiliriz, yani,
 
-$$\mathrm{\c{C}E} (P, Q) = H(P) + D_{\mathrm{KL}}(P\|Q).$$
+$$\mathrm{ÇE} (P, Q) = H(P) + D_{\mathrm{KL}}(P\|Q).$$
 
 Çapraz entropi kaybını aşağıdaki gibi uygulayabiliriz.
 
@@ -588,7 +588,7 @@ Bu bölümün başında belirtildiği gibi, çapraz entropi :eqref:`eq_ce_def` o
 
 ### Çok Sınıflı Sınıflandırmanın Amaç Fonksiyonu Olarak Çapraz Entropi
 
-Çapraz entropi kaybı $\mathrm{\c{C}E}$ ile sınıflandırma amaç fonksiyonunun derinliklerine inersek, $\mathrm{\c{C}E}$'yi minimize etmenin $L$ logaritmik-olabilirlik fonksiyonunu maksimize etmeye eşdeğer olduğunu bulacağız.
+Çapraz entropi kaybı $\mathrm{ÇE}$ ile sınıflandırma amaç fonksiyonunun derinliklerine inersek, $\mathrm{ÇE}$'yi minimize etmenin $L$ logaritmik-olabilirlik fonksiyonunu maksimize etmeye eşdeğer olduğunu bulacağız.
 
 Başlangıç olarak, $n$ örnekli bir veri kümesi verildiğini ve bunun $k$ sınıfa sınıflandırılabileceğini varsayalım. Her $i$ veri örneği için, $k$-sınıf etiketini $\mathbf{y}_i = (y_{i1}, \ldots, y_{ik})$ ile *birebir kodlama* ile temsil ederiz. Belirleyici olmak gerekirse, $i$ örneği $j$ sınıfına aitse, o zaman $j.$ girdisini $1$ olarak ve diğer tüm bileşenleri $0$ olarak kuruyoruz, yani,
 
@@ -601,7 +601,7 @@ Sinir ağımızın $\theta$ parametresi ifade edildiğini varsayalım. Doğru et
 Dolayısıyla, *çapraz entropi kaybı*:
 
 $$
-\mathrm{\c{C}E}(\mathbf{y}, \hat{\mathbf{y}}) = - \sum_{i=1}^n \mathbf{y}_i \log \hat{\mathbf{y}}_i
+\mathrm{ÇE}(\mathbf{y}, \hat{\mathbf{y}}) = - \sum_{i=1}^n \mathbf{y}_i \log \hat{\mathbf{y}}_i
  = - \sum_{i=1}^n \sum_{j=1}^k y_{ij} \log{p_{\theta} (y_{ij}  \mid  \mathbf{x}_i)}.\\
 $$
 
@@ -623,7 +623,7 @@ l(\theta)
 \end{aligned}
 $$
 
-Maksimum olabilirlik tahmini olduğundan, $\pi_{j} = p_{\theta} (y_{ij}  \mid  \mathbf{x}_i)$ elimizdeyken $l(\theta)$ amaç fonksiyonunu maksimize ediyoruz. Bu nedenle, herhangi bir çok-sınıflı sınıflandırma için, yukarıdaki log-olabilirlik fonksiyonunu, $l(\theta)$, maksimize etmek, ÇE kaybını $\mathrm{\c{C}E}(y, \hat{y})$ en aza indirmeye eşdeğerdir.
+Maksimum olabilirlik tahmini olduğundan, $\pi_{j} = p_{\theta} (y_{ij}  \mid  \mathbf{x}_i)$ elimizdeyken $l(\theta)$ amaç fonksiyonunu maksimize ediyoruz. Bu nedenle, herhangi bir çok-sınıflı sınıflandırma için, yukarıdaki log-olabilirlik fonksiyonunu, $l(\theta)$, maksimize etmek, ÇE kaybını $\mathrm{ÇE}(y, \hat{y})$ en aza indirmeye eşdeğerdir.
 
 Yukarıdaki kanıtı test etmek için, yerleşik `NegativeLogLikelihood` ölçütünü uygulayalım. Önceki örnekte olduğu gibi aynı `labels` (etiketler) ve `preds` (tahminler) değişkenlerini kullanarak, 5 ondalık basamağa kadar önceki örnekteki aynı sayısal kaybı elde edeceğiz.
 
