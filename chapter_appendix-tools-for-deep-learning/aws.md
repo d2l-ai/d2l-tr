@@ -190,7 +190,7 @@ conda activate d2l
 conda install python=3.7 pip -y
 ```
 
-Son olarak, MXNet ve `d2l` paketini yükleyin. `cu101` sone ki, bunun CUDA 10.1 varyantı olduğu anlamına gelir. Farklı sürümler için, mesela CUDA 10.0, `cu100`'yı seçmek isteyebirlirsiniz.
+Son olarak, MXNet ve `d2l` paketini yükleyin. `cu101` soneki, bunun CUDA 10.1 varyantı olduğu anlamına gelir. Farklı sürümler için, mesela CUDA 10.0, `cu100`'yı seçmek isteyebirlirsiniz.
 
 ```bash
 pip install mxnet-cu101==1.7.0
