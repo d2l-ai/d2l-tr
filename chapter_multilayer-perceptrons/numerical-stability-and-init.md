@@ -2,7 +2,7 @@
 :label:`sec_numerical_stability`
 
 
-Buraya kadar, uyguladığımız her model, parametrelerini önceden belirlenmiş bazı dağılımlara göre ilklememizi gerektirdi. Şimdiye kadar, bu seçimlerin nasıl yapıldığının ayrıntılarını gözden geçirerek ilkleme düzenini doğal kabul ettik. Bu seçimlerin özellikle önemli olmadığı izlenimini bile almış olabilirsiniz. Aksine, ilkleme düzeninin seçimi sinir ağı öğrenmesinde önemli bir rol oynar ve sayısal kararlılığı korumak için çok önemli olabilir. Dahası, bu seçimler doğrusal olmayan etkinleştirme fonksiyonunun seçimi ile ilginç şekillerde bağlanabilir. Hangi işlevi seçtiğimiz ve parametreleri nasıl ilklettiğimiz, optimizasyon algoritmamızın ne kadar hızlı yakınsadığını belirleyebilir. Buradaki kötü seçimler, eğitim sırasında patlayan veya kaybolan gradyanlarla karşılaşmamıza neden olabilir. Bu bölümde, bu konuları daha ayrıntılı olarak inceliyoruz ve derin öğrenmedeki kariyeriniz boyunca yararlı bulacağınız bazı yararlı buluşsal yöntemleri tartışıyoruz.
+Buraya kadar, uyguladığımız her model, parametrelerini önceden belirlenmiş bazı dağılımlara göre ilklememizi gerektirdi. Şimdiye kadar, bu seçimlerin nasıl yapıldığının ayrıntılarını gözden ardı ederek ilkleme düzenini doğal kabul ettik. Bu seçimlerin özellikle önemli olmadığı izlenimini bile almış olabilirsiniz. Aksine, ilkleme düzeninin seçimi sinir ağı öğrenmesinde önemli bir rol oynar ve sayısal kararlılığı korumak için çok önemli olabilir. Dahası, bu seçimler doğrusal olmayan etkinleştirme fonksiyonunun seçimi ile ilginç şekillerde bağlanabilir. Hangi işlevi seçtiğimiz ve parametreleri nasıl ilklettiğimiz, optimizasyon algoritmamızın ne kadar hızlı yakınsadığını belirleyebilir. Buradaki kötü seçimler, eğitim sırasında patlayan veya kaybolan gradyanlarla karşılaşmamıza neden olabilir. Bu bölümde, bu konuları daha ayrıntılı olarak inceliyoruz ve derin öğrenmedeki kariyeriniz boyunca yararlı bulacağınız bazı yararlı buluşsal yöntemleri tartışıyoruz.
 
 ## Kaybolan ve Patlayan Gradyanlar
 
@@ -22,7 +22,7 @@ Kararsız gradyanların yarattığı riskler sayısal temsilin ötesine geçer. 
 
 ### (**Kaybolan Gradyanlar**)
 
-Kaybolan gradyan sorununa neden olan sık karşılaşılan bir kabahat, her katmanın doğrusal işlemlerinin ardından eklenen $\sigma$ etkinleştirme işlevinin seçimidir. Tarihsel olarak, sigmoid işlevi $1/(1 + \exp(-x))$ (bkz. :numref:`sec_mlp`), bir eşikleme işlevine benzediği için popülerdi. Erken yapay sinir ağları biyolojik sinir ağlarından ilham aldığından, ya *tamamen* ateşleyen ya da *hiç* ateşlemeyen (biyolojik nöronlar gibi) nöronlar fikri çekici görünüyordu. Neden yok olan gradyanlara neden olabileceğini görmek için sigmoide daha yakından bakalım.
+Kaybolan gradyan sorununa neden olan sık karşılaşılan bir zor durum, her katmanın doğrusal işlemlerinin ardından eklenen $\sigma$ etkinleştirme işlevinin seçimidir. Tarihsel olarak, sigmoid işlevi $1/(1 + \exp(-x))$ (bkz. :numref:`sec_mlp`), bir eşikleme işlevine benzediği için popülerdi. Öncül yapay sinir ağları biyolojik sinir ağlarından ilham aldığından, ya *tamamen* ateşleyen ya da *hiç* ateşlemeyen (biyolojik nöronlar gibi) nöronlar fikri çekici görünüyordu. Neden yok olan gradyanlara neden olabileceğini görmek için sigmoide daha yakından bakalım.
 
 ```{.python .input}
 %matplotlib inline
@@ -66,7 +66,7 @@ d2l.plot(x.numpy(), [y.numpy(), t.gradient(y, x).numpy()],
          legend=['sigmoid', 'gradient'], figsize=(4.5, 2.5))
 ```
 
-Gördüğünüz gibi (**sigmoidin gradyanı, girdileri hem büyük hem de küçük olduklarında kaybolur**). Dahası, birçok katmanda geri yayma yaparken, birçok sigmoidin girdilerinin sıfıra yakın olduğu Goldilocks bölgesinde olmadıkça, tüm çarpımın gradyanları kaybolabilir. Ağımız birçok katmana sahip olduğunda, dikkatli olmadıkça, gradyan muhtemelen herhangi bir katmanda kesilecektir. Gerçekten de, bu problem derin ağ eğitiminda başa bela oluyordu. Sonuç olarak, daha kararlı (ancak sinirsel olarak daha az makul olan) ReLU'lar, uygulayıcıların varsayılan seçimi olarak öne çıktı.
+Gördüğünüz gibi (**sigmoidin gradyanı, girdileri hem büyük hem de küçük olduklarında kaybolur**). Dahası, birçok katmanda geri yayma yaparken, birçok sigmoidin girdilerinin sıfıra yakın olduğu altın bölgede (Goldilocks) olmadıkça, tüm çarpımın gradyanları kaybolabilir. Ağımız birçok katmana sahip olduğunda, dikkatli olmadıkça, gradyan muhtemelen herhangi bir katmanda kesilecektir. Gerçekten de, bu problem derin ağ eğitiminda başa bela oluyordu. Sonuç olarak, daha kararlı (ancak sinirsel olarak daha az makul olan) ReLU'lar, uygulayıcıların varsayılan seçimi olarak öne çıktı.
 
 
 ### [**Patlayan Gradyanlar**]
@@ -79,7 +79,7 @@ print('Tek bir matris', M)
 for i in range(100):
     M = np.dot(M, np.random.normal(size=(4, 4)))
 
-print('100 matrisi çarptiktan sonra', M)
+print('100 matrisi carptiktan sonra', M)
 ```
 
 ```{.python .input}
@@ -89,7 +89,7 @@ print('Tek bir matris \n',M)
 for i in range(100):
     M = torch.mm(M,torch.normal(0, 1, size=(4, 4)))
 
-print('100 matrisi çarptiktan sonra\n',M)
+print('100 matrisi carptiktan sonra\n',M)
 ```
 
 ```{.python .input}
@@ -99,7 +99,7 @@ print('Tek bir matris \n', M)
 for i in range(100):
     M = tf.matmul(M, tf.random.normal((4, 4)))
 
-print('100 matrisi çarptiktan sonra\n', M.numpy())
+print('100 matrisi carptiktan sonra\n', M.numpy())
 ```
 
 ### Bakışımı (Simetriyi) Kırma
@@ -117,7 +117,7 @@ Yukarıda belirtilen sorunları ele almanın---ya da en azından hafifletmenin--
 
 ### Varsayılan İlkletme
 
-Önceki bölümlerde, örneğin :numref:`sec_linear_concise`'deki gibi, ağırlıklarımızın değerlerini ilkletmek için normal dağılım kullandık. İlkleme yöntemini belirtmezsek, çerçeve, pratikte genellikle orta düzey problem boyutları için iyi çalışan varsayılan bir rastgele ilkleme yöntemi kullanacaktır.
+Önceki bölümlerde, örneğin :numref:`sec_linear_concise` içindeki gibi, ağırlıklarımızın değerlerini ilkletmek için normal dağılım kullandık. İlkleme yöntemini belirtmezsek, çerçeve, pratikte genellikle orta düzey problem boyutları için iyi çalışan varsayılan bir rastgele ilkleme yöntemi kullanacaktır.
 
 
 
@@ -151,7 +151,7 @@ $$
 \end{aligned}
 $$
 
-Bu, yaratıcılarının ilk yazarının adını taşıyan, artık standart ve pratik olarak faydalı *Xavier ilkletmesi*nin altında yatan mantıktır cite:`Glorot.Bengio.2010`. Tipik olarak, Xavier ilkletmesi sıfır ortalama ve $\sigma^2 = \frac{2}{n_\mathrm{in} + n_\mathrm{out}}$ varyansına sahip bir Gauss dağılımından ağırlıkları örnekler. Aynı zamanda, tekdüze bir dağılımdan ağırlıkları örneklerken, Xavier'in sezgisini varyansı seçecek şekilde uyarlayabiliriz. $U(-a, a)$ tekdüze dağılımının $\frac{a^2}{3}$ varyansına sahip olduğuna dikkat edin. $\frac{a^2}{3}$'ı $\sigma^2$'daki koşulumuza eklemek, şu ilkletme önerisini verir:
+Bu, yaratıcılarının ilk yazarının adını taşıyan, artık standart ve pratik olarak faydalı *Xavier ilkletmesi*nin altında yatan mantıktır :cite:`Glorot.Bengio.2010`. Tipik olarak, Xavier ilkletmesi sıfır ortalama ve $\sigma^2 = \frac{2}{n_\mathrm{in} + n_\mathrm{out}}$ varyansına sahip bir Gauss dağılımından ağırlıkları örnekler. Aynı zamanda, tekdüze bir dağılımdan ağırlıkları örneklerken, Xavier'in sezgisini varyansı seçecek şekilde uyarlayabiliriz. $U(-a, a)$ tekdüze dağılımının $\frac{a^2}{3}$ varyansına sahip olduğuna dikkat edin. $\frac{a^2}{3}$'ı $\sigma^2$'daki koşulumuza eklemek, şu ilkletme önerisini verir:
 
 $$U\left(-\sqrt{\frac{6}{n_\mathrm{in} + n_\mathrm{out}}}, \sqrt{\frac{6}{n_\mathrm{in} + n_\mathrm{out}}}\right).$$
 
@@ -160,7 +160,7 @@ Yukarıdaki matematiksel akıl yürütmede doğrusal olmayanların var olmadığ
 
 ### Daha Fazlası
 
-Yukarıdaki mantık, parametre ilklendirmesine yönelik modern yaklaşımların yüzeyine ışık tutuyor. Bir derin öğrenme çerçevesi genellikle bir düzineden fazla farklı buluşsal yöntem uygular. Dahası, parametre ilkletme, derin öğrenmede temel araştırma için sıcak bir alan olmaya devam ediyor. Bunlar arasında bağlı (paylaşılan) parametreler, süper çözünürlük, dizi modelleri ve diğer durumlar için özelleştirilmiş buluşsal yöntemler bulunur. Örneğin, Xiao ve ark. dikkatle tasarlanmış bir ilkletme yöntemi kullanarak mimari hileler olmadan 10000 katmanlı sinir ağlarını eğitme olasılığını gösterdi :cite:`Xiao.Bahri.Sohl-Dickstein.ea.2018`.
+Yukarıdaki mantık, parametre ilklendirmesine yönelik modern yaklaşımların yüzeyine ışık tutar. Bir derin öğrenme çerçevesi genellikle bir düzineden fazla farklı buluşsal yöntem uygular. Dahası, parametre ilkletme, derin öğrenmede temel araştırma için sıcak bir alan olmaya devam ediyor. Bunlar arasında bağlı (paylaşılan) parametreler, süper çözünürlük, dizi modelleri ve diğer durumlar için özelleştirilmiş buluşsal yöntemler bulunur. Örneğin, Xiao ve ark. dikkatle tasarlanmış bir ilkletme yöntemi kullanarak mimari hileler olmadan 10000 katmanlı sinir ağlarını eğitme olasılığını gösterdi :cite:`Xiao.Bahri.Sohl-Dickstein.ea.2018`.
 
 Konu ilginizi çekiyorsa, bu modülün önerdiklerine derinlemesine dalmanızı, her buluşsal yöntemi öneren ve analiz eden çalışmaları okumanızı ve ardından konuyla ilgili en son yayınlarda gezinmenizi öneririz. Belki de zekice bir fikre rastlarsınız, hatta icat edersiniz ve derin öğrenme çerçevelerinde bir uygulamaya katkıda bulunursunuz.
 
@@ -169,12 +169,12 @@ Konu ilginizi çekiyorsa, bu modülün önerdiklerine derinlemesine dalmanızı,
 * Kaybolan ve patlayan gradyanlar, derin ağlarda yaygın sorunlardır. Gradyanların ve parametrelerin iyi kontrol altında kalmasını sağlamak için parametre ilklemeye büyük özen gösterilmesi gerekir.
 * İlk gradyanların ne çok büyük ne de çok küçük olmasını sağlamak için ilkleme buluşsal yöntemlerine ihtiyaç vardır.
 * ReLU etkinleştirme fonksiyonları, kaybolan gradyan problemini azaltır. Bu yakınsamayı hızlandırabilir.
-* Rastgele ilkleme, optimizasyondan önce bakışımın bozulmasını sağlamak için anahtardır.
+* Rastgele ilkleme, optimizasyondan önce bakışımın bozulmasını sağlamak için bir araçtır.
 * Xavier ilkletme, her katman için herhangi bir çıktının varyansının girdi sayısından etkilenmediğini ve herhangi bir gradyanın varyansının çıktı sayısından etkilenmediğini öne sürer.
 
 ## Alıştırmalar
 
-1. Bir sinir ağının, bir MLP'nin, katmanlarında devrişim bakışımının yanısıra kırılma gerektiren bakışım sergileyebileceği başka durumlar tasarlayabilir misiniz?
+1. Bir sinir ağının, bir MLP'nin, katmanlarında yer değiştirme bakışımının yanısıra kırılma gerektiren bakışım sergileyebileceği başka durumlar tasarlayabilir misiniz?
 1. Doğrusal regresyonda veya softmaks regresyonunda tüm ağırlık parametrelerini aynı değere ilkleyebilir miyiz?
 1. İki matrisin çarpımının özdeğerlerindeki analitik sınırlara bakınız. Bu, gradyanların iyi şartlandırılmasının sağlanması konusunda size ne anlatıyor?
 1. Bazı terimlerin ıraksadığını biliyorsak, bunu sonradan düzeltebilir miyiz? İlham almak için katmanlı uyarlanabilir oran ölçekleme makalesine bakınız :cite:`You.Gitman.Ginsburg.2017`.

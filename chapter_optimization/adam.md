@@ -3,13 +3,13 @@
 
 Bu bölüme kadar uzanan tartışmalarda etkili optimizasyon için bir dizi teknikle karşılaştık. Onları burada ayrıntılı olarak özetleyelim: 
 
-* :numref:`sec_sgd`'nin optimizasyon problemlerini çözerken, örneğin bol veriye olan doğal dayanıklılığı nedeniyle Gradyan İnişi'nden daha etkili olduğunu gördük. 
-* :numref:`sec_minibatch_sgd`'ün bir minigrup içinde daha büyük gözlem kümeleri kullanarak vektörleştirmeden kaynaklanan önemli ek verimlilik sağladığını gördük. Bu, verimli çoklu makine, çoklu GPU ve genel paralel işleme için anahtardır. 
+* :numref:`sec_sgd` içinde optimizasyon problemlerini çözerken, örneğin bol veriye olan doğal dayanıklılığı nedeniyle gradyan inişinden daha etkili olduğunu gördük. 
+* :numref:`sec_minibatch_sgd` içinde bir minigrup içinde daha büyük gözlem kümeleri kullanarak vektörleştirmeden kaynaklanan önemli ek verimlilik sağladığını gördük. Bu, verimli çoklu makine, çoklu GPU ve genel paralel işleme için anahtardır. 
 * :numref:`sec_momentum` yakınsamayı hızlandırmak için geçmiş gradyanların tarihçesini bir araya getirmeye yönelik bir mekanizma ekledi.
-* :numref:`sec_adagrad` hesaplama açısından verimli bir ön koşul sağlamak için koordinat başına ölçekleme kullanılır. 
-* :numref:`sec_rmsprop` bir öğrenme hızı ayarlaması ile koordinat başına ölçeklendirmeyi ayrıştırıldı. 
+* :numref:`sec_adagrad` hesaplama açısından verimli bir ön koşul sağlamak için koordinat başına ölçekleme kullanıldı. 
+* :numref:`sec_rmsprop` bir öğrenme hızı ayarlaması ile koordinat başına ölçeklendirmeyi ayrıştırdı. 
 
-Adam :cite:`Kingma.Ba.2014`, tüm bu teknikleri tek bir verimli öğrenme algoritmasına birleştirir. Beklendiği gibi, bu, derin öğrenmede kullanılacak daha sağlam ve etkili optimizasyon algoritmalarından biri olarak oldukça popüler hale gelen bir algoritmadır. Yine de sorunları yok değildir. Özellikle, :cite:`Reddi.Kale.Kumar.2019`, Adam'ın zayıf varyans kontrolü nedeniyle ıraksayabileceği durumlar olduğunu göstermektedir. Bir takip çalışmasında :cite:`Zaheer.Reddi.Sachan.ea.2018` Adam için bu sorunları gideren Yogi denilen bir düzeltme önerdi. Bunun hakkında daha fazlasını birazdan vereceğiz. Şimdilik Adam algoritmasını gözden geçirelim.  
+Adam :cite:`Kingma.Ba.2014`, tüm bu teknikleri tek bir verimli öğrenme algoritmasına birleştirir. Beklendiği gibi, bu, derin öğrenmede kullanılacak daha sağlam ve etkili optimizasyon algoritmalarından biri olarak oldukça popüler hale gelen bir algoritmadır. Yine de sorunları yok değildir. Özellikle, :cite:`Reddi.Kale.Kumar.2019`, Adam'ın zayıf varyans kontrolü nedeniyle ıraksayabileceği durumlar olduğunu göstermektedir. Bir takip çalışması :cite:`Zaheer.Reddi.Sachan.ea.2018` Adam için bu sorunları gideren Yogi denilen bir düzeltme önerdi. Bunun hakkında daha fazlasını birazdan vereceğiz. Şimdilik Adam algoritmasını gözden geçirelim.  
 
 ## Algoritma
 
@@ -22,13 +22,13 @@ $$\begin{aligned}
 
 Burada $\beta_1$ ve $\beta_2$ negatif olmayan ağırlıklandırma parametreleridir. Onlar için yaygın seçenekler $\beta_1 = 0.9$ ve $\beta_2 = 0.999$'dur. Yani, varyans tahmini momentum teriminden *çok daha yavaş* hareket eder. $\mathbf{v}_0 = \mathbf{s}_0 = 0$ şeklinde ilklersek, başlangıçta daha küçük değerlere karşı önemli miktarda taraflı olduğumuzu unutmayın. Bu, $\sum_{i=0}^t \beta^i = \frac{1 - \beta^t}{1 - \beta}$'nin terimleri yeniden normalleştirmesi gerçeğini kullanarak ele alınabilir. Buna göre normalleştirilmiş durum değişkenleri şu şekilde verilir: 
 
-$$\hat{\mathbf{v}}_t = \frac{\mathbf{v}_t}{1 - \beta_1^t} \text{ and } \hat{\mathbf{s}}_t = \frac{\mathbf{s}_t}{1 - \beta_2^t}.$$
+$$\hat{\mathbf{v}}_t = \frac{\mathbf{v}_t}{1 - \beta_1^t} \text{ ve } \hat{\mathbf{s}}_t = \frac{\mathbf{s}_t}{1 - \beta_2^t}.$$
 
 Uygun tahminlerle donanmış olarak şimdi güncelleme denklemlerini yazabiliriz. İlk olarak, RMSProp'a çok benzer bir şekilde gradyanı yeniden ölçeklendirerek aşağıdaki ifadeyi elde ederiz: 
 
 $$\mathbf{g}_t' = \frac{\eta \hat{\mathbf{v}}_t}{\sqrt{\hat{\mathbf{s}}_t} + \epsilon}.$$
 
-RMSProp'un aksineö güncellememiz gradyanın kendisi yerine $\hat{\mathbf{v}}_t$ momentumunu kullanır. Ayrıca, yeniden ölçeklendirme $\frac{1}{\sqrt{\hat{\mathbf{s}}_t + \epsilon}}$ yerine $\frac{1}{\sqrt{\hat{\mathbf{s}}_t} + \epsilon}$ kullanarak gerçekleştiği için hafif bir kozmetik fark vardır. Önceki, pratikte tartışmasız olarak biraz daha iyi çalışır, dolayısıyla RMSProp'tan bir sapmadır. Sayısal kararlılık ve aslına uygunluk arasında iyi bir denge için tipik olarak $\epsilon = 10^{-6}$'ı seçeriz. 
+RMSProp'un aksine güncellememiz gradyanın kendisi yerine $\hat{\mathbf{v}}_t$ momentumunu kullanır. Ayrıca, yeniden ölçeklendirme $\frac{1}{\sqrt{\hat{\mathbf{s}}_t + \epsilon}}$ yerine $\frac{1}{\sqrt{\hat{\mathbf{s}}_t} + \epsilon}$ kullanarak gerçekleştiği için hafif bir kozmetik fark vardır. Sonraki, pratikte tartışmasız olarak biraz daha iyi çalışır, dolayısıyla RMSProp'tan bir sapmadır. Sayısal kararlılık ve aslına uygunluk arasında iyi bir denge için tipik olarak $\epsilon = 10^{-6}$'yı seçeriz. 
 
 Şimdi güncellemeleri hesaplamak için tüm parçalara sahibiz. Bu biraz hayal kırıcıdır ve formun basit bir güncellemesi vardır: 
 
@@ -144,11 +144,11 @@ Adam'ın sorunlarından biri, $\mathbf{s}_t$'teki ikinci moment tahmini patladı
 
 $$\mathbf{s}_t \leftarrow \mathbf{s}_{t-1} + (1 - \beta_2) \left(\mathbf{g}_t^2 - \mathbf{s}_{t-1}\right).$$
 
-$\mathbf{g}_t^2$ yüksek varyansa sahip olduğunda veya güncellemeler seyrek olduğunda, $\mathbf{s}_t$ geçmiş değerleri çok çabuk unutabilir. Bunun için olası bir düzeltme $\mathbf{g}_t^2 - \mathbf{s}_{t-1}$'yı $\mathbf{g}_t^2 \odot \mathop{\mathrm{sgn}}(\mathbf{g}_t^2 - \mathbf{s}_{t-1})$ ile değiştirmektir. Artık güncellemenin büyüklüğü sapma miktarına bağlı değil. Bu Yogi güncellemelerini verir 
+$\mathbf{g}_t^2$ yüksek varyansa sahip olduğunda veya güncellemeler seyrek olduğunda, $\mathbf{s}_t$ geçmiş değerleri çok çabuk unutabilir. Bunun için olası bir düzeltme $\mathbf{g}_t^2 - \mathbf{s}_{t-1}$'yı $\mathbf{g}_t^2 \odot \mathop{\mathrm{sgn}}(\mathbf{g}_t^2 - \mathbf{s}_{t-1})$ ile değiştirmektir. Artık güncellemenin büyüklüğü sapma miktarına bağlı değil. Bu Yogi güncellemelerini verir: 
 
 $$\mathbf{s}_t \leftarrow \mathbf{s}_{t-1} + (1 - \beta_2) \mathbf{g}_t^2 \odot \mathop{\mathrm{sgn}}(\mathbf{g}_t^2 - \mathbf{s}_{t-1}).$$
 
-Yazarlar ayrıca momentumu sadece ilk noktasal tahminden ziyade daha büyük bir ilk toplu işte ilklemeyi tavsiye ediyor. Tartışmada önemli olmadıkları ve bu yakınsama olmasa bile oldukça iyi kaldığı için ayrıntıları atlıyoruz.
+Yazarlar ayrıca momentumu sadece ilk noktasal tahminden ziyade daha büyük bir ilk toplu iş ile ilklemeyi tavsiye ediyor. Tartışmada önemli olmadıkları ve bu yakınsama olmasa bile oldukça iyi kaldığı için ayrıntıları atlıyoruz.
 
 ```{.python .input}
 def yogi(params, states, hyperparams):
@@ -219,7 +219,7 @@ d2l.train_ch11(yogi, init_adam_states(feature_dim),
 1. Öğrenme oranını ayarlayın ve deneysel sonuçları gözlemleyip analiz edin.
 1. Eğer momentum ve ikinci moment güncellemeleri, ek girdi düzeltme gerektirmeyecek şekilde yeniden yazabilir misiniz?
 1. Neden yakınsadığımızda $\eta$ öğrenme oranını düşürmeniz gerekiyor?
-1. Adam'ın ıraksadığında ve Yogi'nin yakınsadığı bir durum oluşturmaya mı çalışın?
+1. Adam'ın ıraksadığında ve Yogi'nin yakınsadığı bir durum oluşturmaya mı çalışın.
 
 :begin_tab:`mxnet`
 [Tartışmalar](https://discuss.d2l.ai/t/358)

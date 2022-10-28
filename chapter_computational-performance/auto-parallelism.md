@@ -1,9 +1,9 @@
 # Otomatik Paralellik
 :label:`sec_auto_para`
 
-Derin öğrenme çerçeveleri (örneğin, MXNet ve PyTorch) arka işlemcide otomatik olarak hesaplama çizgeleri oluşturur. Bir hesaplama çizgesi kullandığından, sistem tüm bağımlılıkların farkındadır ve hızı artırmak için paralel olarak birden çok birbirine bağımlı olmayan görevi seçici olarak yürütebilir. Örneğin, :numref:`sec_async`'te :numref:`fig_asyncgraph` bağımsız olarak iki değişkeni ilkler. Sonuç olarak sistem bunları paralel olarak yürütmeyi seçebilir. 
+Derin öğrenme çerçeveleri (örneğin, MXNet ve PyTorch) arka işlemcide otomatik olarak hesaplama çizgeleri oluşturur. Bir hesaplama çizgesi kullandığından, sistem tüm bağımlılıkların farkındadır ve hızı artırmak için paralel olarak birden çok birbirine bağımlı olmayan görevi seçici olarak yürütebilir. Örneğin, :numref:`sec_async` içinde :numref:`fig_asyncgraph` bağımsız olarak iki değişkeni ilkler. Sonuç olarak sistem bunları paralel olarak yürütmeyi seçebilir. 
 
-Genellikle, tek bir operatör tüm CPU veya tek bir GPU'da tüm hesaplama kaynaklarını kullanır. Örneğin, `dot` operatörü, tek bir makinede birden fazla CPU işlemcisi olsa bile, tüm CPU'lardaki tüm çekirdekleri (ve iş parçacıklarını) kullanır. Aynısı tek bir GPU için de geçerlidir. Bu nedenle paralelleştirme, tek aygıtlı bilgisayarlar için o kadar yararlı değildir. Birden fazla cihazla işler daha önemli hale gelir. Paralelleştirme genellikle birden fazla GPU arasında en alakalı olmakla birlikte, yerel CPU'nun eklenmesi performansı biraz artıracaktır. Örneğin, bkz. :cite:`Hadjis.Zhang.Mitliagkas.ea.2016`, bir GPU ve CPU'yu birleştiren bilgisayarla görme modellerini eğitmeye odaklanır. Otomatik olarak paralelleştirilen bir çerçevenin kolaylığı sayesinde aynı hedefi birkaç satır Python kodunda gerçekleştirebiliriz. Daha geniş bir şekilde, otomatik paralel hesaplama konusundaki tartışmamız, hem CPU'ları hem de GPU'ları kullanarak paralel hesaplamaya ve aynı zamanda hesaplama ve iletişimin paralelleşmesine odaklanmaktadır. 
+Genellikle, tek bir operatör tüm CPU veya tek bir GPU'da tüm hesaplama kaynaklarını kullanır. Örneğin, `dot` operatörü, tek bir makinede birden fazla CPU işlemcisi olsa bile, tüm CPU'lardaki tüm çekirdekleri (ve iş parçacıklarını) kullanır. Aynısı tek bir GPU için de geçerlidir. Bu nedenle paralelleştirme, tek aygıtlı bilgisayarlar için o kadar yararlı değildir. Birden fazla cihazla işler daha önemli hale gelir. Paralelleştirme genellikle birden fazla GPU arasında en alakadar olmakla birlikte, yerel CPU'nun eklenmesi performansı biraz artıracaktır. Örneğin, bkz. :cite:`Hadjis.Zhang.Mitliagkas.ea.2016`, bir GPU ve CPU'yu birleştiren bilgisayarla görme modellerini eğitmeye odaklanır. Otomatik olarak paralelleştirilen bir çerçevenin kolaylığı sayesinde aynı hedefi birkaç satır Python kodunda gerçekleştirebiliriz. Daha geniş bir şekilde, otomatik paralel hesaplama konusundaki tartışmamız, hem CPU'ları hem de GPU'ları kullanarak paralel hesaplamaya ve aynı zamanda hesaplama ve iletişimin paralelleşmesine odaklanmaktadır. 
 
 Bu bölümdeki deneyleri çalıştırmak için en az iki GPU'ya ihtiyacımız olduğunu unutmayın.
 
@@ -21,7 +21,7 @@ import torch
 
 ## GPU'larda Paralel Hesaplama
 
-Test etmek için bir referans iş yükü tanımlayarak başlayalım: Aşağıdaki `run` işlevi iki değişkene, `x_gpu1` ve `x_gpu2`, ayrılan verileri kullanarak seçeceğimiz cihazda 10 matris matris çarpımı gerçekleştirir.
+Test etmek için bir referans iş yükü tanımlayarak başlayalım: Aşağıdaki `run` işlevi iki değişkene, `x_gpu1` ve `x_gpu2`, ayrılan verileri kullanarak seçeceğimiz cihazda 10 matris-matris çarpımı gerçekleştirir.
 
 ```{.python .input}
 devices = d2l.try_all_gpus()
@@ -51,7 +51,7 @@ x_gpu2 = torch.rand(size=(4000, 4000), device=devices[1])
 :end_tab:
 
 ```{.python .input}
-run(x_gpu1)  # Warm-up both devices
+run(x_gpu1)  # iki cihazi da isindir
 run(x_gpu2)
 npx.waitall()  
 
@@ -67,7 +67,7 @@ with d2l.Benchmark('GPU2 time'):
 ```{.python .input}
 #@tab pytorch
 run(x_gpu1)
-run(x_gpu2)  # Warm-up all devices
+run(x_gpu2)  # bütün cihazlari isindir
 torch.cuda.synchronize(devices[0])
 torch.cuda.synchronize(devices[1])
 
@@ -159,11 +159,11 @@ with d2l.Benchmark('Run on GPU1 and copy to CPU'):
     torch.cuda.synchronize()
 ```
 
-Her iki işlem için gereken toplam süre (beklendiği gibi) parçalarının toplamından daha azdır. Farklı bir kaynak kullandığı için bu görevin paralel hesaplamadan farklı olduğunu unutmayın: CPU ve GPU'lar arasındaki veri yolu. Aslında, her iki cihazda da işlem yapabilir ve iletişim kurabiliriz, hepsini aynı anda. Yukarıda belirtildiği gibi, hesaplama ve iletişim arasında bir bağımlılık vardır: `y[i]` CPU'ya kopyalanmadan önce hesaplanmalıdır. Neyse ki, sistem toplam çalışma süresini azaltmak için `y[i]`'i hesaplarken `y[i-1]`'ü kopyalayabilir. 
+Her iki işlem için gereken toplam süre (beklendiği gibi) parçalarının toplamından daha azdır. Farklı bir kaynak kullandığı için bu görevin paralel hesaplamadan farklı olduğunu unutmayın: CPU ve GPU'lar arasındaki veri yolu. Aslında, her iki cihazda da işlem yapabilir ve iletişim kurabiliriz, hepsini aynı anda. Yukarıda belirtildiği gibi, hesaplama ve iletişim arasında bir bağımlılık vardır: `y[i]` CPU'ya kopyalanmadan önce hesaplanmalıdır. Neyse ki, sistem toplam çalışma süresini azaltmak için `y[i]`'i hesaplarken `y[i-1]`'i kopyalayabilir. 
 
-:numref:`fig_twogpu` içinde gösterildiği gibi, bir CPU ve iki GPU üzerinde eğitim yaparken basit bir iki katmanlı MLP için hesaplama çizgesinin ve bağımlılıklarının bir gösterimi ile sonuca varıyoruz. Bundan kaynaklanan paralel programı manuel olarak planlamak oldukça acı verici olurdu. Optimizasyon için çizge tabanlı bir hesaplama arka işlemcisine sahip olmanın avantajlı olduğu yer burasıdır.
+:numref:`fig_twogpu` içinde gösterildiği gibi, bir CPU ve iki GPU üzerinde eğitim yaparken basit bir iki katmanlı MLP için hesaplama çizgesinin ve bağımlılıklarının bir gösterimi ile sonlandırıyoruz. Bundan kaynaklanan paralel programı manuel olarak planlamak oldukça acı verici olurdu. Eniyileme için çizge tabanlı bir hesaplama arka işlemcisine sahip olmanın avantajlı olduğu yer burasıdır.
 
-![The computational graph and its dependencies of a two-layer MLP on a CPU and two GPUs.](../img/twogpu.svg)
+![Bir CPU ve iki GPU üzerindeki iki katmanlı MLP'nin hesaplama çizgesi ve bağımlılıkları.](../img/twogpu.svg)
 :label:`fig_twogpu`
 
 ## Özet

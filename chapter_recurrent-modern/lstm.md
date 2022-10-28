@@ -9,7 +9,7 @@ Muhtemelen LSTM'nin tasarımı bir bilgisayarın mantık kapılarından esinleni
 
 ### Girdi Geçidi, Unutma Geçidi ve Çıktı Geçidi
 
-Tıpkı GRU'larda olduğu gibi, LSTM geçitlerine beslenen veriler, :numref:`lstm_0`'te gösterildiği gibi, geçerli zaman adımındaki girdi ve önceki zaman adımının gizli durumudur. Girdi, unutma ve çıktı geçitleri değerlerini hesaplamak için sigmoid etkinleştirme fonksiyonuna sahip üç tam bağlı katman tarafından işlenir. Sonuç olarak, üç geçidin değerleri $(0, 1)$ aralığındadır.
+Tıpkı GRU'larda olduğu gibi, LSTM geçitlerine beslenen veriler, :numref:`lstm_0` içinde gösterildiği gibi, geçerli zaman adımındaki girdi ve önceki zaman adımının gizli durumudur. Girdi, unutma ve çıktı geçitleri değerlerini hesaplamak için sigmoid etkinleştirme fonksiyonuna sahip üç tam bağlı katman tarafından işlenir. Sonuç olarak, üç geçidin değerleri $(0, 1)$ aralığındadır.
 
 ![LSTM modelinin girdi, unutma ve çıktı geçitleri değerlerininin hesaplanması](../img/lstm-0.svg)
 :label:`lstm_0`
@@ -28,13 +28,13 @@ burada $\mathbf{W}_{xi}, \mathbf{W}_{xf}, \mathbf{W}_{xo} \in \mathbb{R}^{d \tim
 
 ### Aday Bellek Hücresi
 
-Sonraki adımda hafıza hücresini tasarlıyoruz. Çeşitli geçitlerin eylemini henüz belirtmediğimizden, öncelikle *aday* bellek hücresi $\tilde{\mathbf{C}}_t \in \mathbb{R}^{n \times h}$'i tanıtıyoruz. Hesaplamalar, yukarıda açıklanan üç geçittekine benzer, ancak etkinleştirme fonksiyonu olarak $(-1, 1)$'de bir değer aralığına sahip bir $\tanh$ işlevini kullanır. Bu, $t$ zaman adımında aşağıdaki denklem yol açar:
+Sonraki adımda hafıza hücresini tasarlıyoruz. Çeşitli geçitlerin eylemini henüz belirtmediğimizden, öncelikle *aday* bellek hücresi $\tilde{\mathbf{C}}_t \in \mathbb{R}^{n \times h}$'i tanıtıyoruz. Hesaplamalar, yukarıda açıklanan üç geçittekine benzer, ancak etkinleştirme fonksiyonu olarak $(-1, 1)$'de bir değer aralığına sahip bir $\tanh$ işlevini kullanır. Bu, $t$ zaman adımında aşağıdaki denkleme yol açar:
 
 $$\tilde{\mathbf{C}}_t = \text{tanh}(\mathbf{X}_t \mathbf{W}_{xc} + \mathbf{H}_{t-1} \mathbf{W}_{hc} + \mathbf{b}_c),$$
 
 burada $\mathbf{W}_{xc} \in \mathbb{R}^{d \times h}$ ve $\mathbf{W}_{hc} \in \mathbb{R}^{h \times h}$ ağırlık parametreleridir ve $\mathbf{b}_c \in \mathbb{R}^{1 \times h}$ bir ek girdi parametresidir.
 
-Aday bellek hücresinin hızlı bir gösterimi :numref:`lstm_1`'te verilmiştir.
+Aday bellek hücresinin hızlı bir gösterimi :numref:`lstm_1` içinde verilmiştir.
 
 ![LSTM modelinde aday bellek hücresini hesaplama.](../img/lstm-1.svg)
 :label:`lstm_1`
@@ -47,10 +47,9 @@ $$\mathbf{C}_t = \mathbf{F}_t \odot \mathbf{C}_{t-1} + \mathbf{I}_t \odot \tilde
 
 Unutma geçidi her zaman yaklaşık 1 ise ve girdi geçidi her zaman yaklaşık 0 ise, geçmiş bellek hücreleri $\mathbf{C}_{t-1}$ zamanla kaydedilir ve geçerli zaman adımına geçirilir. Bu tasarım, kaybolan gradyan sorununu hafifletmek ve diziler içindeki uzun menzilli bağlılıkları daha iyi yakalamak için sunuldu.
 
-Böylece :numref:`lstm_2`'teki akış şemasına ulaşırız.
+Böylece :numref:`lstm_2` içindeki akış şemasına ulaşırız.
 
 ![LSTM modelinde bellek hücresini hesaplama.](../img/lstm-2.svg)
-
 :label:`lstm_2`
 
 ### Gizli Durum
@@ -61,14 +60,14 @@ $$\mathbf{H}_t = \mathbf{O}_t \odot \tanh(\mathbf{C}_t).$$
 
 Çıktı geçidi 1'e yaklaştığında, tüm bellek bilgilerini etkin bir şekilde tahminciye aktarırız, oysa 0'a yakın çıktı geçidi için tüm bilgileri yalnızca bellek hücresinde saklarız ve daha fazla işlem yapmayız.
 
-:numref:`lstm_3`'te, veri akışının grafiksel bir gösterimi vardır.
+:numref:`lstm_3` içinde veri akışının grafiksel bir gösterimi vardır.
 
 ![Computing the hidden state in an LSTM model.](../img/lstm-3.svg)
 :label:`lstm_3`
 
 ## Sıfırdan Uygulama
 
-Şimdi sıfırdan bir LSTM uygulayalım. :numref:`sec_rnn_scratch`'teki deneylerle aynı şekilde, önce zaman makinesi veri kümesini yükleriz.
+Şimdi sıfırdan bir LSTM uygulayalım. :numref:`sec_rnn_scratch` içindeki deneylerle aynı şekilde, önce zaman makinesi veri kümesini yükleriz.
 
 ```{.python .input}
 from d2l import mxnet as d2l
@@ -114,14 +113,14 @@ def get_lstm_params(vocab_size, num_hiddens, device):
                 normal((num_hiddens, num_hiddens)),
                 np.zeros(num_hiddens, ctx=device))
 
-    W_xi, W_hi, b_i = three()  # Input gate parameters
-    W_xf, W_hf, b_f = three()  # Forget gate parameters
-    W_xo, W_ho, b_o = three()  # Output gate parameters
-    W_xc, W_hc, b_c = three()  # Candidate memory cell parameters
-    # Output layer parameters
+    W_xi, W_hi, b_i = three()  # Girdi geçidi parametreleri
+    W_xf, W_hf, b_f = three()  # Unutma geçidi parametreleri
+    W_xo, W_ho, b_o = three()  # Çıktı geçidi parametreleri
+    W_xc, W_hc, b_c = three()  # Aday bellek hücresi parametreleri
+    # Çıktı katmanı parametreleri
     W_hq = normal((num_hiddens, num_outputs))
     b_q = np.zeros(num_outputs, ctx=device)
-    # Attach gradients
+    # Gradyanları iliştir
     params = [W_xi, W_hi, b_i, W_xf, W_hf, b_f, W_xo, W_ho, b_o, W_xc, W_hc,
               b_c, W_hq, b_q]
     for param in params:
@@ -142,14 +141,14 @@ def get_lstm_params(vocab_size, num_hiddens, device):
                 normal((num_hiddens, num_hiddens)),
                 d2l.zeros(num_hiddens, device=device))
 
-    W_xi, W_hi, b_i = three()  # Input gate parameters
-    W_xf, W_hf, b_f = three()  # Forget gate parameters
-    W_xo, W_ho, b_o = three()  # Output gate parameters
-    W_xc, W_hc, b_c = three()  # Candidate memory cell parameters
-    # Output layer parameters
+    W_xi, W_hi, b_i = three()  # Girdi geçidi parametreleri
+    W_xf, W_hf, b_f = three()  # Unutma geçidi parametreleri
+    W_xo, W_ho, b_o = three()  # Çıktı geçidi parametreleri
+    W_xc, W_hc, b_c = three()  # Aday bellek hücresi parametreleri
+    # Çıktı katmanı parametreleri
     W_hq = normal((num_hiddens, num_outputs))
     b_q = d2l.zeros(num_outputs, device=device)
-    # Attach gradients
+    # Gradyanları iliştir
     params = [W_xi, W_hi, b_i, W_xf, W_hf, b_f, W_xo, W_ho, b_o, W_xc, W_hc,
               b_c, W_hq, b_q]
     for param in params:
@@ -170,14 +169,14 @@ def get_lstm_params(vocab_size, num_hiddens):
                 normal((num_hiddens, num_hiddens)),
                 tf.Variable(tf.zeros(num_hiddens), dtype=tf.float32))
 
-    W_xi, W_hi, b_i = three()  # Input gate parameters
-    W_xf, W_hf, b_f = three()  # Forget gate parameters
-    W_xo, W_ho, b_o = three()  # Output gate parameters
-    W_xc, W_hc, b_c = three()  # Candidate memory cell parameters
-    # Output layer parameters
+    W_xi, W_hi, b_i = three()  # Girdi geçidi parametreleri
+    W_xf, W_hf, b_f = three()  # Unutma geçidi parametreleri
+    W_xo, W_ho, b_o = three()  # Çıktı geçidi parametreleri
+    W_xc, W_hc, b_c = three()  # Aday bellek hücresi parametreleri
+    # Çıktı katmanı parametreleri
     W_hq = normal((num_hiddens, num_outputs))
     b_q = tf.Variable(tf.zeros(num_outputs), dtype=tf.float32)
-    # Attach gradients
+    # Gradyanları iliştir
     params = [W_xi, W_hi, b_i, W_xf, W_hf, b_f, W_xo, W_ho, b_o, W_xc, W_hc,
               b_c, W_hq, b_q]
     return params
@@ -185,7 +184,7 @@ def get_lstm_params(vocab_size, num_hiddens):
 
 ### Modeli Tanımlama
 
-[**İlkleme işlevinde**], LSTM'nin gizli durumunun değeri 0 ve şekli (toplu iş boyutu, gizli birimlerin sayısı) olan bir *ek* bellek hücresi döndürmesi gerekir. Böylece aşağıdaki durum ilklemeyi elde ederiz.
+[**İlkleme işlevinde**], LSTM'nin gizli durumunun değeri 0 ve şekli (toplu iş boyutu, gizli birimlerin sayısı) olan bir *ek* bellek hücresi döndürmesi gerekir. Böylece aşağıdaki durum ilklemesini elde ederiz.
 
 ```{.python .input}
 def init_lstm_state(batch_size, num_hiddens, device):
@@ -267,7 +266,7 @@ def lstm(inputs, state, params):
 
 ### [**Eğitim**] ve Tahmin Etme
 
-:numref:`sec_rnn_scratch`'te tanıtılan `RNNModelScratch` sınıfını başlatarak :numref:`sec_gru`'te yaptığımız gibi bir LSTM'yi eğitmeye başlayalım.
+:numref:`sec_rnn_scratch` içinde tanıtılan `RNNModelScratch` sınıfını başlatarak :numref:`sec_gru` içinde yaptığımız gibi bir LSTM'yi eğitmeye başlayalım.
 
 ```{.python .input}
 #@tab mxnet, pytorch
@@ -320,7 +319,7 @@ with strategy.scope():
 d2l.train_ch8(model, train_iter, vocab, lr, num_epochs, strategy)
 ```
 
-LSTM'ler, apaçık olmayan durum kontrolü ile ilk örnek saklı değişken özbağlanımlı modeldir. Birçok türevi yıllar içinde önerilmiştir, örn. birden fazla katman, artık bağlantılar, farklı düzenlileştirme türleri. Bununla birlikte, LSTM'leri ve diğer dizi modellerini (GRU'lar gibi) eğitmek dizinin uzun menzilli bağlılığı nedeniyle oldukça maliyetlidir. Daha sonra bazı durumlarda kullanılabilen dönüştürücüler (transformers) gibi diğer seçenek modeller ile karşılaşacağız.
+LSTM'ler, apaçık olmayan durum kontrolüne sahip ilk örnek saklı değişken özbağlanımlı modeldir. Birçok türevi yıllar içinde önerilmiştir, örn. birden fazla katman, artık bağlantılar, farklı düzenlileştirme türleri. Bununla birlikte, LSTM'leri ve diğer dizi modellerini (GRU'lar gibi) eğitmek dizinin uzun menzilli bağlılığı nedeniyle oldukça maliyetlidir. Daha sonra bazı durumlarda kullanılabilen dönüştürücüler (transformers) gibi diğer seçenek modeller ile karşılaşacağız.
 
 ## Özet
 

@@ -1,9 +1,9 @@
 # BERT Ön Eğitimi için Veri Kümesi
 :label:`sec_bert-dataset`
 
-BERT modelini :numref:`sec_bert`'te uygulandığı şekilde ön eğitirken, iki ön eğitim görevini kolaylaştırmak için veri kümesini ideal formatta oluşturmamız gerekir: Maskeli dil modelleme ve sonraki cümle tahmini. Bir yandan, orijinal BERT modeli, iki büyük külliyat BookCorpus ve İngilizce Wikipedia (bkz. :numref:`subsec_bert_pretraining_tasks`), bu kitabın en okuyucuları için koşmayı zorlaştıran iki büyük külliyatın, BookCorpus ve İngilizce Wikipedia'nın bitiştirilmesinde ön eğitilmiştir. Öte yandan, kullanıma hazır önceden eğitilmiş BERT modeli tıp gibi belirli alanlardan gelen uygulamalar için uygun olmayabilir. Bu nedenden, BERT'i özelleştirilmiş bir veri kümesi üzerinde ön eğitmek popüler hale gelmektedir. BERT ön eğitiminin gösterilmesini kolaylaştırmak için daha küçük bir külliyat, WikiText-2, :cite:`Merity.Xiong.Bradbury.ea.2016` kullanıyoruz. 
+BERT modelini :numref:`sec_bert` içinde uygulandığı şekilde ön eğitirken, iki ön eğitim görevini kolaylaştırmak için veri kümesini ideal formatta oluşturmamız gerekir: Maskeli dil modelleme ve sonraki cümle tahmini. Bir yandan, orijinal BERT modeli, bu kitabın en okuyucuları için koşmayı zorlaştıran iki büyük külliyatın,  BookCorpus ve İngilizce Wikipedia'nın (bkz. :numref:`subsec_bert_pretraining_tasks`), bitiştirilmesinde ön eğitilmiştir. Öte yandan, kullanıma hazır önceden eğitilmiş BERT modeli tıp gibi belirli alanlardan gelen uygulamalar için uygun olmayabilir. Bu nedenden, BERT'i özelleştirilmiş bir veri kümesi üzerinde ön eğitmek popüler hale gelmektedir. BERT ön eğitiminin gösterilmesini kolaylaştırmak için daha küçük bir külliyat, WikiText-2 :cite:`Merity.Xiong.Bradbury.ea.2016` kullanıyoruz. 
 
-:numref:`sec_word2vec_data`'te word2vec ön eğitimi için kullanılan PTB veri kümesiyle karşılaştırıldığında, WikiText-2 (i) orijinal noktalama işaretlerini korur ve bir sonraki cümle tahmini için uygun hale getirir; (ii) orijinal harf büyüklüğünü (büyük-küçük) ve sayıları korur; (iii) iki kat daha büyüktür.
+:numref:`sec_word2vec_data` içinde word2vec ön eğitimi için kullanılan PTB veri kümesiyle karşılaştırıldığında, WikiText-2 (i) orijinal noktalama işaretlerini korur ve bir sonraki cümle tahmini için uygun hale getirir; (ii) orijinal harf büyüklüğünü (büyük-küçük) ve sayıları korur; (iii) iki kat daha büyüktür.
 
 ```{.python .input}
 from d2l import mxnet as d2l
@@ -36,7 +36,7 @@ def _read_wiki(data_dir):
     file_name = os.path.join(data_dir, 'wiki.train.tokens')
     with open(file_name, 'r') as f:
         lines = f.readlines()
-    # Uppercase letters are converted to lowercase ones
+    # Büyük harfler küçük harflere dönüştürülür.
     paragraphs = [line.strip().lower().split(' . ')
                   for line in lines if len(line.split(' . ')) >= 2]
     random.shuffle(paragraphs)
@@ -58,7 +58,7 @@ def _get_next_sentence(sentence, next_sentence, paragraphs):
     if random.random() < 0.5:
         is_next = True
     else:
-        # `paragraphs` is a list of lists of lists
+        # `paragraphs` bir listelerin listelerinin listesidir
         next_sentence = random.choice(random.choice(paragraphs))
         is_next = False
     return sentence, next_sentence, is_next
@@ -74,7 +74,7 @@ def _get_nsp_data_from_paragraph(paragraph, paragraphs, vocab, max_len):
     for i in range(len(paragraph) - 1):
         tokens_a, tokens_b, is_next = _get_next_sentence(
             paragraph[i], paragraph[i + 1], paragraphs)
-        # Consider 1 '<cls>' token and 2 '<sep>' tokens
+        # 1 tane '<cls>' belirteci ve 2 tane '<sep>' belirteci düşünün
         if len(tokens_a) + len(tokens_b) + 3 > max_len:
             continue
         tokens, segments = d2l.get_tokens_and_segments(tokens_a, tokens_b)
@@ -85,32 +85,33 @@ def _get_nsp_data_from_paragraph(paragraph, paragraphs, vocab, max_len):
 ### Maskeli Dil Modelleme Görevi Oluşturma
 :label:`subsec_prepare_mlm_data`
 
-BERT girdi dizisinden maskelenmiş dil modelleme görevi için eğitim örnekleri oluşturmak için aşağıdaki `_replace_mlm_tokens` işlevini tanımlıyoruz. Girdilerinde, `tokens`, BERT girdi dizisini temsil eden belirteçlerin bir listesidir, `candidate_pred_positions`, özel belirteçler hariç BERT girdi dizisinin belirteç indekslerinin bir listesidir (maskeli dil modelleme görevinde özel belirteçler tahmin edilmez) ve `num_mlm_preds` tahminlerin sayısını gösterir (tahmin etmek için %15 rastgele belirteci geri çağırın). :numref:`subsec_mlm`'teki maskelenmiş dil modelleme görevinin tanımını takiben, her tahmin konumunda, girdi özel bir “&lt;mask&gt;” belirteci veya rastgele bir belirteç ile değiştirilebilir veya değişmeden kalabilir. Sonunda, işlev olası değiştirmeden sonra girdi belirteçlerini, tahminlerin gerçekleştiği belirteç endekslerini ve bu tahminler için etiketleri döndürür.
+BERT girdi dizisinden maskelenmiş dil modelleme görevi için eğitim örnekleri oluşturmak için aşağıdaki `_replace_mlm_tokens` işlevini tanımlıyoruz. Girdilerinde, `tokens`, BERT girdi dizisini temsil eden belirteçlerin bir listesidir, `candidate_pred_positions`, özel belirteçler hariç BERT girdi dizisinin belirteç indekslerinin bir listesidir (maskeli dil modelleme görevinde özel belirteçler tahmin edilmez) ve `num_mlm_preds` tahminlerin sayısını gösterir (tahmin etmek için %15 rastgele belirteci geri çağırın). :numref:`subsec_mlm` içindeki maskelenmiş dil modelleme görevinin tanımını takiben, her tahmin konumunda, girdi özel bir “&lt;mask&gt;” belirteci veya rastgele bir belirteç ile değiştirilebilir veya değişmeden kalabilir. Sonunda, işlev olası değiştirmeden sonra girdi belirteçlerini, tahminlerin gerçekleştiği belirteç endekslerini ve bu tahminler için etiketleri döndürür.
 
 ```{.python .input}
 #@tab all
 #@save
 def _replace_mlm_tokens(tokens, candidate_pred_positions, num_mlm_preds,
                         vocab):
-    # Make a new copy of tokens for the input of a masked language model,
-    # where the input may contain replaced '<mask>' or random tokens
+    # Girdinin değiştirilmiş '<mask>' veya rastgele belirteçler içerebileceği 
+    # maskelenmiş bir dil modelinin girdisi için belirteçlerin 
+    # yeni bir kopyasını oluşturun
     mlm_input_tokens = [token for token in tokens]
     pred_positions_and_labels = []
-    # Shuffle for getting 15% random tokens for prediction in the masked
-    # language modeling task
+    # Maskeli dil modelleme görevinde tahmin için %15 rastgele 
+    # belirteç almak için karıştır
     random.shuffle(candidate_pred_positions)
     for mlm_pred_position in candidate_pred_positions:
         if len(pred_positions_and_labels) >= num_mlm_preds:
             break
         masked_token = None
-        # 80% of the time: replace the word with the '<mask>' token
+        # Zamanın %80'inde sözcüğü '<mask>' simgesiyle değiştirin
         if random.random() < 0.8:
             masked_token = '<mask>'
         else:
-            # 10% of the time: keep the word unchanged
+            # Zamanın %10'unda kelimeyi değiştirmeden bırakın
             if random.random() < 0.5:
                 masked_token = tokens[mlm_pred_position]
-            # 10% of the time: replace the word with a random word
+            # Zamanın %10'unda kelimeyi rastgele bir kelimeyle değiştirin
             else:
                 masked_token = random.choice(vocab.idx_to_token)
         mlm_input_tokens[mlm_pred_position] = masked_token
@@ -119,21 +120,20 @@ def _replace_mlm_tokens(tokens, candidate_pred_positions, num_mlm_preds,
     return mlm_input_tokens, pred_positions_and_labels
 ```
 
-Yukarıda bahsedilen `_replace_mlm_tokens` işlevini çağırarak, aşağıdaki işlev bir BERT girdi dizisini (`tokens`) girdi olarak alır ve girdi belirteçlerinin dizinlerini (:numref:`subsec_mlm`'de açıklandığı gibi olası belirteç değişiminden sonra), belirteç tahminlerin gerçekleştiği indeksleri ve bu tahminler için etiket indekslerini döndürür.
+Yukarıda bahsedilen `_replace_mlm_tokens` işlevini çağırarak, aşağıdaki işlev bir BERT girdi dizisini (`tokens`) girdi olarak alır ve girdi belirteçlerinin dizinlerini (:numref:`subsec_mlm` içinde açıklandığı gibi olası belirteç değişiminden sonra), belirteç tahminlerin gerçekleştiği indeksleri ve bu tahminler için etiket indekslerini döndürür.
 
 ```{.python .input}
 #@tab all
 #@save
 def _get_mlm_data_from_tokens(tokens, vocab):
     candidate_pred_positions = []
-    # `tokens` is a list of strings
+    # `tokens` bir dizgiler listesidir
     for i, token in enumerate(tokens):
-        # Special tokens are not predicted in the masked language modeling
-        # task
+        # Maskeli dil modelleme görevinde özel belirteçler tahmin edilmez
         if token in ['<cls>', '<sep>']:
             continue
         candidate_pred_positions.append(i)
-    # 15% of random tokens are predicted in the masked language modeling task
+    # Rastgele belirteçlerin %15'i maskelenmiş dil modelleme görevinde tahmin edilir
     num_mlm_preds = max(1, round(len(tokens) * 0.15))
     mlm_input_tokens, pred_positions_and_labels = _replace_mlm_tokens(
         tokens, candidate_pred_positions, num_mlm_preds, vocab)
@@ -161,12 +161,12 @@ def _pad_bert_inputs(examples, max_len, vocab):
             max_len - len(token_ids)), dtype='int32'))
         all_segments.append(np.array(segments + [0] * (
             max_len - len(segments)), dtype='int32'))
-        # `valid_lens` excludes count of '<pad>' tokens
+        # `valid_lens`, '<pad>' belirteçlerinin sayısını hariç tutar
         valid_lens.append(np.array(len(token_ids), dtype='float32'))
         all_pred_positions.append(np.array(pred_positions + [0] * (
             max_num_mlm_preds - len(pred_positions)), dtype='int32'))
-        # Predictions of padded tokens will be filtered out in the loss via
-        # multiplication of 0 weights
+        # Dolgulu belirteçlerin tahminleri, 0 ağırlıklar çarpımı 
+        # yoluyla kayıpta filtrelenecektir.
         all_mlm_weights.append(
             np.array([1.0] * len(mlm_pred_label_ids) + [0.0] * (
                 max_num_mlm_preds - len(pred_positions)), dtype='float32'))
@@ -191,12 +191,12 @@ def _pad_bert_inputs(examples, max_len, vocab):
             max_len - len(token_ids)), dtype=torch.long))
         all_segments.append(torch.tensor(segments + [0] * (
             max_len - len(segments)), dtype=torch.long))
-        # `valid_lens` excludes count of '<pad>' tokens
+        # `valid_lens`, '<pad>' belirteçlerinin sayısını hariç tutar
         valid_lens.append(torch.tensor(len(token_ids), dtype=torch.float32))
         all_pred_positions.append(torch.tensor(pred_positions + [0] * (
             max_num_mlm_preds - len(pred_positions)), dtype=torch.long))
-        # Predictions of padded tokens will be filtered out in the loss via
-        # multiplication of 0 weights
+        # Dolgulu belirteçlerin tahminleri, 0 ağırlıklar çarpımı 
+        # yoluyla kayıpta filtrelenecektir.
         all_mlm_weights.append(
             torch.tensor([1.0] * len(mlm_pred_label_ids) + [0.0] * (
                 max_num_mlm_preds - len(pred_positions)),
@@ -210,31 +210,31 @@ def _pad_bert_inputs(examples, max_len, vocab):
 
 İki ön eğitim görevinin eğitim örneklerini üretmek için yardımcı fonksiyonları ve girdi dolgulama için yardımcı işlevini bir araya getirerek, BERT ön eğitimi için WikiText-2 veri kümesi olarak aşağıdaki `_WikiTextDataset` sınıfını özelleştiriyoruz. `__getitem__` işlevini uygulayarak, WikiText-2 külliyatından bir çift cümleden oluşturulan ön eğitim (maskeli dil modelleme ve sonraki cümle tahmini) örneklerine keyfi olarak erişebiliriz.
 
-Orijinal BERT modeli kelime boyutu 30000 :cite:`Wu.Schuster.Chen.ea.2016` olan WordPiece gömmeleri kullanır. WordPiece'nin belirteçlere ayırma yöntemi, :numref:`subsec_Byte_Pair_Encoding`'te orijinal sekizli çifti kodlama algoritmasının hafif bir değişiğidir. Basitlik için, belirteçlere ayırmak için `d2l.tokenize` işlevini kullanıyoruz. Beş kereden az görünen seyrek belirteçler filtrelenir.
+Orijinal BERT modeli kelime boyutu 30000 :cite:`Wu.Schuster.Chen.ea.2016` olan WordPiece gömmeleri kullanır. WordPiece'nin belirteçlere ayırma yöntemi, :numref:`subsec_Byte_Pair_Encoding` içinde orijinal sekizli çifti kodlama algoritmasının hafif bir değişiğidir. Basitlik için, belirteçlere ayırmak için `d2l.tokenize` işlevini kullanıyoruz. Beş kereden az görünen seyrek belirteçler filtrelenir.
 
 ```{.python .input}
 #@save
 class _WikiTextDataset(gluon.data.Dataset):
     def __init__(self, paragraphs, max_len):
-        # Input `paragraphs[i]` is a list of sentence strings representing a
-        # paragraph; while output `paragraphs[i]` is a list of sentences
-        # representing a paragraph, where each sentence is a list of tokens
+        # Girdi `paragraphs[i]`, bir paragrafı temsil eden cümle dizilerinin 
+        # bir listesidir; çıktı `paragraphs[i]` bir paragrafı temsil eden 
+        # cümlelerin bir listesidir, burada her cümle bir belirteç listesidir
         paragraphs = [d2l.tokenize(
             paragraph, token='word') for paragraph in paragraphs]
         sentences = [sentence for paragraph in paragraphs
                      for sentence in paragraph]
         self.vocab = d2l.Vocab(sentences, min_freq=5, reserved_tokens=[
             '<pad>', '<mask>', '<cls>', '<sep>'])
-        # Get data for the next sentence prediction task
+        # Bir sonraki cümle tahmini görevi için veri alın
         examples = []
         for paragraph in paragraphs:
             examples.extend(_get_nsp_data_from_paragraph(
                 paragraph, paragraphs, self.vocab, max_len))
-        # Get data for the masked language model task
+        # Maskeli dil modeli görevi için veri alın
         examples = [(_get_mlm_data_from_tokens(tokens, self.vocab)
                       + (segments, is_next))
                      for tokens, segments, is_next in examples]
-        # Pad inputs
+        # Girdiyi dolgula
         (self.all_token_ids, self.all_segments, self.valid_lens,
          self.all_pred_positions, self.all_mlm_weights,
          self.all_mlm_labels, self.nsp_labels) = _pad_bert_inputs(
@@ -255,25 +255,25 @@ class _WikiTextDataset(gluon.data.Dataset):
 #@save
 class _WikiTextDataset(torch.utils.data.Dataset):
     def __init__(self, paragraphs, max_len):
-        # Input `paragraphs[i]` is a list of sentence strings representing a
-        # paragraph; while output `paragraphs[i]` is a list of sentences
-        # representing a paragraph, where each sentence is a list of tokens
+        # Girdi `paragraphs[i]`, bir paragrafı temsil eden cümle dizilerinin 
+        # bir listesidir; çıktı `paragraphs[i]` bir paragrafı temsil eden 
+        # cümlelerin bir listesidir, burada her cümle bir belirteç listesidir
         paragraphs = [d2l.tokenize(
             paragraph, token='word') for paragraph in paragraphs]
         sentences = [sentence for paragraph in paragraphs
                      for sentence in paragraph]
         self.vocab = d2l.Vocab(sentences, min_freq=5, reserved_tokens=[
             '<pad>', '<mask>', '<cls>', '<sep>'])
-        # Get data for the next sentence prediction task
+        # Bir sonraki cümle tahmini görevi için veri alın
         examples = []
         for paragraph in paragraphs:
             examples.extend(_get_nsp_data_from_paragraph(
                 paragraph, paragraphs, self.vocab, max_len))
-        # Get data for the masked language model task
+        # Maskeli dil modeli görevi için veri alın
         examples = [(_get_mlm_data_from_tokens(tokens, self.vocab)
                       + (segments, is_next))
                      for tokens, segments, is_next in examples]
-        # Pad inputs
+        # Girdiyi dolgula
         (self.all_token_ids, self.all_segments, self.valid_lens,
          self.all_pred_positions, self.all_mlm_weights,
          self.all_mlm_labels, self.nsp_labels) = _pad_bert_inputs(
@@ -294,7 +294,7 @@ class _WikiTextDataset(torch.utils.data.Dataset):
 ```{.python .input}
 #@save
 def load_data_wiki(batch_size, max_len):
-    """Load the WikiText-2 dataset."""
+    """WikiText-2 veri kümesini yükleyin."""
     num_workers = d2l.get_dataloader_workers()
     data_dir = d2l.download_extract('wikitext-2', 'wikitext-2')
     paragraphs = _read_wiki(data_dir)
@@ -308,7 +308,7 @@ def load_data_wiki(batch_size, max_len):
 #@tab pytorch
 #@save
 def load_data_wiki(batch_size, max_len):
-    """Load the WikiText-2 dataset."""
+    """WikiText-2 veri kümesini yükleyin."""
     num_workers = d2l.get_dataloader_workers()
     data_dir = d2l.download_extract('wikitext-2', 'wikitext-2')
     paragraphs = _read_wiki(data_dir)
@@ -318,7 +318,7 @@ def load_data_wiki(batch_size, max_len):
     return train_iter, train_set.vocab
 ```
 
-Toplu iş boyutunu 512 olarak ve BERT girdi dizisinin maksimum uzunluğunu 64 olarak ayarlayarak, BERT ön eğitim örneklerinden oluşan bir minigrubun şekillerini yazdırıyoruz. Her BERT girdi dizisinde, maskelenmiş dil modelleme görevi için $10$ ($64 \times 0.15$) konumlarının tahmin edildiğini unutmayın.
+Toplu iş boyutunu 512 olarak ve BERT girdi dizisinin maksimum uzunluğunu 64 olarak ayarlayarak, BERT ön eğitim örneklerinden oluşan bir minigrubun şekillerini yazdırıyoruz. Her BERT girdi dizisinde, maskelenmiş dil modelleme görevi için $10$ ($64 \times 0.15$) konumun tahmin edildiğini unutmayın.
 
 ```{.python .input}
 #@tab all

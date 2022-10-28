@@ -440,7 +440,7 @@ d2l.train_ch3(net, train_iter, test_iter, loss, num_epochs,
 ```{.python .input}
 #@tab pytorch
 num_epochs, lr, batch_size = 10, 0.5, 256
-loss = nn.CrossEntropyLoss()
+loss = nn.CrossEntropyLoss(reduction='none')
 train_iter, test_iter = d2l.load_data_fashion_mnist(batch_size)
 trainer = torch.optim.SGD(net.parameters(), lr=lr)
 d2l.train_ch3(net, train_iter, test_iter, loss, num_epochs, trainer)
@@ -497,7 +497,7 @@ def init_weights(m):
     if type(m) == nn.Linear:
         nn.init.normal_(m.weight, std=0.01)
 
-net.apply(init_weights);
+net.apply(init_weights)
 ```
 
 ```{.python .input}

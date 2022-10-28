@@ -1,7 +1,7 @@
 # Doğal Dil Çıkarımı ve Veri Kümesi
 :label:`sec_natural-language-inference-and-dataset`
 
-:numref:`sec_sentiment`'te, duygu analizi sorununu tartıştık. Bu görev, tek bir metin dizisini, duygu kutupları kümesi gibi önceden tanımlanmış kategorilere sınıflandırmayı amaçlamaktadır. Bununla birlikte, bir cümlenin diğerinden çıkarılıp çıkarılamayacağına karar vermek veya anlamsal olarak eşdeğer cümleleri tanımlayarak fazlalıkları ortadan kaldırmak gerektiğinde, bir metin dizisini nasıl sınıflandıracağını bilmek yetersizdir. Bunun yerine, metin dizileri çiftleri üzerinde akıl yürütebilmemiz gerekir. 
+:numref:`sec_sentiment` içinde, duygu analizi sorununu tartıştık. Bu görev, tek bir metin dizisini, duygu kutupları kümesi gibi önceden tanımlanmış kategorilere sınıflandırmayı amaçlamaktadır. Bununla birlikte, bir cümlenin diğerinden çıkarılıp çıkarılamayacağına karar vermek veya anlamsal olarak eşdeğer cümleleri tanımlayarak fazlalıkları ortadan kaldırmak gerektiğinde, bir metin dizisini nasıl sınıflandıracağını bilmek yetersizdir. Bunun yerine, metin dizileri çiftleri üzerinde akıl yürütebilmemiz gerekir. 
 
 ## Doğal Dil Çıkarımı
 
@@ -29,7 +29,7 @@ Doğal dil çıkarımı aynı zamanda metinsel gerekçe görevi olarak da bilini
 
 > Hipotez: Müzisyenler ünlüdür. 
 
-Doğal dil çıkarımı doğal dili anlamak için merkezi bir konu olmuştur. Bilgi alımdan açık alan soru yanıtlamaya kadar geniş uygulamalara sahiptir. Bu sorunu incelemek için popüler bir doğal dil çıkarım kıyaslama veri kümesini araştırarak başlayacağız. 
+Doğal dil çıkarımı doğal dili anlamak için merkezi bir konu olmuştur. Bilgi getiriminden açık alan sorularını yanıtlamaya kadar geniş uygulamalara sahiptir. Bu sorunu incelemek için popüler bir doğal dil çıkarım kıyaslama veri kümesini araştırarak başlayacağız. 
 
 ## Stanford Doğal Dil Çıkarımı (SNLI) Veri Kümesi
 
@@ -75,12 +75,12 @@ Orijinal SNLI veri kümesi, deneylerimizde gerçekten ihtiyacımız olandan çok
 #@tab all
 #@save
 def read_snli(data_dir, is_train):
-    """Read the SNLI dataset into premises, hypotheses, and labels."""
+    """SNLI veri kümesini öncüller, hipotezler ve etiketler halinde okuyun."""
     def extract_text(s):
-        # Remove information that will not be used by us
+        # Bizim tarafımızdan kullanılmayacak bilgileri kaldırın
         s = re.sub('\\(', '', s) 
         s = re.sub('\\)', '', s)
-        # Substitute two or more consecutive whitespace with space
+        # Ardışık iki veya daha fazla boşluğu boşlukla değiştirin
         s = re.sub('\\s{2,}', ' ', s)
         return s.strip()
     label_set = {'entailment': 0, 'contradiction': 1, 'neutral': 2}
@@ -105,7 +105,7 @@ for x0, x1, y in zip(train_data[0][:3], train_data[1][:3], train_data[2][:3]):
     print('label:', y)
 ```
 
-Eğitim kümesinin yaklaşık 550000 çifti vardır ve test kümesi yaklaşık 10000 çifte sahiptir. Aşağıdakiler, hem eğitim kümesinde hem de test kümesinde "gerekçe", "çelişki" ve "tarafsızlık" üç etiketinin dengelendiğini göstermektedir.
+Eğitim kümesinin yaklaşık 550000 çifti vardır ve test kümesi yaklaşık 10000 çifte sahiptir. Aşağıdakiler, hem eğitim kümesindeki hem de test kümesindeki üç etiketin, "gerekçe", "çelişki" ve "tarafsızlık", dengelendiğini göstermektedir.
 
 ```{.python .input}
 #@tab all
@@ -116,12 +116,12 @@ for data in [train_data, test_data]:
 
 ### Veri kümesini Yüklemek İçin Bir Sınıf Tanımlama
 
-Aşağıda, Gluon'daki `Dataset` sınıfından türetilmiş SNLI veri kümesini yüklemek için bir sınıf tanımlıyoruz. Sınıf kurucusundaki `num_steps` bağımsız değişkeni, bir metin dizisinin uzunluğunu belirtir, böylece dizilerin her minigrup işlemi aynı şekle sahip olur. Başka bir deyişle, daha uzun sıradaki ilk `num_steps` olanlardan sonraki belirteçler kırpılırken, "&lt;pad&gt;" özel belirteçleri uzunlukları `num_steps` olana kadar daha kısa dizilere eklenecektir. `__getitem__` işlevini uygulayarak, `idx` endeksi ile öncüle, hipoteze ve etikete keyfi olarak erişebiliriz.
+Aşağıda, Gluon'daki `Dataset` sınıfından türetilmiş SNLI veri kümesini yüklemek için bir sınıf tanımlıyoruz. Sınıf kurucusundaki `num_steps` bağımsız değişkeni, bir metin dizisinin uzunluğunu belirtir, böylece dizilerin her minigrup işlemi aynı şekle sahip olur. Başka bir deyişle, daha uzun dizideki ilk `num_steps` olanlardan sonraki belirteçler kırpılırken, "&lt;pad&gt;" özel belirteçleri uzunlukları `num_steps` olana kadar daha kısa dizilere eklenecektir. `__getitem__` işlevini uygulayarak, `idx` endeksi ile öncüle, hipoteze ve etikete keyfi olarak erişebiliriz.
 
 ```{.python .input}
 #@save
 class SNLIDataset(gluon.data.Dataset):
-    """A customized dataset to load the SNLI dataset."""
+    """SNLI veri kümesini yüklemek için özelleştirilmiş bir veri kümesi."""
     def __init__(self, dataset, num_steps, vocab=None):
         self.num_steps = num_steps
         all_premise_tokens = d2l.tokenize(dataset[0])
@@ -152,7 +152,7 @@ class SNLIDataset(gluon.data.Dataset):
 #@tab pytorch
 #@save
 class SNLIDataset(torch.utils.data.Dataset):
-    """A customized dataset to load the SNLI dataset."""
+    """SNLI veri kümesini yüklemek için özelleştirilmiş bir veri kümesi."""
     def __init__(self, dataset, num_steps, vocab=None):
         self.num_steps = num_steps
         all_premise_tokens = d2l.tokenize(dataset[0])
@@ -186,7 +186,7 @@ Artık `read_snli` işlevini ve `SNLIDataset` sınıfını SNLI veri kümesini i
 ```{.python .input}
 #@save
 def load_data_snli(batch_size, num_steps=50):
-    """Download the SNLI dataset and return data iterators and vocabulary."""
+    """SNLI veri kümesini indirin ve veri yineleyicilerini ve kelime dağarcığını döndürün."""
     num_workers = d2l.get_dataloader_workers()
     data_dir = d2l.download_extract('SNLI')
     train_data = read_snli(data_dir, True)
@@ -204,7 +204,7 @@ def load_data_snli(batch_size, num_steps=50):
 #@tab pytorch
 #@save
 def load_data_snli(batch_size, num_steps=50):
-    """Download the SNLI dataset and return data iterators and vocabulary."""
+    """SNLI veri kümesini indirin ve veri yineleyicilerini ve kelime dağarcığını döndürün."""
     num_workers = d2l.get_dataloader_workers()
     data_dir = d2l.download_extract('SNLI')
     train_data = read_snli(data_dir, True)
@@ -220,7 +220,7 @@ def load_data_snli(batch_size, num_steps=50):
     return train_iter, test_iter, train_set.vocab
 ```
 
-Burada toplu iş boyutunu 128'e ve sıra uzunluğunu 50'ye ayarlıyoruz ve veri yineleyicilerini ve kelime dağarcığını elde etmek için `load_data_snli` işlevini çağırıyoruz. Sonra kelime dağarcığı boyutunu yazdırıyoruz.
+Burada toplu iş boyutunu 128'e ve dizi uzunluğunu 50'ye ayarlıyoruz ve veri yineleyicilerini ve kelime dağarcığını elde etmek için `load_data_snli` işlevini çağırıyoruz. Sonra kelime dağarcığı boyutunu yazdırıyoruz.
 
 ```{.python .input}
 #@tab all
@@ -228,7 +228,7 @@ train_iter, test_iter, vocab = load_data_snli(128, 50)
 len(vocab)
 ```
 
-Şimdi ilk minigrup şeklini yazdırıyoruz. Duygu analizinin aksine, `X[0]` ve `X[1]` iki girdisi öncül ve hipotez çiftlerini temsil ediyor.
+Şimdi ilk minigrubun şeklini yazdırıyoruz. Duygu analizinin aksine, iki girdi, `X[0]` ve `X[1]`, öncül ve hipotez çiftlerini temsil ediyor.
 
 ```{.python .input}
 #@tab all
@@ -248,7 +248,7 @@ for X, Y in train_iter:
 ## Alıştırmalar
 
 1. Makine çevirisi uzun zamandır bir çıktı çevirisi ile bir gerçek referans değer çeviri arasındaki yüzeysel $n$-gramlar eşleşmesine dayalı olarak değerlendirilmektedir. Doğal dil çıkarımını kullanarak makine çevirisi sonuçlarını değerlendirmek için bir ölçü tasarlayabilir misiniz?
-1. Kelime dağarcığı boyutunu azaltmak için hiperparametreleri nasıl değiştirebiliriz?
+1. Kelime dağarcığı boyutunu azaltmak için hiper parametreleri nasıl değiştirebiliriz?
 
 :begin_tab:`mxnet`
 [Tartışmalar](https://discuss.d2l.ai/t/394)

@@ -1,7 +1,7 @@
 # Toplu Normalleştirme
 :label:`sec_batch_norm`
 
-Derin sinir ağlarını eğitmek zordur. Üstelik makul bir süre içinde yakınsamalarını sağlamak çetrefilli olabilir. Bu bölümde, derin ağların :cite:`Ioffe.Szegedy.2015` yakınsamasını sürekli olarak hızlandıran popüler ve etkili bir teknik olan *toplu normalleştirme*'yi tanıtıyoruz. Daha sonra :numref:`sec_resnet`'te kapsanan artık bloklarla birlikte toplu normalleştirme, uygulayıcıların 100'den fazla katmanlı ağları rutin olarak eğitmelerini mümkün kılmıştır.
+Derin sinir ağlarını eğitmek zordur. Üstelik makul bir süre içinde yakınsamalarını sağlamak çetrefilli olabilir. Bu bölümde, derin ağların :cite:`Ioffe.Szegedy.2015` yakınsamasını sürekli olarak hızlandıran popüler ve etkili bir teknik olan *toplu normalleştirme*yi tanıtıyoruz. Daha sonra :numref:`sec_resnet` içinde kapsanan artık bloklarla birlikte toplu normalleştirme, uygulayıcıların 100'den fazla katmanlı ağları rutin olarak eğitmelerini mümkün kılmıştır.
 
 ## Derin Ağları Eğitme
 
@@ -22,16 +22,16 @@ Biçimsel olarak, bir minigrup olan $\mathcal{B}$'ye dahil olan $\mathbf {x} \in
 $$\mathrm{BN}(\mathbf{x}) = \boldsymbol{\gamma} \odot \frac{\mathbf{x} - \hat{\boldsymbol{\mu}}_\mathcal{B}}{\hat{\boldsymbol{\sigma}}_\mathcal{B}} + \boldsymbol{\beta}.$$ 
 :eqlabel:`eq_batchnorm`
 
-:eqref:`eq_batchnorm`'te, $\hat{\boldsymbol{\mu}}_\mathcal{B}$ örneklem ortalaması ve $\hat{\boldsymbol{\sigma}}_\mathcal{B}$ minigrup $\mathcal{B}$'nın örneklem standart sapmasıdır. Standartlaştırma uygulandıktan sonra, ortaya çıkan minigrup sıfır ortalama ve birim varyansa sahiptir. Birim varyans seçimi (diğer bazı sihirli sayılara karşı) keyfi bir seçim olduğundan, genel olarak eleman-yönlü  *ölçek parametresi* $\boldsymbol{\gamma}$'yı ve *kayma parametresi*  $\boldsymbol{\beta}$'yı dahil ederiz ve onlar $\mathbf{x}$ ile aynı şekle sahiptirler. $\boldsymbol{\gamma}$ ve $\boldsymbol{\beta}$'in diğer model parametreleriyle birlikte öğrenilmesi gereken parametreler olduğunu unutmayın.
+:eqref:`eq_batchnorm` denkleminde, $\hat{\boldsymbol{\mu}}_\mathcal{B}$ örneklem ortalaması ve $\hat{\boldsymbol{\sigma}}_\mathcal{B}$ minigrup $\mathcal{B}$'nın örneklem standart sapmasıdır. Standartlaştırma uygulandıktan sonra, ortaya çıkan minigrup sıfır ortalama ve birim varyansa sahiptir. Birim varyans seçimi (diğer bazı sihirli sayılara karşı) keyfi bir seçim olduğundan, genel olarak eleman-yönlü  *ölçek parametresi* $\boldsymbol{\gamma}$'yı ve *kayma parametresi*  $\boldsymbol{\beta}$'yı dahil ederiz ve onlar $\mathbf{x}$ ile aynı şekle sahiptirler. $\boldsymbol{\gamma}$ ve $\boldsymbol{\beta}$'in diğer model parametreleriyle birlikte öğrenilmesi gereken parametreler olduğunu unutmayın.
 
-Sonuç olarak, ara katmanlar için değişken büyüklükleri eğitim sırasında ayrılamaz, çünkü toplu normalleştirme bunları belirli bir ortalama ve boyuta ($\hat{\boldsymbol{\mu}}_\mathcal{B}$ ve ${\hat{\boldsymbol{\sigma}}_\mathcal{B}}$ üzerinden) aktif olarak ortalar ve yeniden ölçeklendirir. Uygulayıcının sezgi veya bilgeliğinin bir parçası, toplu normalleştirmenin daha saldırgan öğrenme oranlarına izin vermesi gibi görünmesidir.
+Sonuç olarak, ara katmanlar için değişken büyüklükleri eğitim sırasında ıraksamaz, çünkü toplu normalleştirme bunları belirli bir ortalama ve boyuta ($\hat{\boldsymbol{\mu}}_\mathcal{B}$ ve ${\hat{\boldsymbol{\sigma}}_\mathcal{B}}$ üzerinden) aktif olarak ortalar ve yeniden ölçeklendirir. Uygulayıcının sezgi veya bilgeliğinin bir parçası, toplu normalleştirmenin daha saldırgan öğrenme oranlarına izin vermesi gibi görünmesidir.
 
-Resmi olarak, :eqref:`eq_batchnorm`'deki $\hat{\boldsymbol{\mu}}_\mathcal{B}$ ve ${\hat{\boldsymbol{\sigma}}_\mathcal{B}}$'yi aşağıdaki gibi hesaplıyoruz:
+Resmi olarak, :eqref:`eq_batchnorm` denklemindeki $\hat{\boldsymbol{\mu}}_\mathcal{B}$ ve ${\hat{\boldsymbol{\sigma}}_\mathcal{B}}$'yi aşağıdaki gibi hesaplıyoruz:
 
 $$\begin{aligned} \hat{\boldsymbol{\mu}}_\mathcal{B} &= \frac{1}{|\mathcal{B}|} \sum_{\mathbf{x} \in \mathcal{B}} \mathbf{x},\\
 \hat{\boldsymbol{\sigma}}_\mathcal{B}^2 &= \frac{1}{|\mathcal{B}|} \sum_{\mathbf{x} \in \mathcal{B}} (\mathbf{x} - \hat{\boldsymbol{\mu}}_{\mathcal{B}})^2 + \epsilon.\end{aligned}$$
 
-Deneysel varyans tahmininin kaybolabileceği durumlarda bile sıfıra bölmeyi denemediğimizden emin olmak için varyans tahminine küçük bir sabit $\epsilon > 0$ eklediğimizi unutmayın. $\hat{\boldsymbol{\mu}}_\mathcal{B}$ ve ${\hat{\boldsymbol{\sigma}}_\mathcal{B}}$ tahminleri, gürültülü ortalama ve varyans tahminleri kullanarak ölçekleme sorununa karşı koymaktadır. Bu gürültüsüzlüğün bir sorun olması gerektiğini düşünebilirsiniz. Anlaşılacağı gibi, bu aslında faydalıdır.
+Deneysel varyans tahmininin kaybolabileceği durumlarda bile sıfıra bölmeyi denemediğimizden emin olmak için varyans tahminine küçük bir sabit $\epsilon > 0$ eklediğimizi unutmayın. $\hat{\boldsymbol{\mu}}_\mathcal{B}$ ve ${\hat{\boldsymbol{\sigma}}_\mathcal{B}}$ tahminleri, gürültülü ortalama ve varyans tahminleri kullanarak ölçekleme sorununa karşı koymaktadır. Bu gürültücülüğün bir sorun olması gerektiğini düşünebilirsiniz. Anlaşılacağı gibi, bu aslında faydalıdır.
 
 Bunun derin öğrenmede yinelenen bir tema olduğu ortaya çıkıyor. Teorik olarak henüz iyi ortaya çıkarılamayan nedenlerden dolayı, eniyilemedeki çeşitli gürültü kaynakları genellikle daha hızlı eğitime ve daha az aşırı öğrenmeye neden olur: Bu varyasyon bir düzenlileştirme biçimi olarak kendini gösteriyor. Bazı ön araştırmalarda, :cite:`Teye.Azizpour.Smith.2018` ve :cite:`Luo.Wang.Shao.ea.2018`, toplu normalleşmenin özelliklerini sırasıyla Bayesian önselleri ve cezaları ile ilişkilendiriyor. Özellikle, bu durum $50 \sim 100$ aralığındaki orta boy minigrup boyutları için toplu normalleştirmenin neden en iyi şekilde çalıştığı bulmacasına biraz ışık tutuyor.
 
@@ -72,33 +72,33 @@ from mxnet.gluon import nn
 npx.set_np()
 
 def batch_norm(X, gamma, beta, moving_mean, moving_var, eps, momentum):
-    # Use `autograd` to determine whether the current mode is training mode or
-    # prediction mode
+    # Mevcut modun eğitim modu mu yoksa tahmin modu mu olduğunu
+    # belirlemek için `autograd`'ı kullan
     if not autograd.is_training():
-        # If it is prediction mode, directly use the mean and variance
-        # obtained by moving average
+        # Tahmin modu ise, hareketli ortalama ile elde edilen ortalama
+        # ve varyansı doğrudan kullan
         X_hat = (X - moving_mean) / np.sqrt(moving_var + eps)
     else:
         assert len(X.shape) in (2, 4)
         if len(X.shape) == 2:
-            # When using a fully-connected layer, calculate the mean and
-            # variance on the feature dimension
+            # Tam bağlı bir katman kullanırken, öznitelik 
+            # boyutundaki ortalamayı ve varyansı hesapla
             mean = X.mean(axis=0)
             var = ((X - mean) ** 2).mean(axis=0)
         else:
-            # When using a two-dimensional convolutional layer, calculate the
-            # mean and variance on the channel dimension (axis=1). Here we
-            # need to maintain the shape of `X`, so that the broadcasting
-            # operation can be carried out later
+            # İki boyutlu bir evrişim katmanı kullanırken, kanal 
+            # boyutundaki (axis=1) ortalamayı ve varyansı hesaplayın. 
+            # Burada, yayın işleminin daha sonra gerçekleştirilebilmesi 
+            # için `X`'in şeklini korumamız gerekiyor.
             mean = X.mean(axis=(0, 2, 3), keepdims=True)
             var = ((X - mean) ** 2).mean(axis=(0, 2, 3), keepdims=True)
-        # In training mode, the current mean and variance are used for the
-        # standardization
+        # Eğitim modunda, standardizasyon için mevcut ortalama ve 
+        # varyans kullanılır
         X_hat = (X - mean) / np.sqrt(var + eps)
-        # Update the mean and variance using moving average
+        # Hareketli ortalamayı kullanarak ortalamayı ve varyansı güncelle
         moving_mean = momentum * moving_mean + (1.0 - momentum) * mean
         moving_var = momentum * moving_var + (1.0 - momentum) * var
-    Y = gamma * X_hat + beta  # Scale and shift
+    Y = gamma * X_hat + beta  # Ölçek ve kaydırma
     return Y, moving_mean, moving_var
 ```
 
@@ -109,33 +109,33 @@ import torch
 from torch import nn
 
 def batch_norm(X, gamma, beta, moving_mean, moving_var, eps, momentum):
-    # Use `is_grad_enabled` to determine whether the current mode is training
-    # mode or prediction mode
+    # Mevcut modun eğitim modu mu yoksa tahmin modu mu olduğunu
+    # belirlemek için `is_grad_enabled`'ı kullanın
     if not torch.is_grad_enabled():
-        # If it is prediction mode, directly use the mean and variance
-        # obtained by moving average
+        # Tahmin modu ise, hareketli ortalama ile elde edilen ortalama
+        # ve varyansı doğrudan kullan
         X_hat = (X - moving_mean) / torch.sqrt(moving_var + eps)
     else:
         assert len(X.shape) in (2, 4)
         if len(X.shape) == 2:
-            # When using a fully-connected layer, calculate the mean and
-            # variance on the feature dimension
+            # Tam bağlı bir katman kullanırken, öznitelik 
+            # boyutundaki ortalamayı ve varyansı hesapla
             mean = X.mean(dim=0)
             var = ((X - mean) ** 2).mean(dim=0)
         else:
-            # When using a two-dimensional convolutional layer, calculate the
-            # mean and variance on the channel dimension (axis=1). Here we
-            # need to maintain the shape of `X`, so that the broadcasting
-            # operation can be carried out later
+            # İki boyutlu bir evrişim katmanı kullanırken, kanal 
+            # boyutundaki (axis=1) ortalamayı ve varyansı hesaplayın. 
+            # Burada, yayın işleminin daha sonra gerçekleştirilebilmesi 
+            # için `X`'in şeklini korumamız gerekiyor.
             mean = X.mean(dim=(0, 2, 3), keepdim=True)
             var = ((X - mean) ** 2).mean(dim=(0, 2, 3), keepdim=True)
-        # In training mode, the current mean and variance are used for the
-        # standardization
+        # Eğitim modunda, standardizasyon için mevcut ortalama ve 
+        # varyans kullanılır
         X_hat = (X - mean) / torch.sqrt(var + eps)
-        # Update the mean and variance using moving average
+        # Hareketli ortalamayı kullanarak ortalamayı ve varyansı güncelle
         moving_mean = momentum * moving_mean + (1.0 - momentum) * mean
         moving_var = momentum * moving_var + (1.0 - momentum) * var
-    Y = gamma * X_hat + beta  # Scale and shift
+    Y = gamma * X_hat + beta  # Ölçek ve kaydırma
     return Y, moving_mean.data, moving_var.data
 ```
 
@@ -145,9 +145,9 @@ from d2l import tensorflow as d2l
 import tensorflow as tf
 
 def batch_norm(X, gamma, beta, moving_mean, moving_var, eps):
-    # Compute reciprocal of square root of the moving variance elementwise
+    # Hareketli varyansın karekökünün tersini eleman-yönlü hesaplayın
     inv = tf.cast(tf.math.rsqrt(moving_var + eps), X.dtype)
-    # Scale and shift
+    # Ölçek ve kaydırma
     inv *= gamma
     Y = X * inv + (beta - moving_mean * inv)
     return Y
@@ -155,34 +155,34 @@ def batch_norm(X, gamma, beta, moving_mean, moving_var, eps):
 
 [**Artık uygun bir `BatchNorm` katmanı oluşturabiliriz.**] Katmanımız `gamma` ölçeği ve `beta` kayması için uygun parametreleri koruyacaktır, bunların her ikisi de eğitim sırasında güncellenecektir. Ayrıca, katmanımız modelin tahmini sırasında sonraki kullanım için ortalamaların ve varyansların hareketli ortalamalarını koruyacaktır.
 
-Algoritmik ayrıntıları bir kenara bırakırsak, katmanın uygulanmasının altında yatan tasarım desenine dikkat edin. Tipik olarak, matematiği ayrı bir işlevde tanımlarız, varsayalım `batch_norm`. Daha sonra bu işlevselliği, verileri doğru cihazın bağlamına taşıma, gerekli değişkenleri tahsis etme ve ilkleme, hareketli ortalamaları takip etme (ortalama ve varyans için) vb. gibi çoğunlukla defter tutma konularını ele alan özel bir katmana kaynaştırıyoruz. Bu model, matematiğin basmakalıp koddan temiz bir şekilde ayrılmasını sağlar. Ayrıca, kolaylık sağlamak için burada girdi şeklini otomatik olarak çıkarma konusunda endişelenmediğimizi, bu nedenle özniteliklerin sayısını belirtmemiz gerektiğini unutmayın. Kaygılanmayın, derin öğrenme çerçevesindeki üst düzey toplu normalleştirme API'leri bunu bizim için halledecek; bunu daha sonra göreceğiz.
+Algoritmik ayrıntıları bir kenara bırakırsak, katmanın uygulanmasının altında yatan tasarım desenine dikkat edin. Tipik olarak, matematiği ayrı bir işlevde tanımlarız, varsayalım `batch_norm`. Daha sonra bu işlevselliği, verileri doğru cihazın bağlamına taşıma, gerekli değişkenleri tahsis etme ve ilkleme, hareketli ortalamaları takip etme (ortalama ve varyans için) vb. gibi çoğunlukla kayıt tutma konularını ele alan özel bir katmana kaynaştırıyoruz. Bu model, matematiğin basmakalıp koddan temiz bir şekilde ayrılmasını sağlar. Ayrıca, kolaylık sağlamak için burada girdi şeklini otomatik olarak çıkarma konusunda endişelenmediğimizi, bu nedenle özniteliklerin sayısını belirtmemiz gerektiğini unutmayın. Kaygılanmayın, derin öğrenme çerçevesindeki üst düzey toplu normalleştirme API'leri bunu bizim için halledecek; bunu daha sonra göreceğiz.
 
 ```{.python .input}
 class BatchNorm(nn.Block):
-    # `num_features`: the number of outputs for a fully-connected layer
-    # or the number of output channels for a convolutional layer. `num_dims`:
-    # 2 for a fully-connected layer and 4 for a convolutional layer
+    # `num_features`: Tam bağlı bir katman için çıktıların sayısı veya 
+    # evrişimli bir katman için çıktı kanallarının sayısı. 
+    # `num_dims`: Tam bağlı katman için 2 ve evrişimli katman için 4
     def __init__(self, num_features, num_dims, **kwargs):
         super().__init__(**kwargs)
         if num_dims == 2:
             shape = (1, num_features)
         else:
             shape = (1, num_features, 1, 1)
-        # The scale parameter and the shift parameter (model parameters) are
-        # initialized to 1 and 0, respectively
+        # Ölçek parametresi ve kaydırma parametresi (model parametreleri) 
+        # sırasıyla 1 ve 0 olarak ilklenir
         self.gamma = self.params.get('gamma', shape=shape, init=init.One())
         self.beta = self.params.get('beta', shape=shape, init=init.Zero())
-        # The variables that are not model parameters are initialized to 0 and 1
+        # Model parametresi olmayan değişkenler 0 ve 1 olarak ilklenir.
         self.moving_mean = np.zeros(shape)
         self.moving_var = np.ones(shape)
 
     def forward(self, X):
-        # If `X` is not on the main memory, copy `moving_mean` and
-        # `moving_var` to the device where `X` is located
+        # Ana bellekte `X` yoksa, `moving_mean` ve `moving_var`'ı `X`in 
+        # bulunduğu cihaza kopyalayın
         if self.moving_mean.ctx != X.ctx:
             self.moving_mean = self.moving_mean.copyto(X.ctx)
             self.moving_var = self.moving_var.copyto(X.ctx)
-        # Save the updated `moving_mean` and `moving_var`
+        # Güncellenen `moving_mean` ve `moving_var`'ı kaydedin
         Y, self.moving_mean, self.moving_var = batch_norm(
             X, self.gamma.data(), self.beta.data(), self.moving_mean,
             self.moving_var, eps=1e-12, momentum=0.9)
@@ -192,30 +192,30 @@ class BatchNorm(nn.Block):
 ```{.python .input}
 #@tab pytorch
 class BatchNorm(nn.Module):
-    # `num_features`: the number of outputs for a fully-connected layer
-    # or the number of output channels for a convolutional layer. `num_dims`:
-    # 2 for a fully-connected layer and 4 for a convolutional layer
+    # `num_features`: Tam bağlı bir katman için çıktıların sayısı veya 
+    # evrişimli bir katman için çıktı kanallarının sayısı. 
+    # `num_dims`: Tam bağlı katman için 2 ve evrişimli katman için 4
     def __init__(self, num_features, num_dims):
         super().__init__()
         if num_dims == 2:
             shape = (1, num_features)
         else:
             shape = (1, num_features, 1, 1)
-        # The scale parameter and the shift parameter (model parameters) are
-        # initialized to 1 and 0, respectively
+        # Ölçek parametresi ve kaydırma parametresi (model parametreleri) 
+        # sırasıyla 1 ve 0 olarak ilklenir
         self.gamma = nn.Parameter(torch.ones(shape))
         self.beta = nn.Parameter(torch.zeros(shape))
-        # The variables that are not model parameters are initialized to 0 and 1
+        # Model parametresi olmayan değişkenler 0 ve 1 olarak ilklenir.
         self.moving_mean = torch.zeros(shape)
         self.moving_var = torch.ones(shape)
 
     def forward(self, X):
-        # If `X` is not on the main memory, copy `moving_mean` and
-        # `moving_var` to the device where `X` is located
+        # Ana bellekte `X` yoksa, `moving_mean` ve `moving_var`'ı `X`in 
+        # bulunduğu cihaza kopyalayın
         if self.moving_mean.device != X.device:
             self.moving_mean = self.moving_mean.to(X.device)
             self.moving_var = self.moving_var.to(X.device)
-        # Save the updated `moving_mean` and `moving_var`
+        # Güncellenen `moving_mean` ve `moving_var`'ı kaydedin
         Y, self.moving_mean, self.moving_var = batch_norm(
             X, self.gamma, self.beta, self.moving_mean,
             self.moving_var, eps=1e-5, momentum=0.9)
@@ -230,13 +230,13 @@ class BatchNorm(tf.keras.layers.Layer):
 
     def build(self, input_shape):
         weight_shape = [input_shape[-1], ]
-        # The scale parameter and the shift parameter (model parameters) are
-        # initialized to 1 and 0, respectively
+        # Ölçek parametresi ve kaydırma parametresi (model parametreleri) 
+        # sırasıyla 1 ve 0 olarak ilklenir
         self.gamma = self.add_weight(name='gamma', shape=weight_shape,
             initializer=tf.initializers.ones, trainable=True)
         self.beta = self.add_weight(name='beta', shape=weight_shape,
             initializer=tf.initializers.zeros, trainable=True)
-        # The variables that are not model parameters are initialized to 0
+        # Model parametresi olmayan değişkenler 0 olarak ilklenir.
         self.moving_mean = self.add_weight(name='moving_mean',
             shape=weight_shape, initializer=tf.initializers.zeros,
             trainable=False)
@@ -275,7 +275,7 @@ class BatchNorm(tf.keras.layers.Layer):
 
 ## [**LeNet'te Toplu Normalleştirme Uygulaması**]
 
-Bağlamda `BatchNorm`'un nasıl uygulanacağını görmek için, aşağıda geleneksel bir LeNet modeline (:numref:`sec_lenet`) uyguluyoruz. Toplu normalleştirmenin, evrişimli katmanlardan veya tam bağlı katmanlardan sonra ancak karşılık gelen etkinleştirme işlevlerinden önce uygulandığını hatırlayın.
+Bağlamda `BatchNorm`'un nasıl uygulanacağını görmek için, aşağıda geleneksel bir LeNet modeline (:numref:`sec_lenet`) uyguluyoruz. Toplu normalleştirmenin, evrişimli katmanlardan veya tam bağlı katmanlardan sonra, ancak karşılık gelen etkinleştirme işlevlerinden önce uygulandığını hatırlayın.
 
 ```{.python .input}
 net = nn.Sequential()
@@ -310,9 +310,9 @@ net = nn.Sequential(
 
 ```{.python .input}
 #@tab tensorflow
-# Recall that this has to be a function that will be passed to `d2l.train_ch6`
-# so that model building or compiling need to be within `strategy.scope()` in
-# order to utilize the CPU/GPU devices that we have
+# Sahip olduğumuz CPU/GPU cihazlarını kullanabilmek için model oluşturma 
+# veya derlemenin `strategy.scope()` içinde olması için bunun 
+# `d2l.train_ch6`ya geçirilecek bir fonksiyon olması gerektiğini hatırlayın.
 def net():
     return tf.keras.models.Sequential([
         tf.keras.layers.Conv2D(filters=6, kernel_size=5,
@@ -369,7 +369,7 @@ tf.reshape(net.layers[1].gamma, (-1,)), tf.reshape(net.layers[1].beta, (-1,))
 
 ## [**Kısa Uygulama**]
 
-Kendimizi tanımladığımız `BatchNorm` sınıfıyla karşılaştırıldığında, doğrudan derin öğrenme çerçevesinden üst düzey API'lerde tanımlanan `BatchNorm` sınıfını kullanabiliriz. Kod, yukarıdaki uygulamamız ile hemen hemen aynı görünüyor.
+Kendimizi tanımladığımız `BatchNorm` sınıfıyla karşılaştırıldığında, doğrudan derin öğrenme çerçevesinden üst seviye API'lerde tanımlanan `BatchNorm` sınıfını kullanabiliriz. Kod, yukarıdaki uygulamamız ile hemen hemen aynı görünüyor.
 
 ```{.python .input}
 net = nn.Sequential()
@@ -426,7 +426,7 @@ def net():
     ])
 ```
 
-Aşağıda, [**modelimizi eğitmek için aynı hiper parametreleri kullanıyoruz.**] Özel uygulamamız Python tarafından yorumlanılır iken, her zamanki gibi üst düzey API sürümünün kodu C++ veya CUDA için derlendiğinden, çok daha hızlı çalıştığını unutmayın.
+Aşağıda, [**modelimizi eğitmek için aynı hiper parametreleri kullanıyoruz.**] Özel uygulamamız Python tarafından yorumlanılır iken, her zamanki gibi üst seviye API sürümünün kodu C++ veya CUDA için derlendiğinden, çok daha hızlı çalıştığını unutmayın.
 
 ```{.python .input}
 #@tab all
@@ -437,11 +437,11 @@ d2l.train_ch6(net, train_iter, test_iter, num_epochs, lr, d2l.try_gpu())
 
 Sezgisel olarak, toplu normalleştirmenin eniyileme alanını daha pürüzsüz hale getirdiği düşünülmektedir. Bununla birlikte, derin modelleri eğitirken gözlemlediğimiz olgular için kurgusal sezgiler ve gerçek açıklamalar arasında ayrım yaparken dikkatli olmalıyız. İlk etapta daha basit derin sinir ağlarının (MLP'ler ve geleneksel CNN'ler) neden genelleştirildiğini bile bilmediğimizi hatırlayın. Hattan düşürme ve ağırlık sönümü ile bile, görünmeyen verilere genelleme kabiliyetleri geleneksel öğrenme-kuramsal genelleme garantileri ile açıklanamayacak kadar esnek kalırlar.
 
-Toplu normalleştirmeyi öneren orijinal çalışmada, yazarlar, güçlü ve kullanışlı bir araç tanıtmanın yanı sıra, neden çalıştığına dair bir açıklama sundular: *Dahili eşdeğişken kayması*nı (internal covariate shift) azaltmak. Muhtemelen *dahili eşdeğişken kayması* ile yazarlar, yukarıda ifade edilen sezgiye benzer bir şey ifade ettiler - değişken değerlerinin dağılımının eğitim boyunca değiştiği düşüncesi. Bununla birlikte, bu açıklamayla ilgili iki mesele vardı: i) Bu sürüklenme, *eşdeğişken kayması*ndan çok farklıdır, bir yanlış isimlendirir. ii) Açıklama az belirtilmiş bir sezgi sunar ancak *neden tam olarak bu teknik çalışır* sorusunu titiz bir açıklama isteyen açık bir soru olarak bırakır. Bu kitap boyunca, uygulayıcıların derin sinir ağlarının gelişimine rehberlik etmek için kullandıkları sezgileri aktarmayı amaçlıyoruz. Bununla birlikte, bu rehberlik sezgilerini yerleşik bilimsel gerçeklerden ayırmanın önemli olduğuna inanıyoruz. Sonunda, bu materyale hakim olduğunuzda ve kendi araştırma makalelerinizi yazmaya başladığınızda, teknik iddialar ve önseziler arasında konumumuzu bulmak için net olmak isteyeceksiniz.
+Toplu normalleştirmeyi öneren orijinal çalışmada, yazarlar, güçlü ve kullanışlı bir araç tanıtmanın yanı sıra, neden çalıştığına dair bir açıklama sundular: *Dahili eşdeğişken kayması*nı (internal covariate shift) azaltmak. Muhtemelen *dahili eşdeğişken kayması* ile yazarlar, yukarıda ifade edilen sezgiye benzer bir şey ifade ettiler - değişken değerlerinin dağılımının eğitim boyunca değiştiği düşüncesi. Bununla birlikte, bu açıklamayla ilgili iki mesele vardı: i) Bu değişim, *eşdeğişken kayması*ndan çok farklıdır, bir yanlış isimlendirmeye yol açar. ii) Açıklama az belirtilmiş bir sezgi sunar ancak *neden tam olarak bu teknik çalışır* sorusunu titiz bir açıklama isteyen açık bir soru olarak bırakır. Bu kitap boyunca, uygulayıcıların derin sinir ağlarının gelişimine rehberlik etmek için kullandıkları sezgileri aktarmayı amaçlıyoruz. Bununla birlikte, bu rehber sezgileri yerleşik bilimsel gerçeklerden ayırmanın önemli olduğuna inanıyoruz. Sonunda, bu materyale hakim olduğunuzda ve kendi araştırma makalelerinizi yazmaya başladığınızda, teknik iddialar ve önseziler arasında konumunuzu bulmak için net olmak isteyeceksiniz.
 
-Toplu normalleşmenin başarısını takiben, başarısının *dahili eşdeğişken kayması* açısından açıklanması, teknik yazındaki tartışmalarda ve makine öğrenmesi araştırmasının nasıl sunulacağı konusunda daha geniş bir söylemde defalarca ortaya çıkmıştır. 2017 NeurIPS konferansında Zaman Testi Ödülü'nü kabul ederken verdiği unutulmaz bir konuşmada Ali Rahimi, modern derin öğrenme pratiğini simyaya benzeten bir argümanda odak noktası olarak *dahili eşdeğişken kayması*nı kullandı. Daha sonra, örnek makine öğrenmesindeki sıkıntılı eğilimleri özetleyen bir konum kağıdında (position paper) ayrıntılı olarak yeniden gözden geçirildi :cite:`Lipton.Steinhardt.2018`. Diğer yazarlar toplu normalleştirmenin başarısı için alternatif açıklamalar önerdiler, bazıları toplu normalleştirmenin başarısının bazı yönlerden orijinal makalede :cite:`Santurkar.Tsipras.Ilyas.ea.2018` iddia edilenlerin tersi olan davranışları sergilemesinden geldiğini iddia ettiler.
+Toplu normalleştirmenin başarısını takiben, başarısının *dahili eşdeğişken kayması* açısından açıklanması, teknik yazındaki tartışmalarda ve makine öğrenmesi araştırmasının nasıl sunulacağı konusunda daha geniş bir söylemde defalarca ortaya çıkmıştır. 2017 NeurIPS konferansında Zaman Testi Ödülü'nü kabul ederken verdiği unutulmaz bir konuşmada Ali Rahimi, modern derin öğrenme pratiğini simyaya benzeten bir argümanda odak noktası olarak *dahili eşdeğişken kayması*nı kullandı. Daha sonra, örnek makine öğrenmesindeki sıkıntılı eğilimleri özetleyen bir konum kağıdında (position paper) ayrıntılı olarak yeniden gözden geçirildi :cite:`Lipton.Steinhardt.2018`. Diğer yazarlar toplu normalleştirmenin başarısı için alternatif açıklamalar önerdiler, bazıları toplu normalleştirmenin başarısının bazı yönlerden orijinal makalede :cite:`Santurkar.Tsipras.Ilyas.ea.2018` iddia edilenlerin tersi olan davranışları sergilemesinden geldiğini iddia ettiler.
 
-*İç eşdeğişken kayması*nın, teknik makine öğrenmesi yazınında benzer şekilde her yıl yapılan belirsiz iddiaların herhangi birinden daha fazla eleştiriye layık olmadığını not ediyoruz. Muhtemelen, bu tartışmaların odak noktası olarak tınlamasını (rezonans), hedef kitledeki geniş tanınabilirliğine borçludur. Toplu normalleştirme, neredeyse tüm konuşlandırılmış imge sınıflandırıcılarında uygulanan vazgeçilmez bir yöntem olduğunu kanıtlamıştır, tekniği tanıtan makaleye on binlerce atıf kazandırmıştır.
+*Dahili eşdeğişken kayması*nın, teknik makine öğrenmesi yazınında benzer şekilde her yıl yapılan belirsiz iddiaların herhangi birinden daha fazla eleştiriye layık olmadığını not ediyoruz. Muhtemelen, bu tartışmaların odak noktası olarak tınlamasını (rezonans), hedef kitledeki geniş tanınabilirliğine borçludur. Toplu normalleştirme, neredeyse tüm konuşlandırılmış imge sınıflandırıcılarında uygulanan vazgeçilmez bir yöntem olduğunu kanıtlamıştır, tekniği tanıtan makaleye on binlerce atıf kazandırmıştır.
 
 ## Özet
 
@@ -453,13 +453,13 @@ Toplu normalleşmenin başarısını takiben, başarısının *dahili eşdeğiş
 ## Alıştırmalar
 
 1. Toplu normalleştirmeden önce ek girdi parametresini tam bağlı katmandan veya evrişimli katmandan kaldırabilir miyiz? Neden?
-1. Toplu normalleştirme ile ve olmadan LeNet için öğrenme oranlarını karşılaştırın.
+1. Toplu normalleştirme olan ve olmayan LeNet için öğrenme oranlarını karşılaştırın.
     1. Eğitim ve test doğruluğundaki artışı çizin.
     1. Öğrenme oranını ne kadar büyük yapabilirsiniz?
 1. Her katmanda toplu normalleştirmeye ihtiyacımız var mı? Deneyle gözlemleyebilir misiniz?
 1. Toplu normalleştirme ile hattan düşürmeyi yer değiştirebilir misiniz? Davranış nasıl değişir?
 1. `beta` ve `gamma` parametrelerini sabitleyin, sonuçları gözlemleyin ve analiz edin.
-1. Toplu normalleştirmenin diğer uygulamaları görmek amacıyla üst düzey API'lerden `BatchNorm` için çevrimiçi belgeleri gözden geçirin.
+1. Toplu normalleştirmenin diğer uygulamalarını görmek amacıyla üst seviye API'lerden `BatchNorm` için çevrimiçi belgelerini gözden geçirin.
 1. Araştırma fikirleri: Uygulayabileceğiniz diğer normalleştirme dönüşümleri düşünün? Olasılık integral dönüşümü uygulayabilir misiniz? Tam kerteli kovaryans tahminine ne dersiniz?
 
 :begin_tab:`mxnet`

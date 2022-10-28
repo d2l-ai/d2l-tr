@@ -1,24 +1,24 @@
 # Dolgu ve Uzun Adımlar
 :label:`sec_padding`
 
-:numref:`fig_correlation`'ün önceki örneğinde, girdimizin hem yüksekliği hem de genişliği 3 idi ve evrişim çekirdeğimizin hem yüksekliği hem de genişliği 2 idi, bu da $2\times2$ boyutlu bir çıktı gösterimi sağladı. :numref:`sec_conv_layer`'te genelleştirdiğimiz gibi, girdinin şeklinin $n_h\times n_w$ olduğunu ve evrişim çekirdeğinin şeklinin $k_h\times k_w$ olduğunu varsayarsak, çıktının şekli $(n_h-k_h+1) \times (n_w-k_w+1)$ olacaktır. Bu nedenle, evrişimli tabakanın çıktı şekli, girdinin şekli ve evrişim çekirdeğinin şekli ile belirlenir.
+Önceki :numref:`fig_correlation` örneğinde, girdimizin hem yüksekliği hem de genişliği 3 idi ve evrişim çekirdeğimizin hem yüksekliği hem de genişliği 2 idi, bu da $2\times2$ boyutlu bir çıktı gösterimi sağladı. :numref:`sec_conv_layer` içinde genelleştirdiğimiz gibi, girdinin şeklinin $n_h\times n_w$ olduğunu ve evrişim çekirdeğinin şeklinin $k_h\times k_w$ olduğunu varsayarsak, çıktının şekli $(n_h-k_h+1) \times (n_w-k_w+1)$ olacaktır. Bu nedenle, evrişimli tabakanın çıktı şekli, girdinin şekli ve evrişim çekirdeğinin şekli ile belirlenir.
 
-Birkaç durumda, çıktının boyutunu etkileyen dolguyu ve uzun adımlı evrişimleri de bazı içeren teknikleri işe dahil ediyoruz. Motivasyon olarak, çekirdeklerin genellikle $1$'den daha büyük genişlik ve yüksekliğe sahip olduğuna dikkat edin, birçok ardışık evrişim uyguladıktan sonra, girdimizden çok daha küçük olan çıktılarla sarılma eğilimindeyiz. $240 \times 240$ piksel imgeyle başlarsak, $10$ tane $5 \times 5$ evrişim katmanı imgeyi $200 \times 200$ piksele indirir, imgenin $\% 30$'unu keserek atar ve orijinal imgenin sınırları hakkındaki ilginç bilgileri yok eder. *Dolgu*, bu sorunu ele almada en popüler araçtır.
+Bazı durumlarda, çıktının boyutunu etkileyen dolgu ve uzun adımlı evrişimler dahil olmak üzere teknikleri dahil ediyoruz.Motivasyon olarak, çekirdeklerin genellikle $1$'den büyük genişliğe ve yüksekliğe sahip olduğundan, birçok ardışık evrişim uyguladıktan sonra, girdimizden önemli ölçüde daha küçük çıktılar elde etme eğiliminde olduğumuzu unutmayın. $240 \times 240$ piksel imgeyle başlarsak, $10$ tane $5 \times 5$ evrişim katmanı imgeyi $200 \times 200$ piksele indirir, imgenin $\% 30$'unu keserek atar ve orijinal imgenin sınırları hakkındaki ilginç bilgileri yok eder. *Dolgu*, bu sorunu ele almada en popüler araçtır.
 
 Diğer durumlarda, örneğin orijinal girdi çözünürlüğünün kullanışsız olduğunu görürsek, boyutsallığı büyük ölçüde azaltmak isteyebiliriz. *Uzun adımlı evrişimler*, bu örneklerde yardımcı olabilecek popüler bir tekniktir.
 
 ## Dolgu
 
-Yukarıda açıklandığı gibi, evrişimli katmanları uygularken zor bir sorun, imgemizin çevresindeki pikselleri kaybetme eğiliminde olmamızdır. Tipik olarak küçük çekirdekler kullandığımızdan, herhangi bir evrişim için, yalnızca birkaç piksel kaybedebiliriz, ancak birçok ardışık evrişimli katman uyguladığımız için bu kayıplar toplanarak artacaktır. Bu soruna basit bir çözüm, girdi imgemizin sınırına ekstra dolgu pikselleri eklemek, böylece imgenin etkin boyutunu arttırmaktır. Tipik olarak, ekstra piksellerin değerlerini sıfıra ayarlarız. :numref:`img_conv_pad`'te, $3 \times 3$'lük girdiyi doldurarak boyutunu $5 \times 5$'e yükseltiyoruz. Karşılık gelen çıktı daha sonra bir $4 \times 4$ matrisine yükselir. Gölgeli kısımlar, çıktı hesaplamasında kullanılan girdi ve çekirdek tensör elemanlarının yanı sıra ilk çıktı elemanıdır: $0\times0+0\times1+0\times2+0\times3=0$.
+Yukarıda açıklandığı gibi, evrişimli katmanları uygularken zor bir sorun, imgemizin çevresindeki pikselleri kaybetme eğiliminde olmamızdır. Tipik olarak küçük çekirdekler kullandığımızdan, herhangi bir evrişim için, yalnızca birkaç piksel kaybedebiliriz, ancak birçok ardışık evrişimli katman uyguladığımız için bu kayıplar toplanarak artacaktır. Bu soruna basit bir çözüm, girdi imgemizin sınırına ekstra dolgu pikselleri eklemek, böylece imgenin etkin boyutunu arttırmaktır. Tipik olarak, ekstra piksellerin değerlerini sıfıra ayarlarız. :numref:`img_conv_pad` içinde, $3 \times 3$'lük girdiyi doldurarak boyutunu $5 \times 5$'e yükseltiyoruz. Karşılık gelen çıktı daha sonra bir $4 \times 4$ matrisine yükselir. Gölgeli kısımlar, çıktı hesaplamasında kullanılan girdi ve çekirdek tensör elemanlarının yanı sıra ilk çıktı elemanıdır: $0\times0+0\times1+0\times2+0\times3=0$.
 
 ![Dolgu ile iki boyutlu çapraz korelasyon.](../img/conv-pad.svg)
 :label:`img_conv_pad`
 
-Genel olarak, toplam $p_h$ satırlı dolgu (kabaca yarısı üstte ve altta yarısı) ve toplam $p_w$ sütunlu dolgu (kabaca yarısı solda ve sağda yarısı) eklersek, çıktı şekli
+Genel olarak, toplam $p_h$ satırlı dolgu (kabaca yarısı üstte ve altta yarısı) ve toplam $p_w$ sütunlu dolgu (kabaca yarısı solda ve sağda yarısı) eklersek, çıktının şekli şöyle olur:
 
 $$(n_h-k_h+p_h+1)\times(n_w-k_w+p_w+1).$$
 
-Bu, çıktının yüksekliği ve genişliğinin sırasıyla $p_h$ ve $p_w$ artacağı anlamına gelir.
+Bu, çıktının yüksekliğinin ve genişliğinin sırasıyla $p_h$ ve $p_w$ artacağı anlamına gelir.
 
 Birçok durumda, girdiye ve çıktıya aynı yüksekliği ve genişliği vermek için $p_h=k_h-1$ ve $p_w=k_w-1$'i ayarlamak isteyeceğiz. Bu, ağ oluştururken her katmanın çıktı şeklini tahmin etmeyi kolaylaştıracaktır. $k_h$'nın burada tek sayı olduğunu varsayarsak, yüksekliğin her iki tarafında $p_h/2$ satır dolgu olacak. Eğer $k_h$ çift ise, bir olasılık girdinin üstünde $\lfloor p_h/2\rfloor$ ve altında $\lceil p_h/2\rceil$ satır dolgu olmasıdır. Genişliğin her iki tarafını da aynı şekilde dolduracağız.
 

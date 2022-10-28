@@ -17,16 +17,16 @@ def fancy_func(a, b, c, d):
 print(fancy_func(1, 2, 3, 4))
 ```
 
-Python bir *yorumlanan dil*dir. Yukarıdaki `fancy_func` işlevini değerlendirirken fonksiyonun gövdesini oluşturan işlemleri *sıra* ile gerçekleştirir. Yani, `e = add(a, b)`'yi değerlendirecek ve sonuçları `e` değişken olarak saklayacak ve böylece programın durumunu değiştirecektir. Sonraki iki ifade `f = add(c, d)` ve `g = add(e, f)` benzer şekilde yürütülecek, toplamalar gerçekleştirilecek ve sonuçları değişken olarak depolayacaktır. :numref:`fig_compute_graph`, veri akışını göstermektedir. 
+Python bir *yorumlanan dil*dir. Yukarıdaki `fancy_func` işlevini değerlendirirken fonksiyonun gövdesini oluşturan işlemleri *sıra* ile gerçekleştirir. Yani, `e = add(a, b)`'yi değerlendirecek ve sonuçları `e` değişkeni olarak saklayacak ve böylece programın durumunu değiştirecektir. Sonraki iki ifade `f = add(c, d)` ve `g = add(e, f)` benzer şekilde yürütülecek, toplamalar gerçekleştirilecek ve sonuçları değişken olarak depolayacaktır. :numref:`fig_compute_graph`, veri akışını göstermektedir. 
 
-![Data flow in an imperative program.](../img/computegraph.svg)
+![Bir buyuru programda veri akışı.](../img/computegraph.svg)
 :label:`fig_compute_graph`
 
-Her ne kadar buyuru programlama uygun olsa da, verimsiz olabilir. Bir yandan, `add` işlevi `fancy_func` boyunca tekrar tekrar çağrılsa bile, Python üç işlevin çağrılarını tek tek yürütür. Bunlar, örneğin, bir GPU'da (veya birden fazla GPU'da) yürütülürse, Python yorumlayıcısından kaynaklanan yükü ezici hale gelebilir. Ayrıca, `fancy_func` içindeki tüm ifadeler yürütülünceye kadar `e` ve `f` değişken değerlerini kaydetmesi gerekecektir. Bunun nedeni, `e = add(a, b)` ve `f = add(c, d)` ifadeleri yürütüldükten sonra `e` ve `f` değişkenlerinin programın diğer bölümleri tarafından kullanılacağını bilmememizdir. 
+Buyuru programlama her ne kadar uygun olsa da, verimsiz olabilir. Bir yandan, `add` işlevi `fancy_func` boyunca tekrar tekrar çağrılsa bile, Python üç işlevin çağrılarını tek tek yürütür. Bunlar, örneğin, bir GPU'da (veya birden fazla GPU'da) yürütülürse, Python yorumlayıcısından kaynaklanan yükü bezdirici hale gelebilir. Ayrıca, `fancy_func` içindeki tüm ifadeler yürütülünceye kadar `e` ve `f` değişken değerlerini kaydetmesi gerekecektir. Bunun nedeni, `e = add(a, b)` ve `f = add(c, d)` ifadeleri yürütüldükten sonra `e` ve `f` değişkenlerinin programın diğer bölümleri tarafından kullanılacağını bilmememizdir. 
 
 ## Sembolik Programlama
 
-Hesaplamanın genellikle süreç tam olarak tanımlandıktan sonra gerçekleştirildiği alternatifi, *sembolik programlama*yı, göz önünde bulundurun. Bu strateji, Theano ve TensorFlow da dahil olmak üzere birden fazla derin öğrenme çerçevesi tarafından kullanılır (ikincisi buyuru uzantıları kazanmıştır). Genellikle aşağıdaki adımları içerir: 
+Hesaplamanın genellikle süreç tam olarak tanımlandıktan sonra gerçekleştirildiği alternatifi, *sembolik programlama*yı, göz önünde bulundurun. Bu strateji, Theano ve TensorFlow da dahil olmak üzere birden fazla derin öğrenme çerçevesi tarafından kullanılır (ikincisi buyuru uzantıları edindi). Genellikle aşağıdaki adımları içerir: 
 
 1. Yürütülecek işlemleri tanımlayın.
 1. İşlemleri yürütülebilir bir programa derleyin.
@@ -93,7 +93,7 @@ from mxnet import np, npx
 from mxnet.gluon import nn
 npx.set_np()
 
-# Factory for networks
+# Ag fabrikasi
 def get_net():
     net = nn.HybridSequential()  
     net.add(nn.Dense(256, activation='relu'),
@@ -113,7 +113,7 @@ from d2l import torch as d2l
 import torch
 from torch import nn
 
-# Factory for networks
+# Ag fabrikasi
 def get_net():
     net = nn.Sequential(nn.Linear(512, 256),
             nn.ReLU(),
@@ -133,7 +133,7 @@ from d2l import tensorflow as d2l
 import tensorflow as tf
 from tensorflow.keras.layers import Dense
 
-# Factory for networks
+# Ag fabrikasi
 def get_net():
     net = tf.keras.Sequential()
     net.add(Dense(256, input_shape = (512,), activation = "relu"))
@@ -189,7 +189,7 @@ Bu gerçek olamayacak kadar iyi görünüyor: Daha önce olduğu gibi aynı kodu
 
 ### Melezleştirme ile İvme
 
-Derleme yoluyla elde edilen performans iyileştirmesini göstermek için `net(x)`'i melezleştirmeden önce ve sonra değerlendirmek için gereken süreyi karşılaştırıyoruz. Önce bu zamanı ölçmek için bir sınıf tanımlayalım. Performansı ölçmek (ve geliştirmek) için yola çıktığımızda bu, bölüm boyunca kullanışlı olacaktır.
+Derleme yoluyla elde edilen performans iyileştirmesini göstermek için `net(x)`'i melezleştirme öncesi ve sonrası değerlendirmek için gereken süreyi karşılaştırıyoruz. Önce bu zamanı ölçmek için bir sınıf tanımlayalım. Performansı ölçmek (ve geliştirmek) için yola çıktığımızda bu, bölüm boyunca kullanışlı olacaktır.
 
 ```{.python .input}
 #@tab all
@@ -298,7 +298,7 @@ tf.saved_model.save(net, 'my_mlp')
 ```
 
 :begin_tab:`mxnet`
-Model, bir (büyük ikili) parametre dosyasına ve model hesaplamasını yürütmek için gereken programın bir JSON açıklamasına ayrıştırılır. Dosyalar C++, R, Scala ve Perl gibi Python veya MXNet tarafından desteklenen diğer önişlemci dilleri tarafından okunabilir. Model tanımlamasındaki ilk birkaç satıra bir göz atalım.
+Model, bir (büyük ikili) parametre dosyasına ve model hesaplamasını yürütmek için gereken programın bir JSON betimlemesine ayrıştırılır. Dosyalar C++, R, Scala ve Perl gibi Python veya MXNet tarafından desteklenen diğer önişlemci dilleri tarafından okunabilir. Model tanımlamasındaki ilk birkaç satıra bir göz atalım.
 :end_tab:
 
 ```{.python .input}
@@ -327,7 +327,7 @@ class HybridNet(nn.HybridBlock):
 ```
 
 :begin_tab:`mxnet`
-Yukarıdaki kod, 4 gizli birime ve 2 çıktıya sahip basit bir ağ uygular. `hybrid_forward` işlevi ek bir argüman `F` alır. Kodun melezleştirilmiş olup olmamasına bağlı olarak, işlemek için biraz farklı bir kütüphane ("ndarray" veya "sembol") kullanacağından bu gereklidir. Her iki sınıf da çok benzer işlevler gerçekleştirir ve MXNet, bağımsız değişkeni otomatik olarak belirler. Neler olup bittiğini anlamak için argümanları işlev çağırısının bir parçası olarak yazdırıyoruz.
+Yukarıdaki kod, 4 gizli birime ve 2 çıktıya sahip basit bir ağ uygular. `hybrid_forward` işlevi ek bir argüman `F` alır. Kodun melezleştirilmiş olup olmamasına bağlı olarak, işlemek için biraz farklı bir kütüphane (`ndarray` veya `symbol`) kullanacağından bu gereklidir. Her iki sınıf da çok benzer işlevler gerçekleştirir ve MXNet, bağımsız değişkeni otomatik olarak belirler. Neler olup bittiğini anlamak için argümanları işlev çağırısının bir parçası olarak yazdırıyoruz.
 :end_tab:
 
 ```{.python .input}
@@ -355,7 +355,7 @@ net(x)
 ```
 
 :begin_tab:`mxnet`
-Bu daha önce gördüğümüzden oldukça farklı. `hybrid_forward`'de tanımlandığı gibi tüm yazdırma ifadeleri atlanır. Gerçekten de, melezleştirmeden sonra `net(x)`'in yürütülmesi artık Python yorumlayıcısı içermez. Bu, herhangi bir sahte Python kodunun (yazdırma ifadeleri gibi) çok daha akıcı bir yürütme ve daha iyi bir başarım lehine atlandığı anlamına gelir. Bunun yerine, MXNet doğrudan C++ arka işlemcisini çağırır. Ayrıca bazı işlevlerin `symbol` modülünde desteklenmediğini (örn. `asnumpy`) ve `a += b` ve `a[:] = a + b` gibi yerinde işlemlerin `a = a + b` olarak yeniden yazılması gerektiğini unutmayın. Bununla birlikte, hız önemli olduğunda modellerin derlenmesi çabaya değer. Fayda, modelin karmaşıklığına, CPU'nun hızına ve GPU'ların hızına ve sayısına bağlı olarak, küçük yüzdelerden iki kattan fazla hıza kadar değişebilir.
+Bu daha önce gördüğümüzden oldukça farklı. `hybrid_forward`'de tanımlandığı gibi tüm yazdırma ifadeleri atlanır. Gerçekten de, melezleştirmeden sonra `net(x)`'in yürütülmesi artık Python yorumlayıcısı içermez. Bu, herhangi bir yapay Python kodunun (yazdırma -print- ifadeleri gibi) çok daha akıcı bir yürütme ve daha iyi bir başarım lehine atlandığı anlamına gelir. Bunun yerine, MXNet doğrudan C++ arka işlemcisini çağırır. Ayrıca bazı işlevlerin `symbol` modülünde desteklenmediğini (örn. `asnumpy`) ve `a += b` ve `a[:] = a + b` gibi yerinde işlemlerin `a = a + b` olarak yeniden yazılması gerektiğini unutmayın. Bununla birlikte, hız önemli olduğunda modellerin derlenmesi çabaya değer. Fayda, modelin karmaşıklığına, CPU'nun hızına ve GPU'ların hızına ve sayısına bağlı olarak, küçük yüzdelerden iki kattan fazla hıza kadar değişebilir.
 :end_tab:
 
 ## Özet

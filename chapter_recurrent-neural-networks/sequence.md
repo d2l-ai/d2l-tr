@@ -19,23 +19,23 @@ Kısacası, film reytinglerinde sabitlik dışında her şey vardır. Böylece, 
 
 ## İstatistiksel Araçlar
 
-Dizi verileriyle uğraşmak için istatistiksel araçlara ve yeni derin sinir ağı mimarilerine ihtiyacımız var. İşleri basit tutmak için örnek olarak :numref:`fig_ftse100`'te gösterilen hisse senedi fiyatını (FTSE 100 endeksi) kullanalım.
+Dizi verileriyle uğraşmak için istatistiksel araçlara ve yeni derin sinir ağı mimarilerine ihtiyacımız var. İşleri basit tutmak için örnek olarak :numref:`fig_ftse100` içinde gösterilen hisse senedi fiyatını (FTSE 100 endeksi) kullanalım.
 
 ![Yaklaşık 30 yıldan fazla sürenin FTSE 100 endeksi.](../img/ftse100.png)
 :width:`400px`
 :label:`fig_ftse100`
 
-Fiyatları $x_t$ ile gösterelim, yani *zaman adım* $t \in \mathbb{Z}^+$'de $x_t$ fiyatını gözlemliyoruz. Bu kitapdeki diziler için $t$'in genellikle ayrık olacağını ve tamsayılara veya alt kümesine göre değişeceğini unutmayın. $t$. günde borsada iyi kazanmak isteyen bir borsa simsarının $x_t$ üzerinden tahmin ettiğini varsayalım:
+Fiyatları $x_t$ ile gösterelim, yani *zaman adım* $t \in \mathbb{Z}^+$'de $x_t$ fiyatını gözlemliyoruz. Bu kitaptaki diziler için $t$'nin genellikle ayrık olacağını ve tamsayılara veya alt kümesine göre değişeceğini unutmayın. $t$. günde borsada iyi kazanmak isteyen bir borsa simsarının $x_t$ üzerinden tahmin ettiğini varsayalım:
 
 $$x_t \sim P(x_t \mid x_{t-1}, \ldots, x_1).$$
 
 ### Özbağlanımlı Modeller 
 
-Bunu başarmak için, simsarımız :numref:`sec_linear_concise`'te eğittiğimiz gibi bir regresyon modelini kullanabilir. Sadece bir büyük sorun var: Girdilerimizin adedi, $x_{t-1}, \ldots, x_1$, $t$'ye bağlı olarak değişir. Yani, karşılaştığımız veri miktarı ile sayı artar ve bunu hesaplamalı olarak işlenebilir hale getirmek için bir yaklaşıma ihtiyacımız vardır. Bu bölümde konuların çoğu $P(x_t \mid x_{t-1}, \ldots, x_1)$'nin verimli bir şekilde nasıl tahmin edileceği etrafında dönecektir. Kısacası, aşağıdaki gibi iki stratejiye indirgeniyor.
+Bunu başarmak için, simsarımız :numref:`sec_linear_concise` içinde eğittiğimiz gibi bir regresyon modelini kullanabilir. Sadece bir büyük sorun var: Girdilerimizin adedi, $x_{t-1}, \ldots, x_1$, $t$'ye bağlı olarak değişir. Yani, karşılaştığımız veri miktarı ile sayı artar ve bunu hesaplamalı olarak işlenebilir hale getirmek için bir yaklaşıma ihtiyacımız vardır. Bu bölümde konuların çoğu $P(x_t \mid x_{t-1}, \ldots, x_1)$'nin verimli bir şekilde nasıl tahmin edileceği etrafında dönecektir. Kısacası, aşağıdaki gibi iki stratejiye indirgeniyor.
 
 İlk olarak, potansiyel olarak oldukça uzun dizinin $x_{t-1}, \ldots, x_1$ gerçekten gerekli olmadığını varsayalım. Bu durumda kendimizi $\tau$ uzunluğunda bir süre ile memnun edebilir ve sadece $x_{t-1}, \ldots, x_{t-\tau}$ gözlemlerini kullanabiliriz. İlk faydası, artık argüman sayısının en azından $t > \tau$ için her zaman aynı olmasıdır. Bu, yukarıda belirtildiği gibi derin bir ağı eğitmemizi sağlar. Bu tür modeller, kelimenin tam anlamıyla kendileri üzerinde bağlanım gerçekleştirdikleri için *özbağlanımlı modeller* olarak adlandırılacaktır.
 
-:numref:`fig_sequence-model`'te gösterilen ikinci strateji, geçmiş gözlemlerin $h_t$'sının bir özetini tutmak ve aynı zamanda $\hat{x}_t$'in tahmine ek olarak $h_t$'yı güncellemektir. Bu, bizi $\hat{x}_t = P(x_t \mid h_{t})$ ile $x_t$'i tahmin eden ve dahası $h_t = g(h_{t-1}, x_{t-1})$ formunu güncelleyen modellere yönlendirir. $h_t$ asla gözlenmediğinden, bu modellere *saklı özbağlanımlı modeller* de denir.
+:numref:`fig_sequence-model` içinde gösterilen ikinci strateji, geçmiş gözlemlerin $h_t$'sının bir özetini tutmak ve aynı zamanda $\hat{x}_t$'in tahmine ek olarak $h_t$'yı güncellemektir. Bu, bizi $\hat{x}_t = P(x_t \mid h_{t})$ ile $x_t$'i tahmin eden ve dahası $h_t = g(h_{t-1}, x_{t-1})$ formunu güncelleyen modellere yönlendirir. $h_t$ asla gözlenmediğinden, bu modellere *saklı özbağlanımlı modeller* de denir.
 
 ![Saklı özbağlanımlı model.](../img/sequence-model.svg)
 :label:`fig_sequence-model`
@@ -44,7 +44,7 @@ Her iki durumda da eğitim verilerinin nasıl oluşturulacağına dair açık bi
 
 $$P(x_1, \ldots, x_T) = \prod_{t=1}^T P(x_t \mid x_{t-1}, \ldots, x_1).$$
 
-Sürekli sayılar yerine kelimeler gibi ayrık nesnelerle uğraştığımızda da yukarıdaki hususların hala geçerli olduğunu unutmayın. Tek fark, böyle bir durumda $P(x_t \mid  x_{t-1}, \ldots, x_1)$'ü tahmin etmek için bir regresyon modeli yerine bir sınıflandırıcı kullanmamız gerektiğidir.
+Sürekli sayılar yerine kelimeler gibi ayrık nesnelerle uğraştığımızda da yukarıdaki hususların hala geçerli olduğunu unutmayın. Tek fark, böyle bir durumda $P(x_t \mid  x_{t-1}, \ldots, x_1)$'yi tahmin etmek için bir regresyon modeli yerine bir sınıflandırıcı kullanmamız gerektiğidir.
 
 ### Markov Modelleri
 
@@ -101,7 +101,7 @@ import tensorflow as tf
 
 ```{.python .input}
 #@tab mxnet, pytorch
-T = 1000  # Generate a total of 1000 points
+T = 1000  # Toplamda 1000 nokta oluşturun
 time = d2l.arange(1, T + 1, dtype=d2l.float32)
 x = d2l.sin(0.01 * time) + d2l.normal(0, 0.2, (T,))
 d2l.plot(time, [x], 'time', 'x', xlim=[1, 1000], figsize=(6, 3))
@@ -109,7 +109,7 @@ d2l.plot(time, [x], 'time', 'x', xlim=[1, 1000], figsize=(6, 3))
 
 ```{.python .input}
 #@tab tensorflow
-T = 1000  # Generate a total of 1000 points
+T = 1000  # Toplamda 1000 nokta oluşturun
 time = d2l.arange(1, T + 1, dtype=d2l.float32)
 x = d2l.sin(0.01 * time) + d2l.normal([T], 0, 0.2)
 d2l.plot(time, [x], 'time', 'x', xlim=[1, 1000], figsize=(6, 3))
@@ -138,7 +138,7 @@ labels = d2l.reshape(x[tau:], (-1, 1))
 ```{.python .input}
 #@tab all
 batch_size, n_train = 16, 600
-# Only the first `n_train` examples are used for training
+# Eğitim için yalnızca ilk `n_train` tane örnek kullanılır
 train_iter = d2l.load_array((features[:n_train], labels[:n_train]),
                             batch_size, is_train=True)
 ```
@@ -146,7 +146,7 @@ train_iter = d2l.load_array((features[:n_train], labels[:n_train]),
 Burada [**mimariyi oldukça basit tutuyoruz:**] Sadece iki tam bağlı katmanlı bir [**MLP**], ReLU etkinleştirmesi ve kare kaybı.
 
 ```{.python .input}
-# A simple MLP
+# Basit  bir MLP
 def get_net():
     net = nn.Sequential()
     net.add(nn.Dense(10, activation='relu'),
@@ -160,12 +160,12 @@ loss = gluon.loss.L2Loss()
 
 ```{.python .input}
 #@tab pytorch
-# Function for initializing the weights of the network
+# Ağın ağırlıklarını ilkleme işlevi
 def init_weights(m):
     if type(m) == nn.Linear:
         nn.init.xavier_uniform_(m.weight)
 
-# A simple MLP
+# Basit  bir MLP
 def get_net():
     net = nn.Sequential(nn.Linear(4, 10),
                         nn.ReLU(),
@@ -173,19 +173,19 @@ def get_net():
     net.apply(init_weights)
     return net
 
-# Note: `MSELoss` computes squared error without the 1/2 factor
+# Not: `MSELoss` karesel hatayı 1/2 çarpanı olmadan hesaplar
 loss = nn.MSELoss(reduction='none')
 ```
 
 ```{.python .input}
 #@tab tensorflow
-# Vanilla MLP architecture
+# Basmakalıp MLP mimarisi
 def get_net():
     net = tf.keras.Sequential([tf.keras.layers.Dense(10, activation='relu'),
                               tf.keras.layers.Dense(1)])
     return net
 
-# Note: `MeanSquaredError` computes squared error without the 1/2 factor
+# Not: `MeanSquaredError` karesel hatayı 1/2 çarpanı olmadan hesaplar
 loss = tf.keras.losses.MeanSquaredError()
 ```
 
@@ -266,7 +266,7 @@ $$
 \ldots
 $$
 
-Genel olarak, $x_t$'ye kadar gözlenen bir dizi için $t+k$ zaman adımında tahmin edilen çıktı $\hat{x}_{t+k}$, $k$*-adım tahmin* olarak adlandırılır. $x_{604}$'ya kadar gözlemlediğimizden, $k$-adım tahminimiz $\hat{x}_{604+k}$'dir. Başka bir deyişle, [**çok ileriki tahminler için kendi tahminlerimizi kullanmak zorunda kalacağız**]. Bakalım ne kadar iyi gidicek.
+Genel olarak, $x_t$'ye kadar gözlenen bir dizi için $t+k$ zaman adımında tahmin edilen çıktı $\hat{x}_{t+k}$, $k$*-adım tahmin* olarak adlandırılır. $x_{604}$'ya kadar gözlemlediğimizden, $k$-adım tahminimiz $\hat{x}_{604+k}$'dir. Başka bir deyişle, [**çok ileriki tahminler için kendi tahminlerimizi kullanmak zorunda kalacağız**]. Bakalım ne kadar iyi gidecek.
 
 ```{.python .input}
 #@tab mxnet, pytorch
@@ -307,13 +307,13 @@ max_steps = 64
 ```{.python .input}
 #@tab mxnet, pytorch
 features = d2l.zeros((T - tau - max_steps + 1, tau + max_steps))
-# Column `i` (`i` < `tau`) are observations from `x` for time steps from
-# `i + 1` to `i + T - tau - max_steps + 1`
+# Sütun `i` (`i` < `tau`), `i + 1` ile `i + T - tau - max_steps + 1`
+# arasındaki zaman adımları için `x`'ten gözlemlerdir.
 for i in range(tau):
     features[:, i] = x[i: i + T - tau - max_steps + 1]
 
-# Column `i` (`i` >= `tau`) are the (`i - tau + 1`)-step-ahead predictions for
-# time steps from `i + 1` to `i + T - tau - max_steps + 1`
+# Sütun `i` (`i` >= `tau`), 'i + 1' ile `i + T - tau - max_steps + 1` 
+# arasındaki zaman adımları için (`i - tau + 1`)-adım ileriki tahminlerdir.
 for i in range(tau, tau + max_steps):
     features[:, i] = d2l.reshape(net(features[:, i - tau: i]), -1)
 ```
@@ -321,13 +321,13 @@ for i in range(tau, tau + max_steps):
 ```{.python .input}
 #@tab tensorflow
 features = tf.Variable(d2l.zeros((T - tau - max_steps + 1, tau + max_steps)))
-# Column `i` (`i` < `tau`) are observations from `x` for time steps from
-# `i + 1` to `i + T - tau - max_steps + 1`
+# Sütun `i` (`i` < `tau`), `i + 1` ile `i + T - tau - max_steps + 1`
+# arasındaki zaman adımları için `x`'ten gözlemlerdir.
 for i in range(tau):
     features[:, i].assign(x[i: i + T - tau - max_steps + 1].numpy())
 
-# Column `i` (`i` >= `tau`) are the (`i - tau + 1`)-step-ahead predictions for
-# time steps from `i + 1` to `i + T - tau - max_steps + 1`
+# Sütun `i` (`i` >= `tau`), 'i + 1' ile `i + T - tau - max_steps + 1` 
+# arasındaki zaman adımları için (`i - tau + 1`)-adım ileriki tahminlerdir.
 for i in range(tau, tau + max_steps):
     features[:, i].assign(d2l.reshape(net((features[:, i - tau: i])), -1))
 ```
@@ -354,7 +354,7 @@ Bu, gelecekte daha da ileriyi doğru tahmin etmeye çalıştıkça, tahminin kal
 
 1. Bu bölümün deneyindeki modeli geliştirin.
     1. Geçmiş 4 gözlemden daha fazlasını mı dahil ediyor musunuz? Gerçekten kaç taneye ihtiyacınız var?
-    1. Gürültü olmasaydı kaç tane geçmiş gözleme ihtiyacınız olurdu? İpucu: $\sin$ ve $\cos$'u diferansiyel denklem olarak  yazabilirsiniz.
+    1. Gürültü olmasaydı kaç tane geçmiş gözleme ihtiyacınız olurdu? İpucu: $\sin$ ve $\cos$'u diferansiyel denklem olarak yazabilirsiniz.
     1. Toplam öznitelik sayısını sabit tutarken eski gözlemleri de dahil edebilir misiniz? Bu doğruluğu artırır mı? Neden?
     1. Sinir ağı mimarisini değiştirin ve performansını değerlendirin.
 1. Bir yatırımcı satın almak için iyi bir yatırım bulmak istiyor. Hangisinin iyi olacağına karar vermek için geçmiş dönemlere bakıyor. Bu stratejide ne yanlış gidebilir ki?

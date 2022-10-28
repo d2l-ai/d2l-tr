@@ -1,7 +1,7 @@
 # Sözcük Gömme Ön Eğitimi İçin Veri Kümesi
 :label:`sec_word2vec_data`
 
-Artık word2vec modellerinin teknik ayrıntılarını ve yaklaşıklama eğitim yöntemlerini bildiğimize göre, uygulamalarını inceleyelim. Özellikle, :numref:`sec_word2vec`'te skip-gram modelini ve :numref:`sec_approx_train`'te negatif örneklemeyi örnek olarak alacağız. Bu bölümde, sözcük gömme modeli ön eğitimi için veri kümesi ile başlıyoruz: Verilerin orijinal biçimi eğitim sırasında yinelenebilen minigruplar haline dönüştürülecektir.
+Artık word2vec modellerinin teknik ayrıntılarını ve yaklaşıklama eğitim yöntemlerini bildiğimize göre, uygulamalarını inceleyelim. Özellikle, :numref:`sec_word2vec` içinde skip-gram modelini ve :numref:`sec_approx_train` içinde negatif örneklemeyi örnek olarak alacağız. Bu bölümde, sözcük gömme modeli ön eğitimi için veri kümesi ile başlıyoruz: Verilerin orijinal biçimi eğitim sırasında yinelenebilen minigruplar haline dönüştürülecektir.
 
 ```{.python .input}
 from d2l import mxnet as d2l
@@ -53,24 +53,24 @@ f'vocab size: {len(vocab)}'
 
 ## Alt Örnekleme
 
-Metin verileri genellikle “the”, “a” ve “in” gibi yüksek frekanslı sözcüklere sahiptir: Hatta çok büyük külliyatta milyarlarca kez ortaya çıkabilirler. Ancak, bu sözcükler genellikle bağlam pencerelerinde birçok farklı sözcükle birlikte ortaya çıkar ve çok az yararlı sinyaller sağlar. Örneğin, bir bağlam penceresinde “çip” sözcüğünü göz önünde bulundurun: Sezgisel olarak düşük frekanslı bir “intel” sözcüğüyle birlikte oluşması, eğitimde yüksek frekanslı bir sözcük “a” ile birlikte oluşmasından daha yararlıdır. Dahası, büyük miktarda (yüksek frekanslı) sözcüklerle eğitim yavaştır. Böylece, sözcük gömme modellerini eğitiyorken, yüksek frekanslı sözcükler *alt örneklenebilir* :cite:`Mikolov.Sutskever.Chen.ea.2013`. Özellikle, veri kümesindeki dizine alınmış her bir $w_i$ sözcüğü aşağıdaki olasılıkla atılacaktır.
+Metin verileri genellikle "the", "a" ve "in" gibi yüksek frekanslı sözcüklere sahiptir: Hatta çok büyük külliyatta milyarlarca kez ortaya çıkabilirler. Ancak, bu sözcükler genellikle bağlam pencerelerinde birçok farklı sözcükle birlikte ortaya çıkar ve çok az yararlı sinyaller sağlar. Örneğin, bir bağlam penceresinde ("çip") "chip" sözcüğünü göz önünde bulundurun: Sezgisel olarak düşük frekanslı bir "intel" sözcüğüyle birlikte oluşması, eğitimde yüksek frekanslı bir sözcük "a" ile birlikte oluşmasından daha yararlıdır. Dahası, büyük miktarda (yüksek frekanslı) sözcüklerle eğitim yavaştır. Böylece, sözcük gömme modellerini eğitiyorken, yüksek frekanslı sözcükler *alt örneklenebilir* :cite:`Mikolov.Sutskever.Chen.ea.2013`. Özellikle, veri kümesindeki dizine alınmış her bir $w_i$ sözcüğü aşağıdaki olasılıkla atılacaktır.
 
 $$ P(w_i) = \max\left(1 - \sqrt{\frac{t}{f(w_i)}}, 0\right),$$
 
-burada $f(w_i)$, $w_i$ sözcüklerinin sayısının veri kümelerindeki toplam sözcük sayısına oranıdır ve $t$ sabit (deneyde $10^{-4}$) bir hiperparametredir. Sadece göreli frekans $f(w_i) > t$ (yüksek frekanslı) olursa sözcük $w_i$ atılabilir ve sözcüğün göreli frekansı ne kadar yüksek olursa, atılma olasılığı o kadar yüksektir.
+burada $f(w_i)$, $w_i$ sözcüklerinin sayısının veri kümelerindeki toplam sözcük sayısına oranıdır ve $t$ sabit (deneyde $10^{-4}$) bir hiper parametredir. Sadece göreli frekans $f(w_i) > t$ (yüksek frekanslı) olursa $w_i$  sözcüğü atılabilir ve sözcüğün göreli frekansı ne kadar yüksek olursa, atılma olasılığı o kadar yüksektir.
 
 ```{.python .input}
 #@tab all
 #@save
 def subsample(sentences, vocab):
-    """Subsample high-frequency words."""
-    # Exclude unknown tokens '<unk>'
+    """Yüksek frekanslı sözcükleri alt örnekle."""
+    # '<unk>' andıçlarını hariç tut
     sentences = [[token for token in line if vocab[token] != vocab.unk]
                  for line in sentences]
     counter = d2l.count_corpus(sentences)
     num_tokens = sum(counter.values())
 
-    # Return True if `token` is kept during subsampling
+    # Alt örnekleme sırasında `token` tutulursa True döndür
     def keep(token):
         return(random.uniform(0, 1) <
                math.sqrt(1e-4 / counter[token] * num_tokens))
@@ -89,7 +89,7 @@ d2l.show_list_len_pair_hist(['origin', 'subsampled'], '# tokens per sentence',
                             'count', sentences, subsampled);
 ```
 
-Bireysel belirteçler için, yüksek frekanslı “the” sözcüğünün örnekleme oranı 1/20'den azdır.
+Bireysel belirteçler için, yüksek frekanslı "the" sözcüğünün örnekleme oranı 1/20'den azdır.
 
 ```{.python .input}
 #@tab all
@@ -101,7 +101,7 @@ def compare_counts(token):
 compare_counts('the')
 ```
 
-Buna karşılık, düşük frekanslı sözcük “join” tamamen tutulur.
+Buna karşılık, düşük frekanslı "join" sözcüğü tamamen tutulur.
 
 ```{.python .input}
 #@tab all
@@ -124,19 +124,19 @@ Aşağıdaki `get_centers_and_contexts` işlevi, `corpus`'ten tüm merkez sözc�
 #@tab all
 #@save
 def get_centers_and_contexts(corpus, max_window_size):
-    """Return center words and context words in skip-gram."""
+    """skip-gramdaki merkez sözcüklerini ve bağlam sözcüklerini döndürür."""
     centers, contexts = [], []
     for line in corpus:
-        # To form a "center word--context word" pair, each sentence needs to
-        # have at least 2 words
+        # Bir "merkez sözcük-bağlam sözcüğü" çifti oluşturmak için 
+        # her cümlede en az 2 kelime olması gerekir
         if len(line) < 2:
             continue
         centers += line
-        for i in range(len(line)):  # Context window centered at `i`
+        for i in range(len(line)):  #  `i` merkezli bağlam penceresi
             window_size = random.randint(1, max_window_size)
             indices = list(range(max(0, i - window_size),
                                  min(len(line), i + 1 + window_size)))
-            # Exclude the center word from the context words
+            # Merkez sözcüğü bağlam sözcüklerinden çıkar
             indices.remove(i)
             contexts.append([line[idx] for idx in indices])
     return centers, contexts
@@ -168,9 +168,9 @@ Yaklaşıklama eğitim için negatif örnekleme kullanıyoruz. Gürültülü sö
 #@tab all
 #@save
 class RandomGenerator:
-    """Randomly draw among {1, ..., n} according to n sampling weights."""
+    """Örnekleme ağırlıklarına göre {1, ..., n} arasından rastgele çek."""
     def __init__(self, sampling_weights):
-        # Exclude 
+        # Hariç tut 
         self.population = list(range(1, len(sampling_weights) + 1))
         self.sampling_weights = sampling_weights
         self.candidates = []
@@ -178,7 +178,7 @@ class RandomGenerator:
 
     def draw(self):
         if self.i == len(self.candidates):
-            # Cache `k` random sampling results
+            # `k` rastgele örnekleme sonuçlarını önbelleğe al
             self.candidates = random.choices(
                 self.population, self.sampling_weights, k=10000)
             self.i = 0
@@ -186,7 +186,7 @@ class RandomGenerator:
         return self.candidates[self.i - 1]
 ```
 
-Örneğin, $P(X=1)=2/9, P(X=2)=3/9$ ve $P(X=3)=4/9$ örnekleme olasılıkları ile 1, 2 ve 3 indeksleri arasında 10 rasgele değişken $X$ çekebiliriz.
+Örneğin, $P(X=1)=2/9, P(X=2)=3/9$ ve $P(X=3)=4/9$ örnekleme olasılıkları ile 1, 2 ve 3 indeksleri arasından 10 adet $X$ rasgele değişkenini çekebiliriz.
 
 ```{.python .input}
 generator = RandomGenerator([2, 3, 4])
@@ -199,9 +199,9 @@ Bir çift merkez sözcük ve bağlam sözcüğü için, rastgele `K` (deneyde 5)
 #@tab all
 #@save
 def get_negatives(all_contexts, vocab, counter, K):
-    """Return noise words in negative sampling."""
-    # Sampling weights for words with indices 1, 2, ... (index 0 is the
-    # excluded unknown token) in the vocabulary
+    """Negatif örneklemede gürültü sözcüklerini döndür."""
+    # Sözlükte 1, 2, ... (dizin 0 hariç tutulan bilinmeyen belirteçtir) 
+    # olan kelimeler için örnekleme ağırlıkları
     sampling_weights = [counter[vocab.to_tokens(i)]**0.75
                         for i in range(1, len(vocab))]
     all_negatives, generator = [], RandomGenerator(sampling_weights)
@@ -209,7 +209,7 @@ def get_negatives(all_contexts, vocab, counter, K):
         negatives = []
         while len(negatives) < len(contexts) * K:
             neg = generator.draw()
-            # Noise words cannot be context words
+            # Gürültü sözcükleri bağlam sözcükleri olamaz
             if neg not in contexts:
                 negatives.append(neg)
         all_negatives.append(negatives)
@@ -221,7 +221,7 @@ all_negatives = get_negatives(all_contexts, vocab, counter, 5)
 ## Minigruplarda Eğitim Örneklerini Yükleme
 :label:`subsec_word2vec-minibatch-loading`
 
-Bağlam sözcükleri ve örneklenmiş gürültü sözcükleri ile birlikte tüm merkezi sözcükler çıkarıldıktan sonra, eğitim sırasında tekrarlı olarak yüklenebilecek örneklerin minigruplarına dönüştürülecektir. 
+Bağlam sözcükleri ve örneklenmiş gürültü sözcükleri ile birlikte tüm merkezi sözcükler çıkarıldıktan sonra, eğitim sırasında yinelemeli olarak yüklenebilecek örneklerin minigruplarına dönüştürülecektir. 
 
 Bir minigrupta, $i.$ örnek bir merkez sözcük ve onun $n_i$ bağlam sözcükleri ve $m_i$ gürültü sözcükleri içerir. Değişen bağlam penceresi boyutları nedeniyle $n_i+m_i$ farklı $i$'ler için değişiklik gösterir. Böylece, her örnek için bağlam sözcüklerini ve gürültü sözcüklerini `contexts_negatives` değişkeninde bitiştiririz ve bitiştirme uzunluğu $\max_i n_i+m_i$'a (`max_len`) ulaşana kadar sıfırlarla dolgularız. Kaybın hesaplanmasında dolguları hariç tutmak için bir maske değişkeni, `masks`, tanımlıyoruz. `masks`'taki elemanlar ve `contexts_negatives`'teki elemanlar arasında bire bir karşılık vardır, burada `masks`'daki sıfırlar (aksi takdirde birler) `contexts_negatives`'teki dolgulara karşılık gelir. 
 
@@ -233,7 +233,7 @@ Yukarıdaki fikir aşağıdaki `batchify` işlevinde uygulanmaktadır. Girdi `da
 #@tab all
 #@save
 def batchify(data):
-    """Return a minibatch of examples for skip-gram with negative sampling."""
+    """Negatif örnekleme ile skip-gram için bir minigrup örnek döndür."""
     max_len = max(len(c) + len(n) for _, c, n in data)
     centers, contexts_negatives, masks, labels = [], [], [], []
     for center, context, negative in data:
@@ -266,7 +266,7 @@ Son olarak, PTB veri kümesini okuyan ve veri yineleyicisini ve sözcük dağarc
 ```{.python .input}
 #@save
 def load_data_ptb(batch_size, max_window_size, num_noise_words):
-    """Download the PTB dataset and then load it into memory."""
+    """PTB veri kümesini indirin ve ardından belleğe yükleyin."""
     sentences = read_ptb()
     vocab = d2l.Vocab(sentences, min_freq=10)
     subsampled, counter = subsample(sentences, vocab)
@@ -340,7 +340,7 @@ for batch in data_iter:
 
 1. Alt örnekleme kullanmıyorsa, bu bölümdeki kodun çalışma süresi nasıl değişir?
 1. `RandomGenerator` sınıfı `k` rasgele örnekleme sonuçlarını önbelleğe alır. `k`'yi diğer değerlere ayarlayın ve veri yükleme hızını nasıl etkilediğini görün.
-1. Bu bölümün kodundaki hangi diğer hiperparametreler veri yükleme hızını etkileyebilir?
+1. Bu bölümün kodundaki hangi diğer hiper parametreler veri yükleme hızını etkileyebilir?
 
 :begin_tab:`mxnet`
 [Tartışmalar](https://discuss.d2l.ai/t/383)

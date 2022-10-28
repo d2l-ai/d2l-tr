@@ -1,16 +1,16 @@
 # Minigrup Rasgele Gradyan İnişi
 :label:`sec_minibatch_sgd`
 
-Şimdiye kadar gradyan tabanlı öğrenme: :numref:`sec_gd` yaklaşımında iki uç noktaya rastladık, gradyanları hesaplamak ve parametreleri güncellemek için her seferinde bir geçiş yaparak tüm veri kümesini kullanır. Tersine :numref:`sec_sgd` ilerleme kaydetmek için bir seferde bir gözlem işler. Her birinin kendi dezavantajları vardır. Gradyan inişi, özellikle veriler çok benzer olduğunda  *veri verimli* değildir. Rasgele gradyan inişi, işlemciler ve GPU'lar vektörleştirmenin tam gücünden yararlanamayacağından, bilhassa *hesaplama açısından verimli* değildir. Bu, mutlu bir ortam olabileceğini gösteriyor ve aslında, şimdiye kadar tartıştığımız örneklerde bunu kullanıyorduk. 
+Şimdiye kadar gradyan tabanlı öğrenme yaklaşımında iki uç noktaya rastladık: :numref:`sec_gd` gradyanları hesaplamak ve parametreleri güncellemek için her seferinde bir geçiş yaparak tüm veri kümesini kullanır. Tersine :numref:`sec_sgd` ilerleme kaydetmek için bir seferde bir gözlem işler. Her birinin kendi dezavantajları vardır. Gradyan inişi, özellikle veriler çok benzer olduğunda  *veri verimli* değildir. Rasgele gradyan inişi, işlemciler ve GPU'lar vektörleştirmenin tam gücünden yararlanamayacağından, bilhassa *hesaplama açısından verimli* değildir. Bu, mutlu bir ortam olabileceğini gösteriyor ve aslında, şimdiye kadar tartıştığımız örneklerde bunu kullanıyorduk. 
 
 ## Vektörleştirme ve Önbellekler
 
-Minigruplar kullanma kararının merkezinde hesaplama verimliliği vardır. Bu, en kolay şekilde birden çok GPU ve birden çok sunucuya paralelleştirme düşünüldüğünde anlaşılır. Bu durumda, her GPU'ya en az bir görüntü göndermemiz gerekiyor. 16 sunucu ve sunucu başına 8 GPU ile zaten 128'lik minigrup boyutuna ulaşıyoruz. 
+Minigruplar kullanma kararının merkezinde hesaplama verimliliği vardır. Bu, en kolay şekilde birden çok GPU ve birden çok sunucuya paralelleştirme düşünüldüğünde anlaşılır. Bu durumda, her GPU'ya en az bir imge göndermemiz gerekiyor. 16 sunucu ve sunucu başına 8 GPU ile zaten 128'lik minigrup boyutuna ulaşıyoruz. 
 
-Tek GPU'lar ve hatta CPU'lar söz konusu olduğunda işler biraz daha inceliktir. Bu cihazların birden çok bellek türü, genellikle birden fazla işlem birimi türü ve aralarında farklı bant genişliği kısıtlamaları vardır. Örneğin, bir CPU az sayıda yazmaç (register) ve daha sonra L1, L2 ve hatta bazı durumlarda L3 önbellek (farklı işlemci çekirdekleri arasında paylaşılır) vardır. Bu önbellekler boyut ve gecikme süresini artırmaktadır (ve aynı zamanda bant genişliğini azaltmaktadır). Diyelim ki, işlemci ana bellek arayüzünün sağlayabildiğinden çok daha fazla işlem gerçekleştirebilir. 
+Tek GPU'lar ve hatta CPU'lar söz konusu olduğunda işler biraz daha inceliktir. Bu cihazların birden çok bellek türü, genellikle birden fazla işlem birimi türü ve aralarında farklı bant genişliği kısıtlamaları vardır. Örneğin, bir CPU'da az sayıda yazmaç (register) ve daha sonra L1, L2 ve hatta bazı durumlarda L3 önbellek (farklı işlemci çekirdekleri arasında paylaşılır) vardır. Bu önbellekler boyut ve gecikme süresini artırmaktadır (ve aynı zamanda bant genişliğini azaltmaktadır). Diyebiliriz ki, aslında işlemci ana bellek arayüzünün sağlayabildiğinden çok daha fazla işlem gerçekleştirebilir. 
 
-* 16 çekirdeğe ve AVX-512 vektörleştirmesine sahip 2 GHz CPU, saniyede $2 \cdot 10^9 \cdot 16 \cdot 32 = 10^{12}$ bayta kadar işleyebilir. GPU'ların kapasitesi bu sayının 100 katını kolayca aşar. Öte yandan, orta düzey bir sunucu işlemcisi 100 GB/s'den fazla bant genişliğine sahip olmayabilir, yani işlemcinin beslenmesini sağlamak için gerekenlerin onda birinden azı olabilir. İşleri daha da kötüleştirmek adına, tüm bellek erişimi eşit oluşturulmaz: Öncelikle, bellek arabirimleri genellikle 64 bit genişliğinde veya daha geniştir (örneğin, 384 bit'e kadar GPU'larda), bu nedenle tek bir bayt okumak çok daha geniş bir erişim maliyetini doğurur.
-* İlk erişim için önemli bir yük varken sıralı erişim nispeten ucuzdur (buna genellikle çoğuşma denir). Birden fazla soket, yonga ve diğer yapılara sahip olduğumuzda önbelleğe alma gibi akılda tutulması gereken çok daha fazla şey vardır. Bunun ayrıntılı bir tartışması, bu bölümün kapsamı dışındadır. Daha ayrıntılı bir tartışma için bu [Wikipedia makalesi](https://en.wikipedia.org/wiki/Cache_hierarchy)'ne bakın.
+* 16 çekirdeğe ve AVX-512 vektörleştirmesine sahip 2 GHz CPU, saniyede $2 \cdot 10^9 \cdot 16 \cdot 32 = 10^{12}$ bayta kadar işleyebilir. GPU'ların kapasitesi bu sayının 100 katını kolayca aşar. Öte yandan, orta düzey bir sunucu işlemcisi 100 GB/s'den fazla bant genişliğine sahip olmayabilir, yani işlemcinin beslenmesini sağlamak için gerekenlerin onda birinden azı olabilir. İşleri daha da kötüleştirmek adına, tüm bellek erişimi eşit oluşturulmaz: Öncelikle, bellek arabirimleri genellikle 64 bittir ya da daha geniştir (örneğin, GPU'larda 384 bite kadar), bu nedenle tek bir bayt okumak çok daha geniş bir erişim maliyetini doğurur.
+* İlk erişim için önemli bir maliyet varken sıralı erişim nispeten ucuzdur (buna genellikle çoğuşma denir). Birden fazla soket, yonga ve diğer yapılara sahip olduğumuzda önbelleğe alma gibi akılda tutulması gereken çok daha fazla şey vardır. Bunun ayrıntılı bir tartışması, bu bölümün kapsamı dışındadır. Daha ayrıntılı bir tartışma için bu [Wikipedia makalesi](https://en.wikipedia.org/wiki/Cache_hierarchy)'ne bakın.
 
 Bu kısıtlamaları hafifletmenin yolu, işlemciye veri sağlamak için yeterince hızlı olan CPU önbellekleri hiyerarşisini kullanmaktır. Bu, derin öğrenmede toplu işlemenin arkasındaki itici güçtür. Konuları basit tutmak için, matris ile matris çarpımını düşünün, $\mathbf{A} = \mathbf{B}\mathbf{C}$ diyelim. $\mathbf{A}$'yı hesaplamak için bir dizi seçeneğimiz var. Örneğin aşağıdakileri deneyebiliriz: 
 
@@ -19,9 +19,9 @@ Bu kısıtlamaları hafifletmenin yolu, işlemciye veri sağlamak için yeterinc
 1. Sadece $\mathbf{A} = \mathbf{B} \mathbf{C}$'yi hesaplayabiliriz.
 1. $\mathbf{B}$ ve $\mathbf{C}$'yi daha küçük blok matrislerine parçalayıp  $\mathbf{A}$'yı her seferde bir blok hesaplayabiliriz.
 
-İlk seçeneği izlersek, $\mathbf{A}_{ij}$ öğesini hesaplamak istediğimiz her seferinde bir satır ve bir sütun vektörünü CPU'ya kopyalamalıyız. Daha da kötüsü, matris elemanlarının sıralı olarak hizalanması nedeniyle, bellekten okurken iki vektörden biri için birçok ayrık konuma erişmemiz gerekiyor. İkinci seçenek çok daha elverişlidir. İçinde $B$ üzerinden geçiş yapmaya devam ederken sütun vektörünü $\mathbf{C}_{:,j}$'ü CPU önbelleğinde tutabiliyoruz. Bu, daha hızlı erişim ile bellek bant genişliği gereksinimini yarıya indirir. Tabii ki, seçenek 3 en çok arzu edilir. Ne yazık ki, çoğu matris önbelleğe tamamen sığmayabilir (sonuçta tartıştığımız şey budur). Bununla birlikte, seçenek 4 pratik olarak kullanışlı bir alternatif sunar: Matrisin bloklarını önbelleğe taşıyabilir ve yerel olarak çoğaltabiliriz. Optimize edilmiş kütüphaneler bunu bizim için halledeceklerdir. Bu operasyonların pratikte ne kadar verimli olduğuna bir göz atalım. 
+İlk seçeneği izlersek, $\mathbf{A}_{ij}$ öğesini hesaplamak istediğimiz her seferinde bir satır ve bir sütun vektörünü CPU'ya kopyalamalıyız. Daha da kötüsü, matris elemanlarının sıralı olarak hizalanması nedeniyle, bellekten okurken iki vektörden biri için birçok ayrık konuma erişmemiz gerekiyor. İkinci seçenek çok daha elverişlidir. İçinde $B$ üzerinden geçiş yapmaya devam ederken sütun vektörünü $\mathbf{C}_{:,j}$'ü CPU önbelleğinde tutabiliyoruz. Bu, daha hızlı erişim ile bellek bant genişliği gereksinimini yarıya indirir. Tabii ki, seçenek 3 en çok arzu edilendir. Ne yazık ki, çoğu matris önbelleğe tamamen sığmayabilir (sonuçta tartıştığımız şey budur). Bununla birlikte, seçenek 4 pratik olarak kullanışlı bir alternatif sunar: Matrisin bloklarını önbelleğe taşıyabilir ve yerel olarak çoğaltabiliriz. Optimize edilmiş kütüphaneler bunu bizim için halledeceklerdir. Bu operasyonların pratikte ne kadar verimli olduğuna bir göz atalım. 
 
-Hesaplama verimliliğinin ötesinde, Python ve derin öğrenme çerçevesinin kendisi tarafından getirilen yük de düşündürücüdür. Python yorumlayıcısı her komutu çalıştırdığımızda MXNet motoruna, hesaplamalı çizgeye eklemesi ve zamanlama sırasında onunla ilgilenmesi gereken bir komut gönderdiğini hatırlayın. Bu tür yükler oldukça zararlı olabilir. Kısacası, mümkün olduğunca vektörleştirme (ve matrisler) kullanılması şiddetle tavsiye edilir.
+Hesaplama verimliliğinin ötesinde, Python ve derin öğrenme çerçevesinin kendisi tarafından getirilen yük de düşündürücüdür. Python yorumlayıcısı her komutu çalıştırdığımızda MXNet motoruna, hesaplamalı çizgeye eklemesi ve zamanlama sırasında onunla ilgilenmesi gereken bir komut gönderdiğini hatırlayın. Bu tür yükler oldukça bezdirici olabilir. Kısacası, mümkün olduğunca vektörleştirme (ve matrisler) kullanılması şiddetle tavsiye edilir.
 
 ```{.python .input}
 %matplotlib inline
@@ -66,7 +66,7 @@ C = tf.Variable(d2l.normal([256, 256], 0, 1))
 Eleman yönlü değer atama, $\mathbf{A}$'ya değer atamak için sırasıyla $\mathbf{B}$ ve $\mathbf{C}$'nin tüm satır ve sütunlarını yineler.
 
 ```{.python .input}
-# Compute A = BC one element at a time
+# Her keresinde bir eleman olacak şekilde A = BC hesapla
 timer.start()
 for i in range(256):
     for j in range(256):
@@ -77,7 +77,7 @@ timer.stop()
 
 ```{.python .input}
 #@tab pytorch
-# Compute A = BC one element at a time
+# Her keresinde bir eleman olacak şekilde A = BC hesapla
 timer.start()
 for i in range(256):
     for j in range(256):
@@ -87,7 +87,7 @@ timer.stop()
 
 ```{.python .input}
 #@tab tensorflow
-# Compute A = BC one element at a time
+# Her keresinde bir eleman olacak şekilde A = BC hesapla
 timer.start()
 for i in range(256):
     for j in range(256):
@@ -98,7 +98,7 @@ timer.stop()
 Daha hızlı bir strateji sütun yönlü atama gerçekleştirmektir.
 
 ```{.python .input}
-# Compute A = BC one column at a time
+# Her keresinde bir sutün olacak şekilde A = BC hesapla
 timer.start()
 for j in range(256):
     A[:, j] = np.dot(B, C[:, j])
@@ -108,7 +108,7 @@ timer.stop()
 
 ```{.python .input}
 #@tab pytorch
-# Compute A = BC one column at a time
+# Her keresinde bir sutün olacak şekilde A = BC hesapla
 timer.start()
 for j in range(256):
     A[:, j] = torch.mv(B, C[:, j])
@@ -126,13 +126,13 @@ timer.stop()
 Son olarak, en etkili yol, tüm işlemi bir blokta gerçekleştirmektir. İşlemlerin göreceli hızının ne olduğunu görelim.
 
 ```{.python .input}
-# Compute A = BC in one go
+# Bir seferde A = BC hesapla
 timer.start()
 A = np.dot(B, C)
 A.wait_to_read()
 timer.stop()
 
-# Multiply and add count as separate operations (fused in practice)
+# Çarpma ve toplama ayrı işlemler olsun (uygulamada kaynaşıktır)
 gigaflops = [2/i for i in timer.times]
 print(f'performance in Gigaflops: element {gigaflops[0]:.3f}, '
       f'column {gigaflops[1]:.3f}, full {gigaflops[2]:.3f}')
@@ -140,12 +140,12 @@ print(f'performance in Gigaflops: element {gigaflops[0]:.3f}, '
 
 ```{.python .input}
 #@tab pytorch
-# Compute A = BC in one go
+# Bir seferde A = BC hesapla
 timer.start()
 A = torch.mm(B, C)
 timer.stop()
 
-# Multiply and add count as separate operations (fused in practice)
+# Çarpma ve toplama ayrı işlemler olsun (uygulamada kaynaşıktır)
 gigaflops = [2/i for i in timer.times]
 print(f'performance in Gigaflops: element {gigaflops[0]:.3f}, '
       f'column {gigaflops[1]:.3f}, full {gigaflops[2]:.3f}')
@@ -157,7 +157,7 @@ timer.start()
 A.assign(tf.tensordot(B, C, axes=1))
 timer.stop()
 
-# Multiply and add count as separate operations (fused in practice)
+# Çarpma ve toplama ayrı işlemler olsun (uygulamada kaynaşıktır)
 gigaflops = [2/i for i in timer.times]
 print(f'performance in Gigaflops: element {gigaflops[0]:.3f}, '
       f'column {gigaflops[1]:.3f}, full {gigaflops[2]:.3f}')
@@ -174,9 +174,9 @@ Bu işlemin *hesaplama* verimliliğini bir seferde bir minigrup gözlem uygulaya
 
 $$\mathbf{g}_t = \partial_{\mathbf{w}} \frac{1}{|\mathcal{B}_t|} \sum_{i \in \mathcal{B}_t} f(\mathbf{x}_{i}, \mathbf{w})$$
 
-Bunun $\mathbf{g}_t$'nin istatistiksel özelliklerine ne yaptığını görelim: Hem $\mathbf{x}_t$ hem de minigrup $\mathcal{B}_t$'nin tüm elemanları eğitim kümesinden tekdüze rastgele bir şekilde çekildiğinden, gradyanın beklentisi değişmeden kalır. Öte yandan varyans önemli ölçüde azaltılır. Minigrup gradyanı, ortalaması alınan $b := |\mathcal{B}_t|$ bağımsız gradyanlardan oluştuğu için, standart sapması $b^{-\frac{1}{2}}$ faktörü kadar azaltılır. Bu, tek başına, iyi bir şeydir, çünkü güncellemelerin tam gradyan ile daha güvenilir bir şekilde hizalandığı anlamına gelir. 
+Bunun $\mathbf{g}_t$'nin istatistiksel özelliklerine ne yaptığını görelim: Hem $\mathbf{x}_t$ hem de minigrup $\mathcal{B}_t$'nin tüm elemanları eğitim kümesinden tekdüze rastgele bir şekilde çekildiğinden, gradyanın beklentisi değişmeden kalır. Öte yandan varyans önemli ölçüde azaltılır. Minigrup gradyanı, ortalaması alınan $b := |\mathcal{B}_t|$ bağımsız gradyanlardan oluştuğu için, standart sapması $b^{-\frac{1}{2}}$ çarpanı kadar azalır. Bu, tek başına, iyi bir şeydir, çünkü güncellemelerin tam gradyan ile daha güvenilir bir şekilde hizalandığı anlamına gelir. 
 
-Safça bu, büyük bir minigrup $\mathcal{B}_t$ seçmenin evrensel olarak arzu edileceğini gösterir. Ne yazık ki, bir noktadan sonra, standart sapmadaki ek azalma, hesaplama maliyetindeki doğrusal artışa kıyasla minimumdur. Pratikte, bir GPU belleğine uyarken iyi hesaplama verimliliği sunacak kadar büyük bir minigrup seçiyoruz. Tasarrufları göstermek için koda biraz göz atalım. İçerisinde aynı matris matris çarpımını gerçekleştiriyoruz, ancak bu sefer bir seferde 64 sütunlu “minigruplar”a parçaladık.
+Safça bu, büyük bir minigrup $\mathcal{B}_t$ seçmenin evrensel olarak arzu edileceğini gösterir. Ne yazık ki, bir noktadan sonra, standart sapmadaki ek azalma, hesaplama maliyetindeki doğrusal artışa kıyasla minimumdur. Pratikte, bir GPU belleğine uyarken iyi hesaplama verimliliği sunacak kadar büyük bir minigrup seçiyoruz. Tasarrufları göstermek için koda biraz göz atalım. İçerisinde aynı matris matris çarpımını gerçekleştiriyoruz, ancak bu sefer bir seferde 64 sütunlu "minigruplar"a parçaladık.
 
 ```{.python .input}
 timer.start()
@@ -204,7 +204,7 @@ timer.stop()
 print(f'performance in Gigaflops: block {2 / timer.times[3]:.3f}')
 ```
 
-Gördüğümüz gibi, minigrup üzerindeki hesaplama aslında tam matris kadar etkilidir. Dikkat edilmesi gereken unsur şudur: :numref:`sec_batch_norm`'te bir minigrup içindeki varyans miktarına büyük ölçüde bağımlı olan bir düzenlilik türü kullandık. İkincisini arttırdıkça, varyans azalır ve bununla birlikte toplu normalleşme nedeniyle gürültü aşılamanın faydası olur. Uygun şartların nasıl yeniden ölçekleneceği ve hesaplanacağı ile ilgili ayrıntılar için bkz. :cite:`Ioffe.2017`. 
+Gördüğümüz gibi, minigrup üzerindeki hesaplama aslında tam matris kadar etkilidir. Dikkat edilmesi gereken unsur şudur: :numref:`sec_batch_norm` içinde bir minigrup içindeki varyans miktarına büyük ölçüde bağımlı olan bir düzenlilik türü kullandık. İkincisini arttırdıkça, varyans azalır ve bununla birlikte toplu normalleşme nedeniyle gürültü aşılamanın faydası olur. Uygun şartların nasıl yeniden ölçekleneceği ve hesaplanacağı ile ilgili ayrıntılar için bkz. :cite:`Ioffe.2017`. 
 
 ## Veri Kümesini Okuma
 
@@ -259,7 +259,7 @@ def get_data_ch11(batch_size=10, n=1500):
 
 ## Sıfırdan Uygulama
 
-:numref:`sec_linear_scratch`'ten minigrup rasgele gradyan inişi uygulamasını hatırlayın. Aşağıda biraz daha genel bir uygulama sağlıyoruz. Kolaylık sağlamak için, bu bölümde daha sonra tanıtılan diğer optimizasyon algoritmalarıyla aynı çağrı imzasına sahiptir. Özellikle, `states` durum girdisini ekliyoruz ve hiperparametreyi `hyperparams` sözlüğüne yerleştiriyoruz. Buna ek olarak, eğitim işlevindeki her minigrup örneğinin kaybını ortalayacağız, böylece optimizasyon algoritmasındaki gradyanın iş boyutuna bölünmesi gerekmez.
+:numref:`sec_linear_scratch` içindeki minigrup rasgele gradyan inişi uygulamasını hatırlayın. Aşağıda biraz daha genel bir uygulama sağlıyoruz. Kolaylık sağlamak için, bu bölümde daha sonra tanıtılan diğer optimizasyon algoritmalarıyla aynı çağrı imzasına sahiptir. Özellikle, `states` durum girdisini ekliyoruz ve hiper parametreyi `hyperparams` sözlüğüne yerleştiriyoruz. Buna ek olarak, eğitim işlevindeki her minigrup örneğinin kaybını ortalayacağız, böylece optimizasyon algoritmasındaki gradyanın iş boyutuna bölünmesi gerekmez.
 
 ```{.python .input}
 def sgd(params, states, hyperparams):
@@ -288,13 +288,13 @@ Daha sonra, bu bölümün ilerleyen bölümlerinde tanıtılan diğer optimizasy
 #@save
 def train_ch11(trainer_fn, states, hyperparams, data_iter,
                feature_dim, num_epochs=2):
-    # Initialization
+    # İlkleme
     w = np.random.normal(scale=0.01, size=(feature_dim, 1))
     b = np.zeros(1)
     w.attach_grad()
     b.attach_grad()
     net, loss = lambda X: d2l.linreg(X, w, b), d2l.squared_loss
-    # Train
+    # Eğitim
     animator = d2l.Animator(xlabel='epoch', ylabel='loss',
                             xlim=[0, num_epochs], ylim=[0.22, 0.35])
     n, timer = 0, d2l.Timer()
@@ -319,12 +319,12 @@ def train_ch11(trainer_fn, states, hyperparams, data_iter,
 #@save
 def train_ch11(trainer_fn, states, hyperparams, data_iter,
                feature_dim, num_epochs=2):
-    # Initialization
+    # İlkleme
     w = torch.normal(mean=0.0, std=0.01, size=(feature_dim, 1),
                      requires_grad=True)
     b = torch.zeros((1), requires_grad=True)
     net, loss = lambda X: d2l.linreg(X, w, b), d2l.squared_loss
-    # Train
+    # Eğitim
     animator = d2l.Animator(xlabel='epoch', ylabel='loss',
                             xlim=[0, num_epochs], ylim=[0.22, 0.35])
     n, timer = 0, d2l.Timer()
@@ -348,12 +348,12 @@ def train_ch11(trainer_fn, states, hyperparams, data_iter,
 #@save
 def train_ch11(trainer_fn, states, hyperparams, data_iter,
                feature_dim, num_epochs=2):
-    # Initialization
+    # İlkleme
     w = tf.Variable(tf.random.normal(shape=(feature_dim, 1),
                                    mean=0, stddev=0.01),trainable=True)
     b = tf.Variable(tf.zeros(1), trainable=True)
 
-    # Train
+    # Eğitim
     net, loss = lambda X: d2l.linreg(X, w, b), d2l.squared_loss
     animator = d2l.Animator(xlabel='epoch', ylabel='loss',
                             xlim=[0, num_epochs], ylim=[0.22, 0.35])
@@ -428,7 +428,7 @@ Gluon'da, optimizasyon algoritmalarını çağırmak için `Trainer` sınıfın�
 ```{.python .input}
 #@save
 def train_concise_ch11(tr_name, hyperparams, data_iter, num_epochs=2):
-    # Initialization
+    # İlkleme
     net = nn.Sequential()
     net.add(nn.Dense(1))
     net.initialize(init.Normal(sigma=0.01))
@@ -456,7 +456,7 @@ def train_concise_ch11(tr_name, hyperparams, data_iter, num_epochs=2):
 #@tab pytorch
 #@save
 def train_concise_ch11(trainer_fn, hyperparams, data_iter, num_epochs=4):
-    # Initialization
+    # İlkleme
     net = nn.Sequential(nn.Linear(5, 1))
     def init_weights(m):
         if type(m) == nn.Linear:
@@ -490,7 +490,7 @@ def train_concise_ch11(trainer_fn, hyperparams, data_iter, num_epochs=4):
 #@tab tensorflow
 #@save
 def train_concise_ch11(trainer_fn, hyperparams, data_iter, num_epochs=2):
-    # Initialization
+    # İlkleme
     net = tf.keras.Sequential()
     net.add(tf.keras.layers.Dense(1,
             kernel_initializer=tf.random_normal_initializer(stddev=0.01)))
@@ -543,19 +543,19 @@ train_concise_ch11(trainer, {'learning_rate': 0.05}, data_iter)
 
 ## Özet
 
-* Vektorleştirme, derin öğrenme çerçevesinden kaynaklanan azaltılmış ek yükü ve CPU ve GPU'larda daha iyi bellek yerelliği ve önbelleğe alma nedeniyle kodu daha verimli hale getirir.
+* Vektorleştirme, derin öğrenme çerçevesinden kaynaklanan azaltılmış ek yükü ve CPU ile GPU'larda daha iyi bellek yerelliği ve önbelleğe alma nedeniyle kodu daha verimli hale getirir.
 * Rasgele gradyan inişinden kaynaklanan istatistiksel verimlilik ile aynı anda büyük veri yığınlarının işlenmesinden kaynaklanan hesaplama verimliliği arasında bir ödün verme vardır.
 * Minigrup rasgele gradyan inişi her iki dünyanın en iyisini sunar: Hesaplama ve istatistiksel verimlilik.
-* Minigrup rasgele gradyan inişinde, eğitim verilerinin rastgele bir permütasyonu ile elde edilen veri yığınlarını işleriz (yani, her gözlem, rastgele sırada da olsa, her dönemde sadece bir kez işlenir).
+* Minigrup rasgele gradyan inişinde, eğitim verilerinin rastgele bir yer değiştirmesi ile elde edilen veri yığınlarını işleriz (yani, her gözlem, rastgele sırada da olsa, her dönemde sadece bir kez işlenir).
 * Eğitim sırasında öğrenme oranlarının sönümlenmesi tavsiye edilir.
 * Genel olarak, minigrup rasgele gradyan inişi, saat süresi açısından ölçüldüğünde, daha küçük bir riske yakınsama için rasgele gradyan inişi ve gradyan inişinden daha hızlıdır.
 
 ## Alıştırmalar
 
-1. Toplu iş boyutunu ve öğrenme oranını değiştirin ve amaç fonksiyonun değeri ve her dönemde tüketilen süreye ilişkin düşüş oranını gözlemleyin.
+1. Toplu iş boyutunu ve öğrenme oranını değiştirin ve amaç fonksiyonun değerini ve her dönemde tüketilen süreye ilişkin düşüş oranını gözlemleyin.
 1. MXNet belgelerini okuyun ve `Trainer` sınıfı `set_learning_rate` işlevini kullanarak minigrup rasgele gradyan inişinin öğrenme hızını her dönemden sonraki önceki değerinin 1/10'una düşürün.
 1. Minigrup rasgele gradyan inişini, eğitim kümesinden *değiştirmeli örneklemler* kullanan bir sürümle karşılaştırın. Ne olur?
-1. Kötü bir cin, size haber vermeden veri kümenizi çoğaltıyor (yani, her gözlem iki kez gerçekleşir ve veri kümeniz orijinal boyutunun iki katına çıkar, ancak size söylenmedi). Rasgele gradyan inişi, minigrup rasgele gradyan inişi ve gradyan inişinin davranışı nasıl değişir?
+1. Kötü bir cin, size haber vermeden veri kümenizi çoğaltıyor (yani, her gözlem iki kez gerçekleşir ve veri kümeniz orijinal boyutunun iki katına çıkar, ancak size söylenmedi). Rasgele gradyan inişinin, minigrup rasgele gradyan inişinin ve gradyan inişinin davranışı nasıl değişir?
 
 :begin_tab:`mxnet`
 [Tartışmalar](https://discuss.d2l.ai/t/353)

@@ -5,26 +5,26 @@ Bir şekilde, makine öğrenmesi tamamen tahminlerde bulunmakla ilgilidir.
 Klinik geçmişi göz önüne alındığında, bir hastanın önümüzdeki yıl kalp krizi geçirme *olasılığını* tahmin etmek isteyebiliriz. Anormallik tespitinde, bir uçağın jet motorundan bir dizi okumanın uçak normal çalışıyor olsaydı ne kadar *muhtemel* olacağını değerlendirmek isteyebiliriz. Pekiştirmeli öğrenmede, bir etmenin bir ortamda akıllıca hareket etmesini istiyoruz. Bu, mevcut eylemlerin her birinin altında yüksek bir ödül alma olasılığını düşünmemiz gerektiği anlamına gelir. Ayrıca tavsiye sistemleri oluşturduğumuzda, olasılık hakkında da düşünmemiz gerekir. Örneğin, *varsayımsal olarak* büyük bir çevrimiçi kitapçı için çalıştığımızı söyleyelim. Belirli bir kullanıcının belirli bir kitabı satın alma olasılığını tahmin etmek isteyebiliriz. Bunun için olasılık dilini kullanmamız gerekiyor.
 Birçok ders, anadal, tez, kariyer ve hatta bölüm olasılığa ayrılmıştır. Doğal olarak, bu bölümdeki amacımız konunun tamamını öğretmek değildir. Bunun yerine sizi ayaklarınızın üzerine kaldırmayı, ilk derin öğrenme modellerinizi oluşturmaya başlayabileceğiniz kadarını öğretmeyi ve dilerseniz konuyu kendi başınıza keşfetmeye başlayabilmeniz için bir tutam bilgi vermeyi umuyoruz.
 
-Daha önceki bölümlerde, tam olarak ne olduklarını açıklamadan veya somut bir örnek vermeden olasılıkları zaten çağırmıştık. Şimdi ilk vakayı ele alarak daha ciddileşelim: Fotoğraflardan kedi ve köpekleri ayırmak. Bu basit gelebilir ama aslında zorlu bir görevdir. Başlangıç ​​olarak, sorunun zorluğu görüntünün çözünürlüğüne bağlı olabilir.
+Daha önceki bölümlerde, tam olarak ne olduklarını açıklamadan veya somut bir örnek vermeden olasılıkları zaten çağırmıştık. Şimdi ilk vakayı ele alarak daha ciddileşelim: Fotoğraflardan kedi ve köpekleri ayırmak. Bu basit gelebilir ama aslında zorlu bir görevdir. Başlangıç ​​olarak, sorunun zorluğu imgenin çözünürlüğüne bağlı olabilir.
 
-![Farklı çözünürlükteki görüntüler ($10 \times 10$, $20 \times 20$, $40 \times 40$, $80 \times 80$, and $160 \times 160$ piksel).](../img/cat-dog-pixels.png)
+![Farklı çözünürlükteki imgeler ($10 \times 10$, $20 \times 20$, $40 \times 40$, $80 \times 80$, and $160 \times 160$ piksel).](../img/cat-dog-pixels.png)
 :width:`300px`
 :label:`fig_cat_dog`
 
-Gösterildiği gibi :numref:`fig_cat_dog`, insanlar için kedileri ve köpekleri $160 \times 16$ piksel çözünürlükte tanımak kolayken, $40 \times 40$ pikselde zorlayıcı ve $10 \times 10$ piksel'de imkansıza yakın hale geliyor. Başka bir deyişle, kedi ve köpekleri büyük bir mesafeden (ve dolayısıyla düşük çözünürlükten) ayırma yeteneğimiz bilgisiz (cahilce) tahminlere yaklaşabilir. Olasılık, bize kesinlik seviyemiz hakkında resmi (kurallı) bir mantık yürütme yöntemi verir.
-Görüntünün bir kediyi gösterdiğinden tamamen eminsek, karşılık gelen $y$ etiketinin "kedi" olma *olasılığının*, $P(y= $"kedi"$)$, $1$'e eşit olduğunu söyleriz.
-$y =$ "kedi" veya $y =$ "köpek" olduğunu önerecek hiçbir kanıtımız yoksa, iki olasılığın eşit derecede *muhtemelen* olduğunu $P(y=$ "kedi"$) = P(y=$ "köpek"$) = 0.5$ diye ifade ederek söyleyebiliriz. Makul derecede emin olsaydık, ancak görüntünün bir kediyi gösterdiğinden kesin emin olamasaydık, $0.5  < P(y=$ "kedi"$) < 1$ bir olasılık atayabilirdik.
+Gösterildiği gibi :numref:`fig_cat_dog`, insanlar için kedileri ve köpekleri $160 \times 16$ piksel çözünürlükte tanımak kolayken, $40 \times 40$ pikselde zorlayıcı ve $10 \times 10$ pikselde imkansıza yakın hale geliyor. Başka bir deyişle, kedi ve köpekleri büyük bir mesafeden (ve dolayısıyla düşük çözünürlükten) ayırma yeteneğimiz bilgisiz (cahilce) tahminlere yaklaşabilir. Olasılık, bize kesinlik seviyemiz hakkında resmi (kurallı) bir mantık yürütme yöntemi verir.
+İmgenin bir kediyi gösterdiğinden tamamen eminsek, karşılık gelen $y$ etiketinin "kedi" olma *olasılığının*, $P(y=$ "kedi"$)$ , $1$'e eşit olduğunu söyleriz.
+$y =$ "kedi" veya $y =$ "köpek" olduğunu önerecek hiçbir kanıtımız yoksa, iki olasılığın eşit derecede *muhtemelen* olduğunu $P(y=$ "kedi"$) = P(y=$ "köpek"$) = 0.5$ diye ifade ederek söyleyebiliriz. Makul derecede emin olsaydık, ancak imgenin bir kediyi gösterdiğinden kesin emin olamasaydık, $0.5  < P(y=$ "kedi"$) < 1$ bir olasılık atayabilirdik.
 
 Şimdi ikinci bir durumu düşünün: Bazı hava durumu izleme verilerini göz önüne alarak yarın Taipei'de yağmur yağma olasılığını tahmin etmek istiyoruz. Yaz mevsimindeyse, yağmur 0.5 olasılıkla gelebilir.
 
 Her iki durumda da, bir miktar ilgi değerimiz var. Her iki durumda da sonuç hakkında emin değiliz.
-Ancak iki durum arasında temel bir fark var. Bu ilk durumda, görüntü aslında ya bir köpektir ya da bir kedidir ve  hangisi olduğunu bilmiyoruz. İkinci durumda, eğer bu tür şeylere inanıyorsanız (ve çoğu fizikçi bunu yapıyor), sonuç aslında rastgele bir olay olabilir. Dolayısıyla olasılık, kesinlik seviyemiz hakkında akıl yürütmek için esnek bir dildir ve geniş bir bağlam kümesinde etkili bir şekilde uygulanabilir.
+Ancak iki durum arasında temel bir fark var. Bu ilk durumda, imge aslında ya bir köpektir ya da bir kedidir ve  hangisi olduğunu bilmiyoruz. İkinci durumda, eğer bu tür şeylere inanıyorsanız (ve çoğu fizikçi bunu yapıyor), sonuç aslında rastgele bir olay olabilir. Dolayısıyla olasılık, kesinlik seviyemiz hakkında akıl yürütmek için esnek bir dildir ve geniş bir bağlam kümesinde etkili bir şekilde uygulanabilir.
 
 ## Temel Olasılık Kuramı
 
 Bir zar attığımızı ve başka bir rakam yerine 1 rakamını görme şansının ne olduğunu bilmek istediğimizi düşünelim. Eğer zar adilse, altı sonucun tümü $\{1, \ldots, 6\}$ eşit derecede meydana gelir ve bu nedenle altı durumdan birinde $1$ görürüz. Resmi olarak $1$'in $\frac{1}{6}$ olasılıkla oluştuğunu belirtiyoruz.
 
-Bir fabrikadan aldığımız gerçek bir zar için bu oranları bilmeyebiliriz ve hileli olup olmadığını kontrol etmemiz gerekir. Zarı araştırmanın tek yolu, onu birçok kez atmak ve sonuçları kaydetmektir. Zarın her kullanımında, $\{1, \ldots, 6\}$'den bir değer gözlemleyeceğiz. Bu sonuçlar göz önüne alındığında, her bir sonucu gözlemleme olasılığını araştırmak istiyoruz.
+Bir fabrikadan aldığımız gerçek bir zar için bu oranları bilmeyebiliriz ve hileli olup olmadığını kontrol etmemiz gerekir. Zarı araştırmanın tek yolu, onu birçok kez atmak ve sonuçları kaydetmektir. Zarın her atımında, $\{1, \ldots, 6\}$'den bir değer gözlemleyeceğiz. Bu sonuçlar göz önüne alındığında, her bir sonucu gözlemleme olasılığını araştırmak istiyoruz.
 
 Doğal bir yaklaşım her değer için, o değerin bireysel sayımını almak ve bunu toplam atış sayısına bölmektir.
 Bu bize belirli bir *olayın* olasılığının *tahminini* verir. *Büyük sayılar yasası* bize, atışların sayısı arttıkça bu tahminin gerçek temel olasılığa gittikçe yaklaşacağını söyler. Burada neler olup bittiğinin ayrıntılarına girmeden önce bunu deneyelim.
@@ -96,7 +96,7 @@ tfp.distributions.Multinomial(10, fair_probs).sample()
 ```
 
 Artık zar atışlarını nasıl örnekleyeceğimizi bildiğimize göre, 1000 atış benzetimi yaparız. Daha sonra, 1000 atışın her birinden sonra, her bir sayının kaç kez atıldığını inceleyebilir ve sayabiliriz.
-Özellikle belitirsek, göreceli frekansı gerçek olasılığın tahmini olarak hesaplarız.
+Özellikle belirtirsek, göreceli frekansı gerçek olasılığın tahmini olarak hesaplarız.
 
 ```{.python .input}
 counts = np.random.multinomial(1000, fair_probs).astype(np.float32)
@@ -116,7 +116,7 @@ counts = tfp.distributions.Multinomial(1000, fair_probs).sample()
 counts / 1000
 ```
 
-Verileri adil bir zardan oluşturduğumuz için, her sonucun gerçek olasılığının $\frac{1}{6}$ olduğunu, yani kabaca $0,167$ olduğunu biliyoruz, bu nedenle yukarıdaki çıktı tahminleri iyi görünüyor.
+Verileri adil bir zardan oluşturduğumuz için, her sonucun gerçek olasılığının $\frac{1}{6}$ olduğunu, yani kabaca $0.167$ olduğunu biliyoruz, bu nedenle yukarıdaki çıktı tahminleri iyi görünüyor.
 
 Ayrıca bu olasılıkların zaman içinde gerçek olasılığa doğru nasıl yakınsadığını da görselleştirebiliyoruz.
 Her grubun 10 örnek çektiği 500 adet deney yapalım.
@@ -193,16 +193,16 @@ Bu aksiyom sistemi sayesinde, rastlantısallıkla ilgili herhangi bir felsefi ta
 
 ### Rastgele Değişkenler
 
-Bir zar atma rastgele deneyimizde, *rastgele değişken* kavramını tanıttık. Rastgele bir değişken hemen hemen herhangi bir miktar olabilir ve deterministik değildir. Değişken rastgele bir deneyde bir dizi olasılık arasından bir değer alabilir.
+Bir zar atma rastgele deneyimizde, *rastgele değişken* kavramını tanıttık. Rastgele bir değişken hemen hemen herhangi bir miktar olabilir ve deterministik (belirlenimci) değildir. Değişken rastgele bir deneyde bir dizi olasılık arasından bir değer alabilir.
 Değeri bir zar atmanın $\mathcal{S} = \{1, 2, 3, 4, 5, 6\}$ örnek uzayında olan $X$ rastgele değişkenini düşünün. "Bir $5$ görme" olayını $\{X = 5\}$ veya $X = 5$ ve olasılığını $P(\{X = 5\})$ veya $P(X = 5)$ diye belirtiriz.
-$P(X = a)$ ile, $X$ rastgele değişkeni ile $X$'ın alabileceği değerler (örneğin, $a$) arasında bir ayrım yaparız.
+$P(X = a)$ ile, $X$ rastgele değişkeni ile $X$'in alabileceği değerler (örneğin, $a$) arasında bir ayrım yaparız.
 Bununla birlikte, bu tür bilgiçlik, hantal bir gösterimle sonuçlanır.
-Kısa bir gösterim için, bir yandan, $P(X)$'ı, $X$ rasgele değişkeni üzerindeki *dağılım* olarak gösterebiliriz: Dağılım bize $X$'ın herhangi bir değeri alma olasılığını söyler.
+Kısa bir gösterim için, bir yandan, $P(X)$'i, $X$ rasgele değişkeni üzerindeki *dağılım* olarak gösterebiliriz: Dağılım bize $X$'in herhangi bir değeri alma olasılığını söyler.
 Öte yandan, rastgele bir değişkenin $a$ değerini alma olasılığını belirtmek için $P(a)$ yazabiliriz.
 Olasılık teorisindeki bir olay, örnek uzaydan bir küme sonuç olduğu için, rastgele bir değişkenin alması için bir dizi değer belirleyebiliriz.
-Örneğin, $P(1 \leq X \leq 3)$, $\{1 \leq X \leq 3\}$ olayının olasılığını belirtir, yani $\{X = 1, 2, \text{veya}, 3\}$ anlamına gelir. Aynı şekilde, $P(1 \leq X \leq 3)$, $X$ rasgele değişkeninin $\{1, 2, 3\}$'ten bir değer alabilme olasılığını temsil eder.
+Örneğin, $P(1 \leq X \leq 3)$, $\{1 \leq X \leq 3\}$ olayının olasılığını belirtir, yani $\{X = 1, 2, \text{veya} 3\}$ anlamına gelir. Aynı şekilde, $P(1 \leq X \leq 3)$, $X$ rasgele değişkeninin $\{1, 2, 3\}$'ten bir değer alabilme olasılığını temsil eder.
 
-Bir zarın yüzleri gibi *kesikli* rastgele değişkenler ile bir kişinin ağırlığı ve boyu gibi *sürekli* olanlar arasında ince bir fark olduğunu unutmayın. İki kişinin tam olarak aynı boyda olup olmadığını sormanın pek bir anlamı yok. Yeterince hassas ölçümler alırsak, gezegendeki hiçbir insanın aynı boyda olmadığını göreceksiniz. Aslında, yeterince ince bir ölçüm yaparsak, uyandığınızda ve uyuduğunuzda da boyunuz aynı olmayacaktır. Dolayısıyla, birinin 1,80139278291028719210196740527486202 metre boyunda olma olasılığını sormanın hiçbir amacı yoktur. Dünya insan nüfusu göz önüne alındığında, olasılık neredeyse 0'dır. Bu durumda, birinin boyunun belirli bir aralıkta, örneğin 1,79 ile 1,81 metre arasında olup olmadığını sormak daha mantıklıdır. Bu durumlarda, bir değeri *yoğunluk* olarak görme olasılığımızı ölçüyoruz. Tam olarak 1,80 metrelik boyun olasılığı yoktur, ancak yoğunluğu sıfır değildir. Herhangi iki farklı boy arasındaki aralıkta sıfır olmayan bir olasılığa sahibiz.
+Bir zarın yüzleri gibi *kesikli* rastgele değişkenler ile bir kişinin ağırlığı ve boyu gibi *sürekli* olanlar arasında ince bir fark olduğunu unutmayın. İki kişinin tam olarak aynı boyda olup olmadığını sormanın pek bir anlamı yok. Yeterince hassas ölçümler alırsak, gezegendeki hiçbir insanın aynı boyda olmadığını göreceksiniz. Aslında, yeterince ince bir ölçüm yaparsak, uyandığınızda ve uyuduğunuzda da boyunuz aynı olmayacaktır. Dolayısıyla, birinin 1.80139278291028719210196740527486202 metre boyunda olma olasılığını sormanın hiçbir amacı yoktur. Dünya insan nüfusu göz önüne alındığında, olasılık neredeyse 0'dır. Bu durumda, birinin boyunun belirli bir aralıkta, örneğin 1.79 ile 1.81 metre arasında olup olmadığını sormak daha mantıklıdır. Bu durumlarda, bir değeri *yoğunluk* olarak görme olasılığımızı ölçüyoruz. Tam olarak 1.80 metrelik boyun olasılığı yoktur, ancak yoğunluğu sıfır değildir. Herhangi iki farklı boy arasındaki aralıkta sıfır olmayan bir olasılığa sahibiz.
 Bu bölümün geri kalanında, olasılığı ayrık uzayda ele alıyoruz.
 Sürekli rastgele değişkenler üzerindeki olasılık için, şuraya başvurabilirsiniz :numref:`sec_random_variables`.
 
@@ -211,16 +211,16 @@ Sürekli rastgele değişkenler üzerindeki olasılık için, şuraya başvurabi
 Çok sık olarak, bir seferde birden fazla rastgele değişkeni dikkate almak isteyeceğiz.
 Örneğin, hastalıklar ile belirtiler arasındaki ilişkiyi modellemek isteyebiliriz. Bir hastalık ve bir belirti verildiğinde, örneğin "grip" ve "öksürük", bir olasılıkla bir hastada ortaya çıkabilirler veya çıkmayabilirler. Her ikisinin de olasılığının sıfıra yakın olacağını umarken, bu olasılıkları ve bunların birbirleriyle olan ilişkilerini tahmin etmek isteyebiliriz, böylece daha iyi tıbbi bakım sağlamak için çıkarımlarımızı uygulayabiliriz.
 
-Daha karmaşık bir örnek olarak, görüntüler milyonlarca piksel, dolayısıyla milyonlarca rastgele değişken içerir. Ve çoğu durumda resimler, resimdeki nesneleri tanımlayan bir etiketle birlikte gelir. Etiketi rastgele bir değişken olarak da düşünebiliriz. Tüm meta (üst) verileri konum, zaman, diyafram, odak uzaklığı, ISO, odak mesafesi ve kamera türü gibi, rastgele değişkenler olarak bile düşünebiliriz.
+Daha karmaşık bir örnek olarak, imgeler milyonlarca piksel, dolayısıyla milyonlarca rastgele değişken içerir. Ve çoğu durumda imgeler, imgedeki nesneleri tanımlayan bir etiketle birlikte gelir. Etiketi rastgele bir değişken olarak da düşünebiliriz. Tüm meta (üst) verileri konum, zaman, diyafram, odak uzaklığı, ISO, odak mesafesi ve kamera türü gibi, rastgele değişkenler olarak bile düşünebiliriz.
 Bunların hepsi birlikte oluşan rastgele değişkenlerdir. Birden çok rastgele değişkenle uğraştığımızda, ilgilendiğimiz birkaç miktar vardır.
 
-### Bileşik olasılık
+### Bileşik Olasılık
 
-İlki, *bileşik olasılık* $P(A=a, B=b)$ olarak adlandırılır. Herhangi $a$ ve $b$ değerleri verildiğinde, bileşik olasılık şu cevabı vermemizi sağlar: $A = a$ ve $B = b$ aynı anda olma olasılığı nedir?
+İlki, *bileşik olasılık* $P(A=a, B=b)$ olarak adlandırılır. Herhangi $a$ ve $b$ değerleri verildiğinde, bileşik olasılık şu cevabı vermemizi sağlar: $A = a$ ve $B = b$ olaylarının aynı anda olma olasılığı nedir?
 Tüm $a$ ve $b$ değerleri için, $P(A=a, B=b) \leq P (A=a)$ olduğuna dikkat edin.
 Durum böyle olmalıdır, çünkü $A=a$ ve $B=b$ olması için $A=a$ olması gerekir *ve* $B=b$ de gerçekleşmelidir (ve bunun tersi de geçerlidir). Bu nedenle, $A=a$ ve $B=b$, tek tek $A=a$ veya $B=b$ değerinden daha büyük olamaz.
 
-### Koşullu olasılık
+### Koşullu Olasılık
 
 Bu bizi ilginç bir orana getiriyor: $0 \leq \frac{P(A=a, B=b)}{P(A=a)} \leq 1$. Bu oranı bir *koşullu olasılık* olarak adlandırıyoruz ve bunu $P(B=b \mid A=a)$ ile gösteriyoruz: $A=a$ olması koşuluyla, $B=b$ olasılığıdır.
 
@@ -232,7 +232,7 @@ Yapısı gereği, $P(A, B) = P(B \mid A) P(A)$ şeklindeki *çarpma kuralına* s
 
 $$P(A \mid B) = \frac{P(B \mid A) P(A)}{P(B)}.$$
 
-Burada, $P(A, B)$'nin *bileşik dağılım* ve $P(A \mid B)$'nin *koşullu dağılım* olduğu, daha sıkı gösterimi kullandığımıza dikkat edin. Bu tür dağılımlar belirli $A = a, B=b$ değerleri için hesaplanabilir.
+Burada, $P(A, B)$'nin *bileşik dağılım* ve $P(A \mid B)$'nin *koşullu dağılım* olduğu, daha sıkıştırılmış gösterimi kullandığımıza dikkat edin. Bu tür dağılımlar belirli $A = a, B=b$ değerleri için hesaplanabilir.
 
 
 ### Marjinalleştirme
@@ -249,7 +249,7 @@ bu aynı zamanda *toplam kuralı* olarak da bilinir. Tümleştirmenin bir sonucu
 Kontrol edilmesi gereken diğer bir yararlı özellik, *bağımlılık* ve *bağımsızlık*tır.
 İki rastgele değişken olan $A$ ve $B$'nin birbirinden bağımsızlığı, $A$ olayının ortaya çıkmasının, $B$ olayının oluşumu hakkında herhangi bir bilgi vermediği anlamına gelir.
 Bu durumda $P(B \mid A) = P(B)$'dir. İstatistikçiler bunu genellikle $A \perp B$ olarak ifade ederler. Bayes teoreminden, bunu aynı zamanda $P(A \mid B) = P(A)$ olduğunu da izler.
-Diğer tüm durumlarda $A$ ve $B$'ye bağımlı diyoruz. Örneğin, bir zarın iki ardışık atışı bağımsızdır. Aksine, bir ışık anahtarının konumu ve odadaki parlaklık değildir (her zaman kırılmış bir ampulümüz, elektrik kesintisi veya kırık bir anahtarımız olabileceğinden, tam olarak gerekirci (deterministik) değildirler).
+Diğer tüm durumlarda $A$ ve $B$'ye bağımlı diyoruz. Örneğin, bir zarın iki ardışık atışı bağımsızdır. Aksine, bir ışık anahtarının konumu ve odadaki parlaklık değildir (her zaman kırılmış bir ampulümüz, elektrik kesintisi veya kırık bir anahtarımız olabileceğinden, tam olarak belirlenimci (deterministik) değildirler).
 
 $P(A \mid B) = \frac{P(A, B)}{P(B)} = P(A)$ ve $P(A, B) = P(A)P(B)$ eşit olduğundan, iki rastgele değişken ancak ve ancak bileşik dağılımları kendi bireysel dağılımlarının çarpımına eşit ise bağımsızdır.
 Benzer şekilde, iki rastgele değişken $A$ ve $B$ başka bir rasgele değişken $C$ verildiğinde, ancak ve ancak $P(A, B \mid C) = P(A \mid C)P(B \mid C)$ ise *koşullu olarak bağımsızdır*. Bu, $A \perp B \mid C$ olarak ifade edilir.
@@ -260,7 +260,7 @@ Benzer şekilde, iki rastgele değişken $A$ ve $B$ başka bir rasgele değişke
 Becerilerimizi test edelim. Bir doktorun bir hastaya HIV testi uyguladığını varsayalım. Bu test oldukça doğrudur ve yalnızca %1 olasılıkla hasta sağlıklı olduğu halde hasta olarak bildirme hatası yapar. Dahası, eğer hastada gerçekten varsa HIV'i asla tespit etmemezlik yapmaz. Teşhisi belirtmek için $D_1$ (pozitifse $1$ ve negatifse $0$) ve HIV durumunu belirtmek için $H$ (pozitifse $1$ ve negatifse $0$) kullanırız.
 :numref:`conditional_prob_D1` bu tür koşullu olasılıkları listeler.
 
-:$P(D_1 \mid H)$ koşullu olasılığı:
+:$P(D_1 \mid H)$ koşullu olasılığı
 
 | Koşullu olasılık | $H=1$ | $H=0$ |
 |---|---|---|
@@ -288,7 +288,7 @@ Gördüğümüz gibi, olasılık sezgilere ters olabilir.
 
 Böylesine korkunç bir haber alan hasta ne yapmalıdır? Muhtemelen hasta, netlik elde etmek için hekimden başka bir test yapmasını isteyecektir. İkinci testin farklı özellikleri vardır ve şu şekilde gösterildiği gibi birincisi kadar iyi değildir :numref:`conditional_prob_D2`.
 
-:$P(D_2 \mid H)$ koşullu olasılığı:
+:$P(D_2 \mid H)$ koşullu olasılığı
 
 | Koşullu olasılık | $H=1$ | $H=0$ |
 |---|---|---|
@@ -313,7 +313,7 @@ $$\begin{aligned}
 \end{aligned}
 $$
 
-Şimdi marjinalleştirme ve çarpım kuralını uygulayabiliriz
+Şimdi marjinalleştirme ve çarpım kuralını uygulayabiliriz:
 
 $$\begin{aligned}
 &P(D_1 = 1, D_2 = 1) \\
@@ -323,7 +323,7 @@ $$\begin{aligned}
 \end{aligned}
 $$
 
-En sonunda, her iki pozitif testin de verildiği hastanın HIVli olma olasılığı
+En sonunda, her iki pozitif testin de verildiği hastanın HIV'li olma olasılığı
 
 $$\begin{aligned}
 &P(H = 1 \mid D_1 = 1, D_2 = 1)\\
@@ -370,7 +370,7 @@ $$\mathrm{Var}[f(x)] = E\left[\left(f(x) - E[f(x)]\right)^2\right].$$
 1. Her grubun $n = 10$ örnek çektiği $m = 500$ deney grubu yürüttük. $m$ ve $n$ değerlerini değiştirin. Deneysel sonuçları gözlemleyin ve analiz edin.
 1. $P(\mathcal{A})$ ve $P(\mathcal{B})$ olasılığına sahip iki olay verildiğinde, $P(\mathcal{A} \cup \mathcal{B})$ ve $P(\mathcal{A} \cap \mathcal{B})$ için üst ve alt sınırları hesaplayın (İpucu: Durumu bir [Venn Şeması](https://en.wikipedia.org/wiki/Venn_diagram) kullanarak görüntüleyin.)
 1. $A$, $B$ ve $C$ gibi rastgele değişkenlerden oluşan bir dizimiz olduğunu varsayalım, burada $B$ yalnızca $A$'ya bağlıdır ve $C$ yalnızca $B$'ye bağlıdır, $P(A, B, C)$ birleşik olasılığı basitleştirebilir misiniz? (İpucu: Bu bir [Markov Zinciri](https://en.wikipedia.org/wiki/Markov_chain)'dir.)
-1. :numref:`subsec_probability_hiv_app`'da, ilk test daha doğrudur. Hem birinci hem de ikinci testleri yapmak yerine neden ilk testi iki kez yapmıyorsunuz? 
+1. :numref:`subsec_probability_hiv_app` içinde, ilk test daha doğrudur. Hem birinci hem de ikinci testleri yapmak yerine neden ilk testi iki kez yapmıyorsunuz? 
 
 
 :begin_tab:`mxnet`

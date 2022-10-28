@@ -10,7 +10,7 @@ GoogLeNet'teki temel evrişimli bloğa, viral bir mizah unsuru (meme) başlatan 
 ![Başlangıç bloğu yapısı.](../img/inception.svg)
 :label:`fig_inception`
 
-:numref:`fig_inception`'te gösterildiği gibi, başlangıç bloğu dört paralel yoldan oluşur. İlk üç yol, farklı uzamsal boyutlardan bilgi ayıklamak için $1\times 1$, $3\times 3$ ve $5\times 5$ pencere boyutlarına sahip evrişimli katmanlar kullanır. Orta iki yol, kanalların sayısını azaltmak ve modelin karmaşıklığını azaltmak için girdi üzerinde bir $1\times 1$ evrişim gerçekleştirir. Dördüncü yol, $3\times 3$ maksimum ortaklama katmanı kullanır ve onu ardından kanal sayısını değiştiren $1\times 1$ evrişimli katman izler. Dört yol, girdi ve çıktıya aynı yüksekliği ve genişliği vermek için uygun dolguyu kullanır. Son olarak, her yol boyunca çıktılar kanal boyutu boyunca bitiştirilir ve bloğun çıktısını oluşturur. Başlangıç bloğunun yaygın olarak ayarlanan hiper parametreleri, katman başına çıktı kanallarının sayısıdır.
+:numref:`fig_inception` içinde gösterildiği gibi, başlangıç bloğu dört paralel yoldan oluşur. İlk üç yol, farklı uzamsal boyutlardan bilgi ayıklamak için $1\times 1$, $3\times 3$ ve $5\times 5$ pencere boyutlarına sahip evrişimli katmanlar kullanır. Orta iki yol, kanalların sayısını azaltmak ve modelin karmaşıklığını azaltmak için girdi üzerinde bir $1\times 1$ evrişim gerçekleştirir. Dördüncü yol, $3\times 3$ maksimum ortaklama katmanı kullanır ve onu ardından kanal sayısını değiştiren $1\times 1$ evrişimli katman izler. Dört yol, girdi ve çıktıya aynı yüksekliği ve genişliği vermek için uygun dolguyu kullanır. Son olarak, her yol boyunca çıktılar kanal boyutu boyunca bitiştirilir ve bloğun çıktısını oluşturur. Başlangıç bloğunun yaygın olarak ayarlanan hiper parametreleri, katman başına çıktı kanallarının sayısıdır.
 
 ```{.python .input}
 from d2l import mxnet as d2l
@@ -123,7 +123,7 @@ Bu ağın neden bu kadar iyi çalıştığına dair sezgi kazanmak için filtrel
 
 ## [**GoogLeNet Modeli**]
 
-:numref:`fig_inception_full`'te gösterildiği gibi, GoogLeNet tahminlerini oluşturmak için toplam 9 başlangıç bloğu ve global ortalama ortaklamadan oluşan bir yığın kullanır. Başlangıç blokları arasındaki maksimum ortaklama boyutsallığı azaltır. İlk modül AlexNet ve LeNet'e benzer. Blokların yığını VGG'den devralınır ve küresel ortalama ortaklama ile sondaki tam bağlı katman yığınından kaçınır.
+:numref:`fig_inception_full` içinde gösterildiği gibi, GoogLeNet tahminlerini oluşturmak için toplam 9 başlangıç bloğu ve global ortalama ortaklamadan oluşan bir yığın kullanır. Başlangıç blokları arasındaki maksimum ortaklama boyutsallığı azaltır. İlk modül AlexNet ve LeNet'e benzer. Blokların yığını VGG'den devralınır ve küresel ortalama ortaklama ile sondaki tam bağlı katman yığınından kaçınır.
 
 ![GoogLeNet mimarisi.](../img/inception-full.svg)
 :label:`fig_inception_full`
@@ -204,7 +204,7 @@ def b3():
         tf.keras.layers.MaxPool2D(pool_size=3, strides=2, padding='same')])
 ```
 
-Dördüncü modül daha karmaşıktır. Beş başlangıç bloğunu seri olarak bağlar ve sırasıyla $192+208+48+64=512$, $160+224+64+64=512$, $128+256+64+64=512$, $112+288+64+64=528$ ve $256+320+128+128=832$ çıktı kanallarına sahiptir. Bu yollara atanan kanalların sayısı üçüncü modüldekine benzerdir: En fazla kanal sayısına sahip $3\times 3$ evrişimli tabaka ile ikinci yol, onu izleyen sadece $1\times 1$ evrişimli tabaka ile ilk yol, $5\times 5$ evrişimli tabaka ile üçüncü yol ve $3\times 3$ maksimum biriktirme katmanı ile dördüncü yol. İkinci ve üçüncü yollar orana göre önce kanal sayısını azaltacaktır. Bu oranlar farklı başlangıç bloklarında biraz farklıdır.
+Dördüncü modül daha karmaşıktır. Beş başlangıç bloğunu seri olarak bağlar ve sırasıyla $192+208+48+64=512$, $160+224+64+64=512$, $128+256+64+64=512$, $112+288+64+64=528$ ve $256+320+128+128=832$ çıktı kanalına sahiptir. Bu yollara atanan kanalların sayısı üçüncü modüldekine benzerdir: En fazla kanal sayısına sahip $3\times 3$ evrişimli tabaka ile ikinci yol, onu izleyen sadece $1\times 1$ evrişimli tabaka ile ilk yol, $5\times 5$ evrişimli tabaka ile üçüncü yol ve $3\times 3$ maksimum biriktirme katmanı ile dördüncü yol. İkinci ve üçüncü yollar orana göre önce kanal sayısını azaltacaktır. Bu oranlar farklı başlangıç bloklarında biraz farklıdır.
 
 ```{.python .input}
 b4 = nn.Sequential()
@@ -323,10 +323,10 @@ d2l.train_ch6(net, train_iter, test_iter, num_epochs, lr, d2l.try_gpu())
 ## Alıştırmalar
 
 1. GoogLeNet'in birkaç yinelemesi vardır. Uygulamayı ve çalıştırmayı deneyin. Bazıları aşağıda verilmiştir:
-    * :numref:`sec_batch_norm`'te daha sonra açıklandığı gibi bir toplu normalleştirme katmanı :cite:`Ioffe.Szegedy.2015` ekleyin.
+    * :numref:`sec_batch_norm` içinde de daha sonra açıklandığı gibi bir toplu normalleştirme katmanı :cite:`Ioffe.Szegedy.2015` ekleyin.
     * :cite:`Szegedy.Vanhoucke.Ioffe.ea.2016` Başlangıç bloğu için ayarlamalar yapın.
     * Model düzenlileştirme için etiket yumuşatma kullanın :cite:`Szegedy.Vanhoucke.Ioffe.ea.2016`.
-    * :numref:`sec_resnet`'te daha sonra açıklandığı gibi artık bağlantı :cite:`Szegedy.Ioffe.Vanhoucke.ea.2017` dahil edin.
+    * :numref:`sec_resnet` içinde de daha sonra açıklandığı gibi artık bağlantı :cite:`Szegedy.Ioffe.Vanhoucke.ea.2017` dahil edin.
 1. GoogLeNet'in çalışması için minimum imge boyutu nedir?
 1. AlexNet, VGG ve NiN model parametre boyutlarını GoogLeNet ile karşılaştırın. Son iki ağ mimarisi, model parametre boyutunu önemli ölçüde nasıl azaltır?
 

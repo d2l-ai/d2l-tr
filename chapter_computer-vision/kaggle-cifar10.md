@@ -3,11 +3,11 @@
 
 Şimdiye kadar, doğrudan tensör formatında imge veri kümelerini elde etmek için derin öğrenme çerçevelerinin üst düzey API'lerini kullanıyoruz. Ancak, özel imge veri kümeleri genellikle imge dosyaları halinde gelir. Bu bölümde, ham imge dosyalarından başlayacağız ve düzenleyeceğiz, okuyacağız, ardından bunları adım adım tensör formatına dönüştüreceğiz. 
 
-Bilgisayarla görmede önemli bir veri kümesi olan :numref:`sec_image_augmentation`'te CIFAR-10 veri kümesi ile deney yaptık. Bu bölümde, CIFAR-10 imge sınıflandırmasının Kaggle yarışmasını uygulamak için önceki bölümlerde öğrendiğimiz bilgileri uygulayacağız. (**Yarışmanın web adresi https://www.kaggle.com/c/cifar-10**) 
+Bilgisayarla görmede önemli bir veri kümesi olan :numref:`sec_image_augmentation` içinde CIFAR-10 veri kümesi ile deney yaptık. Bu bölümde, CIFAR-10 imge sınıflandırmasının Kaggle yarışmasını uygulamak için önceki bölümlerde öğrendiğimiz bilgileri uygulayacağız. (**Yarışmanın web adresi https://www.kaggle.com/c/cifar-10**) 
 
 :numref:`fig_kaggle_cifar10` yarışmanın web sayfasındaki bilgileri gösterir. Sonuçları göndermek için bir Kaggle hesabına kayıt olmanız gerekir. 
 
-![CIFAR-10 image classification competition webpage information. The competition dataset can be obtained by clicking the "Data" tab.](../img/kaggle-cifar10.png)
+![CIFAR-10 imge sınıflandırma yarışması web sayfası bilgileri. Yarışma veri kümesi "Data" ("Veri") sekmesine tıklanarak elde edilebilir.](../img/kaggle-cifar10.png)
 :width:`600px`
 :label:`fig_kaggle_cifar10`
 
@@ -40,11 +40,11 @@ import shutil
 ## Veri Kümesini Elde Etme ve Düzenleme
 
 Yarışma veri kümesi, sırasıyla 50000 ve 300000 imge içeren bir eğitim kümesi ve bir test kümesine ayrılmıştır. Test kümesinde, değerlendirme için 10000 imge kullanılacak, kalan 290000 imgeler değerlendirilmeyecek: Bunlar sadece test kümesinin *manuel* etiketli sonuçlarıyla hile yapmayı zorlaştırmak için dahil edilmiştir.
-Bu veri kümesindeki imgeler, yüksekliği ve genişliği 32 piksel olan png renkli (RGB kanalları) imge dosyalarıdır. İmgeler, uçaklar, arabalar, kuşlar, kediler, geyik, köpekler, kurbağalar, atlar, tekneler ve kamyonlar olmak üzere toplam 10 kategoriyi kapsar. :numref:`fig_kaggle_cifar10`'ün sol üst köşesi veri kümesindeki uçakların, arabaların ve kuşların bazı imgelerini gösterir. 
+Bu veri kümesindeki imgeler, yüksekliği ve genişliği 32 piksel olan png renkli (RGB kanalları) imge dosyalarıdır. İmgeler, uçaklar, arabalar, kuşlar, kediler, geyik, köpekler, kurbağalar, atlar, tekneler ve kamyonlar olmak üzere toplam 10 kategoriyi kapsar. :numref:`fig_kaggle_cifar10` şeklinin sol üst köşesi veri kümesindeki uçakların, arabaların ve kuşların bazı imgelerini gösterir. 
 
 ### Veri Kümesini İndirme
 
-Kaggle'a girdi yaptıktan sonra :numref:`fig_kaggle_cifar10`'te gösterilen CIFAR-10 resim sınıflandırma yarışması web sayfasındaki “Veri” sekmesine tıklayabilir ve “Tümünü İndir” butonuna tıklayarak veri kümesini indirebiliriz. İndirilen dosyayı `../data`'da açtıktan ve içinde `train.7z` ve `test.7z`'yı açtıktan sonra, tüm veri kümesini aşağıdaki yollarda bulacaksınız: 
+Kaggle'a girdi yaptıktan sonra :numref:`fig_kaggle_cifar10` içinde gösterilen CIFAR-10 imge sınıflandırma yarışması web sayfasındaki “Veri” ("Data") sekmesine tıklayabilir ve “Tümünü İndir” ("Download All") butonuna tıklayarak veri kümesini indirebiliriz. İndirilen dosyayı `../data`'da açtıktan ve içinde `train.7z` ve `test.7z`'yı açtıktan sonra, tüm veri kümesini aşağıdaki yollarda bulacaksınız: 
 
 * `../data/cifar-10/train/[1-50000].png`
 * `../data/cifar-10/test/[1-300000].png`
@@ -97,17 +97,16 @@ Ardından, `reorg_train_valid` işlevini [**esas eğitim kümesinden geçerleme 
 #@tab all
 #@save
 def copyfile(filename, target_dir):
-    """Copy a file into a target directory."""
+    """Bir dosyayı hedef dizine kopyalayın."""
     os.makedirs(target_dir, exist_ok=True)
     shutil.copy(filename, target_dir)
 
 #@save
 def reorg_train_valid(data_dir, labels, valid_ratio):
-    """Split the validation set out of the original training set."""
-    # The number of examples of the class that has the fewest examples in the
-    # training dataset
+    """Doğrulama kümesini orijinal eğitim kümesinden ayırın."""
+    # Eğitim veri kümesinde en az örneğe sahip sınıfın örnek sayısı
     n = collections.Counter(labels.values()).most_common()[-1][1]
-    # The number of examples per class for the validation set
+    # Geçerleme kümesi için sınıf başına örnek sayısı
     n_valid_per_label = max(1, math.floor(n * valid_ratio))
     label_count = {}
     for train_file in os.listdir(os.path.join(data_dir, 'train')):
@@ -131,7 +130,7 @@ Aşağıdaki `reorg_test` işlevi [**tahmin sırasında veri yükleme için test
 #@tab all
 #@save
 def reorg_test(data_dir):
-    """Organize the testing set for data loading during prediction."""
+    """Tahmin sırasında veri yüklemesi için test kümesini düzenleyin."""
     for test_file in os.listdir(os.path.join(data_dir, 'test')):
         copyfile(os.path.join(data_dir, 'test', test_file),
                  os.path.join(data_dir, 'train_valid_test', 'test',
@@ -163,17 +162,17 @@ Aşırı öğrenmeyi bertaraf etmek için imge artırımı kullanıyoruz. Örne�
 
 ```{.python .input}
 transform_train = gluon.data.vision.transforms.Compose([
-    # Scale the image up to a square of 40 pixels in both height and width
+    # İmgeyi hem yükseklik hem de genişlikte 40 piksellik bir kareye ölçeklendirin
     gluon.data.vision.transforms.Resize(40),
-    # Randomly crop a square image of 40 pixels in both height and width to
-    # produce a small square of 0.64 to 1 times the area of the original
-    # image, and then scale it to a square of 32 pixels in both height and
-    # width
+    # Orijinal imgenin alanının 0.64 ila 1 katı arasında küçük bir kare 
+    # oluşturmak için hem yükseklik hem de genişlikte 40 piksellik bir kare 
+    # imgeyi rastgele kırpın ve ardından hem yükseklik hem de genişlikte 
+    # 32 piksellik bir kareye ölçeklendirin
     gluon.data.vision.transforms.RandomResizedCrop(32, scale=(0.64, 1.0),
                                                    ratio=(1.0, 1.0)),
     gluon.data.vision.transforms.RandomFlipLeftRight(),
     gluon.data.vision.transforms.ToTensor(),
-    # Standardize each channel of the image
+    # İmgenin her kanalını standartlaştırın
     gluon.data.vision.transforms.Normalize([0.4914, 0.4822, 0.4465],
                                            [0.2023, 0.1994, 0.2010])])
 ```
@@ -181,17 +180,17 @@ transform_train = gluon.data.vision.transforms.Compose([
 ```{.python .input}
 #@tab pytorch
 transform_train = torchvision.transforms.Compose([
-    # Scale the image up to a square of 40 pixels in both height and width
+    # İmgeyi hem yükseklik hem de genişlikte 40 piksellik bir kareye ölçeklendirin
     torchvision.transforms.Resize(40),
-    # Randomly crop a square image of 40 pixels in both height and width to
-    # produce a small square of 0.64 to 1 times the area of the original
-    # image, and then scale it to a square of 32 pixels in both height and
-    # width
+    # Orijinal imgenin alanının 0.64 ila 1 katı arasında küçük bir kare 
+    # oluşturmak için hem yükseklik hem de genişlikte 40 piksellik bir kare 
+    # imgeyi rastgele kırpın ve ardından hem yükseklik hem de genişlikte 
+    # 32 piksellik bir kareye ölçeklendirin
     torchvision.transforms.RandomResizedCrop(32, scale=(0.64, 1.0),
                                                    ratio=(1.0, 1.0)),
     torchvision.transforms.RandomHorizontalFlip(),
     torchvision.transforms.ToTensor(),
-    # Standardize each channel of the image
+    # İmgenin her kanalını standartlaştırın
     torchvision.transforms.Normalize([0.4914, 0.4822, 0.4465],
                                      [0.2023, 0.1994, 0.2010])])
 ```
@@ -235,7 +234,7 @@ valid_ds, test_ds = [torchvision.datasets.ImageFolder(
     transform=transform_test) for folder in ['valid', 'test']]
 ```
 
-Eğitim sırasında [**yukarıda tanımlanan tüm imge artırım işlemlerini belirtmemiz**] gerekir. Geçerleme kümesi hiperparametre ayarlama sırasında model değerlendirmesi için kullanıldığında, imge artırımdan rastgelelik getirilmemelidir. Son tahminden önce, tüm etiketlenmiş verileri tam olarak kullanmak için modeli birleştirilmiş eğitim kümesi ve geçerleme kümesi üzerinde eğitiriz.
+Eğitim sırasında [**yukarıda tanımlanan tüm imge artırım işlemlerini belirtmemiz**] gerekir. Geçerleme kümesi hiper parametre ayarlama sırasında model değerlendirmesi için kullanıldığında, imge artırımdan rastgelelik getirilmemelidir. Son tahminden önce, tüm etiketlenmiş verileri tam olarak kullanmak için modeli birleştirilmiş eğitim kümesi ve geçerleme kümesi üzerinde eğitiriz.
 
 ```{.python .input}
 train_iter, train_valid_iter = [gluon.data.DataLoader(
@@ -267,7 +266,7 @@ test_iter = torch.utils.data.DataLoader(test_ds, batch_size, shuffle=False,
 ## [**Modeli**] Tanımlama
 
 :begin_tab:`mxnet`
-Burada, :numref:`sec_resnet`'te açıklanan uygulamadan biraz farklı olan `HybridBlock` sınıfına dayanan artık blokları inşa ediyoruz. Bu, hesaplama verimliliğini artırmak içindir.
+Burada, :numref:`sec_resnet` içinde açıklanan uygulamadan biraz farklı olan `HybridBlock` sınıfına dayanan artık blokları inşa ediyoruz. Bu, hesaplama verimliliğini artırmak içindir.
 :end_tab:
 
 ```{.python .input}
@@ -321,7 +320,7 @@ def resnet18(num_classes):
 ```
 
 :begin_tab:`mxnet`
-Eğitim başlamadan önce :numref:`subsec_xavier`'te açıklanan Xavier ilkletme işlemini kullanıyoruz.
+Eğitim başlamadan önce :numref:`subsec_xavier` içinde açıklanan Xavier ilkletme işlemini kullanıyoruz.
 :end_tab:
 
 :begin_tab:`pytorch`
@@ -350,7 +349,7 @@ loss = nn.CrossEntropyLoss(reduction="none")
 
 ## [**Eğitim Fonksiyonunu**] Tanımlama
 
-Modelleri seçeceğiz ve hiper parametreleri geçerleme kümesindeki modelin performansına göre ayarlayacağız. Aşağıda, model eğitim fonksiyonunu, `train`, tanımlıyoruz .
+Modelleri seçeceğiz ve hiper parametreleri geçerleme kümesindeki modelin performansına göre ayarlayacağız. Aşağıda, model eğitim fonksiyonunu, `train`, tanımlıyoruz.
 
 ```{.python .input}
 def train(net, train_iter, valid_iter, num_epochs, lr, wd, devices, lr_period,
@@ -485,7 +484,7 @@ df['label'] = df['label'].apply(lambda x: train_valid_ds.classes[x])
 df.to_csv('submission.csv', index=False)
 ```
 
-Yukarıdaki kod, biçimi Kaggle yarışmasının gereksinimini karşılayan bir `submission.csv` dosyası oluşturacaktır. Sonuçları Kaggle'a gönderme yöntemi, :numref:`sec_kaggle_house`'teki yönteme benzerdir. 
+Yukarıdaki kod, biçimi Kaggle yarışmasının gereksinimini karşılayan bir `submission.csv` dosyası oluşturacaktır. Sonuçları Kaggle'a gönderme yöntemi, :numref:`sec_kaggle_house` içindeki yönteme benzerdir. 
 
 ## Özet
 

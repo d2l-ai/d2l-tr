@@ -3,7 +3,7 @@
 
 Şimdiye kadar modellerimizi minigrup rasgele gradyan inişi ile eğittik. Bununla birlikte, algoritmayı uyguladığımızda, yalnızca model aracılığıyla *ileri yayma* ile ilgili hesaplamalar hakkında endişelendik. Gradyanları hesaplama zamanı geldiğinde, derin öğrenme çerçevesi tarafından sağlanan geri yayma fonksiyonunu çalıştırdık.
 
-Gradyanların otomatik olarak hesaplanması (otomatik türev alma), derin öğrenme algoritmalarının uygulanmasını büyük ölçüde basitleştirir. Otomatik türev almadan önce, karmaşık modellerde yapılan küçük değişiklikler bile karmaşık türevlerin elle yeniden hesaplanmasını gerektiriyordu. Şaşırtıcı bir şekilde, akademik makaleler güncelleme kurallarını türetmek için çok sayıda sayfa ayırmak zorunda kalırdı. İlginç kısımlara odaklanabilmemiz için otomotik türeve güvenmeye devam etmemiz gerekse de, sığ bir derin öğrenme anlayışının ötesine geçmek istiyorsanız, bu gradyanların kaputun altında nasıl hesaplandığını bilmelisiniz.
+Gradyanların otomatik olarak hesaplanması (otomatik türev alma), derin öğrenme algoritmalarının uygulanmasını büyük ölçüde basitleştirir. Otomatik türev almadan önce, karmaşık modellerde yapılan küçük değişiklikler bile karmaşık türevlerin elle yeniden hesaplanmasını gerektiriyordu. Şaşırtıcı bir şekilde, akademik makaleler güncelleme kurallarını türetmek için çok sayıda sayfa ayırmak zorunda kalırdı. İlginç kısımlara odaklanabilmemiz için otomatik türeve güvenmeye devam etmemiz gerekse de, sığ bir derin öğrenme anlayışının ötesine geçmek istiyorsanız, bu gradyanların kaputun altında nasıl hesaplandığını bilmelisiniz.
 
 Bu bölümde, *geriye doğru yayma*nın (daha yaygın olarak *geri yayma* olarak adlandırılır) ayrıntılarına derinlemesine dalacağız. Hem teknikler hem de uygulamaları hakkında bazı bilgiler vermek için birtakım temel matematik ve hesaplama çizgelerine güveniyoruz. Başlangıç olarak, açıklamamızı ağırlık sönümlü ($L_2$ düzenlileştirme), bir gizli katmanlı MLP'ye odaklıyoruz.
 
@@ -44,7 +44,7 @@ Aşağıdaki tartışmada $J$'ye *amaç fonksiyonu* olarak atıfta bulunacağız
 
 **Hesaplamalı çizgeleri** çizmek, hesaplamadaki operatörlerin ve değişkenlerin bağımlılıklarını görselleştirmemize yardımcı olur. :numref:`fig_forward`, yukarıda açıklanan basit ağ ile ilişkili çizgeyi içerir, öyleki kareler değişkenleri ve daireler işlemleri temsil eder. Sol alt köşe girdiyi, sağ üst köşesi çıktıyı belirtir. Okların yönlerinin (veri akışını gösteren) esasen sağa ve yukarıya doğru olduğuna dikkat edin.
 
-![İleri yaymanın hesaplamalı Çizgesi](../img/forward.svg)
+![İleri yaymanın hesaplamalı çizgesi](../img/forward.svg)
 :label:`fig_forward`
 
 
@@ -56,7 +56,7 @@ $$\frac{\partial \mathsf{Z}}{\partial \mathsf{X}} = \text{prod}\left(\frac{\part
 
 Burada, aktarma ve girdi konumlarını değiştirme gibi gerekli işlemler gerçekleştirildikten sonra argümanlarını çarpmak için $\text{prod}$ operatörünü kullanıyoruz. Vektörler için bu basittir: Bu basitçe matris-matris çarpımıdır. Daha yüksek boyutlu tensörler için uygun muadili kullanırız. $\text{prod}$ operatörü tüm gösterim ek yükünü gizler.
 
-Hesaplamalı çizgesi :numref:`fig_forward`'de gösterilen bir gizli katmana sahip basit ağın parametrelerinin $\mathbf{W}^{(1)}$ ve $\mathbf{W}^{(2)}$ olduğunu hatırlayalım. Geri yaymanın amacı, $\partial J/\partial \mathbf{W}^{(1)}$ ve $\partial J/\partial \mathbf{W}^{(2)}$ gradyanlarını hesaplamaktır. Bunu başarmak için, zincir kuralını uygularız ve sırayla her bir ara değişken ve parametrenin gradyanını hesaplarız. Hesaplamalı çizgenin sonucuyla başlamamız ve parametrelere doğru yolumuza devam etmemiz gerektiğinden, hesaplamaların sırası ileri yaymada gerçekleştirilenlere göre tersine çevrilir. İlk adım $J=L+s$ amaç fonksiyonunun gradyanlarını $L$ kayıp terimi ve $s$ düzenlileştirme terimine göre hesaplamaktır.
+Hesaplamalı çizgesi :numref:`fig_forward` içinde gösterilen bir gizli katmana sahip basit ağın parametrelerinin $\mathbf{W}^{(1)}$ ve $\mathbf{W}^{(2)}$ olduğunu hatırlayalım. Geri yaymanın amacı, $\partial J/\partial \mathbf{W}^{(1)}$ ve $\partial J/\partial \mathbf{W}^{(2)}$ gradyanlarını hesaplamaktır. Bunu başarmak için, zincir kuralını uygularız ve sırayla her bir ara değişken ve parametrenin gradyanını hesaplarız. Hesaplamalı çizgenin sonucuyla başlamamız ve parametrelere doğru yolumuza devam etmemiz gerektiğinden, hesaplamaların sırası ileri yaymada gerçekleştirilenlere göre tersine çevrilir. İlk adım $J=L+s$ amaç fonksiyonunun gradyanlarını $L$ kayıp terimi ve $s$ düzenlileştirme terimine göre hesaplamaktır.
 
 $$\frac{\partial J}{\partial L} = 1 \; \text{ve} \; \frac{\partial J}{\partial s} = 1.$$
 

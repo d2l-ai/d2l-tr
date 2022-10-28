@@ -1,11 +1,11 @@
 # RMSProp
 :label:`sec_rmsprop`
 
-:numref:`sec_adagrad`'teki en önemli konulardan biri, öğrenme oranının önceden tanımlanmış bir zamanlamayla $\mathcal{O}(t^{-\frac{1}{2}})$ etkin bir şekilde azalmasıdır. Bu genellikle dışbükey problemler için uygun olsa da, derin öğrenmede karşılaşılanlar gibi dışbükey olmayan olanlar için ideal olmayabilir. Yine de, Adagrad'ın koordinat yönlü uyarlanması ön koşul olarak son derece arzu edilir. 
+:numref:`sec_adagrad` içindeki en önemli konulardan biri, öğrenme oranının önceden tanımlanmış bir zamanlamayla $\mathcal{O}(t^{-\frac{1}{2}})$ etkin bir şekilde azalmasıdır. Bu genellikle dışbükey problemler için uygun olsa da, derin öğrenmede karşılaşılanlar gibi dışbükey olmayan olanlar için ideal olmayabilir. Yine de, Adagrad'ın koordinat yönlü uyarlanması ön koşul olarak son derece arzu edilir. 
 
-:cite:`Tieleman.Hinton.2012`, oran zamanlamasını koordinat-uyarlamalı öğrenme hızlarından ayırmak için basit bir düzeltme olarak RMSProp algoritmasını önerdi. Sorun, Adagrad'ın $\mathbf{g}_t$ gradyanının karelerini bir durum vektörü $\mathbf{s}_t = \mathbf{s}_{t-1} + \mathbf{g}_t^2$ olarak biriktirmesidir. Sonuç olarak $\mathbf{s}_t$, normalleştirme eksikliğinden dolayı sınır olmadan, esasında algoritma yakınsadıkça doğrusal olarak büyümeye devam eder.
+:cite:`Tieleman.Hinton.2012`, oran zamanlamasını koordinat-uyarlamalı öğrenme oranlarından ayırmak için basit bir düzeltme olarak RMSProp algoritmasını önerdi. Sorun, Adagrad'ın $\mathbf{g}_t$ gradyanının karelerini bir durum vektörü $\mathbf{s}_t = \mathbf{s}_{t-1} + \mathbf{g}_t^2$ olarak biriktirmesidir. Sonuç olarak $\mathbf{s}_t$, normalleştirme eksikliğinden dolayı sınır olmadan, esasında algoritma yakınsadıkça doğrusal olarak büyümeye devam eder.
 
-Bu sorunu çözmenin bir yolu $\mathbf{s}_t / t$'yi kullanmaktır. $\mathbf{g}_t$'nin makul dağılımları için bu yakınsayacaktır. Ne yazık ki, prosedür tüm değerlerin yörüngesini hatırladığından, limit davranışının önemli olmaya başlaması çok uzun zaman alabilir. Alternatif olarak, momentum yönteminde kullandığımız gibi sızan bir ortalama kullanmaktır, yani bazı $\gamma > 0$ parametresi için $\mathbf{s}_t \leftarrow \gamma \mathbf{s}_{t-1} + (1-\gamma) \mathbf{g}_t^2$. Diğer tüm parçaları değiştirmeden tutmak, RMSProp'u verir.
+Bu sorunu çözmenin bir yolu $\mathbf{s}_t / t$'yi kullanmaktır. $\mathbf{g}_t$'nin makul dağılımları için bu yakınsayacaktır. Ne yazık ki, prosedür tüm değerlerin yörüngesini hatırladığından, limit davranışının etkin olmaya başlaması çok uzun zaman alabilir. Alternatifi, momentum yönteminde kullandığımız gibi sızan bir ortalama kullanmaktır, yani bazı $\gamma > 0$ parametresi için $\mathbf{s}_t \leftarrow \gamma \mathbf{s}_{t-1} + (1-\gamma) \mathbf{g}_t^2$. Diğer tüm parçaları değiştirmeden tutmak, RMSProp'u verir.
 
 ## Algoritma
 
@@ -25,7 +25,7 @@ $$
 \end{aligned}
 $$
 
-Daha önce :numref:`sec_momentum`'te olduğu gibi $1 + \gamma + \gamma^2 + \ldots, = \frac{1}{1-\gamma}$ kullanıyoruz. Bu nedenle ağırlıkların toplamı $\gamma^{-1}$'lik bir gözlem yarılanma ömrü ile $1$'e normalleştirilir. Çeşitli $\gamma$ seçenekleri için son 40 zaman adımının ağırlıklarını görselleştirelim.
+Daha önce :numref:`sec_momentum` içinde olduğu gibi $1 + \gamma + \gamma^2 + \ldots, = \frac{1}{1-\gamma}$ kullanıyoruz. Bu nedenle ağırlıkların toplamı $\gamma^{-1}$'lik bir gözlem yarılanma ömrü ile $1$'e normalleştirilir. Çeşitli $\gamma$ seçenekleri için son 40 zaman adımının ağırlıklarını görselleştirelim.
 
 ```{.python .input}
 %matplotlib inline
@@ -62,7 +62,7 @@ d2l.plt.xlabel('time');
 
 ## Sıfırdan Uygulama
 
-Daha önce olduğu gibi, RMSProp yörüngesini gözlemlemek için $f(\mathbf{x})=0.1x_1^2+2x_2^2$ ikinci dereceden polinom işlevini kullanıyoruz. :numref:`sec_adagrad`da Adagrad'ı 0.4 öğrenme oranıyla kullandığımızda, öğrenme oranı çok hızlı düştüğü için değişkenlerin algoritmanın sonraki aşamalarında çok yavaş hareket ettiğini hatırlayın. $\eta$ ayrı ayrı kontrol edildiğinden bu RMSProp ile gerçekleşmez.
+Daha önce olduğu gibi, RMSProp yörüngesini gözlemlemek için $f(\mathbf{x})=0.1x_1^2+2x_2^2$ ikinci dereceden polinom işlevini kullanıyoruz. :numref:`sec_adagrad` içinde Adagrad'ı 0.4 öğrenme oranıyla kullandığımızda, öğrenme oranı çok hızlı düştüğü için değişkenlerin algoritmanın sonraki aşamalarında çok yavaş hareket ettiğini hatırlayın. $\eta$ ayrı ayrı kontrol edildiğinden bu RMSProp ile gerçekleşmez.
 
 ```{.python .input}
 #@tab all
@@ -164,12 +164,12 @@ d2l.train_concise_ch11(trainer, {'learning_rate': 0.01, 'rho': 0.9},
 * RMSProp, her ikisi de katsayıları ölçeklendirmek için gradyanın karesini kullandığı için Adagrad'a çok benzer.
 * RMSProp, sızıntı ortalamasını momentum ile paylaşır. Bununla birlikte, RMSProp, katsayı bazında ön koşullayıcıyı ayarlamak için bu tekniği kullanır.
 * Öğrenme oranının pratikte deney yapan tarafından planlanması gerekir.
-* $\gamma$ katsayısı, koordinat başına ölçeği ayarlarken geçmişin ne kadar süreceğini belirler.
+* $\gamma$ katsayısı, koordinat başına ölçeği ayarlarken geçmişin ne kadar geri gideceğini belirler.
 
 ## Alıştırmalar
 
 1. $\gamma = 1$'i ayarlarsak deneysel olarak ne olur? Neden?
-1. Optimizasyon problemini $f(\mathbf{x}) = 0.1 (x_1 + x_2)^2 + 2 (x_1 - x_2)^2$'yi en aza indirmek için döndürün. Yakınsamaya ne olur?
+1. Optimizasyon problemi $f(\mathbf{x}) = 0.1 (x_1 + x_2)^2 + 2 (x_1 - x_2)^2$'yi en aza indirmek için döndürün. Yakınsamaya ne olur?
 1. Fashion-MNIST eğitimi gibi gerçek bir makine öğrenmesi probleminde RMSProp'a ne olduğunu deneyin. Öğrenme oranını ayarlamak için farklı seçeneklerle denemeler yapın.
 1. Optimizasyon ilerledikçe $\gamma$'yı ayarlamak ister misiniz? RMSProp buna ne kadar duyarlıdır?
 

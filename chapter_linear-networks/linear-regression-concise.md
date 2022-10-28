@@ -1,9 +1,9 @@
 # Doğrusal Regresyonunun Kısa Uygulaması
 :label:`sec_linear_concise`
 
-Son birkaç yıldır derin öğrenmeye olan geniş ve yoğun ilgi, gradyan tabanlı öğrenme algoritmalarını uygulamanın tekrarlayan iş yükünü otomatikleştirmek için şirketler, akademisyenler ve amatör geliştiricilere çeşitli olgun açık kaynak çerçeveleri geliştirmeleri için ilham verdi. :numref:`sec_linear_scratch`'de, biz sadece (i) veri depolama ve doğrusal cebir için tensörlere; ve (ii) gradyanları hesaplamak için otomatik türev almaya güvendik. Pratikte, veri yineleyiciler, kayıp işlevleri, optimize ediciler ve sinir ağı katmanları çok yaygın olduğu için, modern kütüphaneler bu bileşenleri bizim için de uygular.
+Son birkaç yıldır derin öğrenmeye olan geniş ve yoğun ilgi, gradyan tabanlı öğrenme algoritmalarını uygulamanın tekrarlayan iş yükünü otomatikleştirmek için şirketler, akademisyenler ve amatör geliştiricilere çeşitli olgun açık kaynak çerçeveleri geliştirmeleri için ilham verdi. :numref:`sec_linear_scratch` içinde, biz sadece (i) veri depolama ve doğrusal cebir için tensörlere; ve (ii) gradyanları hesaplamak için otomatik türev almaya güvendik. Pratikte, veri yineleyiciler, kayıp işlevleri, optimize ediciler ve sinir ağı katmanları çok yaygın olduğu için, modern kütüphaneler bu bileşenleri bizim için de uygular.
 
-Bu bölümde, derin öğrenme çerçevelerinin (**üst düzey API'lerini kullanarak :numref:`sec_linear_scratch`'deki doğrusal regresyon modelini kısaca nasıl uygulayacağınızı göstereceğiz**).
+Bu bölümde, derin öğrenme çerçevelerinin (**üst düzey API'lerini kullanarak :numref:`sec_linear_scratch` içindeki doğrusal regresyon modelini kısaca nasıl uygulayacağınızı göstereceğiz**).
 
 ## Veri Kümesini Oluşturma
 
@@ -43,7 +43,7 @@ Kendi yineleyicimizi döndürmek yerine, [**verileri okumak için bir çerçeved
 
 ```{.python .input}
 def load_array(data_arrays, batch_size, is_train=True):  #@save
-    """Bir Gluon veri yineleyici olusturun."""
+    """Bir Gluon veri yineleyici oluşturun."""
     dataset = gluon.data.ArrayDataset(*data_arrays)
     return gluon.data.DataLoader(dataset, batch_size, shuffle=is_train)
 ```
@@ -51,7 +51,7 @@ def load_array(data_arrays, batch_size, is_train=True):  #@save
 ```{.python .input}
 #@tab pytorch
 def load_array(data_arrays, batch_size, is_train=True):  #@save
-    """Bir PyTorch veri yineleyici olusturun."""
+    """Bir PyTorch veri yineleyici oluşturun."""
     dataset = data.TensorDataset(*data_arrays)
     return data.DataLoader(dataset, batch_size, shuffle=is_train)
 ```
@@ -59,7 +59,7 @@ def load_array(data_arrays, batch_size, is_train=True):  #@save
 ```{.python .input}
 #@tab tensorflow
 def load_array(data_arrays, batch_size, is_train=True):  #@save
-    """Bir TensorFlow veri yineleyici olusturun."""
+    """Bir TensorFlow veri yineleyici oluşturun."""
     dataset = tf.data.Dataset.from_tensor_slices(data_arrays)
     if is_train:
         dataset = dataset.shuffle(buffer_size=1000)
@@ -73,7 +73,7 @@ batch_size = 10
 data_iter = load_array((features, labels), batch_size)
 ```
 
-Şimdi, `data_iter`i, `data_iter` işlevini :numref:`sec_linear_scratch`'de çağırdırdığımız şekilde kullanabiliriz. Çalıştığını doğrulamak için, örneklerin ilk minigrubunu okuyabilir ve yazdırabiliriz. :numref:`sec_linear_scratch`'deki ile karşılaştırıldığında, burada bir Python yineleyici oluşturmak için `iter` kullanıyoruz ve yineleyiciden ilk öğeyi elde etmek için `next`'i kullanıyoruz.
+Şimdi, `data_iter`i, `data_iter` işlevini :numref:`sec_linear_scratch` içinde çağırdığımız şekilde kullanabiliriz. Çalıştığını doğrulamak için, örneklerin ilk minigrubunu okuyabilir ve yazdırabiliriz. :numref:`sec_linear_scratch` içindeki ile karşılaştırıldığında, burada bir Python yineleyici oluşturmak için `iter` kullanıyoruz ve yineleyiciden ilk öğeyi elde etmek için `next`'i kullanıyoruz.
 
 ```{.python .input}
 #@tab all
@@ -82,11 +82,11 @@ next(iter(data_iter))
 
 ## Modeli Tanımlama
 
-Doğrusal regresyonu :numref:`sec_linear_scratch`'de sıfırdan uyguladığımızda, model parametrelerimizi açık bir şekilde tanımladık ve temel doğrusal cebir işlemlerini kullanarak çıktı üretmek için hesaplamalarımızı kodladık. Bunu nasıl yapacağınızı *bilmelisiniz*. Ancak modelleriniz daha karmaşık hale geldiğinde ve bunu neredeyse her gün yapmanız gerektiğinde, bu yardım için memnun olacaksınız. Durum, kendi blogunuzu sıfırdan kodlamaya benzer. Bunu bir veya iki kez yapmak ödüllendirici ve öğreticidir, ancak bir bloga her ihtiyaç duyduğunuzda tekerleği yeniden icat etmek için bir ay harcarsanız kötü bir web geliştiricisi olursunuz.
+Doğrusal regresyonu :numref:`sec_linear_scratch` içinde sıfırdan uyguladığımızda, model parametrelerimizi açık bir şekilde tanımladık ve temel doğrusal cebir işlemlerini kullanarak çıktı üretmek için hesaplamalarımızı kodladık. Bunu nasıl yapacağınızı *bilmelisiniz*. Ancak modelleriniz daha karmaşık hale geldiğinde ve bunu neredeyse her gün yapmanız gerektiğinde, bu yardım için memnun olacaksınız. Durum, kendi blogunuzu sıfırdan kodlamaya benzer. Bunu bir veya iki kez yapmak ödüllendirici ve öğreticidir, ancak bir bloga her ihtiyaç duyduğunuzda tekerleği yeniden icat etmek için bir ay harcarsanız kötü bir web geliştiricisi olursunuz.
 
 Standart işlemler için, uygulamaya (kodlamaya) odaklanmak yerine özellikle modeli oluşturmak için kullanılan katmanlara odaklanmamızı sağlayan [**bir çerçevenin önceden tanımlanmış katmanlarını**] kullanabiliriz. Önce, `Sequential` (ardışık, sıralı) sınıfının bir örneğini ifade edecek `net` (ağ) model değişkenini tanımlayacağız. `Sequential` sınıfı, birbirine zincirlenecek birkaç katman için bir kapsayıcı (container) tanımlar. Girdi verileri verildiğinde, `Sequential` bir örnek, bunu birinci katmandan geçirir, ardından onun çıktısını ikinci katmanın girdisi olarak geçirir ve böyle devam eder. Aşağıdaki örnekte, modelimiz yalnızca bir katmandan oluşuyor, bu nedenle gerçekten `Sequential` örneğe ihtiyacımız yok. Ancak, gelecekteki modellerimizin neredeyse tamamı birden fazla katman içereceği için, sizi en standart iş akışına alıştırmak için yine de kullanacağız.
 
-Tek katmanlı bir ağın mimarisini şurada gösterildiği gibi hatırlayın :numref:`fig_single_neuron`. Katmanın *tamamen bağlı* olduğu söylenir, çünkü girdilerinin her biri, bir matris-vektör çarpımı yoluyla çıktılarının her birine bağlanır.
+Tek katmanlı bir ağın mimarisini şurada gösterildiği gibi hatırlayın: :numref:`fig_single_neuron`. Katmanın *tamamen bağlı* olduğu söylenir, çünkü girdilerinin her biri, bir matris-vektör çarpımı yoluyla çıktılarının her birine bağlanır.
 
 :begin_tab:`mxnet`
 Gluon'da tamamen bağlı katman `Dense` (Yoğun) sınıfında tanımlanır. Sadece tek bir skaler çıktı üretmek istediğimiz için, bu sayıyı 1 olarak ayarladık.
@@ -105,7 +105,7 @@ Kolaylık sağlamak için Gluon'un her katman için girdi şeklini belirlememizi
 :end_tab:
 
 ```{.python .input}
-# `nn` is an abbreviation for neural networks
+# `nn` sinir ağları için kısaltmadır
 from mxnet.gluon import nn
 net = nn.Sequential()
 net.add(nn.Dense(1))
@@ -113,14 +113,14 @@ net.add(nn.Dense(1))
 
 ```{.python .input}
 #@tab pytorch
-# `nn` is an abbreviation for neural networks
+# `nn` sinir ağları için kısaltmadır
 from torch import nn
 net = nn.Sequential(nn.Linear(2, 1))
 ```
 
 ```{.python .input}
 #@tab tensorflow
-# `keras` is the high-level API for TensorFlow
+# `keras` TensorFlow'un üst-seviye API'sidir
 net = tf.keras.Sequential()
 net.add(tf.keras.layers.Dense(1))
 ```
@@ -178,11 +178,11 @@ Gluon'da `loss` modülü çeşitli kayıp fonksiyonlarını tanımlar. Bu örnek
 :end_tab:
 
 :begin_tab:`pytorch`
-[**`MSELoss` sınıfı, ortalama hata karesini hesaplar (:eqref:`eq_mse`'deki $1/2$ çarpanı olmadan)**]. Varsayılan olarak, örneklerdeki ortalama kaybı döndürür.
+[**`MSELoss` sınıfı, ortalama hata karesini hesaplar (:eqref:`eq_mse` içindeki $1/2$ çarpanı olmadan)**]. Varsayılan olarak, örneklerdeki ortalama kaybı döndürür.
 :end_tab:
 
 :begin_tab:`tensorflow`
-[**`MeanSquaredError` sınıfı, ortalama hata karesini hesaplar (:eqref:`eq_mse`'deki $1/2$ çarpanı olmadan)**]. Varsayılan olarak, örneklerdeki ortalama kaybı döndürür.
+[**`MeanSquaredError` sınıfı, ortalama hata karesini hesaplar (:eqref:`eq_mse` içindeki $1/2$ çarpanı olmadan)**]. Varsayılan olarak, örneklerdeki ortalama kaybı döndürür.
 :end_tab:
 
 ```{.python .input}
@@ -233,7 +233,7 @@ trainer = tf.keras.optimizers.SGD(learning_rate=0.03)
 
 Modelimizi derin öğrenme çerçevesinin yüksek seviyeli API'leri aracılığıyla ifade etmenin nispeten birkaç satır kod gerektirdiğini fark etmiş olabilirsiniz. Parametreleri ayrı ayrı tahsis etmemiz, kayıp fonksiyonumuzu tanımlamamız veya minigrup rasgele gradyan inişini uygulamamız gerekmedi. Çok daha karmaşık modellerle çalışmaya başladığımızda, üst düzey API'lerin avantajları önemli ölçüde artacaktır. Bununla birlikte, tüm temel parçaları bir kez yerine getirdiğimizde, [**eğitim döngüsünün kendisi, her şeyi sıfırdan uygularken yaptığımıza çarpıcı bir şekilde benzer**].
 
-Hafızanızı yenilemek için: Bazı dönemler (epoch) için, veri kümesinin (`train_data`) üzerinden eksiksiz bir geçiş yapacağız ve yinelemeli olarak bir minigrup girdiyi ve ilgili kesin-doğru etiketleri alacağız. Her minigrup için aşağıdaki ritüeli uyguluyoruz:
+Hafızanızı yenilemek için: Bazı dönemler (epoch) için, veri kümesinin (`train_data`) üzerinden eksiksiz bir geçiş yapacağız ve yinelemeli olarak bir minigrup girdiyi ve ilgili referans gerçek değer etiketleri alacağız. Her minigrup için aşağıdaki ritüeli uyguluyoruz:
 
 * `net(X)`'i çağırarak tahminler oluşturun ve `l` kaybını (ileriye doğru yayma) hesaplayın.
 * Geri yaymayı çalıştırarak gradyanları hesaplayın.
@@ -279,7 +279,7 @@ for epoch in range(num_epochs):
     print(f'donem {epoch + 1}, kayip {l:f}')
 ```
 
-Aşağıda, [**sonlu veri üzerinde eğitimle öğrenilen model parametrelerini ve veri setimizi oluşturan gerçek parametreleri karşılaştırıyoruz**]. Parametrelere erişmek için önce ihtiyacımız olan katmana `net`'ten erişiyoruz ve sonra bu katmanın ağırlıklarına ve ek girdilerine erişiyoruz. Sıfırdan uygulamamızda olduğu gibi, tahmin edilen parametrelerimizin kesin-doğru referanslara yakın olduğuna dikkat edin.
+Aşağıda, [**sonlu veri üzerinde eğitimle öğrenilen model parametrelerini ve veri kümemizi oluşturan gerçek parametreleri karşılaştırıyoruz**]. Parametrelere erişmek için önce ihtiyacımız olan katmana `net`'ten erişiyoruz ve sonra bu katmanın ağırlıklarına ve ek girdilerine erişiyoruz. Sıfırdan uygulamamızda olduğu gibi, tahmin edilen parametrelerimizin gerçek referans değerlere yakın olduğuna dikkat edin.
 
 ```{.python .input}
 w = net[0].weight.data()
@@ -337,7 +337,7 @@ print('b tahmin hatasi', true_b - b)
 :end_tab:
 
 :begin_tab:`pytorch`
-1. Eğer `nn.MSELoss(reduction='sum')`ı `nn.MSELoss()` ile değiştirirsek, kodun aynı şekilde davranması için öğrenme oranını nasıl değiştirebiliriz? Neden?
+1. Eğer `nn.MSELoss()`ı `nn.MSELoss(reduction='sum')` ile değiştirirsek, kodun aynı şekilde davranması için öğrenme oranını nasıl değiştirebiliriz? Neden?
 1. Hangi kayıp işlevlerinin ve ilkleme yöntemlerinin sağlandığını görmek için PyTorch belgelerini inceleyin. Kaybı Huber kaybıyla yer değiştirin.
 1. `net[0].weight`'in gradyanına nasıl erişirsiniz?
 

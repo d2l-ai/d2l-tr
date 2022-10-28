@@ -1,11 +1,11 @@
 # Maksimum (Azami) Olabilirlik
 :label:`sec_maximum_likelihood`
 
-Makine öğrenmesinde en sık karşılaşılan düşünce yöntemlerinden biri, maksimum olabilirlik bakış açısıdır. Bu, bilinmeyen parametrelere sahip bir olasılık modeli ile çalışırken, verileri en yüksek olasılığa sahip yapan parametrelerin en olası olanlarıyla çalışma kavramıdır.
+Makine öğrenmesinde en sık karşılaşılan düşünce yöntemlerinden biri, maksimum olabilirlik bakış açısıdır. Bu, bilinmeyen parametrelere sahip olasılıklı bir modelle çalışırken, verileri en yüksek olasılığa sahip kılan parametrelerin en olası parametreler olduğu kavramıdır.
 
 ## Maksimum Olabilirlik İlkesi
 
-Bunun üzerinde düşünmeye yardımcı olabilecek Bayesçi bir yorumu vardır. $\boldsymbol{\theta}$ parametrelerine ve $X$ veri noktalarına sahip bir modelimiz olduğunu varsayalım. Somutluk açısından, $\boldsymbol{\theta}$'nın, bir bozuk paranın ters çevrildiğinde tura gelme olasılığını temsil eden tek bir değer ve $X$'in bağımsız bir bozuk para çevirme dizisi olduğunu hayal edebiliriz. Bu örneğe daha sonra derinlemesine bakacağız.
+Bunun, üzerinde düşünmeye yardımcı olabilecek Bayesçi bir yorumu vardır. $\boldsymbol{\theta}$ parametrelerine ve $X$ veri örneklerine sahip bir modelimiz olduğunu varsayalım. Somutluk açısından, $\boldsymbol{\theta}$'nın, bir bozuk paranın ters çevrildiğinde tura gelme olasılığını temsil eden tek bir değer ve $X$'in bağımsız bir bozuk para çevirme dizisi olduğunu hayal edebiliriz. Bu örneğe daha sonra derinlemesine bakacağız.
 
 Modelimizin parametreleri için en olası değeri bulmak istiyorsak, bu, bunu bulmak istediğimiz anlamına gelir:
 
@@ -68,7 +68,19 @@ p = theta**9 * (1 - theta)**4.
 d2l.plot(theta, p, 'theta', 'likelihood')
 ```
 
-Bunun maksimum değeri, beklentisi $9/13 \approx 0.7\ldots$'a yakın bir yerde. Bunun tam olarak orada olup olmadığını görmek için kalkülüse dönebiliriz. Maksimumda fonksiyonun düz olduğuna dikkat edin. Böylece, türevin sıfır olduğu yerde $\theta$ değerlerini bularak ve en yüksek olasılığı veren yerde maksimum olabilirlik tahminini :eqref:`eq_max_like` bulabiliriz. Hesaplayalım:
+```{.python .input}
+#@tab tensorflow
+%matplotlib inline
+from d2l import tensorflow as d2l
+import tensorflow as tf
+
+theta = tf.range(0, 1, 0.001)
+p = theta**9 * (1 - theta)**4.
+
+d2l.plot(theta, p, 'theta', 'likelihood')
+```
+
+Bunun maksimum değeri, beklentisi $9/13 \approx 0.7\ldots$'a yakın bir yerde. Bunun tam olarak orada olup olmadığını görmek için kalkülüse dönebiliriz. Maksimumda fonksiyonun gradyanının düz olduğuna dikkat edin. Böylece, türevin sıfır olduğu yerde $\theta$ değerlerini bularak ve en yüksek olasılığı veren yerde maksimum olabilirlik tahminini :eqref:`eq_max_like` bulabiliriz. Hesaplayalım:
 
 $$
 \begin{aligned}
@@ -83,9 +95,9 @@ Bunun üç çözümü vardır: $0$, $1$ ve $9/13$. İlk ikisi açıkça minimumd
 
 ## Sayısal Optimizasyon (Eniyileme) ve Negatif Logaritmik-Olabilirliği
 
-Önceki örnek güzel, ama ya milyarlarca parametremiz ve veri noktamız varsa.
+Önceki örnek güzel, ama ya milyarlarca parametremiz ve veri örneğimiz varsa?
 
-İlk olarak, tüm veri noktalarının bağımsız olduğunu varsayarsak, pratik olarak olabilirliliğin kendisini artık pek çok olasılığın bir çarpımı olarak değerlendiremeyeceğimize dikkat edin. Aslında, her olasılık $[0,1]$ arasındadır, diyelim ki tipik olarak yaklaşık $1/2$ değerindedir ve $(1/2)^{1000000000}$ çarpımı makine hassasiyetinin çok altındadır. Bununla doğrudan çalışamayız.
+İlk olarak, tüm veri örneklerinin bağımsız olduğunu varsayarsak, pratik olarak olabilirliliğin kendisini artık pek çok olasılığın bir çarpımı olarak değerlendiremeyeceğimize dikkat edin. Aslında, her olasılık $[0,1]$ arasındadır, diyelim ki tipik olarak yaklaşık $1/2$ değerindedir ve $(1/2)^{1000000000}$ çarpımı makine hassasiyetinin çok altındadır. Bununla doğrudan çalışamayız.
 
 Ancak, logaritmanın çarpımları toplamlara dönüştürdüğünü hatırlayın, bu durumda
 
@@ -93,15 +105,15 @@ $$
 \log((1/2)^{1000000000}) = 1000000000\cdot\log(1/2) \approx -301029995.6\ldots
 $$
 
-Bu sayı, $32$-bit'lik yüzer sayı tek duyarlılığına bile mükemmel şekilde uyuyor. Bu nedenle, *log-olabilirliği* göz önünde bulundurmalıyız.
+Bu sayı, $32$-bitlik kayan virgüllü sayı tek duyarlılığına bile mükemmel şekilde uyuyor. Bu nedenle, *log-olabilirliği* göz önünde bulundurmalıyız.
 
 $$
 \log(P(X \mid \boldsymbol{\theta})).
 $$
 
-$x \mapsto \log(x)$ işlevi arttığından, olabilirliliği en üst düzeye çıkarmak, log-olabilirliliği en üst düzeye çıkarmakla aynı şeydir. Nitekim :numref:`sec_naive_bayes`'de, naif Bayes sınıflandırıcısının belirli bir örneğiyle çalışırken bu mantığın uygulandığını göreceğiz.
+$x \mapsto \log(x)$ işlevi arttığından, olabilirliliği en üst düzeye çıkarmak, log-olabilirliliği en üst düzeye çıkarmakla aynı şeydir. Nitekim :numref:`sec_naive_bayes` içinde, naif Bayes sınıflandırıcısının belirli bir örneğiyle çalışırken bu mantığın uygulandığını göreceğiz.
 
-Genellikle kaybı en aza indirmek istediğimiz kayıp işlevleriyle çalışırız. *Negatif log-olabilirlik* olan $-\log(P(X \mid \boldsymbol{\theta}))$'ı alarak maksimum olabilirliliği bir kaybın en aza indirilmesine çevirebiliriz.
+Genellikle kaybı en aza indirmek istediğimiz kayıp işlevleriyle çalışırız. *Negatif logaritmik-olabilirlik* olan $-\log(P(X \mid \boldsymbol{\theta}))$'ı alarak maksimum olabilirliliği bir kaybın en aza indirilmesine çevirebiliriz.
 
 Bunu örnekle görselleştirmek için, yazı tura atma problemini önceden düşünün ve kapalı form çözümünü bilmiyormuşuz gibi davranın. Bunu hesaplayabiliriz
 
@@ -112,15 +124,15 @@ $$
 Bu, koda yazılabilir ve milyarlarca bozuk para atmak için bile serbestçe optimize edilebilir.
 
 ```{.python .input}
-# Set up our data
+# Verilerimizi ayarlayın
 n_H = 8675309
 n_T = 25624
 
-# Initialize our paramteres
+# Parametrelerimizi ilkle
 theta = np.array(0.5)
 theta.attach_grad()
 
-# Perform gradient descent
+# Gradyan inişi gerçekleştir
 lr = 0.00000000001
 for iter in range(10):
     with autograd.record():
@@ -128,20 +140,20 @@ for iter in range(10):
     loss.backward()
     theta -= lr * theta.grad
 
-# Check output
+# Çıktıyı kontrol et
 theta, n_H / (n_H + n_T)
 ```
 
 ```{.python .input}
 #@tab pytorch
-# Set up our data
+# Verilerimizi ayarlayın
 n_H = 8675309
 n_T = 25624
 
-# Initialize our paramteres
+# Parametrelerimizi ilkle
 theta = torch.tensor(0.5, requires_grad=True)
 
-# Perform gradient descent
+# Gradyan inişi gerçekleştir
 lr = 0.00000000001
 for iter in range(10):
     loss = -(n_H * torch.log(theta) + n_T * torch.log(1 - theta))
@@ -150,13 +162,33 @@ for iter in range(10):
         theta -= lr * theta.grad
     theta.grad.zero_()
 
-# Check output
+# Çıktıyı kontrol et
 theta, n_H / (n_H + n_T)
 ```
 
-Sayısal (Numerik) elverişlilik, insanların negatif log-likelihood kullanmaktan hoşlanmalarının tek nedenidir. Aslında tercih edilebilmesinin birkaç nedeni vardır.
+```{.python .input}
+#@tab tensorflow
+# Verilerimizi ayarlayın
+n_H = 8675309
+n_T = 25624
 
-Log-olabilirliliğini düşünmemizin ikinci nedeni, kalkülüs kurallarının basitleştirilmiş uygulamasıdır. Yukarıda tartışıldığı gibi, bağımsızlık varsayımları nedeniyle, makine öğrenmesinde karşılaştığımız çoğu olasılık, bireysel olasılıkların çarpımıdır.
+# Parametrelerimizi ilkle
+theta = tf.Variable(tf.constant(0.5))
+
+# Gradyan inişi gerçekleştir
+lr = 0.00000000001
+for iter in range(10):
+    with tf.GradientTape() as t:
+        loss = -(n_H * tf.math.log(theta) + n_T * tf.math.log(1 - theta))
+    theta.assign_sub(lr * t.gradient(loss, theta))
+
+# Çıktıyı kontrol et
+theta, n_H / (n_H + n_T)
+```
+
+İnsanların negatif logaritma olasılıklarını kullanmayı sevmesinin tek nedeni sayısal kolaylık değildir. Tercih edilmesinin birkaç nedeni daha var.
+
+Logaritmik-olabilirliliğini düşünmemizin ikinci nedeni, kalkülüs kurallarının basitleştirilmiş uygulamasıdır. Yukarıda tartışıldığı gibi, bağımsızlık varsayımları nedeniyle, makine öğrenmesinde karşılaştığımız çoğu olasılık, bireysel olasılıkların çarpımıdır.
 
 $$
 P(X\mid\boldsymbol{\theta}) = p(x_1\mid\boldsymbol{\theta})\cdot p(x_2\mid\boldsymbol{\theta})\cdots p(x_n\mid\boldsymbol{\theta}).
@@ -173,7 +205,7 @@ $$
 \end{aligned}
 $$
 
-Bu, $(n-1)$ toplama ile birlikte $n(n-1)$ çarpımı gerektirir, bu nedenle toplam işlem zamanı girdilerin ikinci dereceden polinomudur! Yeterli akıllılık terimleri gruplayarak bunu doğrusal zamana indirgeyecektir, ancak biraz düşünmeyi gerektirir. Negatif log-olabilirlikte ise, bunun yerine
+Bu, $(n-1)$ toplama ile birlikte $n(n-1)$ çarpımı gerektirir, bu nedenle işlem zamanı girdilerin ikinci dereceden polinomuyla orantılıdır! Yeterli akıllılık terimleri gruplayarak bunu doğrusal zamana indirgeyecektir, ancak biraz düşünmeyi gerektirir. Negatif logaritmik-olabilirlikte ise, bunun yerine
 
 $$
 -\log\left(P(X\mid\boldsymbol{\theta})\right) = -\log(P(x_1\mid\boldsymbol{\theta})) - \log(P(x_2\mid\boldsymbol{\theta})) \cdots - \log(P(x_n\mid\boldsymbol{\theta})),
@@ -187,13 +219,13 @@ $$
 
 Bu sadece $n$ bölme ve $n-1$ toplam gerektirir ve dolayısıyla girdilerle doğrusal zamanlıdır.
 
-Negatif log-olabilirliği göz önünde bulundurmanın üçüncü ve son nedeni, bilgi teorisi ile olan ilişkidir ve bunu ayrıntılı olarak tartışacağız :numref:`sec_information_theory`. Bu, rastgele bir değişkendeki bilginin veya rasgeleliğin derecesini ölçmek için bir yol sağlayan titiz bir matematiksel teoridir. Bu alanda çalışmanın temel konusu entropidir.
+Negatif logaritmik-olabilirliği göz önünde bulundurmanın üçüncü ve son nedeni, bilgi teorisi ile olan ilişkidir ve bunu :numref:`sec_information_theory` içinde ayrıntılı olarak tartışacağız. Bu, rastgele bir değişkendeki bilginin veya rasgeleliğin derecesini ölçmek için bir yol sağlayan titiz bir matematiksel teoridir. Bu alanda çalışmanın temel konusu entropidir.
 
 $$
 H(p) = -\sum_{i} p_i \log_2(p_i),
 $$
 
-Bir kaynağın rasgeleliğini ölçer. Bunun ortalama $-\log$ olasılığından başka bir şey olmadığına dikkat edin ve bu nedenle, negatif log-olabilirliğimizi alıp veri noktalarının sayısına bölersek, çapraz-entropi (cross-entropy) olarak bilinen göreceli bir entropi elde ederiz. Tek başına bu teorik yorum, model performansını ölçmenin bir yolu olarak, veri kümesi üzerinden ortalama negatif log-olabilirliliği rapor etmeyi motive etmek için yeterince zorlayıcı olacaktır.
+Bir kaynağın rasgeleliğini ölçer. Bunun ortalama $-\log$ olasılığından başka bir şey olmadığına dikkat edin ve bu nedenle, negatif logaritmik-olabilirliğimizi alıp veri örneklerinin sayısına bölersek, çapraz-entropi (cross-entropy) olarak bilinen göreceli bir entropi elde ederiz. Tek başına bu teorik yorum, model performansını ölçmenin bir yolu olarak, veri kümesi üzerinden ortalama negatif logaritmik-olabilirliliği rapor etmeyi motive etmek için yeterince zorlayıcı olacaktır.
 
 ## Sürekli Değişkenler için Maksimum Olabilirlik
 
@@ -205,7 +237,7 @@ $$
 -\log\left(p(X\mid\boldsymbol{\theta})\right) = -\log(p(x_1\mid\boldsymbol{\theta})) - \log(p(x_2\mid\boldsymbol{\theta})) \cdots - \log(p(x_n\mid\boldsymbol{\theta})) = -\sum_i \log(p(x_i \mid \theta)).
 $$
 
-Soru, "Bu neden geçerli?" haline gelir. Sonuçta, yoğunlukları tanıtmamızın nedeni, belirli sonuçların kendilerinin elde edilme olasılıklarının sıfır olmasıydı ve dolayısıyla herhangi bir parametre kümesi için verilerimizi üretme olasılığımızın sıfır olmaz mı?.
+Soru, "Bu neden geçerli?" haline gelir. Sonuçta, yoğunlukları tanıtmamızın nedeni, belirli sonuçların kendilerinin elde edilme olasılıklarının sıfır olmasıydı ve dolayısıyla herhangi bir parametre kümesi için verilerimizi üretme olasılığımızın sıfır olmaz mı?
 
 Aslında soru budur ve neden yoğunluklara geçebileceğimizi anlamak, epsilonlara ne olduğunu izlemeye yönelik bir alıştırmadır.
 
@@ -227,7 +259,7 @@ $$
 \end{aligned}
 $$
 
-Bu ifadeyi incelersek, $\epsilon$'un olduğu tek yer $-N\log (\epsilon)$ toplamsal sabitidir. Bu,$\boldsymbol{\theta}$ parametrelerine hiç bağlı değildir, dolayısıyla en uygun $\boldsymbol{\theta}$ seçimi, $\epsilon$ seçimimize bağlı değildir! Dört veya dört yüz basamaklı da talep edersek, en iyi $\boldsymbol{\theta}$ seçimi aynı kalır, böylece epsilon'u serbestçe dışarıda bırakıp optimize etmek istediğimiz şey bu olur:
+Bu ifadeyi incelersek, $\epsilon$'un olduğu tek yer $-N\log (\epsilon)$ toplamsal sabitidir. Bu, $\boldsymbol{\theta}$ parametrelerine hiç bağlı değildir, dolayısıyla en uygun $\boldsymbol{\theta}$ seçimi, $\epsilon$ seçimimize bağlı değildir! Dört veya dört yüz basamaklı da talep edersek, en iyi $\boldsymbol{\theta}$ seçimi aynı kalır, böylece epsilon'u serbestçe dışarıda bırakıp optimize etmek istediğimiz şey bu olur:
 
 $$
 - \sum_{i} \log(p(x_i\mid\boldsymbol{\theta})).
@@ -237,14 +269,22 @@ Böylelikle, olasılıkları olasılık yoğunlukları ile değiştirerek, maksi
 
 ## Özet
 * Maksimum olabilirlik ilkesi bize, belirli bir veri kümesi için en uygun modelin en yüksek olasılıkla verileri üreten model olduğunu söyler.
-* Genellikle insanlar çeşitli nedenlerde dolayı negatif log-olabilirlik ile çalışırlar: Sayısal kararlılık, çarpımların toplamlara dönüştürülmesi (ve bunun sonucunda gradyan hesaplamalarının basitleştirilmesi) ve bilgi teorisine yönelik teorik bağlar.
+* Genellikle insanlar çeşitli nedenlerde dolayı negatif logaritmik-olabilirlik ile çalışırlar: Sayısal kararlılık, çarpımların toplamlara dönüştürülmesi (ve bunun sonucunda gradyan hesaplamalarının basitleştirilmesi) ve bilgi teorisine yönelik teorik bağlar.
 * Ayrık ortamda motive etmek en basiti olsa da, veri noktalarına atanan olasılık yoğunluğunu en üst düzeye çıkararak sürekli ortamda da serbestçe genelleştirilebilir.
 
 ## Alıştırmalar
-1. Rastgele bir değişkenin bir $\alpha$ değeri için $\frac{1}{\alpha}e^{-\alpha x}$ yoğunluğuna sahip olduğunu bildiğinizi varsayalım. Rastgele değişkenden $3$ sayısı olan tek bir gözlem elde ediyorsunuz. $\alpha$ için maksimum olabilirlik tahmini nedir?
+1. Rastgele bir değişkenin bir $\alpha$ değeri için $\frac{1}{\alpha}e^{-\alpha x}$ yoğunluğuna sahip olduğunu bildiğinizi varsayalım. Rastgele değişkenden $3$ sayısını tek gözlem olarak elde ediyorsunuz. $\alpha$ için maksimum olabilirlik tahmini nedir?
 2. Ortalama değeri bilinmeyen ancak varyansı $1$ olan bir Gauss'tan alınmış $\{x_i\}_{i=1}^N$ örnekten oluşan bir veri kümeniz olduğunu varsayalım. Ortalama için maksimum olabilirlik tahmini nedir?
 
 
 :begin_tab:`mxnet`
 [Tartışmalar](https://discuss.d2l.ai/t/416)
+:end_tab:
+
+:begin_tab:`pytorch`
+[Tartışmalar](https://discuss.d2l.ai/t/1096)
+:end_tab:
+
+:begin_tab:`tensorflow`
+[Tartışmalar](https://discuss.d2l.ai/t/1097)
 :end_tab:

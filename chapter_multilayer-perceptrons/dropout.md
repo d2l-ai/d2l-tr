@@ -7,20 +7,20 @@
 
 Örneklerden daha fazla öznitelikle karşı karşıya kalan doğrusal modeller, aşırı öğrenme eğilimindedir. Ancak özniteliklerden daha fazla örnek verildiğinde, genellikle doğrusal modellere aşırı öğrenmeme için güvenebiliriz. Ne yazık ki, doğrusal modellerin genelleştirildiği güvenilirliğin bir bedeli vardır. Naif olarak uygulanan doğrusal modeller, öznitelikler arasındaki etkileşimleri hesaba katmaz. Doğrusal bir model, her öznitelik için bağlamı yok sayarak pozitif veya negatif bir ağırlık atamalıdır.
 
-Geleneksel metinlerde, genelleştirilebilirlik ve esneklik arasındaki bu temel gerilim, *yanlılık-değişinti değiş-tokuşu (bias-variance tradeoff)* olarak tanımlanır. Doğrusal modeller yüksek yanlılığa sahiptir: Yalnızca küçük bir işlev sınıfını temsil edebilirler. Ancak bu modeller düşük varyansa sahiptirler: Verilerin farklı rastgele örneklemlerinde benzer sonuçlar verirler.
+Geleneksel metinlerde, genelleştirilebilirlik ve esneklik arasındaki bu temel gerilim, *yanlılık-değişinti ödünleşmesi (bias-variance tradeoff)* olarak tanımlanır. Doğrusal modeller yüksek yanlılığa sahiptir: Yalnızca küçük bir işlev sınıfını temsil edebilirler. Ancak bu modeller düşük varyansa sahiptirler: Verilerin farklı rastgele örneklemlerinde benzer sonuçlar verirler.
 
 Derin sinir ağları, yanlılık-değişinti spektrumunun diğer ucunda bulunur. Doğrusal modellerin aksine, sinir ağları her özelliğe ayrı ayrı bakmakla sınırlı kalmazlar. Öznitelik grupları arasındaki etkileşimleri öğrenebilirler. Örneğin, bir e-postada birlikte görünen "Nijerya" ve "Western Union"nin yaramaz postayı (spam) gösterdiğini ancak ayrı ayrıyken göstermediklerini çıkarabilirler.
 
-Özniteliklerden çok daha fazla örneğimiz olsa bile, derin sinir ağları gereğinden aşırı öğrenebilirler. 2017'de bir grup araştırmacı, rastgele etiketlenmiş görüntüler üzerinde derin ağları eğiterek sinir ağlarının aşırı esnekliğini gösterdi. Girdileri çıktılara bağlayan herhangi bir gerçek model olmamasına rağmen, rasgele gradyan inişi tarafından optimize edilen sinir ağının eğitim kümesindeki her görüntüyü mükemmel şekilde etiketleyebileceğini buldular.
+Özniteliklerden çok daha fazla örneğimiz olsa bile, derin sinir ağları gereğinden aşırı öğrenebilirler. 2017'de bir grup araştırmacı, rastgele etiketlenmiş imgeler üzerinde derin ağları eğiterek sinir ağlarının aşırı esnekliğini gösterdi. Girdileri çıktılara bağlayan herhangi bir gerçek model olmamasına rağmen, rasgele gradyan inişi tarafından optimize edilen sinir ağının eğitim kümesindeki her imgeyi mükemmel şekilde etiketleyebileceğini buldular.
 Bunun ne anlama geldiğini bir düşünün. Etiketler rastgele atanırsa ve 10 sınıf varsa, hiçbir sınıflandırıcı harici tutulan verilerinde %10'den daha iyi doğruluk sağlayamaz. Buradaki genelleme açığı %90 gibi büyük bir oran. Modellerimiz bu seviye aşırı öğrenebilecek kadar ifade edici ise, o halde ne zaman aşırı öğrenmemelerini beklemeliyiz?
 
 Derin ağların kafa karıştırıcı genelleme özelliklerinin matematiksel temelleri, açık araştırma soruları olmaya devam ediyor ve teori yönelimli okuyucuyu bu konuda daha derine inmeye teşvik ediyoruz. Şimdilik, derin ağların genelleştirilmesini deneysel olarak iyileştirme eğiliminde olan pratik araçların araştırmasına dönüyoruz.
 
 ## Düzensizliğe Gürbüzlük
 
-İyi bir tahminci modelden ne beklediğimizi kısaca düşünelim. Görünmeyen veriler üzerinde iyi başarım göstermelerini istiyoruz. Klasik genelleme teorisi, eğitim ve test performansı arasındaki aralığı kapatmak için basit bir modeli hedeflememiz gerektiğini öne sürer. Sadelik, az sayıda boyut şeklinde olabilir. :numref:`sec_model_selection` içinde doğrusal modellerin tek terimli temel fonksiyonlarını tartışırken bunu araştırdık. Ek olarak, ağırlık sönümünü ($L_2$ düzenlileştirmesi) :numref:`sec_weight_decay`'te tartışırken gördüğümüz gibi, parametrelerin (ters) normu, basitliğin de bir kullanışlı ölçüsünü temsil eder. Bir başka kullanışlı basitlik kavramı, pürüzsüzlüktür, yani işlevin girdilerindeki küçük değişikliklere hassas olmaması gerektiğidir. Örneğin, imgeleri sınıflandırdığımızda, piksellere bazı rastgele gürültü eklemenin çoğunlukla zararsız olmasını bekleriz.
+İyi bir tahminci modelden ne beklediğimizi kısaca düşünelim. Görünmeyen veriler üzerinde iyi başarım göstermelerini istiyoruz. Klasik genelleme teorisi, eğitim ve test performansı arasındaki aralığı kapatmak için basit bir modeli hedeflememiz gerektiğini öne sürer. Sadelik, az sayıda boyut şeklinde olabilir. :numref:`sec_model_selection` içinde doğrusal modellerin tek terimli temel fonksiyonlarını tartışırken bunu araştırdık. Ek olarak, ağırlık sönümünü ($L_2$ düzenlileştirmesi) :numref:`sec_weight_decay` içinde tartışırken gördüğümüz gibi, parametrelerin (ters) normu, basitliğin de bir kullanışlı ölçüsünü temsil eder. Bir başka kullanışlı basitlik kavramı, pürüzsüzlüktür, yani işlevin girdilerindeki küçük değişikliklere hassas olmaması gerektiğidir. Örneğin, imgeleri sınıflandırdığımızda, piksellere bazı rastgele gürültü eklemenin çoğunlukla zararsız olmasını bekleriz.
 
-1995'te Christopher Bishop, girdi gürültüsü ile eğitimin Tikhonov düzenlemesine eşdeğer olduğunu kanıtladığında bu fikri resmileştirdi :cite:`Bishop.1995`. Bu çalışma, bir fonksiyonun düzgün (ve dolayısıyla basit) olması gerekliliği ile girdideki karışıklıklara dirençli olması gerekliliği arasında açık bir matematiksel bağlantı kurdu.
+1995'te Christopher Bishop, girdi gürültüsü ile eğitimin Tikhonov düzenlemesine eşdeğer olduğunu kanıtladığında bu fikri formüle döktü :cite:`Bishop.1995`. Bu çalışma, bir fonksiyonun düzgün (ve dolayısıyla basit) olması gerekliliği ile girdideki karışıklıklara dirençli olması gerekliliği arasında açık bir matematiksel bağlantı kurdu.
 
 Ardından 2014 yılında Srivastava ve ark. :cite:`Srivastava.Hinton.Krizhevsky.ea.2014`, Bishop'un fikrinin bir ağın iç katmanlarına da nasıl uygulanacağı konusunda akıllıca bir fikir geliştirdi. Yani, eğitim sırasında sonraki katmanı hesaplamadan önce ağın her katmanına gürültü yerleştirmeyi önerdiler. Birçok katman içeren derin bir ağı eğitirken, gürültü yerleştirmenin sadece girdi-çıktı eşlemesinde pürüzsüzlüğü zorladığını fark ettiler.
 
@@ -48,7 +48,7 @@ Tasarım gereği, beklenti değişmeden kalır, yani $E[h'] = h$.
 
 ## Pratikte Hattan Düşürme
 
-:numref:`fig_mlp`'deki bir gizli katman ve 5 gizli birimli MLP'yi hatırlayın. Hattan düşürmeyi gizli bir katmana uyguladığımızda, her gizli birimi $p$ olasılığı ile sıfırlayarsak, sonuç, orijinal nöronların yalnızca bir alt kümesini içeren bir ağ olarak görülebilir. :numref:`fig_dropout2`'de, $h_2$ ve $h_5$ kaldırılmıştır. Sonuç olarak, çıktıların hesaplaması artık $h_2$ veya $h_5$ değerlerine bağlı değildir ve bunların ilgili gradyanları da geri yayma gerçekleştirilirken kaybolur. Bu şekilde, çıktı katmanının hesaplanması, $h_1, \ldots, h_5$ öğelerinin herhangi birine aşırı derecede bağımlı olamaz.
+:numref:`fig_mlp` içindeki bir gizli katmanlı ve 5 gizli birimli MLP'yi hatırlayın. Hattan düşürmeyi gizli bir katmana uyguladığımızda, her gizli birimi $p$ olasılığı ile sıfırlarsak, sonuç, orijinal nöronların yalnızca bir alt kümesini içeren bir ağ olarak görülebilir. :numref:`fig_dropout2` içinde, $h_2$ ve $h_5$ kaldırılmıştır. Sonuç olarak, çıktıların hesaplaması artık $h_2$ veya $h_5$ değerlerine bağlı değildir ve bunların ilgili gradyanları da geri yayma gerçekleştirilirken kaybolur. Bu şekilde, çıktı katmanının hesaplanması, $h_1, \ldots, h_5$ öğelerinin herhangi birine aşırı derecede bağımlı olamaz.
 
 ![Hattan düşürme öncesi ve sonrası MLP.](../img/dropout2.svg)
 :label:`fig_dropout2`
@@ -57,7 +57,7 @@ Tipik olarak, test sırasında hattan düşürmeyi devre dışı bırakırız. E
 
 ## Sıfırdan Uygulama
 
-Hattan düşürme işlevini tek bir katman için uygulamak için, katmanımızın boyutları olduğu için Bernoulli (ikili) rastgele değişkenden olabildiğince çok örneklem almalıyız, burada rastgele değişken $1-p$ olasılıkla $1$ (tut), $p$ olasılıkla $0$ (düşür) değerini alır. Bunu gerçekleştirmenin kolay bir yolu, ilk olarak $U[0, 1]$ tekdüze dağılımından örnekler almaktır. Daha sonra, $p$'dan büyük olduğu düğümlere karşılık gelen örnekleri tutarak geri kalanı hattan düşürebiliriz.
+Hattan düşürme işlevini tek bir katman için uygulamak için, katmanımızın boyutları olduğu için Bernoulli (ikili) rastgele değişkenden olabildiğince çok örneklem almalıyız, burada rastgele değişken $1-p$ olasılıkla $1$ (tut), $p$ olasılıkla $0$ (düşür) değerini alır. Bunu gerçekleştirmenin kolay bir yolu, ilk olarak $U[0, 1]$ tekdüze dağılımından örnekler almaktır. Daha sonra, $p$'den büyük olan düğümlere karşılık gelen örnekleri tutarak geri kalanı hattan düşürebiliriz.
 
 Aşağıdaki kodda, (**`X` tensör girdisindeki öğeleri `hattan düşürme` olasılığı ile hattan düşüren ve kalanı yukarıda açıklandığı gibi yeniden ölçeklendiren bir `dropout_layer` işlevi uyguluyoruz**); kurtulanları `1.0-dropout` ile böleriz.
 
@@ -69,7 +69,7 @@ npx.set_np()
 
 def dropout_layer(X, dropout):
     assert 0 <= dropout <= 1
-    # Bu durumda tüm elemanlar düşürülür.
+    # Bu durumda tüm elemanlar düşürülür
     if dropout == 1:
         return np.zeros_like(X)
     # Bu durumda tüm elemanlar tutulur
@@ -87,7 +87,7 @@ from torch import nn
 
 def dropout_layer(X, dropout):
     assert 0 <= dropout <= 1
-    # Bu durumda tüm elemanlar düşürülür.
+    # Bu durumda tüm elemanlar düşürülür
     if dropout == 1:
         return torch.zeros_like(X)
     # Bu durumda tüm elemanlar tutulur
@@ -104,7 +104,7 @@ import tensorflow as tf
 
 def dropout_layer(X, dropout):
     assert 0 <= dropout <= 1
-    # Bu durumda tüm elemanlar düşürülür.
+    # Bu durumda tüm elemanlar düşürülür
     if dropout == 1:
         return tf.zeros_like(X)
     # Bu durumda tüm elemanlar tutulur
@@ -144,7 +144,7 @@ print(dropout_layer(X, 1.))
 
 ### Model Parametrelerini Tanımlama
 
-Yine, :numref:`sec_fashion_mnist`'da tanıtılan Fashion-MNIST veri kümesiyle çalışıyoruz. [**Her biri 256 çıktı içeren iki gizli katmana sahip bir MLP tanımlıyoruz.**]
+Yine, :numref:`sec_fashion_mnist` içinde tanıtılan Fashion-MNIST veri kümesiyle çalışıyoruz. [**Her biri 256 çıktı içeren iki gizli katmana sahip bir MLP tanımlıyoruz.**]
 
 ```{.python .input}
 num_inputs, num_outputs, num_hiddens1, num_hiddens2 = 784, 10, 256, 256
@@ -181,13 +181,13 @@ dropout1, dropout2 = 0.2, 0.5
 def net(X):
     X = X.reshape(-1, num_inputs)
     H1 = npx.relu(np.dot(X, W1) + b1)
-    # Use dropout only when training the model
+    # Hattan düşürmeyi yalnızca modeli eğitirken kullan
     if autograd.is_training():
-        # Add a dropout layer after the first fully connected layer
+        # İlk tamamen bağlı katmandan sonra bir hattan düşürme katmanı ekle
         H1 = dropout_layer(H1, dropout1)
     H2 = npx.relu(np.dot(H1, W2) + b2)
     if autograd.is_training():
-        # Add a dropout layer after the second fully connected layer
+        # İkinci tamamen bağlı katmandan sonra bir hattan düşürme katmanı ekle
         H2 = dropout_layer(H2, dropout2)
     return np.dot(H2, W3) + b3
 ```
@@ -209,13 +209,13 @@ class Net(nn.Module):
 
     def forward(self, X):
         H1 = self.relu(self.lin1(X.reshape((-1, self.num_inputs))))
-        # Use dropout only when training the model
+        # Hattan düşürmeyi yalnızca modeli eğitirken kullan
         if self.training == True:
-            # Add a dropout layer after the first fully connected layer
+            #  İlk tamamen bağlı katmandan sonra bir hattan düşürme katmanı ekle
             H1 = dropout_layer(H1, dropout1)
         H2 = self.relu(self.lin2(H1))
         if self.training == True:
-            # Add a dropout layer after the second fully connected layer
+            # İkinci tamamen bağlı katmandan sonra bir hattan düşürme katmanı ekle
             H2 = dropout_layer(H2, dropout2)
         out = self.lin3(H2)
         return out
@@ -282,15 +282,15 @@ d2l.train_ch3(net, train_iter, test_iter, loss, num_epochs, trainer)
 
 ## [**Kısa Uygulama**]
 
-Üst düzey API'lerle, tek yapmamız gereken, her tam bağlı katmandan sonra bir `Dropout` katmanı eklemek ve hattan düşürme olasılığını yapıcısına tek argüman olarak aktarmaktır. Eğitim sırasında, `Dropout` katmanı, belirtilen hattan düşürme olasılığına göre önceki katmanın çıktılarını (veya eşdeğer olarak sonraki katmana olan girdileri) rasgele düşürür. Eğitim modunda olmadığında, `Dropout` katmanı verileri test sırasında basitçe iletir.
+Üst düzey API'lerle, tek yapmamız gereken, her tam bağlı katmandan sonra bir `Dropout` katmanı eklemek ve hattan düşürme olasılığını kurucusuna tek argüman olarak aktarmaktır. Eğitim sırasında, `Dropout` katmanı, belirtilen hattan düşürme olasılığına göre önceki katmanın çıktılarını (veya eşdeğer olarak sonraki katmana olan girdileri) rasgele düşürür. Eğitim modunda olmadığında, `Dropout` katmanı verileri test sırasında basitçe iletir.
 
 ```{.python .input}
 net = nn.Sequential()
 net.add(nn.Dense(256, activation="relu"),
-        # Add a dropout layer after the first fully connected layer
+        # İlk tamamen bağlı katmandan sonra bir hattan düşürme katmanı ekle
         nn.Dropout(dropout1),
         nn.Dense(256, activation="relu"),
-        # Add a dropout layer after the second fully connected layer
+        # İkinci tamamen bağlı katmandan sonra bir hattan düşürme katmanı ekle
         nn.Dropout(dropout2),
         nn.Dense(10))
 net.initialize(init.Normal(sigma=0.01))
@@ -301,11 +301,11 @@ net.initialize(init.Normal(sigma=0.01))
 net = nn.Sequential(nn.Flatten(),
         nn.Linear(784, 256),
         nn.ReLU(),
-        # Add a dropout layer after the first fully connected layer
+        # İlk tamamen bağlı katmandan sonra bir hattan düşürme katmanı ekle
         nn.Dropout(dropout1),
         nn.Linear(256, 256),
         nn.ReLU(),
-        # Add a dropout layer after the second fully connected layer
+        # İkinci tamamen bağlı katmandan sonra bir hattan düşürme katmanı ekle
         nn.Dropout(dropout2),
         nn.Linear(256, 10))
 
@@ -321,10 +321,10 @@ net.apply(init_weights)
 net = tf.keras.models.Sequential([
     tf.keras.layers.Flatten(),
     tf.keras.layers.Dense(256, activation=tf.nn.relu),
-    # Add a dropout layer after the first fully connected layer
+    # İlk tamamen bağlı katmandan sonra bir hattan düşürme katmanı ekle
     tf.keras.layers.Dropout(dropout1),
     tf.keras.layers.Dense(256, activation=tf.nn.relu),
-    # Add a dropout layer after the second fully connected layer
+    # İkinci tamamen bağlı katmandan sonra bir hattan düşürme katmanı ekle
     tf.keras.layers.Dropout(dropout2),
     tf.keras.layers.Dense(10),
 ])
@@ -352,13 +352,13 @@ d2l.train_ch3(net, train_iter, test_iter, loss, num_epochs, trainer)
 ## Özet
 
 * Boyutların sayısını ve ağırlık vektörünün boyutunu kontrol etmenin ötesinde, hattan düşürme, aşırı öğrenmeyi önlemek için başka bir araçtır. Genellikle birlikte kullanılırlar.
-* Hattan düşürme, $h$ etkinleştirmesini, bekletisi $h$ değerine sahip rastgele bir değişken ile değiştirir.
+* Hattan düşürme, $h$ etkinleştirmesini, beklentisi $h$ değerine sahip rastgele bir değişken ile değiştirir.
 * Hattan düşürme yalnızca eğitim sırasında kullanılır.
 
 ## Alıştırmalar
 
-1. İlk ve ikinci katmanlar için hattan düşürme olasılıklarını değiştirirseniz ne olur? Özellikle, her iki katman için olanları yere değiştirirseniz ne olur? Bu soruları yanıtlamak için bir deney tasarlayınız, bulgularınızı nicel olarak açıklayınız ve nitel çıkarımları özetleyiniz.
-1. Dönem sayısını artırınız ve hattan düşürme kullanılırken elde edilen sonuçları kullanmadığınız zamanlarda elde ettikleriniz ile karşılaştırınız.
+1. İlk ve ikinci katmanlar için hattan düşürme olasılıklarını değiştirirseniz ne olur? Özellikle, her iki katman için olanları yer değiştirirseniz ne olur? Bu soruları yanıtlamak için bir deney tasarlayınız, bulgularınızı nicel olarak açıklayınız ve nitel çıkarımları özetleyiniz.
+1. Dönem sayısını arttırınız ve hattan düşürme kullanılırken elde edilen sonuçları kullanmadığınız zamanlarda elde ettikleriniz ile karşılaştırınız.
 1. Hattan düşürme uygulandığında ve uygulanmadığında her bir gizli katmandaki etkinleştirmelerin varyansı nedir? Her iki model için de bu miktarın zaman içinde nasıl değiştiğini gösteren bir grafik çiziniz.
 1. Hattan düşürme neden tipik olarak test zamanında kullanılmaz?
 1. Bu bölümdeki modeli örnek olarak kullanarak, hattan düşürme ve ağırlık sönümünün etkilerini karşılaştırınız. Hattan düşürme ve ağırlık sönümü aynı anda kullanıldığında ne olur? Sonuçlar katkı sağlıyor mu? Azalan getiri mi (ya da daha kötüsü mü) var? Birbirlerini iptal ediyorlar mı?
