@@ -1,7 +1,7 @@
 # word2vec Ön Eğitimi
 :label:`sec_word2vec_pretraining`
 
-:numref:`sec_word2vec` içinde tanımlanan skip-gram modelini uygulamaya devam ediyoruz. Ardından, PTB veri kümesindeki negatif örnekleme kullanarak word2vec ön eğiteceğiz. Her şeyden önce, :numref:`sec_word2vec_data` içinde açıklanan `d2l.load_data_ptb` işlevini çağırarak veri yineleyicisini ve bu veri kümesi için sözcük dağarcığını elde edelim.
+:numref:`sec_word2vec`'te tanımlanan skip-gram modelini uygulamaya devam ediyoruz. Ardından, PTB veri kümesindeki negatif örnekleme kullanarak word2vec ön eğiteceğiz. Her şeyden önce, :numref:`sec_word2vec_data`'te açıklanan `d2l.load_data_ptb` işlevini çağırarak veri yineleyicisini ve bu veri kümesi için sözcük dağarcığını elde edelim.
 
 ```{.python .input}
 from d2l import mxnet as d2l
@@ -33,7 +33,7 @@ Katmanları ve toplu matris çarpımlarını kullanarak skip-gram modelini uygul
 
 ### Gömme Katmanı
 
-:numref:`sec_seq2seq` içinde açıklandığı gibi, bir katman, bir belirteç dizinini öznitelik vektörüyle eşler. Bu katmanın ağırlığı, satır sayısı sözlük boyutuna (`input_dim`) ve sütun sayısı her belirteç için vektör boyutuna (`output_dim`) eşit olan bir matristir. Bir sözcük gömme modeli eğitildikten sonra, bu ağırlık ihtiyacımız olan şeydir.
+:numref:`sec_seq2seq`'te açıklandığı gibi, bir katman, bir belirteç dizinini öznitelik vektörüyle eşler. Bu katmanın ağırlığı, satır sayısı sözlük boyutuna (`input_dim`) ve sütun sayısı her belirteç için vektör boyutuna (`output_dim`) eşit olan bir matristir. Bir sözcük gömme modeli eğitildikten sonra, bu ağırlık ihtiyacımız olan şeydir.
 
 ```{.python .input}
 embed = nn.Embedding(input_dim=20, output_dim=4)
@@ -58,7 +58,7 @@ embed(x)
 
 ### İleri Yaymayı Tanımlama
 
-İleri yayılımda, skip-gram modelinin girdisi, (toplu iş boyutu, 1) şekilli `center` merkez sözcük indekslerini ve `max_len`'in :numref:`subsec_word2vec-minibatch-loading` içinde tanımlandığı (toplu iş boyutu, `max_len`) şeklindeki `contexts_and_negatives` bitiştirilmiş bağlam ve gürültü sözcük indekslerini içerir. Bu iki değişken önce belirteç dizinlerinden gömme katmanı aracılığıyla vektörlere dönüştürülür, daha sonra toplu matris çarpımı (:numref:`subsec_batch_dot` içinde açıklanmıştır) (toplu iş boyutu, 1, `max_len`) şekilli bir çıktı döndürür. Çıktıdaki her eleman, bir merkez sözcük vektörü ile bir bağlam veya gürültü sözcük vektörünün nokta çarpımıdır .
+İleri yayılımda, skip-gram modelinin girdisi, (toplu iş boyutu, 1) şekilli `center` merkez sözcük indekslerini ve `max_len`'nın :numref:`subsec_word2vec-minibatch-loading`'te tanımlandığı (toplu iş boyutu, `max_len`) şeklindeki `contexts_and_negatives` bitiştirilmiş bağlam ve gürültü sözcük indekslerini içerir. Bu iki değişken önce belirteç dizinlerinden gömme katmanı aracılığıyla vektörlere dönüştürülür, daha sonra toplu matris çarpımı (:numref:`subsec_batch_dot`'te açıklanmıştır) (toplu iş boyutu, 1, `max_len`) şekilli bir çıktı döndürür. Çıktıdaki her eleman, bir merkez sözcük vektörü ile bir bağlam veya gürültü sözcük vektörünün nokta çarpımıdır .
 
 ```{.python .input}
 def skip_gram(center, contexts_and_negatives, embed_v, embed_u):
@@ -95,7 +95,7 @@ Skip-gram modelini negatif örnekleme ile eğitmeden önce, öncelikle kayıp i�
 
 ### İkili Çapraz Entropi Kaybı
 
-:numref:`subsec_negative-sampling` içinde negatif örnekleme için kayıp fonksiyonunun tanımına göre ikili çapraz entropi kaybını kullanacağız.
+:numref:`subsec_negative-sampling`'te negatif örnekleme için kayıp fonksiyonunun tanımına göre ikili çapraz entropi kaybını kullanacağız.
 
 ```{.python .input}
 loss = gluon.loss.SigmoidBCELoss()
@@ -104,7 +104,7 @@ loss = gluon.loss.SigmoidBCELoss()
 ```{.python .input}
 #@tab pytorch
 class SigmoidBCELoss(nn.Module):
-    # Maskeleme ile ikili çapraz entropi kaybı
+    # Binary cross-entropy loss with masking
     def __init__(self):
         super().__init__()
 
@@ -116,7 +116,7 @@ class SigmoidBCELoss(nn.Module):
 loss = SigmoidBCELoss()
 ```
 
-:numref:`subsec_word2vec-minibatch-loading` içindeki maske değişkeninin ve etiket değişkeninin tanımlarını hatırlayın. Aşağıdaki ifade, verilen değişkenler için ikili çapraz entropi kaybını hesaplar.
+:numref:`subsec_word2vec-minibatch-loading`'teki maske değişkeninin ve etiket değişkeninin tanımlarını hatırlayın. Aşağıdaki, verilen değişkenler için ikili çapraz entropi kaybını hesaplar.
 
 ```{.python .input}
 #@tab all
@@ -168,7 +168,7 @@ def train(net, data_iter, lr, num_epochs, device=d2l.try_gpu()):
                             {'learning_rate': lr})
     animator = d2l.Animator(xlabel='epoch', ylabel='loss',
                             xlim=[1, num_epochs])
-    # Normalleştirilmiş kayıpların toplamı, normalleştirilmiş kayıpların sayısı
+    # Sum of normalized losses, no. of normalized losses
     metric = d2l.Accumulator(2)
     for epoch in range(num_epochs):
         timer, num_batches = d2l.Timer(), len(data_iter)
@@ -200,7 +200,7 @@ def train(net, data_iter, lr, num_epochs, device=d2l.try_gpu()):
     optimizer = torch.optim.Adam(net.parameters(), lr=lr)
     animator = d2l.Animator(xlabel='epoch', ylabel='loss',
                             xlim=[1, num_epochs])
-    # Normalleştirilmiş kayıpların toplamı, normalleştirilmiş kayıpların sayısı
+    # Sum of normalized losses, no. of normalized losses
     metric = d2l.Accumulator(2)
     for epoch in range(num_epochs):
         timer, num_batches = d2l.Timer(), len(data_iter)
@@ -239,7 +239,7 @@ Word2vec modelini eğittikten sonra, eğitimli modeldeki sözcük vektörlerinin
 def get_similar_tokens(query_token, k, embed):
     W = embed.weight.data()
     x = W[vocab[query_token]]
-    # Kosinüs benzerliğini hesaplayın. Sayısal kararlılık için 1e-9 ekleyin
+    # Compute the cosine similarity. Add 1e-9 for numerical stability
     cos = np.dot(W, x) / np.sqrt(np.sum(W * W, axis=1) * np.sum(x * x) + 1e-9)
     topk = npx.topk(cos, k=k+1, ret_typ='indices').asnumpy().astype('int32')
     for i in topk[1:]:  # Remove the input words
@@ -253,7 +253,7 @@ get_similar_tokens('chip', 3, net[0])
 def get_similar_tokens(query_token, k, embed):
     W = embed.weight.data
     x = W[vocab[query_token]]
-    # Kosinüs benzerliğini hesaplayın. Sayısal kararlılık için 1e-9 ekleyin
+    # Compute the cosine similarity. Add 1e-9 for numerical stability
     cos = torch.mv(W, x) / torch.sqrt(torch.sum(W * W, dim=1) *
                                       torch.sum(x * x) + 1e-9)
     topk = torch.topk(cos, k=k+1)[1].cpu().numpy().astype('int32')
@@ -270,7 +270,7 @@ get_similar_tokens('chip', 3, net[0])
 
 ## Alıştırmalar
 
-1. Eğitilmiş modeli kullanarak, diğer girdi sözcükleri için anlamsal olarak benzer sözcükleri bulun. Hiper parametreleri ayarlayarak sonuçları iyileştirebilir misiniz?
+1. Eğitilmiş modeli kullanarak, diğer girdi sözcükleri için anlamsal olarak benzer sözcükleri bulun. Hiperparametreleri ayarlayarak sonuçları iyileştirebilir misiniz?
 1. Bir eğitim külliyatı çok büyük olduğunda, *model parametrelerini güncellerken* mevcut minigrup içindeki merkez sözcükler için bağlam sözcükleri ve gürültü sözcüklerini sık sık örnekleriz. Başka bir deyişle, aynı merkez sözcük farklı eğitim dönemlerinde farklı bağlam sözcüklerine veya gürültü sözcüklerine sahip olabilir. Bu yöntemin faydaları nelerdir? Bu eğitim yöntemini uygulamaya çalışın.
 
 :begin_tab:`mxnet`

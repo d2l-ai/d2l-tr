@@ -13,7 +13,7 @@ Bu kitap boyunca, aşağıdaki gösterim kurallarına bağlı kalacağız. Bu se
 * $\mathbf{X}$: matris (Dizey)
 * $\mathsf{X}$: bir genel tensör (Gerey)
 * $\mathbf{I}$: birim dizeyi -- köşegen girdileri $1$ köşegen-olmayan girdileri $0$ olan kare dizey
-* $x_i$, $[\mathbf{x}]_i$: $\mathbf{x}$ dizeyinin $i.$ elemanı
+* $x_i$, $[\mathbf{x}]_i$: $\mathbf{x}$ dizeyinin $i$'inci elemanı
 * $x_{ij}$, $x_{i,j}$,$[\mathbf{X}]_{ij}$, $[\mathbf{X}]_{i,j}$: $\mathbf{X}$ dizeyinin $i.$ satır $j.$ sütundaki elemanı
 
 
@@ -44,10 +44,10 @@ Bu kitap boyunca, aşağıdaki gösterim kurallarına bağlı kalacağız. Bu se
 * $\mathbf{1}_{\mathcal{X}}(z)$: küme-üyeliği gösterge işlevi, eğer $z$ elemanı $\mathcal{X}$ kümesine ait ise $1$ ve değil ise $0$
 * $\mathbf{(\cdot)}^\top$: bir vektörün veya matrisin devriği
 * $\mathbf{X}^{-1}$: $\mathbf{X}$ matrisinin tersi
-* $\odot$: Hadamard (eleman-yönlü) çarpımı
-* $[\cdot, \cdot]$: bitiştirme
-* $\|\cdot\|_p$: $L_p$ büyüklüğü (Norm)
-* $\|\cdot\|$: $L_2$ büyüklüğü (Norm)
+* $\odot$: hadamard (eleman-yönlü) çarpımı
+* $[\cdot, \cdot]$: birbirine bağlama
+* $\|\cdot\|_p$: $L_p$ büyüklük (Norm)
+* $\|\cdot\|$: $L_2$ büyüklük (Norm)
 * $\langle \mathbf{x}, \mathbf{y} \rangle$: $\mathbf{x}$ ve $\mathbf{y}$ vektörlerinin iç (nokta) çarpımı
 * $\sum$: bir elemanlar topluluğu üzerinde toplam
 * $\prod$: bir elemanlar topluluğu üzerinde toplam çarpımı
@@ -68,12 +68,12 @@ Bu kitap boyunca, aşağıdaki gösterim kurallarına bağlı kalacağız. Bu se
 * $X \sim P$: $X$ rasgele değişkeni $P$ olasılık dağılımına sahiptir
 * $P(X=x)$: $X$ rasgele değişkeninin $x$ değerini alma olayının olasılığı
 * $P(X \mid Y)$: $Y$ bilindiğinde $X$'in koşullu olasılık dağılımı
-* $p(\cdot)$: P dağılımı ile ilişkili koşullu olasılık yoğunluk fonksiyonu
+* $p(\cdot)$: P dağılımına ilişkili koşullu olasılık yoğunluk fonksiyonu
 * ${E}[X]$: $X$ rasgele değişkeninin beklentisi
 * $X \perp Y$: $X$ ve $Y$ rasgele değişkenleri bağımsızdır
 * $X \perp Y \mid Z$: $X$ ve $Y$ rasgele değişkenleri, $Z$ göz önüne alındığında (verildiğinde) koşullu olarak bağımsızdır
 * $\sigma_X$: $X$ rasgele değişkeninin standart sapması
-* $\mathrm{Var}(X)$: $X$ rasgele değişkeninin değişintisi (varyansı), $\sigma^2_X$'e eşittir
+* $\mathrm{Var}(X)$: $X$ rasgele değişkeninin değişintisi (varyansı), $\sigma^2_X$'ze eşittir
 * $\mathrm{Cov}(X, Y)$: $X$ ve $Y$ rasgele değişkenlerinin eşdeğişintisi (kovaryansı)
 * $\rho(X, Y)$: $X$ ve $Y$ rasgele değişkenleri arasındaki Pearson ilinti katsayısı (korrelasyonu), $\frac{\mathrm{Cov}(X, Y)}{\sigma_X \sigma_Y}$'ye eşittir
 * $H(X)$: $X$ rasgele değişkeninin düzensizliği (entropisi)

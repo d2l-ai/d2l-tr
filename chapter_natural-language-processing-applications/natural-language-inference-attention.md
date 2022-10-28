@@ -1,7 +1,7 @@
-# Doğal Dil Çıkarımı: Dikkati Kullanma
+# Doğal Dil Çıkarımı: Dikkat Kullanma
 :label:`sec_natural-language-inference-attention`
 
-:numref:`sec_natural-language-inference-and-dataset` içinde doğal dil çıkarım görevini ve SNLI veri kümesini tanıttık. Karmaşık ve derin mimarilere dayanan birçok model göz önüne alındığında, Parikh ve ark. doğal dil çıkarımını dikkat mekanizmaları ile ele almayı önerdi ve bunu "ayrıştırılabilir dikkat modeli" olarak adlandırdı :cite:`Parikh.Tackstrom.Das.ea.2016`. Bu, yinelemeli veya evrişimli katmanları olmayan bir modelle sonuçlanır ve SNLI veri kümesinde o anda çok daha az parametre ile en iyi sonucu elde eder. Bu bölümde, :numref:`fig_nlp-map-nli-attention` içinde tasvir edildiği gibi doğal dil çıkarımı için bu dikkat tabanlı yöntemi (MLP'lerle) açıklayacağız ve uygulayacağız. 
+:numref:`sec_natural-language-inference-and-dataset`'da doğal dil çıkarım görevini ve SNLI veri kümesini tanıttık. Karmaşık ve derin mimarilere dayanan birçok model göz önüne alındığında, Parikh ve ark. doğal dil çıkarımını dikkat mekanizmaları ile ele almayı önerdi ve bunu "ayrıştırılabilir dikkat modeli" olarak adlandırdı :cite:`Parikh.Tackstrom.Das.ea.2016`. Bu, yinelemeli veya evrişimli katmanları olmayan bir modelle sonuçlanır ve SNLI veri kümesinde o anda çok daha az parametre ile en iyi sonucu elde eder. Bu bölümde, :numref:`fig_nlp-map-nli-attention`'te tasvir edildiği gibi doğal dil çıkarımı için bu dikkat tabanlı yöntemi (MLP'lerle) açıklayacağız ve uygulayacağız. 
 
 ![Bu bölüm, önceden eğitilmiş GloVe'i, doğal dil çıkarımı için dikkat ve MLP'lere dayalı bir mimariye besler.](../img/nlp-map-nli-attention.svg)
 :label:`fig_nlp-map-nli-attention`
@@ -10,10 +10,10 @@
 
 Öncüllerdeki ve hipotezlerdeki belirteçlerin sırasını korumaktan daha basit olarak, sadece bir metin dizisindeki belirteçleri diğerindeki her belirteçle hizalayabiliriz ve tersi de geçerlidir, daha sonra öncüller ve hipotezler arasındaki mantıksal ilişkileri tahmin etmek için bu bilgileri karşılaştırabilir ve birleştirebiliriz. Makine çevirisinde kaynak ve hedef cümleler arasında belirteçlerin hizalanmasına benzer şekilde, öncül ve hipotezler arasındaki belirteçlerin hizalanması dikkat mekanizmaları ile düzgün bir şekilde gerçekleştirilebilir. 
 
-![Dikkat mekanizmalarını kullanan doğal dil çıkarımı.](../img/nli-attention.svg)
+![Dikkat mekanizmalarını kullanarak doğal dil çıkarımı.](../img/nli-attention.svg)
 :label:`fig_nli_attention`
 
-:numref:`fig_nli_attention` dikkat mekanizmalarını kullanan doğal dil çıkarım yöntemini tasvir eder. Üst düzeyde, ortak eğitilmiş üç adımdan oluşur: Dikkat etmek, karşılaştırmak ve biriktirmek. Onları aşağıda adım adım göstereceğiz.
+:numref:`fig_nli_attention` dikkat mekanizmalarını kullanarak doğal dil çıkarım yöntemini tasvir eder. Yüksek düzeyde, ortaklaşa eğitilmiş üç adımdan oluşur: Dikkat etmek, karşılaştırmak ve biriktirmek. Onları aşağıda adım adım göstereceğiz.
 
 ```{.python .input}
 from d2l import mxnet as d2l
@@ -35,12 +35,12 @@ from torch.nn import functional as F
 
 İlk adım, bir metin dizisindeki belirteçleri diğer dizideki her belirteçle hizalamaktır. Öncülün “benim uykuya ihtiyacım var” ve hipotezin “ben yorgunum” olduğunu varsayalım. Anlamsal benzerlik nedeniyle, hipotezdeki "ben" ile öncül içindeki "ben"'i hizalamak ve hipotezdeki "yorgun"'u öncül içindeki "uyku" ile hizalamak isteyebiliriz. Benzer şekilde, öncüldeki "ben"i hipotezdeki "ben" ile hizalamak ve öncüldeki "uyku" ve "ihtiyaç"'ı hipotezdeki "yorgun" ile aynı hizaya getirmek isteyebiliriz. Bu tür bir hizalamanın, ideal olarak büyük ağırlıkların hizalanacak belirteçlerle ilişkilendirildiği, ağırlıklı ortalama kullanılarak *yumuşak* olduğunu unutmayın. Gösterim kolaylığı için, :numref:`fig_nli_attention` böyle bir hizalamayı *sert* bir şekilde gösterir. 
 
-Şimdi dikkat mekanizmalarını kullanarak yumuşak hizalamayı daha ayrıntılı olarak tanımlıyoruz. $\mathbf{A} = (\mathbf{a}_1, \ldots, \mathbf{a}_m)$ ve $\mathbf{B} = (\mathbf{b}_1, \ldots, \mathbf{b}_n)$ ile, sırasıyla $\mathbf{a}_i, \mathbf{b}_j \in \mathbb{R}^{d}$ ($i = 1, \ldots, m, j = 1, \ldots, n$) $d$ boyutlu bir sözcük vektörü olan belirteç sayısı $m$ ve $n$ olan öncülü ve hipotezi belirtin. Yumuşak hizalama için $e_{ij} \in \mathbb{R}$ dikkat ağırlıklarını aşağıdaki gibi hesaplıyoruz 
+Şimdi dikkat mekanizmalarını kullanarak yumuşak hizalamayı daha ayrıntılı olarak tanımlıyoruz. $\mathbf{A} = (\mathbf{a}_1, \ldots, \mathbf{a}_m)$ ve $\mathbf{B} = (\mathbf{b}_1, \ldots, \mathbf{b}_n)$ ile, sırasıyla $\mathbf{a}_i, \mathbf{b}_j \in \mathbb{R}^{d}$ ($i = 1, \ldots, m, j = 1, \ldots, n$) $\mathbf{a}_i, \mathbf{b}_j \in \mathbb{R}^{d}$ ($i = 1, \ldots, m, j = 1, \ldots, n$) $d$ boyutlu bir sözcük vektörü olan belirteç sayısı $m$ ve $n$ olan öncül ve hipotezi belirtin. Yumuşak hizalama için $e_{ij} \in \mathbb{R}$ dikkat ağırlıklarını aşağıdaki gibi hesaplıyoruz 
 
 $$e_{ij} = f(\mathbf{a}_i)^\top f(\mathbf{b}_j),$$
 :eqlabel:`eq_nli_e`
 
-burada $f$ işlevi, aşağıdaki `mlp` işlevinde tanımlanan bir MLP'dir. $f$'in çıktı boyutu, `mlp`'nin `num_hiddens` argümanı tarafından belirlenir.
+burada $f$ işlevi, aşağıdaki `mlp` işlevinde tanımlanan bir MLP'dir. $f$'in çıktı boyutu, `mlp`'nin `num_hiddens`argümanı tarafından belirlenir.
 
 ```{.python .input}
 def mlp(num_hiddens, flatten):
@@ -69,9 +69,9 @@ def mlp(num_inputs, num_hiddens, flatten):
     return nn.Sequential(*net)
 ```
 
-:eqref:`eq_nli_e` denkleminde $f$'in $\mathbf{a}_i$ ve $\mathbf{b}_j$ girdilerini girdi olarak bir çift almak yerine ayrı ayrı aldığı vurgulanmalıdır. Bu *ayrıştırma* püf noktası, $mn$ kere uygulama (ikinci dereceden karmaşıklık) yerine $f$'in yalnızca $m + n$ kere uygulamasına (doğrusal karmaşıklık) yol açar. 
+:eqref:`eq_nli_e`'de $f$'in $\mathbf{a}_i$ ve $\mathbf{b}_j$ girdilerini girdi olarak bir çift almak yerine ayrı ayrı aldığı vurgulanmalıdır. Bu *ayrıştırma* püf noktası, $mn$ uygulama (ikinci dereceden karmaşıklık) yerine $f$'in yalnızca $m + n$ uygulamasına (doğrusal karmaşıklık)  yol açar. 
 
-:eqref:`eq_nli_e` içindeki dikkat ağırlıklarını normalleştirerek, varsayımdaki tüm belirteç vektörlerinin ağırlıklı ortalamasını hesaplıyoruz ve bu hipotezin temsilini elde etmek için $i$ ile endeksli belirteç ile yumuşak bir şekilde hizalanan hipotezin temsilini elde ediyoruz: 
+:eqref:`eq_nli_e` içideki dikkat ağırlıklarını normalleştirerek, varsayımdaki tüm belirteç vektörlerinin ağırlıklı ortalamasını hesaplıyoruz ve bu hipotezin temsilini elde etmek için $i$ ile endeksli belirteç ile yumuşak bir şekilde hizalanan hipotezin temsilini elde ediyoruz: 
 
 $$
 \boldsymbol{\beta}_i = \sum_{j=1}^{n}\frac{\exp(e_{ij})}{ \sum_{k=1}^{n} \exp(e_{ik})} \mathbf{b}_j.
@@ -92,22 +92,22 @@ class Attend(nn.Block):
         self.f = mlp(num_hiddens=num_hiddens, flatten=False)
 
     def forward(self, A, B):
-        # `A`/`B`'nin şekli: (`batch_size`, A/B dizisindeki belirteç sayısı, 
+        # Shape of `A`/`B`: (b`atch_size`, no. of tokens in sequence A/B,
         # `embed_size`)
-        # `f_A`/`f_B`'nin şekli: (`batch_size`, A/B dizisindeki belirteç 
-        # sayısı, `num_hiddens`)
+        # Shape of `f_A`/`f_B`: (`batch_size`, no. of tokens in sequence A/B,
+        # `num_hiddens`)
         f_A = self.f(A)
         f_B = self.f(B)
-        # `e`'nin şekli: (`batch_size`, A dizisindeki belirteç sayısı, 
-        # B dizisindeki belirteç sayısı)
+        # Shape of `e`: (`batch_size`, no. of tokens in sequence A,
+        # no. of tokens in sequence B)
         e = npx.batch_dot(f_A, f_B, transpose_b=True)
-        # `beta`'nın şekli: (`batch_size`, A dizisindeki belirteç sayısı, 
-        # `embed_size`), burada B dizisi, A dizisindeki her bir belirteç ile
-        # (`beta`'nın 1. ekseni) yumuşak bir şekilde hizalanır.
+        # Shape of `beta`: (`batch_size`, no. of tokens in sequence A,
+        # `embed_size`), where sequence B is softly aligned with each token
+        # (axis 1 of `beta`) in sequence A
         beta = npx.batch_dot(npx.softmax(e), B)
-        # `alpha`'nın şekli: (`batch_size`, dizi B'deki belirteç sayısı, 
-        # `embed_size`), burada A dizisi, B dizisindeki her bir belirteç ile
-        # (`alpha`'nın 1. ekseni) yumuşak bir şekilde hizalanır
+        # Shape of `alpha`: (`batch_size`, no. of tokens in sequence B,
+        # `embed_size`), where sequence A is softly aligned with each token
+        # (axis 1 of `alpha`) in sequence B
         alpha = npx.batch_dot(npx.softmax(e.transpose(0, 2, 1)), A)
         return beta, alpha
 ```
@@ -120,29 +120,29 @@ class Attend(nn.Module):
         self.f = mlp(num_inputs, num_hiddens, flatten=False)
 
     def forward(self, A, B):
-        # `A`/`B`'nin şekli: (`batch_size`, A/B dizisindeki belirteç sayısı, 
+        # Shape of `A`/`B`: (`batch_size`, no. of tokens in sequence A/B,
         # `embed_size`)
-        # `f_A`/`f_B`'nin şekli: (`batch_size`, A/B dizisindeki belirteç 
-        # sayısı, `num_hiddens`)
+        # Shape of `f_A`/`f_B`: (`batch_size`, no. of tokens in sequence A/B,
+        # `num_hiddens`)
         f_A = self.f(A)
         f_B = self.f(B)
-        # `e`'nin şekli: (`batch_size`, A dizisindeki belirteç sayısı, 
-        # B dizisindeki belirteç sayısı)
+        # Shape of `e`: (`batch_size`, no. of tokens in sequence A,
+        # no. of tokens in sequence B)
         e = torch.bmm(f_A, f_B.permute(0, 2, 1))
-        # `beta`'nın şekli: (`batch_size`, A dizisindeki belirteç sayısı, 
-        # `embed_size`), burada B dizisi, A dizisindeki her bir belirteç ile
-        # (`beta`'nın 1. ekseni) yumuşak bir şekilde hizalanır.
+        # Shape of `beta`: (`batch_size`, no. of tokens in sequence A,
+        # `embed_size`), where sequence B is softly aligned with each token
+        # (axis 1 of `beta`) in sequence A
         beta = torch.bmm(F.softmax(e, dim=-1), B)
-        # `alpha`'nın şekli: (`batch_size`, dizi B'deki belirteç sayısı, 
-        # `embed_size`), burada A dizisi, B dizisindeki her bir belirteç ile
-        # (`alpha`'nın 1. ekseni) yumuşak bir şekilde hizalanır
+        # Shape of `alpha`: (`batch_size`, no. of tokens in sequence B,
+        # `embed_size`), where sequence A is softly aligned with each token
+        # (axis 1 of `alpha`) in sequence B
         alpha = torch.bmm(F.softmax(e.permute(0, 2, 1), dim=-1), A)
         return beta, alpha
 ```
 
 ### Karşılaştırmak
 
-Bir sonraki adımda, bir dizideki bir belirteci, bu belirteçle yumuşak bir şekilde hizalanan diğer diziyle karşılaştırırız. Yumuşak hizalamada, bir dizideki tüm belirteçlerin, muhtemelen farklı dikkat ağırlıklarına sahip olsa da, diğer dizideki bir belirteçle karşılaştırılacağını unutmayın. Kolay gösterim için, :numref:`fig_nli_attention` belirteçleri *sert* bir şekilde hizalanmış belirteçlerle eşleştirir. Örneğin, dikkat etme adımının öncüldeki "ihtiyaç" ve "uyku"'nun her ikisinin de hipotezdeki "yorgun" ile aynı hizada olduğunu belirlediğini varsayalım, "yorgun--uykuya ihtiyacım var" çifti karşılaştırılacaktır.
+Bir sonraki adımda, bir dizideki bir belirteci, bu belirteçle yumuşak bir şekilde hizalanan diğer diziyle karşılaştırırız. Yumuşak hizalamada, bir dizideki tüm belirteçlerin, muhtemelen farklı dikkat ağırlıklarına sahip olsa da, diğer dizideki bir belirteçle karşılaştırılacağını unutmayın. Kolay gösterim için, :numref:`fig_nli_attention` belirteçleri *sert* bir şekilde hizalanmış belirteçlerle eşleştirir. Örneğin, dikkat etme adımının öncüldeki "ihtiyaç" ve "uyku"nun her ikisinin de hipotezdeki "yorgun" ile aynı hizada olduğunu belirlediğini varsayalım, "yorgun--uykuya ihtiyacım var" çifti karşılaştırılacaktır.
 
 Karşılaştırma adımında, bir diziden belirteçlerin (operatör $[\cdot, \cdot]$) ve diğer diziden hizalanmış belirteçlerin bitiştirilmesini $g$ (bir MLP) işlevine besleriz: 
 
@@ -150,7 +150,7 @@ $$\mathbf{v}_{A,i} = g([\mathbf{a}_i, \boldsymbol{\beta}_i]), i = 1, \ldots, m\\
 
 :eqlabel:`eq_nli_v_ab` 
 
-:eqref:`eq_nli_v_ab` içinde, $\mathbf{v}_{A,i}$, öncüldeki $i$ belirteci ve $i$ belirteci ile yumuşak bir şekilde hizalanan tüm hipotez belirteçleri arasındaki karşılaştırmadır; $\mathbf{v}_{B,j}$ ise hipotezdeki $j$ belirteci ile $j$ belirteci ile yumuşak bir şekilde hizalanmış tüm öncül belirteçler arasındaki karşılaştırmadır. Aşağıdaki `Compare` sınıfı, böyle bir karşılaştırma adımı tanımlar.
+:eqref:`eq_nli_v_ab`'te, $\mathbf{v}_{A,i}$, öncüldeki $i$ belirteci ve $i$ belirteci ile yumuşak bir şekilde hizalanan tüm hipotez belirteçleri arasındaki karşılaştırmadır; $\mathbf{v}_{B,j}$ ise hipotezdeki $j$ belirteci ile $j$ belirteci ile yumuşak bir şekilde hizalanmış tüm öncül belirteçler arasındaki karşılaştırmadır. Aşağıdaki `Compare` sınıfı, böyle bir karşılaştırma adımı tanımlar.
 
 ```{.python .input}
 class Compare(nn.Block):
@@ -201,10 +201,10 @@ class Aggregate(nn.Block):
         self.h.add(nn.Dense(num_outputs))
 
     def forward(self, V_A, V_B):
-        # Her iki karşılaştırma vektörü kümesini toplayın
+        # Sum up both sets of comparison vectors
         V_A = V_A.sum(axis=1)
         V_B = V_B.sum(axis=1)
-        # Her iki özetleme sonucunun bitiştirmesini bir MLP'ye besleyin
+        # Feed the concatenation of both summarization results into an MLP
         Y_hat = self.h(np.concatenate([V_A, V_B], axis=1))
         return Y_hat
 ```
@@ -218,10 +218,10 @@ class Aggregate(nn.Module):
         self.linear = nn.Linear(num_hiddens, num_outputs)
 
     def forward(self, V_A, V_B):
-       # Her iki karşılaştırma vektörü kümesini toplayın
+        # Sum up both sets of comparison vectors
         V_A = V_A.sum(dim=1)
         V_B = V_B.sum(dim=1)
-        # Her iki özetleme sonucunun bitiştirmesini bir MLP'ye besleyin
+        # Feed the concatenation of both summarization results into an MLP
         Y_hat = self.linear(self.h(torch.cat([V_A, V_B], dim=1)))
         return Y_hat
 ```
@@ -237,7 +237,7 @@ class DecomposableAttention(nn.Block):
         self.embedding = nn.Embedding(len(vocab), embed_size)
         self.attend = Attend(num_hiddens)
         self.compare = Compare(num_hiddens)
-        # 3 olası çıktı vardır: gerekçe, çelişki ve tarafsızlık
+        # There are 3 possible outputs: entailment, contradiction, and neutral
         self.aggregate = Aggregate(num_hiddens, 3)
 
     def forward(self, X):
@@ -259,7 +259,7 @@ class DecomposableAttention(nn.Module):
         self.embedding = nn.Embedding(len(vocab), embed_size)
         self.attend = Attend(num_inputs_attend, num_hiddens)
         self.compare = Compare(num_inputs_compare, num_hiddens)
-        # 3 olası çıktı vardır: gerekçe, çelişki ve tarafsızlık
+        # There are 3 possible outputs: entailment, contradiction, and neutral
         self.aggregate = Aggregate(num_inputs_agg, num_hiddens, num_outputs=3)
 
     def forward(self, X):
@@ -278,7 +278,7 @@ class DecomposableAttention(nn.Module):
 
 ### Veri Kümesini Okuma
 
-SNLI veri kümesini :numref:`sec_natural-language-inference-and-dataset` içinde tanımlanan işlevi kullanarak indirip okuyoruz. Toplu iş boyutu ve dizi uzunluğu sırasıyla $256$ ve $50$ olarak ayarlanır.
+SNLI veri kümesini :numref:`sec_natural-language-inference-and-dataset`'te tanımlanan işlevi kullanarak indirip okuyoruz. Toplu iş boyutu ve dizi uzunluğu sırasıyla $256$ ve $50$ olarak ayarlanır.
 
 ```{.python .input}
 #@tab all
@@ -288,7 +288,7 @@ train_iter, test_iter, vocab = d2l.load_data_snli(batch_size, num_steps)
 
 ### Modeli Oluşturma
 
-Girdi belirteçlerini temsil etmek için önceden eğitilmiş 100 boyutlu GloVe gömmeyi kullanıyoruz. Böylece, $\mathbf{a}_i$ ve $\mathbf{b}_j$ vektörlerinin :eqref:`eq_nli_e` içindeki boyutunu önceden 100 olarak tanımlarız. :eqref:`eq_nli_e` içindeki $f$ ve :eqref:`eq_nli_v_ab` içindeki $g$ fonksiyonlarının çıktı boyutu 200 olarak ayarlanmıştır. Ardından bir model örneği oluşturur, parametrelerini ilkler ve girdi belirteçlerinin vektörlerini ilklemek için GloVe gömmesini yükleriz.
+Girdi belirteçlerini temsil etmek için önceden eğitilmiş 100 boyutlu GloVe gömmeyi kullanıyoruz. Böylece, $\mathbf{a}_i$ ve $\mathbf{b}_j$ vektörlerinin :eqref:`eq_nli_e` içindeki boyutunu önceden 100 olarak tanımlarız. :eqref:`eq_nli_e` içindeki $f$ ve :eqref:`eq_nli_v_ab` içindeki $g$ fonksiyonlarının çıktı boyutu 200 olarak ayarlanmıştır. Ardından bir model örneği oluşturur, parametrelerini ilkler ve girdi belirteçlerinin vektörlerini ilklemek için GloVe gömmeyi yükleriz.
 
 ```{.python .input}
 embed_size, num_hiddens, devices = 100, 200, d2l.try_all_gpus()
@@ -310,13 +310,12 @@ net.embedding.weight.data.copy_(embeds);
 
 ### Model Eğitimi ve Değerlendirilmesi
 
-:numref:`sec_multi_gpu` içindeki `split_batch` işlevinin aksine, metin dizileri (veya imgeler) gibi tek girdileri alan `split_batch` işlevinin aksine, minigruplarda öncüller ve hipotezler gibi birden fazla girdiyi almak için `split_batch_multi_inputs` işlevi tanımlıyoruz.
+:numref:`sec_multi_gpu`'teki `split_batch` işlevinin aksine, metin dizileri (veya imgeler) gibi tek girdileri alan `split_batch` işlevinin aksine, minigruplarda öncüller ve hipotezler gibi birden fazla girdiyi almak için `split_batch_multi_inputs` işlevi tanımlıyoruz.
 
 ```{.python .input}
 #@save
 def split_batch_multi_inputs(X, y, devices):
     """Split multi-input `X` and `y` into multiple devices."""
-    """Çoklu girdili `X` and `y`'yi birden çok cihaza ayırın."""
     X = list(zip(*[gluon.utils.split_and_load(
         feature, devices, even_split=False) for feature in X]))
     return (X, gluon.utils.split_and_load(y, devices, even_split=False))
@@ -347,7 +346,7 @@ Son olarak, bir çift öncül ve hipotez arasındaki mantıksal ilişkiyi ortaya
 ```{.python .input}
 #@save
 def predict_snli(net, vocab, premise, hypothesis):
-    """Öncül ve hipotez arasındaki mantıksal ilişkiyi tahmin edin."""
+    """Predict the logical relationship between the premise and hypothesis."""
     premise = np.array(vocab[premise], ctx=d2l.try_gpu())
     hypothesis = np.array(vocab[hypothesis], ctx=d2l.try_gpu())
     label = np.argmax(net([premise.reshape((1, -1)),
@@ -360,7 +359,7 @@ def predict_snli(net, vocab, premise, hypothesis):
 #@tab pytorch
 #@save
 def predict_snli(net, vocab, premise, hypothesis):
-    """Öncül ve hipotez arasındaki mantıksal ilişkiyi tahmin edin."""
+    """Predict the logical relationship between the premise and hypothesis."""
     net.eval()
     premise = torch.tensor(vocab[premise], device=d2l.try_gpu())
     hypothesis = torch.tensor(vocab[hypothesis], device=d2l.try_gpu())
@@ -386,7 +385,7 @@ predict_snli(net, vocab, ['he', 'is', 'good', '.'], ['he', 'is', 'bad', '.'])
 
 ## Alıştırmalar
 
-1. Modeli diğer hiper parametre kombinasyonları ile eğitin. Test kümesinde daha iyi doğruluk elde edebilir misiniz?
+1. Modeli diğer hiperparametre kombinasyonları ile eğitin. Test kümesinde daha iyi doğruluk elde edebilir misiniz?
 1. Doğal dil çıkarımı için ayrıştırılabilir dikkat modelinin en büyük sakıncaları nelerdir?
 1. Herhangi bir cümle çifti için anlamsal benzerlik düzeyini (örneğin, 0 ile 1 arasında sürekli bir değer) elde etmek istediğimizi varsayalım. Veri kümesini nasıl toplayıp etiketleyeceğiz? Dikkat mekanizmaları ile bir model tasarlayabilir misiniz?
 

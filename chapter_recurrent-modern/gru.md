@@ -1,13 +1,13 @@
 # Geçitli Yinelemeli Birimler (GRU)
 :label:`sec_gru`
 
-:numref:`sec_bptt` içinde, gradyanların RNN'lerde nasıl hesaplandığını tartıştık. Özellikle matrislerin uzun çarpımlarının kaybolan veya patlayan gradyanlara yol açabileceğini gördük. Bu tür gradyan sıradışılıklarının pratikte ne anlama geldiğini hakkında kısaca düşünelim:
+:numref:`sec_bptt`'te, gradyanların RNN'lerde nasıl hesaplandığını tartıştık. Özellikle matrislerin uzun çarpımlarının kaybolan veya patlayan gradyanlara yol açabileceğini gördük. Bu tür gradyan sıradışılıklarının pratikte ne anlama geldiğini hakkında kısaca düşünelim:
 
 * Gelecekteki tüm gözlemleri tahmin etmek için erken bir gözlemin son derece önemli olduğu bir durumla karşılaşabiliriz. Biraz karmaşık bir durumu düşünün; ilk gözlem bir sağlama toplamı (checksum) içerir ve hedef de sağlama toplamının dizinin sonunda doğru olup olmadığını fark etmektir. Bu durumda, ilk andıcın etkisi hayati önem taşır. Hayati önem taşıyan erken bilgileri bir *bellek hücresinde* depolamak için bazı mekanizmalara sahip olmak isteriz. Böyle bir mekanizma olmadan, bu gözlemlere çok büyük bir gradyan atamak zorunda kalacağız, çünkü sonraki tüm gözlemleri etkilerler.
 * Bazı andıçların uygun gözlem taşımadığı durumlarla karşılaşabiliriz. Örneğin, bir web sayfasını ayrıştırırken, sayfada iletilen duygunun değerlendirilmesi amacıyla alakasız olan yardımcı HTML kodu olabilir. Gizli durum temsilinde bu tür andıçları *atlamak* için birtakım mekanizmaya sahip olmak isteriz.
 * Bir dizinin parçaları arasında mantıksal bir kırılma olduğu durumlarla karşılaşabiliriz. Örneğin, bir kitaptaki bölümler arasında bir geçiş veya menkul kıymetler piyasasında hisse değerleri arasında bir geçiş olabilir. Bu durumda iç durum temsilimizi *sıfırlamak* için bir araca sahip olmak güzel olurdu.
 
-Bunu ele almak için bir dizi yöntem önerilmiştir. İlk öncülerden biri :numref:`sec_lstm` içinde tartışacağımız uzun ömürlü kısa-dönem belleğidir :cite:`Hochreiter.Schmidhuber.1997`. Geçitli yinelemeli birim (GRU) :cite:`Cho.Van-Merrienboer.Bahdanau.ea.2014`, genellikle benzer performans sunan ve hesaplanmanın önemli ölçüde daha hızlı olduğu biraz daha elverişli bir türdür :cite:`Chung.Gulcehre.Cho.ea.2014`. Sadeliğinden dolayı, GRU ile başlayalım.
+Bunu ele almak için bir dizi yöntem önerilmiştir. İlk öncülerden biri :numref:`sec_lstm`'de tartışacağımız uzun ömürlü kısa-dönem belleğidir :cite:`Hochreiter.Schmidhuber.1997`. Geçitli yinelemeli birim (GRU) :cite:`Cho.Van-Merrienboer.Bahdanau.ea.2014`, genellikle benzer performans sunan ve :cite:`Chung.Gulcehre.Cho.ea.2014` hesaplanmanın önemli ölçüde daha hızlı olduğu biraz daha elverişli bir türdür. Sadeliğinden dolayı, GRU ile başlayalım.
 
 ## Geçitli Gizli Durum
 
@@ -22,7 +22,7 @@ Bu geçitleri işleyerek başlıyoruz. :numref:`fig_gru_1`, mevcut zaman adımı
 ![Bir GRU modelinde sıfırlama ve güncelleme geçitlerini hesaplama.](../img/gru-1.svg)
 :label:`fig_gru_1`
 
-Matematiksel olarak, belirli bir zaman adımı $t$ için, girdinin bir minigrubun $\mathbf{X}_t \in \mathbb{R}^{n \times d}$ (örnek sayısı: $n$, girdi sayısı: $d$) ve önceki zaman adımının gizli durumunun $\mathbf{H}_{t-1} \in \mathbb{R}^{n \times h}$ (gizli birimlerin sayısı: $h$) olduğunu varsayalım. O zaman, sıfırlama geçidi $\mathbf{R}_t \in \mathbb{R}^{n \times h}$ ve güncelleştirme geçidi $\mathbf{Z}_t \in \mathbb{R}^{n \times h}$ aşağıdaki gibi hesaplanır:
+Matematiksel olarak, belirli bir zaman adımı $t$ için, girdinin bir minigrubun $\mathbf{X}_t \in \mathbb{R}^{n \times d}$ (örnek sayısı: $n$, girdi sayısı: $d$) ve önceki zaman adımının gizli durumunun $\mathbf{H}_{t-1} \in \mathbb{R}^{n \times h}$ (gizli birimlerin sayısı: $h$) olduğunu varsayalım . O zaman, sıfırlama geçidi $\mathbf{R}_t \in \mathbb{R}^{n \times h}$ ve güncelleştirme geçidi $\mathbf{Z}_t \in \mathbb{R}^{n \times h}$ aşağıdaki gibi hesaplanır:
 
 $$
 \begin{aligned}
@@ -31,33 +31,33 @@ $$
 \end{aligned}
 $$
 
-burada $\mathbf{W}_{xr}, \mathbf{W}_{xz} \in \mathbb{R}^{d \times h}$ ve $\mathbf{W}_{hr}, \mathbf{W}_{hz} \in \mathbb{R}^{h \times h}$ ağırlık parametreleridir ve $\mathbf{b}_r, \mathbf{b}_z \in \mathbb{R}^{1 \times h}$ ek girdilerdir. Yayınlamanın (bkz. :numref:`subsec_broadcasting`) toplama sırasında tetiklendiğini unutmayın. Girdi değerlerini $(0, 1)$ aralığına dönüştürmek için sigmoid işlevleri (:numref:`sec_mlp` içinde tanıtıldığı gibi) kullanırız.
+burada $\mathbf{W}_{xr}, \mathbf{W}_{xz} \in \mathbb{R}^{d \times h}$ ve $\mathbf{W}_{hr}, \mathbf{W}_{hz} \in \mathbb{R}^{h \times h}$ ağırlık parametreleridir ve $\mathbf{b}_r, \mathbf{b}_z \in \mathbb{R}^{1 \times h}$ ek girdilerdir. Yayınlamanın (bkz. :numref:`subsec_broadcasting`) toplama sırasında tetiklendiğini unutmayın. Girdi değerlerini $(0, 1)$ aralığına dönüştürmek için sigmoid işlevleri (:numref:`sec_mlp`'te tanıtıldığı gibi) kullanırız.
 
 ### Aday Gizli Durum
 
-Ardından, $\mathbf{R}_t$'i sıfırlama geçidini :eqref:`rnn_h_with_state` denklemindeki normal gizli durum güncelleme mekanizmasıyla tümleştirelim. Bizi $t$ zaman adımında aşağıdaki *aday gizli durum* $\tilde{\mathbf{H}}_t \in \mathbb{R}^{n \times h}$'ye yönlendirir:
+Ardından, $\mathbf{R}_t$'i sıfırlama geçidini :eqref:`rnn_h_with_state`'teki normal gizli durum güncelleme mekanizmasıyla tümleştirelim. Bizi $t$ zaman adımında aşağıdaki *aday gizli durum* $\tilde{\mathbf{H}}_t \in \mathbb{R}^{n \times h}$'ye yönlendirir:
 
 $$\tilde{\mathbf{H}}_t = \tanh(\mathbf{X}_t \mathbf{W}_{xh} + \left(\mathbf{R}_t \odot \mathbf{H}_{t-1}\right) \mathbf{W}_{hh} + \mathbf{b}_h),$$
 :eqlabel:`gru_tilde_H`
 
 burada $\mathbf{W}_{xh} \in \mathbb{R}^{d \times h}$ ve $\mathbf{W}_{hh} \in \mathbb{R}^{h \times h}$ ağırlık parametreleridir, $\mathbf{b}_h \in \mathbb{R}^{1 \times h}$ ek girdi ve $\odot$ sembolü Hadamard (eleman yönlü) çarpım işlemidir. Burada, aday gizli durumdaki değerlerin $(-1, 1)$ aralığında kalmasını sağlamak için tanh şeklinde bir doğrusal olmayan bir işlev kullanıyoruz.
 
-Sonuç, hala güncelleme geçidinin eylemini dahil etmemiz gerektiğinden bir *adaydır*. :eqref:`rnn_h_with_state` ile karşılaştırıldığında, önceki durumların etkisi $\mathbf{R}_t$ ve $\mathbf{H}_{t-1}$'nin :eqref:`gru_tilde_H` denkleminde eleman yönlü çarpımı ile azaltılabilir. Sıfırlama geçidi $\mathbf{R}_t$ girdileri 1'e yakın olduğunda, :eqref:`rnn_h_with_state` denkleminde olduğu gibi sıradan bir RNN elde ederiz. Sıfırlama geçidi $\mathbf{R}_t$'nın 0'a yakın olan tüm girdileri için, aday gizli durum, girdisi $\mathbf{X}_t$ olan bir MLP'nin sonucudur. Önceden var olan herhangi bir gizli durum böylece *sıfırlanarak* varsayılanlara döner.
+Sonuç, hala güncelleme geçidinin eylemini dahil etmemiz gerektiğinden bir *adaydır*. :eqref:`rnn_h_with_state` ile karşılaştırıldığında, önceki durumların etkisi $\mathbf{R}_t$ ve $\mathbf{H}_{t-1}$'nin :eqref:`gru_tilde_H`'te eleman yönlü çarpımı ile azaltılabilir. Sıfırlama geçidi $\mathbf{R}_t$ girdileri 1'e yakın olduğunda, :eqref:`rnn_h_with_state`'te olduğu gibi sıradan bir RNN elde ederiz. Sıfırlama geçidi $\mathbf{R}_t$'nın 0'a yakın olan tüm girdileri için, aday gizli durum, girdisi $\mathbf{X}_t$ olan bir MLP'nin sonucudur. Önceden var olan herhangi bir gizli durum böylece *sıfırlanarak* varsayılanlara döner.
 
-:numref:`fig_gru_2` sıfırlama geçidini uyguladıktan sonraki hesaplama akışını gösterir.
+:numref:`fig_gru_2`, sıfırlama geçidini uyguladıktan sonraki hesaplama akışını gösterir.
 
 ![GRU'de aday gizli durumu hesaplama.](../img/gru-2.svg)
 :label:`fig_gru_2`
 
 ### Gizli Durum
 
-Son olarak, güncelleme geçidi $\mathbf{Z}_t$'nin etkisini dahil etmemiz gerekiyor. Bu, yeni gizli durum $\mathbf{H}_t \in \mathbb{R}^{n \times h}$'in sadece eski durum $\mathbf{H}_{t-1}$'in ve yeni aday durum $\tilde{\mathbf{H}}_t$'nin ne kadar kullanıldığını belirler. $\mathbf{Z}_t$ güncelleme geçidi bu amaçla kullanılabilir, basitçe hem $\mathbf{H}_{t-1}$ hem de $\tilde{\mathbf{H}}_t$ arasındaki eleman yönlü dışbükey birleşimler alarak kullanılabilir. Bu da, GRU için son güncelleştirme denklemine yol açar:
+Son olarak, güncelleme geçid $\mathbf{Z}_t$'nin etkisini dahil etmemiz gerekiyor. Bu, yeni gizli durum $\mathbf{H}_t \in \mathbb{R}^{n \times h}$'in sadece eski durum $\mathbf{H}_{t-1}$'in ve yeni aday durum $\tilde{\mathbf{H}}_t$'nin ne kadar kullanıldığını belirler. $\mathbf{Z}_t$ güncelleme geçidi bu amaçla kullanılabilir, basitçe hem $\mathbf{H}_{t-1}$ hem de $\tilde{\mathbf{H}}_t$ arasındaki eleman yönlü dışbükey birleşimler alarak kullanılabilir. Bu da, GRU için son güncelleştirme denklemine yol açar:
 
 $$\mathbf{H}_t = \mathbf{Z}_t \odot \mathbf{H}_{t-1}  + (1 - \mathbf{Z}_t) \odot \tilde{\mathbf{H}}_t.$$
 
 Güncelleme geçidi $\mathbf{Z}_t$ 1'e yakın olduğunda, sadece eski durumu koruruz. Bu durumda $\mathbf{X}_t$'den gelen bilgiler esasen göz ardı edilir, bağlılık zincirinde $t$ zaman adımı etkin bir şekilde atlanır. Buna karşılık, $\mathbf{Z}_t$ 0'a yakın olduğunda, yeni gizli durum $\mathbf{H}_t$ aday gizli durum $\tilde{\mathbf{H}}_t$'ye yaklaşır. Bu tasarımlar, RNN'lerdeki kaybolan gradyan sorunuyla başa çıkmamıza ve büyük zaman adım mesafeleri olan diziler için bağlılıkları daha iyi yakalamamıza yardımcı olabilirler. Örneğin, güncelleme geçidi tüm bir alt dizinin tüm zaman adımları için 1'e yakınsa, başlangıç zamanındaki eski gizli durum alt sıranın uzunluğuna bakılmaksızın kolayca korunur ve sonuna kadar geçirilir.
 
-:numref:`fig_gru_3` güncelleme geçidi harekete geçtikten sonra hesaplama akışını gösterir.
+:numref:`fig_gru_3`, güncelleme geçidi harekete geçtikten sonra hesaplama akışını gösterir.
 
 ![GRU modelinde gizli durumu hesaplama.](../img/gru-3.svg)
 :label:`fig_gru_3`
@@ -69,7 +69,7 @@ Güncelleme geçidi $\mathbf{Z}_t$ 1'e yakın olduğunda, sadece eski durumu kor
 
 ## Sıfırdan Uygulama
 
-GRU modelini daha iyi anlamak için sıfırdan uygulayalım. :numref:`sec_rnn_scratch` içinde kullandığımız zaman makinesi veri kümesini okuyarak başlıyoruz. Veri kümesini okuma kodu aşağıda verilmiştir.
+GRU modelini daha iyi anlamak için sıfırdan uygulayalım. :numref:`sec_rnn_scratch`'te kullandığımız zaman makinesi veri kümesini okuyarak başlıyoruz. Veri kümesini okuma kodu aşağıda verilmiştir.
 
 ```{.python .input}
 from d2l import mxnet as d2l
@@ -116,13 +116,13 @@ def get_params(vocab_size, num_hiddens, device):
                 normal((num_hiddens, num_hiddens)),
                 np.zeros(num_hiddens, ctx=device))
 
-    W_xz, W_hz, b_z = three()  # Geçit parametrelerini güncelle
-    W_xr, W_hr, b_r = three()  # Geçit parametrelerini sıfırla
-    W_xh, W_hh, b_h = three()  # Aday gizli durum parametreleri
-    # Çıktı katmanı parametreleri
+    W_xz, W_hz, b_z = three()  # Update gate parameters
+    W_xr, W_hr, b_r = three()  # Reset gate parameters
+    W_xh, W_hh, b_h = three()  # Candidate hidden state parameters
+    # Output layer parameters
     W_hq = normal((num_hiddens, num_outputs))
     b_q = np.zeros(num_outputs, ctx=device)
-    # Gradyanları iliştir
+    # Attach gradients
     params = [W_xz, W_hz, b_z, W_xr, W_hr, b_r, W_xh, W_hh, b_h, W_hq, b_q]
     for param in params:
         param.attach_grad()
@@ -142,13 +142,13 @@ def get_params(vocab_size, num_hiddens, device):
                 normal((num_hiddens, num_hiddens)),
                 d2l.zeros(num_hiddens, device=device))
 
-    W_xz, W_hz, b_z = three()  # Geçit parametrelerini güncelle
-    W_xr, W_hr, b_r = three()  # Geçit parametrelerini sıfırla
-    W_xh, W_hh, b_h = three()  # Aday gizli durum parametreleri
-    # Çıktı katmanı parametreleri
+    W_xz, W_hz, b_z = three()  # Update gate parameters
+    W_xr, W_hr, b_r = three()  # Reset gate parameters
+    W_xh, W_hh, b_h = three()  # Candidate hidden state parameters
+    # Output layer parameters
     W_hq = normal((num_hiddens, num_outputs))
     b_q = d2l.zeros(num_outputs, device=device)
-    # Gradyanları iliştir
+    # Attach gradients
     params = [W_xz, W_hz, b_z, W_xr, W_hr, b_r, W_xh, W_hh, b_h, W_hq, b_q]
     for param in params:
         param.requires_grad_(True)
@@ -167,10 +167,10 @@ def get_params(vocab_size, num_hiddens):
                 tf.Variable(normal((num_hiddens, num_hiddens)), dtype=tf.float32),
                 tf.Variable(d2l.zeros(num_hiddens), dtype=tf.float32))
 
-    W_xz, W_hz, b_z = three()  # Geçit parametrelerini güncelle
-    W_xr, W_hr, b_r = three()  # Geçit parametrelerini sıfırla
-    W_xh, W_hh, b_h = three()  # Aday gizli durum parametreleri
-    # Çıktı katmanı parametreleri
+    W_xz, W_hz, b_z = three()  # Update gate parameters
+    W_xr, W_hr, b_r = three()  # Reset gate parameters
+    W_xh, W_hh, b_h = three()  # Candidate hidden state parameters
+    # Output layer parameters
     W_hq = tf.Variable(normal((num_hiddens, num_outputs)), dtype=tf.float32)
     b_q = tf.Variable(d2l.zeros(num_outputs), dtype=tf.float32)
     params = [W_xz, W_hz, b_z, W_xr, W_hr, b_r, W_xh, W_hh, b_h, W_hq, b_q]
@@ -179,7 +179,7 @@ def get_params(vocab_size, num_hiddens):
 
 ### Modelin Tanımlanması
 
-Şimdi [**gizli durum ilkleme işlevini**] tanımlayacağız `init_gru_state`. :numref:`sec_rnn_scratch` içinde tanımlanan `init_rnn_state` işlevi gibi, bu işlev, değerleri sıfırlar olan (toplu boyut, gizli birim sayısı) şekline sahip bir tensör döndürür.
+Şimdi [**gizli durum ilkleme işlevini**] tanımlayacağız `init_gru_state`. :numref:`sec_rnn_scratch`'te tanımlanan `init_rnn_state` işlevi gibi, bu işlev, değerleri sıfırlar olan (toplu boyut, gizli birim sayısı) şekline sahip bir tensör döndürür.
 
 ```{.python .input}
 def init_gru_state(batch_size, num_hiddens, device):
@@ -250,7 +250,7 @@ def gru(inputs, state, params):
 
 ### Eğitme ve Tahmin Etme
 
-[**Eğitim**] ve tahmin, tam olarak :numref:`sec_rnn_scratch` içindekiyle aynı şekilde çalışır. Eğitimden sonra, sırasıyla sağlanan “zaman yolcusu” ve “yolcusu” ön eklerini takip eden eğitim kümesindeki şaşkınlığı ve tahmin edilen diziyi yazdırırız.
+[**Eğitim**] ve tahmin, tam olarak :numref:`sec_rnn_scratch`'tekiyle aynı şekilde çalışır. Eğitimden sonra, sırasıyla sağlanan “zaman yolcusu” ve “yolcusu” ön eklerini takip eden eğitim kümesindeki şaşkınlığı ve tahmin edilen diziyi yazdırırız.
 
 ```{.python .input}
 #@tab mxnet, pytorch
@@ -263,7 +263,7 @@ d2l.train_ch8(model, train_iter, vocab, lr, num_epochs, device)
 ```{.python .input}
 #@tab tensorflow
 vocab_size, num_hiddens, device_name = len(vocab), 256, d2l.try_gpu()._device_name
-# tensorflow eğitim stratejisini tanımlama
+# defining tensorflow training strategy
 strategy = tf.distribute.OneDeviceStrategy(device_name)
 num_epochs, lr = 500, 1
 with strategy.scope():

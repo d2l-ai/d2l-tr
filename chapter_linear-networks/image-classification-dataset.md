@@ -72,7 +72,7 @@ len(mnist_train), len(mnist_test)
 len(mnist_train[0]), len(mnist_test[0])
 ```
 
-Her girdi imgesinin yüksekliği ve genişliği 28 pikseldir. Veri kümesinin, kanal sayısı 1 olan gri tonlamalı görsellerden oluştuğuna dikkat edin. Kısaca, bu kitapta yüksekliği $h$ genişliği $w$ piksel olan herhangi bir imgenin şekli $h \times w$ veya ($h$, $w$)'dir.
+Her girdi imgesinin yüksekliği ve genişliği 28 pikseldir. Veri kümesinin, kanal sayısı 1 olan gri tonlamalı görsellerden oluştuğuna dikkat edin. Kısaca, bu kitapta yüksekliği $h$ genişliği $w$ piksel olan herhangi bir görüntünün şekli $h \times w$ veya ($h$, $w$)'dir.
 
 ```{.python .input}
 #@tab all
@@ -155,7 +155,7 @@ show_images(X, 2, 9, titles=get_fashion_mnist_labels(y));
 
 ## Minigrup Okuma
 
-Eğitim ve test kümelerinden okurken hayatımızı kolaylaştırmak için sıfırdan bir tane oluşturmak yerine yerleşik veri yineleyiciyi kullanıyoruz. Her yinelemede, bir yineleyicinin [**her seferinde grup (`batch_size`) boyutundaki bir veri minigrubunu okuduğunu**] hatırlayın. Ayrıca eğitim verisi yineleyicisi için örnekleri rastgele karıştırıyoruz.
+Eğitim ve test kümelerinden okurken hayatımızı kolaylaştırmak için sıfırdan bir tane oluşturmak yerine yerleşik veri yineleyiciyi kullanıyoruz. Her yinelemede, bir yineleyicinin [**her seferinde grup (`batch_size`) boyutundaki bir veri mini grubunu okuduğunu**] hatırlayın. Ayrıca eğitim verisi yineleyicisi için örnekleri rastgele karıştırıyoruz.
 
 ```{.python .input}
 batch_size = 256
@@ -272,7 +272,7 @@ Artık ilerleyen bölümlerde Fashion-MNIST veri kümesiyle çalışmaya hazır�
 ## Özet
 
 * Fashion-MNIST, 10 kategoriyi temsil eden resimlerden oluşan bir giyim sınıflandırma veri kümesidir. Bu veri kümesini, çeşitli sınıflandırma algoritmalarını değerlendirmek için sonraki bölümlerde kullanacağız.
-* Yüksekliği $h$ genişliği $w$ piksel olan herhangi bir imgenin şeklini $h \times w$ veya ($h$, $w$) olarak saklarız.
+* Yüksekliği $h$ genişliği $w$ piksel olan herhangi bir görüntünün şeklini $h \times w$ veya ($h$, $w$) olarak saklarız.
 * Veri yineleyiciler, verimli performans için önemli bir bileşendir. Eğitim döngünüzü yavaşlatmaktan kaçınmak için yüksek performanslı hesaplamalardan yararlanan iyi uygulanmış veri yineleyicilerine güvenin.
 
 ## Alıştırmalar

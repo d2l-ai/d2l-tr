@@ -1,26 +1,26 @@
 # Tek Atışta Çoklu Kutu Algılama
 :label:`sec_ssd`
 
-:numref:`sec_bbox`—-:numref:`sec_object-detection-dataset` içinde kuşatan kutuları, çapa kutularını, çoklu ölçekli nesne algılamayı ve nesne algılama için veri kümesini kullanıma sunduk. Şimdi bir nesne algılama modeli tasarlamak için bu tür arkaplan bilgisini kullanmaya hazırız: Tek atışta çoklu kutu algılama (SSD) :cite:`Liu.Anguelov.Erhan.ea.2016`. Bu model basittir, hızlıdır ve yaygın olarak kullanılmaktadır. Bu, çok büyük miktardaki nesne algılama modellerinden sadece biri olmasına rağmen, bu bölümdeki tasarım ilkeleri ve uygulama detaylarından bazıları diğer modeller için de geçerlidir. 
+:numref:`sec_bbox`—-:numref:`sec_object-detection-dataset`'te kuşatan kutuları, çapa kutularını, çoklu ölçekli nesne algılamayı ve nesne algılama için veri kümesini kullanıma sunduk. Şimdi bir nesne algılama modeli tasarlamak için bu tür arkaplan bilgisini kullanmaya hazırız: Tek atışta çoklu kutu algılama (SSD) :cite:`Liu.Anguelov.Erhan.ea.2016`. Bu model basittir, hızlıdır ve yaygın olarak kullanılmaktadır. Bu, çok büyük miktardaki nesne algılama modellerinden sadece biri olmasına rağmen, bu bölümdeki tasarım ilkeleri ve uygulama detaylarından bazıları diğer modeller için de geçerlidir. 
 
 ## Model
 
 :numref:`fig_ssd`, tek atışta çoklu kutu algılama tasarımına genel bir bakış sağlar. Bu model esas olarak bir temel ağdan ve ardından birkaç çoklu ölçekli öznitelik haritası bloğundan oluşur. Temel ağ, girdi imgesinden öznitelikleri ayıklamak içindir, bu nedenle derin bir CNN kullanabilir. Örneğin, özgün tek atışta çoklu kutu algılama makalesi :cite:`Liu.Anguelov.Erhan.ea.2016` sınıflandırma katmanında önce budanmış bir VGG ağı benimser, her ne kadar ResNet de yaygın olarak kullanılır olsa da. Tasarımımız sayesinde, daha küçük nesneleri algılamak için daha fazla çapa kutusu üretmek için temel ağ çıktısının daha büyük öznitelik haritaları yapmasını sağlarız. Daha sonra, her çoklu ölçekli öznitelik harita bloğu önceki bloktan öznitelik haritalarının yüksekliğini ve genişliğini azaltır (örn. yarı yarıya) ve öznitelik haritalarının her biriminin girdi imgesindeki alıcı alanını artırmasını sağlar. 
 
-:numref:`sec_multiscale-object-detection` içinde derin sinir ağları tarafından imgelerin katmansal gösterimleri yoluyla çoklu ölçekli nesne algılama tasarımını hatırlayın. :numref:`fig_ssd` içinde gösterilen üst kısmına daha yakın olan çoklu ölçekli öznitelik haritaları daha küçük olduğundan ancak daha büyük alıcı alanlara sahip olduklarından, daha az ama daha büyük nesneleri algılamak için uygundur. 
+:numref:`sec_multiscale-object-detection`'te derin sinir ağları tarafından imgelerin katmansal gösterimleri yoluyla çoklu ölçekli nesne algılama tasarımını hatırlayın. :numref:`fig_ssd`'in üst kısmına daha yakın olan çoklu ölçekli öznitelik haritaları daha küçük olduğundan ancak daha büyük alıcı alanlara sahip olduklarından, daha az ama daha büyük nesneleri algılamak için uygundur. 
 
 Özetle, temel ağı ve birkaç çoklu ölçekli öznitelik haritası bloğu aracılığıyla, tek atışta çoklu kutu algılama, farklı boyutlarda değişen sayıda çapa kutusu oluşturur ve bu çapa kutularının sınıflarını ve ofsetlerini (dolayısıyla kuşatan kutuları) tahmin ederek değişen boyuttaki nesneleri algılar; bu nedenle, bu bir çoklu ölçekli nesne algılama modelidir. 
 
-![Çoklu ölçekli bir nesne algılama modeli olarak, tek atışta çoklu kutu algılama temel olarak bir temel ağdan ve ardından birkaç çoklu ölçekli öznitelik haritası bloğundan oluşur.](../img/ssd.svg)
+![Çoklu ölçekli bir nesne algılama modeli olarak, tek atışta çoklu kutu algılama temel olarak bir temel ağdan ve ardından birkaç çoklu ölçekli öznitelik haritası bloğundan oluşur..](../img/ssd.svg)
 :label:`fig_ssd`
 
-Aşağıda, :numref:`fig_ssd` içindeki farklı blokların uygulama ayrıntılarını açıklayacağız. Başlangıç olarak, sınıf ve kuşatan kutu tahmininin nasıl uygulanacağını tartışıyoruz. 
+Aşağıda, :numref:`fig_ssd`'te farklı blokların uygulama ayrıntılarını açıklayacağız. Başlangıç olarak, sınıf ve kuşatan kutu tahmininin nasıl uygulanacağını tartışıyoruz. 
 
 ### [**Sınıf Tahmin Katmanı**]
 
-Nesne sınıflarının sayısı $q$ olsun. O zaman çapa kutuları $q+1$ sınıfa sahiptir, burada sınıf 0 arkaplandır. Bazı ölçeklerde, öznitelik haritalarının yüksekliği ve genişliğinin sırasıyla $h$ ve $w$ olduğunu varsayalım. $a$ tane çapa kutusu, bu öznitelik haritalarının her mekansal konumu ile merkezi olarak oluşturulduğunda, toplam $hwa$ çapa kutusunun sınıflandırılması gerekir. Bu durum genellikle büyük olasılıkla ağır parametreleme maliyetleri nedeniyle tam bağlı katmanlarla sınıflandırmayı olanaksız kılar. :numref:`sec_nin` içinde sınıfları tahmin etmek için evrişimli katman kanallarını nasıl kullandığımızı hatırlayın. Tek atışta çoklu kutu algılama, model karmaşıklığını azaltmak için aynı tekniği kullanır. 
+Nesne sınıflarının sayısı $q$ olsun. O zaman çapa kutuları $q+1$ sınıfa sahiptir, burada sınıf 0 arkaplandır. Bazı ölçeklerde, öznitelik haritalarının yüksekliği ve genişliğinin sırasıyla $h$ ve $w$ olduğunu varsayalım. $a$ tane çapa kutusu, bu öznitelik haritalarının her mekansal konumu ile merkezi olarak oluşturulduğunda, toplam $hwa$ çapa kutusunun sınıflandırılması gerekir. Bu durum genellikle büyük olasılıkla ağır parametreleme maliyetleri nedeniyle tam bağlı katmanlarla sınıflandırmayı olanaksız kılar. :numref:`sec_nin`'te sınıfları tahmin etmek için evrişimli katman kanallarını nasıl kullandığımızı hatırlayın. Tek atışta çoklu kutu algılama, model karmaşıklığını azaltmak için aynı tekniği kullanır. 
 
-Özellikle, sınıf tahmini katmanı, öznitelik haritalarının genişliğini veya yüksekliğini değiştirmeden bir evrişimli katman kullanır. Bu şekilde, öznitelik haritalarının aynı uzamsal boyutlarında (genişlik ve yükseklik) çıktılar ve girdiler arasında birebir karşılık olabilir. Daha somut olarak, çıktı öznitelik haritalarının kanallarının herhangi bir ($x$, $y$) uzamsal konumu, girdi öznitelik haritalarının ($x$, $y$) merkezli tüm çapa kutuları için sınıf tahminlerini temsil eder. Geçerli tahminler üretmek için, $a(q+1)$ çıktı kanalı olmalıdır; burada aynı uzamsal konum için $i(q+1) + j$ dizinli çıktı kanalı, $i$ ($0 \leq i < a$) çapa kutusu için $j$ ($0 \leq j \leq q$) sınıfının tahminini temsil eder. 
+Özellikle, sınıf tahmini katmanı, öznitelik haritalarının genişliğini veya yüksekliğini değiştirmeden bir evrişimli katman kullanır. Bu şekilde, öznitelik haritalarının aynı uzamsal boyutlarında (genişlik ve yükseklik) çıktılar ve girdiler arasında bire bir karşılık olabilir. Daha somut olarak, çıktı öznitelik haritalarının kanallarının herhangi bir ($x$, $y$) uzamsal konumu, girdi öznitelik haritalarının ($x$, $y$) merkezli tüm çapa kutuları için sınıf tahminlerini temsil eder. Geçerli tahminler üretmek için, $a(q+1)$ çıktı kanalı olmalıdır; burada aynı uzamsal konum için $i(q+1) + j$ dizinli çıktı kanalı, $i$ ($0 \leq i < a$) çapa kutusu için $j$ ($0 \leq j \leq q$) sınıfının tahminini temsil eder. 
 
 Aşağıda, sırasıyla `num_anchors` ve `num_classes` argümanları vasıtasıyla $a$'yı ve $q$'yu belirten böyle bir sınıf tahmini katmanı tanımlıyoruz. Bu katman, 1 dolgulu bir $3\times3$'lük evrişimli tabaka kullanır. Bu evrişimli katmanın girdisinin ve çıktısının genişliği ve yüksekliği değişmeden kalır.
 
@@ -70,7 +70,7 @@ def bbox_predictor(num_inputs, num_anchors):
 
 Belirttiğimiz gibi, tek atışta çok kutulu algılama, çapa kutuları oluşturmak ve sınıflarını ve uzaklıklarını tahmin etmek için çoklu ölçekli öznitelik haritaları kullanır. Farklı ölçeklerde, öznitelik haritalarının şekilleri veya aynı birimde ortalanmış çapa kutularının sayısı değişebilir. Bu nedenle, farklı ölçeklerde tahmin çıktılarının şekilleri değişebilir. 
 
-Aşağıdaki örnekte, aynı minigrup için `Y1` ve `Y2` olmak üzere iki farklı ölçekte öznitelik haritası oluşturuyoruz; burada `Y2`'nin yüksekliği ve genişliği `Y1`'inkinin yarısı kadardır. Örnek olarak sınıf tahminini ele alalım. Her birim için sırasıyla `Y1` ve `Y2`'teki 5 ve 3 çapa kutusunun oluşturulduğunu varsayalım. Nesne sınıflarının sayısının 10 olduğunu varsayalım. Öznitelik haritaları `Y1` ve `Y2` için sınıf tahmini çıktılarındaki kanal sayısı sırasıyla $5\times(10+1)=55$ ve $3\times(10+1)=33$'tür, burada (toplu iş boyutu, kanal sayısı, yükseklik, genişlik) her iki çıktının şeklidir.
+Aşağıdaki örnekte, aynı minigrup için `Y1` ve `Y2` olmak üzere iki farklı ölçekte öznitelik haritası oluşturuyoruz; burada `Y2`nin yüksekliği ve genişliği `Y1`inkinin yarısı kadardır. Örnek olarak sınıf tahminini ele alalım. Her birim için sırasıyla `Y1` ve `Y2`'teki 5 ve 3 çapa kutusunun oluşturulduğunu varsayalım. Nesne sınıflarının sayısının 10 olduğunu varsayalım. Öznitelik haritaları `Y1` ve `Y2` için sınıf tahmini çıktılarındaki kanal sayısı sırasıyla $5\times(10+1)=55$ ve $3\times(10+1)=33$'dür, burada (parti boyutu, kanal sayısı, yükseklik, genişlik) her iki çıktının şeklidir.
 
 ```{.python .input}
 def forward(x, block):
@@ -92,7 +92,7 @@ Y2 = forward(torch.zeros((2, 16, 10, 10)), cls_predictor(16, 3, 10))
 Y1.shape, Y2.shape
 ```
 
-Gördüğümüz gibi, toplu iş boyutu hariç, diğer üç boyutun hepsinin farklı boyutları var. Daha verimli hesaplama için bu iki tahmin çıktısını bitiştirmek için bu tensörleri daha tutarlı bir formata dönüştüreceğiz. 
+Gördüğümüz gibi, topu iş boyutu hariç, diğer üç boyutun hepsinin farklı boyutları var. Daha verimli hesaplama için bu iki tahmin çıktısını bitiştirmek için bu tensörleri daha tutarlı bir formata dönüştüreceğiz. 
 
 Kanal boyutunun aynı merkeze sahip çapa kutuları için tahminleri tuttuğunu unutmayın. İlk önce bu boyutu en içteki boyuta taşıyacağız. Toplu iş boyutu farklı ölçekler için aynı kaldığından, tahmin çıktısını (toplu iş boyutu, yükseklik $\times$ genişlik $\times$ kanal sayısı) şekline sahip iki boyutlu bir tensöre dönüştürebiliriz. O zaman bu tür çıktıları 1. boyut boyunca farklı ölçeklerde birleştiririz.
 
@@ -122,7 +122,7 @@ concat_preds([Y1, Y2]).shape
 
 ### [**Örnek Seyreltme Bloğu**]
 
-Nesneleri çoklu ölçekte algılamak için girdi öznitelik haritalarının yüksekliğini ve genişliğini yarıya indiren aşağıdaki örnek seyreltme bloğu `down_sample_blk`'i tanımlarız. Aslında, bu blok :numref:`subsec_vgg-blocks` içindeki VGG bloklarının tasarımını uygular. Daha somut olarak, her bir örnek seyreltme bloğu, 1 dolgulu iki $3\times3$ evrişimli katmandan ve ardından 2 uzun adımlı bir $2\times2$ maksimum ortaklama katmanından oluşur. Bildiğimiz gibi, 1 dolgulu $3\times3$ evrişimli katmanlar, öznitelik haritalarının şeklini değiştirmez. Ancak, sonraki $2\times2$ maksimum ortaklama, girdi öznitelik haritalarının yüksekliğini ve genişliğini yarı yarıya azaltır. Bu örnek seyreltme bloğunun hem girdi hem de çıktı öznitelik haritaları için $1\times 2+(3-1)+(3-1)=6$ olduğundan, çıktıdaki her birim girdi üzerinde $6\times6$ alıcı alanına sahiptir. Bu nedenle, aşağı örnek seyreltme bloğu, çıktı öznitelik haritalarında her birim alıcı alanını genişletir.
+Nesneleri çoklu ölçekte algılamak için girdi öznitelik haritalarının yüksekliğini ve genişliğini yarıya indiren aşağıdaki örnek seyreltme bloğu `down_sample_blk`'i tanımlarız. Aslında, bu blok :numref:`subsec_vgg-blocks`'teki VGG bloklarının tasarımını uygular. Daha somut olarak, her bir örnek seyreltme bloğu, 1 dolgulu iki $3\times3$ evrişimli katmandan ve ardından 2 uzun adımlı bir $2\times2$ maksimum ortaklama katmanından oluşur. Bildiğimiz gibi, 1 dolgulu $3\times3$ evrişimli katmanlar, öznitelik haritalarının şeklini değiştirmez. Ancak, sonraki $2\times2$ maksimum ortaklama, girdi öznitelik haritalarının yüksekliğini ve genişliğini yarı yarıya azaltır. Bu örnek seyreltme bloğunun hem girdi hem de çıktı öznitelik haritaları için $1\times 2+(3-1)+(3-1)=6$ olduğundan, çıktıdaki her birim girdi üzerinde $6\times6$ alıcı alanına sahiptir. Bu nedenle, aşağı örnek seyreltme bloğu, çıktı öznitelik haritalarında her birim alıcı alanını genişletir.
 
 ```{.python .input}
 def down_sample_blk(num_channels):
@@ -188,7 +188,7 @@ forward(torch.zeros((2, 3, 256, 256)), base_net()).shape
 
 ### Tam Model
 
-[**Tek atışta çoklu kutu algılama modeli beş bloktan oluşur.**] Her blok tarafından üretilen öznitelik haritaları, (i) çapa kutuları oluşturmak ve (ii) bu çapa kutularının sınıflarını ve ofsetlerini tahmin etmek için kullanılır. Bu beş blok arasında, ilki temel ağ bloğudur, ikincisinden dördüncüsüne kadarkiler örnek seyreltme bloklarıdır ve son blok hem yüksekliği hem de genişliği 1'e düşürmek için küresel maksimum ortaklama kullanır. Teknik olarak, ikincisinden beşinciye bütün bloklar, :numref:`fig_ssd` içindeki çoklu ölçekli öznitelik harita bloklarıdır.
+[**Tek atışta çoklu kutu algılama modeli beş bloktan oluşur.**] Her blok tarafından üretilen öznitelik haritaları, (i) çapa kutuları oluşturmak ve (ii) bu çapa kutularının sınıflarını ve ofsetlerini tahmin etmek için kullanılır. Bu beş blok arasında, ilki temel ağ bloğudur, ikincisinden dördüncüsüne kadarkiler örnek seyreltme bloklarıdır ve son blok hem yüksekliği hem de genişliği 1'e düşürmek için küresel maksimum ortaklama kullanır. Teknik olarak, ikincisinden beşinciye bütün bloklar, :numref:`fig_ssd`'teki çoklu ölçekli öznitelik harita bloklarıdır.
 
 ```{.python .input}
 def get_blk(i):
@@ -215,7 +215,7 @@ def get_blk(i):
     return blk
 ```
 
-Şimdi her blok için [**ileri yaymayı tanımlıyoruz**]. İmge sınıflandırma görevlerinden farklı olarak, buradaki çıktılar arasında (i) CNN öznitelik haritaları `Y`, (ii) geçerli ölçekte `Y` kullanılarak oluşturulan çapa kutuları ve (iii) (`Y`'ye dayalı) bu çapa kutuları için tahmin edilen sınıfları ve uzaklıkları (ofsetleri) içerir.
+Şimdi her blok için [**ileri yaymayı tanımlıyoruz**]. İmge sınıflandırma görevlerinden farklı olarak, buradaki çıktılar arasında (i) CNN öznitelik haritaları `Y`, (ii) geçerli ölçekte `Y` kullanılarak oluşturulan çapa kutuları ve (iii) (`Y`'e dayalı) bu çapa kutuları için tahmin edilen sınıfları ve uzaklıkları (ofsetleri) içerir.
 
 ```{.python .input}
 def blk_forward(X, blk, size, ratio, cls_predictor, bbox_predictor):
@@ -236,9 +236,9 @@ def blk_forward(X, blk, size, ratio, cls_predictor, bbox_predictor):
     return (Y, anchors, cls_preds, bbox_preds)
 ```
 
-:numref:`fig_ssd` içinde, tepeye daha yakın olan çoklu ölçekli bir öznitelik harita bloğunun daha büyük nesneleri algılamak için olduğunu hatırlayın; bu nedenle, daha büyük çapa kutuları oluşturması gerekir. Yukarıdaki ileri yaymada, her çoklu ölçekli öznitelik harita bloğunda, çağrılan `multibox_prior` işlevinin `sizes` argümanı (:numref:`sec_anchor` içinde açıklanmıştır) vasıtasıyla iki ölçekli değerlerden oluşan bir liste geçeririz. Aşağıda, 0.2 ile 1.05 arasındaki aralık, beş bloktaki daha küçük ölçek değerlerini belirlemek için eşit olarak beş bölüme ayrılmıştır: 0.2, 0.37, 0.54, 0.71 ve 0.88. Daha sonra daha büyük ölçek değerleri $\sqrt{0.2 \times 0.37} = 0.272$, $\sqrt{0.37 \times 0.54} = 0.447$ vb. şeklinde verilir.
+:numref:`fig_ssd`'te, tepeye daha yakın olan çoklu ölçekli bir öznitelik harita bloğunun daha büyük nesneleri algılamak için olduğunu hatırlayın; bu nedenle, daha büyük çapa kutuları oluşturması gerekir. Yukarıdaki ileri yaymada, her çoklu ölçekli öznitelik harita bloğunda, çağrılan `multibox_prior` işlevinin `sizes` argümanı (:numref:`sec_anchor`'te açıklanmıştır) vasıtasıyla iki ölçekli değerlerden oluşan bir liste geçeririz. Aşağıda, 0.2 ile 1.05 arasındaki aralık, beş bloktaki daha küçük ölçek değerlerini belirlemek için eşit olarak beş bölüme ayrılmıştır: 0.2, 0.37, 0.54, 0.71 ve 0.88. Daha sonra daha büyük ölçek değerleri $\sqrt{0.2 \times 0.37} = 0.272$, $\sqrt{0.37 \times 0.54} = 0.447$ vb. şeklinde verilir.
 
-[~~Her blok için Hiper parametreler ~~]
+[~~Her blok için Hiperparametreler ~~]
 
 ```{.python .input}
 #@tab all
@@ -256,7 +256,7 @@ class TinySSD(nn.Block):
         super(TinySSD, self).__init__(**kwargs)
         self.num_classes = num_classes
         for i in range(5):
-            # Eşdeğer atama `self.blk_i = get_blk(i)`
+            # Equivalent to the assignment statement `self.blk_i = get_blk(i)`
             setattr(self, f'blk_{i}', get_blk(i))
             setattr(self, f'cls_{i}', cls_predictor(num_anchors, num_classes))
             setattr(self, f'bbox_{i}', bbox_predictor(num_anchors))
@@ -264,7 +264,7 @@ class TinySSD(nn.Block):
     def forward(self, X):
         anchors, cls_preds, bbox_preds = [None] * 5, [None] * 5, [None] * 5
         for i in range(5):
-            # Burada `getattr(self, 'blk_%d' % i)` `self.blk_i`'ye ulaşır
+            # Here `getattr(self, 'blk_%d' % i)` accesses `self.blk_i`
             X, anchors[i], cls_preds[i], bbox_preds[i] = blk_forward(
                 X, getattr(self, f'blk_{i}'), sizes[i], ratios[i],
                 getattr(self, f'cls_{i}'), getattr(self, f'bbox_{i}'))
@@ -284,7 +284,7 @@ class TinySSD(nn.Module):
         self.num_classes = num_classes
         idx_to_in_channels = [64, 128, 128, 128, 128]
         for i in range(5):
-            # Eşdeğer atama  `self.blk_i = get_blk(i)`
+            # Equivalent to the assignment statement `self.blk_i = get_blk(i)`
             setattr(self, f'blk_{i}', get_blk(i))
             setattr(self, f'cls_{i}', cls_predictor(idx_to_in_channels[i],
                                                     num_anchors, num_classes))
@@ -294,7 +294,7 @@ class TinySSD(nn.Module):
     def forward(self, X):
         anchors, cls_preds, bbox_preds = [None] * 5, [None] * 5, [None] * 5
         for i in range(5):
-            # Burada `getattr(self, 'blk_%d' % i)` `self.blk_i`'ye ulaşır
+            # Here `getattr(self, 'blk_%d' % i)` accesses `self.blk_i`
             X, anchors[i], cls_preds[i], bbox_preds[i] = blk_forward(
                 X, getattr(self, f'blk_{i}'), sizes[i], ratios[i],
                 getattr(self, f'cls_{i}'), getattr(self, f'bbox_{i}'))
@@ -338,7 +338,7 @@ print('output bbox preds:', bbox_preds.shape)
 
 ### Veri Kümesini Okuma ve Modeli İlkleme
 
-Başlangıç olarak, :numref:`sec_object-detection-dataset` içinde açıklanan [**muz algılama veri kümesini okuyalım**].
+Başlangıç olarak, :numref:`sec_object-detection-dataset`'te açıklanan [**muz algılama veri kümesini okuyalım**].
 
 ```{.python .input}
 #@tab all
@@ -363,7 +363,7 @@ trainer = torch.optim.SGD(net.parameters(), lr=0.2, weight_decay=5e-4)
 
 ### [**Kayıp ve Değerlendirme Fonksiyonlarını Tanımlama**]
 
-Nesne algılaması iki tür kayba sahiptir. İlk kayıp, çapa kutularının sınıflarıyla ilgilidir: Hesaplama, imge sınıflandırması için kullandığımız çapraz entropi kayıp işlevini yeniden kullanabilir. İkinci kayıp pozitif (arkaplan olmayan) çapa kutularının ofsetlerini ile ilgilenir: Bu bir bağlanım problemidir. Bununla birlikte, bu bağlanım sorunu için, burada :numref:`subsec_normal_distribution_and_squared_loss` içinde açıklanan kare kaybı kullanmıyoruz. Bunun yerine, $L_1$ norm kaybını, tahmin ve gerçek referans değer arasındaki farkın mutlak değerini kullanıyoruz. Maske değişkeni `bbox_masks`, kayıp hesaplamasında negatif çapa kutularını ve geçersiz (dolgulu) çapa kutularını filtreler. Sonunda, model için yitim fonksiyonunu elde etmek için çapa kutusu sınıf kaybını ve çapa kutusu ofset kaybını toplarız.
+Nesne algılaması iki tür kayba sahiptir. İlk kayıp, çapa kutularının sınıflarıyla ilgilidir: Hesaplama, imge sınıflandırması için kullandığımız çapraz entropi kayıp işlevini yeniden kullanabilir. İkinci kayıp pozitif (arkaplan olmayan) çapa kutularının ofsetlerini ile ilgilenir: Bu bir bağlanım problemidir. Bununla birlikte, bu bağlanım sorunu için, burada :numref:`subsec_normal_distribution_and_squared_loss`'te açıklanan kare kaybı kullanmıyoruz. Bunun yerine, $L_1$ norm kaybını, tahmin ve gerçek referans değer arasındaki farkın mutlak değerini kullanıyoruz. Maske değişkeni `bbox_masks`, kayıp hesaplamasında negatif çapa kutularını ve geçersiz (dolgulu) çapa kutularını filtreler. Sonunda, model için yitim fonksiyonunu elde etmek için çapa kutusu sınıf kaybını ve çapa kutusu ofset kaybını toplarız.
 
 ```{.python .input}
 cls_loss = gluon.loss.SoftmaxCrossEntropyLoss()
@@ -393,8 +393,8 @@ Sınıflandırma sonuçlarını değerlendirmek için doğruluğu kullanabiliriz
 
 ```{.python .input}
 def cls_eval(cls_preds, cls_labels):
-    # Sınıf tahmini sonuçları son boyutta olduğundan, 
-    # `argmax`'ın bu boyutu belirtmesi gerekiyor
+    # Because the class prediction results are on the final dimension,
+    # `argmax` needs to specify this dimension
     return float((cls_preds.argmax(axis=-1).astype(
         cls_labels.dtype) == cls_labels).sum())
 
@@ -405,8 +405,8 @@ def bbox_eval(bbox_preds, bbox_labels, bbox_masks):
 ```{.python .input}
 #@tab pytorch
 def cls_eval(cls_preds, cls_labels):
-    # Sınıf tahmini sonuçları son boyutta olduğundan, 
-    # `argmax`'ın bu boyutu belirtmesi gerekiyor
+    # Because the class prediction results are on the final dimension,
+    # `argmax` needs to specify this dimension
     return float((cls_preds.argmax(dim=-1).type(
         cls_labels.dtype) == cls_labels).sum())
 
@@ -423,22 +423,22 @@ num_epochs, timer = 20, d2l.Timer()
 animator = d2l.Animator(xlabel='epoch', xlim=[1, num_epochs],
                         legend=['class error', 'bbox mae'])
 for epoch in range(num_epochs):
-    # Eğitim doğruluğu toplamı, eğitim doğruluğu toplamında örnek sayısı, 
-    # Mutlak hata toplamı, mutlak hata toplamında örnek sayısı
+    # Sum of training accuracy, no. of examples in sum of training accuracy,
+    # Sum of absolute error, no. of examples in sum of absolute error
     metric = d2l.Accumulator(4)
     for features, target in train_iter:
         timer.start()
         X = features.as_in_ctx(device)
         Y = target.as_in_ctx(device)
         with autograd.record():
-            # Çok ölçekli bağlantı kutuları oluşturun ve sınıflarını 
-            # ve ofsetlerini tahmin edin
+            # Generate multiscale anchor boxes and predict their classes and
+            # offsets
             anchors, cls_preds, bbox_preds = net(X)
-            # Bu çapa kutularının sınıflarını ve uzaklıklarını etiketleyin
+            # Label the classes and offsets of these anchor boxes
             bbox_labels, bbox_masks, cls_labels = d2l.multibox_target(anchors,
                                                                       Y)
-            # Sınıfların ve ofsetlerin tahmin edilen ve etiketlenen 
-            # değerlerini kullanarak kayıp fonksiyonunu hesaplayın
+            # Calculate the loss function using the predicted and labeled
+            # values of the classes and offsets
             l = calc_loss(cls_preds, cls_labels, bbox_preds, bbox_labels,
                           bbox_masks)
         l.backward()
@@ -460,21 +460,21 @@ animator = d2l.Animator(xlabel='epoch', xlim=[1, num_epochs],
                         legend=['class error', 'bbox mae'])
 net = net.to(device)
 for epoch in range(num_epochs):
-    # Eğitim doğruluğu toplamı, eğitim doğruluğu toplamında örnek sayısı, 
-    # Mutlak hata toplamı, mutlak hata toplamında örnek sayısı
+    # Sum of training accuracy, no. of examples in sum of training accuracy,
+    # Sum of absolute error, no. of examples in sum of absolute error
     metric = d2l.Accumulator(4)
     net.train()
     for features, target in train_iter:
         timer.start()
         trainer.zero_grad()
         X, Y = features.to(device), target.to(device)
-        # Çok ölçekli bağlantı kutuları oluşturun ve sınıflarını 
-        # ve ofsetlerini tahmin edin
+        # Generate multiscale anchor boxes and predict their classes and
+        # offsets
         anchors, cls_preds, bbox_preds = net(X)
-        # Bu çapa kutularının sınıflarını ve uzaklıklarını etiketleyin
+        # Label the classes and offsets of these anchor boxes
         bbox_labels, bbox_masks, cls_labels = d2l.multibox_target(anchors, Y)
-        # Sınıfların ve ofsetlerin tahmin edilen ve etiketlenen 
-        # değerlerini kullanarak kayıp fonksiyonunu hesaplayın
+        # Calculate the loss function using the predicted and labeled values
+        # of the classes and offsets
         l = calc_loss(cls_preds, cls_labels, bbox_preds, bbox_labels,
                       bbox_masks)
         l.mean().backward()
@@ -571,7 +571,7 @@ display(img, output.cpu(), threshold=0.9)
 
 ## Alıştırmalar
 
-1. Kayıp işlevini geliştirerek tek atışta çoklu kutu algılamasını geliştirebilir misiniz? Örneğin, tahmini ofsetler için pürüzsüz $L_1$ norm kaybı ile $L_1$ norm kaybını değiştirin. Bu kayıp fonksiyonu, hiper parametre $\sigma$ tarafından kontrol edilen pürüzsüzlük için sıfır çevresinde bir kare işlevi kullanır:
+1. Kayıp işlevini geliştirerek tek atışta çoklu kutu algılamasını geliştirebilir misiniz? Örneğin, tahmini ofsetler için pürüzsüz $L_1$ norm kaybı ile $L_1$ norm kaybını değiştirin. Bu kayıp fonksiyonu, hiperparametre $\sigma$ tarafından kontrol edilen pürüzsüzlük için sıfır çevresinde bir kare işlevi kullanır:
 
 $$
 f(x) =
@@ -617,7 +617,7 @@ for l, s in zip(lines, sigmas):
 d2l.plt.legend();
 ```
 
-Ayrıca, deneyde sınıf tahmini için çapraz entropi kaybı kullandık: $p_j$ ile $p_j$ ile gerçek referans değer sınıfı $j$ için tahmin edilen olasılığı ifade edersek, çapraz entropi kaybı $-\log p_j$ olur. Ayrıca odak kaybı :cite:`Lin.Goyal.Girshick.ea.2017` kullanabilirsiniz: $\gamma > 0$ ve $\alpha > 0$ hiper parametre ile, bu kayıp şu şekilde tanımlanır: 
+Ayrıca, deneyde sınıf tahmini için çapraz entropi kaybı kullandık: $p_j$ ile $p_j$ ile gerçek referans değer sınıfı $j$ için tahmin edilen olasılığı ifade edersek, çapraz entropi kaybı $-\log p_j$ olur. Ayrıca odak kaybı :cite:`Lin.Goyal.Girshick.ea.2017` kullanabilirsiniz: $\gamma > 0$ ve $\alpha > 0$ hiperparametre ile, bu kayıp şu şekilde tanımlanır: 
 
 $$ - \alpha (1-p_j)^{\gamma} \log p_j.$$
 
@@ -648,7 +648,7 @@ d2l.plt.legend();
 2. Alan kısıtları nedeniyle, bu bölümdeki tek atışta çoklu kutu algılama modelinin bazı uygulama ayrıntılarını atladık. Modeli aşağıdaki yönlerden daha da geliştirebilir misiniz?
     1. Nesne imgeye kıyasla çok daha küçük olduğunda, model girdi imgesini daha büyük boyutlandırabilir.
     1. Genellikle çok sayıda negatif çapa kutusu vardır. Sınıf dağılımını daha dengeli hale getirmek için negatif çapa kutularını azaltabiliriz.
-    1. Kayıp işlevinde, sınıf kaybına ve ofset kaybına farklı ağırlık hiper parametreleri atayın.
+    1. Kayıp işlevinde, sınıf kaybına ve ofset kaybına farklı ağırlık hiperparametreleri atayın.
     1. Nesne algılama modelini değerlendirmek için, tek atışta çoklu kutu algılama çalışması :cite:`Liu.Anguelov.Erhan.ea.2016` gibi diğer yöntemleri kullanın.
 
 :begin_tab:`mxnet`

@@ -1,7 +1,7 @@
 # Kodlayıcı-Kodçözücü Mimarisi
 :label:`sec_encoder-decoder`
 
-:numref:`sec_machine_translation` içinde tartıştığımız gibi, makine çevirisi, girdinin ve çıktının ikisinin de değişken uzunlukta diziler olduğu dizi dönüştürme modelleri için önemli bir problem sahasıdır. Bu tür girdi ve çıktıları işlemek için iki ana bileşenli bir mimari tasarlayabiliriz. İlk bileşen bir *kodlayıcı*dır (encoder): Girdi olarak değişken uzunlukta bir diziyi alır ve sabit bir şekle sahip bir duruma dönüştürür. İkinci bileşen bir *kodçözücü*dür (decoder): Sabit şekilli bir kodlanmış durumu değişken uzunlukta bir diziye eşler. Bu, :numref:`fig_encoder_decoder` şeklinde tasvir edildiği gibi *kodlayıcı-kodçözücü* mimarisi olarak adlandırılır.
+:numref:`sec_machine_translation`'te tartıştığımız gibi, makine çevirisi, girdinin ve çıktının ikisinin de değişken uzunlukta diziler olduğu dizi dönüştürme modelleri için önemli bir problem sahasıdır. Bu tür girdi ve çıktıları işlemek için iki ana bileşenli bir mimari tasarlayabiliriz. İlk bileşen bir *kodlayıcı*dır (encoder): Girdi olarak değişken uzunlukta bir diziyi alır ve sabit bir şekle sahip bir duruma dönüştürür. İkinci bileşen bir *kodçözücü*dür (decoder): Sabit şekilli bir kodlanmış durumu değişken uzunlukta bir diziye eşler. Bu, :numref:`fig_encoder_decoder`'te tasvir edildiği gibi *kodlayıcı-kodçözücüsü* mimarisi olarak adlandırılır.
 
 ![Kodlayıcı-kodçözücü mimarisi.](../img/encoder-decoder.svg)
 :label:`fig_encoder_decoder`
@@ -17,7 +17,7 @@ from mxnet.gluon import nn
 
 #@save
 class Encoder(nn.Block):
-    """Kodlayıcı-kod çözücü mimarisi için temel kodlayıcı arabirimi."""
+    """The base encoder interface for the encoder-decoder architecture."""
     def __init__(self, **kwargs):
         super(Encoder, self).__init__(**kwargs)
 
@@ -31,7 +31,7 @@ from torch import nn
 
 #@save
 class Encoder(nn.Module):
-    """Kodlayıcı-kod çözücü mimarisi için temel kodlayıcı arabirimi."""
+    """The base encoder interface for the encoder-decoder architecture."""
     def __init__(self, **kwargs):
         super(Encoder, self).__init__(**kwargs)
 
@@ -45,7 +45,7 @@ import tensorflow as tf
 
 #@save
 class Encoder(tf.keras.layers.Layer):
-    """Kodlayıcı-kod çözücü mimarisi için temel kodlayıcı arabirimi."""
+    """The base encoder interface for the encoder-decoder architecture."""
     def __init__(self, **kwargs):
         super(Encoder, self).__init__(**kwargs)
 
@@ -55,12 +55,12 @@ class Encoder(tf.keras.layers.Layer):
 
 ## [**Kodçözücü**]
 
-Aşağıdaki kodçözücü arayüzünde, kodlayıcı çıktısını (`enc_outputs`) kodlanmış duruma dönüştürmek için ek bir `init_state` işlevi ekliyoruz. Bu adımın :numref:`subsec_mt_data_loading` içinde açıklanan girdinin geçerli uzunluğu gibi ek girdiler gerektirebileceğini unutmayın. Her seferinde bir andıç yaratarak değişken uzunlukta bir dizi oluşturmak için, her zaman kodçözücü bir girdiyi (örneğin, önceki zaman adımında oluşturulan andıç) ve kodlanmış durumu şu anki zaman adımındaki bir çıktı andıcına eşler.
+Aşağıdaki kodçözücü arayüzünde, kodlayıcı çıktısını (`enc_outputs`) kodlanmış duruma dönüştürmek için ek bir `init_state` işlevi ekliyoruz. Bu adımın :numref:`subsec_mt_data_loading`'te açıklanan girdinin geçerli uzunluğu gibi ek girdiler gerektirebileceğini unutmayın. Her seferinde bir andıç yaratarak değişken uzunlukta bir dizi oluşturmak için, her zaman kodçözücü bir girdiyi (örneğin, önceki zaman adımında oluşturulan andıç) ve kodlanmış durumu şu anki zaman adımındaki bir çıktı andıcına eşler.
 
 ```{.python .input}
 #@save
 class Decoder(nn.Block):
-    """Kodlayıcı-kod çözücü mimarisi için temel kodçözücü arabirimi."""
+    """The base decoder interface for the encoder-decoder architecture."""
     def __init__(self, **kwargs):
         super(Decoder, self).__init__(**kwargs)
 
@@ -75,7 +75,7 @@ class Decoder(nn.Block):
 #@tab pytorch
 #@save
 class Decoder(nn.Module):
-    """Kodlayıcı-kod çözücü mimarisi için temel kodçözücü arabirimi."""
+    """The base decoder interface for the encoder-decoder architecture."""
     def __init__(self, **kwargs):
         super(Decoder, self).__init__(**kwargs)
 
@@ -90,7 +90,7 @@ class Decoder(nn.Module):
 #@tab tensorflow
 #@save
 class Decoder(tf.keras.layers.Layer):
-    """Kodlayıcı-kod çözücü mimarisi için temel kodçözücü arabirimi."""
+    """The base decoder interface for the encoder-decoder architecture."""
     def __init__(self, **kwargs):
         super(Decoder, self).__init__(**kwargs)
 
@@ -108,7 +108,7 @@ Sonunda, kodlayıcı-kodçözücü mimarisi, isteğe bağlı olarak ekstra argü
 ```{.python .input}
 #@save
 class EncoderDecoder(nn.Block):
-    """Kodlayıcı-kod çözücü mimarisi için temel sınıf."""
+    """The base class for the encoder-decoder architecture."""
     def __init__(self, encoder, decoder, **kwargs):
         super(EncoderDecoder, self).__init__(**kwargs)
         self.encoder = encoder
@@ -124,7 +124,7 @@ class EncoderDecoder(nn.Block):
 #@tab pytorch
 #@save
 class EncoderDecoder(nn.Module):
-    """Kodlayıcı-kod çözücü mimarisi için temel sınıf."""
+    """The base class for the encoder-decoder architecture."""
     def __init__(self, encoder, decoder, **kwargs):
         super(EncoderDecoder, self).__init__(**kwargs)
         self.encoder = encoder
@@ -140,7 +140,7 @@ class EncoderDecoder(nn.Module):
 #@tab tensorflow
 #@save
 class EncoderDecoder(tf.keras.Model):
-    """Kodlayıcı-kod çözücü mimarisi için temel sınıf."""
+    """The base class for the encoder-decoder architecture."""
     def __init__(self, encoder, decoder, **kwargs):
         super(EncoderDecoder, self).__init__(**kwargs)
         self.encoder = encoder

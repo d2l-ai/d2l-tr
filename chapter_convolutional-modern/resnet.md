@@ -5,22 +5,22 @@ Giderek daha derin ağlar tasarlarken, katman eklemenin ağın karmaşıklığı
 
 ## Fonksiyon Sınıfları
 
-Belirli bir ağ mimarisinin (öğrenme hızları ve diğer hiper parametre ayarları ile birlikte) ulaşabileceği işlevlerin sınıfı olan $\mathcal{F}$'i düşünün. Yani, $f \in \mathcal{F}$'in tümü için uygun bir veri kümesi üzerinde eğitim yoluyla elde edilebilecek bazı parametreler (örneğin, ağırlıklar ve ek girdiler) vardır. $f^*$'in gerçekten bulmak istediğimiz “gerçek” fonksiyon olduğunu varsayalım. Eğer $\mathcal{F}$'te ise, iyi durumdayız ancak tipik olarak bu kadar şanslı olmayacağız. Bunun yerine, $\mathcal{F}$ içinde en iyi aday olan herhangi bir $f^*_\mathcal{F}$ bulmaya çalışacağız. Örneğin, $\mathbf{X}$ öznitelikleri ve $\mathbf{y}$ etiketleri olan bir veri kümesi göz önüne alındığında, aşağıdaki eniyileme sorununu çözerek aday bulmayı deneyebiliriz:
+Belirli bir ağ mimarisinin (öğrenme hızları ve diğer hiper parametre ayarları ile birlikte) ulaşabileceği işlevlerin sınıfı olan $\mathcal{F}$'i düşünün. Yani, $f \in \mathcal{F}$'un tümü için uygun bir veri kümesi üzerinde eğitim yoluyla elde edilebilecek bazı parametreler (örneğin, ağırlıklar ve ek girdiler) vardır. $f^*$'in gerçekten bulmak istediğimiz “gerçek” fonksiyon olduğunu varsayalım. Eğer $\mathcal{F}$'te ise, iyi durumdayız ancak tipik olarak bu kadar şanslı olmayacağız. Bunun yerine, $\mathcal{F}$ içinde en iyi aday olan herhangi bir $f^*_\mathcal{F}$ bulmaya çalışacağız. Örneğin, $\mathbf{X}$ öznitelikleri ve $\mathbf{y}$ etiketleri olan bir veri kümesi göz önüne alındığında, aşağıdaki eniyileme sorununu çözerek aday bulmayı deneyebiliriz:
 
-$$f^*_\mathcal{F} \stackrel{\mathrm{def}}{=} \mathop{\mathrm{argmin}}_f L(\mathbf{X}, \mathbf{y}, f) \text{ öyle ki } f \in \mathcal{F}.$$
+$$f^*_\mathcal{F} \stackrel{\mathrm{def}}{=} \mathop{\mathrm{argmin}}_f L(\mathbf{X}, \mathbf{y}, f) \text{ subject to } f \in \mathcal{F}.$$
 
-Sadece farklı ve daha güçlü bir $\mathcal{F}'$ mimarisi tasarlarsak daha iyi bir sonuca ulaşacağımızı varsaymak mantıklıdır. Başka bir deyişle, $f^*_{\mathcal{F}'}$'nin $f^*_{\mathcal{F}}$'dan “daha iyi” olmasını bekleriz. Ancak, eğer $\mathcal{F} \not\subseteq \mathcal{F}'$ ise, bunun gerçekleşmesi gerektiğinin garantisi yoktur. Aslında, $f^*_{\mathcal{F}'}$ daha kötü olabilir. :numref:`fig_functionclasses` içinde gösterildiği gibi, iç içe olmayan işlev sınıfları için, daha büyük bir işlev sınıfı her zaman “gerçek” işlevi $f^*$'ye yakınlaşmaz. Örneğin, :numref:`fig_functionclasses` solunda $\mathcal{F}_3$'ün $f^*$'a $\mathcal{F}_1$'den daha yakın olmasına rağmen, $\mathcal{F}_6$ uzaklaşıyor ve karmaşıklığın daha da arttırılmasının $f^*$'ye mesafeyi azaltabileceğinin garantisi yoktur. İç içe işlev sınıfları ile, $\mathcal{F}_1 \subseteq \ldots \subseteq \mathcal{F}_6$, burada :numref:`fig_functionclasses` sağında gösteriliyor, yukarıda bahsedilen iç içe olmayan işlev sınıfları sorunundan kaçınabilirsiniz.
+Sadece farklı ve daha güçlü bir mimari tasarlarsak $\mathcal{F}'$ daha iyi bir sonuca varmamız gerektiğini varsaymak mantıklıdır. Başka bir deyişle, $f^*_{\mathcal{F}'}$'nin $f^*_{\mathcal{F}}$'dan “daha iyi” olmasını bekleriz. Ancak, eğer $\mathcal{F} \not\subseteq \mathcal{F}'$ ise, bunun gerçekleşmesi gerektiğinin garantisi yoktur. Aslında, $f^*_{\mathcal{F}'}$ daha kötü olabilir. :numref:`fig_functionclasses`'de gösterildiği gibi, iç içe olmayan işlev sınıfları için, daha büyük bir işlev sınıfı her zaman “gerçek” işlevi $f^*$'ye yakınlaşmaz. Örneğin, :numref:`fig_functionclasses`'in solunda $\mathcal{F}_3$'ün $f^*$'a $\mathcal{F}_1$'den daha yakın olmasına rağmen, $\mathcal{F}_6$ uzaklaşıyor ve karmaşıklığın daha da arttırılmasının $f^*$'ye mesafeyi azaltabileceğinin garantisi yoktur. İç içe işlev sınıfları ile, $\mathcal{F}_1 \subseteq \ldots \subseteq \mathcal{F}_6$, burada :numref:`fig_functionclasses`'ın sağında gösteriliyor, yukarıda bahsedilen iç içe olmayan işlev sınıfları sorunundan kaçınabilirsiniz.
 
 ![İç içe olmayan işlev sınıfları için, daha büyük (alanla gösteriliyor) işlev sınıfı, "doğruluk" işlevine ($f^*$) yaklaşmayı garanti etmez. Bu, yuvalanmış işlev sınıflarında gerçekleşmez.](../img/functionclasses.svg)
 :label:`fig_functionclasses`
 
 Böylece, daha büyük fonksiyon sınıfları daha küçük olanları içeriyorsa, onları artırmanın ağın açıklayıcı gücünü kesinlikle arttırdığını garanti ederiz. Derin sinir ağları için, yeni eklenen katmanı bir birim fonksiyonu $f(\mathbf{x}) = \mathbf{x}$ olarak eğitebilirsek, yeni model orijinal model kadar etkili olacaktır. Yeni model, eğitim veri kümesine uyacak şekilde daha iyi bir çözüm elde edebileceğinden, eklenen katman eğitim hatalarını azaltmayı kolaylaştırabilir.
 
-Bu çok derin bilgisayarla görme modelleri üzerinde çalışırken He ve diğerlerinin :cite:`He.Zhang.Ren.ea.2016` üstünde düşündüğü sorudur. Önerilen *artık ağ*ın (*ResNet*) özünde, her ek katmanın kendi elemanlarından biri olarak birim işlevini daha kolaylıkla içermesi gerektiği fikri vardır. Bu fikirler oldukça bilgeydi, fakat şaşırtıcı derecede basit bir çözüme ulaştılar; *artık blok*. ResNet, 2015 yılında ImageNet Büyük Ölçekli Görsel Tanıma Yarışmasını kazandı. Tasarımın derin sinir ağlarının nasıl kurulacağı üzerinde derin bir etkisi oldu.
+Bu çok derin bilgisayarla görme modelleri üzerinde çalışırken He ve diğerlerinin :cite:`He.Zhang.Ren.ea.2016` üstünde düşündüğü sorudur. Önerilen *artık ağ*ın (*ResNet*) özünde, her ek katmanın kendi elemanlarından biri olarak birim işlevini daha kolaylıkla içermesi gerektiği fikri vardır. Bu fikirler oldukça derindi, fakat şaşırtıcı derecede basit bir çözüme ulaştılar; *artık blok*. ResNet, 2015 yılında ImageNet Büyük Ölçekli Görsel Tanıma Yarışmasını kazandı. Tasarımın derin sinir ağlarının nasıl kurulacağı üzerinde derin bir etkisi oldu.
 
 ## (**Artık Blokları**)
 
-:numref:`fig_residual_block` içinde gösterildiği gibi, bir sinir ağının yerel bir bölümüne odaklanalım. Girdiyi $\mathbf{x}$ ile belirtelim. Öğrenerek elde etmek istediğimiz altta yatan eşlemenin üstteki etkinleştirme işlevine girdi olarak kullanılacak $f(\mathbf{x})$ olduğunu varsayıyoruz. :numref:`fig_residual_block` solunda, kesik çizgili kutudaki kısım doğrudan $f(\mathbf{x})$ eşlemesini öğrenmelidir. Sağda, kesik çizgili kutudaki bölümün, artık bloğun adını belirleyen *artık eşleme* $f(\mathbf{x}) - \mathbf{x}$'i öğrenmesi gerekir. Birim eşlemesi $f(\mathbf{x}) = \mathbf{x}$ istenen altta yatan eşleme ise, artık eşlemeyi öğrenmek daha kolaydır: Sadece kesik çizgili kutudaki üst ağırlık katmanının ağırlıklarını ve ek girdilerini (örn. tam bağlı katman ve evrişimli katman) sıfıra itmemiz gerekir. :numref:`fig_residual_block` içindeki sağdaki şekil, ResNet'in *artık bloğu*nu göstermektedir; burada $\mathbf{x}$ katman girdisini toplama işlemine taşıyan düz çizgiye *artık bağlantı* (veya *kısayol bağlantısı*) denir. Artık bloklarla girdiler, katmanlar arasında kalan bağlantılar üzerinden daha hızlı yayılabilir.
+:numref:`fig_residual_block`'te gösterildiği gibi, bir sinir ağının yerel bir bölümüne odaklanalım. Girdiyi $\mathbf{x}$ ile belirtin. Öğrenerek elde etmek istediğimiz altta yatan eşlemenin üstteki etkinleştirme işlevine girdi olarak kullanılacak $f(\mathbf{x})$ olduğunu varsayıyoruz. :numref:`fig_residual_block`'ün solunda, kesik çizgili kutudaki kısım doğrudan $f(\mathbf{x})$ eşlemesini öğrenmelidir. Sağda, kesik çizgili kutudaki bölümün, artık bloğun adını belirleyen *artık eşleme* $f(\mathbf{x}) - \mathbf{x}$'i öğrenmesi gerekir. Birim eşlemesi $f(\mathbf{x}) = \mathbf{x}$ istenen altta yatan eşleme ise, artık eşlemeyi öğrenmek daha kolaydır: Sadece kesik çizgili kutudaki üst ağırlık katmanının ağırlıklarını ve ek girdilerini (örn. tam bağlı katman ve evrişimli katman) sıfıra itmemiz gerekir. :numref:`fig_residual_block`'teki sağdaki şekil, ResNet'in *artık bloğu*nu göstermektedir; burada $\mathbf{x}$ katman girdisini toplama işlemine taşıyan düz çizgiye *artık bağlantı* (veya *kısayol bağlantısı*) denir. Artık bloklarla girdiler, katmanlar arasında kalan bağlantılar üzerinden daha hızlı yayılabilir.
 
 ![Normal bir blok (solda) ve bir artık blok (sağda).](../img/residual-block.svg)
 :label:`fig_residual_block`
@@ -34,7 +34,7 @@ from mxnet.gluon import nn
 npx.set_np()
 
 class Residual(nn.Block):  #@save
-    """ResNet'in artık bloğu."""
+    """The Residual block of ResNet."""
     def __init__(self, num_channels, use_1x1conv=False, strides=1, **kwargs):
         super().__init__(**kwargs)
         self.conv1 = nn.Conv2D(num_channels, kernel_size=3, padding=1,
@@ -64,7 +64,7 @@ from torch import nn
 from torch.nn import functional as F
 
 class Residual(nn.Module):  #@save
-    """ResNet'in artık bloğu."""
+    """The Residual block of ResNet."""
     def __init__(self, input_channels, num_channels,
                  use_1x1conv=False, strides=1):
         super().__init__()
@@ -95,7 +95,7 @@ from d2l import tensorflow as d2l
 import tensorflow as tf
 
 class Residual(tf.keras.Model):  #@save
-    """ResNet'in artık bloğu."""
+    """The Residual block of ResNet."""
     def __init__(self, num_channels, use_1x1conv=False, strides=1):
         super().__init__()
         self.conv1 = tf.keras.layers.Conv2D(
@@ -118,12 +118,12 @@ class Residual(tf.keras.Model):  #@save
         return tf.keras.activations.relu(Y)
 ```
 
-Bu kod iki tür ağ oluşturur: Biri, `use_1x1conv=False`'te ReLU doğrusal olmayanlığını uygulamadan önce çıktı ile  girdiyi topladığımız ve diğeri toplamadan önce $1 \times 1$ evrişim vasıtasıyla kanalları ve çözünürlüğü ayarladığımız. :numref:`fig_resnet_block` içinde bunu görebiliriz:
+Bu kod iki tür ağ oluşturur: Biri, `use_1x1conv=False`'te ReLU doğrusal olmayanlığını uygulamadan önce çıktı ile  girdiyi topladığımız ve diğeri toplamadan önce $1 \times 1$ evrişim vasıtasıyla kanalları ve çözünürlüğü ayarladığımız. :numref:`fig_resnet_block`'te bunu görebiliriz:
 
 ![$1 \times 1$ evrişim içeren ve içermeyen ResNet bloğu.](../img/resnet-block.svg)
 :label:`fig_resnet_block`
 
-Şimdi [**girdinin ve çıktının aynı şekle sahip olduğu bir duruma**] bakalım.
+Şimdi [**girdi ve çıktının aynı şekle sahip olduğu bir duruma**] bakalım.
 
 ```{.python .input}
 blk = Residual(3)
@@ -284,21 +284,20 @@ net = nn.Sequential(b1, b2, b3, b4, b5,
 
 ```{.python .input}
 #@tab tensorflow
-
-# Bunu daha sonra yeniden kullanabilmemiz ve çeşitli hesaplama kaynaklarını 
-# kullanmak için `tf.distribute.MirroredStrategy` kapsamında çalıştırabilmemiz 
-# için bir işlev olarak tanımladığımızı hatırlayın, mesela GPU'lar. Ayrıca b1, 
-# b2, b3, b4, b5'i yaratmış olmamıza rağmen, onları bu fonksiyonun kapsamı 
-# içinde yeniden oluşturacağımızı unutmayın.
+# Recall that we define this as a function so we can reuse later and run it
+# within `tf.distribute.MirroredStrategy`'s scope to utilize various
+# computational resources, e.g. GPUs. Also note that even though we have
+# created b1, b2, b3, b4, b5 but we will recreate them inside this function's
+# scope instead
 def net():
     return tf.keras.Sequential([
-        # Aşağıdaki katmanlar daha önce oluşturduğumuz b1 ile aynıdır
+        # The following layers are the same as b1 that we created earlier
         tf.keras.layers.Conv2D(64, kernel_size=7, strides=2, padding='same'),
         tf.keras.layers.BatchNormalization(),
         tf.keras.layers.Activation('relu'),
         tf.keras.layers.MaxPool2D(pool_size=3, strides=2, padding='same'),
-        # Aşağıdaki katmanlar daha önce oluşturduğumuz b2, b3, b4 ve b5 ile 
-        # aynıdır
+        # The following layers are the same as b2, b3, b4, and b5 that we
+        # created earlier
         ResnetBlock(64, 2, first_block=True),
         ResnetBlock(128, 2),
         ResnetBlock(256, 2),
@@ -307,7 +306,7 @@ def net():
         tf.keras.layers.Dense(units=10)])
 ```
 
-Her modülde 4 evrişimli katman vardır ($1\times 1$ evrişimli katman hariç). İlk $7\times 7$ evrişimli katman ve son tam bağlı tabaka ile birlikte toplamda 18 katman vardır. Bu nedenle, bu model yaygın olarak ResNet-18 olarak bilinir. Modülde farklı sayıda kanal ve artık blokları yapılandırarak, daha derin 152 katmanlı ResNet-152 gibi farklı ResNet modelleri oluşturabiliriz. ResNet'in ana mimarisi GoogLeNet'e benzer olsa da, ResNet'in yapısı daha basit ve değiştirmesi daha kolaydır. Tüm bu faktörler ResNet'in hızlı ve yaygın kullanımı ile sonuçlandı. :numref:`fig_resnet18` içinde bütün ResNet-18'i görselleştiriyoruz.
+Her modülde 4 evrişimli katman vardır ($1\times 1$ evrişimli katman hariç). İlk $7\times 7$ evrişimli katman ve son tam bağlı tabaka ile birlikte toplamda 18 katman vardır. Bu nedenle, bu model yaygın olarak ResNet-18 olarak bilinir. Modülde farklı sayıda kanal ve artık blokları yapılandırarak, daha derin 152 katmanlı ResNet-152 gibi farklı ResNet modelleri oluşturabiliriz. ResNet'in ana mimarisi GoogLeNet'e benzer olsa da, ResNet'in yapısı daha basit ve değiştirmesi daha kolaydır. Tüm bu faktörler ResNet'in hızlı ve yaygın kullanımı ile sonuçlandı. :numref:`fig_resnet18`'te bütün ResNet-18'i görselleştiriyoruz.
 
 ![The ResNet-18 architecture.](../img/resnet18.svg)
 :label:`fig_resnet18`
@@ -351,14 +350,14 @@ d2l.train_ch6(net, train_iter, test_iter, num_epochs, lr, d2l.try_gpu())
 
 ## Özet
 
-* İç içe işlev sınıfları arzu edilir. Derin sinir ağlarında bir birim fonksiyonu olarak ek bir katman öğrenmek (bu aşırı bir durum olsa da) kolaylaştırılmalıdır.
+* İç içe işlev sınıfları arzulanır. Derin sinir ağlarında bir birim fonksiyonu olarak ek bir katman öğrenmek (bu aşırı bir durum olsa da) kolaylaştırılmalıdır.
 * Artık eşleme, ağırlık katmanındaki parametreleri sıfıra iterek birim işlevini daha kolay öğrenebilir.
 * Artık blokları ile etkili bir derin sinir ağı eğitebiliriz. Girdiler, katmanlar arasındaki artık bağlantılar üzerinden daha hızlı yayılabilir.
 * ResNet, hem evrişimli hem de sıralı içerikli, müteakip derin sinir ağlarının tasarımı üzerinde büyük bir etkiye sahip oldu.
 
 ## Alıştırmalar
 
-1. :numref:`fig_inception` içindeki başlangıç bloğu ile artık blok arasındaki ana farklılıklar nelerdir? Başlangıç bloğundaki bazı yolları kaldırırsak, birbirleriyle nasıl ilişkili olurlar?
+1. :numref:`fig_inception`'teki başlangıç bloğu ile artık blok arasındaki ana farklılıklar nelerdir? Başlangıç bloğundaki bazı yolları kaldırırsak, birbirleriyle nasıl ilişkili olurlar?
 1. Farklı sürümleri uygulamak için ResNet makalesindeki :cite:`He.Zhang.Ren.ea.2016` Tablo 1'e bakın.
 1. Daha derin ağlar için ResNet, model karmaşıklığını azaltmada bir “darboğaz” mimarisi sunar. Uygulamaya çalışın.
 1. ResNet'in sonraki sürümlerinde yazarlar “evrişim, toplu normalleştirme ve etkinleştirme” yapısını “toplu normalleştirme, etkinleştirme ve evrişim” yapısına değiştirdiler. Bu gelişmeyi kendiniz uygulayın. Ayrıntılar için :cite:`He.Zhang.Ren.ea.2016*1`'teki Şekil 1'e bakın.

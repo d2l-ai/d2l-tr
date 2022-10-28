@@ -13,7 +13,7 @@ Mevcut bilgi miktarına bağlı olarak boşlukları “mutluyum”, “yarı” 
 
 Bu alt bölüm, dinamik programlama problemini göstermeyi amaçlar. Belirli teknik detaylar derin öğrenme modellerini anlamak için önemli değildir, ancak neden derin öğrenmeyi kullanabileceğimizi ve neden belirli mimarileri seçebileceğimizi anlamaya yardımcı olurlar.
 
-Problemi olasılıksal çizge modelleri kullanarak çözmek istiyorsak, mesela aşağıdaki gibi gizli bir değişken modeli tasarlayabiliriz. Herhangi bir $t$ zaman adımında, $P(x_t \mid h_t)$ olasılığında $x_t$ aracılığıyla gözlenen salınımı yöneten bazı gizli $h_t$ değişkenimiz olduğunu varsayalım. Dahası, herhangi bir $h_t \to h_{t+1}$ geçişi, bir durum geçiş olasılığı $P(h_{t+1} \mid h_{t})$ ile verilir. Bu olasılıksal çizge modeli :numref:`fig_hmm` şeklinde olduğu gibi bir *saklı Markov modeli*dir.
+Problemi olasılıksal çizge modelleri kullanarak çözmek istiyorsak, mesela aşağıdaki gibi gizli bir değişken modeli tasarlayabiliriz. Herhangi bir $t$ zamanda adımında, $P(x_t \mid h_t)$ olasılığında $x_t$ aracılığıyla gözlenen salınımı yöneten bazı gizli $h_t$ değişkenimiz olduğunu varsayalım. Dahası, herhangi bir $h_t \to h_{t+1}$ geçişi, bir durum geçiş olasılığı $P(h_{t+1} \mid h_{t})$ ile verilir. Bu olasılıksal çizge modeli :numref:`fig_hmm`'te olduğu gibi bir *saklı Markov modeli*dir.
 
 ![Saklı Markov Modeli.](../img/hmm.svg)
 :label:`fig_hmm`
@@ -23,9 +23,9 @@ Böylece, $T$ gözlemlerinin bir dizisi için gözlemlenen ve gizli durumlar üz
 $$P(x_1, \ldots, x_T, h_1, \ldots, h_T) = \prod_{t=1}^T P(h_t \mid h_{t-1}) P(x_t \mid h_t), \text{ öyleki } P(h_1 \mid h_0) = P(h_1).$$
 :eqlabel:`eq_hmm_jointP`
 
-Şimdi bazı $x_j$'ler hariç tüm $x_i$'leri gözlemlediğimizi varsayalım ve amacımız $P(x_j \mid x_{-j})$'yı hesaplamaktır ve burada $x_{-j} = (x_1, \ldots, x_{j-1}, x_{j+1}, \ldots, x_{T})$'dir. $P(x_j \mid x_{-j})$'te saklı bir değişken olmadığından, $h_1, \ldots, h_T$ için olası tüm seçenek kombinasyonlarını toplamayı düşünürüz. Herhangi bir $h_i$'nin $k$ farklı değerlere (sonlu sayıda durum) sahip olması durumunda, bu, $k^T$ terimi toplamamız gerektiği anlamına gelir; bu da genellikle imkansız bir işlemdir! Neyse ki bunun için şık bir çözüm var: *Dinamik programlama*.
+Şimdi bazı $x_j$'ler hariç tüm $x_i$'leri gözlemlediğimizi varsayalım ve amacımız $P(x_j \mid x_{-j})$'yı hesaplamaktır ve burada $x_{-j} = (x_1, \ldots, x_{j-1}, x_{j+1}, \ldots, x_{T})$'dir. $P(x_j \mid x_{-j})$'te saklı bir değişken olmadığından, $h_1, \ldots, h_T$ için olası tüm seçenek kombinasyonlarını toplamayı düşünürüz. Herhangi bir $h_i$'un $k$ farklı değerlere (sonlu sayıda durum) sahip olması durumunda, bu, $k^T$ terimi toplamamız gerektiği anlamına gelir; bu da genellikle imkansız bir işlemdir! Neyse ki bunun için şık bir çözüm var: *Dinamik programlama*.
 
-Nasıl çalıştığını görmek için, sırayla $h_1, \ldots, h_T$ saklı değişkenleri üzerinde toplamayı düşünün. :eqref:`eq_hmm_jointP` denklemine göre, şu ifadeye varırız:
+Nasıl çalıştığını görmek için, sırayla $h_1, \ldots, h_T$ saklı değişkenleri üzerinde toplamayı düşünün. :eqref:`eq_hmm_jointP`'e göre, şu ifadeye varırız:
 
 $$\begin{aligned}
     &P(x_1, \ldots, x_T) \\
@@ -80,7 +80,7 @@ Aslında, bu, gizli Markov modellerinin dinamik programlanmasındaki ileriye ve 
 
 ### Tanım
 
-Çift yönlü RNN'ler :cite:`Schuster.Paliwal.1997` çalışmasında tanıtıldı. Çeşitli mimarilerin ayrıntılı bir tartışması için de :cite:`Graves.Schmidhuber.2005` çalışmasında bakınız. Böyle bir ağın özelliklerine bakalım.
+Çift yönlü RNN'ler :cite:`Schuster.Paliwal.1997`'de tanıtıldı. Çeşitli mimarilerin ayrıntılı bir tartışması için de bkz :cite:`Graves.Schmidhuber.2005`. Böyle bir ağın özelliklerine bakalım.
 
 Herhangi bir $t$ zaman adımı için, bir minigrup girdisi $\mathbf{X}_t \in \mathbb{R}^{n \times d}$ (örnek sayısı: $n$, her örnekteki girdi sayısı: $d$) verildiğinde gizli katman etkinleştirme işlevinin $\phi$ olduğunu varsayalım. Çift yönlü mimaride, bu zaman adımı için ileriye ve geriye doğru gizli durumların sırasıyla $\overrightarrow{\mathbf{H}}_t  \in \mathbb{R}^{n \times h}$ ve $\overleftarrow{\mathbf{H}}_t  \in \mathbb{R}^{n \times h}$ olduğunu varsayıyoruz, burada $h$ gizli birimlerin sayısıdır. İleriye ve geriye doğru gizli durum güncelleştirmeleri aşağıdaki gibidir:
 
@@ -105,11 +105,11 @@ Burada, $\mathbf{W}_{hq} \in \mathbb{R}^{2h \times q}$ ağırlık matrisi ve $\m
 
 Yaraya tuz ekler gibi üstelik çift yönlü RNN'ler de son derece yavaştır. Bunun başlıca nedeni ileri yaymanın iki yönlü katmanlarda hem ileri hem de geri özyinelemeler gerektirmesi ve geri yaymanın ileri yayma sonuçlarına bağlı olmasıdır. Bu nedenle, gradyanlar çok uzun bir bağlılık zincirine sahip olacaktır.
 
-Pratikte çift yönlü katmanlar çok az kullanılır ve yalnızca eksik kelimeleri doldurma, andıçlara açıklama ekleme (örneğin, adlandırılmış nesne tanıma için) ve dizileri toptan kodlayarak diziyi veri işleme hattında bir adım işlemek gibi (örneğin, makine çevirisi için) dar bir uygulama kümesi için kullanılır. :numref:`sec_bert` ve :numref:`sec_sentiment_rnn` içinde, metin dizilerini kodlamak için çift yönlü RNN'lerin nasıl kullanılacağını tanıtacağız.
+Pratikte çift yönlü katmanlar çok az kullanılır ve yalnızca eksik kelimeleri doldurma, andıçlara açıklama ekleme (örneğin, adlandırılmış nesne tanıma için) ve dizileri toptan kodlayarak diziyi veri işleme hattında bir adım işlemek gibi (örneğin, makine çevirisi için) dar bir uygulama kümesi için kullanılır. :numref:`sec_bert` ve :numref:`sec_sentiment_rnn`'te, metin dizilerini kodlamak için çift yönlü RNN'lerin nasıl kullanılacağını tanıtacağız.
 
 ## (**Yanlış Bir Uygulama İçin Çift Yönlü RNN Eğitmek**)
 
-İki yönlü RNN'lerin geçmişteki ve gelecekteki verileri kullanmalarına gerçeğine ilişkin tüm ikazları görmezden gelirsek ve basitçe dil modellerine uygularsak, kabul edilebilir bir şaşkınlık değeriyle tahminler elde edebiliriz. Bununla birlikte, modelin gelecekteki andıçlarını tahmin etme yeteneği, aşağıdaki deneyin gösterdiği gibi ciddi bir şekilde zarar sokulmuştur. Makul şaşkınlığa rağmen, birçok yinelemeden sonra bile anlamsız ifadeler üretir. Aşağıdaki kodu, yanlış bağlamda kullanmaya karşı uyarıcı bir örnek olarak ekliyoruz.
+İki yönlü RNN'lerin geçmişteki ve gelecekteki verileri kullanmalarına gerçeğine ilişkin tüm ikazları görmezden gelirsek ve basitçe dil modellerine uygularsak, kabul edilebilir bir şaşkınlık değeriyle tahminler elde edebiliriz. Bununla birlikte, modelin gelecekteki andıçlarını tahmin etme yeteneği, aşağıdaki deney gösterildiği gibi ciddi bir şekilde zarar sokulmuştur. Makul şaşkınlığa rağmen, birçok yinelemeden sonra bile anlamsız ifadeler üretir. Aşağıdaki kodu, yanlış bağlamda kullanmaya karşı uyarıcı bir örnek olarak ekliyoruz.
 
 ```{.python .input}
 from d2l import mxnet as d2l
@@ -117,14 +117,14 @@ from mxnet import npx
 from mxnet.gluon import rnn
 npx.set_np()
 
-# Veriyi yükle
+# Load data
 batch_size, num_steps, device = 32, 35, d2l.try_gpu()
 train_iter, vocab = d2l.load_data_time_machine(batch_size, num_steps)
-# Çift yönlü LSTM modelini `bidirectional=True` olarak ayarlayarak tanımlayın.
+# Define the bidirectional LSTM model by setting `bidirectional=True`
 vocab_size, num_hiddens, num_layers = len(vocab), 256, 2
 lstm_layer = rnn.LSTM(num_hiddens, num_layers, bidirectional=True)
 model = d2l.RNNModel(lstm_layer, len(vocab))
-# Modeli eğitin
+# Train the model
 num_epochs, lr = 500, 1
 d2l.train_ch8(model, train_iter, vocab, lr, num_epochs, device)
 ```
@@ -135,21 +135,21 @@ from d2l import torch as d2l
 import torch
 from torch import nn
 
-# Veriyi yükle
+# Load data
 batch_size, num_steps, device = 32, 35, d2l.try_gpu()
 train_iter, vocab = d2l.load_data_time_machine(batch_size, num_steps)
-# Çift yönlü LSTM modelini `bidirectional=True` olarak ayarlayarak tanımlayın.
+# Define the bidirectional LSTM model by setting `bidirectional=True`
 vocab_size, num_hiddens, num_layers = len(vocab), 256, 2
 num_inputs = vocab_size
 lstm_layer = nn.LSTM(num_inputs, num_hiddens, num_layers, bidirectional=True)
 model = d2l.RNNModel(lstm_layer, len(vocab))
 model = model.to(device)
-# Modeli eğitin
+# Train the model
 num_epochs, lr = 500, 1
 d2l.train_ch8(model, train_iter, vocab, lr, num_epochs, device)
 ```
 
-Çıktı, yukarıda açıklanan nedenlerden dolayı bariz şekilde tatmin edici değildir. İki yönlü RNN'lerin daha etkili kullanımları hakkında bir tartışma için lütfen :numref:`sec_sentiment_rnn` içindeki duygusallık analizi uygulamasına bakın.
+Çıktı, yukarıda açıklanan nedenlerden dolayı bariz şekilde tatmin edici değildir. İki yönlü RNN'lerin daha etkili kullanımları hakkında bir tartışma için lütfen :numref:`sec_sentiment_rnn`'teki duygusallık analizi uygulamasına bakın.
 
 ## Özet
 
@@ -160,7 +160,7 @@ d2l.train_ch8(model, train_iter, vocab, lr, num_epochs, device)
 
 ## Alıştırmalar
 
-1. Farklı yönler farklı sayıda gizli birim kullanıyorsa, $\mathbf{H}_t$'nin şekli nasıl değişecektir?
+1. Farklı yönler farklı sayıda gizli birim kullanıyorsa, $\mathbf{H}_t$'ün şekli nasıl değişecektir?
 1. Birden fazla gizli katmanlı çift yönlü bir RNN tasarlayın.
 1. Çok anlamlılık doğal dillerde yaygındır. Örneğin, “banka” kelimesinin “nakit yatırmak için bankaya gittim” ve “oturmak için banka doğru gittim” bağlamlarında farklı anlamları vardır. Bir bağlam dizisi ve bir kelime, bağlamda kelimenin vektör temsilini döndüren bir sinir ağı modelini nasıl tasarlayabiliriz? Çok anlamlılığın üstesinden gelmek için hangi tür sinir mimarileri tercih edilir?
 

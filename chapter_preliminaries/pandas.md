@@ -56,7 +56,7 @@ girdiler = girdiler.fillna(girdiler.mean())
 print(girdiler)
 ```
 
-[**`Girdiler`deki kategorik veya ayrık değerler için `NaN`'i bir kategori olarak kabul ediyoruz.**]
+[**`Girdiler`deki kategorik veya ayrık değerler için `NaN`i bir kategori olarak kabul ediyoruz.**]
 "Alley" sütunu yalnızca "Pave" ve "NaN" olmak üzere iki tür kategorik değer aldığından, `pandas` bu sütunu otomatik olarak "Alley_Pave" ve "Alley_nan" sütunlarına dönüştürebilir.
 Sokak tipi "Pave" olan bir satır "Alley_Pave" ve "Alley_nan" değerlerini 1 ve 0 olarak tayin eder.
 Sokak türü eksik olan bir satır, değerlerini 0 ve 1 olarak tayin eder.
@@ -69,7 +69,7 @@ print(girdiler)
 
 ## Tensör Formatına Dönüştürme
 
-Artık [**`girdiler`deki ve `ciktilar`daki tüm girdi değerleri sayısal olduğundan, bunlar tensör formatına dönüştürülebilir.**]
+Artık [**`girdiler`deki ve `ciktilar`daki tüm giriş değerleri sayısal olduğundan, bunlar tensör formatına dönüştürülebilir.**]
 Veriler bu formatta olduğunda, daha önce tanıttığımız tensör işlevleri ile daha fazla oynama yapılabilir :numref:`sec_ndarray`.
 
 ```{.python .input}
@@ -97,7 +97,7 @@ X, y
 
 ## Özet
 
-* Python'un geniş ekosistemindeki diğer birçok eklenti paketi gibi, `pandas` da tensörler ile birlikte çalışabilir.
+* Python'un geniş ekosistemindeki diğer birçok uzantı paketi gibi, `pandas` da tensörler ile birlikte çalışabilir.
 * İtham etme ve silme, eksik verilerle baş etmek için kullanılabilir.
 
 ## Alıştırmalar

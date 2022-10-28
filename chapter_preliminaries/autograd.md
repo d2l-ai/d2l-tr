@@ -1,11 +1,11 @@
 # Otomatik Türev Alma
 :label:`sec_autograd`
 
-:numref:`sec_calculus` içinde açıkladığımız gibi, türev alma neredeyse tüm derin öğrenme optimizasyon algoritmalarında çok önemli bir adımdır.
+:numref:`sec_calculus`'de açıkladığımız gibi, türev alma neredeyse tüm derin öğrenme optimizasyon algoritmalarında çok önemli bir adımdır.
 Bu türevleri almak için gerekli hesaplamalar basittir ve sadece biraz temel kalkülüs gerektirirken, karmaşık modeller için güncellemeleri elle yapmak bir sancılı olabilir (ve genellikle hataya açık olabilir).
 
 Derin öğrenme çerçeveleri, türevleri otomatik olarak hesaplayarak, yani *otomatik türev alma* yoluyla bu çalışmayı hızlandırır.
-Uygulamada, tasarladığımız modele dayalı olarak sistem, çıktıyı üretmek için hangi verinin hangi işlemlerle birleştirildiğini izleyen bir *hesaplama grafiği (çizgesi)* oluşturur.
+Uygulamada, tasarladığımız modele dayalı olarak sistem, çıktıyı üretmek için hangi verinin hangi işlemlerle birleştirildiğini izleyen bir *hesaplama grafiği (çizelgesi)* oluşturur.
 Otomatik türev alma, sistemin daha sonra gradyanları geri yaymasını (backpropagation) sağlar.
 Burada *geri yayma*, her bir parametreye göre kısmi türevleri doldurarak, hesaplama grafiğini izlemek anlamına gelir.
 
@@ -39,7 +39,7 @@ x = tf.range(4, dtype=tf.float32)
 x
 ```
 
-[**$y$'nin $\mathbf{x}$'e göre gradyanını hesaplamadan önce, onu saklayabileceğimiz bir yere ihtiyacımız var.**]
+[**$y$'nin $\mathbf{x}$'e göre radyanını hesaplamadan önce, onu saklayabileceğimiz bir yere ihtiyacımız var.**]
 Bir parametreye göre her türev aldığımızda yeni bir bellek ayırmamamız önemlidir çünkü aynı parametreleri binlerce kez veya milyonlarca kez güncelleyeceğiz ve belleğimiz hızla tükenebilir.
 Skaler değerli bir fonksiyonun bir $\mathbf{x}$ vektörüne göre gradyanının kendisinin vektör değerli olduğuna ve $\mathbf{x}$ ile aynı şekle sahip olduğuna dikkat edin.
 
@@ -152,7 +152,7 @@ t.gradient(y, x)  # Yeni hesaplanan gradyan tarafından üzerine yazılır
 Teknik olarak, `y` skaler olmadığında, `y` vektörünün `x` vektörüne göre türevinin en doğal yorumu bir matristir.
 Daha yüksek kademeli ve daha yüksek boyutlu `y` ve `x` için, türevin sonucu yüksek kademeli bir tensör olabilir.
 
-Bununla birlikte, bu daha egzotik nesneler gelişmiş makine öğrenmesinde ([**derin öğrenmedekiler**] dahil) ortaya çıkarken, daha sıklıkla [**bir vektör üzerinde geriye doğru dönük çağırdığımızda**], bir *grup* eğitim örneğinde kayıp fonksiyonlarının her bir bileşeni için türevlerini hesaplamaya çalışıyoruz.
+Bununla birlikte, bu daha egzotik nesneler gelişmiş makine öğrenmesinde ([**derin öğrenmedekiler**] dahil) ortaya çıkarken, daha sıklıkla [**bir vektör üzerinde geriye doğru dönük çağırdığmızda**], bir *grup* eğitim örneğinde kayıp fonksiyonlarının her bir bileşeni için türevlerini hesaplamaya çalışıyoruz.
 Burada (**amacımız**), türev matrisini hesaplamak değil, (**gruptaki her örnek için ayrı ayrı hesaplanan kısmi türevlerin toplamını**) hesaplamaktır.
 
 ```{.python .input}
@@ -192,7 +192,7 @@ Bazen, [**bazı hesaplamaları kaydedilen hesaplama grafiğinin dışına taşı
 
 Burada, `y` ile aynı değere sahip yeni bir `u` değişkeni döndürmek için `y`'yi ayırabiliriz, ancak bu `y`'nin hesaplama grafiğinde nasıl hesaplandığına dair tüm bilgileri yok sayar.
 Başka bir deyişle, gradyan `u`'dan `x`'e geriye doğru akmayacaktır.
-Bu nedenle, aşağıdaki geri yayma işlevi, `z = x * x * x`'in `x`'e göre kısmi türevi hesaplamak yerine, `z = u * x`'in `x`'e göre kısmi türevini `u` sabitmiş gibi davranarak hesaplar. 
+Bu nedenle, aşağıdaki geri yayılım işlevi, `z = x * x * x`'in `x`'e göre kısmi türevi hesaplamak yerine, `z = u * x`'in `x`'e göre kısmi türevini `u` sabitmiş gibi davranarak hesaplar. 
 
 ```{.python .input}
 with autograd.record():
@@ -247,7 +247,7 @@ t.gradient(y, x) == 2 * x
 
 ## Python Kontrol Akışının Gradyanını Hesaplama
 
-Otomatik türev almayı kullanmanın bir yararı, bir Python kontrol akışı labirentinden (örneğin, koşullu ifadeler, döngüler ve rastgele fonksiyon çağrıları) geçen (**bir fonksiyondan hesaplama çizgesi oluşturup**), (**elde edilen değişkenin gradyanını yine de hesaplayabilmemizdir**).
+Otomatik türev almayı kullanmanın bir yararı, bir Python kontrol akışı labirentinden (örneğin, koşullu ifadeler, döngüler ve rastgele fonksiyon çağrıları) geçen (**bir fonksiyondan hesaplama çizelgesi oluşturup**), (**elde edilen değişkenin gradyanını yine de hesaplayabilmemizdir**).
 Aşağıdaki kod parçacığında, `while` döngüsünün yineleme sayısının ve `if` ifadesinin değerlendirmesinin `a` girdisinin değerine bağlı olduğuna dikkat edin.
 
 ```{.python .input}

@@ -13,7 +13,7 @@ Blokları kullanma fikri ilk olarak Oxford Üniversitesi'ndeki [Görsel Geometri
 Klasik CNN'lerin temel yapı taşı aşağıdakilerin bir dizisidir: (i) Çözünürlüğü korumak için dolgulu bir evrişimli katman, (ii) ReLU gibi bir doğrusal olmayan işlev, (iii) Maksimum ortaklama katmanı gibi bir ortaklama katmanı. Bir VGG bloğu, uzamsal örnek seyreltme için bir maksimum ortaklama katmanı izleyen bir evrişimli katman dizisinden oluşur. Orijinal VGG makalesinde :cite:`Simonyan.Zisserman.2014`, yazarlar $3\times3$ çekirdeklerle evrişim (yüksekliği ve genişliği aynı tutarak) ve 2 birim uzun adımlı $2 \times 2$ maksimum ortaklama (her bloktan sonra çözünürlüğü yarıya indirerek) kullandılar. Aşağıdaki kodda, bir VGG bloğu uygulamak için `vgg_block` adlı bir işlev tanımlıyoruz. 
 
 :begin_tab:`mxnet,tensorflow`
-İşlev, evrişimli katmanların sayısı `num_convs`'a ve çıktı kanallarının sayısı `num_channels`'a karşılık gelen iki argüman alır.
+İşlev, evrişimli katmanların sayısına `num_convs` ve çıktı kanalı sayısına `num_channels` karşılık gelen iki argüman alır.
 :end_tab:
 
 :begin_tab:`pytorch`
@@ -68,13 +68,13 @@ def vgg_block(num_convs, num_channels):
 
 ## [**VGG Ağı**]
 
-AlexNet ve LeNet gibi, VGG ağı iki kısma bölünebilir: Birincisi çoğunlukla evrişim ve ortaklama katmanlarından ve ikincisi tam bağlı katmanlardan oluşur. Bu :numref:`fig_vgg` içinde tasvir edilmiştir.
+AlexNet ve LeNet gibi, VGG ağı iki kısma bölünebilir: Birincisi çoğunlukla evrişim ve ortaklama katmanlarından ve ikincisi tam bağlı katmanlardan oluşur. Bu :numref:`fig_vgg`'te tasvir edilmiştir.
 
 ![AlexNet'ten yapı bloklarından tasarlanmış VGG'ye](../img/vgg.svg)
 :width:`400px`
 :label:`fig_vgg`
 
-Ağın evrişimli kısmı, :numref:`fig_vgg` içindeki gösterilen (`vgg_block` işlevinde de tanımlanmıştır) birkaç VGG bloğunu arka arkaya bağlar. Aşağıdaki `conv_arch` değişken, her biri iki değer içeren bir çokuzlu (blok başına bir) listesinden oluşur: Evrişimli katmanların sayısı ve çıktı kanallarının sayısı, ki tam olarak `vgg_block` işlevini çağırmak için gerekli argümanlardır. VGG ağının tam bağlı kısmı AlexNet'te kapsananla aynıdır.
+Ağın evrişimli kısmı, :numref:`fig_vgg`'deki (`vgg_block` işlevinde de tanımlanmıştır) birkaç VGG bloğunu arka arkaya bağlar. Aşağıdaki `conv_arch` değişken, her biri iki değer içeren bir çokuzlu (blok başına bir) listesinden oluşur: Evrişimli katmanların sayısı ve çıktı kanallarının sayısı, ki tam olarak `vgg_block` işlevini çağırmak için gerekli argümanlardır. VGG ağının tam bağlı kısmı AlexNet'te kapsananla aynıdır.
 
 Orijinal VGG ağında, ilk ikisinin her birinin bir evrişimli tabakaya sahip olduğu ve sonraki üçünün her birinin iki evrişimli katman içerdiği 5 evrişimli blok vardı. İlk blokta 64 çıktı kanalı vardır ve sonraki her blok, bu sayı 512'ye ulaşıncaya kadar çıktı kanalı sayısını iki katına çıkarır. Bu ağ 8 evrişimli katman ve 3 tam bağlı katman kullandığından, genellikle VGG-11 olarak adlandırılır.
 
@@ -189,7 +189,7 @@ small_conv_arch = [(pair[0], pair[1] // ratio) for pair in conv_arch]
 net = lambda: vgg(small_conv_arch)
 ```
 
-Biraz daha büyük bir öğrenme hızı kullanmanın haricinde, [**model eğitim**] süreci :numref:`sec_alexnet` içindeki AlexNet'e benzerdir.
+Biraz daha büyük bir öğrenme hızı kullanmanın haricinde, [**model eğitim**] süreci :numref:`sec_alexnet`'teki AlexNet'e benzerdir.
 
 ```{.python .input}
 #@tab all
@@ -209,7 +209,7 @@ d2l.train_ch6(net, train_iter, test_iter, num_epochs, lr, d2l.try_gpu())
 1. Katmanların boyutlarını yazdırırken 11 yerine sadece 8 sonuç gördük. Kalan 3 katman bilgisi nereye gitti?
 1. AlexNet ile karşılaştırıldığında, VGG hesaplama açısından çok daha yavaştır ve ayrıca daha fazla GPU belleğine ihtiyaç duyar. Bunun nedenlerini analiz edin.
 1. Fashion-MNIST içindeki imgelerin yüksekliğini ve genişliğini 224'ten 96'ya değiştirmeyi deneyin. Bunun deneyler üzerinde ne etkisi olur?
-1. VGG-16 veya VGG-19 gibi diğer yaygın modelleri oluşturmak için VGG makalesindeki :cite:`Simonyan.Zisserman.2014` Tablo 1'e bakın.
+1. VGG-16 veya VGG-19 gibi diğer yaygın modelleri oluşturmak için VGG makalesideki :cite:`Simonyan.Zisserman.2014` Tablo 1'e bakın.
 
 :begin_tab:`mxnet`
 [Tartışmalar](https://discuss.d2l.ai/t/77)

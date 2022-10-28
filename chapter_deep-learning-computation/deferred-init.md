@@ -9,7 +9,7 @@
 
 Kodumuzun çalışmasına şaşırabilirsiniz. Sonuçta, derin öğrenme çerçevesinin bir ağın girdi boyutluluğunun ne olacağını söylemesi mümkün değildir. Buradaki püf nokta, çerçevenin *ilklemeyi ertelemesidir*, verileri modelden ilk kez geçirene kadar bekleyerek koşma anında her katmanın boyutunu çıkarır.
 
-Daha sonra, evrişimli sinir ağları ile çalışırken, bu teknik daha da uygun hale gelecektir, çünkü girdi boyutluluğu (yani, bir imgenin çözünürlüğü) sonraki her katmanın boyutluluğunu etkileyecektir. Bu nedenle, kodun yazılması sırasında boyutluluğun ne olduğunu bilmeye gerek kalmadan parametreleri ayarlama becerisi, modellerimizi belirleme ve daha sonra değiştirme görevini büyük ölçüde basitleştirebilir. Ardından, ilkleme mekaniğinin daha derinine ineceğiz.
+Daha sonra, evrişimli sinir ağları ile çalışırken, bu teknik daha da uygun hale gelecektir, çünkü girdi boyutluluğu (yani, bir görüntünün çözünürlüğü) sonraki her katmanın boyutluluğunu etkileyecektir. Bu nedenle, kodun yazılması sırasında boyutluluğun ne olduğunu bilmeye gerek kalmadan parametreleri ayarlama becerisi, modellerimizi belirleme ve daha sonra değiştirme görevini büyük ölçüde basitleştirebilir. Ardından, ilkleme mekaniğinin daha derinine ineceğiz.
 
 ## Bir Ağ Örneği Yaratma
 

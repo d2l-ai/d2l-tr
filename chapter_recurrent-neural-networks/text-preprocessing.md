@@ -1,7 +1,7 @@
 # Metin Ön 	İşleme
 :label:`sec_text_preprocessing`
 
-Dizi verileri için istatistiksel araçları ve tahmin zorluklarını inceledik ve değerlendirdik. Bu veriler birçok şekil alabilir. Özellikle, kitabın birçok bölümünde odaklanacağımız gibi, metinler dizi verilerinin en popüler örneklerindendir. Örneğin, bir makale basitçe bir sözcük dizisi veya hatta bir karakter dizisi olarak görülebilir. Dizi verileriyle gelecekteki deneylerimizi kolaylaştırmak amacıyla, bu bölümü metin için ortak ön işleme adımlarını açıklamaya adayacağız. Genellikle, aşağıdaki adımlar vardır:
+Dizi verileri için istatistiksel araçları ve tahmin zorluklarını inceledik ve değerlendirdik. Bu veriler birçok şekil alabilir. Özellikle, kitabın birçok bölümünde odaklanacağımız gibi, metinler dizi verilerinin en popüler örneklerindendir. Örneğin, bir makale basitçe bir sözcük dizisi veya hatta bir karakter dizisi olarak görülebilir. Dizi verileriyle gelecekteki deneylerimizi kolaylaştırmak amacıyla, bu bölümü metin için ortak ön işleme adımlarını açıklamak üzere adayacağız. Genellikle, aşağıdaki adımlar vardır:
 
 1. Metni dizgi (string) olarak belleğe yükleyin.
 1. Dizgileri andıçlara (token) ayırın (örn. kelimeler ve karakterler).
@@ -39,7 +39,7 @@ d2l.DATA_HUB['time_machine'] = (d2l.DATA_URL + 'timemachine.txt',
                                 '090b5e7e70c295757f55df93cb0a180b9691891a')
 
 def read_time_machine():  #@save
-    """Zaman makinesi veri kümesini bir metin satırı listesine yükleyin."""
+    """Load the time machine dataset into a list of text lines."""
     with open(d2l.download('time_machine'), 'r') as f:
         lines = f.readlines()
     return [re.sub('[^A-Za-z]+', ' ', line).strip().lower() for line in lines]
@@ -57,7 +57,7 @@ Aşağıdaki `tokenize` işlevi, girdi olarak bir liste (`lines`) alır ve burad
 ```{.python .input}
 #@tab all
 def tokenize(lines, token='word'):  #@save
-    """Metin satırlarını kelime veya karakter belirteçlerine ayırın."""
+    """Split text lines into word or character tokens."""
     if token == 'word':
         return [line.split() for line in lines]
     elif token == 'char':
@@ -77,17 +77,17 @@ Andıcın dizgi tipi, sayısal girdiler alan modeller tarafından kullanılmak i
 ```{.python .input}
 #@tab all
 class Vocab:  #@save
-    """Metin için kelime hazinesi."""
+    """Vocabulary for text."""
     def __init__(self, tokens=None, min_freq=0, reserved_tokens=None):
         if tokens is None:
             tokens = []
         if reserved_tokens is None:
             reserved_tokens = [] 
-        # Frekanslara göre sırala
+        # Sort according to frequencies
         counter = count_corpus(tokens)
         self._token_freqs = sorted(counter.items(), key=lambda x: x[1],
                                    reverse=True)
-        # Bilinmeyen andıcın indeksi 0'dır
+        # The index for the unknown token is 0
         self.idx_to_token = ['<unk>'] + reserved_tokens
         self.token_to_idx = {token: idx
                              for idx, token in enumerate(self.idx_to_token)}
@@ -112,18 +112,18 @@ class Vocab:  #@save
         return [self.idx_to_token[index] for index in indices]
 
     @property
-    def unk(self):  # Bilinmeyen andıç için dizin
+    def unk(self):  # Index for the unknown token
         return 0
 
     @property
-    def token_freqs(self):  # Bilinmeyen andıç için dizin
+    def token_freqs(self):  # Index for the unknown token
         return self._token_freqs
 
 def count_corpus(tokens):  #@save
     """Count token frequencies."""
-    # Burada `tokens` bir 1B liste veya 2B listedir
+    # Here `tokens` is a 1D list or 2D list
     if len(tokens) == 0 or isinstance(tokens[0], list):
-        # Bir belirteç listelerinin listesini belirteç listesine düzleştirin
+        # Flatten a list of token lists into a list of tokens
         tokens = [token for line in tokens for token in line]
     return collections.Counter(tokens)
 ```
@@ -145,19 +145,19 @@ for i in [0, 10]:
     print('indices:', vocab[tokens[i]])
 ```
 
-## Her Şeyi Bir Araya Koymak
+## Her Şeyi Bir Araya Getirmek
 
-Yukarıdaki işlevleri kullanarak, `corpus`'u (külliyat), andıç indekslerinin bir listesidir, ve `vocab`'ı döndüren [**`load_corpus_time_machine` işlevine her şeyi paketliyoruz**]. Burada yaptığımız değişiklikler şunlardır: (i) Metni daha sonraki bölümlerdeki eğitimi basitleştirmek için kelimelere değil, karakterlere andıçlıyoruz; (ii) `corpus` tek bir listedir, andıç listelerinin listesi değildir, çünkü zaman makinesi veri kümesindeki her metin satırı mutlaka bir cümle veya paragraf değildir.
+Yukarıdaki işlevleri kullanarak, `corpus` (külliyat), andıç indekslerinin bir listesini ve `vocab`'ı döndüren [**`load_corpus_time_machine` işlevine her şeyi paketliyoruz**]. Burada yaptığımız değişiklikler şunlardır: (i) Metni daha sonraki bölümlerdeki eğitimi basitleştirmek için kelimelere değil, karakterlere andıçlıyoruz; (ii) `corpus` tek bir listedir, andıç listelerinin listesi değildir, çünkü zaman makinesi veri kümesindeki her metin satırı mutlaka bir cümle veya paragraf değildir.
 
 ```{.python .input}
 #@tab all
 def load_corpus_time_machine(max_tokens=-1):  #@save
-    """Andıç indislerini ve zaman makinesi veri kümesinin kelime dağarcığını döndür."""
+    """Return token indices and the vocabulary of the time machine dataset."""
     lines = read_time_machine()
     tokens = tokenize(lines, 'char')
     vocab = Vocab(tokens)
-    # Zaman makinesi veri kümesindeki her metin satırı mutlaka bir cümle veya 
-    # paragraf olmadığından, tüm metin satırlarını tek bir listede düzleştirin
+    # Since each text line in the time machine dataset is not necessarily a
+    # sentence or a paragraph, flatten all the text lines into a single list
     corpus = [vocab[token] for line in tokens for token in line]
     if max_tokens > 0:
         corpus = corpus[:max_tokens]

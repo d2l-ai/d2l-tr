@@ -175,7 +175,7 @@ loss = gluon.loss.SoftmaxCrossEntropyLoss()
 
 ```{.python .input}
 #@tab pytorch
-loss = nn.CrossEntropyLoss(reduction='none')
+loss = nn.CrossEntropyLoss()
 ```
 
 ```{.python .input}

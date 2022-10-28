@@ -3,7 +3,7 @@
 
 Bir primatın görme sisteminin görme siniri, beynin tam olarak işleyebildiğini aşan devasa duyusal girdi alır. Neyse ki, tüm uyaranlar eşit yaratılmaz. Odaklanma ve bilinç yoğunlaşması primatların karmaşık görsel ortamda avlar ve yırtıcı hayvanlar gibi ilgi çekici nesnelere dikkatini yönlendirmesini sağladı. Bilginin sadece küçük bir kısmına dikkat etme yeteneği evrimsel öneme sahiptir ve bu da insanların yaşamasına ve başarılı olmasına izin verir. 
 
-Bilim adamları 19. yüzyıldan beri bilişsel sinirbilim alanında dikkati çalışıyor. Bu bölümde, dikkatin görsel bir sahnede nasıl konuşlandığını açıklayan popüler bir çerçeveyi inceleyerek başlayacağız. Bu çerçevedeki dikkat işaretlerinden esinlenerek, bu tür dikkat işaretlerinden faydalanan modeller tasarlayacağız. Özellikle, 1964 yılında Nadaraya-Waston çekirdek regresyonu, makine öğrenmesinin  *dikkat mekanizmaları* ile basit bir kanıtlamasıdır. 
+Bilim adamları 19. yüzyıldan beri bilişsel sinirbilim alanında dikkati çalışıyor. Bu bölümde, dikkatin görsel bir sahnede nasıl konuşlandığını açıklayan popüler bir çerçeveyi inceleyerek başlayacağız. Bu çerçevedeki dikkat işaretlerinden esinlenerek, bu tür dikkat işaretlerinden faydalanan modeller tasarlayacağız. Özellikle, 1964 yılında Nadaraya-Waston çekirdek regresyonu, *dikkat mekanizmaları* ile makine öğrenmesinin basit bir kanıtlamasıdır. 
 
 Ardından, derin öğrenmede dikkat modellerinin tasarımında yaygın olarak kullanılan dikkat işlevlerini tanıtmaya devam edeceğiz. Özellikle, çift yönlü hizalanabilen ve türevlenebilen derin öğrenmede çığır açıcı bir dikkat modeli olan *Bahdanau dikkat*ini tasarlamak için bu işlevleri nasıl kullanacağımızı göstereceğiz. 
 

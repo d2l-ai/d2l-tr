@@ -17,14 +17,14 @@ Yani, ResNet $f$'i basit bir doğrusal terime ve daha karmaşık doğrusal olmay
 ![Katmanlar arası bağlantılarda ResNet (sol) ve DenseNet (sağ) arasındaki temel fark: Toplama ve bitiştirme kullanımı.](../img/densenet-block.svg)
 :label:`fig_densenet_block`
 
-:numref:`fig_densenet_block` içinde gösterildiği gibi, ResNet ve DenseNet arasındaki temel fark, ikinci durumda çıktıların toplanmaktan ziyade *bitiştirilmesidir* ($[,]$ ile gösterilir). Sonuç olarak, giderek daha karmaşık bir işlev dizisini uyguladıktan sonra $\mathbf{x}$'ten değerlerine bir eşleme gerçekleştiriyoruz:
+:numref:`fig_densenet_block`'te gösterildiği gibi, ResNet ve DenseNet arasındaki temel fark, ikinci durumda çıktıların toplanmaktan ziyade *bitiştirilmesidir* ($[,]$ ile gösterilir). Sonuç olarak, giderek daha karmaşık bir işlev dizisini uyguladıktan sonra $\mathbf{x}$'ten değerlerine bir eşleme gerçekleştiriyoruz:
 
 $$\mathbf{x} \to \left[
 \mathbf{x},
 f_1(\mathbf{x}),
 f_2([\mathbf{x}, f_1(\mathbf{x})]), f_3([\mathbf{x}, f_1(\mathbf{x}), f_2([\mathbf{x}, f_1(\mathbf{x})])]), \ldots\right].$$
 
-Sonunda, tüm bu işlevler tekrar öznitelik sayısını azaltmak için MLP'de birleştirilir. Uygulama açısından bu oldukça basittir: Terimleri toplamak yerine, bunları bitiştiririz. DenseNet'in adı, değişkenler arasındaki bağımlılık grafiğinin oldukça yoğunlaştığı gerçeğinden kaynaklanmaktadır. Böyle bir zincirin son katmanı, önceki tüm katmanlara yoğun bir şekilde bağlanır. Yoğun bağlantılar :numref:`fig_densenet` içinde gösterilmiştir.
+Sonunda, tüm bu işlevler tekrar öznitelik sayısını azaltmak için MLP'de birleştirilir. Uygulama açısından bu oldukça basittir: Terimleri toplamak yerine, bunları bitiştiririz. DenseNet'in adı, değişkenler arasındaki bağımlılık grafiğinin oldukça yoğunlaştığı gerçeğinden kaynaklanmaktadır. Böyle bir zincirin son katmanı, önceki tüm katmanlara yoğun bir şekilde bağlanır. Yoğun bağlantılar :numref:`fig_densenet`'te gösterilmiştir.
 
 ![DenseNet'teki yoğun bağlantılar.](../img/densenet.svg)
 :label:`fig_densenet`
@@ -33,7 +33,7 @@ DenseNet oluşturan ana bileşenler *yoğun bloklar* ve *geçiş katmanları*dı
 
 ## [**Yoğun Bloklar**]
 
-DenseNet, ResNet'in değiştirilmiş “toplu normalleştirme, etkinleştirme ve evrişim” yapısını kullanır (bkz. :numref:`sec_resnet` içindeki alıştırma). İlk olarak, bu evrişim blok yapısını uyguluyoruz.
+DenseNet, ResNet'in değiştirilmiş “toplu normalleştirme, etkinleştirme ve evrişim” yapısını kullanır (bkz. :numref:`sec_resnet`'teki alıştırma). İlk olarak, bu evrişim blok yapısını uyguluyoruz.
 
 ```{.python .input}
 from d2l import mxnet as d2l
@@ -97,7 +97,8 @@ class DenseBlock(nn.Block):
     def forward(self, X):
         for blk in self.net:
             Y = blk(X)
-            # Her bloğun girdi ve çıktısını kanal boyutunda birleştirin
+            # Concatenate the input and output of each block on the channel
+            # dimension
             X = np.concatenate((X, Y), axis=1)
         return X
 ```
@@ -116,7 +117,8 @@ class DenseBlock(nn.Module):
     def forward(self, X):
         for blk in self.net:
             Y = blk(X)
-            # Her bloğun girdi ve çıktısını kanal boyutunda birleştirin
+            # Concatenate the input and output of each block on the channel
+            # dimension
             X = torch.cat((X, Y), dim=1)
         return X
 ```
@@ -250,21 +252,21 @@ def block_1():
        tf.keras.layers.MaxPool2D(pool_size=3, strides=2, padding='same')])
 ```
 
-Daha sonra, ResNet'in kullandığı artık bloklardan oluşan dört modüle benzer, DenseNet de dört yoğun blok kullanır. ResNet'e benzer şekilde, her yoğun blokta kullanılan evrişimli katmanların sayısını da ayarlayabiliriz. Burada, :numref:`sec_resnet` içindeki ResNet-18 modeliyle uyumlu olarak katmanların sayısını 4'e ayarladık. Ayrıca, yoğun bloktaki evrişimli katmanlar için kanal sayısını (yani büyüme hızı) 32'ye ayarladık, böylece her yoğun bloğa 128 kanal eklenecektir.
+Daha sonra, ResNet'in kullandığı artık bloklardan oluşan dört modüle benzer, DenseNet de dört yoğun blok kullanır. ResNet'e benzer şekilde, her yoğun blokta kullanılan evrişimli katmanların sayısını da ayarlayabiliriz. Burada, :numref:`sec_resnet`'teki ResNet-18 modeliyle uyumlu olarak katmanların sayısını 4'e ayarladık. Ayrıca, yoğun bloktaki evrişimli katmanlar için kanal sayısını (yani büyüme hızı) 32'ye ayarladık, böylece her yoğun bloğa 128 kanal eklenecektir.
 
 ResNet'te, her modül arasındaki yükseklik ve genişlik, 2'lik uzun adımlı bir artık bloğu ile azaltılır. Burada, yükseklik ve genişliği yarıya indirip kanal sayısını yarılayarak geçiş katmanını kullanıyoruz.
 
 ```{.python .input}
-# `num_channels`: mevcut kanal sayısı
+# `num_channels`: the current number of channels
 num_channels, growth_rate = 64, 32
 num_convs_in_dense_blocks = [4, 4, 4, 4]
 
 for i, num_convs in enumerate(num_convs_in_dense_blocks):
     net.add(DenseBlock(num_convs, growth_rate))
-    # Bu, önceki yoğun bloktaki çıktı kanallarının sayısıdır.
+    # This is the number of output channels in the previous dense block
     num_channels += num_convs * growth_rate
-    # Yoğun bloklar arasına kanal sayısını yarıya indiren bir geçiş katmanı 
-    # eklenir
+    # A transition layer that halves the number of channels is added between
+    # the dense blocks
     if i != len(num_convs_in_dense_blocks) - 1:
         num_channels //= 2
         net.add(transition_block(num_channels))
@@ -272,16 +274,16 @@ for i, num_convs in enumerate(num_convs_in_dense_blocks):
 
 ```{.python .input}
 #@tab pytorch
-# `num_channels`: mevcut kanal sayısı
+# `num_channels`: the current number of channels
 num_channels, growth_rate = 64, 32
 num_convs_in_dense_blocks = [4, 4, 4, 4]
 blks = []
 for i, num_convs in enumerate(num_convs_in_dense_blocks):
     blks.append(DenseBlock(num_convs, num_channels, growth_rate))
-    # Bu, önceki yoğun bloktaki çıktı kanallarının sayısıdır.
+    # This is the number of output channels in the previous dense block
     num_channels += num_convs * growth_rate
-    # Yoğun bloklar arasına kanal sayısını yarıya indiren bir geçiş katmanı 
-    # eklenir
+    # A transition layer that halves the number of channels is added between
+    # the dense blocks
     if i != len(num_convs_in_dense_blocks) - 1:
         blks.append(transition_block(num_channels, num_channels // 2))
         num_channels = num_channels // 2
@@ -291,15 +293,16 @@ for i, num_convs in enumerate(num_convs_in_dense_blocks):
 #@tab tensorflow
 def block_2():
     net = block_1()
-    # `num_channels`: mevcut kanal sayısı
+    # `num_channels`: the current number of channels
     num_channels, growth_rate = 64, 32
     num_convs_in_dense_blocks = [4, 4, 4, 4]
 
     for i, num_convs in enumerate(num_convs_in_dense_blocks):
         net.add(DenseBlock(num_convs, growth_rate))
-        # Bu, önceki yoğun bloktaki çıktı kanallarının sayısıdır.
+        # This is the number of output channels in the previous dense block
         num_channels += num_convs * growth_rate
-        # Yoğun bloklar arasına kanal sayısını yarıya indiren bir geçiş katmanı eklenir
+        # A transition layer that halves the number of channels is added
+        # between the dense blocks
         if i != len(num_convs_in_dense_blocks) - 1:
             num_channels //= 2
             net.add(TransitionBlock(num_channels))
@@ -350,7 +353,7 @@ d2l.train_ch6(net, train_iter, test_iter, num_epochs, lr, d2l.try_gpu())
 
 ## Özet
 
-* DenseNet, girdilerin ve çıktıların birlikte toplandığı ResNet'in aksine, çapraz katman bağlantıları bağlanımda, kanal boyutundaki girdi ve çıktıları bitiştirir.
+* DenseNet, girdi ve çıktıların birlikte toplandığı ResNet'in aksine, çapraz katman bağlantıları bağlanımda, kanal boyutundaki girdi ve çıktıları bitiştirir.
 * DenseNet'i oluşturan ana bileşenler yoğun bloklar ve geçiş katmanlarıdır.
 * Kanal sayısını tekrar küçülten geçiş katmanları ekleyerek ağı oluştururken boyutsallığı kontrol altında tutmamız gerekir.
 
@@ -362,16 +365,16 @@ d2l.train_ch6(net, train_iter, test_iter, num_epochs, lr, d2l.try_gpu())
     1. Bu gerçekten doğru mudur? Gerçek GPU bellek tüketimini görmek için girdi şeklini $224\times 224$ olarak değiştirmeye çalışın.
     1. Bellek tüketimini azaltmanın alternatif bir yolunu düşünebiliyor musunuz? Çerçeveyi nasıl değiştirmeniz gerekecektir?
 1. DenseNet makalesi :cite:`Huang.Liu.Van-Der-Maaten.ea.2017` Tablo 1'de sunulan çeşitli DenseNet sürümlerini uygulayın.
-1. DenseNet fikrini uygulayarak MLP tabanlı bir model tasarlayın. :numref:`sec_kaggle_house` içindeki konut fiyatı tahmini çalışmasına uygulayın.
+1. DenseNet fikrini uygulayarak MLP tabanlı bir model tasarlayın. :numref:`sec_kaggle_house`'teki konut fiyatı tahmini çalışmasına uygulayın.
 
 :begin_tab:`mxnet`
-[Tartışmalar](https://discuss.d2l.ai/t/87)
+[Discussions](https://discuss.d2l.ai/t/87)
 :end_tab:
 
 :begin_tab:`pytorch`
-[Tartışmalar](https://discuss.d2l.ai/t/88)
+[Discussions](https://discuss.d2l.ai/t/88)
 :end_tab:
 
 :begin_tab:`tensorflow`
-[Tartışmalar](https://discuss.d2l.ai/t/331)
+[Discussions](https://discuss.d2l.ai/t/331)
 :end_tab:

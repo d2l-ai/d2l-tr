@@ -4,7 +4,7 @@ Derin öğrenmenin başarısının ardındaki faktörlerden biri, çok çeşitli
 
 ## (**Paramatresiz Katmanlar**)
 
-Başlangıç olarak, kendi parametresi olmayan özelleştirilmiş bir katman oluşturalım. Bloğu tanıttığımızı bölümü hatırlarsanız, :numref:`sec_model_construction` içindeki, burası size tanıdık gelecektir. Aşağıdaki `CenteredLayer` sınıfı, girdiden ortalamayı çıkarır. Bunu inşa etmek için, temel katman sınıfından kalıtımla üretmemiz ve ileri yayma işlevini uygulamamız gerekir.
+Başlangıç olarak, kendi parametresi olmayan özelleştirilmiş bir katman oluşturalım. Bloğu tanıttığımızı bölümü hatırlarsanız, :numref:`sec_model_construction`, burası size tanıdık gelecektir. Aşağıdaki `CenteredLayer` sınıfı, girdiden ortalamayı çıkarır. Bunu inşa etmek için, temel katman sınıfından kalıtımla üretmemiz ve ileri yayma işlevini uygulamamız gerekir.
 
 ```{.python .input}
 from mxnet import np, npx

@@ -1,7 +1,7 @@
 # Çoklu Girdi ve Çoklu Çıktı Kanalları
 :label:`sec_channels`
 
-Her imgeyi :numref:`subsec_why-conv-channels` içinde birden fazla kanal (örneğin, renkli görüntüler kırmızı, yeşil ve mavi miktarını belirtmek için standart RGB kanallarına sahiptir) için evrişimli katmanlar tarif etmişken, şimdiye kadar, tüm sayısal örneklerimizi sadece tek bir girdi ve tek bir çıktı kanalı kullanarak basitleştirdik. Bu, girdilerimizi, evrişim çekirdeklerini ve çıktılarımızı iki boyutlu tensörler olarak düşünmemizi sağladı.
+Her imgeyi :numref:`subsec_why-conv-channels`'te birden fazla kanal (örneğin, renkli görüntüler kırmızı, yeşil ve mavi miktarını belirtmek için standart RGB kanallarına sahiptir) için evrişimli katmanlar tarif etmişken, şimdiye kadar, tüm sayısal örneklerimizi sadece tek bir girdi ve tek bir çıktı kanalı kullanarak basitleştirdik. Bu, girdilerimizi, evrişim çekirdeklerini ve çıktılarımızı iki boyutlu tensörler olarak düşünmemizi sağladı.
 
 Bu karışıma kanal eklediğimizde, girdilerimiz ve gizli temsillerimiz üç boyutlu tensörler haline gelir. Örneğin, her RGB girdi imgesi $3\times h\times w$ şeklindedir. 3 uzunluklu bu eksene, *kanal* boyutu olarak atıfta bulunuyoruz. Bu bölümde, birden fazla girdi ve birden fazla çıktı kanalı içeren evrişim çekirdeklerine daha derin bir bakış atacağız.
 
@@ -11,7 +11,7 @@ Girdi verileri birden çok kanal içerdiğinde, girdi verileriyle aynı sayıda 
 
 Ancak, $c_i>1$ olduğunda, *her* girdi kanalı için $k_h\times k_w$ şeklindeki bir tensör içeren bir çekirdeğe ihtiyacımız var. Bu $c_i$ tensörlerin birleştirilmesi, $c_i\times k_h\times k_w$ şeklindeki bir evrişim çekirdeği verir. Girdi ve evrişim çekirdeğinin her biri $c_i$ kanallara sahip olduğundan, her kanal için iki boyutlu tensör girdinin ve iki boyutlu tensör evrişim çekirdeğinin üzerinde çapraz korelasyon işlemi gerçekleştirebiliriz, $c_i$ sonuçlarını da birlikte toplayarak (kanallar üzerinde toplanarak) iki boyutlu tensör elde ederiz. Bu, çok kanallı girdi ve çok girdi kanallı evrişim çekirdeği arasındaki iki boyutlu çapraz korelasyonun sonucudur.
 
-:numref:`fig_conv_multi_in` içinde, iki girdi kanalı ile iki boyutlu çapraz korelasyon örneğini gösteriyoruz. Gölgeli kısımlar, çıktı hesaplaması için kullanılan girdi ve çekirdek tensör elemanlarının yanı sıra ilk çıktı öğesidir: $(1\times1+2\times2+4\times3+5\times4)+(0\times0+1\times1+3\times2+4\times3)=56$.
+:numref:`fig_conv_multi_in`'te, iki girdi kanalı ile iki boyutlu çapraz korelasyon örneğini gösteriyoruz. Gölgeli kısımlar, çıktı hesaplaması için kullanılan girdi ve çekirdek tensör elemanlarının yanı sıra ilk çıktı öğesidir: $(1\times1+2\times2+4\times3+5\times4)+(0\times0+1\times1+3\times2+4\times3)=56$.
 
 ![2 girdi kanalı ile çapraz korelasyon hesaplaması.](../img/conv-multi-in.svg)
 :label:`fig_conv_multi_in`
@@ -49,7 +49,7 @@ def corr2d_multi_in(X, K):
     return tf.reduce_sum([d2l.corr2d(x, k) for x, k in zip(X, K)], axis=0)
 ```
 
-Çapraz korelasyon (**işleminin çıktısını doğrulamak**) için :numref:`fig_conv_multi_in` içindeki değerlere karşılık gelen `X` girdi tensörünü ve `K` çekirdek tensörünü inşa edebiliriz.
+Çapraz korelasyon (**işleminin çıktısını doğrulamak**) için :numref:`fig_conv_multi_in`'teki değerlere karşılık gelen `X` girdi tensörünü ve `K` çekirdek tensörünü inşa edebiliriz.
 
 ```{.python .input}
 #@tab all
@@ -63,7 +63,7 @@ corr2d_multi_in(X, K)
 ## Çoklu Çıktı Kanalları
 :label:`subsec_multi-output-channels`
 
-Girdi kanallarının sayısı ne olursa olsun, şimdiye kadar hep elimizde bir çıktı kanalı kaldı. Bununla birlikte, :numref:`subsec_why-conv-channels` içinde tartıştığımız gibi, her katmanda birden fazla kanalın olması gerekli olduğu ortaya çıkıyor. En popüler sinir ağı mimarilerinde, sinir ağında daha yükseğe çıktıkça kanal boyutunu artırıyoruz, tipik olarak uzamsal çözünürlüğü daha büyük bir *kanal derinliği* için takas ederek örnek seyreltme yapıyoruz. Sezgisel olarak, her kanalı bazı farklı öznitelik kümesine yanıt veriyor gibi düşünebilirsiniz. Gerçeklik, bu sezginin en saf yorumlarından biraz daha karmaşıktır, çünkü temsiller bağımsız olarak öğrenilmemiştir, ancak ortaklaşa yararlı olmak için eniyilenmişlerdir. Bu nedenle, tek bir kanalın bir kenar dedektörünü öğrenmesi değil, kanal uzayındaki bazı yönlerin kenarları algılamaya karşılık gelmesi olabilir.
+Girdi kanallarının sayısı ne olursa olsun, şimdiye kadar hep elimizde bir çıktı kanalı kaldı. Bununla birlikte, :numref:`subsec_why-conv-channels`'te tartıştığımız gibi, her katmanda birden fazla kanalın olması gerekli olduğu ortaya çıkıyor. En popüler sinir ağı mimarilerinde, sinir ağında daha yükseğe çıktıkça kanal boyutunu artırıyoruz, tipik olarak uzamsal çözünürlüğü daha büyük bir *kanal derinliği* için takas ederek örnek seyreltme yapıyoruz. Sezgisel olarak, her kanalı bazı farklı öznitelik kümesine yanıt veriyor gibi düşünebilirsiniz. Gerçeklik, bu sezginin en saf yorumlarından biraz daha karmaşıktır, çünkü temsiller bağımsız olarak öğrenilmemiştir, ancak ortaklaşa yararlı olmak için eniyilenmişlerdir. Bu nedenle, tek bir kanalın bir kenar dedektörünü öğrenmesi değil, kanal uzayındaki bazı yönlerin kenarları algılamaya karşılık gelmesi olabilir.
 
 $c_i$ ile $c_o$ sırasıyla girdi ve çıktı kanallarının sayısını belirtsin ve $k_h$ ile $k_w$ çekirdeğin yüksekliği ve genişliği olsun. Birden fazla kanal içeren bir çıktı elde etmek amacıyla, *her* çıktı kanalı için $c_i\times k_h\times k_w$ şeklinde bir çekirdek tensör oluşturabiliriz. Onları çıktı kanalı boyutunda birleştiririz, böylece evrişim çekirdeğinin şekli $c_o\times c_i\times k_h\times k_w$ olur. Çapraz korelasyon işlemlerinde, her çıktı kanalındaki sonuç, çıktı kanalına karşılık gelen evrişim çekirdeğinden hesaplanır ve girdi tensöründeki tüm kanallardan girdi alır.
 

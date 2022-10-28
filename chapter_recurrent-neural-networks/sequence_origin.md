@@ -394,7 +394,7 @@ While the 4-step-ahead predictions still look good, anything beyond that is almo
 * Sequence models require specialized statistical tools for estimation. Two popular choices are autoregressive models and latent-variable autoregressive models.
 * For causal models (e.g., time going forward), estimating the forward direction is typically a lot easier than the reverse direction.
 * For an observed sequence up to time step $t$, its predicted output at time step $t+k$ is the $k$*-step-ahead prediction*. As we predict further in time by increasing $k$, the errors accumulate and the quality of the prediction degrades, often dramatically.
-
+	
 
 ## Exercises
 

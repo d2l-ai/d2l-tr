@@ -4,7 +4,7 @@ Tavsiye araştırmaları için kullanılabilen bir dizi veri kümesi vardır. Bu
 
 ## Verileri Alma
 
-MovieLens veri kümesi, [GroupLens](https://grouplens.org/datasets/movielens/) web sitesinde konuşlandırılmaktadır. Birçok sürümü mevcuttur. MovieLens 100K veri kümesini kullanacağız :cite:`Herlocker.Konstan.Borchers.ea.1999`. Bu veri kümesi, 1682 filmdeki 943 kullanıcıdan 1 ile 5 yıldız arasında değişen $100000$ derecelendirmeden oluşmaktadır. Veri her kullanıcıdan en az 20 film derecelendirmesi içerecek şekilde temizlendi. Yaş, cinsiyet, kullanıcılar ve öğeler için türler gibi bazı basit demografik bilgiler de mevcuttur. [ml-100k.zip](http://files.grouplens.org/datasets/movielens/ml-100k.zip)'i indirebilir ve csv formatındaki bütün $100000$ derecelendirmeyi içeren `u.data` dosyasını ayıklayabiliriz. Klasörde başka birçok dosya bulunur, her dosya için ayrıntılı bir açıklama veri kümesinin [README](http://files.grouplens.org/datasets/movielens/ml-100k-README.txt) dosyasında bulunabilir. 
+MovieLens veri kümesi, [GroupLens](https://grouplens.org/datasets/movielens/) web sitesinde konuşlandırılmaktadır. Birçok sürümü mevcuttur. MovieLens 100K veri kümesini kullanacağız :cite:`Herlocker.Konstan.Borchers.ea.1999`. Bu veri kümesi, 1682 filmdeki 943 kullanıcıdan 1'e 5 yıldız arasında değişen $100000$ derecelendirmeden oluşmaktadır. Veri her kullanıcıdan en az 20 film derecelendirmesi içerecek şekilde temizlendi. Yaş, cinsiyet, kullanıcılar ve öğeler için türler gibi bazı basit demografik bilgiler de mevcuttur. [ml-100k.zip](http://files.grouplens.org/datasets/movielens/ml-100k.zip)'i indirebilir ve csv formatındaki bütün $100000$ derecelendirmeyi içeren `u.data` dosyasını ayıklayabiliriz. Klasörde başka birçok dosya bulunur, her dosya için ayrıntılı bir açıklama veri kümesinin [README](http://files.grouplens.org/datasets/movielens/ml-100k-README.txt) dosyasında bulunabilir. 
 
 Başlangıç olarak, bu bölümün deneylerini çalıştırmak için gereken paketleri içe aktaralım.
 
@@ -46,27 +46,27 @@ print(f'matrix sparsity: {sparsity:f}')
 print(data.head(5))
 ```
 
-Her satırın “user id” (kullanıcı kimliği) 1-943, “item id” (öğe kimliği) 1-1682, “rating” (derecelendirme) 1-5 ve “timestamp” (zaman damgası) dahil olmak üzere dört sütundan oluştuğunu görebiliriz. $n \times m$ boyutlarında bir etkileşim matrisi oluşturabiliriz, burada $n$ ve $m$ sırasıyla kullanıcı sayısı ve öğe sayısıdır. Bu veri kümesi yalnızca mevcut derecelendirmeleri kaydeder, bu nedenle buna derecelendirme matrisi diyebiliriz ve bu matrisin değerlerinin tam derecelendirmeleri temsil etmesi durumunda etkileşim matrisi ve derecelendirme matrisini birbirinin yerine kullanacağız. Kullanıcılar filmlerin çoğunu derecelendirmediğinden derecelendirme matrisindeki değerlerin çoğu bilinmemektedir. Ayrıca bu veri kümesinin seyrek olduğunu da gösteriyoruz. Seyreklik `1 - number of nonzero entries / ( number of users * number of items)` ( 1 - sıfır olmayan girdiler / (kullanıcı sayısı * öğe sayısı)) olarak tanımlanır. Açıkçası, etkileşim matrisi son derece seyrektir (yani, seyreklik = 93.695%). Gerçek dünya veri kümeleri, daha büyük ölçüde seyreklik yaşayabilir ve tavsiye sistemlerinin oluşturulmasında uzun süredir devam eden bir zorluk olmuştur. Kullanıcı/öğe öznitelikleri gibi ek yan bilgileri kullanmak için uygulanabilir bir çözüm, seyrekliği hafifletmektir. 
+Her satırın “user id” (kullanıcı kimliği) 1-943, “item id” (öğe kimliği) 1-1682, “rating” (derecelendirme) 1-5 ve “timestamp” (zaman damgası) dahil olmak üzere dört sütundan oluştuğunu görebiliriz. $n \times m$ boyutlarında bir etkileşim matrisi oluşturabiliriz, burada $n$ ve $m$ sırasıyla kullanıcı sayısı ve öğe sayısıdır. Bu veri kümesi yalnızca mevcut derecelendirmeleri kaydeder, bu nedenle buna derecelendirme matrisi diyebiliriz ve bu matrisin değerlerinin tam derecelendirmeleri temsil etmesi durumunda etkileşim matrisi ve derecelendirme matrisini birbirinin yerine kullanacağız. Kullanıcılar filmlerin çoğunu derecelendirmediğinden derecelendirme matrisindeki değerlerin çoğu bilinmemektedir. Ayrıca bu veri kümesinin seyrek olduğunu da gösteriyoruz. Seyreklik `1 - number of nonzero entries / ( number of users * number of items)` ( 1 - sıfır olmayan girdiler / (kullanıcı sayısı * öğe sayısı)) olarak tanımlanır. Açıkçası, etkileşim matrisi son derece seyrektir (yani, seyreklik = 93,695%). Gerçek dünya veri kümeleri, daha büyük ölçüde seyreklik yaşayabilir ve önerici sistemlerinin oluşturulmasında uzun süredir devam eden bir zorluk olmuştur. Kullanıcı/öğe öznitelikleri gibi ek yan bilgileri kullanmak için uygulanabilir bir çözüm, seyreliği hafifletmektir. 
 
 Daha sonra farklı derecelendirme sayımlarının dağılımını çizdiriyoruz. Beklendiği gibi, normal bir dağılım gibi görünüyor ve çoğu derecelendirme 3-4 olarak ortalanmıştır.
 
 ```{.python .input  n=4}
 d2l.plt.hist(data['rating'], bins=5, ec='black')
-d2l.plt.xlabel('Değerlendirme')
-d2l.plt.ylabel('Sayım')
-d2l.plt.title('MovieLens 100Kda değerlendirmelerin dağılımı')
+d2l.plt.xlabel('Rating')
+d2l.plt.ylabel('Count')
+d2l.plt.title('Distribution of Ratings in MovieLens 100K')
 d2l.plt.show()
 ```
 
 ## Veri Kümesini Bölme
 
-Veri kümesini eğitim ve test kümelerine ayırdık. Aşağıdaki işlev `random` ve `seq-aware` dahil olmak üzere iki bölünmüş mod sağlar. `random` modunda, fonksiyon 100 bin etkileşimi zaman damgası dikkate almadan rastgele böler ve varsayılan olarak verilerin %90'ını eğitim örnekleri, geri kalanın %10'unu test örnekleri olarak kullanır. `seq-aware` modunda, bir kullanıcının test için en son puan aldığı öğeyi ve kullanıcıların eğitim kümesi olarak tarihsel etkileşimlerini bırakıyoruz. Kullanıcı geçmişi etkileşimleri, zaman damgasına göre en eskisinden en yeniye sıralanır. Bu mod, sıraya duyarlı tavsiye bölümünde kullanılır.
+Veri kümesini eğitim ve test kümelerine ayırdık. Aşağıdaki işlev `random` ve `seq-aware` dahil olmak üzere iki bölünmüş mod sağlar. `random` modunda, fonksiyon 100k etkileşimlerini zaman damgası dikkate almadan rastgele böler ve varsayılan olarak verilerin %90'ını eğitim örnekleri, geri kalanın %10'unu test örnekleri olarak kullanır. `seq-aware` modunda, bir kullanıcının test için en son puan aldığı öğeyi ve kullanıcıların eğitim kümesi olarak tarihsel etkileşimlerini bırakıyoruz. Kullanıcı geçmişi etkileşimleri, zaman damgasına göre en eskisinden en yeniye sıralanır. Bu mod, sıraya duyarlı tavsiye bölümünde kullanılır.
 
 ```{.python .input  n=5}
 #@save
 def split_data_ml100k(data, num_users, num_items,
                       split_mode='random', test_ratio=0.1):
-    """Veri kümesini rastgele modda veya sıraya duyarlı modda böl."""
+    """Split the dataset in random mode or seq-aware mode."""
     if split_mode == 'seq-aware':
         train_items, test_items, train_list = {}, {}, []
         for line in data.itertuples():
@@ -92,7 +92,7 @@ Yalnızca bir test kümesi dışında, pratikte bir geçerleme kümesi kullanman
 
 ## Veriyi Yükleme
 
-Veri kümesinin bölünmesinden sonra, eğitim kümesini ve test kümesini kolaylık sağlamak için listelere ve sözlüklere/matrise dönüştüreceğiz. Aşağıdaki işlev, veri çerçevesini satır satır okur ve kullanıcıların/öğelerin dizinini sıfırdan başlatır. İşlev daha sonra kullanıcılar, öğeler, derecelendirmeler listelerini ve etkileşimleri kaydeden bir sözlük/matris döndürür. Geri bildirim türünü `explicit` (açık) veya `implicit` (örtük) diye belirtebiliriz.
+Veri kümesinin bölünmesinden sonra, eğitim kümesini ve test kümesini kolaylık sağlamak için listelere ve sözlüklere/matrise dönüştüreceğiz. Aşağıdaki işlev, veri çerçevesini satır satır okur ve kullanıcılar/öğelerin dizinini sıfırdan başlatır. İşlev daha sonra kullanıcılar, öğeler, derecelendirmeler listelerini ve etkileşimleri kaydeden bir sözlük/matris döndürür. Geri bildirim türünü `explicit` (açık) veya `implicit` (örtük) diye belirtebiliriz.
 
 ```{.python .input  n=6}
 #@save
@@ -112,7 +112,7 @@ def load_data_ml100k(data, num_users, num_items, feedback='explicit'):
     return users, items, scores, inter
 ```
 
-Daha sonra yukarıdaki adımları bir araya getiriyoruz ve bir sonraki bölümde kullanacağız. Sonuçlar `Dataset` ve `DataLoader` ile sarmalanır. Eğitim verileri için `DataLoader`'ın (VeriYineleyici) `last_batch`'inin (son toplu iş) `rollover` (çevirme) moduna ayarlandığını (kalan örnekler bir sonraki döneme aktarılır) ve sıraların karıştırıldığını unutmayın.
+Daha sonra yukarıdaki adımları bir araya getiriyoruz ve bir sonraki bölümde kullanacağız. Sonuçlar `Dataset` ve `DataLoader` ile sarmalanır. Eğitim verileri için `DataLoader`'ın (VeriYineleyici) `last_batch`'inin (son_topluis) `rollover` (cevirme) moduna ayarlandığını kalan örnekler bir sonraki döneme aktarılır) ve sıraların karıştırıldığını unutmayın.
 
 ```{.python .input  n=7}
 #@save

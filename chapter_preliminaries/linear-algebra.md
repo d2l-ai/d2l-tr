@@ -11,7 +11,7 @@ Doğrusal cebir veya makine öğrenmesi üzerine hiç çalışmadıysanız, mate
 Ayrıca, bir çek defterini dengelediyseniz veya hatta bir restoranda akşam yemeği için ödeme yaptıysanız, bir çift sayıyı toplama ve çarpma gibi temel şeyleri nasıl yapacağınızı zaten biliyorsunuzdur.
 Örneğin, Palo Alto'daki sıcaklık $52$ Fahrenheit derecedir.
 Usul olarak, sadece bir sayısal miktar içeren değerlere *sayıl (skaler)* diyoruz.
-Bu değeri Celsius'a (metrik sistemin daha anlamlı sıcaklık ölçeği) dönüştürmek istiyorsanız, $f$'i $52$ olarak kurup $c = \frac{5}{9}(f - 32)$ ifadesini hesaplarsınız.
+Bu değeri Celsius'a (metrik sistemin daha anlamlı sıcaklık ölçeği) dönüştürmek istiyorsanız, $f$i $52$ olarak ayarlayarak $c = \frac{5}{9}(f - 32)$ ifadesini hesaplarsınız.
 Bu denklemde ---$5$, $9$ ve $32$--- terimlerinin her biri skaler değerlerdir.
 $c$ ve $f$ göstermelik ifadelerine (placeholders) *değişkenler* denir ve bilinmeyen skaler değerleri temsil ederler.
 
@@ -161,7 +161,7 @@ Bu anlamda, bir tensörün bazı eksenlerinin boyutluluğu, bu eksenin uzunluğu
 Vektörler, skalerleri sıfırdan birinci dereceye kadar genelleştirirken, matrisler de vektörleri birinci dereceden ikinci dereceye genelleştirir.
 Genellikle kalın, büyük harflerle (örn., $\mathbf{X}$, $\mathbf{Y}$, and $\mathbf{Z}$) göstereceğimiz matrisler, kodda iki eksenli tensörler olarak temsil edilir.
 
-Matematiksel gösterimde, $\mathbf{A}$ matrisinin gerçel değerli skaler $m$ satır ve $n$ sütundan oluştuğunu ifade etmek için $\mathbf{A} \in \mathbb{R}^{m \times n}$'i kullanırız.
+Matematiksel gösterimde, $\mathbf{A}$ matrisinin gerçel değerli skaler $m$ satır ve $n$ sütundan oluştuğunu ifade etmek için $\mathbf{A} \in \mathbb{R}^{m \times n}$i kullanırız .
 Görsel olarak, herhangi bir $\mathbf{A} \in \mathbb{R}^{m \times n}$ matrisini $a_{ij}$ öğesinin $i.$ satıra ve $j.$ sütuna ait olduğu bir tablo olarak gösterebiliriz:
 
 $$\mathbf{A}=\begin{bmatrix} a_{11} & a_{12} & \cdots & a_{1n} \\ a_{21} & a_{22} & \cdots & a_{2n} \\ \vdots & \vdots & \ddots & \vdots \\ a_{m1} & a_{m2} & \cdots & a_{mn} \\ \end{bmatrix}.$$
@@ -190,7 +190,7 @@ A
 ```
 
 Satır ($i$) ve sütun ($j$) indekslerini belirterek $\mathbf{A}$ matrisinin $a_{ij}$ skaler öğesine erişebiliriz, $[\mathbf{A}]_{ij}$ gibi.
-Bir $\mathbf{A}$ matrisinin skaler elemanları verilmediğinde, örneğin :eqref:`eq_matrix_def` gibi, basitçe $\mathbf{A}$ matrisinin küçük harfli altindislisi $a_{ij}$'yi kullanarak $[\mathbf{A}]_{ij}$'ye atıfta bulunuruz.
+Bir $\mathbf{A}$ matrisinin skaler elemanları verilmediğinde, örneğin :eqref:`eq_matrix_def` gibi, basitçe $\mathbf{A}$ matrisinin küçük harfli altindislisi $a_{ij}$yi kullanarak $[\mathbf{A}]_{ij}$'ye atıfta bulunuruz.
 Gösterimi basit tutarken indeksleri ayırmak için virgüller yalnızca gerekli olduğunda eklenir, örneğin $a_{2, 3j}$ ve $[\mathbf{A}]_{2i-1, 3}$ gibi.
 
 
@@ -600,13 +600,13 @@ tf.reduce_sum(x * y)
 
 Nokta çarpımları çok çeşitli bağlamlarda kullanışlıdır.
 Örneğin, $\mathbf{x} \in \mathbb{R}^d$ vektörü ve $\mathbf{w} \in \mathbb{R}^d$ ile belirtilen bir ağırlık kümesi verildiğinde, $\mathbf{x}$ içindeki değerlerin $\mathbf{w}$ ağırlıklarına göre ağırlıklı toplamı $\mathbf{x}^\top \mathbf{w}$ nokta çarpımı olarak ifade edilebilir.
-Ağırlıklar negatif olmadığında ve bire (örn., $\left(\sum_{i=1}^{d} {w_i} = 1\right)$) toplandığında, nokta çarpımı *ağırlıklı ortalama*yı ifade eder.
-İki vektörü birim uzunluğa sahip olacak şekilde normalleştirdikten sonra, nokta çarpımlar arasındaki açının kosinüsünü ifade eder.
+Ağırlıklar negatif olmadığında ve bire (i.e., $\left(\sum_{i=1}^{d} {w_i} = 1\right)$) toplandığında, nokta çarpımı *ağırlıklı ortalama*yı ifade eder.
+İki vektörü birim uzunluğa sahip olacak şekilde normalleştirdikten sonra, nokta ürünler aralarındaki açının kosinüsünü ifade eder.
 *Uzunluk* kavramını bu bölümün ilerleyen kısımlarında usüle uygun tanıtacağız.
 
 ## Matris-Vektör Çarpımları
 
-Artık nokta çarpımlarını nasıl hesaplayacağımızı bildiğimize göre, *matris-vektör çarpımları*nı anlamaya başlayabiliriz.
+Artık nokta çarpımlarını nasıl hesaplayacağımızı bildiğimize göre, *matris-vektör çarpımları* anlamaya başlayabiliriz.
 $\mathbf{A} \in \mathbb{R}^{m \times n}$ matrisini ve $\mathbf{x} \in \mathbb{R}^n$ vektörünü sırasıyla tanımladık ve :eqref:`eq_matrix_def` ve :eqref:`eq_vec_def`'de görselleştirdik.
 $\mathbf{A}$ matrisini satır vektörleriyle görselleştirerek başlayalım.
 
@@ -783,7 +783,7 @@ Normların mesafe ölçülerine çok benzediğini fark edebilirsiniz.
 Ayrıca eğer ilkokuldan Öklid mesafesini hatırlarsanız (Pisagor teoremini düşünün), o zaman negatif olmama ve üçgen eşitsizlik kavramları zihininizde bir zil çalabilir.
 Aslında Öklid mesafesi bir normdur: Özellikle $L_2$ normudur.
 $n$ boyutlu vektör, $\mathbf{x}$, içindeki öğelerin $x_1,\ldots,x_n$ olduğunu varsayalım.
-[**$\mathbf{x}$'in $L_2$ *normu*, vektör öğelerinin karelerinin toplamının kareköküdür:**]
+[**$\mathbf{x}$'ın $L_2$ *normu*, vektör öğelerinin karelerinin toplamının kareköküdür:**]
 
 (**$$\|\mathbf{x}\|_2 = \sqrt{\sum_{i=1}^n x_i^2},$$**)
 
@@ -867,11 +867,11 @@ Benzer öğeler arasındaki mesafe en aza indirilecek ve benzer olmayan öğeler
 
 Sadece bu bölümde, modern derin öğrenmenin dikkate değer bir bölümünü anlamak için ihtiyaç duyacağınız tüm doğrusal cebiri öğrettik.
 Doğrusal cebirde çok daha fazlası vardır ve daha fazla matematik makine öğrenmesi için yararlıdır.
-Örneğin, matrisler faktörlere ayrıştırılabilir ve bu ayrışmalar gerçek dünya veri kümelerinde düşük boyutlu yapıları ortaya çıkarabilir.
+Örneğin, matrisler faktörlere ayrılabilir ve bu ayrışmalar gerçek dünya veri kümelerinde düşük boyutlu yapıları ortaya çıkarabilir.
 Veri kümelerindeki yapıyı keşfetmek ve tahmin problemlerini çözmek için matris ayrıştırmalarına ve onların yüksek dereceli tensörlere genellemelerini kullanmaya odaklanan koca makine öğrenmesi alt alanları vardır.
 Ancak bu kitap derin öğrenmeye odaklanmaktadır.
 Gerçek veri kümelerinde faydalı makine öğrenmesi modelleri uygulayarak ellerinizi kirlettikten sonra daha fazla matematik öğrenmeye çok daha meyilli olacağınıza inanıyoruz.
-Bu nedenle, daha sonra daha fazla matematiği öne sürme hakkımızı saklı tutarken, bu bölümü burada toparlayacağız.
+Bu nedenle, daha sonra daha fazla matematik tanıtma hakkımızı saklı tutarken, bu bölümü burada toparlayacağız.
 
 Doğrusal cebir hakkında daha fazla bilgi edinmek istiyorsanız, şunlardan birine başvurabilirsiniz: [Doğrusal cebir işlemleri üzerine çevrimiçi ek](https://tr.d2l.ai/chapter_appendix-mathematics-for-deep-learning/geometry-linear-algebraic-ops.html) veya diğer mükemmel kaynaklar :cite:`Strang.1993,Kolter.2008,Petersen.Pedersen.ea.2008`.
 
@@ -882,17 +882,17 @@ Doğrusal cebir hakkında daha fazla bilgi edinmek istiyorsanız, şunlardan bir
 * Vektörler skaleri genelleştirir ve matrisler vektörleri genelleştirir.
 * Skalerler, vektörler, matrisler ve tensörler sırasıyla sıfır, bir, iki ve rastgele sayıda eksene sahiptir.
 * Bir tensör, belirtilen eksenler boyunca `toplam` ve `ortalama` ile indirgenebilir.
-* İki matrisin eleman yönlü olarak çarpılmasına Hadamard çarpımı denir. Matris çarpımından farklıdır.
+* İki matrisin elementsel olarak çarpılmasına Hadamard çarpımı denir. Matris çarpımından farklıdır.
 * Derin öğrenmede, genellikle $L_1$ normu, $L_2$ normu ve Frobenius normu gibi normlarla çalışırız.
 * Skalerler, vektörler, matrisler ve tensörler üzerinde çeşitli işlemler gerçekleştirebiliriz.
 
 ## Alıştırmalar
-1. $\mathbf{A}$'nın devrik bir matrisinin devrik işleminin $\mathbf{A}$, yani $(\mathbf{A}^\top)^\top = \mathbf{A}$ olduğunu kanıtlayın.
+1. $\mathbf{A}$'nın devrik bir matrisinin devrik işleminin $\mathbf{A}$:$(\mathbf{A}^\top)^\top = \mathbf{A}$ olduğunu kanıtlayın.
 1. $\mathbf{A}$ ve $\mathbf{B}$ matrisleri verildiğinde, devriklerin toplamının bir toplamın devriğine eşit olduğunu gösterin: $\mathbf{A}^\top + \mathbf{B}^\top = (\mathbf{A} + \mathbf{B})^\top$.
 1. Herhangi bir kare matris $\mathbf{A}$ verildiğinde, $\mathbf{A} + \mathbf{A}^\top$ her zaman simetrik midir? Neden?
 1. Bu bölümde (2, 3, 4) şeklinde `X` tensörünü tanımladık. `len(X)` çıktısı nedir?
 1. Rasgele şekilli bir tensör `X` için, `len(X)` her zaman belirli bir `X` ekseninin uzunluğuna karşılık gelir mi? Bu eksen nedir?
-1. `A / A.sum(axis=1)` komutunu çalıştırın ve ne olduğuna bakın. Sebebini analiz edebilir misiniz?
+1. `A / A.sum (axis=1)` komutunu çalıştırın ve ne olduğunu görün. Sebebini analiz edebilir misiniz?
 1. Manhattan'da iki nokta arasında seyahat ederken, koordinatlar açısından, yani cadde ve sokak cinsinden, kat etmeniz gereken mesafe nedir? Çaprazlama seyahat edebilir misiniz?
 1. (2, 3, 4) şekilli bir tensörü düşünün. 0, 1 ve 2 ekseni boyunca toplam çıktılarının şekilleri nelerdir?
 1. 3 veya daha fazla eksenli bir tensörü `linalg.norm` fonksiyonuna besleyin ve çıktısını gözlemleyin. Bu işlev keyfi şekilli tansörler için ne hesaplar?

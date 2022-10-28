@@ -1,7 +1,7 @@
 # Çapa Kutuları
 :label:`sec_anchor`
 
-Nesne algılama algoritmaları genellikle girdi imgesinde çok sayıda bölgeyi örnekler, bu bölgelerin ilgilenilen nesneleri içerip içermediğini belirler ve nesnelerin *gerçek referans değeri kuşatan kutularını* daha doğru bir şekilde tahmin etmek için bölgelerin sınırlarını ayarlar. Farklı modeller farklı bölge örnekleme düzenleri benimseyebilir. Burada bu tür yöntemlerden birini sunuyoruz: Her pikselde ortalanmış değişen ölçeklere ve en-boy oranlarına sahip birden çok kuşatan kutu oluşturur. Bu kuşatan kutulara *çapa kutuları* denir. :numref:`sec_ssd` içinde çapa kutularına dayalı bir nesne algılama modeli tasarlayacağız. 
+Nesne algılama algoritmaları genellikle girdi imgesinde çok sayıda bölgeyi örnekler, bu bölgelerin ilgilenilen nesneleri içerip içermediğini belirler ve nesnelerin *gerçek referans değeri kuşatan kutularını* daha doğru bir şekilde tahmin etmek için bölgelerin sınırlarını ayarlar. Farklı modeller farklı bölge örnekleme düzenleri benimseyebilir. Burada bu tür yöntemlerden birini sunuyoruz: Her pikselde ortalanmış değişen ölçeklere ve en boy oranlarına sahip birden çok kuşatan kutu oluşturur. Bu kuşatan kutulara *çapa kutuları* denir. :numref:`sec_ssd`'te çapa kutularına dayalı bir nesne algılama modeli tasarlayacağız. 
 
 Öncelikle, sadece daha özlü çıktılar için doğruluk yazdırmayı değiştirelim.
 
@@ -10,7 +10,7 @@ Nesne algılama algoritmaları genellikle girdi imgesinde çok sayıda bölgeyi 
 from d2l import mxnet as d2l
 from mxnet import gluon, image, np, npx
 
-np.set_printoptions(2)  # Doğruluğunu basmayı basitleştirin
+np.set_printoptions(2)  # Simplify printing accuracy
 npx.set_np()
 ```
 
@@ -20,58 +20,55 @@ npx.set_np()
 from d2l import torch as d2l
 import torch
 
-torch.set_printoptions(2)  # Doğruluğunu basmayı basitleştirin
+torch.set_printoptions(2)  # Simplify printing accuracy
 ```
 
 ## Çoklu Çapa Kutuları Oluşturma
 
-Girdi imgesinin $h$ yüksekliğine ve $w$ genişliğine sahip olduğunu varsayalım. İmgenin her pikselinde ortalanmış farklı şekillere sahip çapa kutuları oluşturuyoruz. *Ölçek* $s\in (0, 1]$ ve *en-boy oranı* (genişliğin yüksekliğe oranı) $r > 0$ olsun. O zaman [**çapa kutusunun genişliği ve yüksekliği sırasıyla $ws\sqrt{r}$ ve $hs/\sqrt{r}$'dür.**] Merkez konumu verildiğinde, bilinen genişlik ve yüksekliğe sahip bir çapa kutusu belirlendiğini unutmayın. 
+Girdi imgesünün $h$ yüksekliğine ve $w$ genişliğine sahip olduğunu varsayalım. İmgenin her pikselinde ortalanmış farklı şekillere sahip çapa kutuları oluşturuyoruz. *Ölçek* $s\in (0, 1]$ ve *en-boy oranı* (genişliğin yüksekliğe oranı) $r > 0$ olsun. O zaman [**çapa kutusunun genişliği ve yüksekliği sırasıyla $ws\sqrt{r}$ ve $hs/\sqrt{r}$'dür.**] Merkez konumu verildiğinde, bilinen genişlik ve yüksekliğe sahip bir çapa kutusu belirlendiğini unutmayın. 
 
-Farklı şekillerde birden çok çapa kutusu oluşturmak için, bir dizi ölçek $s_1,\ldots, s_n$ ve bir dizi en boy oranı $r_1,\ldots, r_m$ ayarlayalım. Bu ölçeklerin ve en boy oranlarının tüm kombinasyonlarını merkez olarak her pikselle birlikte kullanırken, girdi imgesinde toplam $whnm$ çapa kutusu bulunur. Bu çapa kutuları gerçek referans değerleri kuşatan kutuları kapsayabilmesine rağmen, hesaplama karmaşıklığı basitçe çok yüksektir. Uygulamada, yalnızca $s_1$ veya $r_1$ (**içeren kombinasyonları dikkate alalım**): 
+Farklı şekillerde birden çok çapa kutusu oluşturmak için, bir dizi ölçek $s_1,\ldots, s_n$ ve bir dizi en boy oranı $r_1,\ldots, r_m$ ayarlayalım. Bu ölçeklerin ve en boy oranlarının tüm kombinasyonlarını merkez olarak her pikselle birlikte kullanırken, girdi imgesünde toplam $whnm$ çapa kutusu bulunur. Bu çapa kutuları gerçek referans değerleri kuşatan kutuları kapsayabilmesine rağmen, hesaplama karmaşıklığı basitçe çok yüksektir. Uygulamada, yalnızca $s_1$ veya $r_1$ (**içeren kombinasyonları dikkate alalım**): 
 
 (**$$(s_1, r_1), (s_1, r_2), \ldots, (s_1, r_m), (s_2, r_1), (s_3, r_1), \ldots, (s_n, r_1).$$**) 
 
 Yani, aynı pikselde ortalanmış çapa kutularının sayısı $n+m-1$'dir. Tüm girdi imgesi için toplam $wh(n+m-1)$ çapa kutusu oluşturacağız. 
 
-Yukarıdaki çapa kutuları oluşturma yöntemi aşağıdaki `multibox_prior` işlevinde uygulanır. Girdi imgesini, ölçeklerin bir listesini ve en-boy oranlarının bir listesini belirleriz, daha sonra bu işlev tüm çapa kutularını döndürür.
+Yukarıdaki çapa kutuları oluşturma yöntemi aşağıdaki `multibox_prior` işlevinde uygulanır. Girdi imgesini, ölçeklerin bir listesini ve en boy oranlarının bir listesini belirleriz, daha sonra bu işlev tüm çapa kutularını döndürür.
 
 ```{.python .input}
 #@save
 def multibox_prior(data, sizes, ratios):
-    """Her pikselde ortalanmış farklı şekillere sahip çapa kutuları oluşturun."""
+    """Generate anchor boxes with different shapes centered on each pixel."""
     in_height, in_width = data.shape[-2:]
     device, num_sizes, num_ratios = data.ctx, len(sizes), len(ratios)
     boxes_per_pixel = (num_sizes + num_ratios - 1)
     size_tensor = d2l.tensor(sizes, ctx=device)
     ratio_tensor = d2l.tensor(ratios, ctx=device)
-    # Bağlantıyı bir pikselin merkezine taşımak için kaydırmalar gereklidir. 
-    # Bir pikselin yüksekliği=1 ve genişliği=1 olduğundan, merkezlerimizi 0.5 
-    # ile kaydırmayı seçiyoruz.
+    # Offsets are required to move the anchor to the center of a pixel. Since
+    # a pixel has height=1 and width=1, we choose to offset our centers by 0.5
     offset_h, offset_w = 0.5, 0.5
-    steps_h = 1.0 / in_height  # y ekseninde ölçeklenmiş adımlar
-    steps_w = 1.0 / in_width  # x ekseninde ölçeklenmiş adımlar
+    steps_h = 1.0 / in_height  # Scaled steps in y-axis
+    steps_w = 1.0 / in_width  # Scaled steps in x-axis
 
-    # Çapa kutuları için tüm merkez noktalarını oluştur
+    # Generate all center points for the anchor boxes
     center_h = (d2l.arange(in_height, ctx=device) + offset_h) * steps_h
     center_w = (d2l.arange(in_width, ctx=device) + offset_w) * steps_w
     shift_x, shift_y = d2l.meshgrid(center_w, center_h)
     shift_x, shift_y = shift_x.reshape(-1), shift_y.reshape(-1)
 
-    # Daha sonra çapa kutusu köşe koordinatları (xmin, xmax, ymin, ymax) 
-    # oluşturmak için kullanılacak yükseklik ve genişliklerin `boxes_per_pixel` 
-    # sayısını oluşturun
+    # Generate `boxes_per_pixel` number of heights and widths that are later
+    # used to create anchor box corner coordinates (xmin, xmax, ymin, ymax)
     w = np.concatenate((size_tensor * np.sqrt(ratio_tensor[0]),
                         sizes[0] * np.sqrt(ratio_tensor[1:]))) \
-                        * in_height / in_width  # Dikdörtgen girdileri yönet
+                        * in_height / in_width  # Handle rectangular inputs
     h = np.concatenate((size_tensor / np.sqrt(ratio_tensor[0]),
                         sizes[0] / np.sqrt(ratio_tensor[1:])))
-    # Yarım yükseklik ve yarım genişlik elde etmek için 2'ye bölün
+    # Divide by 2 to get half height and half width
     anchor_manipulations = np.tile(np.stack((-w, -h, w, h)).T,
                                    (in_height * in_width, 1)) / 2
 
-    # Her merkez noktasında `boxes_per_pixel` sayısı çapa kutusu olacaktır, 
-    # bu nedenle `boxes_per_pixel` tekrarlarıyla tüm çapa kutusu 
-    # merkezlerinin bir ızgarasını oluşturun
+    # Each center point will have `boxes_per_pixel` number of anchor boxes, so
+    # generate a grid of all anchor box centers with `boxes_per_pixel` repeats
     out_grid = d2l.stack([shift_x, shift_y, shift_x, shift_y],
                          axis=1).repeat(boxes_per_pixel, axis=0)
     output = out_grid + anchor_manipulations
@@ -82,54 +79,51 @@ def multibox_prior(data, sizes, ratios):
 #@tab pytorch
 #@save
 def multibox_prior(data, sizes, ratios):
-    """Her pikselde ortalanmış farklı şekillere sahip çapa kutuları oluşturun."""
+    """Generate anchor boxes with different shapes centered on each pixel."""
     in_height, in_width = data.shape[-2:]
     device, num_sizes, num_ratios = data.device, len(sizes), len(ratios)
     boxes_per_pixel = (num_sizes + num_ratios - 1)
     size_tensor = d2l.tensor(sizes, device=device)
     ratio_tensor = d2l.tensor(ratios, device=device)
-    # Bağlantıyı bir pikselin merkezine taşımak için kaydırmalar gereklidir. 
-    # Bir pikselin yüksekliği=1 ve genişliği=1 olduğundan, merkezlerimizi 0.5 
-    # ile kaydırmayı seçiyoruz.
+    # Offsets are required to move the anchor to the center of a pixel. Since
+    # a pixel has height=1 and width=1, we choose to offset our centers by 0.5
     offset_h, offset_w = 0.5, 0.5
-    steps_h = 1.0 / in_height  # y ekseninde ölçeklenmiş adımlar
-    steps_w = 1.0 / in_width  # x ekseninde ölçeklenmiş adımlar
+    steps_h = 1.0 / in_height  # Scaled steps in y axis
+    steps_w = 1.0 / in_width  # Scaled steps in x axis
 
-    # Çapa kutuları için tüm merkez noktalarını oluştur
+    # Generate all center points for the anchor boxes
     center_h = (torch.arange(in_height, device=device) + offset_h) * steps_h
     center_w = (torch.arange(in_width, device=device) + offset_w) * steps_w
     shift_y, shift_x = torch.meshgrid(center_h, center_w)
     shift_y, shift_x = shift_y.reshape(-1), shift_x.reshape(-1)
 
-    # Daha sonra çapa kutusu köşe koordinatları (xmin, xmax, ymin, ymax) 
-    # oluşturmak için kullanılacak yükseklik ve genişliklerin `boxes_per_pixel` 
-    # sayısını oluşturun
+    # Generate `boxes_per_pixel` number of heights and widths that are later
+    # used to create anchor box corner coordinates (xmin, xmax, ymin, ymax)
     w = torch.cat((size_tensor * torch.sqrt(ratio_tensor[0]),
                    sizes[0] * torch.sqrt(ratio_tensor[1:])))\
-                   * in_height / in_width  # Dikdörtgen girdileri yönet
+                   * in_height / in_width  # Handle rectangular inputs
     h = torch.cat((size_tensor / torch.sqrt(ratio_tensor[0]),
                    sizes[0] / torch.sqrt(ratio_tensor[1:])))
-    # Yarım yükseklik ve yarım genişlik elde etmek için 2'ye bölün
+    # Divide by 2 to get half height and half width
     anchor_manipulations = torch.stack((-w, -h, w, h)).T.repeat(
                                         in_height * in_width, 1) / 2
 
-    # Her merkez noktasında `boxes_per_pixel` sayısı çapa kutusu olacaktır, 
-    # bu nedenle `boxes_per_pixel` tekrarlarıyla tüm çapa kutusu 
-    # merkezlerinin bir ızgarasını oluşturun
+    # Each center point will have `boxes_per_pixel` number of anchor boxes, so
+    # generate a grid of all anchor box centers with `boxes_per_pixel` repeats
     out_grid = torch.stack([shift_x, shift_y, shift_x, shift_y],
                 dim=1).repeat_interleave(boxes_per_pixel, dim=0)
     output = out_grid + anchor_manipulations
     return output.unsqueeze(0)
 ```
 
-[**Döndürülen çapa kutusu değişkeni `Y`'nin**] şeklinin (parti boyutu, çapa kutusu sayısı, 4) olduğunu görebiliriz.
+[**Döndürülen çapa kutusu değişkeni `Y`'nin**] şeklinin (parti boyutu, bağlantı kutusu sayısı, 4) olduğunu görebiliriz.
 
 ```{.python .input}
 img = image.imread('../img/catdog.jpg').asnumpy()
 h, w = img.shape[:2]
 
 print(h, w)
-X = np.random.uniform(size=(1, 3, h, w))  # Girdi verisi oluştur
+X = np.random.uniform(size=(1, 3, h, w))  # Construct input data
 Y = multibox_prior(X, sizes=[0.75, 0.5, 0.25], ratios=[1, 2, 0.5])
 Y.shape
 ```
@@ -140,12 +134,12 @@ img = d2l.plt.imread('../img/catdog.jpg')
 h, w = img.shape[:2]
 
 print(h, w)
-X = torch.rand(size=(1, 3, h, w))  # Girdi verisi oluştur
+X = torch.rand(size=(1, 3, h, w))  # Construct input data
 Y = multibox_prior(X, sizes=[0.75, 0.5, 0.25], ratios=[1, 2, 0.5])
 Y.shape
 ```
 
-Çapa kutusu değişkeninin şeklini değiştirdikten sonra `Y` olarak (imge yüksekliği, imge genişliği, aynı piksel üzerinde ortalanmış çapa kutularının sayısı, 4), belirtilen piksel konumuna ortalanmış tüm çapa kutularını elde edebiliriz. Aşağıda [**(250, 250) merkezli ilk çapa kutusuna erişiyoruz**]. Dört öğeye sahiptir: Sol üst köşedeki $(x, y)$ eksen koordinatları ve çapa kutusunun sağ alt köşesindeki $(x, y)$ eksen koordinatları. Her iki eksenin koordinat değerleri sırasıyla imgenin genişliği ve yüksekliğine bölünür; böylece değer aralığı 0 ile 1 arasındadır.
+Çapa kutusu değişkeninin şeklini değiştirdikten sonra `Y` olarak (imge yüksekliği, imge genişliği, aynı piksel üzerinde ortalanmış çapa kutularının sayısı, 4), belirtilen piksel konumuna ortalanmış tüm çapa kutularını elde edebiliriz. Aşağıda [**(250, 250) merkezli ilk çapa kutusuna erişiyoruz**]. Dört öğeye sahiptir: sol üst köşedeki $(x, y)$ eksen koordinatları ve çapa kutusunun sağ alt köşesindeki $(x, y)$ eksen koordinatları. Her iki eksenin koordinat değerleri sırasıyla imgenin genişliği ve yüksekliğine bölünür; böylece değer aralığı 0 ile 1 arasındadır.
 
 ```{.python .input}
 #@tab all
@@ -159,7 +153,7 @@ boxes[250, 250, 0, :]
 #@tab all
 #@save
 def show_bboxes(axes, bboxes, labels=None, colors=None):
-    """Çapa kutularını göster."""
+    """Show bounding boxes."""
 
     def make_list(obj, default_values=None):
         if obj is None:
@@ -199,7 +193,7 @@ Sadece bir çapa kutusunun köpeği imgede “iyi” çevrelediğini belirttik. 
 
 $$J(\mathcal{A},\mathcal{B}) = \frac{\left|\mathcal{A} \cap \mathcal{B}\right|}{\left| \mathcal{A} \cup \mathcal{B}\right|}.$$
 
-Aslında, herhangi bir kuşatan kutunun piksel alanını bir piksel kümesi olarak düşünebiliriz. Bu şekilde, iki kuşatan kutunun benzerliğini piksel kümelerinin Jaccard indeksi ile ölçebiliriz. İki kuşatan kutu için, Jaccard indeksini genellikle :numref:`fig_iou` içinde gösterildiği gibi, kesişme alanlarının birleşme alanlarına oranı olan *bileşim üzerinden kesişme* (*IoU*) olarak adlandırırız. Bir IoU aralığı 0 ile 1 arasındadır: 0 iki kuşatan kutunun hiç örtüşmediği anlamına gelirken 1, iki kuşatan kutunun eşit olduğunu gösterir. 
+Aslında, herhangi bir kuşatan kutunun piksel alanını bir piksel kümesi olarak düşünebiliriz. Bu şekilde, iki kuşatan kutunun benzerliğini piksel kümelerinin Jaccard indeksi ile ölçebiliriz. İki kuşatan kutu için, Jaccard indeksini genellikle :numref:`fig_iou`'te gösterildiği gibi, kesişme alanlarının birleşme alanlarına oranı olan *bileşim üzerinden kesişme* (*IoU*) olarak adlandırırız. Bir IoU aralığı 0 ile 1 arasındadır: 0 iki kuşatan kutunun hiç örtüşmediği anlamına gelirken 1, iki kuşatan kutunun eşit olduğunu gösterir. 
 
 ![IoU, kesişim alanının iki kuşatan kutunun birleşim alanına oranıdır.](../img/iou.svg)
 :label:`fig_iou`
@@ -209,7 +203,7 @@ Bu bölümün geri kalanında, çapa kutuları ile gerçek referans değeri kuş
 ```{.python .input}
 #@save
 def box_iou(boxes1, boxes2):
-    """İki çapa veya kuşatan kutu listesinde ikili IoU hesaplayın."""
+    """Compute pairwise IoU across two lists of anchor or bounding boxes."""
     box_area = lambda boxes: ((boxes[:, 2] - boxes[:, 0]) *
                               (boxes[:, 3] - boxes[:, 1]))
     # Shape of `boxes1`, `boxes2`, `areas1`, `areas2`: (no. of boxes1, 4),
@@ -231,7 +225,7 @@ def box_iou(boxes1, boxes2):
 #@tab pytorch
 #@save
 def box_iou(boxes1, boxes2):
-    """İki çapa veya kuşatan kutu listesinde ikili IoU hesaplayın."""
+    """Compute pairwise IoU across two lists of anchor or bounding boxes."""
     box_area = lambda boxes: ((boxes[:, 2] - boxes[:, 0]) *
                               (boxes[:, 3] - boxes[:, 1]))
     # Shape of `boxes1`, `boxes2`, `areas1`, `areas2`: (no. of boxes1, 4),
@@ -252,7 +246,7 @@ def box_iou(boxes1, boxes2):
 ## Eğitim Verilerinde Çapa Kutuları Etiketleme
 :label:`subsec_labeling-anchor-boxes`
 
-Bir eğitim veri kümesinde, her çapa kutusunu bir eğitim örneği olarak değerlendiririz. Bir nesne algılama modelini eğitmek için, her bir çapa kutusu için *sınıf* ve *uzaklık* etiketlerine ihtiyacımız var; burada birincisi, çapa kutusuyla ilgili nesnenin sınıfıdır ve ikincisi ise çapa kutusuna göre gerçek referans değeri kuşatan kutunun uzaklığıdır. Tahmin sırasında, her imge için birden çok çapa kutusu oluşturur, tüm bağlantı kutuları için sınıfları ve uzaklıkları tahmin eder, tahmini kuşatan kutuları elde etmek için konumlarını tahmin edilen uzaklıklara göre ayarlarız ve son olarak yalnızca belirli kriterleri karşılayan tahmini kuşatan kutuları çıktılarız. 
+Bir eğitim veri kümesinde, her çapa kutusunu bir eğitim örneği olarak değerlendiririz. Bir nesne algılama modelini eğitmek için, her bir çapa kutusu için *sınıf* ve *uzaklık* etiketlerine ihtiyacımız var; burada birincisi, çapa kutusuyla ilgili nesnenin sınıfıdır ve ikincisi ise çapa kutusuna göre gerçek referans değeri kuşatan kutunun uzaklığıdır. Tahmin sırasında, her imge için birden çok çapa kutusu oluşturur, tüm bağlantı kutuları için sınıfları ve uzaklıkları tahmin eder, öngörülen kuşatan kutuları elde etmek için konumlarını tahmin edilen uzaklıklara göre ayarlarız ve son olarak yalnızca belirli kriterleri karşılayan tahmini kuşatan kutuları çıkarırız. 
 
 Bildiğimiz gibi, bir nesne algılama eğitim kümesi, *gerçek referans değeri kuşatan kutular* ve çevrelenmiş nesnelerin sınıfları için etiketlerle birlikte gelir. Oluşturulan herhangi bir *çapa kutusu* etiketlemek için, çapa kutusuna en yakın olan *atanmış* gerçek referans değeri kuşatan kutunun etiketlenmiş konumuna ve sınıfına başvururuz. Aşağıda, çapa kutularına en yakın gerçek referans değeri kuşatan kutuları atamak için bir algoritma tanımlıyoruz.  
 
@@ -265,7 +259,7 @@ Bir imge göz önüne alındığında, çapa kutularının $A_1, A_2, \ldots, A_
 1. Bu noktada, $\mathbf{X}$ matrisindeki iki satır ve iki sütundaki öğeler atılmıştır. $\mathbf{X}$ matrisindeki $n_b$ sütunundaki tüm öğeler atılana kadar devam ederiz. Şu anda, $n_b$ çapa kutusunun her birine bir gerçek referans değeri kuşatan kutu atadık.
 1. Sadece kalan $n_a - n_b$ tane çapa kutusundan geçiş yapın. Örneğin, herhangi bir $A_i$ çapa kutusu verildiğinde, $i.$ matrisinin $\mathbf{X}$ satırı boyunca $A_i$ ile en büyük IoU'ya sahip $B_j$ gerçek referans değeri kuşatan kutusunu bulun ve yalnızca bu IoU önceden tanımlanmış bir eşikten büyükse $B_j$ öğesini $A_i$ öğesine atayın.
 
-Yukarıdaki algoritmayı somut bir örnek kullanarak gösterelim. :numref:`fig_anchor_label` içinde(solda) gösterildiği gibi, $\mathbf{X}$ matrisindeki maksimum değerin $x_{23}$ olduğunu varsayarak $x_{23}$, $B_3$ numaralı gerçek referans değeri kuşatan kutusunu $A_2$ numaralı çapa kutusuna atarız. Daha sonra, matrisin satır 2 ve sütun 3'teki tüm elemanlarını atırız, kalan elemanlarda (gölgeli alan) en büyük $x_{71}$'i buluruz ve $A_7$ çapa kutusuna $B_1$ numaralı gerçek referans değeri kuşatan kutuyu atarız. Daha sonra, :numref:`fig_anchor_label` (ortada) içinde gösterildiği gibi, matrisin 7. satırı ve 1. sütunundaki tüm öğeleri atın, kalan elemanlardaki (gölgeli alan) en büyük $x_{54}$ öğesini bulun ve $B_4$ gerçek referans değeri kuşatan kutusunu $A_5$ çapa kutusuna atayın. Son olarak, :numref:`fig_anchor_label` içinde (sağda) gösterildiği gibi, matrisin 5. satırı ve 4. sütunundaki tüm elemanları atın, kalan elemanlardaki (gölgeli alan) en büyük $x_{92}$ değerini bulun ve $B_2$ gerçek referans değeri kuşatan kutusunu $A_9$ çapa kutusuna atayın. Bundan sonra, yalnızca geri kalan $A_1, A_3, A_4, A_6, A_8$ çapa kutularından geçmemiz ve eşiğe göre gerçek referans değeri kuşatan kutular atanıp atanmayacağına karar vermemiz gerekiyor.
+Yukarıdaki algoritmayı somut bir örnek kullanarak gösterelim. :numref:`fig_anchor_label`'te (solda) gösterildiği gibi, $\mathbf{X}$ matrisindeki maksimum değerin $x_{23}$ olduğunu varsayarak $x_{23}$, $B_3$ numaralı gerçek referans değeri kuşatan kutusunu $A_2$ numaralı çapa kutusuna atarız. Daha sonra, matrisin satır 2 ve sütun 3'teki tüm elemanlarını atırız, kalan elemanlarda (gölgeli alan) en büyük $x_{71}$'i buluruz ve $A_7$ çapa kutusuna $B_1$ numaralı gerçek referans değeri kuşatan kutuyu atarız. Daha sonra, :numref:`fig_anchor_label` (ortada) içinde gösterildiği gibi, matrisin 7. satırı ve 1. sütunundaki tüm öğeleri atın, kalan elemanlardaki (gölgeli alan) en büyük $x_{54}$ öğesini bulun ve $B_4$ gerçek referans değeri kuşatan kutusunu $A_5$ çapa kutusuna atayın. Son olarak, :numref:`fig_anchor_label`de (sağda) gösterildiği gibi, matrisin 5. satırı ve 4. sütunundaki tüm elemanları atın, kalan elemanlardaki (gölgeli alan) en büyük $x_{92}$ değerini bulun ve $B_2$ gerçek referans değeri kuşatan kutusunu $A_9$ çapa kutusuna atayın. Bundan sonra, yalnızca geri kalan $A_1, A_3, A_4, A_6, A_8$ çapa kutularından geçmemiz ve eşiğe göre gerçek referans değeri kuşatan kutular atanıp atanmayacağına karar vermemiz gerekiyor.
 
 ![Çapa kutularına gerçek referans değeri kuşatan kutular atama.](../img/anchor-label.svg)
 :label:`fig_anchor_label`
@@ -275,14 +269,15 @@ Bu algoritma aşağıdaki `assign_anchor_to_bbox` işlevinde uygulanır.
 ```{.python .input}
 #@save
 def assign_anchor_to_bbox(ground_truth, anchors, device, iou_threshold=0.5):
-    """En yakın gerçek referans değeri kuşatan kutuları çapa kutularına atayın."""
+    """Assign closest ground-truth bounding boxes to anchor boxes."""
     num_anchors, num_gt_boxes = anchors.shape[0], ground_truth.shape[0]
-    # i. satır ve j. sütundaki x_ij öğesi, i çapa kutusunun ve j gerçek referans değeri kuşatan kutusunu IoU'sudur.
+    # Element x_ij in the i-th row and j-th column is the IoU of the anchor
+    # box i and the ground-truth bounding box j
     jaccard = box_iou(anchors, ground_truth)
-    # Her çapa için atanmış gerçek referans değeri kuşatan kutuyu tutmak için 
-    # tensörü ilklet
+    # Initialize the tensor to hold the assigned ground-truth bounding box for
+    # each anchor
     anchors_bbox_map = np.full((num_anchors,), -1, dtype=np.int32, ctx=device)
-    # Eşiğe göre gerçek referans değeri kuşatan kutuları atayın    
+    # Assign ground-truth bounding boxes according to the threshold
     max_ious, indices = np.max(jaccard, axis=1), np.argmax(jaccard, axis=1)
     anc_i = np.nonzero(max_ious >= 0.5)[0]
     box_j = indices[max_ious >= 0.5]
@@ -290,7 +285,7 @@ def assign_anchor_to_bbox(ground_truth, anchors, device, iou_threshold=0.5):
     col_discard = np.full((num_anchors,), -1)
     row_discard = np.full((num_gt_boxes,), -1)
     for _ in range(num_gt_boxes):
-        max_idx = np.argmax(jaccard)  # En büyük IoU'yu bul
+        max_idx = np.argmax(jaccard)  # Find the largest IoU
         box_idx = (max_idx % num_gt_boxes).astype('int32')
         anc_idx = (max_idx / num_gt_boxes).astype('int32')
         anchors_bbox_map[anc_idx] = box_idx
@@ -303,15 +298,16 @@ def assign_anchor_to_bbox(ground_truth, anchors, device, iou_threshold=0.5):
 #@tab pytorch
 #@save
 def assign_anchor_to_bbox(ground_truth, anchors, device, iou_threshold=0.5):
-    """En yakın gerçek referans değeri kuşatan kutuları çapa kutularına atayın."""
+    """Assign closest ground-truth bounding boxes to anchor boxes."""
     num_anchors, num_gt_boxes = anchors.shape[0], ground_truth.shape[0]
-    # i. satır ve j. sütundaki x_ij öğesi, i çapa kutusunun ve j gerçek referans değeri kuşatan kutusunu IoU'sudur.
+    # Element x_ij in the i-th row and j-th column is the IoU of the anchor
+    # box i and the ground-truth bounding box j
     jaccard = box_iou(anchors, ground_truth)
-    # Her çapa için atanmış gerçek referans değeri kuşatan kutuyu tutmak için 
-    # tensörü ilklet
+    # Initialize the tensor to hold the assigned ground-truth bounding box for
+    # each anchor
     anchors_bbox_map = torch.full((num_anchors,), -1, dtype=torch.long,
                                   device=device)
-    # Eşiğe göre gerçek referans değeri kuşatan kutuları atayın  
+    # Assign ground-truth bounding boxes according to the threshold
     max_ious, indices = torch.max(jaccard, dim=1)
     anc_i = torch.nonzero(max_ious >= 0.5).reshape(-1)
     box_j = indices[max_ious >= 0.5]
@@ -319,7 +315,7 @@ def assign_anchor_to_bbox(ground_truth, anchors, device, iou_threshold=0.5):
     col_discard = torch.full((num_anchors,), -1)
     row_discard = torch.full((num_gt_boxes,), -1)
     for _ in range(num_gt_boxes):
-        max_idx = torch.argmax(jaccard)  # En büyük IoU'yu bul
+        max_idx = torch.argmax(jaccard)  # Find the largest IoU
         box_idx = (max_idx % num_gt_boxes).long()
         anc_idx = (max_idx / num_gt_boxes).long()
         anchors_bbox_map[anc_idx] = box_idx
@@ -330,21 +326,21 @@ def assign_anchor_to_bbox(ground_truth, anchors, device, iou_threshold=0.5):
 
 ### Etiketleme Sınıfları ve Uzaklıklar
 
-Artık her çapa kutusu için sınıfı ve uzaklığı etiketleyebiliriz. Bir $A$ çapa kutusunun bir $B$ gerçek referans değer kuşatan kutusuna atandığını varsayalım. Bir yandan, $A$ çapa kutusu sınıfı $B$'ninkiyle aynı olarak etiketlenecektir. Öte yandan, $A$ çapa kutusunun uzaklığı, $B$ ve $A$ arasındaki merkezi koordinatlar arasındaki göreli konuma göre bu iki kutu arasındaki göreli boyutla birlikte etiketlenecektir. Veri kümesindeki farklı kutuların değişen konumları ve boyutları verildiğinde, sığdırılması daha kolay olan daha düzgün dağıtılmış ofsetlere yol açabilecek bu göreli konumlara ve boyutlara dönüşümler uygulayabiliriz. Burada genel bir dönüşümü tanımlıyoruz. [**$A$ ve $B$'nin merkezi koordinatları $(x_a, y_a)$ ve $(x_b, y_b)$ olarak verildiğinde, sırasıyla genişlikleri $w_a$ ve $w_b$ ve yükseklikleri $h_a$ ve $h_b$ olarak verilir. $A$ ofsetini şu şekilde etiketleyebiliriz:
+Artık her çapa kutusu için sınıfı ve uzaklığı etiketleyebiliriz. Bir $A$ çapa kutusunun bir $B$ gerçek referans değer kuşatan kutuna atandığını varsayalım. Bir yandan, $A$ çapa kutusu sınıfı $B$'ninkiyle aynı olarak etiketlenecektir. Öte yandan, $A$ çapa kutusunun uzaklığı, $B$ ve $A$ arasındaki merkezi koordinatlar arasındaki göreli konuma göre bu iki kutu arasındaki göreli boyutla birlikte etiketlenecektir. Veri kümesindeki farklı kutuların değişen konumları ve boyutları verildiğinde, sığdırılması daha kolay olan daha düzgün dağıtılmış ofsetlere yol açabilecek bu göreli konumlara ve boyutlara dönüşümler uygulayabiliriz. Burada genel bir dönüşümü tanımlıyoruz. [**$A$ ve $B$'inn merkezi koordinatları $(x_a, y_a)$ ve $(x_b, y_b)$ olarak verildiğinde, sırasıyla genişlikleri $w_a$ ve $w_b$ ve yükseklikleri $h_a$ ve $h_b$ olarak verilir. $A$ ofsetini şu şekilde etiketleyebiliriz:
 
 $$\left( \frac{ \frac{x_b - x_a}{w_a} - \mu_x }{\sigma_x},
 \frac{ \frac{y_b - y_a}{h_a} - \mu_y }{\sigma_y},
 \frac{ \log \frac{w_b}{w_a} - \mu_w }{\sigma_w},
 \frac{ \log \frac{h_b}{h_a} - \mu_h }{\sigma_h}\right),$$
 **]
-burada sabitlerin varsayılan değerleri $\mu_x = \mu_y = \mu_w = \mu_h = 0, \sigma_x=\sigma_y=0.1$ ve $\sigma_w=\sigma_h=0.2$'dır.
-Bu dönüştürme, aşağıda `offset_boxes` işlevinde uygulanmaktadır.
+where default values of the constants are $\mu_x = \mu_y = \mu_w = \mu_h = 0, \sigma_x=\sigma_y=0.1$, and $\sigma_w=\sigma_h=0.2$.
+This transformation is implemented below in the `offset_boxes` function.
 
 ```{.python .input}
 #@tab all
 #@save
 def offset_boxes(anchors, assigned_bb, eps=1e-6):
-    """Çapa kutu ofsetlerini dönüştür"""
+    """Transform for anchor box offsets."""
     c_anc = d2l.box_corner_to_center(anchors)
     c_assigned_bb = d2l.box_corner_to_center(assigned_bb)
     offset_xy = 10 * (c_assigned_bb[:, :2] - c_anc[:, :2]) / c_anc[:, 2:]
@@ -353,12 +349,12 @@ def offset_boxes(anchors, assigned_bb, eps=1e-6):
     return offset
 ```
 
-Bir çapa kutusuna bir gerçek referans değeri kuşatan kutu atanmamışsa, sadece çapa kutusunun sınıfını "arka plan" olarak etiketleriz. Sınıfları arka plan olan çapa kutuları genellikle *negatif* çapa kutuları olarak adlandırılır ve geri kalanı ise *pozitif* çapa kutuları olarak adlandırılır. Aşağıdaki `multibox_target` işlevini gerçek referans değeri kuşatan kutuları (`labels` bağımsız değişkeni) kullanarak [**sınıfları ve çapa kutuları (`anchors` bağımsız değişkeni) için uzaklıkları etiketlemek**] için uyguluyoruz. Bu işlev, arka plan sınıfını sıfıra ayarlar ve yeni bir sınıfın tamsayı dizinini bir artırır.
+Bir çapa kutusuna bir gerçek referans değeri kuşatan kutu atanmamışsa, sadece çapa kutusunun sınıfını “arka plan” olarak etiketleriz. Sınıfları arka plan olan çapa kutuları genellikle *negatif* çapa kutuları olarak adlandırılır ve geri kalanı ise *pozitif* çapa kutuları olarak adlandırılır. Aşağıdaki `multibox_target` işlevini gerçek referans değeri kuşatan kutuları (`labels` bağımsız değişkeni) kullanarak [**sınıfları ve çapa kutuları için uzaklıkları etiketlemek**](`anchors` bağımsız değişkeni) için uyguluyoruz. Bu işlev, arka plan sınıfını sıfıra ayarlar ve yeni bir sınıfın tamsayı dizinini bir artırır.
 
 ```{.python .input}
 #@save
 def multibox_target(anchors, labels):
-    """Gerçeği referans değeri kuşatan kutuları kullanarak çapa kutularını etiketleyin."""
+    """Label anchor boxes using ground-truth bounding boxes."""
     batch_size, anchors = labels.shape[0], anchors.squeeze(0)
     batch_offset, batch_mask, batch_class_labels = [], [], []
     device, num_anchors = anchors.ctx, anchors.shape[0]
@@ -368,19 +364,19 @@ def multibox_target(anchors, labels):
             label[:, 1:], anchors, device)
         bbox_mask = np.tile((np.expand_dims((anchors_bbox_map >= 0),
                                             axis=-1)), (1, 4)).astype('int32')
-        # Sınıf etiketlerini ve atanmış kuşatan kutu koordinatlarını sıfırlarla ilklet
+        # Initialize class labels and assigned bounding box coordinates with
+        # zeros
         class_labels = d2l.zeros(num_anchors, dtype=np.int32, ctx=device)
         assigned_bb = d2l.zeros((num_anchors, 4), dtype=np.float32,
                                 ctx=device)
-        # Çapa kutularının sınıflarını kendilerine atanan gerçek referans değeri
-        # kuşatan kutularını kullanarak etiketleyin. Bir çapa kutusu
-        # atanmamışsa, sınıfını arka plan olarak etiketliyoruz (değer sıfır 
-        # olarak kalıyor)
+        # Label classes of anchor boxes using their assigned ground-truth
+        # bounding boxes. If an anchor box is not assigned any, we label its
+        # class as background (the value remains zero)
         indices_true = np.nonzero(anchors_bbox_map >= 0)[0]
         bb_idx = anchors_bbox_map[indices_true]
         class_labels[indices_true] = label[bb_idx, 0].astype('int32') + 1
         assigned_bb[indices_true] = label[bb_idx, 1:]
-        # Ofset dönüşümü
+        # Offset transformation
         offset = offset_boxes(anchors, assigned_bb) * bbox_mask
         batch_offset.append(offset.reshape(-1))
         batch_mask.append(bbox_mask.reshape(-1))
@@ -395,7 +391,7 @@ def multibox_target(anchors, labels):
 #@tab pytorch
 #@save
 def multibox_target(anchors, labels):
-    """Gerçeği referans değeri kuşatan kutuları kullanarak çapa kutularını etiketleyin."""
+    """Label anchor boxes using ground-truth bounding boxes."""
     batch_size, anchors = labels.shape[0], anchors.squeeze(0)
     batch_offset, batch_mask, batch_class_labels = [], [], []
     device, num_anchors = anchors.device, anchors.shape[0]
@@ -405,20 +401,20 @@ def multibox_target(anchors, labels):
             label[:, 1:], anchors, device)
         bbox_mask = ((anchors_bbox_map >= 0).float().unsqueeze(-1)).repeat(
             1, 4)
-        # Sınıf etiketlerini ve atanmış kuşatan kutu koordinatlarını sıfırlarla ilklet
+        # Initialize class labels and assigned bounding box coordinates with
+        # zeros
         class_labels = torch.zeros(num_anchors, dtype=torch.long,
                                    device=device)
         assigned_bb = torch.zeros((num_anchors, 4), dtype=torch.float32,
                                   device=device)
-        # Çapa kutularının sınıflarını kendilerine atanan gerçek referans değeri
-        # kuşatan kutularını kullanarak etiketleyin. Bir çapa kutusu
-        # atanmamışsa, sınıfını arka plan olarak etiketliyoruz (değer sıfır 
-        # olarak kalıyor)
+        # Label classes of anchor boxes using their assigned ground-truth
+        # bounding boxes. If an anchor box is not assigned any, we label its
+        # class as background (the value remains zero)
         indices_true = torch.nonzero(anchors_bbox_map >= 0)
         bb_idx = anchors_bbox_map[indices_true]
         class_labels[indices_true] = label[bb_idx, 0].long() + 1
         assigned_bb[indices_true] = label[bb_idx, 1:]
-        # Ofset dönüşümü
+        # Offset transformation
         offset = offset_boxes(anchors, assigned_bb) * bbox_mask
         batch_offset.append(offset.reshape(-1))
         batch_mask.append(bbox_mask.reshape(-1))
@@ -491,7 +487,7 @@ Tahmin esnasında, imge için birden çok çapa kutusu oluşturur ve her biri i�
 #@tab all
 #@save
 def offset_inverse(anchors, offset_preds):
-    """Tahmin edilen uzaklıklara sahip çapa kutularına dayalı kuşatan kutuları tahmin edin."""
+    """Predict bounding boxes based on anchor boxes with predicted offsets."""
     anc = d2l.box_corner_to_center(anchors)
     pred_bbox_xy = (offset_preds[:, :2] * anc[:, 2:] / 10) + anc[:, :2]
     pred_bbox_wh = d2l.exp(offset_preds[:, 2:] / 5) * anc[:, 2:]
@@ -500,7 +496,7 @@ def offset_inverse(anchors, offset_preds):
     return predicted_bbox
 ```
 
-Çok sayıda bağlantı kutusu olduğunda, aynı nesneyi çevreleyen birçok benzer (önemli ölçüde örtüşen) tahmin edilen kuşatan kutular potansiyel olarak çıktılanabilir. Çıktıyı basitleştirmek için, aynı nesneye ait benzer tahmin edilen kuşatan kutuları *maksimum olmayanı bastırma (non-maximum suppression)* (NMS) kullanarak birleştirebiliriz. 
+Çok sayıda çapa kutusu olduğunda, benzer (önemli örtüşme ile) tahmin edilen kuşatan kutular aynı nesneyi çevreleyen için potansiyel çıktı olabilir. Çıktıyı basitleştirmek için, aynı nesneye ait benzer tahmin edilen kuşatan kutuları *maksimum olmayanı bastırma (non-maximum suppression)* (NMS) kullanarak birleştirebiliriz. 
 
 Şimdi maksimum olmayanı bastırma nasıl çalışır anlayalım. Tahmin edilen bir kuşatan kutu $B$ için nesne algılama modeli her sınıf için tahmin edilen olasılığı hesaplar. $p$ ile tahmin edilen en büyük olasılığı ifade edersek, bu olasılığa karşılık gelen sınıf, $B$ için tahmin edilen sınıftır. Daha özel belirtirsek, $p$'yi tahmini kuşatan kutu $B$'nin *güveni* (skoru) olarak adlandırıyoruz. Aynı imgede, tahmin edilen tüm arka plan olmayan kuşatan kutular, bir $L$ listesi oluşturmak için azalan düzende güvene göre sıralanır. Ardından, aşağıdaki adımlarda sıralanmış listeyi $L$'yi değiştiriyoruz.: 
 
@@ -514,9 +510,9 @@ def offset_inverse(anchors, offset_preds):
 ```{.python .input}
 #@save
 def nms(boxes, scores, iou_threshold):
-    """Tahmin edilen kuşatan kutuların güven puanlarını sıralama."""
+    """Sort confidence scores of predicted bounding boxes."""
     B = scores.argsort()[::-1]
-    keep = []  # Tutulacak tahmini sınırlayıcı kutuların endeksleri
+    keep = []  # Indices of predicted bounding boxes that will be kept
     while B.size > 0:
         i = B[0]
         keep.append(i)
@@ -532,9 +528,9 @@ def nms(boxes, scores, iou_threshold):
 #@tab pytorch
 #@save
 def nms(boxes, scores, iou_threshold):
-    """Tahmin edilen kuşatan kutuların güven puanlarını sıralama."""
+    """Sort confidence scores of predicted bounding boxes."""
     B = torch.argsort(scores, dim=-1, descending=True)
-    keep = []  # Tutulacak tahmini sınırlayıcı kutuların endeksleri
+    keep = []  # Indices of predicted bounding boxes that will be kept
     while B.numel() > 0:
         i = B[0]
         keep.append(i)
@@ -546,13 +542,13 @@ def nms(boxes, scores, iou_threshold):
     return d2l.tensor(keep, device=boxes.device)
 ```
 
-Aşağıdaki `multibox_detection` işlevi [**kuşatan kutuları tahmin ederken maksimum olmayanı bastırmayı uygulamak**] için tanımlıyoruz. Uygulamanın biraz karmaşık olduğunu görürseniz endişelenmeyin: Uygulamadan hemen sonra somut bir örnekle nasıl çalıştığını göstereceğiz.
+Aşağıdaki `multibox_detection`'ü [**kuşatan kutuları tahmin ederken maksimum olmayanı bastırmayı uygulamak**] için tanımlıyoruz. Uygulamanın biraz karmaşık olduğunu görürseniz endişelenmeyin: Usygulamadan hemen sonra somut bir örnekle nasıl çalıştığını göstereceğiz.
 
 ```{.python .input}
 #@save
 def multibox_detection(cls_probs, offset_preds, anchors, nms_threshold=0.5,
                        pos_threshold=0.009999999):
-    """Maksimum olmayan bastırma kullanarak kuşatan kutuları tahmin edin."""
+    """Predict bounding boxes using non-maximum suppression."""
     device, batch_size = cls_probs.ctx, cls_probs.shape[0]
     anchors = np.squeeze(anchors, axis=0)
     num_classes, num_anchors = cls_probs.shape[1], cls_probs.shape[2]
@@ -562,7 +558,7 @@ def multibox_detection(cls_probs, offset_preds, anchors, nms_threshold=0.5,
         conf, class_id = np.max(cls_prob[1:], 0), np.argmax(cls_prob[1:], 0)
         predicted_bb = offset_inverse(anchors, offset_pred)
         keep = nms(predicted_bb, conf, nms_threshold)
-        # Tüm "tutmayan" dizinleri bulun ve sınıfı arka plana ayarlayın
+        # Find all non-`keep` indices and set the class to background
         all_idx = np.arange(num_anchors, dtype=np.int32, ctx=device)
         combined = d2l.concat((keep, all_idx))
         unique, counts = np.unique(combined, return_counts=True)
@@ -571,7 +567,8 @@ def multibox_detection(cls_probs, offset_preds, anchors, nms_threshold=0.5,
         class_id[non_keep] = -1
         class_id = class_id[all_id_sorted].astype('float32')
         conf, predicted_bb = conf[all_id_sorted], predicted_bb[all_id_sorted]
-        # Burada `pos_threshold`, pozitif (arka plan dışı) tahminler için bir eşik değeridir
+        # Here `pos_threshold` is a threshold for positive (non-background)
+        # predictions
         below_min_idx = (conf < pos_threshold)
         class_id[below_min_idx] = -1
         conf[below_min_idx] = 1 - conf[below_min_idx]
@@ -587,7 +584,7 @@ def multibox_detection(cls_probs, offset_preds, anchors, nms_threshold=0.5,
 #@save
 def multibox_detection(cls_probs, offset_preds, anchors, nms_threshold=0.5,
                        pos_threshold=0.009999999):
-    """Maksimum olmayan bastırma kullanarak kuşatan kutuları tahmin edin."""
+    """Predict bounding boxes using non-maximum suppression."""
     device, batch_size = cls_probs.device, cls_probs.shape[0]
     anchors = anchors.squeeze(0)
     num_classes, num_anchors = cls_probs.shape[1], cls_probs.shape[2]
@@ -597,7 +594,7 @@ def multibox_detection(cls_probs, offset_preds, anchors, nms_threshold=0.5,
         conf, class_id = torch.max(cls_prob[1:], 0)
         predicted_bb = offset_inverse(anchors, offset_pred)
         keep = nms(predicted_bb, conf, nms_threshold)
-        # Tüm "tutmayan" dizinleri bulun ve sınıfı arka plana ayarlayın
+        # Find all non-`keep` indices and set the class to background
         all_idx = torch.arange(num_anchors, dtype=torch.long, device=device)
         combined = torch.cat((keep, all_idx))
         uniques, counts = combined.unique(return_counts=True)
@@ -606,7 +603,8 @@ def multibox_detection(cls_probs, offset_preds, anchors, nms_threshold=0.5,
         class_id[non_keep] = -1
         class_id = class_id[all_id_sorted]
         conf, predicted_bb = conf[all_id_sorted], predicted_bb[all_id_sorted]
-        # Burada `pos_threshold`, pozitif (arka plan dışı) tahminler için bir eşik değeridir
+        # Here `pos_threshold` is a threshold for positive (non-background)
+        # predictions
         below_min_idx = (conf < pos_threshold)
         class_id[below_min_idx] = -1
         conf[below_min_idx] = 1 - conf[below_min_idx]
@@ -624,9 +622,9 @@ def multibox_detection(cls_probs, offset_preds, anchors, nms_threshold=0.5,
 anchors = d2l.tensor([[0.1, 0.08, 0.52, 0.92], [0.08, 0.2, 0.56, 0.95],
                       [0.15, 0.3, 0.62, 0.91], [0.55, 0.2, 0.9, 0.88]])
 offset_preds = d2l.tensor([0] * d2l.size(anchors))
-cls_probs = d2l.tensor([[0] * 4,  # Tahmini arka plan olabilirliği
-                      [0.9, 0.8, 0.7, 0.1],  # Tahmini köpek olabilirliği
-                      [0.1, 0.2, 0.3, 0.9]])  #  Tahmini kedi olabilirliği
+cls_probs = d2l.tensor([[0] * 4,  # Predicted background likelihood 
+                      [0.9, 0.8, 0.7, 0.1],  # Predicted dog likelihood 
+                      [0.1, 0.2, 0.3, 0.9]])  # Predicted cat likelihood
 ```
 
 Bu tahmini kuşatan kutuları resimdeki güvenleriyle çizebiliriz.
