@@ -1,9 +1,9 @@
 # İmge Artırması
 :label:`sec_image_augmentation`
 
-:numref:`sec_alexnet` içinde, büyük veri kümelerinin, çeşitli uygulamalarda derin sinir ağlarının başarısı için bir ön koşul olduğunu belirttik.
+:numref:`sec_alexnet`'te, büyük veri kümelerinin çeşitli uygulamalarda derin sinir ağlarının başarısı için bir ön koşul olduğunu belirttik.
 *İmge artırma* 
-eğitim imgelerinde bir dizi rastgele değişiklikten sonra benzer ama farklı eğitim örnekleri üretir ve böylece eğitim kümesinin boyutunu genişletir. Alternatif olarak, imge artırma, eğitim örneklerinin rastgele ayarlanması modellerin belirli niteliklere daha az güvenmesine ve böylece genelleme yeteneklerini geliştirmesine izin vermesi gerçeğiyle motive edilebilir. Örneğin, bir imgeyi, ilgi nesnesinin farklı pozisyonlarda görünmesini sağlamak için farklı şekillerde kırpabiliriz, böylece bir modelin nesnenin konumuna bağımlılığını azaltabiliriz. Ayrıca, modelin renge duyarlılığını azaltmak için parlaklık ve renk gibi faktörleri de ayarlayabiliriz. Muhtemelen zamanında imge artırmanın AlexNet'in başarısı için vazgeçilmez olduğu doğrudur. Bu bölümde bilgisayarla görmede yaygın olarak kullanılan bu tekniği tartışacağız.
+eğitim imgelerinde bir dizi rastgele değişiklikten sonra benzer ama farklı eğitim örnekleri üretir ve böylece eğitim kümesinin boyutunu genişletir. Alternatif olarak, imge artırma, eğitim örneklerinin rastgele ayarlanması modellerin belirli niteliklere daha az güvenmesine ve böylece genelleme yeteneklerini geliştirmesine izin vermesi gerçeğiyle motive edilebilir. Örneğin, bir imgeyi, ilgi nesnesinin farklı pozisyonlarda görünmesini sağlamak için farklı şekillerde kırpabiliriz, böylece bir modelin nesnenin konumuna bağımlılığını azaltabiliriz. Ayrıca, modelin renge duyarlılığını azaltmak için parlaklık ve renk gibi faktörleri de ayarlayabiliriz. Muhtemelen imge artırma o zaman AlexNet'in başarısı için vazgeçilmez olduğu doğrudur. Bu bölümde bilgisayarla görmede yaygın olarak kullanılan bu tekniği tartışacağız.
 
 ```{.python .input}
 %matplotlib inline
@@ -85,7 +85,7 @@ apply(img, gluon.data.vision.transforms.RandomFlipTopBottom())
 apply(img, torchvision.transforms.RandomVerticalFlip())
 ```
 
-Kullandığımız örnek imgede, kedi imgenin ortasındadır, ancak bu genel olarak böyle olmayabilir. :numref:`sec_pooling` içinde, ortaklama katmanının evrişimli bir katmanın hedef konuma duyarlılığını azaltabileceğini açıkladık. Buna ek olarak, nesnelerin imgedeki farklı ölçeklerde farklı konumlarda görünmesini sağlamak için imgeyi rastgele kırpabiliriz, bu da bir modelin hedef konuma duyarlılığını da azaltabilir. 
+Kullandığımız örnek imgede, kedi imgenin ortasındadır, ancak bu genel olarak böyle olmayabilir. :numref:`sec_pooling`'te, ortaklama katmanının evrişimli bir katmanın hedef konuma duyarlılığını azaltabileceğini açıkladık. Buna ek olarak, nesnelerin imgedeki farklı ölçeklerde farklı konumlarda görünmesini sağlamak için imgeyi rastgele kırpabiliriz, bu da bir modelin hedef konuma duyarlılığını da azaltabilir. 
 
 Aşağıdaki kodda, her seferinde orijinal alanın $\%10 \sim \%100$ alanı olan bir alanı [**rastgele kırpıyoruz**] ve bu alanın genişliğinin yüksekliğine oranı $0.5 \sim 2$'den rastgele seçilir. Ardından, bölgenin genişliği ve yüksekliği 200 piksele ölçeklenir. Aksi belirtilmedikçe, bu bölümdeki $a$ ile $b$ arasındaki rastgele sayı, $[a, b]$ aralığından rastgele ve tek biçimli örneklemeyle elde edilen sürekli bir değeri ifade eder.
 
@@ -104,7 +104,7 @@ apply(img, shape_aug)
 
 ### Renkleri Değiştirme
 
-Diğer bir artırma yöntemi ise renkleri değiştirmektir. İmge renginin dört cephesini değiştirebiliriz: Parlaklık, zıtlık, doygunluk ve renk tonu. Aşağıdaki örnekte, imgenin [**parlaklığını**] orijinal imgenin %50'si ($1-0.5$) ile %150'si ($1+0.5$) arasında bir değere değiştiriyoruz.
+Diğer bir artırma yöntemi ise renkleri değiştirmektir. İmge renginin dört cephedeb değiştirebiliriz: Parlaklık, zıtlık, doygunluk ve renk tonu. Aşağıdaki örnekte, imgenin [**parlaklığını**] orijinal imgenin %50'si ($1-0.5$) ile %150'si ($1+0.5$) arasında bir değere değiştiriyoruz.
 
 ```{.python .input}
 apply(img, gluon.data.vision.transforms.RandomBrightness(0.5))
@@ -128,7 +128,7 @@ apply(img, torchvision.transforms.ColorJitter(
     brightness=0, contrast=0, saturation=0, hue=0.5))
 ```
 
-Ayrıca bir `RandomColorJitter` örneği oluşturabilir ve [**imgenin `brightness` (parlaklık), `contrast` (zıtlık), `saturation` (doygunluk) ve `hue`'ini (renk tonu) aynı anda nasıl rastgele değiştirebileceğimizi**] ayarlayabiliriz.
+Ayrıca bir `RandomColorJitter` örneği oluşturabilir ve nasıl [**imgenin `brightness`, `contrast`, `saturation` ve `hue`'ini aynı anda rastgele değiştirebileceğimizi**] ayarlayabiliriz.
 
 ```{.python .input}
 color_aug = gluon.data.vision.transforms.RandomColorJitter(
@@ -145,7 +145,7 @@ apply(img, color_aug)
 
 ### Çoklu İmge Artırma Yöntemlerini Birleştirme
 
-Pratikte, [**birden fazla imge artırma yöntemini**] birleştireceğiz. Örneğin, yukarıda tanımlanan farklı imge artırma yöntemlerini birleştirebilir ve bunları bir `Compose` (beste) örneği aracılığıyla her imgeye uygulayabiliriz.
+Pratikte, [**birden fazla imge artırma yöntemini**] birleştireceğiz. Örneğin, yukarıda tanımlanan farklı imge artırma yöntemlerini birleştirebilir ve bunları bir `Compose` örneği aracılığıyla her imgeye uygulayabiliriz.
 
 ```{.python .input}
 augs = gluon.data.vision.transforms.Compose([
@@ -176,7 +176,7 @@ all_images = torchvision.datasets.CIFAR10(train=True, root="../data",
 d2l.show_images([all_images[i][0] for i in range(32)], 4, 8, scale=0.8);
 ```
 
-Tahmin sırasında kesin sonuçlar elde etmek için genellikle sadece eğitim örneklerine imge artırma uygularız ve tahmin sırasında rastgele işlemlerle imge artırma kullanmayız. [**Burada sadece en basit rastgele sol-sağ döndürme yöntemini kullanıyoruz**]. Buna ek olarak, bir minigrup imgeyi derin öğrenme çerçevesinin gerektirdiği biçime dönüştürmek için `ToTensor` örneğini kullanıyoruz, yani 0 ile 1 arasında 32 bit kayan virgüllü sayıları (toplu iş boyutu, kanal sayısı, yükseklik, genişlik) şeklindedirler.
+Tahmin sırasında kesin sonuçlar elde etmek için genellikle sadece eğitim örneklerine imge artırma uygularız ve tahmin sırasında rastgele işlemlerle imge artırma kullanmayız. [**Burada sadece en basit rastgele sol-sağ dçndürme yöntemini kullanıyoruz**]. Buna ek olarak, bir minigrup imgeyi derin öğrenme çerçevesinin gerektirdiği biçime dönüştürmek için `ToTensor` örneğini kullanıyoruz, yani 0 ile 1 arasında 32 bit kayan virgüllü sayıları (toplu iş boyutu, kanal sayısı, yükseklik, genişlik) şeklindedir.
 
 ```{.python .input}
 train_augs = gluon.data.vision.transforms.Compose([
@@ -202,7 +202,7 @@ Ardından, imgeyi okumayı ve imge artırmasını uygulamayı kolaylaştırmak i
 :end_tab:
 
 :begin_tab:`pytorch`
-Ardından, [**imgeyi okumayı ve imge artırmasını uygulamayı kolaylaştırmak için yardımcı bir işlev tanımlar**]. PyTorch'un veri kümesi tarafından sağlanan `transform` bağımsız değişkeni, imgeleri döndürmek için artırma uygular. `DataLoader`'a ayrıntılı bir giriş için lütfen :numref:`sec_fashion_mnist` kısmına bakın.
+Ardından, [**imgeyi okumayı ve imge artırmasını uygulamayı kolaylaştırmak için yardımcı bir işlev tanımlar**]. PyTorch'un veri kümesi tarafından sağlanan `transform` bağımsız değişkeni, imgeleri döndürmek için artırma uygular. `DataLoader`'ya ayrıntılı bir giriş için lütfen :numref:`sec_fashion_mnist`'e bakın.
 :end_tab:
 
 ```{.python .input}
@@ -225,13 +225,13 @@ def load_cifar10(is_train, augs, batch_size):
 
 ### Çoklu-GPU Eğitimi
 
-ResNet-18 modelini :numref:`sec_resnet` içindeki CIFAR-10 veri kümesi üzerinde eğitiyoruz. :numref:`sec_multi_gpu_concise` kısmından çoklu GPU eğitimine girişi hatırlayın. Aşağıda, [**birden çok GPU kullanarak modeli eğitmek ve değerlendirmek için bir işlev tanımlıyoruz**].
+ResNet-18 modelini :numref:`sec_resnet`'ten CIFAR-10 veri kümesi üzerinde eğitiyoruz. :numref:`sec_multi_gpu_concise`'te çoklu GPU eğitimine girişi hatırlayın. Aşağıda, [**birden çok GPU kullanarak modeli eğitmek ve değerlendirmek için bir işlev tanımlıyoruz**].
 
 ```{.python .input}
 #@save
 def train_batch_ch13(net, features, labels, loss, trainer, devices,
                      split_f=d2l.split_batch):
-    """Birden çok GPU'lu bir minigrup için eğitim (Bölüm 13'te tanımlanmıştır)."""
+    """Train for a minibatch with mutiple GPUs (defined in Chapter 13)."""
     X_shards, y_shards = split_f(features, labels, devices)
     with autograd.record():
         pred_shards = [net(X_shard) for X_shard in X_shards]
@@ -239,7 +239,8 @@ def train_batch_ch13(net, features, labels, loss, trainer, devices,
               in zip(pred_shards, y_shards)]
     for l in ls:
         l.backward()
-    # `True` bayrağı, daha sonra yararlı olan eski gradyanlara sahip parametrelere izin verir (örneğin, BERT ince ayarında)
+    # The `True` flag allows parameters with stale gradients, which is useful
+    # later (e.g., in fine-tuning BERT)
     trainer.step(labels.shape[0], ignore_stale_grad=True)
     train_loss_sum = sum([float(l.sum()) for l in ls])
     train_acc_sum = sum(d2l.accuracy(pred_shard, y_shard)
@@ -251,9 +252,9 @@ def train_batch_ch13(net, features, labels, loss, trainer, devices,
 #@tab pytorch
 #@save
 def train_batch_ch13(net, X, y, loss, trainer, devices):
-    """Birden çok GPU'lu bir minigrup için eğitim (Bölüm 13'te tanımlanmıştır)."""
+    """Train for a minibatch with mutiple GPUs (defined in Chapter 13)."""
     if isinstance(X, list):
-        # BERT ince ayarı için gerekli (daha sonra ele alınacaktır)
+        # Required for BERT fine-tuning (to be covered later)
         X = [x.to(devices[0]) for x in X]
     else:
         X = X.to(devices[0])
@@ -273,12 +274,13 @@ def train_batch_ch13(net, X, y, loss, trainer, devices):
 #@save
 def train_ch13(net, train_iter, test_iter, loss, trainer, num_epochs,
                devices=d2l.try_all_gpus(), split_f=d2l.split_batch):
-    """Birden çok GPU'lu bir modeli eğitin (Bölüm 13'te tanımlanmıştır)."""
+    """Train a model with mutiple GPUs (defined in Chapter 13)."""
     timer, num_batches = d2l.Timer(), len(train_iter)
     animator = d2l.Animator(xlabel='epoch', xlim=[1, num_epochs], ylim=[0, 1],
                             legend=['train loss', 'train acc', 'test acc'])
     for epoch in range(num_epochs):
-    # Eğitim kaybının toplamı, eğitim doğruluğunun toplamı, örneklerin sayısı, tahminlerin sayısı
+        # Sum of training loss, sum of training accuracy, no. of examples,
+        # no. of predictions
         metric = d2l.Accumulator(4)
         for i, (features, labels) in enumerate(train_iter):
             timer.start()
@@ -303,13 +305,14 @@ def train_ch13(net, train_iter, test_iter, loss, trainer, num_epochs,
 #@save
 def train_ch13(net, train_iter, test_iter, loss, trainer, num_epochs,
                devices=d2l.try_all_gpus()):
-    """Birden çok GPU'lu bir modeli eğitin (Bölüm 13'te tanımlanmıştır)."""
+    """Train a model with mutiple GPUs (defined in Chapter 13)."""
     timer, num_batches = d2l.Timer(), len(train_iter)
     animator = d2l.Animator(xlabel='epoch', xlim=[1, num_epochs], ylim=[0, 1],
                             legend=['train loss', 'train acc', 'test acc'])
     net = nn.DataParallel(net, device_ids=devices).to(devices[0])
     for epoch in range(num_epochs):
-        # Eğitim kaybının toplamı, eğitim doğruluğunun toplamı, örneklerin sayısı, tahminlerin sayısı
+        # Sum of training loss, sum of training accuracy, no. of examples,
+        # no. of predictions
         metric = d2l.Accumulator(4)
         for i, (features, labels) in enumerate(train_iter):
             timer.start()
@@ -379,7 +382,7 @@ train_with_data_aug(train_augs, test_augs, net)
 
 1. İmge artırma özelliğini, `train_with_data_aug(test_augs, test_augs)`, kullanmadan modeli eğitin. İmge artırmasını kullanırken ve kullanmazken eğitim ve test doğruluğunu karşılaştırın. Bu karşılaştırmalı deney, imge artırmanin aşırı uyumu azaltabileceği argümanını destekleyebilir mi? Neden?
 1. CIFAR-10 veri kümesinde model eğitiminde birden çok farklı imge artırma yöntemini birleştirin. Test doğruluğunu arttırıyor mu? 
-1. Derin öğrenme çerçevesinin çevrimiçi belgelerine bakın. Başka hangi imge artırma yöntemlerini de sağlar?
+1. Derin öğrenme çerçevesinin çevrimiçi dokümantasyonuna bakın. Başka hangi imge artırma yöntemlerini de sağlar?
 
 :begin_tab:`mxnet`
 [Tartışmalar](https://discuss.d2l.ai/t/367)

@@ -1,6 +1,6 @@
 # Parametre Yönetimi
 
-Bir mimari seçip hiper parametrelerimizi belirledikten sonra, hedefimiz yitim işlevimizi en aza indiren parametre değerlerini bulmak olduğu eğitim döngüsüne geçiyoruz. Eğitimden sonra, gelecekteki tahminlerde bulunmak için bu parametrelere ihtiyacımız olacak. Ek olarak, bazen parametreleri başka bir bağlamda yeniden kullanmak, modelimizi başka bir yazılımda yürütülebilmesi için diske kaydetmek veya bilimsel anlayış kazanma umuduyla incelemek için ayıklamak isteyeceğiz.
+Bir mimari seçip hiper parametrelerimizi belirledikten sonra, hedefimiz yitim işlevimizi en aza indiren parametre değerlerini bulmak olduğu eğitim döngüsüne geçiyoruz. Eğitimden sonra, gelecekteki tahminlerde bulunmak için bu parametrelere ihtiyacımız olacak. Ek olarak, bazen parametreleri başka bir bağlamda yeniden kullanmak, modelimizi başka bir yazılımda yürütülebilmesi için diske kaydetmek veya bilimsel anlayış kazanma umuduyla incelemek için dışarı çıkarmak isteyeceğiz.
 
 Çoğu zaman, ağır işlerin üstesinden gelmek için derin öğrenme çerçevelerine dayanarak, parametrelerin nasıl beyan edildiğine ve değiştirildiğine dair işin esas ayrıntıları görmezden gelebileceğiz. Bununla birlikte, standart katmanlara sahip yığılmış mimarilerden uzaklaştığımızda, bazen parametreleri bildirme ve onların üstünde oynama yabani otlarına girmemizi gerekecektir. Bu bölümde aşağıdakileri ele alıyoruz:
 
@@ -50,7 +50,7 @@ net(X)
 
 ## [**Parametre Erişimi**]
 
-Zaten bildiğiniz modellerden parametrelere nasıl erişileceğiyle başlayalım. Bir model `Sequential` sınıfı aracılığıyla tanımlandığında, ilk olarak herhangi bir katmana, bir listeymiş gibi modelde üzerinden indeksleme ile erişebiliriz. Her katmanın parametreleri, özelliklerinde uygun bir şekilde bulunur. Tam bağlı ikinci katmanın parametrelerini aşağıdaki gibi irdeleyebiliriz.
+Zaten bildiğiniz modellerden parametrelere nasıl erişileceğiyle başlayalım. Bir model `Sequential` sınıfı aracılığıyla tanımlandığında, ilk olarak herhangi bir katmana, bir listeymiş gibi modelde üzerinden indeksleme ile erişebiliriz. Her katmanın parametreleri, özelliklerınde uygun bir şekilde bulunur. Tam bağlı ikinci katmanın parametrelerini aşağıdaki gibi irdeleyebiliriz.
 
 ```{.python .input}
 print(net[1].params)
@@ -159,7 +159,7 @@ def block1():
 def block2():
     net = nn.Sequential()
     for _ in range(4):
-        # Burada iç içe konuyor
+        # Nested here
         net.add(block1())
     return net
 
@@ -179,7 +179,7 @@ def block1():
 def block2():
     net = nn.Sequential()
     for i in range(4):
-        # Burada iç içe konuyor
+        # Nested here
         net.add_module(f'block {i}', block1())
     return net
 
@@ -198,7 +198,7 @@ def block1(name):
 def block2():
     net = tf.keras.Sequential()
     for i in range(4):
-        # Burada iç içe konuyor
+        # Nested here
         net.add(block1(name=f'block-{i}'))
     return net
 
@@ -243,7 +243,7 @@ rgnet.layers[0].layers[1].layers[1].weights[1]
 
 ## Parametre İlkleme
 
-Artık parametrelere nasıl erişeceğimizi bildiğimize göre, onları nasıl doğru şekilde ilkleteceğimize bakalım. Uygun ilkleme ihtiyacını :numref:`sec_numerical_stability` içinde tartıştık. Derin öğrenme çerçevesi katmanlarına varsayılan rastgele ilklemeler sağlar. Bununla birlikte, ağırlıklarımızı öteki farklı protokollere göre ilkletmek istiyoruz. Çerçeve, en sık kullanılan protokolleri sağlar ve ayrıca özelleştirilmiş bir ilkletici oluşturmaya izin verir.
+Artık parametrelere nasıl erişeceğimizi bildiğimize göre, onları nasıl doğru şekilde ilkleteceğimize bakalım. Uygun ilkleme ihtiyacını :numref:`sec_numerical_stability`'de tartıştık. Derin öğrenme çerçevesi katmanlarına varsayılan rastgele ilklemeler sağlar. Bununla birlikte, ağırlıklarımızı öteki farklı protokollere göre ilkletmek istiyoruz. Çerçeve, en sık kullanılan protokolleri sağlar ve ayrıca özelleştirilimiş bir ilkletici oluşturmaya izin verir.
 
 :begin_tab:`mxnet`
 Varsayılan olarak, MXNet ağırlık parametrelerini $U[-0.07, 0.07]$ tekdüze dağılımdan rasgele çekerek ilkler ve ek girdileri sıfırlar. MXNet'in `init` modülü önceden ayarlı çeşitli ilkleme yöntemleri sağlar.
@@ -259,7 +259,7 @@ Varsayılan olarak Keras, girdi ve çıktı boyutuna göre hesaplanan bir aralı
 
 ### [**Yerleşik İlkletme**]
 
-Yerleşik ilkleticileri çağırarak ilkleyelim. Aşağıdaki kod, tüm ağırlık parametrelerini standart sapması 0.01 olan Gauss rastgele değişkenler olarak ilkletirken ek girdi parametreleri de 0 olarak atanır.
+Yerleşik ilkleticileri çağırarak ilkleyelim. Aşağıdaki kod, tüm ağırlık parametrelerini standart sapması 0.01 olan Gauss rastgele değişkenler olarak ilkletir, ek girdi parametreleri de 0 olarak atanır.
 
 ```{.python .input}
 # Burada 'force_reinit', daha önce ilklenmiş olsalar bile parametrelerin 
@@ -469,8 +469,8 @@ Genellikle, parametreleri birden çok katmanda paylaşmak isteriz. Bunu biraz da
 
 ```{.python .input}
 net = nn.Sequential()
-# Parametrelerine atıfta bulunabilmemiz için paylaşılan katmana bir ad 
-# vermemiz gerekiyor
+# We need to give the shared layer a name so that we can refer to its
+# parameters
 shared = nn.Dense(8, activation='relu')
 net.add(nn.Dense(8, activation='relu'),
         shared,
@@ -481,33 +481,36 @@ net.initialize()
 X = np.random.uniform(size=(2, 20))
 net(X)
 
-# Parametrelerin aynı olup olmadığını kontrol edin
+# Check whether the parameters are the same
 print(net[1].weight.data()[0] == net[2].weight.data()[0])
 net[1].weight.data()[0, 0] = 100
-# Aynı değere sahip olmak yerine aslında aynı nesne olduklarından emin olun
+# Make sure that they are actually the same object rather than just having the
+# same value
 print(net[1].weight.data()[0] == net[2].weight.data()[0])
 ```
 
 ```{.python .input}
 #@tab pytorch
-# Parametrelerine atıfta bulunabilmemiz için paylaşılan katmana bir ad 
-# vermemiz gerekiyor
+# We need to give the shared layer a name so that we can refer to its
+# parameters
 shared = nn.Linear(8, 8)
 net = nn.Sequential(nn.Linear(4, 8), nn.ReLU(),
                     shared, nn.ReLU(),
                     shared, nn.ReLU(),
                     nn.Linear(8, 1))
 net(X)
-# Parametrelerin aynı olup olmadığını kontrol edin
+# Check whether the parameters are the same
 print(net[2].weight.data[0] == net[4].weight.data[0])
 net[2].weight.data[0, 0] = 100
-# Aynı değere sahip olmak yerine aslında aynı nesne olduklarından emin olun
+# Make sure that they are actually the same object rather than just having the
+# same value
 print(net[2].weight.data[0] == net[4].weight.data[0])
 ```
 
 ```{.python .input}
 #@tab tensorflow
-# tf.keras biraz farklı davranır. Yinelenen katmanı otomatik olarak kaldırır.
+# tf.keras behaves a bit differently. It removes the duplicate layer
+# automatically
 shared = tf.keras.layers.Dense(4, activation=tf.nn.relu)
 net = tf.keras.models.Sequential([
     tf.keras.layers.Flatten(),
@@ -517,7 +520,7 @@ net = tf.keras.models.Sequential([
 ])
 
 net(X)
-# Parametrelerin farklı olup olmadığını kontrol edin
+# Check whether the parameters are different
 print(len(net.layers) == 3)
 ```
 
@@ -533,7 +536,7 @@ Bu örnek, ikinci ve üçüncü katmanın parametrelerinin birbirine bağlı old
 
 ## Alıştırmalar
 
-1. :numref:`sec_model_construction` içinde tanımlanan `FancyMLP` modelini kullanınız ve çeşitli katmanların parametrelerine erişiniz.
+1. :numref:`sec_model_construction`'de tanımlanan `FancyMLP` modelini kullanınız ve çeşitli katmanların parametrelerine erişiniz.
 1. Farklı ilkleyicileri keşfetmek için ilkleme modülü dökümanına bakınız.
 1. Paylaşılan bir parametre katmanı içeren bir MLP oluşturunuz ve onu eğitiniz. Eğitim sürecinde, her katmanın model parametrelerini ve gradyanlarını gözlemleyiniz.
 1. Parametreleri paylaşmak neden iyi bir fikirdir?

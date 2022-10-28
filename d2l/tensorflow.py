@@ -1,9 +1,28 @@
 DATA_HUB = dict()
 DATA_URL = 'http://d2l-data.s3-accelerate.amazonaws.com/'
 
+import collections
+import hashlib
+import inspect
+import math
+import os
+import random
+import re
+import shutil
+import sys
+import tarfile
+import time
+import zipfile
+from collections import defaultdict
+import pandas as pd
+import requests
+from IPython import display
+from matplotlib import pyplot as plt
+
 import numpy as np
 import tensorflow as tf
 
+d2l = sys.modules[__name__]
 nn_Module = tf.keras.Model
 
 #################   WARNING   ################
@@ -1454,46 +1473,7 @@ def bbox_to_rect(bbox, color):
     # upper-left y), width, height)
     return d2l.plt.Rectangle(
         xy=(bbox[0], bbox[1]), width=bbox[2]-bbox[0], height=bbox[3]-bbox[1],
-        fill=False, edgecolor=color, linewidth=2)
-
-def update_D(X, Z, net_D, net_G, loss, optimizer_D):
-    """Update discriminator.
-
-    Defined in :numref:`sec_basic_gan`"""
-    batch_size = X.shape[0]
-    ones = tf.ones((batch_size,)) # Labels corresponding to real data
-    zeros = tf.zeros((batch_size,)) # Labels corresponding to fake data
-    # Do not need to compute gradient for `net_G`, so it's outside GradientTape
-    fake_X = net_G(Z)
-    with tf.GradientTape() as tape:
-        real_Y = net_D(X)
-        fake_Y = net_D(fake_X)
-        # We multiply the loss by batch_size to match PyTorch's BCEWithLogitsLoss
-        loss_D = (loss(ones, tf.squeeze(real_Y)) + loss(
-            zeros, tf.squeeze(fake_Y))) * batch_size / 2
-    grads_D = tape.gradient(loss_D, net_D.trainable_variables)
-    optimizer_D.apply_gradients(zip(grads_D, net_D.trainable_variables))
-    return loss_D
-
-def update_G(Z, net_D, net_G, loss, optimizer_G):
-    """Update generator.
-
-    Defined in :numref:`sec_basic_gan`"""
-    batch_size = Z.shape[0]
-    ones = tf.ones((batch_size,))
-    with tf.GradientTape() as tape:
-        # We could reuse `fake_X` from `update_D` to save computation
-        fake_X = net_G(Z)
-        # Recomputing `fake_Y` is needed since `net_D` is changed
-        fake_Y = net_D(fake_X)
-        # We multiply the loss by batch_size to match PyTorch's BCEWithLogits loss
-        loss_G = loss(ones, tf.squeeze(fake_Y)) * batch_size
-    grads_G = tape.gradient(loss_G, net_G.trainable_variables)
-    optimizer_G.apply_gradients(zip(grads_G, net_G.trainable_variables))
-    return loss_G
-
-d2l.DATA_HUB['pokemon'] = (d2l.DATA_URL + 'pokemon.zip',
-                           'c065c0e2593b8b161a2d7873e42418bf6a21106c')# Alias defined in config.ini
+        fill=False, edgecolor=color, linewidth=2)# Alias defined in config.ini
 size = lambda a: tf.size(a).numpy()
 
 reshape = tf.reshape

@@ -5,8 +5,6 @@ affine; afin
 
 agent; etmen
 
-aliasing; zamansal örtüşme
-
 analogy; benzeşim, benzetme
 
 anchor; çapa
@@ -49,8 +47,6 @@ byte; bayt, sekizli
 
 cache; ön bellek
 
-callback; geri arama
-
 checksum; sağlama toplamı
 
 co-adaptation; birlikte-uyarlama
@@ -87,7 +83,7 @@ deployment; konuşlandırma
 
 descent; iniş
 
-deterministic; gerekirci, belirlenimci
+deterministic; gerekirci
 
 discriminator; ayrımcı
 
@@ -117,8 +113,6 @@ exhaustive search; kapsamlı arama
 
 extrapolation; dışdeğerleme
 
-exponential; üstel
-
 feature; öznitelik
 
 firmware; bellenim
@@ -136,8 +130,6 @@ full rank; tam kerteli
 fully-connected; tam bağlı
 
 gate; geçit
-
-gated recurrent units; geçitli yinelemeli birimler
 
 generative adversarial networks; çekişmeli üretici ağlar
 
@@ -161,15 +153,11 @@ imperative; buyuru
 
 imputation; itham
 
-independent and identically distributed; bağımsız ve özdeşçe dağılmış
-
 indicator; gösterge, belirteç
 
 information retrieval; bilgi getirimi
 
 initialization; ilkleme
-
-insight; kavrama
 
 internal covariate shift; dahili eşdeğişken kayması
 
@@ -315,7 +303,7 @@ string; dizgi
 
 stochastic; rasgele
 
-subsampling; alt örnekleme
+sunsampling; alt örnekleme
 
 surrogate; vekil
 

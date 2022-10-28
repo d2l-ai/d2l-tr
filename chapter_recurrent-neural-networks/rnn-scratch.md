@@ -1,7 +1,7 @@
 # Yinelemeli Sinir Ağlarının Sıfırdan Uygulanması
 :label:`sec_rnn_scratch`
 
-Bu bölümde, :numref:`sec_rnn` içindeki tanımlamalarımıza göre, karakter düzeyinde bir dil modeli için sıfırdan bir RNN uygulayacağız. Bu tarz bir model H. G. Wells'in *Zaman Makinesi* ile eğitilecek. Daha önce olduğu gibi, önce :numref:`sec_language_model` içinde tanıtılan veri kümesini okuyarak başlıyoruz.
+Bu bölümde, :numref:`sec_rnn`'deki açıklamalarımıza göre, karakter düzeyinde bir dil modeli için sıfırdan bir RNN uygulayacağız. Bu tarz bir model H. G. Wells'in *Zaman Makinesi* ile eğitilecek. Daha önce olduğu gibi, önce :numref:`sec_language_model`'te tanıtılan veri kümesini okuyarak başlıyoruz.
 
 ```{.python .input}
 %matplotlib inline
@@ -43,7 +43,7 @@ train_random_iter, vocab_random_iter = d2l.load_data_time_machine(
 
 ## [**Bire Bir Kodlama**]
 
-Her andıcın `train_iter`'te sayısal bir indeks olarak temsil edildiğini hatırlayın. Bu indeksleri doğrudan sinir ağına beslemek öğrenmeyi zorlaştırabilir. Genellikle her andıcı daha açıklayıcı bir öznitelik vektörü olarak temsil ediyoruz. En kolay gösterim, :numref:`subsec_classification-problem` içinde tanıtılan *bire bir kodlama*dır (one-hot coding).
+Her andıcın `train_iter`'te sayısal bir indeks olarak temsil edildiğini hatırlayın. Bu indeksleri doğrudan sinir ağına beslemek öğrenmeyi zorlaştırabilir. Genellikle her andıcı daha açıklayıcı bir öznitelik vektörü olarak temsil ediyoruz. En kolay gösterim, :numref:`subsec_classification-problem`'te tanıtılan *bire bir kodlama*dır (one-hot coding).
 
 Özetle, her bir indeksi farklı bir birim vektörüne eşleriz: Kelime dağarcığındaki farklı andıçların sayısının $N$ (`len(vocab)`) olduğunu ve andıç indekslerinin $0$ ile $N-1$ arasında değiştiğini varsayalım. Bir andıç indeksi $i$ tamsayısı ise, o zaman $N$ uzunluğunda tümü 0 olan bir vektör oluştururuz ve $i$ konumundaki elemanı 1'e ayarlarız. Bu vektör, orijinal andıcın bire bir kodlama vektörüdür. İndeksleri 0 ve 2 olan bire bir kodlama vektörleri aşağıda gösterilmiştir.
 
@@ -61,7 +61,7 @@ F.one_hot(torch.tensor([0, 2]), len(vocab))
 tf.one_hot(tf.constant([0, 2]), len(vocab))
 ```
 
-Her seferinde örnek aldığımız (**minigrubun şeklidir (grup boyutu, zaman adımlarının sayısı). `one_hot` işlevi, böyle bir minigrubu, son boyutun kelime dağarcığı uzunluğuna eşit olduğu üç boyutlu bir tensöre dönüştürür (`len(vocab)`).**) Girdiyi sıklıkla deviririz (transpose), böylece (zaman adımlarının sayısı, grup boyutu, kelime dağarcığı uzunluğu) şeklinde bir çıktı elde edeceğiz. Bu, bir minigrubun gizli durumlarını zaman adımlarıyla güncellerken en dıştaki boyutta daha rahat döngü yapmamızı sağlayacaktır.
+Her seferinde örnek aldığımız (**minigrubun şekli (grup boyutu, zaman adımlarının sayısı)'dır. `one_hot` işlevi, böyle bir minigrubu, son boyutun kelime dağarcığı uzunluğuna eşit olduğu üç boyutlu bir tensöre dönüştürür (`len(vocab)`).**) Girdiyi sıklıkla deviriyoruz (transpose), böylece (zaman adımlarının sayısı, grup boyutu, kelime dağarcığı uzunluğu) şeklinde bir çıktı elde edeceğiz. Bu, bir minigrubun gizli durumlarını zaman adımlarıyla güncellerken en dıştaki boyutta daha rahat döngü yapmamızı sağlayacaktır.
 
 ```{.python .input}
 X = d2l.reshape(d2l.arange(10), (2, 5))
@@ -91,14 +91,14 @@ def get_params(vocab_size, num_hiddens, device):
     def normal(shape):
         return np.random.normal(scale=0.01, size=shape, ctx=device)
 
-    # Gizli katman parametreleri
+    # Hidden layer parameters
     W_xh = normal((num_inputs, num_hiddens))
     W_hh = normal((num_hiddens, num_hiddens))
     b_h = d2l.zeros(num_hiddens, ctx=device)
-    # Çıktı katmanı parametreleri
+    # Output layer parameters
     W_hq = normal((num_hiddens, num_outputs))
     b_q = d2l.zeros(num_outputs, ctx=device)
-    # Gradyanları iliştir
+    # Attach gradients
     params = [W_xh, W_hh, b_h, W_hq, b_q]
     for param in params:
         param.attach_grad()
@@ -113,14 +113,14 @@ def get_params(vocab_size, num_hiddens, device):
     def normal(shape):
         return torch.randn(size=shape, device=device) * 0.01
 
-    # Gizli katman parametreleri
+    # Hidden layer parameters
     W_xh = normal((num_inputs, num_hiddens))
     W_hh = normal((num_hiddens, num_hiddens))
     b_h = d2l.zeros(num_hiddens, device=device)
-    # Çıktı katmanı parametreleri
+    # Output layer parameters
     W_hq = normal((num_hiddens, num_outputs))
     b_q = d2l.zeros(num_outputs, device=device)
-    # Gradyanları iliştir
+    # Attach gradients
     params = [W_xh, W_hh, b_h, W_hq, b_q]
     for param in params:
         param.requires_grad_(True)
@@ -135,11 +135,11 @@ def get_params(vocab_size, num_hiddens):
     def normal(shape):
         return d2l.normal(shape=shape,stddev=0.01,mean=0,dtype=tf.float32)
 
-    # Gizli katman parametreleri
+    # Hidden layer parameters
     W_xh = tf.Variable(normal((num_inputs, num_hiddens)), dtype=tf.float32)
     W_hh = tf.Variable(normal((num_hiddens, num_hiddens)), dtype=tf.float32)
     b_h = tf.Variable(d2l.zeros(num_hiddens), dtype=tf.float32)
-    # Çıktı katmanı parametreleri
+    # Output layer parameters
     W_hq = tf.Variable(normal((num_hiddens, num_outputs)), dtype=tf.float32)
     b_q = tf.Variable(d2l.zeros(num_outputs), dtype=tf.float32)
     params = [W_xh, W_hh, b_h, W_hq, b_q]
@@ -167,15 +167,15 @@ def init_rnn_state(batch_size, num_hiddens):
     return (d2l.zeros((batch_size, num_hiddens)), )
 ```
 
-[**Aşağıdaki `rnn` işlevi, gizli durumu ve çıktıyı bir zaman adımında nasıl hesaplayacağınızı tanımlar.**] RNN modelinin `inputs` değişkeninin en dış boyutunda döngü yaptığını, böylece minigrubun gizli durumları `H`'nin her zaman adımında güncellediğini unutmayın. Ayrıca, burada etkinleştirme fonksiyonu olarak $\tanh$ işlevi kullanılır. :numref:`sec_mlp` içinde açıklandığı gibi, $\tanh$ işlevinin ortalama değeri, elemanlar gerçel sayılar üzerinde eşit olarak dağıtıldığında 0'dır.
+[**Aşağıdaki `rnn` işlevi, gizli durumu ve çıktıyı bir zaman adımında nasıl hesaplayacağınızı tanımlar.**] RNN modelinin `inputs` değişkeninin en dış boyutunda döngü yaptığını, böylece minigrubun gizli durumları `H`'nin her zaman adımında güncellediğini unutmayın. Ayrıca, burada etkinleştirme fonksiyonu olarak $\tanh$ işlevi kullanılır. :numref:`sec_mlp`'te açıklandığı gibi, $\tanh$ işlevinin ortalama değeri, elemanlar gerçel sayılar üzerinde eşit olarak dağıtıldığında 0'dır.
 
 ```{.python .input}
 def rnn(inputs, state, params):
-    # `inputs`'un şekli: (`num_steps`, `batch_size`, `vocab_size`)
+    # Shape of `inputs`: (`num_steps`, `batch_size`, `vocab_size`)
     W_xh, W_hh, b_h, W_hq, b_q = params
     H, = state
     outputs = []
-    # `X`'in şekli: (`batch_size`, `vocab_size`)
+    # Shape of `X`: (`batch_size`, `vocab_size`)
     for X in inputs:
         H = np.tanh(np.dot(X, W_xh) + np.dot(H, W_hh) + b_h)
         Y = np.dot(H, W_hq) + b_q
@@ -186,11 +186,11 @@ def rnn(inputs, state, params):
 ```{.python .input}
 #@tab pytorch
 def rnn(inputs, state, params):
-    # `inputs`'un şekli: (`num_steps`, `batch_size`, `vocab_size`)
+    # Here `inputs` shape: (`num_steps`, `batch_size`, `vocab_size`)
     W_xh, W_hh, b_h, W_hq, b_q = params
     H, = state
     outputs = []
-    # `X`'in şekli: (`batch_size`, `vocab_size`)
+    # Shape of `X`: (`batch_size`, `vocab_size`)
     for X in inputs:
         H = torch.tanh(torch.mm(X, W_xh) + torch.mm(H, W_hh) + b_h)
         Y = torch.mm(H, W_hq) + b_q
@@ -201,11 +201,11 @@ def rnn(inputs, state, params):
 ```{.python .input}
 #@tab tensorflow
 def rnn(inputs, state, params):
-    # `inputs`'un şekli: (`num_steps`, `batch_size`, `vocab_size`)
+    # Here `inputs` shape: (`num_steps`, `batch_size`, `vocab_size`)
     W_xh, W_hh, b_h, W_hq, b_q = params
     H, = state
     outputs = []
-    # `X`'in şekli: (`batch_size`, `vocab_size`)
+    # Shape of `X`: (`batch_size`, `vocab_size`)
     for X in inputs:
         X = tf.reshape(X,[-1,W_xh.shape[0]])
         H = tf.tanh(tf.matmul(X, W_xh) + tf.matmul(H, W_hh) + b_h)
@@ -218,7 +218,7 @@ Gerekli tüm işlevler tanımlandıktan sonra, [**bu işlevleri sarmalamak ve s�
 
 ```{.python .input}
 class RNNModelScratch:  #@save
-    """Sıfırdan uygulanan bir RNN modeli."""
+    """An RNN Model implemented from scratch."""
     def __init__(self, vocab_size, num_hiddens, device, get_params,
                  init_state, forward_fn):
         self.vocab_size, self.num_hiddens = vocab_size, num_hiddens
@@ -236,7 +236,7 @@ class RNNModelScratch:  #@save
 ```{.python .input}
 #@tab pytorch
 class RNNModelScratch: #@save
-    """Sıfırdan uygulanan bir RNN modeli."""
+    """A RNN Model implemented from scratch."""
     def __init__(self, vocab_size, num_hiddens, device,
                  get_params, init_state, forward_fn):
         self.vocab_size, self.num_hiddens = vocab_size, num_hiddens
@@ -254,7 +254,7 @@ class RNNModelScratch: #@save
 ```{.python .input}
 #@tab tensorflow
 class RNNModelScratch: #@save
-    """Sıfırdan uygulanan bir RNN modeli."""
+    """A RNN Model implemented from scratch."""
     def __init__(self, vocab_size, num_hiddens,
                  init_state, forward_fn, get_params):
         self.vocab_size, self.num_hiddens = vocab_size, num_hiddens
@@ -315,7 +315,7 @@ Y.shape, len(new_state), new_state[0].shape
 
 ```{.python .input}
 def predict_ch8(prefix, num_preds, net, vocab, device):  #@save
-    """`prefix`'i takip eden yeni karakterler üret."""
+    """Generate new characters following the `prefix`."""
     state = net.begin_state(batch_size=1, ctx=device)
     outputs = [vocab[prefix[0]]]
     get_input = lambda: d2l.reshape(
@@ -332,7 +332,7 @@ def predict_ch8(prefix, num_preds, net, vocab, device):  #@save
 ```{.python .input}
 #@tab pytorch
 def predict_ch8(prefix, num_preds, net, vocab, device):  #@save
-    """`prefix`'i takip eden yeni karakterler üret."""
+    """Generate new characters following the `prefix`."""
     state = net.begin_state(batch_size=1, device=device)
     outputs = [vocab[prefix[0]]]
     get_input = lambda: d2l.reshape(d2l.tensor(
@@ -349,7 +349,7 @@ def predict_ch8(prefix, num_preds, net, vocab, device):  #@save
 ```{.python .input}
 #@tab tensorflow
 def predict_ch8(prefix, num_preds, net, vocab):  #@save
-    """`prefix`'i takip eden yeni karakterler üret."""
+    """Generate new characters following the `prefix`."""
     state = net.begin_state(batch_size=1, dtype=tf.float32)
     outputs = [vocab[prefix[0]]]
     get_input = lambda: d2l.reshape(d2l.tensor([outputs[-1]]), (1, 1)).numpy()
@@ -376,13 +376,13 @@ predict_ch8('time traveller ', 10, net, vocab)
 
 ## [**Gradyan Kırpma**]
 
-$T$ uzunluğunda bir dizi için, bir yinelemede bu $T$ zaman adımlarının üzerindeki gradyanları hesaplarız, bu da geri yayma sırasında $\mathcal{O}(T)$ uzunluğunda bir matris çarpımları zincirine neden olur. :numref:`sec_numerical_stability içinde belirtildiği gibi, bu da sayısal kararsızlığa neden olabilir, örneğin $T$ büyük olduğunda gradyanlar patlayabilir veya kaybolabilir. Bu nedenle, RNN modelleri genellikle eğitimi kararlı tutmak için ekstra yardıma ihtiyaç duyar.
+$T$ uzunluğunda bir dizi için, bir yinelemede bu $T$ zaman adımlarının üzerindeki gradyanları hesaplarız, bu da geri yayma sırasında $\mathcal{O}(T)$ uzunluğunda bir matris çarpımları zincirine neden olur. :numref:`sec_numerical_stability`'te belirtildiği gibi, bu da sayısal kararsızlığa neden olabilir, örneğin $T$ büyük olduğunda gradyanlar patlayabilir veya kaybolabilir. Bu nedenle, RNN modelleri genellikle eğitimi kararlı tutmak için ekstra yardıma ihtiyaç duyar.
 
 Genel olarak, bir eniyileme problemini çözerken, model parametresi için güncelleme adımları atıyoruz, mesela $\mathbf{x}$ vektör formunda, bir minigrup üzerinden negatif gradyan $\mathbf{g}$ yönünde. Örneğin, öğrenme oranı $\eta > 0$ ise, bir yinelemede $\mathbf{x}$'i $\mathbf{x} - \eta \mathbf{g}$ olarak güncelleriz. $f$ amaç fonksiyonunun iyi davrandığını varsayalım, diyelim ki, $L$ sabiti ile *Lipschitz sürekli* olsun. Yani, herhangi bir $\mathbf{x}$ ve $\mathbf{y}$ için:
 
 $$|f(\mathbf{x}) - f(\mathbf{y})| \leq L \|\mathbf{x} - \mathbf{y}\|.$$
 
-Bu durumda, parametre vektörünü $\eta \mathbf{g}$ ile güncellediğimizi varsayarsak, o zaman
+Bu durumda, parametre vektörünü $\eta \mathbf{g}$ ile güncelledğimizi varsayarsak, o zaman
 
 $$|f(\mathbf{x}) - f(\mathbf{x} - \eta\mathbf{g})| \leq L \eta\|\mathbf{g}\|,$$
 
@@ -398,7 +398,7 @@ Aşağıda, sıfırdan uygulanan veya üst düzey API'ler tarafından oluşturul
 
 ```{.python .input}
 def grad_clipping(net, theta):  #@save
-    """Gradyanı kırp."""
+    """Clip the gradient."""
     if isinstance(net, gluon.Block):
         params = [p.data() for p in net.collect_params().values()]
     else:
@@ -412,7 +412,7 @@ def grad_clipping(net, theta):  #@save
 ```{.python .input}
 #@tab pytorch
 def grad_clipping(net, theta):  #@save
-    """Gradyanı kırp."""
+    """Clip the gradient."""
     if isinstance(net, nn.Module):
         params = [p for p in net.parameters() if p.requires_grad]
     else:
@@ -426,7 +426,7 @@ def grad_clipping(net, theta):  #@save
 ```{.python .input}
 #@tab tensorflow
 def grad_clipping(grads, theta):  #@save
-    """Gradyanı kırp."""
+    """Clip the gradient."""
     theta = tf.constant(theta, dtype=tf.float32)
     new_grad = []
     for grad in grads:
@@ -447,26 +447,26 @@ def grad_clipping(grads, theta):  #@save
 
 ## Eğitim
 
-Modeli eğitmeden önce, [**modeli bir dönemde eğitmek için bir işlev tanımlayalım**]. :numref:`sec_softmax_scratch` içindeki model eğitimimizden üç yerde farklılık gösterir:
+Modeli eğitmeden önce, [**modeli bir dönemde eğitmek için bir işlev tanımlayalım**]. :numref:`sec_softmax_scratch`'teki model eğitimimizden üç yerde farklılık gösterir:
 
 1. Dizili veriler için farklı örnekleme yöntemleri (rastgele örnekleme ve sıralı bölümleme), gizli durumların ilklenmesinde farklılıklara neden olacaktır.
 1. Model parametrelerini güncellemeden önce gradyanları kırpıyoruz. Bu, eğitim süreci sırasında bir noktada gradyanlar patladığında bile modelin ıraksamamasını sağlar.
-1. Modeli değerlendirmek için şaşkınlığı kullanıyoruz. :numref:`subsec_perplexity` içinde tartışıldığı gibi, bu farklı uzunluktaki dizilerin karşılaştırılabilir olmasını sağlar.
+1. Modeli değerlendirmek için şaşkınlığı kullanıyoruz. :numref:`subsec_perplexity`'te tartışıldığı gibi, bu farklı uzunluktaki dizilerin karşılaştırılabilir olmasını sağlar.
 
-Özellikle, sıralı bölümleme kullanıldığında, gizli durumu yalnızca her dönemin başında ilkleriz. Sonraki minigruptaki $i$. altdizi örneği şimdiki $i$. altdizi örneğine bitişik olduğundan, şimdiki minigrup sonundaki gizli durum sonraki minigrup başında gizli durumu ilklemek için kullanılır. Bu şekilde, gizli durumda saklanan dizinin tarihsel bilgileri bir dönem içinde bitişik altdizilere aktarılabilir. Ancak, herhangi bir noktada gizli durumun hesaplanması, aynı dönemdeki tüm önceki minigruplara bağlıdır, ki bu da gradyan hesaplamasını zorlaştırır. Hesaplama maliyetini azaltmak için, herhangi bir minigrup işleminden önce gradyanı koparıp ayırırız, böylece gizli durumun gradyan hesaplaması her zaman minigrup içindeki zaman adımlarıyla sınırlı kalır.
+Özellikle, sıralı bölümleme kullanıldığında, gizli durumu yalnızca her dönemin başında ilkleriz. Sonraki minigruptaki $i$. altdizi örneği şimdiki $i$. altdizi örneği bitişik olduğundan, şimdiki minigrup sonundaki gizli durumu sonraki minigrup başında gizli durumu ilklemek için kullanılır. Bu şekilde, gizli durumda saklanan dizinin tarihsel bilgileri bir dönem içinde bitişik altdizilere aktarılabilir. Ancak, herhangi bir noktada gizli durumun hesaplanması, aynı dönemdeki tüm önceki minigruplara bağlıdır, ki bu da gradyan hesaplamasını zorlaştırır. Hesaplama maliyetini azaltmak için, herhangi bir minigrup işleminden önce gradyanı ayırırız, böylece gizli durumun gradyan hesaplaması her zaman minigrup içindeki zaman adımlarıyla sınırlı kalır.
 
-Rastgele örneklemeyi kullanırken, her örnek rastgele bir konumla örneklendiğinden, her yineleme için gizli durumu yeniden ilklememiz gerekir. :numref:`sec_softmax_scratch` içindeki `train_epoch_ch3` işlevi gibi, `updater` da model parametrelerini güncellemek için genel bir işlevdir. Sıfırdan uygulanan `d2l.sgd` işlevi veya derin bir öğrenme çerçevesindeki yerleşik eniyileme işlevi olabilir.
+Rastgele örneklemeyi kullanırken, her örnek rastgele bir konumla örneklendiğinden, her yineleme için gizli durumu yeniden ilklememiz gerekir. :numref:`sec_softmax_scratch`'teki `train_epoch_ch3` işlevi gibi, `updater` da model parametrelerini güncellemek için genel bir işlevdir. Sıfırdan uygulanan `d2l.sgd` işlevi veya derin bir öğrenme çerçevesindeki yerleşik eniyileme işlevi olabilir.
 
 ```{.python .input}
  #@save
 def train_epoch_ch8(net, train_iter, loss, updater, device, use_random_iter):
-    """Bir modeli bir dönem içinde eğitin (Bölüm 8'de tanımlanmıştır)."""
+    """Train a model within one epoch (defined in Chapter 8)."""
     state, timer = None, d2l.Timer()
-    metric = d2l.Accumulator(2)  # Eğitim kaybı toplamı, andıç sayısı
+    metric = d2l.Accumulator(2)  # Sum of training loss, no. of tokens
     for X, Y in train_iter:
         if state is None or use_random_iter:
-            # İlk yineleme olduğunda veya rastgele örnekleme kullanıldığında 
-            # `state`'i (durumu) ilklet
+            # Initialize `state` when either it is the first iteration or
+            # using random sampling
             state = net.begin_state(batch_size=X.shape[0], ctx=device)
         else:
             for s in state:
@@ -478,7 +478,7 @@ def train_epoch_ch8(net, train_iter, loss, updater, device, use_random_iter):
             l = loss(y_hat, y).mean()
         l.backward()
         grad_clipping(net, 1)
-        updater(batch_size=1)  # `mean` işlevi çağrıldığından dolayı
+        updater(batch_size=1)  # Since the `mean` function has been invoked
         metric.add(l * d2l.size(y), d2l.size(y))
     return math.exp(metric[0] / metric[1]), metric[1] / timer.stop()
 ```
@@ -487,21 +487,21 @@ def train_epoch_ch8(net, train_iter, loss, updater, device, use_random_iter):
 #@tab pytorch
 #@save
 def train_epoch_ch8(net, train_iter, loss, updater, device, use_random_iter):
-    """Bir modeli bir dönem içinde eğitin (Bölüm 8'de tanımlanmıştır)."""
+    """Train a net within one epoch (defined in Chapter 8)."""
     state, timer = None, d2l.Timer()
-    metric = d2l.Accumulator(2)  # Eğitim kaybı toplamı, andıç sayısı
+    metric = d2l.Accumulator(2)  # Sum of training loss, no. of tokens
     for X, Y in train_iter:
         if state is None or use_random_iter:
-            # İlk yineleme olduğunda veya rastgele örnekleme kullanıldığında 
-            # `state`'i (durumu) ilklet
+            # Initialize `state` when either it is the first iteration or
+            # using random sampling
             state = net.begin_state(batch_size=X.shape[0], device=device)
         else:
             if isinstance(net, nn.Module) and not isinstance(state, tuple):
-                # `state` (durum) `nn.GRU` için bir tensördür
+                # `state` is a tensor for `nn.GRU`
                 state.detach_()
             else:
-                # `state`, `nn.LSTM` ve özel sıfırdan uygulamamız için 
-                # bir tensör grubudur
+                # `state` is a tuple of tensors for `nn.LSTM` and
+                # for our custom scratch implementation 
                 for s in state:
                     s.detach_()
         y = Y.T.reshape(-1)
@@ -516,7 +516,7 @@ def train_epoch_ch8(net, train_iter, loss, updater, device, use_random_iter):
         else:
             l.backward()
             grad_clipping(net, 1)
-            # `mean` işlevi çağrıldığından dolayı
+            # Since the `mean` function has been invoked
             updater(batch_size=1)
         metric.add(l * d2l.size(y), d2l.size(y))
     return math.exp(metric[0] / metric[1]), metric[1] / timer.stop()
@@ -526,13 +526,13 @@ def train_epoch_ch8(net, train_iter, loss, updater, device, use_random_iter):
 #@tab tensorflow
 #@save
 def train_epoch_ch8(net, train_iter, loss, updater, use_random_iter):
-    """Bir modeli bir dönem içinde eğitin (Bölüm 8'de tanımlanmıştır)."""
+    """Train a model within one epoch (defined in Chapter 8)."""
     state, timer = None, d2l.Timer()
-    metric = d2l.Accumulator(2)  # Eğitim kaybı toplamı, andıç sayısı
+    metric = d2l.Accumulator(2)  # Sum of training loss, no. of tokens
     for X, Y in train_iter:
         if state is None or use_random_iter:
-            # İlk yineleme olduğunda veya rastgele örnekleme kullanıldığında 
-            # `state`'i (durumu) ilklet
+            # Initialize `state` when either it is the first iteration or
+            # using random sampling
             state = net.begin_state(batch_size=X.shape[0], dtype=tf.float32)
         with tf.GradientTape(persistent=True) as g:
             y_hat, state = net(X, state)
@@ -543,8 +543,7 @@ def train_epoch_ch8(net, train_iter, loss, updater, use_random_iter):
         grads = grad_clipping(grads, 1)
         updater.apply_gradients(zip(grads, params))
         
-        # Varsayılan Keras kaybı, bir minigrup içindeki ortalama 
-        # kaybı döndürür
+        # Keras loss by default returns the average loss in a batch
         # l_sum = l * float(d2l.size(y)) if isinstance(
         #     loss, tf.keras.losses.Loss) else tf.reduce_sum(l)
         metric.add(l * d2l.size(y), d2l.size(y))
@@ -556,11 +555,11 @@ def train_epoch_ch8(net, train_iter, loss, updater, use_random_iter):
 ```{.python .input}
 def train_ch8(net, train_iter, vocab, lr, num_epochs, device,  #@save
               use_random_iter=False):
-    """Bir modeli eğitin (Bölüm 8'de tanımlanmıştır)."""
+    """Train a model (defined in Chapter 8)."""
     loss = gluon.loss.SoftmaxCrossEntropyLoss()
     animator = d2l.Animator(xlabel='epoch', ylabel='perplexity',
                             legend=['train'], xlim=[10, num_epochs])
-    # İlkleyin
+    # Initialize
     if isinstance(net, gluon.Block):
         net.initialize(ctx=device, force_reinit=True,
                          init=init.Normal(0.01))
@@ -570,7 +569,7 @@ def train_ch8(net, train_iter, vocab, lr, num_epochs, device,  #@save
     else:
         updater = lambda batch_size: d2l.sgd(net.params, lr, batch_size)
     predict = lambda prefix: predict_ch8(prefix, 50, net, vocab, device)
-    # Eğit ve tahminle
+    # Train and predict
     for epoch in range(num_epochs):
         ppl, speed = train_epoch_ch8(
             net, train_iter, loss, updater, device, use_random_iter)
@@ -586,17 +585,17 @@ def train_ch8(net, train_iter, vocab, lr, num_epochs, device,  #@save
 #@save
 def train_ch8(net, train_iter, vocab, lr, num_epochs, device,
               use_random_iter=False):
-    """Bir modeli eğitin (Bölüm 8'de tanımlanmıştır)."""
+    """Train a model (defined in Chapter 8)."""
     loss = nn.CrossEntropyLoss()
     animator = d2l.Animator(xlabel='epoch', ylabel='perplexity',
                             legend=['train'], xlim=[10, num_epochs])
-    # İlkleyin
+    # Initialize
     if isinstance(net, nn.Module):
         updater = torch.optim.SGD(net.parameters(), lr)
     else:
         updater = lambda batch_size: d2l.sgd(net.params, lr, batch_size)
     predict = lambda prefix: predict_ch8(prefix, 50, net, vocab, device)
-    # Eğit ve tahminle
+    # Train and predict
     for epoch in range(num_epochs):
         ppl, speed = train_epoch_ch8(
             net, train_iter, loss, updater, device, use_random_iter)
@@ -613,14 +612,14 @@ def train_ch8(net, train_iter, vocab, lr, num_epochs, device,
 #@save
 def train_ch8(net, train_iter, vocab, lr, num_epochs, strategy,
               use_random_iter=False):
-    """Bir modeli eğitin (Bölüm 8'de tanımlanmıştır)."""
+    """Train a model (defined in Chapter 8)."""
     with strategy.scope():
         loss = tf.keras.losses.SparseCategoricalCrossentropy(from_logits=True)
         updater = tf.keras.optimizers.SGD(lr)
     animator = d2l.Animator(xlabel='epoch', ylabel='perplexity',
                             legend=['train'], xlim=[10, num_epochs])
     predict = lambda prefix: predict_ch8(prefix, 50, net, vocab)
-    # Eğit ve tahminle
+    # Train and predict
     for epoch in range(num_epochs):
         ppl, speed = train_epoch_ch8(net, train_iter, loss, updater,
                                      use_random_iter)
@@ -673,7 +672,7 @@ Yukarıdaki RNN modelini sıfırdan uygulamak öğretici olsa da, pek de uygun d
 * Kullanıcı tarafından sağlanan metin önekini takip eden metin üretmek için RNN tabanlı karakter düzeyinde bir dil modeli eğitebiliriz.
 * Basit bir RNN dil modeli girdi kodlama, RNN modelleme ve çıktı üretme içerir.
 * RNN modellerinin eğitim için durum ilklenmesi gerekir, ancak rasgele örnekleme ve sıralı bölümleme farklı yollar kullanır.
-* Sıralı bölümleme kullanırken, hesaplama maliyetini azaltmak için gradyanı koparıp ayırmamız gerekir.
+* Sıralı bölümleme kullanırken, hesaplama maliyetini azaltmak için gradyanı ayırmamız gerekir.
 * Isınma süresi, herhangi bir tahmin yapmadan önce bir modelin kendisini güncellemesine (örneğin, ilkleme değerinden daha iyi bir gizli durum elde etmesine) olanak tanır.
 * Gradyan kırpma gradyan patlamasını önler, ancak kaybolan gradyanları düzeltemez.
 

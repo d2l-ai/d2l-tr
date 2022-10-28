@@ -1,7 +1,7 @@
 # Duygu Analizi: Yinemeli Sinir Ağlarının Kullanımı
 :label:`sec_sentiment_rnn`
 
-Kelime benzerliği ve benzetme görevleri gibi, biz de duygu analizine önceden eğitilmiş kelime vektörleri de uygulayabiliriz. :numref:`sec_sentiment` içindeki IMDb inceleme veri kümesi çok büyük olmadığından, büyük ölçekli külliyat üzerinde önceden eğitilmiş metin temsillerinin kullanılması modelin aşırı öğrenmesini azaltabilir. :numref:`fig_nlp-map-sa-rnn` içinde gösterilen özel bir örnek olarak, önceden eğitilmiş GloVe modelini kullanarak her belirteci temsil edeceğiz ve bu belirteç temsillerini metin dizisi gösterimini, ki duygu analizi çıktılarına dönüştürülecektir, elde etmek için çok katmanlı çift yönlü bir RNN'ye besleyeceğiz :cite:`Maas.Daly.Pham.ea.2011`. Aynı aşağı akım uygulaması için daha sonra farklı bir mimari seçimi ele alacağız.
+Kelime benzerliği ve benzetme görevleri gibi, biz de duygu analizine önceden eğitilmiş kelime vektörleri de uygulayabiliriz. :numref:`sec_sentiment`'teki IMDb inceleme veri kümesi çok büyük olmadığından, büyük ölçekli külliyat üzerinde önceden eğitilmiş metin temsillerinin kullanılması modelin aşırı öğrenmesini azaltabilir. :numref:`fig_nlp-map-sa-rnn` içinde gösterilen özel bir örnek olarak, önceden eğitilmiş GloVe modelini kullanarak her belirteci temsil edeceğiz ve bu belirteç temsillerini metin dizisi gösterimini, ki duygu analizi çıktılarına dönüştürülecektir, elde etmek için çok katmanlı çift yönlü bir RNN'ye besleyeceğiz :cite:`Maas.Daly.Pham.ea.2011`. Aynı aşağı akım uygulaması için daha sonra farklı bir mimari seçimi ele alacağız.
 
 ![Bu bölüm, duygu analizi için önceden eğitilmiş GloVe'yi RNN tabanlı bir mimariye besler.](../img/nlp-map-sa-rnn.svg)
 :label:`fig_nlp-map-sa-rnn`
@@ -36,25 +36,25 @@ class BiRNN(nn.Block):
                  num_layers, **kwargs):
         super(BiRNN, self).__init__(**kwargs)
         self.embedding = nn.Embedding(vocab_size, embed_size)
-        # Çift yönlü bir RNN elde etmek için `bidirectional` (çift yönlü)
-        # öğesini True olarak ayarlayın
+        # Set `bidirectional` to True to get a bidirectional RNN
         self.encoder = rnn.LSTM(num_hiddens, num_layers=num_layers,
                                 bidirectional=True, input_size=embed_size)
         self.decoder = nn.Dense(2)
 
     def forward(self, inputs):
-        # `inputs` şekli (parti boyutu, zaman adımı sayısı)'dır. LSTM,
-        # girdisinin ilk boyutunun zamansal boyut olmasını gerektirdiğinden, 
-        # girdi, belirteç temsilleri elde edilmeden önce değiştirilir. Çıktı 
-        # şekli (zaman adımı sayısı, iş boyutu, kelime vektör boyutu)
+        # The shape of `inputs` is (batch size, no. of time steps). Because
+        # LSTM requires its input's first dimension to be the temporal
+        # dimension, the input is transposed before obtaining token
+        # representations. The output shape is (no. of time steps, batch size,
+        # word vector dimension)
         embeddings = self.embedding(inputs.T)
-        # Farklı zaman adımlarında son gizli katmanın gizli durumlarını 
-        # döndürür. `outputs` şekli 
-        # (zaman adımı sayısı, iş boyutu, 2 * gizli birim sayısı)'dır.
+        # Returns hidden states of the last hidden layer at different time
+        # steps. The shape of `outputs` is (no. of time steps, batch size,
+        # 2 * no. of hidden units)
         outputs = self.encoder(embeddings)
-        # Tam bağlı katmanın girdisi olarak ilk ve son zaman adımlarında gizli 
-        # durumları bitiştirin. 
-        # Şekli (parti boyutu, 4 * gizli birim sayısı)'dır
+        # Concatenate the hidden states at the initial and final time steps as
+        # the input of the fully-connected layer. Its shape is (batch size,
+        # 4 * no. of hidden units)
         encoding = np.concatenate((outputs[0], outputs[-1]), axis=1)
         outs = self.decoder(encoding)
         return outs
@@ -67,32 +67,35 @@ class BiRNN(nn.Module):
                  num_layers, **kwargs):
         super(BiRNN, self).__init__(**kwargs)
         self.embedding = nn.Embedding(vocab_size, embed_size)
-        # Çift yönlü bir RNN elde etmek için `bidirectional` (çift yönlü)
-        # öğesini True olarak ayarlayın
+        # Set `bidirectional` to True to get a bidirectional RNN
         self.encoder = nn.LSTM(embed_size, num_hiddens, num_layers=num_layers,
                                 bidirectional=True)
         self.decoder = nn.Linear(4 * num_hiddens, 2)
 
     def forward(self, inputs):
-        # `inputs` şekli (parti boyutu, zaman adımı sayısı)'dır. LSTM,
-        # girdisinin ilk boyutunun zamansal boyut olmasını gerektirdiğinden, 
-        # girdi, belirteç temsilleri elde edilmeden önce değiştirilir. Çıktı 
-        # şekli (zaman adımı sayısı, parti boyutu, kelime vektör boyutu)
+        # The shape of `inputs` is (batch size, no. of time steps). Because
+        # LSTM requires its input's first dimension to be the temporal
+        # dimension, the input is transposed before obtaining token
+        # representations. The output shape is (no. of time steps, batch size,
+        # word vector dimension)
         embeddings = self.embedding(inputs.T)
         self.encoder.flatten_parameters()
-        # Farklı zaman adımlarında son gizli katmanın gizli durumlarını 
-        # döndürür. `outputs` şekli 
-        # (zaman adımı sayısı, iş boyutu, 2 * gizli birim sayısı)'dır.
+        # Returns hidden states of the last hidden layer at different time
+        # steps. The shape of `outputs` is (no. of time steps, batch size,
+        # 2 * no. of hidden units)
         outputs, _ = self.encoder(embeddings)
-        # Tam bağlı katmanın girdisi olarak ilk ve son zaman adımlarında gizli 
-        # durumları bitiştirin. 
-        # Şekli (parti boyutu, 4 * gizli birim sayısı)'dır
+        # Concatenate the hidden states of the initial time step and final
+        # time step to use as the input of the fully connected layer. Its
+        # shape is (batch size, 4 * no. of hidden units)
         encoding = torch.cat((outputs[0], outputs[-1]), dim=1)
+        # Concatenate the hidden states at the initial and final time steps as
+        # the input of the fully-connected layer. Its shape is (batch size,
+        # 4 * no. of hidden units)
         outs = self.decoder(encoding)
         return outs
 ```
 
-Duygu analizi için tek bir metni temsil etmek üzere iki gizli katman içeren çift yönlü bir RNN oluşturalım.
+Duygu analizi için tek bir metni temsil etmek üzere iki gizli katman içeren öift yönlü bir RNN oluşturalım.
 
 ```{.python .input}
 #@tab all
@@ -170,7 +173,7 @@ Eğitimli modeli, `net`, kullanarak bir metin dizisinin duygusunu tahmin etmek i
 ```{.python .input}
 #@save
 def predict_sentiment(net, vocab, sequence):
-    """Bir metin dizisinin duygusunu tahmin edin."""
+    """Predict the sentiment of a text sequence."""
     sequence = np.array(vocab[sequence.split()], ctx=d2l.try_gpu())
     label = np.argmax(net(sequence.reshape(1, -1)), axis=1)
     return 'positive' if label == 1 else 'negative'
@@ -180,7 +183,7 @@ def predict_sentiment(net, vocab, sequence):
 #@tab pytorch
 #@save
 def predict_sentiment(net, vocab, sequence):
-    """Bir metin dizisinin duygusunu tahmin edin."""
+    """Predict the sentiment of a text sequence."""
     sequence = torch.tensor(vocab[sequence.split()], device=d2l.try_gpu())
     label = torch.argmax(net(sequence.reshape(1, -1)), dim=1)
     return 'positive' if label == 1 else 'negative'
@@ -205,9 +208,9 @@ predict_sentiment(net, vocab, 'this movie is so bad')
 
 ## Alıştırmalar
 
-1. Dönem sayısını artırın. Eğitim ve test doğruluklarını iyileştirebilir misiniz? Diğer hiper parametreleri ayarlamaya ne dersiniz?
+1. Dönem sayısını artırın. Eğitim ve test doğruluklarını iyileştirebilir misiniz? Diğer hiperparametreleri ayarlamaya ne dersiniz?
 1. 300 boyutlu GloVe gömme gibi daha büyük önceden eğitilmiş sözcük vektörlerini kullanın. Sınıflandırma doğruluğunu arttırıyor mu?
-1. SpaCy andıçlamasını kullanarak sınıflandırma doğruluğunu artırabilir miyiz? SpaCy (`pip install spacy`) ve İngilizce paketini (`python -m spacy download en`) yüklemeniz gerekir. Kodda, önce spaCy'i (`import spacy`) içe aktarın. Ardından, spaCy İngilizce paketini yükleyin (`spacy_en = spacy.load('en')`). Son olarak, `def tokenizer(text): return [tok.text for tok in spacy_en.tokenizer(text)]` işlevini tanımlayın ve orijinal `tokenizer` işlevini değiştirin. GloVe ve spaCy içinde ifade belirteçlerinin farklı biçimlerine dikkat edin. Örneğin, "new york" ifade belirteci GloVe'de "new-york" biçimini ve spaCy andıçlamasından sonra "new york" biçimini alır.
+1. SpaCy belirteçleştirmesini kullanarak sınıflandırma doğruluğunu artırabilir miyiz? SpaCy (`pip install spacy`) yüklemeniz ve İngilizce paketini (`python -m spacy download en`) yüklemeniz gerekir. Kodda, önce spaCy'i (`import spacy`) içe aktarın. Ardından, spaCy İngilizce paketini yükleyin (`spacy_en = spacy.load('en')`). Son olarak, `def tokenizer(text): return [tok.text for tok in spacy_en.tokenizer(text)]` işlevini tanımlayın ve orijinal `tokenizer` işlevini değiştirin. GloVe ve spaCy içinde ifade belirteçlerinin farklı biçimlerine dikkat edin. Örneğin, "new york" ifade belirteci GloVe'de "new-york" biçimini ve spaCy belirteçleştirmesinden sonra "new york" biçimini alır.
 
 :begin_tab:`mxnet`
 [Tartışmalar](https://discuss.d2l.ai/t/392)

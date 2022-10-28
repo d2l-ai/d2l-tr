@@ -1,7 +1,7 @@
 # Momentum
 :label:`sec_momentum`
 
-:numref:`sec_sgd` içinde, rasgele gradyan inişini gerçekleştirirken, yani, gradyanın yalnızca gürültülü bir sürümünün mevcut olduğu optimizasyonu gerçekleştirirken neler olduğunu inceledik. Özellikle, gürültülü gradyanlar için gürültü karşısında öğrenme oranını seçmek söz konusu olduğunda aşırı temkinli olmamız gerektiğini fark ettik. Eğer çok hızlı azaltırsak yakınsama durur. Eğer çok hoşgörülü olursak, gürültü bizi eniyi cevaptan uzaklaştırmaya devam ettiğinden, yeterince iyi bir çözüme yaklaşmayı başaramayız. 
+:numref:`sec_sgd`'te, rasgele gradyan inişini gerçekleştirirken, yani, gradyanın yalnızca gürültülü bir sürümünün mevcut olduğu optimizasyonu gerçekleştirirken neler olduğunu inceledik. Özellikle, gürültülü gradyanlar için gürültü karşısında öğrenme oranını seçmek söz konusu olduğunda aşırı temkinli olmamız gerektiğini fark ettik. Eğer çok hızlı azaltırsak yakınsama durur. Eğer çok hoşgörülü olursak, gürültü bizi eniyi cevaptan uzaklaştırmaya devam ettiğinden, yeterince iyi bir çözüme yaklaşmayı başaramayız. 
 
 ## Temel Bilgiler
 
@@ -14,7 +14,7 @@ Bu bölümde, özellikle uygulamada yaygın olan belirli optimizasyon problemler
 $$\mathbf{g}_{t, t-1} = \partial_{\mathbf{w}} \frac{1}{|\mathcal{B}_t|} \sum_{i \in \mathcal{B}_t} f(\mathbf{x}_{i}, \mathbf{w}_{t-1}) = \frac{1}{|\mathcal{B}_t|} \sum_{i \in \mathcal{B}_t} \mathbf{h}_{i, t-1}.
 $$
 
-Notasyonu basit tutmak için, $t-1$ zamanında güncellenen ağırlıkları kullanarak $i$ örneğinin rasgele gradyan inişi olarak $\mathbf{h}_{i, t-1} = \partial_{\mathbf{w}} f(\mathbf{x}_i, \mathbf{w}_{t-1})$ kullandık. Bir minigrup üzerindeki gradyanların ortalamasının ötesinde bile varyans azaltmanın etkisinden faydalanabilsek güzel olurdu. Bu görevi yerine getirmek için bir seçenek gradyan hesaplamayı “sızıntılı ortalama” ile değiştirmektir: 
+Notasyonu basit tutmak için, $t-1$ zamanında güncellenen ağırlıkları kullanarak $i$ numunesinin rasgele gradyan inişi olarak $\mathbf{h}_{i, t-1} = \partial_{\mathbf{w}} f(\mathbf{x}_i, \mathbf{w}_{t-1})$ kullandık. Bir minigrup üzerindeki gradyanların ortalamasının ötesinde bile varyans azaltmanın etkisinden faydalanabilsek güzel olurdu. Bu görevi yerine getirmek için bir seçenek gradyan hesaplamayı “sızıntılı ortalama” ile değiştirmektir: 
 
 $$\mathbf{v}_t = \beta \mathbf{v}_{t-1} + \mathbf{g}_{t, t-1}$$
 
@@ -29,15 +29,15 @@ Büyük $\beta$, uzun menzilli ortalamaya karşılık gelirken, küçük $\beta$
 
 Yukarıdaki akıl yürütme, şimdi momentumlu gradyanlar gibi *hızlandırılmış* gradyan yöntemleri olarak bilinen şeyin temelini oluşturmuştur. Optimizasyon probleminin kötü koşullu olduğu durumlarda (yani ilerlemenin diğerlerinden çok daha yavaş olduğu, dar bir kanyona benzeyen bazı yönlerin olduğu yerlerde) çok daha etkili olmanın ek avantajından yararlanırlar. Ayrıca, daha kararlı iniş yönleri elde etmek için sonraki gradyanlar üzerinde ortalama yapmamıza izin verirlar. Gerçekten de, gürültüsüz dışbükey problemler için bile ivmenin yönü, momentumun neden çalıştığı ve neden bu kadar iyi çalıştığının temel nedenlerinden biridir. 
 
-Beklendiği gibi, etkinliği nedeniyle ivme derin öğrenme ve ötesinde optimizasyonda iyi çalışılmış bir konudur. Örneğin, ayrıntılı bir analiz ve etkileşimli animasyon için güzel [açıklayıcı makale](https://distill.pub/2017/momentum/)'ye :cite:`Goh.2017` bakın. Bu :cite:`Polyak.1964` tarafından önerilmiştir. :cite:`Nesterov.2018` dışbükey optimizasyon bağlamında ayrıntılı bir teorik tartışma sunar. Derin öğrenmede momentumun uzun zamandır faydalı olduğu bilinmektedir. Ayrıntılar için örneğin :cite:`Sutskever.Martens.Dahl.ea.2013` çalışmasındaki tartışmalarına bakın. 
+Beklendiği gibi, etkinliği nedeniyle ivme derin öğrenme ve ötesinde optimizasyonda iyi çalışılmış bir konudur. Örneğin, ayrıntılı bir analiz ve etkileşimli animasyon için güzel [açıklayıcı makale](https://distill.pub/2017/momentum/) :cite:`Goh.2017`'ye bakın. Bu :cite:`Polyak.1964` tarafından önerilmiştir. :cite:`Nesterov.2018` dışbükey optimizasyon bağlamında ayrıntılı bir teorik tartışma sunar. Derin öğrenmede momentumun uzun zamandır faydalı olduğu bilinmektedir. Ayrıntılar için örneğin :cite:`Sutskever.Martens.Dahl.ea.2013`'teki tartışmalarına bakın. 
 
 ### Kötü Koşullu Bir Problem
 
-Momentum yönteminin geometrik özelliklerini daha iyi anlamak için, önemli ölçüde daha az hoş bir amaç fonksiyonu ile de olsa, gradyan inişini tekrar gözden geçiriyoruz. :numref:`sec_gd` içinde $f(\mathbf{x}) = x_1^2 + 2 x_2^2$'i, yani orta miktarda çarpık elipsoid bir amaç kullandığımızı hatırlayın. Bu işlevi $x_1$ yönünde uzatarak daha da bozuyoruz 
+Momentum yönteminin geometrik özelliklerini daha iyi anlamak için, önemli ölçüde daha az hoş bir amaç fonksiyonu ile de olsa, gradyan inişini tekrar gözden geçiriyoruz. :numref:`sec_gd`'te $f(\mathbf{x}) = x_1^2 + 2 x_2^2$'i, yani orta miktarda çarpık elipsoid bir amaç kullandığımızı hatırlayın. Bu işlevi $x_1$ yönünde uzatarak daha da bozuyoruz 
 
 $$f(\mathbf{x}) = 0.1 x_1^2 + 2 x_2^2.$$
 
-Daha önce olduğu gibi $f$ $(0, 0)$'da minimum seviyeye sahiptir. Bu fonksiyon $x_1$ yönünde *çok* düzdür. Bu yeni işlevde daha önce olduğu gibi gradyan inişi gerçekleştirdiğimizde ne olacağını görelim. Öğrenme oranını $0.4$ seçiyoruz.
+Daha önce olduğu gibi $f$ $(0, 0)$'da minimum seviyeye sahiptir. Bu fonksiyon $x_1$ yönünde *çok* düzdür. Bu yeni işlevde daha önce olduğu gibi gradyan inişi gerçekleştirdiğimizde ne olacağını görelim. Öğrenim oranını $0.4$ seçiyoruz.
 
 ```{.python .input}
 %matplotlib inline
@@ -84,7 +84,7 @@ def gd_2d(x1, x2, s1, s2):
 d2l.show_trace_2d(f_2d, d2l.train_2d(gd_2d))
 ```
 
-Yapı gereği, $x_2$ yönündeki gradyan *çok daha* yüksek ve yatay $x_1$ yönünden çok daha hızlı değişiyor. Böylece iki istenmeyen seçenek arasında sıkışmış olduk: Küçük bir öğrenme oranı seçersek, çözümün $x_2$ yönünde ıraksamamasını sağlarız, ancak $x_1$ yönünde yavaş yakınsama ile eyerleniriz. Tersine, büyük bir öğrenme oranı ile $x_1$ yönünde hızla ilerliyoruz ancak $x_2$'te ıraksıyoruz. Aşağıdaki örnek, $0.4$'ten $0.6$'ya kadar öğrenme hızında hafif bir artıştan sonra bile neler olduğunu göstermektedir. $x_1$ yönündeki yakınsama gelişir ancak genel çözüm kalitesi çok daha kötüdür.
+Yapı gereği, $x_2$ yönündeki gradyan *çok daha* yüksek ve yatay $x_1$ yönünden çok daha hızlı değişiyor. Böylece iki istenmeyen seçenek arasında sıkışmış olduk: küçük bir öğrenme oranı seçersek, çözümün $x_2$ yönünde ıraksamamasını sağlarız, ancak $x_1$ yönünde yavaş yakınsama ile eyerleniriz. Tersine, büyük bir öğrenme oranı ile $x_1$ yönünde hızla ilerliyoruz ancak $x_2$'te ıraksıyoruz. Aşağıdaki örnek, $0.4$'ten $0.6$'ya kadar öğrenme hızında hafif bir artıştan sonra bile neler olduğunu göstermektedir. $x_1$ yönündeki yakınsama gelişir ancak genel çözüm kalitesi çok daha kötüdür.
 
 ```{.python .input}
 #@tab all
@@ -116,7 +116,7 @@ eta, beta = 0.6, 0.5
 d2l.show_trace_2d(f_2d, d2l.train_2d(momentum_2d))
 ```
 
-Gördüğümüz gibi, daha önce kullandığımız aynı öğrenme oranıyla bile, momentum hala iyi bir şekilde yakınsıyor. Momentum parametresini azalttığımızda neler olacağını görelim. $\beta = 0.25$'e kadar yarıya indirmek, neredeyse hiç yakınsamayan bir yörüngeye yol açar. Bununla birlikte, momentumsuz halinden çok daha iyidir (çözüm ıraksadığı zaman).
+Gördüğümüz gibi, daha önce kullandığımız aynı öğrenme oranıyla bile, momentum hala iyi bir şekilde yakınsıyor. Momentum parametresini azalttığımızda neler olacağını görelim. $\beta = 0.25$'e kadar yarıya indirmek, neredeyse hiç yakınsamayan bir yörüngeye yol açar. Bununla birlikte, momentum olmadan çok daha iyidir (çözüm ıraksadığı zaman).
 
 ```{.python .input}
 #@tab all
@@ -128,7 +128,7 @@ Rasgele gradyan inişi, özellikle minigrup rasgele gradyan inişi ile momentumu
 
 ### Etkili Örneklem Ağırlığı
 
-Hatırlayalım $\mathbf{v}_t = \sum_{\tau = 0}^{t-1} \beta^{\tau} \mathbf{g}_{t-\tau, t-\tau-1}$. Limitte terimler $\sum_{\tau=0}^\infty \beta^\tau = \frac{1}{1-\beta}$'ye toplanır. Başka bir deyişle, gradyan inişte veya rasgele gradyan inişte $\eta$ boyutunda bir adım atmak yerine, $\frac{\eta}{1-\beta}$ boyutunda bir adım atıyoruz ve aynı zamanda potansiyel olarak çok daha iyi davranan bir iniş yönüyle uğraşıyoruz. Bunlar ikisi bir arada faydalardır. $\beta$'yı farklı seçenekler için ağırlıklandırmanın nasıl davrandığını göstermek için aşağıdaki diyagramı göz önünde bulundurun.
+Hatırlayalım $\mathbf{v}_t = \sum_{\tau = 0}^{t-1} \beta^{\tau} \mathbf{g}_{t-\tau, t-\tau-1}$. Limitte terimler $\sum_{\tau=0}^\infty \beta^\tau = \frac{1}{1-\beta}$'ye toplanır.B aşka bir deyişle, gradyan inişte veya rasgele gradyan inişte $\eta$ boyutunda bir adım atmak yerine, $\frac{\eta}{1-\beta}$ boyutunda bir adım atıyoruz ve aynı zamanda potansiyel olarak çok daha iyi davranan bir iniş yönüyle uğraiıyoruz. Bunlar bir arada iki faydadır. $\beta$'yı farklı seçenekler için ağırlıklandırmanın nasıl davrandığını göstermek için aşağıdaki diyagramı göz önünde bulundurun.
 
 ```{.python .input}
 #@tab all
@@ -147,7 +147,7 @@ Momentumun pratikte nasıl çalıştığını görelim, yani, uygun bir iyileşt
 
 ### Sıfırdan Uygulama
 
-(Minigrup) rasgele gradyan inişi ile karşılaştırıldığında, momentum yönteminin bir dizi yardımcı değişken muhafaza etmesi gerekir, mesela hız. Gradyanlar (ve en iyileştirme probleminin değişkenleri) ile aynı şekle sahiptir. Aşağıdaki uygulamada bu değişkenleri `states` olarak adlandırıyoruz.
+(Minigrup) rasgele gradyan inişi ile karşılaştırıldığında, momentum yönteminin bir dizi yardımcı değişken (mesela hız) muhafaza etmesi gerekir. Gradyanlar (ve en iyileştirme probleminin değişkenleri) ile aynı şekle sahiptir. Aşağıdaki uygulamada bu değişkenleri `states` olarak adlandırıyoruz.
 
 ```{.python .input}
 #@tab mxnet,pytorch
@@ -203,7 +203,7 @@ data_iter, feature_dim = d2l.get_data_ch11(batch_size=10)
 train_momentum(0.02, 0.5)
 ```
 
-Momentum hiper parametresi `momentum`'u 0.9'a yükselttiğimizde, bu, $\frac{1}{1 - 0.9} = 10$ gibi önemli ölçüde daha büyük bir etkin örneklem boyutu anlamına gelir. Sorunları kontrol altında tutmak için öğrenme oranını azar azar $0.01$'a indiriyoruz.
+Momentum hiper parametresi `momentum`'u 0.9'a yükselttiğimizde, bu, $\frac{1}{1 - 0.9} = 10$ gibi önemli ölçüde daha büyük bir etkin örnek boyutu anlamına gelir. Sorunları kontrol altında tutmak için öğrenme oranını azar azar $0.01$'a indiriyoruz.
 
 ```{.python .input}
 #@tab all
@@ -271,7 +271,7 @@ $$\begin{aligned}
     & = (\mathbf{I} - \eta \boldsymbol{\Lambda}) \mathbf{z}_{t-1} - \eta \beta \mathbf{v}_{t-1}.
 \end{aligned}$$
 
-Bunu yaparken ayrıca şu teoremi kanıtladık: Dışbükey bir ikinci derece fonksiyon için ivmeli ve ivmesiz gradyan inişi, ikinci dereceden matrisin özvektörleri yönünde koordinat yönlü optimizasyonuna ayrışır. 
+Bunu yaparken sadece aşağıdaki teoremi kanıtladık: Dışbükey bir kuadratik fonksiyon için ivme ile ve ivmesiz Degrade İniş kuadratik matrisin özvektörleri yönünde koordinat bilge optimizasyonuna ayrışır. 
 
 ### Skaler Fonksiyonlar
 
@@ -300,24 +300,24 @@ $$
 \begin{bmatrix} \beta & \lambda \\ -\eta \beta & (1 - \eta \lambda) \end{bmatrix}
 \begin{bmatrix} v_{t} \\ x_{t} \end{bmatrix} = \mathbf{R}(\beta, \eta, \lambda) \begin{bmatrix} v_{t} \\ x_{t} \end{bmatrix}.
 $$
- 
-$\mathbf{R}$'ı, yakınsama davranışını yöneten $2 \times 2$'yi göstermek için kullandık. $t$ adımdan sonra ilk tercih $[v_0, x_0]$, $\mathbf{R}(\beta, \eta, \lambda)^t [v_0, x_0]$ olur. Bu nedenle, yakınsama hızını belirlemek $\mathbf{R}$'nin özdeğerlerine kalmıştır. Harika bir animasyon için :cite:`Goh.2017` [Distill post](https://distill.pub/2017/momentum/)una ve ayrıntılı analiz için :cite:`Flammarion.Bach.2015` bölümüne bakın. $0 < \eta \lambda < 2 + 2 \beta$ olduğunda momentumun yakınsadığını gösterilebilir. Bu, gradyan inişi için $0 < \eta \lambda < 2$ ile karşılaştırıldığında daha geniş bir uygulanabilir parametre aralığıdır. Ayrıca, genel olarak $\beta$'nin büyük değerlerinin arzu edildiğini de göstermektedir. Daha fazla ayrıntı, makul miktarda teknik detay gerektirir ve ilgilenen okuyucunun orijinal yayınlara başvurmasını öneririz. 
+
+$\mathbf{R}$ yöneten yakınsama davranışını göstermek için $\mathbf{R}$ kullandık. $t$ adımlarından sonra ilk tercih $[v_0, x_0]$, $\mathbf{R}(\beta, \eta, \lambda)^t [v_0, x_0]$ olur. Bu nedenle, yakınsama hızını belirlemek $\mathbf{R}$'nin özdeğerlerine kalmıştır. Harika bir animasyon için [Distill post](https://distill.pub/2017/momentum/)una  :cite:`Goh.2017` ve ayrıntılı analiz için :cite:`Flammarion.Bach.2015` bölümüne bakın. Biri $0 < \eta \lambda < 2 + 2 \beta$ olduğunda momentumun yakınsadığını gösterebilir. Bu, gradyan inişi için $0 < \eta \lambda < 2$ ile karşılaştırıldığında daha geniş bir uygulanabilir parametre aralığıdır. Ayrıca, genel olarak $\beta$'nin büyük değerlerinin arzu edildiğini de göstermektedir. Daha fazla ayrıntı, makul miktarda teknik detay gerektirir ve ilgilenen okuyucunun orijinal yayınlara danışmasını öneririz. 
 
 ## Özet
 
 * Momentum, geçmiş gradyanlara göre sızan bir ortalama ile gradyanların yerini alır. Bu, yakınsamayı önemli ölçüde hızlandırır.
 * Hem gürültüsüz gradyan inişi hem de (gürültülü) rasgele gradyan inişi için arzu edilir.
 * Momentum, rasgele gradyan inişi için ortaya çıkma olasılığı çok daha yüksek olan optimizasyon sürecinin durdurulmasını önler.
-* Geçmiş verilerin katlanarak azaltılması nedeniyle etkin gradyan sayısı $\frac{1}{1-\beta}$ ile verilir.
-* Dışbükey ikinci derece problemler durumunda bu ayrıntılı olarak açıkça analiz edilebilir.
+* Geçmiş verilerin katlanarak azaltılması nedeniyle etkin gradyan sayısı $\frac{1}{1-\beta}$ tarafından verilir.
+* Dışbükey ikinci derece problemler durumunda bu açıkça ayrıntılı olarak analiz edilebilir.
 * Uygulama oldukça basittir ancak ek bir durum vektörü (momentum $\mathbf{v}$) saklamamızı gerektirir.
 
 ## Alıştırmalar
 
-1. Momentum hiper parametrelerinin ve öğrenme oranlarının diğer kombinasyonlarını kullanın ve farklı deneysel sonuçları gözlemleyip analiz edin.
-1. Birden fazla özdeğeriniz olduğu, yani $f(x) = \frac{1}{2} \sum_i \lambda_i x_i^2$, örn. $\lambda_i = 2^{-i}$ gibi bir ikinci derece polinom problem için GD ve momentum deneyin. $x$ değerlerinin ilk $x_i = 1$ için nasıl azaldığını çizdirin.
+1. Momentum hiper parametre ve öğrenme hızlarının diğer kombinasyonlarını kullanın ve farklı deneysel sonuçları gözlemleyip analiz edin.
+1. Birden fazla özdeğeriniz olduğu, yani $f(x) = \frac{1}{2} \sum_i \lambda_i x_i^2$, örn. $\lambda_i = 2^{-i}$ gibi bir ikinci derece polinom sorun için GD ve momentum deneyin. $x$ değerlerinin ilk $x_i = 1$ için nasıl azaldığını çizin.
 1. $h(\mathbf{x}) = \frac{1}{2} \mathbf{x}^\top \mathbf{Q} \mathbf{x} + \mathbf{x}^\top \mathbf{c} + b$ için minimum değeri ve küçültücüyü türetin.
-1. Biz momentumlu rasgele gradyan inişi gerçekleştirdiğinizde ne değişir? Momentumlu minigrup rasgele gradyan inişi kullandığımızda ne olur? Ya parametrelerle deney yaparsak ne olur?
+1. Biz momentumlu rasgele gradyan inişi gerçekleştirdiğinizde ne değişir? Momentumlu minigrup rasgele gradyan inişi kullandığımızda ne olur? Ya parametrelerle deney yaparsak?
 
 :begin_tab:`mxnet`
 [Tartışmalar](https://discuss.d2l.ai/t/354)

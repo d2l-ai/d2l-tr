@@ -1,18 +1,18 @@
-# Öğrenme Oranını Zamanlama
+# Öğrenme Oranı Zamanlama
 :label:`sec_scheduler`
 
-Şimdiye kadar öncelikle ağırlık vektörlerinin güncellendikleri *oran* yerine ağırlık vektörlerinin nasıl güncelleneceğine dair optimizasyon *algoritmalarına* odaklandık. Bununla birlikte, öğrenme oranının ayarlanması genellikle gerçek algoritma kadar önemlidir. Göz önünde bulundurulması gereken bir dizi husus vardır: 
+Şimdiye kadar öncelikle ağırlık vektörlerinin güncellendikleri *oran* yerine ağırlık vektörlerinin nasıl güncelleneceğine dair optimizasyon *algoritmalarına* odaklandık. Bununla birlikte, öğrenme oranının ayarlanması genellikle gerçek algoritma kadar önemlidir. Göz önünde bulundurulması gereken bir dizi hususu vardır: 
 
 * En çok açıkçası öğrenme oranının *büyüklüğü* önemlidir. Çok büyükse, optimizasyon ıraksar, eğer çok küçükse, eğitilmesi çok uzun sürer veya yarı-optimal bir sonuç elde ederiz. Daha önce problemin sağlamlık sayısının önemli olduğunu gördük (ayrıntılar için bkz. :numref:`sec_momentum`). Sezgisel olarak, en hassas yöndeki değişim miktarının en az hassas olanına oranıdır.
-* İkincisi, sönme oranı da aynı derecede önemlidir. Öğrenme oranı büyük kalırsa, en küçük seviyeyi atlayabilir ve böylece eniyiye ulaşamayabiliriz. :numref:`sec_minibatch_sgd` içinde bunu ayrıntılı olarak tartıştık ve :numref:`sec_sgd` içinde performans garantilerini analiz ettik. Kısacası, sönme oranını istiyoruz, ama muhtemelen dışbükey problemler için $\mathcal{O}(t^{-\frac{1}{2}})$ daha yavaş olanlar iyi bir seçim olurdu.
-* Eşit derecede önemli olan bir diğer yön ise *ilklemedir*. Bu, hem parametrelerin başlangıçta nasıl ayarlandığı (ayrıntılar için bkz.:numref:`sec_numerical_stability`) hem de başlangıçta nasıl evrimleştikleri de ilgilidir. Bu, *ısınma* diye tabir edilir, yani başlangıçta çözüme doğru ne kadar hızlı ilerlemeye başladığımızla ilgilidir. Başlangıçta büyük adımlar yararlı olmayabilir, özellikle de ilk parametre kümesi rastgele olduğundan. İlk güncelleme yönergeleri de oldukça anlamsız olabilir.
-* Son olarak, döngüsel öğrenme hızı ayarlaması gerçekleştiren bir dizi optimizasyon türü vardır. Bu, bu bölümün kapsamı dışındadır. Okuyucuya :cite:`Izmailov.Podoprikhin.Garipov.ea.2018` çalışmasındaki ayrıntıları gözden geçirmesini tavsiye ederiz, örneğin, parametrelerin izlediği *yolun* üzerinden ortalama alarak daha iyi çözümler elde etmek gibi.
+* İkincisi, sönme oranı da aynı derecede önemlidir. Öğrenme oranı büyük kalırsa, en küçük seviyeyi sıçrayabilir ve böylece eniyiye ulaşamayabiliriz. :numref:`sec_minibatch_sgd` içinde bunu ayrıntılı olarak tartıştık ve :numref:`sec_sgd`'te performans garantilerini analiz ettik. Kısacası, sönme oranını istiyoruz, ama muhtemelen daha yavaş $\mathcal{O}(t^{-\frac{1}{2}})$ dışbükey problemler için iyi bir seçim olurdu.
+* Eşit derecede önemli olan bir diğer yön ise *ilklemedir*. Bu, hem parametrelerin başlangıçta nasıl ayarlandığı (ayrıntılar için :numref:`sec_numerical_stability`'i inceleyin) hem de başlangıçta nasıl evrimleştikleri de ilgilidir. Bu, *ısınma* takma adıyla, yani başlangıçta çözüme doğru ne kadar hızlı ilerlemeye başladığımızla ilgilidir. Başlangıçta büyük adımlar yararlı olmayabilir, özellikle de ilk parametre kümesi rastgele olduğundan. İlk güncelleme yönergeleri de oldukça anlamsız olabilir.
+* Son olarak, döngüsel öğrenme hızı ayarlaması gerçekleştiren bir dizi optimizasyon türü vardır. Bu, bu bölümün kapsamı dışındadır. Okuyucunun :cite:`Izmailov.Podoprikhin.Garipov.ea.2018`'te ayrıntıları gözden geçirmesini tavsiye ederiz, örneğin, parametrelerin izlediği *yolun* üzerinden ortalama alarak daha iyi çözümler elde etmek.
 
-Öğrenme oranlarını yönetmek için gereken çok fazla ayrıntı olduğu göz önüne alındığında, çoğu derin öğrenme çerçevesinin bununla otomatik olarak başa çıkabilmesi için araçlar vardır. Bu bölümde, farklı zamanlamaların doğruluk üzerindeki etkilerini gözden geçireceğiz ve ayrıca bunun bir *öğrenme oranı zamanlayıcısı* aracılığıyla nasıl verimli bir şekilde yönetilebileceğini göstereceğiz. 
+Öğrenme oranlarını yönetmek için gereken çok fazla ayrıntı olduğu göz önüne alındığında, çoğu derin öğrenme çerçevesinin bununla otomatik olarak başa çıkabilmesi için araçlar vardır. Bu bölümde, farklı zamanlamaların doğruluk üzerindeki etkilerini gözden geçireceğiz ve ayrıca bunun bir *öğrenme oranı zamanlayıcı* aracılığıyla nasıl verimli bir şekilde yönetilebileceğini göstereceğiz. 
 
 ## Basit Örnek Problem
 
-Kolayca hesaplanabilecek kadar ucuz, ancak bazı önemli hususları göstermek için yeterince açık olmayan bir basit örnek problem ile başlıyoruz. Bunun için Fashion-MNIST'e uygulandığı gibi LeNet'in biraz modern bir sürümünü seçin (`relu` yerine `sigmoid` aktivasyon, MaxPooling (Maksimum Havuzlama) yerine AveragePooling (Ortalama Havuzlama)). Dahası, ağı performans için melezleştiriyoruz. Kodun çoğu standart olduğundan, daha fazla ayrıntılı tartışma yapmadan sadece temel bilgileri sunuyoruz. Gerektiğinde anımsamak için bkz. :numref:`chap_cnn`.
+Kolayca hesaplanabilecek kadar ucuz, ancak bazı önemli hususları göstermek için yeterince açık olmayan bir basit örnek problem ile başlıyoruz. Bunun için LeNet'in biraz modern bir sürümünü seçin (`relu` yerine `sigmoid` aktivasyon, MaxPooling yerine AveragePooling), Fashion-MNIST'e uygulandığı gibi. Dahası, ağı performans için melezleştiriyoruz. Kodun çoğu standart olduğundan, daha fazla ayrıntılı tartışma yapmadan sadece temel bilgileri sunuyoruz. Gerektiğinde anımsamak için bkz. :numref:`chap_cnn`
 
 ```{.python .input}
 %matplotlib inline
@@ -36,8 +36,8 @@ device = d2l.try_gpu()
 batch_size = 256
 train_iter, test_iter = d2l.load_data_fashion_mnist(batch_size=batch_size)
 
-# Kod, evrişimli sinir ağları bölümünün lenet kısmında tanımlanan 
-# `d2l.train_ch6` ile neredeyse aynıdır.
+# The code is almost identical to `d2l.train_ch6` defined in the 
+# lenet section of chapter convolutional neural networks
 def train(net, train_iter, test_iter, num_epochs, loss, trainer, device):
     net.initialize(force_reinit=True, ctx=device, init=init.Xavier())
     animator = d2l.Animator(xlabel='epoch', xlim=[0, num_epochs],
@@ -91,8 +91,8 @@ device = d2l.try_gpu()
 batch_size = 256
 train_iter, test_iter = d2l.load_data_fashion_mnist(batch_size=batch_size)
 
-# Kod, evrişimli sinir ağları bölümünün lenet kısmında tanımlanan 
-# `d2l.train_ch6` ile neredeyse aynıdır.
+# The code is almost identical to `d2l.train_ch6` defined in the 
+# lenet section of chapter convolutional neural networks
 def train(net, train_iter, test_iter, num_epochs, loss, trainer, device, 
           scheduler=None):
     net.to(device)
@@ -158,8 +158,8 @@ def net():
 batch_size = 256
 train_iter, test_iter = d2l.load_data_fashion_mnist(batch_size=batch_size)
 
-# Kod, evrişimli sinir ağları bölümünün lenet kısmında tanımlanan 
-# `d2l.train_ch6` ile neredeyse aynıdır.
+# The code is almost identical to `d2l.train_ch6` defined in the 
+# lenet section of chapter convolutional neural networks
 def train(net_fn, train_iter, test_iter, num_epochs, lr,
               device=d2l.try_gpu(), custom_callback = False):
     device_name = device._device_name
@@ -205,7 +205,7 @@ train(net, train_iter, test_iter, num_epochs, lr)
 
 ## Zamanlayıcılar
 
-Öğrenme oranını ayarlamanın bir yolu, her adımda açıkça ayarlamaktır. Bu, `set_learning_rate` yöntemi ile elverişli bir şekilde elde edilir. Her dönemden sonra (hatta her minigrup işleminden sonra), örneğin, optimizasyonun nasıl ilerlediğine yanıt olarak dinamik bir şekilde, aşağı doğru ayarlayabiliriz.
+Öğrenme oranını ayarlamanın bir yolu, her adımda açıkça ayarlamaktır. Bu, `set_learning_rate` yöntemi ile elverişli bir şekilde elde edilir. Her dönemden sonra (hatta her minigrup işleminden sonra), örneğin, optimizasyonun nasıl ilerlediğine yanıt olarak dinamik bir şekilde aşağı doğru ayarlayabiliriz.
 
 ```{.python .input}
 trainer.set_learning_rate(0.1)
@@ -446,7 +446,7 @@ scheduler = CosineScheduler(20, warmup_steps=5, base_lr=0.3, final_lr=0.01)
 d2l.plot(d2l.arange(num_epochs), [scheduler(t) for t in range(num_epochs)])
 ```
 
-Ağın ilkin daha iyi yakınsadığına dikkat edin (özellikle ilk 5 dönemde performansı gözlemleyin).
+Ağın ilkin daha iyi yakınsadığına dikkat edin (özellikle ilk 5 dçnemde performansı gözlemleyin).
 
 ```{.python .input}
 trainer = gluon.Trainer(net.collect_params(), 'sgd',
@@ -481,7 +481,7 @@ Isınma herhangi bir zamanlayıcıya uygulanabilir (sadece kosinüs değil). Ö�
 ## Alıştırmalar
 
 1. Belirli bir sabit öğrenme hızı için optimizasyon davranışıyla deneyler yapın. Bu şekilde elde edebileceğiniz en iyi model nedir?
-1. Öğrenme oranındaki düşüşün üssünü değiştirirseniz yakınsama nasıl değişir? Deneylerde kolaylık sağlamak için `PolyScheduler`'i kullanın.
+1. Öğrenme oranındaki düşüşün üsünü değiştirirseniz yakınsama nasıl değişir? Deneylerde kolaylık sağlamak için `PolyScheduler`'i kullanın.
 1. Kosinüs zamanlayıcısını büyük bilgisayarla görme problemlerine uygulayın, örn. ImageNet'i eğitin. Diğer zamanlayıcılara göre performansı nasıl etkiler?
 1. Isınma ne kadar sürer?
 1. Optimizasyon ve örneklemeyi ilişkilendirebilir misiniz? :cite:`Welling.Teh.2011`'ten Rasgele Gradyan Langevin Dinamik sonuçlarını kullanarak başlayın.

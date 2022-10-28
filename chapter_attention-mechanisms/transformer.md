@@ -1,21 +1,21 @@
 # Dönüştürücü
 :label:`sec_transformer`
 
-:numref:`subsec_cnn-rnn-self-attention` içinde CNN , RNN ve özdikkati karşılaştırdık. Özellikle, özdikkat hem paralel hesaplamanın hem de en kısa maksimum yol uzunluğunun keyfini sürer. Bu nedenle doğal olarak, özdikkat kullanarak derin mimariler tasarlamak caziptir. Girdi temsilleri için RNN'lere güvenen önceki özdikkat modellerinin aksine :cite:`Cheng.Dong.Lapata.2016,Lin.Feng.Santos.ea.2017,Paulus.Xiong.Socher.2017`, dönüştürücü modeli :cite:`Vaswani.Shazeer.Parmar.ea.2017` sadece herhangi bir evrişimli veya yinelemeli tabaka olmadan dikkat mekanizmalarına dayanmaktadır. Başlangıçta metin verilerinde diziden diziye öğrenme için önerilmiş olsa da, dönüştürücüler dil, görme, konuşma ve pekiştirmeli öğrenme alanlarında olduğu gibi çok çeşitli modern derin öğrenme uygulamalarında yaygın olmuştur. 
+:numref:`subsec_cnn-rnn-self-attention` içinde CNN , RNN, ve özdikkati karşılaştırdık. Özellikle, özdikkat hem paralel hesaplamanın hem de en kısa maksimum yol uzunluğunun keyfini sürer. Bu nedenle doğal olarak, özdikkat kullanarak derin mimariler tasarlamak caziptir. :cite:`Cheng.Dong.Lapata.2016,Lin.Feng.Santos.ea.2017,Paulus.Xiong.Socher.2017` girdi temsilleri için RNN'lere güvenen önceki özdikkat modellerinin aksine, dönüştürücü modeli :cite:`Vaswani.Shazeer.Parmar.ea.2017` sadece herhangi bir evrişimli veya yinelemeli tabaka olmadan dikkat mekanizmalarına dayanmaktadır. Başlangıçta metin verilerinde diziden diziye öğrenme için önerilmiş olsa da, dönüştürücüler dil, görme, konuşma ve pekiştirmeli öğrenme alanlarında olduğu gibi çok çeşitli modern derin öğrenme uygulamalarında yaygın olmuştur. 
 
 ## Model
 
-Kodlayıcı-kodçözücü mimarisinin bir örneği olarak, dönüştürücünün genel mimarisi :numref:`fig_transformer` içinde sunulmuştur. Gördüğümüz gibi, dönüştürücü bir kodlayıcı ve bir kodçözücüden oluşur. :numref:`fig_s2s_attention_details` içinde diziden diziye öğrenmede Bahdanau dikkatinden farklı olarak, girdi (kaynak) ve çıktı (hedef) dizi gömmeleri, özdikkate dayalı modülleri istifleyen kodlayıcıya ve kodçözücüye beslenmeden önce, konumsal kodlama ile toplanır.
+Kodlayıcı-kodçözücü mimarisinin bir örneği olarak, dönüştürücünün genel mimarisi :numref:`fig_transformer`'te sunulmuştur. Gördüğümüz gibi, dönüştürücü bir kodlayıcı ve bir kodçözücüden oluşur. :numref:`fig_s2s_attention_details` içinde diziden diziye öğrenmede Bahdanau dikkatinden farklı olarak, girdi (kaynak) ve çıktı (hedef) dizi gömmeleri, özdikkate dayalı modülleri istifleyen kodlayıcıya ve kodçözücüye beslenmeden önce, konumsal kodlama ile toplanır.
 
 ![Dönüştürücü mimarisi.](../img/transformer.svg)
 :width:`500px`
 :label:`fig_transformer`
 
-Şimdi :numref:`fig_transformer` figüründeki dönüştürücü mimarisine genel bir bakış sunuyoruz. Yüksek düzeyde, dönüştürücü kodlayıcısı, her katmanın iki alt katmana sahip olduğu (ikisi de $\mathrm{altkatman}$ olarak ifade edilir) çoklu özdeş katmandan oluşan bir yığındır. Birincisi, çoklu kafalı bir özdikkat ortaklamasıdır ve ikincisi ise konumsal olarak ileriye besleme ağıdır. Özellikle, özdikkatteki kodlayıcıda, sorgular, anahtarlar ve değerler tüm önceki kodlayıcı katmanının çıktılarından gelir. :numref:`sec_resnet` içindeki ResNet tasarımından esinlenerek, her iki alt katman etrafında artık bağlantı kullanılır. Dönüştürücüde, dizinin herhangi bir pozisyonunda $\mathbf{x} \in \mathbb{R}^d$ herhangi bir girdi için $\mathrm{altkatman}(\mathbf{x}) \in \mathbb{R}^d$'ye ihtiyaç duyuyoruz, böylece $\mathbf{x} + \mathrm{altkatman}(\mathbf{x}) \in \mathbb{R}^d$, artık bağlantı $\mathbf{x} + \mathrm{altkatman}(\mathbf{x}) \in \mathbb{R}^d$ mümkündür. Artık bağlantıya bu ilavenin hemen ardından katman normalleştirmesi :cite:`Ba.Kiros.Hinton.2016` gelir. Sonuç olarak, dönüştürücü kodlayıcısı, girdi dizisinin her konumu için $d$ boyutlu bir vektör temsilini çıkarır. 
+Şimdi :numref:`fig_transformer`'daki dönüştürücü mimarisine genel bir bakış sunuyoruz. Yüksek düzeyde, dönüştürücü kodlayıcısı, her katmanın iki alt katmana sahip olduğu (ya $\mathrm{sublayer}$ olarak gösterilir) çoklu özdeş katmandan oluşan bir yığındır. Birincisi, çoklu kafalı bir özdikkat ortaklamasıdır ve ikincisi ise konumsal olarak ileriye doğru ilerleme ağıdır. Özellikle, özdikkatteki kodlayıcıda, sorgular, anahtarlar ve değerler tüm önceki kodlayıcı katmanının çıktılarından gelir. :numref:`sec_resnet`'teki ResNet tasarımından esinlenerek, her iki alt katman etrafında artık bağlantı kullanılır. Dönüştürücüde, dizinin herhangi bir pozisyonunda $\mathbf{x} \in \mathbb{R}^d$ herhangi bir girdi için $\mathrm{sublayer}(\mathbf{x}) \in \mathbb{R}^d$'ye ihtiyaç duyuyoruz, böylece $\mathbf{x} + \mathrm{sublayer}(\mathbf{x}) \in \mathbb{R}^d$ artık bağlantı $\mathbf{x} + \mathrm{sublayer}(\mathbf{x}) \in \mathbb{R}^d$ mümkündür. Artık bağlantıya bu ilavenin hemen ardından katman normalleştirmesi :cite:`Ba.Kiros.Hinton.2016` gelir. Sonuç olarak, dönüştürücü kodlayıcısı, girdi dizisinin her konumu için $d$ boyutlu bir vektör temsilini çıkarır. 
 
 Dönüştürücü kodçözücü ayrıca artık bağlantılar ve katman normalleştirmeleri ile birden çok özdeş katman yığınıdır. Kodlayıcıda açıklanan iki alt katmanın yanı sıra, kodçözücü bu ikisi arasında kodlayıcı-kodçözücü dikkat olarak bilinen üçüncü bir alt katman ekler. Kodlayıcı-kod özücü dikkatinde, sorgular önceki kodçözücü katmanının çıktılarından ve anahtarlar ve değerler dönüştürücü kodlayıcı çıktılarından kaynaklanır. Kodçözücünün özdikkatinde, sorgular, anahtarlar ve değerler tüm önceki kodçözücü katmanının çıktılarından gelir. Bununla birlikte, kodçözücüdeki her pozisyonun, yalnızca kodçözücünün bu konuma kadar tüm pozisyonlara ilgi göstermesine izin verilir. Bu *maskelenmiş* dikkat, otomatik bağlanım özelliğini korur ve tahminin yalnızca üretilen çıktı belirteçlerine bağlı olmasını sağlar. 
 
-:numref:`sec_multihead-attention` içindeki ölçeklendirilmiş nokta çarpımlarına ve :numref:`subsec_positional-encoding` içindeki konumsal kodlamaya dayanan çoklu kafalı dikkati zaten tanımladık ve uyguladık. Aşağıda, dönüştürücü modelinin geri kalanını uygulayacağız.
+:numref:`sec_multihead-attention`'teki ölçeklendirilmiş nokta çarpımlarına ve :numref:`subsec_positional-encoding`'te konumsal kodlamaya dayanan çoklu kafalı dikkati zaten tanımladık ve uyguladık. Aşağıda, dönüştürücü modelinin geri kalanını uygulayacağız.
 
 ```{.python .input}
 from d2l import mxnet as d2l
@@ -50,7 +50,7 @@ Konumsal olarak ileriye besleme ağı, aynı MLP'yi kullanarak tüm dizi pozisyo
 ```{.python .input}
 #@save
 class PositionWiseFFN(nn.Block):
-    """Konumsal olarak ileriye besleme ağı."""
+    """Positionwise feed-forward network."""
     def __init__(self, ffn_num_hiddens, ffn_num_outputs, **kwargs):
         super(PositionWiseFFN, self).__init__(**kwargs)
         self.dense1 = nn.Dense(ffn_num_hiddens, flatten=False,
@@ -65,7 +65,7 @@ class PositionWiseFFN(nn.Block):
 #@tab pytorch
 #@save
 class PositionWiseFFN(nn.Module):
-    """Konumsal olarak ileriye besleme ağı."""
+    """Positionwise feed-forward network."""
     def __init__(self, ffn_num_input, ffn_num_hiddens, ffn_num_outputs,
                  **kwargs):
         super(PositionWiseFFN, self).__init__(**kwargs)
@@ -81,7 +81,7 @@ class PositionWiseFFN(nn.Module):
 #@tab tensorflow
 #@save
 class PositionWiseFFN(tf.keras.layers.Layer):
-    """Konumsal olarak ileriye besleme ağı."""
+    """Positionwise feed-forward network."""
     def __init__(self, ffn_num_hiddens, ffn_num_outputs, **kwargs):
         super().__init__(*kwargs)
         self.dense1 = tf.keras.layers.Dense(ffn_num_hiddens)
@@ -115,7 +115,7 @@ ffn(tf.ones((2, 3, 4)))[0]
 
 ## Artık Bağlantı ve Katman Normalleştirmesi
 
-Şimdi :numref:`fig_transformer` figüründeki "topla ve normalleştir" bileşenine odaklanalım. Bu bölümün başında tanımladığımız gibi, bu, katman normalleştirmesinin hemen ardından geldiği bir artık bağlantıdır. Her ikisi de etkili derin mimarilerin anahtarıdır. 
+Şimdi :numref:`fig_transformer`'teki “ekle ve normalleştir” bileşenine odaklanalım. Bu bölümün başında tanımladığımız gibi, bu, katman normalizasyonunun hemen ardından geldiği bir artık bağlantıdır. Her ikisi de etkili derin mimarilerin anahtarıdır. 
 
 :numref:`sec_batch_norm` bölümünde, toplu normalleştirmenin nasıl ortalandığını ve bir minigrup içindeki örnekler arasında nasıl yeniden ölçeklendiğini açıkladık. Katman normalleştirmesi, birincinin öznitelik boyutu boyunca normalleştirmesi dışında toplu normalleştirme ile aynıdır. Bilgisayarla görmede yaygın uygulamalarına rağmen, toplu normalleştirme deneysel olarak genellikle girdileri değişken uzunluktaki diziler olan doğal dil işleme görevlerinde katman normalleştirmesinden daha az etkilidir. 
 
@@ -127,7 +127,7 @@ ln.initialize()
 bn = nn.BatchNorm()
 bn.initialize()
 X = d2l.tensor([[1, 2], [2, 3]])
-# Eğitim modunda `X`'den ortalama ve varyansı hesaplayın
+# Compute mean and variance from `X` in the training mode
 with autograd.record():
     print('layer norm:', ln(X), '\nbatch norm:', bn(X))
 ```
@@ -137,7 +137,7 @@ with autograd.record():
 ln = nn.LayerNorm(2)
 bn = nn.BatchNorm1d(2)
 X = d2l.tensor([[1, 2], [2, 3]], dtype=torch.float32)
-# Eğitim modunda `X`'den ortalama ve varyansı hesaplayın
+# Compute mean and variance from `X` in the training mode
 print('layer norm:', ln(X), '\nbatch norm:', bn(X))
 ```
 
@@ -149,12 +149,12 @@ X = tf.constant([[1, 2], [2, 3]], dtype=tf.float32)
 print('layer norm:', ln(X), '\nbatch norm:', bn(X, training=True))
 ```
 
-Artık `AddNorm` sınıfını [**bir artık bağlantı ve ardından katman normalleştirme**] kullanarak uygulayabiliriz. Düzenlileştirme için hattan düşürme de uygulanır.
+Artık `AddNorm` sınıfını [**bir artık bağlantı ve ardından katman normalizasyonu**] kullanarak uygulayabiliriz. Düzenlileştirme için hattan düşürme de uygulanır.
 
 ```{.python .input}
 #@save
 class AddNorm(nn.Block):
-    """Artık bağlantı ve ardından katman normalleştirme."""
+    """Residual connection followed by layer normalization."""
     def __init__(self, dropout, **kwargs):
         super(AddNorm, self).__init__(**kwargs)
         self.dropout = nn.Dropout(dropout)
@@ -168,7 +168,7 @@ class AddNorm(nn.Block):
 #@tab pytorch
 #@save
 class AddNorm(nn.Module):
-    """Artık bağlantı ve ardından katman normalleştirme."""
+    """Residual connection followed by layer normalization."""
     def __init__(self, normalized_shape, dropout, **kwargs):
         super(AddNorm, self).__init__(**kwargs)
         self.dropout = nn.Dropout(dropout)
@@ -182,7 +182,7 @@ class AddNorm(nn.Module):
 #@tab tensorflow
 #@save
 class AddNorm(tf.keras.layers.Layer):
-    """Artık bağlantı ve ardından katman normalleştirme."""
+    """Residual connection followed by layer normalization."""
     def __init__(self, normalized_shape, dropout, **kwargs):
         super().__init__(**kwargs)
         self.dropout = tf.keras.layers.Dropout(dropout)
@@ -215,12 +215,12 @@ add_norm(tf.ones((2, 3, 4)), tf.ones((2, 3, 4)), training=False).shape
 
 ## Kodlayıcı
 
-Dönüştürücü kodlayıcıyı toparlamak için gerekli tüm bileşenlerle, [**kodlayıcı içinde tek bir katman**] uygulayarak başlayalım. Aşağıdaki `EncoderBlock` sınıfı iki alt katman içerir: Çoklu kafalı özdikkat ve konumsal ileri beslemeli ağlar, burada bir artık bağlantı ve ardından katman normalleştirme her iki alt katman etrafında kullanılır.
+Dönüştürücü kodlayıcıyı biraraya getirmek için gerekli tüm bileşenlerle, [**kodlayıcı içinde tek bir katman**] uygulayarak başlayalım. Aşağıdaki `EncoderBlock` sınıfı iki alt katman içerir: Çoklu kafalı özdikkat ve konumsal ileri beslemeli ağlar, burada bir artık bağlantı ve ardından katman normalizasyonu her iki alt katman etrafında kullanılır.
 
 ```{.python .input}
 #@save
 class EncoderBlock(nn.Block):
-    """Dönüştürücü kodlayıcı bloğu."""
+    """Transformer encoder block."""
     def __init__(self, num_hiddens, ffn_num_hiddens, num_heads, dropout,
                  use_bias=False, **kwargs):
         super(EncoderBlock, self).__init__(**kwargs)
@@ -239,7 +239,7 @@ class EncoderBlock(nn.Block):
 #@tab pytorch
 #@save
 class EncoderBlock(nn.Module):
-    """Dönüştürücü kodlayıcı bloğu."""
+    """Transformer encoder block."""
     def __init__(self, key_size, query_size, value_size, num_hiddens,
                  norm_shape, ffn_num_input, ffn_num_hiddens, num_heads,
                  dropout, use_bias=False, **kwargs):
@@ -261,7 +261,7 @@ class EncoderBlock(nn.Module):
 #@tab tensorflow
 #@save
 class EncoderBlock(tf.keras.layers.Layer):
-    """Dönüştürücü kodlayıcı bloğu."""
+    """Transformer encoder block."""
     def __init__(self, key_size, query_size, value_size, num_hiddens,
                  norm_shape, ffn_num_hiddens, num_heads, dropout, bias=False, **kwargs):
         super().__init__(**kwargs)
@@ -322,9 +322,9 @@ class TransformerEncoder(d2l.Encoder):
                              use_bias))
 
     def forward(self, X, valid_lens, *args):
-        # # Konumsal kodlama değerleri -1 ile 1 arasında olduğundan, 
-        # gömme değerleri, toplanmadan önce yeniden ölçeklendirmek için 
-        # gömme boyutunun kareköküyle çarpılır
+        # Since positional encoding values are between -1 and 1, the embedding
+        # values are multiplied by the square root of the embedding dimension
+        # to rescale before they are summed up
         X = self.pos_encoding(self.embedding(X) * math.sqrt(self.num_hiddens))
         self.attention_weights = [None] * len(self.blks)
         for i, blk in enumerate(self.blks):
@@ -354,9 +354,9 @@ class TransformerEncoder(d2l.Encoder):
                              num_heads, dropout, use_bias))
 
     def forward(self, X, valid_lens, *args):
-        # # Konumsal kodlama değerleri -1 ile 1 arasında olduğundan, 
-        # gömme değerleri, toplanmadan önce yeniden ölçeklendirmek için 
-        # gömme boyutunun kareköküyle çarpılır
+        # Since positional encoding values are between -1 and 1, the embedding
+        # values are multiplied by the square root of the embedding dimension
+        # to rescale before they are summed up
         X = self.pos_encoding(self.embedding(X) * math.sqrt(self.num_hiddens))
         self.attention_weights = [None] * len(self.blks)
         for i, blk in enumerate(self.blks):
@@ -384,9 +384,9 @@ class TransformerEncoder(d2l.Encoder):
             num_layers)]
         
     def call(self, X, valid_lens, **kwargs):
-        # # Konumsal kodlama değerleri -1 ile 1 arasında olduğundan, 
-        # gömme değerleri, toplanmadan önce yeniden ölçeklendirmek için 
-        # gömme boyutunun kareköküyle çarpılır
+        # Since positional encoding values are between -1 and 1, the embedding
+        # values are multiplied by the square root of the embedding dimension
+        # to rescale before they are summed up
         X = self.pos_encoding(self.embedding(X) * tf.math.sqrt(
             tf.cast(self.num_hiddens, dtype=tf.float32)), **kwargs)
         self.attention_weights = [None] * len(self.blks)
@@ -421,13 +421,13 @@ encoder(tf.ones((2, 100)), valid_lens, training=False).shape
 
 ## Kodçözücü
 
-:numref:`fig_transformer` şeklinde gösterildiği gibi, [**dönüştürücü kodçözücüsü birden çok özdeş katmandan oluşur**]. Her katman, üç alt katman içeren aşağıdaki `DecoderBlock` sınıfında uygulanır: Kodçözücü özdikkat, kodlayıcı-kodçözücü dikkat ve konumsal olarak ileri beslemeli ağlar. Bu alt katmanlar çevrelerinde bir artık bağlantı ve ardından katman normalleştirmesi kullanır. 
+:numref:`fig_transformer`'te gösterildiği gibi, [**dönüştürücü kodçözücüsü birden çok özdeş katmandan oluşur**]. Her katman, üç alt katman içeren aşağıdaki `DecoderBlock` sınıfında uygulanır: Kodçözücü özdikkat, kodlayıcı-kodçözücü dikkat ve konumsal olarak ileri beslemeli ağlar. Bu alt katmanlar çevrelerinde bir artık bağlantı ve ardından katman normalleştirmesi kullanır. 
 
 Bu bölümde daha önce de açıklandığı gibi, maskelenmiş çoklu kafalı kodçözücü özdikkatinde (ilk alt katman), sorgular, anahtarlar ve değerler önceki kodçözücü katmanının çıktılarından gelir. Diziden diziye modellerini eğitirken, çıktı dizisinin tüm pozisyonlarında (zaman adımları) belirteçleri bilinir. Bununla birlikte, tahmin esnasında çıktı dizisi belirteç belirteç oluşturulur; böylece, herhangi bir kodçözücü zaman adımında yalnızca üretilen belirteçler kodçözücünün özdikkatinde kullanılabilir. Kodçözücünün otomatik regresyonunu korumak için, maskeli özdikkat `dec_valid_lens`'ü belirtir, böylece herhangi bir sorgu yalnızca kodçözücünün sorgulama konumuna kadarki tüm konumlara ilgi gösterir.
 
 ```{.python .input}
 class DecoderBlock(nn.Block):
-    # Kodçözücüdeki `i`. blok
+    # The `i`-th block in the decoder
     def __init__(self, num_hiddens, ffn_num_hiddens, num_heads,
                  dropout, i, **kwargs):
         super(DecoderBlock, self).__init__(**kwargs)
@@ -443,12 +443,11 @@ class DecoderBlock(nn.Block):
 
     def forward(self, X, state):
         enc_outputs, enc_valid_lens = state[0], state[1]
-        # Eğitim sırasında, herhangi bir çıktı dizisinin tüm belirteçleri 
-        # aynı anda işlenir, bu nedenle `state[2][self.i]` ilklendiği gibi
-        #  `None` olur. Tahmin sırasında herhangi bir çıktı dizisi 
-        # belirtecinin kodunu çözerken, `state[2][self.i]`, geçerli zaman 
-        # adımına kadar  `i`. bloğundaki kodu çözülmüş çıktının 
-        # temsillerini içerir.
+        # During training, all the tokens of any output sequence are processed
+        # at the same time, so `state[2][self.i]` is `None` as initialized.
+        # When decoding any output sequence token by token during prediction,
+        # `state[2][self.i]` contains representations of the decoded output at
+        # the `i`-th block up to the current time step
         if state[2][self.i] is None:
             key_values = X
         else:
@@ -457,17 +456,17 @@ class DecoderBlock(nn.Block):
 
         if autograd.is_training():
             batch_size, num_steps, _ = X.shape
-            # `dec_valid_lens` şekli: (`batch_size`, `num_steps`),
-            #  burada her satır [1, 2, ..., `num_steps`]
+            # Shape of `dec_valid_lens`: (`batch_size`, `num_steps`), where
+            # every row is [1, 2, ..., `num_steps`]
             dec_valid_lens = np.tile(np.arange(1, num_steps + 1, ctx=X.ctx),
                                      (batch_size, 1))
         else:
             dec_valid_lens = None
 
-        # Öz-dikkat
+        # Self-attention
         X2 = self.attention1(X, key_values, key_values, dec_valid_lens)
         Y = self.addnorm1(X, X2)
-        # Kodlayıcı - kodçözücüye dikkat. `enc_outputs` şekli:
+        # Encoder-decoder attention. Shape of `enc_outputs`:
         # (`batch_size`, `num_steps`, `num_hiddens`)
         Y2 = self.attention2(Y, enc_outputs, enc_outputs, enc_valid_lens)
         Z = self.addnorm2(Y, Y2)
@@ -477,7 +476,7 @@ class DecoderBlock(nn.Block):
 ```{.python .input}
 #@tab pytorch
 class DecoderBlock(nn.Module):
-    # Kodçözücüdeki `i`. blok
+    # The `i`-th block in the decoder
     def __init__(self, key_size, query_size, value_size, num_hiddens,
                  norm_shape, ffn_num_input, ffn_num_hiddens, num_heads,
                  dropout, i, **kwargs):
@@ -495,12 +494,11 @@ class DecoderBlock(nn.Module):
 
     def forward(self, X, state):
         enc_outputs, enc_valid_lens = state[0], state[1]
-        # Eğitim sırasında, herhangi bir çıktı dizisinin tüm belirteçleri 
-        # aynı anda işlenir, bu nedenle `state[2][self.i]` ilklendiği gibi
-        #  `None` olur. Tahmin sırasında herhangi bir çıktı dizisi 
-        # belirtecinin kodunu çözerken, `state[2][self.i]`, geçerli zaman 
-        # adımına kadar  `i`. bloğundaki kodu çözülmüş çıktının 
-        # temsillerini içerir.
+        # During training, all the tokens of any output sequence are processed
+        # at the same time, so `state[2][self.i]` is `None` as initialized.
+        # When decoding any output sequence token by token during prediction,
+        # `state[2][self.i]` contains representations of the decoded output at
+        # the `i`-th block up to the current time step
         if state[2][self.i] is None:
             key_values = X
         else:
@@ -508,17 +506,17 @@ class DecoderBlock(nn.Module):
         state[2][self.i] = key_values
         if self.training:
             batch_size, num_steps, _ = X.shape
-            # `dec_valid_lens` şekli: (`batch_size`, `num_steps`),
-            #  burada her satır [1, 2, ..., `num_steps`]
+            # Shape of `dec_valid_lens`: (`batch_size`, `num_steps`), where
+            # every row is [1, 2, ..., `num_steps`]
             dec_valid_lens = torch.arange(
                 1, num_steps + 1, device=X.device).repeat(batch_size, 1)
         else:
             dec_valid_lens = None
 
-        # Öz-dikkat
+        # Self-attention
         X2 = self.attention1(X, key_values, key_values, dec_valid_lens)
         Y = self.addnorm1(X, X2)
-        # Kodlayıcı - kodçözücüye dikkat. `enc_outputs` şekli:
+        # Encoder-decoder attention. Shape of `enc_outputs`:
         # (`batch_size`, `num_steps`, `num_hiddens`)
         Y2 = self.attention2(Y, enc_outputs, enc_outputs, enc_valid_lens)
         Z = self.addnorm2(Y, Y2)
@@ -528,7 +526,7 @@ class DecoderBlock(nn.Module):
 ```{.python .input}
 #@tab tensorflow
 class DecoderBlock(tf.keras.layers.Layer):
-    # Kodçözücüdeki `i`. blok
+    # The `i`-th block in the decoder
     def __init__(self, key_size, query_size, value_size, num_hiddens,
                  norm_shape, ffn_num_hiddens, num_heads, dropout, i, **kwargs):
         super().__init__(**kwargs)
@@ -542,12 +540,11 @@ class DecoderBlock(tf.keras.layers.Layer):
         
     def call(self, X, state, **kwargs):
         enc_outputs, enc_valid_lens = state[0], state[1]
-        # Eğitim sırasında, herhangi bir çıktı dizisinin tüm belirteçleri 
-        # aynı anda işlenir, bu nedenle `state[2][self.i]` ilklendiği gibi
-        #  `None` olur. Tahmin sırasında herhangi bir çıktı dizisi 
-        # belirtecinin kodunu çözerken, `state[2][self.i]`, geçerli zaman 
-        # adımına kadar  `i`. bloğundaki kodu çözülmüş çıktının 
-        # temsillerini içerir.
+        # During training, all the tokens of any output sequence are processed
+        # at the same time, so `state[2][self.i]` is `None` as initialized.
+        # When decoding any output sequence token by token during prediction,
+        # `state[2][self.i]` contains representations of the decoded output at
+        # the `i`-th block up to the current time step
         if state[2][self.i] is None:
             key_values = X
         else:
@@ -555,25 +552,24 @@ class DecoderBlock(tf.keras.layers.Layer):
         state[2][self.i] = key_values
         if kwargs["training"]:
             batch_size, num_steps, _ = X.shape
-            # `dec_valid_lens` şekli: (`batch_size`, `num_steps`),
-            #  burada her satır [1, 2, ..., `num_steps`]
+            # Shape of `dec_valid_lens`: (`batch_size`, `num_steps`), where
+            # every row is [1, 2, ..., `num_steps`]
             dec_valid_lens = tf.repeat(tf.reshape(tf.range(1, num_steps + 1),
                                                  shape=(-1, num_steps)), repeats=batch_size, axis=0)
 
         else:
             dec_valid_lens = None
             
-        # Öz-dikkat
+        # Self-attention
         X2 = self.attention1(X, key_values, key_values, dec_valid_lens, **kwargs)
         Y = self.addnorm1(X, X2, **kwargs)
-        # Kodlayıcı - kodçözücüye dikkat. `enc_outputs` şekli:
-        # (`batch_size`, `num_steps`, `num_hiddens`)
+        # Encoder-decoder attention. Shape of `enc_outputs`: (`batch_size`, `num_steps`, `num_hiddens`)
         Y2 = self.attention2(Y, enc_outputs, enc_outputs, enc_valid_lens, **kwargs)
         Z = self.addnorm2(Y, Y2, **kwargs)
         return self.addnorm3(Z, self.ffn(Z), **kwargs), state
 ```
 
-Kodlayıcı-kodçözücü dikkat ve artık bağlantılarda toplama işlemlerinde ölçeklendirilmiş nokta çarpımı işlemlerini kolaylaştırmak için, [**kodçözücünün öznitelik boyutu (`num_hiddens`) kodlayıcınınkiyle aynıdır.**]
+Kodlayıcı-kodçözücü dikkat ve artık bağlantılarda ekleme işlemlerinde ölçeklendirilmiş nokta çarpımı işlemlerini kolaylaştırmak için, [**kodçözücünün  öznitelik boyutu (`num_hiddens`) kodlayıcınınkiyle aynıdır.**]
 
 ```{.python .input}
 decoder_blk = DecoderBlock(24, 48, 8, 0.5, 0)
@@ -600,7 +596,7 @@ state = [encoder_blk(X, valid_lens), valid_lens, [None]]
 decoder_blk(X, state, training=False)[0].shape
 ```
 
-Şimdi `DecoderBlock` `DecoderBlock` örneklerinden oluşan [**tam dönüştürücü kodçözücüyü**] oluşturuyoruz. Sonunda, tam bağlı bir katman tüm `vocab_size` olası çıktı belirteçleri için tahmin hesaplar. Hem dekoder öz-dikkat ağırlıkları hem de kodlayıcı-kodçözücü dikkat ağırlıkları daha sonra görselleştirme için saklanır.
+Şimdi `DecoderBlock` `DecoderBlock` örneklerinden oluşan [****tüm dönüştürücü dekoderi**] oluşturuyoruz. Sonunda, tam bağlı bir katman tüm `vocab_size` olası çıktı belirteçleri için tahmin hesaplar. Hem dekoder öz-dikkat ağırlıkları hem de kodlayıcı-kod çözücü dikkat ağırlıkları daha sonra görselleştirme için saklanır.
 
 Şimdi, `DecoderBlock`'un `num_layers` tane örnekten oluşan [**bütün dönüştürücü kodçözücüsünü**] oluşturuyoruz. Sonunda, tam bağlı bir katman, `vocab_size` boyutlu tüm olası çıktı belirteçleri için tahminleri hesaplar. Hem kodçözücü özdikkat ağırlıkları hem de kodlayıcı-kodçözücü dikkat ağırlıkları daha sonrasındaki görselleştirme için saklanır.
 
@@ -628,10 +624,10 @@ class TransformerDecoder(d2l.AttentionDecoder):
         self._attention_weights = [[None] * len(self.blks) for _ in range (2)]
         for i, blk in enumerate(self.blks):
             X, state = blk(X, state)
-            # Kodçözücü özdikkat ağırlıkları
+            # Decoder self-attention weights
             self._attention_weights[0][
                 i] = blk.attention1.attention.attention_weights
-            # Kodlayıcı-kodçözücü dikkat ağırlıkları
+            # Encoder-decoder attention weights
             self._attention_weights[1][
                 i] = blk.attention2.attention.attention_weights
         return self.dense(X), state
@@ -668,10 +664,10 @@ class TransformerDecoder(d2l.AttentionDecoder):
         self._attention_weights = [[None] * len(self.blks) for _ in range (2)]
         for i, blk in enumerate(self.blks):
             X, state = blk(X, state)
-            # Kodçözücü özdikkat ağırlıkları
+            # Decoder self-attention weights
             self._attention_weights[0][
                 i] = blk.attention1.attention.attention_weights
-            # Kodlayıcı-kodçözücü dikkat ağırlıkları
+            # Encoder-decoder attention weights
             self._attention_weights[1][
                 i] = blk.attention2.attention.attention_weights
         return self.dense(X), state
@@ -700,12 +696,12 @@ class TransformerDecoder(d2l.AttentionDecoder):
     
     def call(self, X, state, **kwargs):
         X = self.pos_encoding(self.embedding(X) * tf.math.sqrt(tf.cast(self.num_hiddens, dtype=tf.float32)), **kwargs)
-        self._attention_weights = [[None] * len(self.blks) for _ in range(2)]  # Kodçözücüdeki 2 dikkat katmanı
+        self._attention_weights = [[None] * len(self.blks) for _ in range(2)]  # 2 Attention layers in decoder
         for i, blk in enumerate(self.blks):
             X, state = blk(X, state, **kwargs)
-            # Kodçözücü özdikkat ağırlıkları
+            # Decoder self-attention weights
             self._attention_weights[0][i] = blk.attention1.attention.attention_weights
-            # Kodlayıcı-kodçözücü dikkat ağırlıkları
+            # Encoder-decoder attention weights
             self._attention_weights[1][i] = blk.attention2.attention.attention_weights
         return self.dense(X), state
     
@@ -716,7 +712,7 @@ class TransformerDecoder(d2l.AttentionDecoder):
 
 ## [**Eğitim**]
 
-Dönüştürücü mimarisini takip ederek bir kodlayıcı-kodçözücü modeli oluşturalım. Burada hem dönüştürücü kodlayıcının hem de dönüştürücü kodçözücünün 4 kafalı dikkat kullanan 2 katmana sahip olduğunu belirtiyoruz. :numref:`sec_seq2seq_training` içindekine benzer şekilde, dönüştürücü modelini İngilizce-Fransızca makine çevirisi veri kümelerinde diziden diziye öğrenmeye yönelik eğitiyoruz.
+Dönüştürücü mimarisini takip ederek bir kodlayıcı-kodçözücü modeli oluşturalım. Burada hem dönüştürücü kodlayıcının hem de dönüştürücü kodçözücünün 4 kafalı dikkat kullanan 2 katmana sahip olduğunu belirtiyoruz. :numref:`sec_seq2seq_training`'e benzer şekilde, dönüştürücü modelini İngilizce-Fransızca makine çevirisi veri kümelerinde diziden diziye öğrenmeye yönelik eğitiyoruz.
 
 ```{.python .input}
 num_hiddens, num_layers, dropout, batch_size, num_steps = 32, 2, 0.1, 64, 10
@@ -827,7 +823,7 @@ d2l.show_heatmaps(
     figsize=(7, 3.5))
 ```
 
-[**Hem kodçözücü özdikkat ağırlıklarını hem de kodlayıcı-kodçözücü dikkat ağırlıklarını görselleştirmek için daha fazla veri düzenlemeye ihtiyacımız var.**] Örneğin, maskelenmiş dikkat ağırlıklarını sıfırla dolduruyoruz. Kodçözücü özdikkat ağırlıklarının ve kodlayıcı-kodçözücü dikkat ağırlıklarının her ikisinin de aynı sorguları olduğunu unutmayın: Dizinin başlangıç belirteci ve ardından çıktı belirteçleri.
+[**Hem kodçözücü özdikkat ağırlıklarını hem de kodlayıcı-kodçözücü dikkat ağırlıklarını görselleştirmek için daha fazla veri düzenlemeye ihtiyacımız var.**] Örneğin, maskeli dikkat ağırlıklarını sıfırla dolduruyoruz. Kodçözücü özdikkat ağırlıklarının ve kodlayıcı-kodçözücü dikkat ağırlıklarının her ikisinin de aynı sorguları olduğunu unutmayın: Dizinin başlangıcı belirteci ve ardından çıktı belirteçleri.
 
 ```{.python .input}
 dec_attention_weights_2d = [d2l.tensor(head[0]).tolist()
@@ -871,18 +867,18 @@ dec_self_attention_weights, dec_inter_attention_weights = tf.transpose(
 print(dec_self_attention_weights.shape, dec_inter_attention_weights.shape)
 ```
 
-Kodçözücünün özdikkatinin otomatik bağlanım özelliği nedeniyle, hiçbir sorgu sorgu konumundan sonra anahtar/değer çiftlerine ilgi göstermez.
+Kodçözücünün özdikkatinin otomatik bagğlanım özelliği nedeniyle, hiçbir sorgu sorgu konumundan sonra anahtar/değer çiftlerine ilgi göstermez.
 
 ```{.python .input}
 #@tab all
-# Dizi başlangıç belirtecini içermek için 1 ekle
+# Plus one to include the beginning-of-sequence token
 d2l.show_heatmaps(
     dec_self_attention_weights[:, :, :, :len(translation.split()) + 1],
     xlabel='Key positions', ylabel='Query positions',
     titles=['Head %d' % i for i in range(1, 5)], figsize=(7, 3.5))
 ```
 
-Kodlayıcının özdikkatindeki duruma benzer şekilde, girdi dizisince belirtilen geçerli uzunluğu aracılığıyla, [**çıktı dizisinden gelen hiçbir sorgu bu girdi dizisinden dolgu belirteçlerine ilgi göstermez.**]
+Kodlayıcının özdikkatindeki duruma benzer şekilde, girdi dizisinincd belirtilen geçerli uzunluğu aracılığıyla, [**çıktı dizisinden gelen hiçbir sorgu bu girdi dizisinden dolgu belirteçlerine ilgi göstermez.**]
 
 ```{.python .input}
 #@tab all
@@ -898,16 +894,16 @@ Dönüştürücü mimarisi başlangıçta diziden-diziye öğrenme için öneril
 
 * Dönüştürücü, kodlayıcı-kodçözücü mimarisinin bir örneğidir, ancak kodlayıcı veya kodçözücü uygulamada ayrı ayrı kullanılabilir.
 * Dönüştürücüde, girdi dizisini ve çıktı dizisini temsil etmek için çoklu kafalı özdikkat kullanılır, ancak kodçözücünün maskelenmiş bir sürüm aracılığıyla otomatik bağlanım özelliğini korumak zorundadır.
-* Hem artık bağlantılar hem de dönüştürücüdeki katman normalleştirmesi, bir çok derin modeli eğitmek için önemlidir.
-* Dönüştürücü modelindeki konumsal olarak ileriye besleme ağı, aynı MLP'yi kullanarak tüm dizi konumlarındaki gösterimi dönüştürür.
+* Hem artık bağlantılar hem de dönüştürücüdeki katman normalleştirmesi, bir çok derin model eğitmek için önemlidir.
+* Dönüştürücü modelindeki konumsal olarak ileri besleme ağı, aynı MLP kullanılarak tüm dizi konumlarındaki gösterimi dönüştürür.
 
 ## Alıştırmalar
 
 1. Deneylerde daha derin bir dönüştürücü eğitin. Eğitim hızını ve çeviri performansını nasıl etkiler?
 1. Dönüştürücüdeki ölçeklendirilmiş nokta çarpımı dikkatini toplayıcı dikkati ile değiştirmek iyi bir fikir midir? Neden?
 1. Dil modellemesi için dönüştürücü kodlayıcısını mı, kodçözücüyü mü veya her ikisini birden mi kullanmalıyız? Bu yöntem nasıl tasarlanabilir?
-1. Girdi dizileri çok uzunsa dönüştürücüler için ne zorluklar olabilir? Neden?
-1. Dönüştürücülerin hesaplama ve bellek verimliliğini nasıl arttırılabilir? İpucu: Tay ve ark. tarafından hazırlanan çalışmaya başvurabilirsiniz. :cite:`Tay.Dehghani.Bahri.ea.2020`.
+1. Giriş dizileri çok uzunsa dönüştürücüler için ne zorluklar olabilir? Neden?
+1. Dönüştürücülerin hesaplama ve bellek verimliliğini nasıl arttıralabilir? İpucu: Tay ve ark. tarafından hazırlanan çalışmaya başvurabilirsiniz. :cite:`Tay.Dehghani.Bahri.ea.2020`.
 1. CNN kullanmadan imge sınıflandırma işleri için dönüştürücü tabanlı modelleri nasıl tasarlayabiliriz? İpucu: Görüntü dönüştürücüye başvurabilirsiniz :cite:`Dosovitskiy.Beyer.Kolesnikov.ea.2021`
 
 :begin_tab:`mxnet`

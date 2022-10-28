@@ -12,10 +12,10 @@ atlayabilirsiniz.
 Miniconda'nın web sitesini ziyaret edin ve Python 3.x sürümünüze ve makine mimarinize göre sisteminiz için uygun sürümü belirleyin. Örneğin, macOS ve Python 3.x kullanıyorsanız, adı "Miniconda3" ve "MacOSX" dizelerini içeren bash betiğini indirin, indirme konumuna gidin ve kurulumu aşağıdaki gibi yürütün:
 
 ```bash
-sh Miniconda3-py39_4.12.0-MacOSX-x86_64.sh -b
+sh Miniconda3-latest-MacOSX-x86_64.sh -b
 ```
 
-Python 3.x'e sahip bir Linux kullanıcısı, adı "Miniconda3" ve "Linux" dizelerini içeren dosyayı indirmeli ve indirme konumunda aşağıda yazılanları yürütmeli:
+Python 3.x'e sahip bir Linux kullanıcısı, adı "Miniconda3" ve "Linux" dizelerini içeren dosyayı indirmeli ve indirme konumunda aşağıdaki yazılıları yürütmeli:
 
 ```bash
 sh Miniconda3-latest-Linux-x86_64.sh -b
@@ -31,14 +31,14 @@ Ardından, doğrudan `conda`'yı çalıştırabilmeniz için kabuğu (shell) sı
 ortam oluşturabilirsiniz:
 
 ```bash
-conda create --name d2l python=3.9 -y
+conda create --name d2l python=3.8 -y
 ```
 
 
 ## D2L Not Defterlerini İndirme
 
 Sonra, bu kitapta kullanılan kodu indirmeniz gerekiyor. Kodu indirmek ve açmak için
-herhangi bir HTML sayfasının üst kısmındaki "Not Defterleri" sekmesine
+herhangi bir HTML sayfasının üst kısmındaki "Tüm Not Defterleri" sekmesine
 tıklayabilirsiniz. Alternatif olarak, "unzip" varsa kullanabilirsiniz
 (yoksa "sudo apt install unzip" yazarak kurabilirsiniz):
 
@@ -95,7 +95,8 @@ pip install tensorflow tensorflow-probability
 Bir sonraki adımımız, bu kitapta bulunan sık kullanılan işlevleri ve sınıfları kapsamak için geliştirdiğimiz `d2l` paketini kurmaktır.
 
 ```bash
-pip install d2l==0.17.5
+# -U: Bütün paketleri en yeni sürümlerine güncelle
+pip install -U d2l
 ```
 
 Bu kurulum adımlarını tamamladıktan sonra, Jupyter not defteri sunucusunu şu şekilde çalıştırarak başlatabiliriz:
@@ -125,17 +126,17 @@ pip uninstall mxnet
 
 Şimdi hangi CUDA sürümünü yüklediğinizi bulmamız gerekiyor. 
 Bunu `nvcc --version` veya `cat /usr/local/cuda/version.txt` komutunu çalıştırarak kontrol edebilirsiniz.
-CUDA 10.2'i yüklediğinizi varsayalım, o zaman aşağıdaki komutla kurabilirsiniz:
+CUDA 10.1'i yüklediğinizi varsayalım, o zaman aşağıdaki komutla kurabilirsiniz:
 
 ```bash
 # Windows kullanıcıları için
-pip install mxnet-cu102==1.7.0 -f https://dist.mxnet.io/python
+pip install mxnet-cu101==1.7.0 -f https://dist.mxnet.io/python
 
 # Linux ve macOS kullanıcıları için
-pip install mxnet-cu102==1.7.0
+pip install mxnet-cu101==1.7.0
 ```
 
-Son rakamları CUDA sürümünüze göre değiştirebilirsiniz. Örn. CUDA 10.1 için `cu101` CUDA 9.0 için `cu90`.
+Son rakamları CUDA sürümünüze göre değiştirebilirsiniz. Örn. CUDA 10.0 için `cu100` CUDA 9.0 için `cu90`.
 :end_tab:
 
 

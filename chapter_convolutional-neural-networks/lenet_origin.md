@@ -367,7 +367,7 @@ def train_ch6(net, train_iter, test_iter, num_epochs, lr, device):
 ```{.python .input}
 #@tab tensorflow
 class TrainCallback(tf.keras.callbacks.Callback):  #@save
-    """A callback to visualize the training progress."""
+    """A callback to visiualize the training progress."""
     def __init__(self, net, train_iter, test_iter, num_epochs, device_name):
         self.timer = d2l.Timer()
         self.animator = d2l.Animator(

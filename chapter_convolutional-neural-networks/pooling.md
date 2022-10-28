@@ -5,7 +5,7 @@
 
 Genellikle esas görevimiz bize imge hakkında küresel bir soru sormaktadır, örn. *bir kedi içeriyor mu?* Bu nedenle tipik olarak son katmanımızın birimleri tüm girdiye karşı hassas olmalıdır. Bilgiyi kademeli olarak toplayarak, daha kaba eşlemeler üreterek, en sonunda küresel bir gösterimi öğrenme amacını gerçekleştiriyoruz ve bunu yaparken evrişimli ara katmanlardaki işlemlerin tüm avantajlarını tutuyoruz.
 
-Dahası, kenarlar gibi (:numref:`sec_conv_layer` içinde tartışıldığına benzer) alt seviye öznitelikleri tespit ederken, genellikle temsillerimizin yer değiştirmelerden etkilenmez olmasını isteriz. Örneğin, siyah beyaz arasında keskin gösterimli bir `X` imgesini alıp tüm imgeyi bir pikselle sağa kaydırırsak, yani `Z[i, j] = X[i, j + 1]`, yeni imgenin çıktısı çok farklı olabilir. Kenar bir piksel ile kaydırılmış olacaktır. Gerçekte, nesneler neredeyse hiç bir zaman aynı yerde olmaz. Aslında, bir tripod ve sabit bir nesneyle bile, deklanşörün hareketi nedeniyle kameranın titreşimi her şeyi bir piksel kaydırabilir (üst düzey kameralar bu sorunu gidermek için özel özelliklerle donatılmıştır).
+Dahası, kenarlar gibi (:numref:`sec_conv_layer`'te tartışıldığına benzer) alt seviye öznitelikleri tespit ederken, genellikle temsillerimizin yer değiştirmelerden etkilenmez olmasını isteriz. Örneğin, siyah beyaz arasında keskin gösterimli bir `X` imgesini alıp tüm imgeyi bir pikselle sağa kaydırırsak, yani `Z[i, j] = X[i, j + 1]`, yeni imgenin çıktısı çok farklı olabilir. Kenar bir piksel ile kaydırılmış olacaktır. Gerçekte, nesneler neredeyse hiç bir zaman aynı yerde olmaz. Aslında, bir tripod ve sabit bir nesneyle bile, deklanşörün hareketi nedeniyle kameranın titreşimi her şeyi bir piksel kaydırabilir (üst düzey kameralar bu sorunu gidermek için özel özelliklerle donatılmıştır).
 
 Bu bölümde, evrişimli katmanların konuma duyarlılığını azaltmak ve gösterimleri uzaysal örnek seyreltmek gibi ikili amaçlara hizmet eden *ortaklama katmanları* tanıtılmaktadır.
 
@@ -18,7 +18,7 @@ Her iki durumda da, çapraz korelasyon uygulayıcısında olduğu gibi, ortaklam
 ![$2 \times 2$ şeklinde bir ortaklama penceresi ile maksimum ortaklama. Gölgeli kısımlar, ilk çıktı elemanı ve çıktı hesaplaması için kullanılan girdi tensör elemanlarıdır: $\max(0, 1, 3, 4)=4$.](../img/pooling.svg)
 :label:`fig_pooling`
 
-:numref:`fig_pooling` içindeki çıktı tensör 2'lik yüksekliğe ve 2'lik genişliğe sahiptir. Dört öğe, her ortaklama penceresindeki maksimum değerden türetilir:
+:numref:`fig_pooling`'teki çıktı tensör 2'lik yüksekliğe ve 2'lik genişliğe sahiptir. Dört öğe, her ortaklama penceresindeki maksimum değerden türetilir:
 
 $$
 \max(0, 1, 3, 4)=4,\\
@@ -29,9 +29,9 @@ $$
 
 Ortaklama penceresi şeklindeki $p \times q$ ortaklama katmanına $p \times q$ ortaklama katmanı denir. Ortaklama işlemi $p \times q$ ortaklama olarak adlandırılır.
 
-Bu bölümün başında belirtilen nesne kenarı algılama örneğine dönelim. Şimdi $2\times 2$ maksimum ortaklama için girdi olarak evrişimli tabakanın çıktısını kullanacağız. Evrişimli katman girdisini `X` ve ortaklama katmanı çıktısını `Y` olarak düzenleyelim. `X[i, j]` ve `X[i, j + 1]` veya `X[i, j + 1]` ve `X[i, j + 2]` değerleri farklı olsa da olmasa da, ortaklama katmanı her zaman `Y[i, j] = 1` çıktısını verir. Yani, $2\times 2$ maksimum ortaklama katmanını kullanarak, evrişimli katman tarafından tanınan desenin yükseklik veya genişlik olarak birden fazla eleman yine de hareket edip etmediğini tespit edebiliriz.
+Bu bölümün başında belirtilen nesne kenar algılama örneğine dönelim. Şimdi $2\times 2$ maksimum ortaklama için girdi olarak evrişimli tabakanın çıktısını kullanacağız. Evrişimli katman girdisini `X` ve ortaklama katmanı çıktısını `Y` olarak düzenleyelim. `X[i, j]` ve `X[i, j + 1]` veya `X[i, j + 1]` ve `X[i, j + 2]` değerleri farklı olsa da olmasa da, ortaklama katmanı her zaman `Y[i, j] = 1` çıktısını verir. Yani, $2\times 2$ maksimum ortaklama katmanını kullanarak, evrişimli katman tarafından tanınan desenin yükseklik veya genişlik olarak birden fazla eleman yine de hareket edip etmediğini tespit edebiliriz.
 
-Aşağıdaki kodda, `pool2d` işlevinde (**ortaklama katmanının ileri yaymasını uyguluyoruz**). Bu işlev :numref:`sec_conv_layer` içindeki `corr2d` işlevine benzer. Ancak, burada çekirdeğimiz yok, çıktıyı girdideki her bölgenin maksimumu veya ortalaması olarak hesaplıyoruz.
+Aşağıdaki kodda, `pool2d` işlevinde (**ortaklama katmanının ileri yaymasını uyguluyoruz**). Bu işlev :numref:`sec_conv_layer`'deki `corr2d` işlevine benzer. Ancak, burada çekirdeğimiz yok, çıktıyı girdideki her bölgenin maksimumu veya ortalaması olarak hesaplıyoruz.
 
 ```{.python .input}
 from d2l import mxnet as d2l
@@ -77,7 +77,7 @@ def pool2d(X, pool_size, mode='max'):
     return Y
 ```
 
-[**İki boyutlu maksimum ortaklama tabakasının çıktısını doğrulamak için**] :numref:`fig_pooling` içinde girdi tensörü `X`'i inşa ediyoruz.
+[**İki boyutlu maksimum ortaklama tabakasının çıktısını doğrulamak için**] :numref:`fig_pooling`'te girdi tensörü `X`'i inşa ediyoruz.
 
 ```{.python .input}
 #@tab all

@@ -58,7 +58,7 @@ $\frac{1}{2}$ sabiti gerçekte bir fark yaratmaz, ancak gösterim olarak uygun o
 ![Verilere doğrusal bir model oturtmak.](../img/fit-linreg.svg)
 :label:`fig_fit_linreg`
 
-$\hat{y}^{(i)}$ tahminleri ile $y^{(i)}$ gözlemleri arasındaki büyük farkların ikinci dereceden bağımlılık nedeniyle daha da büyük kayıba neden olduğuna dikkat edin. $n$ örnekli veri kümesinin tamamında bir modelin kalitesini ölçmek için, eğitim kümesindeki kayıpların ortalamasını alıyoruz (veya eşdeğer bir şekilde topluyoruz).
+$\hat{y}^{(i)}$ tahminleri ile $y^{(i)}$ gözlemleri arasındaki büyük farkların ikinci dereceden bağımlılık nedeniyle daha da büyük kayıba neden olduğuna dikkat edin. $n$ örnekli veri kümesinin tamamında bir modelin kalitesini ölçmek için, eğitim setindeki kayıpların ortalamasını alıyoruz (veya eşdeğer bir şekilde topluyoruz).
 
 $$L(\mathbf{w}, b) =\frac{1}{n}\sum_{i=1}^n l^{(i)}(\mathbf{w}, b) =\frac{1}{n} \sum_{i=1}^n \frac{1}{2}\left(\mathbf{w}^\top \mathbf{x}^{(i)} + b - y^{(i)}\right)^2.$$
 
@@ -198,7 +198,7 @@ for i in range(n):
 f'{timer.stop():.5f} sn'
 ```
 
-(**Alternatif olarak, eleman yönlü toplamı hesaplamak için yeniden yüklenen `+` operatörüne güveniyoruz.**)
+(**Alternatif olarak, eleman-yönlü toplamı hesaplamak için yeniden yüklenen `+` operatörüne güveniyoruz.**)
 
 ```{.python .input}
 #@tab all
@@ -233,7 +233,7 @@ Artık (**normal dağılımları görselleştirebiliriz**).
 #@tab mxnet
 # Görselleştirme için gene numpy kullanın
 x = np.arange(-7, 7, 0.01)
-# Ortalama ve standart sapma çifti
+# Mean and standard deviation pairs
 params = [(0, 1), (0, 2), (3, 1)]
 d2l.plot(x.asnumpy(), [normal(x, mu, sigma).asnumpy() for mu, sigma in params], xlabel='x',
          ylabel='p(x)', figsize=(4.5, 2.5),
@@ -266,7 +266,7 @@ $$P(y \mid \mathbf{x}) = \frac{1}{\sqrt{2 \pi \sigma^2}} \exp\left(-\frac{1}{2 \
 
 $$P(\mathbf y \mid \mathbf X) = \prod_{i=1}^{n} p(y^{(i)}|\mathbf{x}^{(i)}).$$
 
-Maksimum olabilirlik ilkesine göre seçilen tahminciler, *maksimum olabilirlik tahmincileri* olarak adlandırılır. Birçok üstel fonksiyonun çarpımını maksimize etmek zor görünse de, bunun yerine olabilirliğin logaritmasını maksimize ederek, amaç fonksiyonunu değiştirmeden işleri önemli ölçüde basitleştirebiliriz. Tarihsel nedenlerden dolayı, eniyilemeler daha çok azamileştirmekten (maksimizasyon) ziyade asgarileştirme (minimizasyon) olarak ifade edilir. Dolayısıyla, hiçbir şeyi değiştirmeden *negatif log-olabilirlik*, $-\log P(\mathbf y \mid \mathbf X)$, değerini en aza indirebiliriz. Matematik üzerinde biraz çalışmak bize şunu verir:
+Maksimum olabilirlik ilkesine göre seçilen tahminciler, *maksimum olabilirlik tahmincileri* olarak adlandırılır. Birçok üssel fonksiyonun çarpımını maksimize etmek zor görünse de, bunun yerine olabilirliğin logaritmasını maksimize ederek, amaç fonksiyonunu değiştirmeden işleri önemli ölçüde basitleştirebiliriz. Tarihsel nedenlerden dolayı, eniyilemeler daha çok azamileştirmekten (maksimizasyon) ziyade asgarileştirme (minimizasyon) olarak ifade edilir. Dolayısıyla, hiçbir şeyi değiştirmeden *negatif log-olabilirlik*, $-\log P(\mathbf y \mid \mathbf X)$, değerini en aza indirebiliriz. Matematik üzerinde biraz çalışmak bize şunu verir:
 
 $$-\log P(\mathbf y \mid \mathbf X) = \sum_{i=1}^n \frac{1}{2} \log(2 \pi \sigma^2) + \frac{1}{2 \sigma^2} \left(y^{(i)} - \mathbf{w}^\top \mathbf{x}^{(i)} - b\right)^2.$$
 
@@ -278,14 +278,14 @@ $$-\log P(\mathbf y \mid \mathbf X) = \sum_{i=1}^n \frac{1}{2} \log(2 \pi \sigma
 
 ### Yapay Sinir Ağı Şeması
 
-Derin öğrenme uygulayıcıları, modellerinde neler olduğunu görselleştirmek için şemalar çizmeyi severler. :numref:`fig_single_neuron` içinde, doğrusal regresyon modelimizi bir sinir ağı olarak tasvir ediyoruz. Bu diyagramların, her bir girdinin çıktıya nasıl bağlandığı gibi bağlantı desenlerini vurguladığına, ancak ağırlıkların veya ek girdilerin aldığı değerleri vurgulamadığına dikkat edin.
+Derin öğrenme uygulayıcıları, modellerinde neler olduğunu görselleştirmek için şemalar çizmeyi severler. :numref:`fig_single_neuron`'de, doğrusal regresyon modelimizi bir sinir ağı olarak tasvir ediyoruz. Bu diyagramların, her bir girdinin çıktıya nasıl bağlandığı gibi bağlantı desenlerini vurguladığına, ancak ağırlıkların veya ek girdilerin aldığı değerleri vurgulamadığına dikkat edin.
 
 ![Doğrusal regresyon, tek katmanlı bir sinir ağıdır.](../img/singleneuron.svg)
 :label:`fig_single_neuron`
 
-:numref:`fig_single_neuron` içinde gösterilen sinir ağı için, girdiler $x_1, \ldots, x_d$'dir, dolayısıyla girdi katmanındaki *girdi sayısı* (veya *öznitelik boyutu*) $d$'dir. Ağın :numref:`fig_single_neuron` içindeki çıktısı $o_1$'dir, dolayısıyla çıktı katmanındaki *çıktı sayısı* $1$'dir. Girdi değerlerinin hepsinin *verildiğini* ve sadece tek bir *hesaplanmış*  nöron (sinir hücresi) olduğuna dikkat edin. Hesaplamanın nerede gerçekleştiğine odaklanarak, geleneksel olarak katmanları sayarken girdi katmanını dikkate almayız. Yani :numref:`fig_single_neuron` içindeki sinir ağı için *katman sayısı* $1$'dir. Doğrusal regresyon modellerini sadece tek bir yapay nörondan oluşan sinir ağları veya tek katmanlı sinir ağları olarak düşünebiliriz.
+:numref:`fig_single_neuron`'de gösterilen sinir ağı için, girdiler $x_1, \ldots, x_d$'dir, dolayısıyla girdi katmanındaki *girdi sayısı* (veya *öznitelik boyutu*) $d$'dir. Ağın :numref:`fig_single_neuron`'deki çıktısı $ o_1 $'dir, dolayısıyla çıktı katmanındaki *çıktı sayısı* $1$'dir. Girdi değerlerinin hepsinin *verildiğini* ve sadece tek bir *hesaplanmış*  nöron (sinir hücresi) olduğuna dikkat edin. Hesaplamanın nerede gerçekleştiğine odaklanarak, geleneksel olarak katmanları sayarken girdi katmanını dikkate almayız. Yani :numref:`fig_single_neuron`'deki sinir ağı için *katman sayısı* $1$'dir. Doğrusal regresyon modellerini sadece tek bir yapay nörondan oluşan sinir ağları veya tek katmanlı sinir ağları olarak düşünebiliriz.
 
-Doğrusal regresyon için, her girdi her çıktıya bağlı olduğundan (bu durumda yalnızca bir çıktı vardır), bu dönüşümü (:numref:`fig_single_neuron` içindeki çıktı katmanı) *tam bağ(lantı)lı katman* veya *yoğun katman* olarak kabul edebiliriz. Bir sonraki bölümde bu tür katmanlardan oluşan ağlar hakkında daha çok konuşacağız.
+Doğrusal regresyon için, her girdi her çıktıya bağlı olduğundan (bu durumda yalnızca bir çıktı vardır), bu dönüşümü (:numref:`fig_single_neuron`'deki çıktı katmanı) *tam bağlantılı katman* veya *yoğun katman* olarak kabul edebiliriz. Bir sonraki bölümde bu tür katmanlardan oluşan ağlar hakkında daha çok konuşacağız.
 
 ### Biyoloji
 
@@ -317,7 +317,7 @@ Aynı zamanda, günümüzde derin öğrenmedeki çoğu araştırma, sinirbilimde
     1. $w$'ye göre kaybın gradyanını hesaplayınız.
     1. Gradyanı sıfıra eşitleyerek ve matris denklemini çözerek analitik çözümü bulunuz.
     1. Bu ne zaman rasgele gradyan iniş kullanmaktan daha iyi olabilir? Bu yöntem ne zaman bozulabilir?
-1. Eklenen gürültü $\epsilon$'u etkin gürültü modelinin üstel dağılım olduğunu varsayın. Yani, $p(\epsilon) = \frac{1}{2} \exp(-|\epsilon|)$'dur.
+1. Eklenen gürültü $\epsilon$'u yöneten gürültü modelinin üssel dağılım olduğunu varsayın. Yani, $p(\epsilon) = \frac{1}{2} \exp(-|\epsilon|)$'dur.
     1. Verilerin negatif log-olabilirliğini $-\log P(\mathbf y \mid \mathbf X)$ modeli altında yazınız.
     1. Kapalı form çözümü bulabilir misiniz?
     1. Bu sorunu çözmek için bir rasgele gradyan iniş algoritması önerin. Ne yanlış gidebilir (İpucu: Parametreleri güncellemeye devam ederken durağan noktanın yakınında ne olur)? Bunu düzeltebilir misiniz?

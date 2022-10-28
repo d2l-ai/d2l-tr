@@ -1,7 +1,7 @@
 # Gradyan İnişi
 :label:`sec_gd`
 
-Bu bölümde *gradyan inişi*nin altında yatan temel kavramları tanıtacağız. Derin öğrenmede nadiren kullanılmasına rağmen, gradyan inişi anlamak rasgele gradyan iniş algoritmalarını anlamak için anahtardır. Örneğin, optimizasyon problemi aşırı büyük bir öğrenme oranı nedeniyle ıraksayabilir. Bu olay halihazırda gradyan inişinde görülebilir. Benzer şekilde, ön şartlandırma gradyan inişinde yaygın bir tekniktir ve daha gelişmiş algoritmalara taşır. Basit bir özel durumla başlayalım. 
+Bu bölümde *gradyan inişi*nin altında yatan temel kavramları tanıtacağız . Derin öğrenmede nadiren kullanılmasına rağmen, gradyan inişi anlamak rasgele gradyan iniş algoritmalarını anlamak için anahtardır. Örneğin, optimizasyon problemi aşırı büyük bir öğrenme oranı nedeniyle ıraksayabilir. Bu olay halihazırda gradyan inişinde görülebilir. Benzer şekilde, ön şartlandırma gradyan inişinde yaygın bir tekniktir ve daha gelişmiş algoritmalara taşır. Basit bir özel durumla başlayalım. 
 
 ## Tek Boyutlu Gradyan İnişi
 
@@ -10,7 +10,7 @@ Bir boyuttaki gradyan iniş, gradyan iniş algoritmasının amaç işlevinin de�
 $$f(x + \epsilon) = f(x) + \epsilon f'(x) + \mathcal{O}(\epsilon^2).$$
 :eqlabel:`gd-taylor`
 
-Yani, birinci dereceden açılımda $f(x+\epsilon)$, $f(x)$ fonksiyon değeri ve $x$'deki birinci türev $f'(x)$ tarafından verilir. Küçük $\epsilon$ için negatif gradyan yönünde hareket etmenin $f$'nın azalacağını varsaymak mantıksız değildir. İşleri basit tutmak için sabit bir adım boyutu $\eta > 0$ seçip $\epsilon = -\eta f'(x)$'i seçeriz. Bunu yukarıdaki Taylor açılımı içine koyarsak: 
+Yani, birinci dereceden açılımda $f(x+\epsilon)$, $f(x)$ fonksiyon değeri ve $x$'daki birinci türev $f'(x)$ tarafından verilir. Küçük $\epsilon$ için negatif gradyan yönünde hareket etmenin $f$'nın azalacağını varsaymak mantıksız değildir. İşleri basit tutmak için sabit bir adım boyutu $\eta > 0$ seçip $\epsilon = -\eta f'(x)$'i seçeriz. Bunu yukarıdaki Taylor açılımı içine koyarsak: 
 
 $$f(x - \eta f'(x)) = f(x) - \eta f'^2(x) + \mathcal{O}(\eta^2 f'^2(x)).$$
 :eqlabel:`gd-taylor-2`
@@ -52,10 +52,10 @@ import tensorflow as tf
 
 ```{.python .input}
 #@tab all
-def f(x):  # Amaç fonksiyonu
+def f(x):  # Objective function
     return x ** 2
 
-def f_grad(x):  # Amaç fonksiyonunun gradyanı (türevi)
+def f_grad(x):  # Gradient (derivative) of the objective function
     return 2 * x
 ```
 
@@ -69,7 +69,7 @@ def gd(eta, f_grad):
     for i in range(10):
         x -= eta * f_grad(x)
         results.append(float(x))
-    print(f'donem 10, x: {x:f}')
+    print(f'epoch 10, x: {x:f}')
     return results
 
 results = gd(0.2, f_grad)
@@ -99,7 +99,7 @@ $\eta$ öğrenme oranı algoritma tasarımcısı tarafından ayarlanabilir. Çok
 show_trace(gd(0.05, f_grad), f)
 ```
 
-Tersine, aşırı yüksek öğrenim oranı kullanırsak, $\left|\eta f'(x)\right|$ birinci dereceden Taylor genişleme formülü için çok büyük olabilir. Yani, :eqref:`gd-taylor-2` denklemdeki $\mathcal{O}(\eta^2 f'^2(x))$ terimi önemli hale gelebilir. Bu durumda, $x$ yinelemesinin $f(x)$ değerini düşüreceğini garanti edemeyiz. Örneğin, öğrenme oranını $\eta=1.1$ olarak ayarladığımızda, $x$ optimal çözümü $x=0$'i geçersiz kılar ve kademeli olarak ıraksar.
+Tersine, aşırı yüksek öğrenim oranı kullanırsak, $\left|\eta f'(x)\right|$ birinci dereceden Taylor genişleme formülü için çok büyük olabilir. Yani, :eqref:`gd-taylor-2`'teki $\mathcal{O}(\eta^2 f'^2(x))$ terimi önemli hale gelebilir. Bu durumda, $x$ yinelemesinin $f(x)$ değerini düşüreceğini garanti edemeyiz. Örneğin, öğrenme oranını $\eta=1.1$ olarak ayarladığımızda, $x$ optimal çözümü $x=0$'i geçersiz kılar ve kademeli olarak ıraksar.
 
 ```{.python .input}
 #@tab all
@@ -114,10 +114,10 @@ Dışbükey olmayan fonksiyonlarde ne olduğunu göstermek için, bazı sabit $c
 #@tab all
 c = d2l.tensor(0.15 * np.pi)
 
-def f(x):  # Amaç fonksiyonu
+def f(x):  # Objective function
     return x * d2l.cos(c * x)
 
-def f_grad(x):  # Amaç fonksiyonunun gradyanı (türevi)
+def f_grad(x):  # Gradient of the objective function
     return d2l.cos(c * x) - c * x * d2l.sin(c * x)
 
 show_trace(gd(2, f_grad), f)
@@ -129,7 +129,7 @@ Artık tek değişkenli durumun daha iyi bir sezgisine sahip olduğumuza göre, 
 
 $$\nabla f(\mathbf{x}) = \bigg[\frac{\partial f(\mathbf{x})}{\partial x_1}, \frac{\partial f(\mathbf{x})}{\partial x_2}, \ldots, \frac{\partial f(\mathbf{x})}{\partial x_d}\bigg]^\top.$$
 
-Gradyandaki her kısmi türev elemanı $\partial f(\mathbf{x})/\partial x_i$, $x_i$ girdisine göre $\mathbf{x}$'deki $f$ değişiminin oranını gösterir. Tek değişkenli durumda daha önce olduğu gibi, ne yapmamız gerektiğine dair bir fikir edinmek için çok değişkenli fonksiyonlarla ilgili Taylor açılımını kullanabiliriz. Özellikle, elimizde şu var: 
+Gradyandaki her kısmi türev elemanı $\partial f(\mathbf{x})/\partial x_i$ $x_i$ girdisine göre $\mathbf{x}$'deki $f$ değişiminin oranını gösterir. Tek değişkenli durumda daha önce olduğu gibi, ne yapmamız gerektiğine dair bir fikir edinmek için çok değişkenli fonksiyonlarla ilgili Taylor açılımını kullanabiliriz. Özellikle, elimizde şu var: 
 
 $$f(\mathbf{x} + \boldsymbol{\epsilon}) = f(\mathbf{x}) + \mathbf{\boldsymbol{\epsilon}}^\top \nabla f(\mathbf{x}) + \mathcal{O}(\|\boldsymbol{\epsilon}\|^2).$$
 :eqlabel:`gd-multi-taylor`
@@ -138,15 +138,15 @@ Başka bir deyişle, $\boldsymbol{\epsilon}$'te ikinci dereceden terimlere kadar
 
 $$\mathbf{x} \leftarrow \mathbf{x} - \eta \nabla f(\mathbf{x}).$$
 
-Algoritmanın pratikte nasıl davrandığını görmek için girdi olarak iki boyutlu vektörü, $\mathbf{x} = [x_1, x_2]^\top$, çıktı olarak bir skaleri ile bir amaç fonksiyonu, $f(\mathbf{x})=x_1^2+2x_2^2$, oluşturalım. Gradyan $\nabla f(\mathbf{x}) = [2x_1, 4x_2]^\top$ ile verilir. $\mathbf{x}$'in yörüngesini $[-5, -2]$ ilk konumundan gradyan inişle gözlemleyeceğiz. 
+Algoritmanın pratikte nasıl davrandığını görmek için $f(\mathbf{x})=x_1^2+2x_2^2$ girdi olarak iki boyutlu vektör $\mathbf{x} = [x_1, x_2]^\top$ ve çıktı olarak bir skaler ile bir amaç fonksiyon oluşturalım. Gradyan $\nabla f(\mathbf{x}) = [2x_1, 4x_2]^\top$ tarafından verilir. $\mathbf{x}$'in yörüngesini $[-5, -2]$ ilk konumundan gradyan inişle gözlemleyeceğiz. 
 
 Başlangıç olarak, iki yardımcı fonksiyona daha ihtiyacımız var. Birincisi bir güncelleme işlevi kullanır ve ilk değere 20 kez uygular. İkinci yardımcı $\mathbf{x}$'in yörüngesini görselleştirir.
 
 ```{.python .input}
 #@tab all
 def train_2d(trainer, steps=20, f_grad=None):  #@save
-    """Özelleştirilmiş bir eğitici ile 2B amaç işlevini optimize edin."""
-    # `s1` ve `s2` daha sonra kullanılacak dahili durum değişkenleridir
+    """Optimize a 2D objective function with a customized trainer."""
+    # `s1` and `s2` are internal state variables that will be used later
     x1, x2, s1, s2 = -5, -2, 0, 0
     results = [(x1, x2)]
     for i in range(steps):
@@ -159,7 +159,7 @@ def train_2d(trainer, steps=20, f_grad=None):  #@save
     return results
 
 def show_trace_2d(f, results):  #@save
-    """Optimizasyon sırasında 2B değişkenlerin izini gösterin."""
+    """Show the trace of 2D variables during optimization."""
     d2l.set_figsize()
     d2l.plt.plot(*zip(*results), '-o', color='#ff7f0e')
     x1, x2 = d2l.meshgrid(d2l.arange(-5.5, 1.0, 0.1),
@@ -173,10 +173,10 @@ Daha sonra, $\eta = 0.1$ öğrenme oranı için optimizasyon değişkeninin $\ma
 
 ```{.python .input}
 #@tab all
-def f_2d(x1, x2):  # Amaç fonksiyonu
+def f_2d(x1, x2):  # Objective function
     return x1 ** 2 + 2 * x2 ** 2
 
-def f_2d_grad(x1, x2):  # Amaç fonksiyonun gradyanı
+def f_2d_grad(x1, x2):  # Gradient of the objective function
     return (2 * x1, 4 * x2)
 
 def gd_2d(x1, x2, s1, s2, f_grad):
@@ -189,7 +189,7 @@ show_trace_2d(f_2d, train_2d(gd_2d, f_grad=f_2d_grad))
 
 ## Uyarlamalı Yöntemler
 
-:numref:`subsec_gd-learningrate` içinde görebildiğimiz gibi, “doğru” $\eta$ öğrenme oranını elde etmek çetrefillidir. Eğer çok küçük seçersek, çok az ilerleme kaydederiz. Eğer çok büyük seçersek, çözüm salınır ve en kötü ihtimalle ıraksayabilir. $\eta$'yi otomatik olarak belirleyebilirsek veya bir öğrenme oranı seçmek zorunda kalmaktan kurtulsak ne olur? Bu durumda sadece amaç fonksiyonun değerine ve gradyanlarına değil, aynı zamanda *eğri*sinin değerine de bakan ikinci dereceden yöntemler yardımcı olabilir. Bu yöntemler, hesaplama maliyeti nedeniyle doğrudan derin öğrenmeye uygulanamamakla birlikte, aşağıda belirtilen algoritmaların arzu edilen özelliklerinin çoğunu taklit eden gelişmiş optimizasyon algoritmalarının nasıl tasarlanacağına dair yararlı önseziler sağlarlar. 
+:numref:`subsec_gd-learningrate`'te görebildiğimiz gibi, $\eta$ “doğru” öğrenme oranını elde etmek çetrefillidir. Eğer çok küçük seçersek, çok az ilerleme kaydederiz. Eğer çok büyük seçersek, çözüm salınır ve en kötü ihtimalle ıraksayabilir. $\eta$'yi otomatik olarak belirleyebilirsek veya bir öğrenme oranı seçmek zorunda kalmaktan kurtulsak ne olur? Bu durumda sadece amaç fonksiyonun değerine ve gradyanlarına değil, aynı zamanda *eğri*sinin değerine de bakan ikinci dereceden yöntemler yardımcı olabilir. Bu yöntemler, hesaplama maliyeti nedeniyle doğrudan derin öğrenmeye uygulanamamakla birlikte, aşağıda belirtilen algoritmaların arzu edilen özelliklerinin çoğunu taklit eden gelişmiş optimizasyon algoritmalarının nasıl tasarlanacağına dair yararlı önseziler sağlarlar. 
 
 ### Newton Yöntemi
 
@@ -198,11 +198,11 @@ show_trace_2d(f_2d, train_2d(gd_2d, f_grad=f_2d_grad))
 $$f(\mathbf{x} + \boldsymbol{\epsilon}) = f(\mathbf{x}) + \boldsymbol{\epsilon}^\top \nabla f(\mathbf{x}) + \frac{1}{2} \boldsymbol{\epsilon}^\top \nabla^2 f(\mathbf{x}) \boldsymbol{\epsilon} + \mathcal{O}(\|\boldsymbol{\epsilon}\|^3).$$
 :eqlabel:`gd-hot-taylor`
 
-Hantal notasyondan kaçınmak için $\mathbf{H} \stackrel{\mathrm{def}}{=} \nabla^2 f(\mathbf{x})$'i $f$'in Hessian'i olarak tanımlıyoruz, ki bu bir $d \times d$ matristir. Küçük $d$ ve basit sorunlar için $\mathbf{H}$'nin hesaplaması kolaydır. Öte yandan derin sinir ağları için $\mathbf{H}$, $\mathcal{O}(d^2)$ girdilerinin depolanması maliyeti nedeniyle yasaklayıcı derecede büyük olabilir. Ayrıca geri yayma yoluyla hesaplamak çok pahalı olabilir. Şimdilik böyle düşünceleri göz ardı edelim ve hangi algoritmayı alacağımıza bakalım. 
+Hantal notasyondan kaçınmak için $\mathbf{H} \stackrel{\mathrm{def}}{=} \nabla^2 f(\mathbf{x})$'i $f$'in Hessian'i olarak tanımlıyoruz, ki bu bir $d \times d$ matristir. Küçük $d$ ve basit sorunlar için $\mathbf{H}$'nin hesaplaması kolaydır. Öte yandan derin sinir ağları için $\mathbf{H}$, $\mathcal{O}(d^2)$ girdilerinin depolanması maliyeti nedeniyle yasaklayıcı derecede büyük olabilir. Ayrıca geri yayma yoluyla hesaplamak çok pahalı olabilir. Şimdilik böyle düşüncelere göz ardı edelim ve hangi algoritmayı alacağımıza bakalım. 
 
-Sonuçta, minimum $f$, $\nabla f = 0$'i karşılar. :numref:`subsec_calculus-grad` içindeki kalkülüs kurallarını izleyerek :eqref:`gd-hot-taylor` türevlerini $\boldsymbol{\epsilon}$ ile ilgili olarak alıp ve yüksek dereceden terimleri göz ardı ederek şuna varırız:
+Sonuçta, minimum $f$, $\nabla f = 0$'i karşılar. :numref:`subsec_calculus-grad`'teki kalkülüs kurallarını izleyerek :eqref:`gd-hot-taylor` türevlerini $\boldsymbol{\epsilon}$ ile ilgili olarak alarak ve yüksek dereceden terimleri göz ardı ederek şuna varırız:
 
-$$\nabla f(\mathbf{x}) + \mathbf{H} \boldsymbol{\epsilon} = 0 \text{ ve böylece }
+$$\nabla f(\mathbf{x}) + \mathbf{H} \boldsymbol{\epsilon} = 0 \text{ and hence }
 \boldsymbol{\epsilon} = -\mathbf{H}^{-1} \nabla f(\mathbf{x}).$$
 
 Yani, optimizasyon probleminin bir parçası olarak Hessian $\mathbf{H}$'nin tersini almalıyız. 
@@ -215,13 +215,13 @@ Diğer problemlerde neler olduğunu görelim. Bazı sabit $c$ için dışbükey 
 #@tab all
 c = d2l.tensor(0.5)
 
-def f(x):  # Amaç fonksiyonu
+def f(x):  # Objective function
     return d2l.cosh(c * x)
 
-def f_grad(x):  # Amaç fonksiyonun gradyanı
+def f_grad(x):  # Gradient of the objective function
     return c * d2l.sinh(c * x)
 
-def f_hess(x):  # Amaç fonksiyonunun Hessian'i
+def f_hess(x):  # Hessian of the objective function
     return c**2 * d2l.cosh(c * x)
 
 def newton(eta=1):
@@ -230,7 +230,7 @@ def newton(eta=1):
     for i in range(10):
         x -= eta * f_grad(x) / f_hess(x)
         results.append(float(x))
-    print('donem 10, x:', x)
+    print('epoch 10, x:', x)
     return results
 
 show_trace(newton(), f)
@@ -242,13 +242,13 @@ show_trace(newton(), f)
 #@tab all
 c = d2l.tensor(0.15 * np.pi)
 
-def f(x):  # Amaç fonksiyonu
+def f(x):  # Objective function
     return x * d2l.cos(c * x)
 
-def f_grad(x):  # Amaç fonksiyonun gradyanı
+def f_grad(x):  # Gradient of the objective function
     return d2l.cos(c * x) - c * x * d2l.sin(c * x)
 
-def f_hess(x):  # Amaç fonksiyonun Hessian'i
+def f_hess(x):  # Hessian of the objective function
     return - 2 * c * d2l.sin(c * x) - x * c**2 * d2l.cos(c * x)
 
 show_trace(newton(), f)
@@ -265,7 +265,7 @@ show_trace(newton(0.5), f)
 
 Biz sadece bazı dışbükey ve üç kez türevlenebilir amaç fonksiyonu $f$ için Newton yönteminin yakınsama oranını analiz ediyoruz, burada ikinci türev sıfırdan farklı, yani $f'' > 0$. Çok değişkenli kanıt, aşağıdaki tek boyutlu argümanın basit bir uzantısıdır ve sezgi açısından bize pek yardımcı olmadığından ihmal edilir. 
 
-$k$'inci yinelemesinde $x$ değerini $x^{(k)}$ ile belirtelim ve $e^{(k)} \stackrel{\mathrm{def}}{=} x^{(k)} - x^*$ yinelemesinde eniyilikten uzaklık olmasına izin verelim. Taylor açılımı ile $f'(x^*) = 0$ durumu aşağıdaki gibi yazılabilir:
+$k.$ yinelemesinde $x$ değerini $x^{(k)}$ ile belirtin ve $e^{(k)} \stackrel{\mathrm{def}}{=} x^{(k)} - x^*$ yinelemesinde eniyilikten uzaklık olmasına izin verin. Taylor açılımı ile $f'(x^*) = 0$ durumu aşağıdaki gibi yazılabilir:
 
 $$0 = f'(x^{(k)} - e^{(k)}) = f'(x^{(k)}) - e^{(k)} f''(x^{(k)}) + \frac{1}{2} (e^{(k)})^2 f'''(\xi^{(k)}),$$
 
@@ -293,9 +293,9 @@ Bu tam Newton'un yöntemi kadar iyi olmasa da, onu kullanmamaktan çok daha iyid
 
 ### Doğru Üzerinde Arama ile Gradyan İnişi
 
-Gradyan inişindeki en önemli sorunlardan biri, hedefi aşmamız veya yetersiz ilerleme kaydetmemizdir. Sorun için basit bir düzeltme, gradyan iniş ile birlikte doğru üzerinde arama kullanmaktır. Yani, $\nabla f(\mathbf{x})$ tarafından verilen yönü kullanırız ve ardından $\eta$ öğrenme oranının $f(\mathbf{x} - \eta \nabla f(\mathbf{x}))$'yi en aza indirmek için ikili arama yaparız.
+Gradyan inişindeki en önemli sorunlardan biri, hedefi aşmamız veya yetersiz ilerleme kaydedebilmemizdir. Sorun için basit bir düzeltme, gradyan iniş ile birlikte doğru üzerinde arama kullanmaktır. Yani, $\nabla f(\mathbf{x})$ tarafından verilen yönü kullanırız ve ardından $\eta$ öğrenme oranının $f(\mathbf{x} - \eta \nabla f(\mathbf{x}))$'yi en aza indirmwk için ikili arama yaparız.
 
-Bu algoritma hızla yakınsar (analiz ve kanıt için bkz., :cite:`Boyd.Vandenberghe.2004`). Ancak, derin öğrenme amacıyla bu o kadar da mümkün değildir, çünkü doğru üzerinde aramanın her adımı, tüm veri kümesindeki amaç fonksiyonunu değerlendirmemizi gerektirir. Bunu tamamlamak çok maliyetlidir.
+Bu algoritma hızla yakınsar (analiz ve kanıt için bkz., :cite:`Boyd.Vandenberghe.2004`). Ancak, derin öğrenme amacıyla bu o kadar da mümkün değildir, çünkü doğru üzerinde aramanın her adımı, tüm veri kümesindeki amaç fonksiyonunu değerlendirmemizi gerektirir. Bunu başarmak çok maliyetlidir.
 
 ## Özet
 
@@ -310,14 +310,14 @@ Bu algoritma hızla yakınsar (analiz ve kanıt için bkz., :cite:`Boyd.Vandenbe
 
 1. Gradyan inişi için farklı öğrenme oranları ve amaç fonksiyonları ile deney yapın.
 1. $[a, b]$ aralığında dışbükey işlevini en aza indirmek için doğru üzerinde arama gerçekleştirin.
-    1. İkili arama için türevlere ihtiyacınız var mı, mesela $[a, (a+b)/2]$ veya $[(a+b)/2, b]$'yi seçip seçmeyeceğinize karar vermek için?
+    1. İkili arama için türevlere ihtiyacınız var mı, yani $[a, (a+b)/2]$ veya $[(a+b)/2, b]$'yi seçip seçmeyeceğinize karar vermek için?
     1. Algoritma için yakınsama oranı ne kadar hızlıdır?
     1. Algoritmayı uygulayın ve $\log (\exp(x) + \exp(-2x -3))$'ü en aza indirmek için uygulayın.
 1. Gradyan inişinin son derece yavaş olduğu $\mathbb{R}^2$'te tanımlanan bir amaç fonksiyonu tasarlayın. İpucu: Farklı koordinatları farklı şekilde ölçeklendirin.
 1. Aşağıdaki ön şartlandırmaları kullanarak Newton yönteminin hafifsiklet versiyonunu uygulayın:
-    1. Ön koşul olarak köşegen Hessian kullanın.
+    1. Ön koşul olarak diyagonal Hessian kullanın.
     1. Gerçek (muhtemelen işaretli) değerler yerine bunun mutlak değerlerini kullanın.
-    1. Bunu yukarıdaki probleme uygulayın.
-1. Yukarıdaki algoritmayı bir takım amaç fonksiyonuna uygulayın (dışbükey olan veya olmayan). Koordinatları $45$ derece döndürürseniz ne olur?
+    1. Bunu yukarıdaki probaleme uygulayın.
+1. Yukarıdaki algoritmayı bir takım amaç fonksiyonuna uygulayın (dışbükey veya değil). Koordinatları $45$ derece döndürürseniz ne olur?
 
 [Tartışmalar](https://discuss.d2l.ai/t/351)

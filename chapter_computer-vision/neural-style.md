@@ -1,15 +1,15 @@
 # Sinir Stil Transferi
 
-Eğer bir fotoğraf meraklısı iseniz, filtreye aşina olabilirsiniz. Fotoğrafların renk stilini değiştirebilir, böylece manzara fotoğrafları daha keskin hale gelir veya portre fotoğrafları beyaz tonlara sahip olur. Ancak, bir filtre genellikle fotoğrafın yalnızca bir yönünü değiştirir. Bir fotoğrafa ideal bir stil uygulamak için muhtemelen birçok farklı filtre kombinasyonunu denemeniz gerekir. Bu işlem, bir modelin hiper parametrelerini ayarlamak kadar karmaşıktır. 
+Eğer bir fotoğraf meraklısı iseniz, filtreye aşina olabilirsiniz. Fotoğrafların renk stilini değiştirebilir, böylece manzara fotoğrafları daha keskin hale gelir veya portre fotoğrafları beyaz tonlara sahip olur. Ancak, bir filtre genellikle fotoğrafın yalnızca bir yönünü değiştirir. Bir fotoğrafa ideal bir stil uygulamak için muhtemelen birçok farklı filtre kombinasyonunu denemeniz gerekir. Bu işlem, bir modelin hiperparametrelerini ayarlamak kadar karmaşıktır. 
 
-Bu bölümde, bir imgenin stilini otomatik olarak başka bir imgeye (örn. *stil aktarımı* :cite:`Gatys.Ecker.Bethge.2016`) uygulamak için CNN'nin katmanlı temsillerinden yararlanacağız. Bu görevde iki girdi imgesi gerekir: Biri *içerik imgesi*, diğeri ise *stil imgesi*. İçerik imgesini stil imgesine yakın hale getirmek için sinir ağlarını kullanacağız. Örneğin, :numref:`fig_style_transfer` içindeki içerik imgesi Seattle'ın banliyölerindeki Rainier Milli Parkı'nda tarafımızdan çekilen bir manzara fotoğrafıdır ve stil imgesi sonbahar meşe ağaçları temalı bir yağlı boya tablosudur. Sentezlenmiş çıktı imgesinde, stil imgesinin yağlı fırça darbeleri uygulanarak, içerik imgesindeki nesnelerin ana şekli korunurken daha canlı renkler elde edilir. 
+Bu bölümde, bir imgenin stilini otomatik olarak başka bir imgeye (örn. *stil aktarımı* :cite:`Gatys.Ecker.Bethge.2016`) uygulamak için CNN'nin katmanlı temsillerinden yararlanacağız. Bu görevde iki girdi imgesi gerekir: Biri *içerik imgesi*, diğeri ise *stil imgesi*. İçerik imgesini stil imgesine yakın hale getirmek için sinir ağlarını kullanacağız. Örneğin, :numref:`fig_style_transfer`'teki içerik imgesi Seattle'ın banliyölerindeki Rainier Milli Parkı'nda tarafımızdan çekilen bir manzara fotoğrafıdır ve stil imgesi sonbahar meşe ağaçları temalı bir yağlı boya tablosudur. Sentezlenmiş çıktı imgesinde, stil imgesinin yağlı fırça darbeleri uygulanarak, içerik imgesindeki nesnelerin ana şekli korunurken daha canlı renkler elde edilir. 
 
-![Verilen içerik ve stil imgeleri, stil aktarımı sentezlenmiş bir imge verir.](../img/style-transfer.svg)
+![Verilen içerik ve stil görüntüleri, stil aktarımı sentezlenmiş bir görüntü verir.](../img/style-transfer.svg)
 :label:`fig_style_transfer`
 
 ## Yöntem
 
-:numref:`fig_style_transfer_model`, CNN tabanlı stil aktarım yöntemini basitleştirilmiş bir örnekle gösterir. İlk olarak, sentezlenen imgeyi, örneğin içerik imgesine ilkleriz. Bu sentezlenen imge, stil aktarımı işlemi sırasında güncellenmesi gereken tek değişkendir, yani eğitim sırasında güncellenecek model parametreleri. Daha sonra imge özniteliklerini ayıklamak için önceden eğitilmiş bir CNN seçiyoruz ve eğitim sırasında model parametrelerini donduruyoruz. Bu derin CNN imgeler için hiyerarşik öznitelikleri ayıklamak için çoklu katman kullanır. İçerik öznitelikleri veya stil öznitelikleri olarak bu katmanlardan bazılarının çıktısını seçebiliriz. Örnek olarak :numref:`fig_style_transfer_model` figürünü ele alın. Buradaki önceden eğitilmiş sinir ağı, ikinci katmanın içerik özniteliklerini çıkardığı ve birinci ve üçüncü katmanlar stil özniteliklerini çıkardığı 3 evrişimli katmana sahiptir. 
+:numref:`fig_style_transfer_model`, CNN tabanlı stil aktarım yöntemini basitleştirilmiş bir örnekle gösterir. İlk olarak, sentezlenen imgeyi, örneğin içerik imgesine ilkleriz. Bu sentezlenen imge, stil aktarımı işlemi sırasında güncellenmesi gereken tek değişkendir, yani eğitim sırasında güncellenecek model parametreleri. Daha sonra imge özniteliklerini ayıklamak için önceden eğitilmiş bir CNN seçiyoruz ve eğitim sırasında model parametrelerini donduruyoruz. Bu derin CNN imgeler için hiyerarşik öznitelikleri ayıklamak için çoklu katman kullanır. İçerik öznitelikleri veya stil öznitelikleri olarak bu katmanlardan bazılarının çıktısını seçebiliriz. Örnek olarak :numref:`fig_style_transfer_model`'ü ele alın. Buradaki önceden eğitilmiş sinir ağı, ikinci katmanın içerik özniteliklerini çıkardığı ve birinci ve üçüncü katmanlar stil özniteliklerini çıkardığı 3 evrişimli katmana sahiptir. 
 
 ![CNN tabanlı stil aktarım süreci. Düz çizgiler ileri yayma yönünü ve noktalı çizgiler geriye yaymayı gösterir. ](../img/neural-style.svg)
 :label:`fig_style_transfer_model`
@@ -108,7 +108,7 @@ pretrained_net = gluon.model_zoo.vision.vgg19(pretrained=True)
 pretrained_net = torchvision.models.vgg19(pretrained=True)
 ```
 
-İmgenin içerik özniteliklerini ve stil özniteliklerini ayıklamak için, VGG ağındaki belirli katmanların çıktısını seçebiliriz. Genel olarak, girdi katmanına ne kadar yakın olursa, imgenin ayrıntılarını çıkarmak daha kolay olur ve tersi yönde de, imgenin küresel bilgilerini çıkarmak daha kolay olur. Sentezlenen imgede içerik imgesinin ayrıntılarını aşırı derecede tutmaktan kaçınmak için imgenin içerik özniteliklerinin çıktısını almak için *içerik katmanı* olarak çıktıya daha yakın bir VGG katmanı seçiyoruz. Yerel ve küresel stil özniteliklerini ayıklamak için farklı VGG katmanlarının çıktısını da seçiyoruz. Bu katmanlar *stil katmanları* olarak da adlandırılır. :numref:`sec_vgg` içinde belirtildiği gibi, VGG ağı 5 evrişimli blok kullanır. Deneyde, dördüncü evrişimli bloğun  son evrişimli katmanını içerik katmanı olarak ve her bir evrişimli bloğun ilk evrişimli katmanını stil katmanı olarak seçiyoruz. Bu katmanların indeksleri `pretrained_net` örneğini yazdırarak elde edilebilir.
+İmgenin içerik özniteliklerini ve stil özniteliklerini ayıklamak için, VGG ağındaki belirli katmanların çıktısını seçebiliriz. Genel olarak, girdi katmanına ne kadar yakın olursa, imgenin ayrıntılarını çıkarmak daha kolay olur ve tersi yönde de, imgenin küresel bilgilerini çıkarmak daha kolay olur. Sentezlenen imgede içerik imgesinin ayrıntılarını aşırı derecede tutmaktan kaçınmak için imgenin içerik özniteliklerinin çıktısını almak için *içerik katmanı* olarak çıktıya daha yakın bir VGG katmanı seçiyoruz. Yerel ve küresel stil özniteliklerini ayıklamak için farklı VGG katmanlarının çıktısını da seçiyoruz. Bu katmanlar *stil katmanları* olarak da adlandırılır. :numref:`sec_vgg`'te belirtildiği gibi, VGG ağı 5 evrişimli blok kullanır. Deneyde, dördüncü evrişimli bloğun  son evrişimli katmanını içerik katmanı olarak ve her bir evrişimli bloğun ilk evrişimli katmanını stil katmanı olarak seçiyoruz. Bu katmanların indeksleri `pretrained_net` örneğini yazdırarak elde edilebilir.
 
 ```{.python .input}
 #@tab all
@@ -196,7 +196,7 @@ def content_loss(Y_hat, Y):
 
 ### Stil Kaybı
 
-İçerik kaybına benzer şekilde stil kaybı, aynı zamanda sentezlenen imge ile stil imgesi arasındaki stil farkını ölçmek için kare kaybı işlevini kullanır. Herhangi bir stil katmanının stil çıktısını ifade etmeden önce stil katmanı çıktısını hesaplamak için `extract_features` işlevini kullanırız. Çıktının 1 örneği, $c$ kanalları, $h$ yüksekliği ve $w$ genişliği olduğunu varsayalım, bu çıktıyı $c$ satırları ve $hw$ sütunlarıyla $\mathbf{X}$ matrisine dönüştürebiliriz. Bu matris, her birinin uzunluğu $hw$ olan $c$  adet $\mathbf{x}_1, \ldots, \mathbf{x}_c$ vektörlerinin birleşimi olarak düşünülebilir. Burada $\mathbf{x}_i$ vektörü, $i$ kanalının stil özniteliğini temsil eder.
+İçerik kaybına benzer şekilde stil kaybı, aynı zamanda sentezlenen imge ile stil imgesi arasındaki stil farkını ölçmek için kare kaybı işlevini kullanır. Herhangi bir stil katmanının stil çıktısını ifade etmeden önce stil katmanı çıktısını hesaplamak için `extract_features` işlevini kullanırız.Çıktının 1 örneği, $c$ kanalları, yüksekliği $h$ ve genişliği $w$ olduğunu varsayalım, bu çıktıyı $c$ satırları ve $hw$ sütunlarıyla $\mathbf{X}$ matrisine dönüştürebiliriz. Bu matris, her birinin uzunluğu $hw$ olan $c$  adet $\mathbf{x}_1, \ldots, \mathbf{x}_c$ vektörlerinin birleşimi olarak düşünülebilir. Burada $\mathbf{x}_i$ vektörü, $i$ kanalının stil özniteliğini temsil eder.
 
 Bu vektörlerin *Gram matrisinde* $\mathbf{X}\mathbf{X}^\top \in \mathbb{R}^{c \times c}$, $i$ satırındaki ve $j$ sütunundaki $x_{ij}$ öğesi $\mathbf{x}_j$ vektörlerinin nokta çarpımıdır. $i$ ve $j$ kanallarının stil özniteliklerinin korelasyonunu temsil eder. Bu Gram matrisini herhangi bir stil katmanının stil çıktısını temsil etmek için kullanırız. $hw$ değeri daha büyük olduğunda, büyük olasılıkla Gram matrisinde daha büyük değerlere yol açtığını unutmayın. Gram matrisinin yüksekliği ve genişliğinin ikisinin de kanal sayısının $c$ olduğunu da unutmayın. Stil kaybının bu değerlerden etkilenmemesine izin vermek için, aşağıdaki `gram` işlevi Gram matrisini elemanlarının sayısına (yani $chw$) böler.
 
@@ -239,20 +239,20 @@ def tv_loss(Y_hat):
 
 ### Kayıp Fonksiyonu
 
-[**Stil aktarımının kayıp fonksiyonu, içerik kaybı, stil kaybı ve toplam değişim kaybının ağırlıklı toplamıdır**]. Bu ağırlık hiper parametrelerini ayarlayarak sentezlenen imgede, içerik tutma, stil aktarma ve gürültü azaltma arasında denge kurabiliriz.
+[**Stil aktarımının kayıp fonksiyonu, içerik kaybı, stil kaybı ve toplam değişim kaybının ağırlıklı toplamıdır**]. Bu ağırlık hiperparametrelerini ayarlayarak sentezlenen imgede, içerik tutma, stil aktarma ve gürültü azaltma arasında denge kurabiliriz.
 
 ```{.python .input}
 #@tab all
 content_weight, style_weight, tv_weight = 1, 1e3, 10
 
 def compute_loss(X, contents_Y_hat, styles_Y_hat, contents_Y, styles_Y_gram):
-    # Sırasıyla içerik, stil ve toplam varyans kayıplarını hesaplayın
+    # Calculate the content, style, and total variance losses respectively
     contents_l = [content_loss(Y_hat, Y) * content_weight for Y_hat, Y in zip(
         contents_Y_hat, contents_Y)]
     styles_l = [style_loss(Y_hat, Y) * style_weight for Y_hat, Y in zip(
         styles_Y_hat, styles_Y_gram)]
     tv_l = tv_loss(X) * tv_weight
-    # Bütün kayıpları toplayın
+    # Add up all the losses
     l = sum(10 * styles_l + contents_l + [tv_l])
     return contents_l, styles_l, tv_l, l
 ```
@@ -380,14 +380,14 @@ Sentezlenen imgenin içerik imgesinin manzarasını ve nesnelerini koruduğunu v
 
 ## Özet
 
-* Stil aktarımında yaygın olarak kullanılan kayıp fonksiyonu üç bölümden oluşur: (i) İçerik kaybı, sentezlenen imgeyi ve içerik imgesini içerik özniteliklerinde yakınlaştırır; (ii) stil kaybı, sentezlenen imge ve stil imgesini stil özniteliklerinde yakınlaştırır; ve (iii) toplam değişim kaybı sentezlenmiş imgedeki gürültüyü azaltmayı sağlar.
+* Stil aktarımında yaygın olarak kullanılan kayıp fonksiyonu üç bölümden oluşur: (i) içerik kaybı, sentezlenen imgeyi ve içerik imgesini içerik özniteliklerinde yakınlaştırır; (ii) stil kaybı, sentezlenen imge ve stil imgesini stil özniteliklerinde yakınlaştırır; ve (iii) toplam değişim kaybı sentezlenmiş imgedeki gürültüyü azaltmayı sağlar.
 * Eğitim sırasında sentezlenen imgeyi sürekli olarak model parametreleri olarak güncellemek için imge özniteliklerini ayıklamak ve kayıp işlevini en aza indirmek için önceden eğitilmiş bir CNN kullanabiliriz.
 * Stil katmanlarından stil çıktılarını temsil etmek için Gram matrisleri kullanırız.
 
 ## Alıştırmalar
 
 1. Farklı içerik ve stil katmanları seçtiğinizde çıktı nasıl değişir?
-1. Kayıp işlevindeki ağırlık hiper parametrelerini ayarlayın. Çıktıda daha fazla içerik mi yoksa daha az gürültü mü var?
+1. Kayıp işlevindeki ağırlık hiperparametrelerini ayarlayın. Çıktıda daha fazla içerik mi yoksa daha az gürültü mü var?
 1. Farklı içerik ve stil imgeleri kullanın. Sentezlenmiş daha ilginç imgeler oluşturabilir misiniz?
 1. Metin için stil aktarımı uygulayabilir miyiz? İpucu: Hu ve arkadaşlarının araştırma makalesine başvurabilirsiniz :cite:`Hu.Lee.Aggarwal.ea.2020`.
 

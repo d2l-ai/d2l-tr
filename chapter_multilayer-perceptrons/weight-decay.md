@@ -12,11 +12,11 @@ $d$ derecesine sahip terimlerin sayısının, $d$ büyüdükçe hızla arttığ�
 Hem $L_2$ hem de $L_1$ normunu daha önce :numref:`subsec_lin-algebra-norms` ünitesinde tanıtmıştık, ikisi de genel $L_p$ normunun özel durumlarıdır.
 (***Ağırlık sönümü* (genellikle $L_2$ düzenlileştirme olarak adlandırılır), parametrik makine öğrenmesi modellerini düzenlemek için en yaygın kullanılan teknik olabilir.**) Teknik, tüm $f$ işlevleri arasında, $f = 0$ işlevinin (tüm girdilere $0$ değerini atayarak) bir anlamda *en basit* olduğu ve sıfırdan uzaklığına göre bir fonksiyonun karmaşıklığını ölçebileceğimiz temel sezgisiyle motive edilir. Fakat bir fonksiyon ile sıfır arasındaki mesafeyi ne kadar kesinlikle ölçmeliyiz? Tek bir doğru cevap yok. Aslında, fonksiyonel analiz bölümleri ve Banach uzayları teorisi de dahil olmak üzere matematiğin tüm dalları, bu sorunu yanıtlamaya adanmıştır.
 
-Basit bir yorumlama, bir $f(\mathbf{x}) = \mathbf{w}^\top \mathbf{x}$ doğrusal fonksiyonunun karmaşıklığını, ağırlık vektörünün bir normu ile ölçmek olabilir, örneğin, $\| \mathbf{w} \|^2$ gibi. Küçük bir ağırlık vektörü sağlamanın en yaygın yöntemi, onun normunu, kaybın en aza indirilmesi problemine bir ceza terimi olarak eklemektir. Böylece orijinal amaç fonksiyonumuzu, *eğitim etiketlerindeki tahmin kaybını en aza indirir*, yeni bir amaç fonksiyonu ile değiştiriyor, *tahmin kaybı ile ceza teriminin toplamını en aza indiriyoruz*. Şimdi, ağırlık vektörümüz çok büyürse, öğrenme algoritmamız eğitim hatasını en aza indirmek yerine $\| \mathbf{w} \|^2$ ağırlık normunu en aza indirmeye odaklanabilir. Bu tam olarak istediğimiz şey. Bu şeyleri kodda örneklendirmek için, :numref:`sec_linear_regression` içindeki önceki doğrusal regresyon örneğimizi canlandıralım. Kaybımız şöyle verilir:
+Basit bir yorumlama, bir $f(\mathbf{x}) = \mathbf{w}^\top \mathbf{x}$ doğrusal fonksiyonunun karmaşıklığını, ağırlık vektörünün bir normu ile ölçmek olabilir, örneğin, $\| \mathbf{w} \|^2$ gibi. Küçük bir ağırlık vektörü sağlamanın en yaygın yöntemi, onun normunu, kaybın en aza indirilmesi problemine bir ceza terimi olarak eklemektir. Böylece orijinal amaç fonksiyonumuzu, *eğitim etiketlerindeki tahmin kaybını en aza indirmektir*, yeni bir maç fonksiyonu ile değiştiriyor, *tahmin kaybı ile ceza teriminin toplamını en aza indiriyoruz*. Şimdi, ağırlık vektörümüz çok büyürse, öğrenme algoritmamız eğitim hatasını en aza indirmek yerine $\| \mathbf{w} \|^2$ ağırlık normunu en aza indirmeye odaklanabilir. Bu tam olarak istediğimiz şey. Bu şeyleri kodda örneklendirmek için, önceki doğrusal regresyon örneğimiz :numref:`sec_linear_regression`'i canlandıralım. Kaybımız şöyle verilir:
 
 $$L(\mathbf{w}, b) = \frac{1}{n}\sum_{i=1}^n \frac{1}{2}\left(\mathbf{w}^\top \mathbf{x}^{(i)} + b - y^{(i)}\right)^2.$$
 
-$\mathbf{x}^{(i)}$'in öznitelikler, $y^{(i)}$'nin her $i$ veri örneği için etiket ve $(\mathbf{w}, b)$ değerlerinin sırasıyla ağırlık ve ek girdi parametreleri olduğunu hatırlayın. Ağırlık vektörünün büyüklüğünü cezalandırmak için, bir şekilde $\| \mathbf{w} \|^2$'yi kayıp fonksiyonuna eklemeliyiz, ancak model bu yeni ilave ceza ile standart kaybı nasıl bir ödünleşmeye sokmalıdır? Pratikte, bu ödünleşme, geçerleme verilerini kullanarak öğrendiğimiz negatif olmayan bir hiper parametre, yani *düzenlileştirme sabiti* $\lambda$ ile karakterize ediyoruz:
+$\mathbf{x}^{(i)}$'in öznitelikler, $y^{(i)}$'nin her $i$ veri örneği için etiket ve $(\mathbf{w}, b)$ değerlerinin sırasıyla ağırlık ve ek girdi parametreleri olduğunu hatırlayın. Ağırlık vektörünün büyüklüğünü cezalandırmak için, bir şekilde $\| \mathbf{w} \|^2$'yi kayıp fonksiyonuna eklemeliyiz, ancak model bu yeni ilave ceza ile standart kaybı nasıl bir değiş tokuşa sokmalıdır? Pratikte, bu değiş tokuşu, geçerleme verilerini kullanarak öğrendiğimiz negatif olmayan bir hiper parametre, yani *düzenlileştirme sabiti* $\lambda$ ile karakterize ediyoruz:
 
 $$L(\mathbf{w}, b) + \frac{\lambda}{2} \|\mathbf{w}\|^2,$$
 
@@ -26,9 +26,9 @@ Dahası, neden ilk olarak L2 normuyla çalıştığımızı ve örneğin L1 norm
 Aslında, diğer seçenekler geçerli ve istatistiksel bakımdan popülerdir. $L_2$-regresyonlu doğrusal modeller klasik *sırt regresyon* algoritmasını oluştururken, $L_1$-regresyonlu doğrusal regresyon benzer şekilde istatistikte temel bir modeldir, ki popüler olarak *kement regresyon* diye bilinir.
 
 
-$L_2$ normuyla çalışmanın bir nedeni, ağırlık vektörünün büyük bileşenlerine daha büyük cezalar verilmesidir. Bu, öğrenme algoritmamızı, ağırlığı daha fazla sayıda özniteliğe eşit olarak dağıtan modellere doğru yönlendirir. Uygulamada, bu onları tek bir değişkendeki ölçüm hatasına karşı daha gürbüz hale getirebilir. Aksine, $L_1$ cezaları, diğer ağırlıkları sıfıra yaklaştırarak temizler ve ağırlıkları küçük bir öznitelik kümesine yoğunlaştıran modellere yol açar. Buna *öznitelik seçme* denir ve başka nedenlerden dolayı arzu edilebilir.
+$L_2$ normuyla çalışmanın bir nedeni, ağırlık vektörünün büyük bileşenlerine daha büyük cezalar verilmesidir. Bu, öğrenme algoritmamızı, ağırlığı daha fazla sayıda özniteliğe eşit olarak dağıtan modellere doğru yönlendirir. Uygulamada, bu onları tek bir değişkendeki ölçüm hatasına karşı daha gürbüz hale getirebilir. Aksine, $L_1$ cezaları, diğer ağırlıkları sıfıra yaklaştırarak temizler ve ağırlıkları küçük bir öznitelik kümesine yoğunlaştıran modellere yol açar. Buna *öznitelik seçme* denir ve başka nedenlerden dolayı istenebilir.
 
-:eqref:`eq_linreg_batch_update` içindeki gösterimi kullanırsak, $L_2$ ile düzenlileştirilmiş regresyon için rasgele gradyan iniş güncellemeleri aşağıdaki gibidir:
+:eqref:`eq_linreg_batch_update`'deki gösterimi kullanırsak, $L_2$ ile düzenlileştirilmiş regresyon için rasgele gradyan iniş güncellemeleri aşağıdaki gibidir:
 
 $$
 \begin{aligned}
@@ -152,8 +152,8 @@ def train(lambd):
     for epoch in range(num_epochs):
         for X, y in train_iter:
             with autograd.record():
-                # L2 normu ceza terimi eklendi ve yayma,`l2_penalty(w)`'yi 
-                # uzunluğu `batch_size` olan bir vektör yapıyor.
+                # The L2 norm penalty term has been added, and broadcasting
+                # makes `l2_penalty(w)` a vector whose length is `batch_size`
                 l = loss(net(X), y) + lambd * l2_penalty(w)
             l.backward()
             d2l.sgd([w, b], lr, batch_size)
@@ -173,8 +173,8 @@ def train(lambd):
                             xlim=[5, num_epochs], legend=['train', 'test'])
     for epoch in range(num_epochs):
         for X, y in train_iter:
-            # L2 normu ceza terimi eklendi ve yayma,`l2_penalty(w)`'yi 
-            # uzunluğu `batch_size` olan bir vektör yapıyor.
+            # The L2 norm penalty term has been added, and broadcasting
+            # makes `l2_penalty(w)` a vector whose length is `batch_size`
             l = loss(net(X), y) + lambd * l2_penalty(w)
             l.sum().backward()
             d2l.sgd([w, b], lr, batch_size)
@@ -195,8 +195,8 @@ def train(lambd):
     for epoch in range(num_epochs):
         for X, y in train_iter:
             with tf.GradientTape() as tape:
-                # L2 normu ceza terimi eklendi ve yayma,`l2_penalty(w)`'yi 
-                # uzunluğu `batch_size` olan bir vektör yapıyor.
+                # The L2 norm penalty term has been added, and broadcasting
+                # makes `l2_penalty(w)` a vector whose length is `batch_size`
                 l = loss(net(X), y) + lambd * l2_penalty(w)
             grads = tape.gradient(l, [w, b])
             d2l.sgd([w, b], grads, lr, batch_size)
@@ -208,7 +208,7 @@ def train(lambd):
 
 ### [**Düzenleştirmesiz Eğitim**]
 
-Şimdi bu kodu `lambd = 0` ile çalıştırarak ağırlık sönümünü devre dışı bırakıyoruz. Kötü bir şekilde fazla öğrendiğimizi, eğitim hatasını azalttığımızı ancak test hatasını azaltmadığımızı unutmayın---aşırı öğrenmenin bir ders kitabı vakası.
+Şimdi bu kodu `lambd = 0` ile çalıştırarak ağırlık sönümünü devre dışı bırakıyoruz. Kötü bir şekilde fazla öğrendiğimizi, eğitim hatasını azalttığımızı ancak test hatasını azaltmadığımızı unutmayın---bir aşırı öğrenme ders kitabı vakası.
 
 ```{.python .input}
 #@tab all
@@ -229,7 +229,7 @@ train(lambd=3)
 Ağırlık sönümü sinir ağı optimizasyonunda her yerde mevcut olduğu için, derin öğrenme çerçevesi, herhangi bir kayıp fonksiyonuyla birlikte kolay kullanım için ağırlık sönümü optimizasyon algoritmasını kendisine kaynaştırarak bunu özellikle kullanışlı hale getirir. Dahası, bu kaynaştırma, herhangi bir ek hesaplama yükü olmaksızın, uygulama marifetlerinin algoritmaya ağırlık sönümü eklemesine izin vererek hesaplama avantajı sağlar. Güncellemenin ağırlık sönümü kısmı yalnızca her bir parametrenin mevcut değerine bağlı olduğundan, optimize edicinin herhalükarda her parametreye bir kez dokunması gerekir.
 
 :begin_tab:`mxnet`
-Aşağıdaki kodda, ağırlık sönümü hiper parametresini, `Trainer` (Eğitici) örneğimizi oluştururken doğrudan `wd` aracılığıyla belirtiyoruz. Varsayılan olarak Gluon hem ağırlıkları hem de ek girdileri aynı anda azaltır. Model parametreleri güncellenirken hiper parametre `wd`'nin `wd_mult` ile çarpılacağına dikkat edin. Bu nedenle, `wd_mult`'i sıfır olarak ayarlarsak, ek girdi parametresi $b$ sönmeyecektir.
+Aşağıdaki kodda, ağırlık sönümü hiper parametresini, `Trainer` (Eğitici) örneğimizi oluştururken doğrudan `wd` aracılığıyla belirtiyoruz. Varsayılan olarak Gluon hem ağırlıkları hem de ek girdileri aynı anda azaltır. Model parametreleri güncellenirken hiper parametre `wd`nin `wd_mult` ile çarpılacağına dikkat edin. Bu nedenle, `wd_mult`'i sıfır olarak ayarlarsak, ek girdi parametresi $b$ sönmeyecektir.
 :end_tab:
 
 :begin_tab:`pytorch`
@@ -249,7 +249,7 @@ def train_concise(wd):
     num_epochs, lr = 100, 0.003
     trainer = gluon.Trainer(net.collect_params(), 'sgd',
                             {'learning_rate': lr, 'wd': wd})
-    # Ek girdi parametresi sönümlenmedi. Ek girdi adları genellikle "bias" ile biter
+    # Ek girdi parametresi sönümlenmedi. Ey girdi adları genellikle "bias" ile biter
     net.collect_params('.*bias').setattr('wd_mult', 0)
     animator = d2l.Animator(xlabel='epochs', ylabel='loss', yscale='log',
                             xlim=[5, num_epochs], legend=['train', 'test'])

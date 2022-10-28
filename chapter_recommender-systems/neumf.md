@@ -1,6 +1,6 @@
 # Kişiselleştirilmiş Sıralama için Sinirsel İşbirlikçi Filtreleme
 
-Bu bölüm, örtülü geri bildirimlerle öneri için sinirsel işbirlikçi filtreleme (NCF) çerçevesini tanıtarak, açık geri bildirimlerin ötesine geçmektedir. Örtülü geribildirim, tavsiye sistemlerinde yaygındır. Tıklamalar, satın almalar ve izlemeler gibi eylemler, toplanması kolay ve kullanıcıların tercihlerini belirten yaygın örtülü geri bildirimlerdir. Sinirsel matris çarpanlarına ayırmanın kısaltıldığı NeuMF :cite:`He.Liao.Zhang.ea.2017` başlıklı model, kişiselleştirilmiş sıralama görevini örtülü geri bildirimle ele almayı amaçlamaktadır. Bu model, modelin ifade edilebilirliğini artırmayı amaçlayan matrisi çarpanlarına ayırmanın nokta çarpımlarını değiştirmek için sinir ağlarının esnekliğini ve doğrusal olmama özelliğini kullanır. Özellikle bu model, genelleştirilmiş matris çarpanlara ayırması (GMF) ve MLP dahil olmak üzere iki alt ağla yapılandırılmıştır ve basit nokta çarpımları yerine iki yoldan etkileşimleri modeller. Bu iki ağın çıktıları nihai tahmin puanlarının hesaplanması için bitiştirilir. AutoRec'deki derecelendirme tahmini görevinden farklı olarak, bu model örtülü geri bildirime dayalı olarak her kullanıcı için sıralamalı bir tavsiye listesi oluşturur. Bu modeli eğitmek için son bölümde tanıtılan kişiselleştirilmiş sıralama kaybını kullanacağız. 
+Bu bölüm, örtülü geri bildirimlerle öneri için sinirsel işbirlikçi filtreleme (NCF) çerçevesini tanıtarak, açık geri bildirimlerin ötesine geçmektedir. Örtülü geribildirim, tavsiye sistemlerinde yaygındır. Tıklamalar, satın almalar ve izlemeler gibi eylemler, toplanması kolay ve kullanıcıların tercihlerini belirten yaygın örtülü geri bildirimlerdir. Sinirsel matris çarpanlarına ayırmanın kısaltıldığı NeuMF :cite:`He.Liao.Zhang.ea.2017` başlıklı model, kişiselleştirilmiş sıralama görevini örtülü geri bildirimle ele almayı amaçlamaktadır. Bu model, modelin ifade edilebilirliğini artırmayı amaçlayan matrisi çarpanlarına ayırmanın nokta çarpımlarını değiştirmek için sinir ağlarının esnekliğini ve doğrusal olmama özelliğini kullanır. Özellikle bu model, genelleştirilmiş matris çarpanlara ayırması (GMF) ve MLP dahil olmak üzere iki alt ağla yapılandırılmıştır ve basit nokta çarpımları yerine iki yoldan etkileşimleri modeller. Bu iki ağın çıktıları nihai tahmin puanları hesaplaması için birleştirilir. AutoRec'deki derecelendirme tahmini görevinden farklı olarak, bu model örtülü geri bildirime dayalı olarak her kullanıcı için sıralamalı bir tavsiye listesi oluşturur. Bu modeli eğitmek için son bölümde tanıtılan kişiselleştirilmiş sıralama kaybını kullanacağız. 
 
 ## NeuMF modeli
 
@@ -77,7 +77,7 @@ class NeuMF(nn.Block):
 
 ## Negatif Örnekleme ile Özelleştirilmiş Veri Kümesi
 
-Çiftli sıralama kaybı için önemli bir adım negatif örneklemedir. Her kullanıcı için, bir kullanıcının etkileşim kurmadığı öğeler aday öğelerdir (gözlenmeyen girdiler). Aşağıdaki işlev, kullanıcı kimliğini ve aday öğelerini girdi olarak alır ve negatif öğeleri, o kullanıcının aday kümesindeki her kullanıcı için rastgele örneklemler. Eğitim aşamasında model, kullanıcının beğendiği öğelerin, sevmediği veya etkileşimde bulunmadığı öğelerden daha üst sıralarda yer almasını sağlar.
+İkili sıralama kaybı için önemli bir adım negatif örneklemedir. Her kullanıcı için, bir kullanıcının etkileşim kurmadığı öğeler aday öğelerdir (gözlenmeyen girişler). Aşağıdaki işlev, kullanıcı kimliğini ve aday öğelerini girdi olarak alır ve negatif öğeleri, o kullanıcının aday kümesindeki her kullanıcı için rastgele örneklemler. Eğitim aşamasında model, kullanıcının beğendiği öğelerin, sevmediği veya etkileşimde bulunmadığı öğelerden daha üst sıralarda yer almasını sağlar.
 
 ```{.python .input  n=3}
 class PRDataset(gluon.data.Dataset):
@@ -163,7 +163,7 @@ def evaluate_ranking(net, test_input, seq, candidates, num_users, num_items,
 
 ## Model Eğitimi ve Değerlendirilmesi
 
-Eğitim fonksiyonu aşağıda tanımlanmıştır. Modeli çiftli şeklinde eğitiyoruz.
+Eğitim fonksiyonu aşağıda tanımlanmıştır. Modeli ikili şeklinde eğitiyoruz.
 
 ```{.python .input  n=6}
 #@save
@@ -201,7 +201,7 @@ def train_ranking(net, train_iter, test_iter, loss, trainer, test_seq_iter,
           f'on {str(devices)}')
 ```
 
-Şimdi, MovieLens 100k veri kümesini yükleyebilir ve modeli eğitebiliriz. MovieLens veri kümesinde sadece derecelendirmeler olduğundan, bazı doğruluk kayıplarıyla birlikte, bu derecelendirmeleri sıfırlara ve birlere göre ikili hale getiriyoruz. Bir kullanıcı bir öğeyi derecelendirdiyse, örtülü geri bildirimi bir olarak değerlendiririz, aksi takdirde sıfır olarak kabul ederiz. Bir öğeyi derecelendirme eylemi, örtülü geri bildirim sağlama şekli olarak değerlendirilebilir. Burada, veri kümesini, kullanıcıların en son etkileşimde bulunduğu öğelerin test için dışarıda bırakıldığı `seq-aware` modunda böldük.
+Şimdi, MovieLens 100k veri kümesini yükleyebilir ve modeli eğitebiliriz. MovieLens veri kümesindeki derecelendirmeler olduğundan, bazı doğruluk kayıplarıyla birlikte, bu derecelendirmeleri sıfırlara ve birlere göre ikili hale getiriyoruz. Bir kullanıcı bir öğeyi derecelendirdiyse, örtülü geri bildirimi bir olarak değerlendiririz, aksi takdirde sıfır olarak kabul ederiz. Bir öğeyi derecelendirme eylemi, örtülü geri bildirim sağlama şekli olarak değerlendirilebilir. Burada, veri kümesini, kullanıcıların en son etkileşimde bulunduğu öğelerin test için dışarıda bırakıldığı `seq-aware` modunda böldük.
 
 ```{.python .input  n=11}
 batch_size = 1024
@@ -244,7 +244,7 @@ train_ranking(net, train_iter, test_iter, loss, trainer, None, num_users,
 ## Alıştırmalar
 
 * Gizli çarpanların boyutunu değiştirin. Gizli çarpanların boyutu model performansını nasıl etkiler?
-* Performans üzerindeki etkisini kontrol etmek için MLP'nin mimarilerini (örn. katman sayısı, her katmanın nöron sayısı) değiştirin.
+* Performans üzerindeki etkisini kontrol etmek için MLP'nin mimarilerini (örn. katman sayısı, her katmanın sinir sayısı) değiştirin.
 * Farklı eniyileyicileri, öğrenme oranını ve ağırlık sönümü oranını deneyin.
 * Bu modeli eniyilemek için son bölümde tanımlanan menteşe kaybını kullanmaya çalışın.
 

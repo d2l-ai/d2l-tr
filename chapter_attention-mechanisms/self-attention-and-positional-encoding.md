@@ -34,8 +34,8 @@ $\mathbf{x}_1, \ldots, \mathbf{x}_n$ ($1 \leq i \leq n$) herhangi bir $\mathbf{x
 
 $$\mathbf{y}_i = f(\mathbf{x}_i, (\mathbf{x}_1, \mathbf{x}_1), \ldots, (\mathbf{x}_n, \mathbf{x}_n)) \in \mathbb{R}^d$$
 
-:eqref:`eq_attn-pooling` denklemindeki $f$ dikkat ortaklama tanımına göredir.
-Çoklu kafalı dikkati kullanarak, aşağıdaki kod parçacığı, (toplu iş boyutu, zaman adımlarının sayısı veya belirteçlerdeki dizi uzunluğu, $d$) şekline sahip bir tensörün özdikkatini hesaplar. Çıktı tensörü aynı şekle sahiptir.
+:eqref:`eq_attn-pooling` içinde $f$ dikkat ortaklama tanımına göredir.
+Çoklu kafa dikkatini kullanarak, aşağıdaki kod parçacığı, bir tensörün şekle sahip özdikkatini hesaplar (toplu iş boyutu, zaman adımlarının sayısı veya belirteçlerdeki dizi uzunluğu, $d$). Çıktı tensörü aynı şekle sahiptir.
 
 ```{.python .input}
 num_hiddens, num_heads = 100, 5
@@ -77,14 +77,14 @@ attention(X, X, X, valid_lens, training=False).shape
 
 $n$ tane belirtecin bir dizisini eşit uzunlukta başka bir diziyle eşlemek için mimarileri karşılaştıralım, burada her girdi veya çıktı belirteci $d$ boyutlu bir vektör ile temsil edilir. Özellikle CNN'leri, RNN'leri ve özdikkati dikkate alacağız. Hesaplama karmaşıklığını, ardışık işlemleri ve maksimum yol uzunluklarını karşılaştıracağız. Ardışık işlemlerin paralel hesaplamayı engellediğini unutmayın, dizi konumlarının herhangi bir kombinasyonu arasındaki daha kısa bir yol dizi içindeki uzun menzilli bağımlılıkları öğrenmeyi kolaylaştırır :cite:`Hochreiter.Bengio.Frasconi.ea.2001`. 
 
-![CNN (dolgu belirteçleri atlanmıştır), RNN ve özdikkat mimarilerini karşılaştırma.](../img/cnn-rnn-self-attention.svg)
+![Comparing CNN (padding tokens are omitted), RNN, and self-attention architectures. CNN (dolgu belirteçleri atlanmıştır), RNN ve özdikkat mimarilerini karşılaştırma.](../img/cnn-rnn-self-attention.svg)
 :label:`fig_cnn-rnn-self-attention`
 
-Çekirdek boyutu $k$ olan bir evrişimli katman düşünün. Daha sonraki bölümlerde CNN'leri kullanarak dizi işleme hakkında daha fazla ayrıntı sağlayacağız. Şimdilik, sadece dizi uzunluğu $n$ olduğundan, girdi ve çıktı kanallarının ikisinin de sayısı $d$ olduğunu, evrişimli katmanın hesaplama karmaşıklığının $\mathcal{O}(knd^2)$ olduğunu bilmemiz gerekiyor. :numref:`fig_cnn-rnn-self-attention` şeklinin gösterdiği gibi, CNN'ler hiyerarşik olduğundan $\mathcal{O}(1)$ ardışık işlem vardır ve maksimum yol uzunluğu $\mathcal{O}(n/k)$'dir. Örneğin, $\mathbf{x}_1$ ve $\mathbf{x}_5$, :numref:`fig_cnn-rnn-self-attention` içinde çekirdek boyutu 3 olan iki katmanlı CNN'nin alıcı alanı içerisindedir. 
+Çekirdek boyutu $k$ olan bir evrişimli katman düşünün. Daha sonraki bölümlerde CNN'leri kullanarak dizi işleme hakkında daha fazla ayrıntı sağlayacağız. Şimdilik, sadece dizi uzunluğu $n$ olduğundan, girdi ve çıktı kanallarının ikisinin de sayısı $d$ olduğunu, evrişimli katmanın hesaplama karmaşıklığının $\mathcal{O}(knd^2)$ olduğunu bilmemiz gerekiyor. :numref:`fig_cnn-rnn-self-attention`'in gösterdiği gibi, CNN'ler hiyerarşik olduğundan $\mathcal{O}(1)$ ardışık işlem vardır ve maksimum yol uzunluğu $\mathcal{O}(n/k)$'dir. Örneğin, $\mathbf{x}_1$ ve $\mathbf{x}_5$, :numref:`fig_cnn-rnn-self-attention` içinde çekirdek boyutu 3 olan iki katmanlı CNN'nin alıcı alanı içerisindedir. 
 
-RNN'lerin gizli durum güncellemesinde, $d \times d$ ağırlık matrisinin ve $d$ boyutlu gizli durumun çarpımı $\mathcal{O}(d^2)$ hesaplama karmaşıklığına sahiptir. Dizi uzunluğu $n$ olduğundan, yinelemeli katmanın hesaplama karmaşıklığı $\mathcal{O}(nd^2)$'dir. :numref:`fig_cnn-rnn-self-attention` şekline göre, paralelleştirilemeyen $\mathcal{O}(n)$ ardışık işlem vardır ve maksimum yol uzunluğu da $\mathcal{O}(n)$'dir. 
+RNN'lerin gizli durum güncellemesinde, $d \times d$ ağırlık matrisinin ve $d$ boyutlu gizli durumun çarpımı $\mathcal{O}(d^2)$ hesaplama karmaşıklığına sahiptir. Dizi uzunluğu $n$ olduğundan, yinelemeli katmanın hesaplama karmaşıklığı $\mathcal{O}(nd^2)$'dir. :numref:`fig_cnn-rnn-self-attention`'e göre, paralelleştirilemeyen $\mathcal{O}(n)$ ardışık işlem vardır ve maksimum yol uzunluğu da $\mathcal{O}(n)$'dır. 
 
-Özdikkatte, sorgular, anahtarlar ve değerlerin tümü $n \times d$ matrislerdir. $n \times d$ matrisinin $d \times n$ matrisi ile çarpıldığı :eqref:`eq_softmax_QK_V` denklemindeki ölçeklendirilmiş nokta çarpımı dikkatini düşünün, daha sonra $n \times n$ çıktı matrisi $n \times d$ matrisi ile çarpılır. Sonuç olarak, özdikkat $\mathcal{O}(n^2d)$ hesaplama karmaşıklığına sahiptir. :numref:`fig_cnn-rnn-self-attention` şeklinde görebileceğimiz gibi, her belirteç, özdikkat yoluyla başka bir belirteçle doğrudan bağlanır. Bu nedenle, hesaplama $\mathcal{O}(1)$ ardışık işlemle paralel olabilir ve maksimum yol uzunluğu da $\mathcal{O}(1)$'dir. 
+Özdikkatte, sorgular, anahtarlar ve değerlerin tümü $n \times d$ matrislerdir. $n \times d$ matrisinin $d \times n$ matrisi ile çarpıldığı :eqref:`eq_softmax_QK_V`'te ölçeklendirilmiş nokta çarpımı dikkatini düşünün, daha sonra $n \times n$ çıktı matrisi $n \times d$ matrisi ile çarpılır. Sonuç olarak, özdikkat $\mathcal{O}(n^2d)$ hesaplama karmaşıklığına sahiptir. :numref:`fig_cnn-rnn-self-attention`'te görebileceğimiz gibi, her belirteç, özdikkat yoluyla başka bir belirteçle doğrudan bağlanır. Bu nedenle, hesaplama $\mathcal{O}(1)$ ardışık işlemlerle paralel olabilir ve maksimum yol uzunluğu da $\mathcal{O}(1)$'dir. 
 
 Sonuçta, hem CNN'ler hem de özdikkat paralel hesaplamanın keyfini çıkarır ve özdikkat en kısa maksimum yol uzunluğuna sahiptir. Bununla birlikte, dizi uzunluğuna göre ikinci dereceden hesaplama karmaşıklığı, özdikkati çok uzun diziler için engelleyici bir şekilde yavaşlatır. 
 
@@ -102,11 +102,11 @@ $$\begin{aligned} p_{i, 2j} &= \sin\left(\frac{i}{10000^{2j/d}}\right),\\p_{i, 2
 ```{.python .input}
 #@save
 class PositionalEncoding(nn.Block):
-    """Konumsal kodlama."""
+    """Positional encoding."""
     def __init__(self, num_hiddens, dropout, max_len=1000):
         super(PositionalEncoding, self).__init__()
         self.dropout = nn.Dropout(dropout)
-        # Yeterince uzun `P` yarat
+        # Create a long enough `P`
         self.P = d2l.zeros((1, max_len, num_hiddens))
         X = d2l.arange(max_len).reshape(-1, 1) / np.power(
             10000, np.arange(0, num_hiddens, 2) / num_hiddens)
@@ -122,11 +122,11 @@ class PositionalEncoding(nn.Block):
 #@tab pytorch
 #@save
 class PositionalEncoding(nn.Module):
-    """Konumsal kodlama."""
+    """Positional encoding."""
     def __init__(self, num_hiddens, dropout, max_len=1000):
         super(PositionalEncoding, self).__init__()
         self.dropout = nn.Dropout(dropout)
-        # Yeterince uzun `P` yarat
+        # Create a long enough `P`
         self.P = d2l.zeros((1, max_len, num_hiddens))
         X = d2l.arange(max_len, dtype=torch.float32).reshape(
             -1, 1) / torch.pow(10000, torch.arange(
@@ -143,11 +143,11 @@ class PositionalEncoding(nn.Module):
 #@tab tensorflow
 #@save
 class PositionalEncoding(tf.keras.layers.Layer):
-    """Konumsal kodlama."""
+    """Positional encoding."""
     def __init__(self, num_hiddens, dropout, max_len=1000):
         super().__init__()
         self.dropout = tf.keras.layers.Dropout(dropout)
-        # Yeterince uzun `P` yarat
+        # Create a long enough `P`
         self.P = np.zeros((1, max_len, num_hiddens))
         X = np.arange(max_len, dtype=np.float32).reshape(
             -1,1)/np.power(10000, np.arange(
@@ -195,7 +195,7 @@ d2l.plot(np.arange(num_steps), P[0, :, 6:10].T, xlabel='Row (position)',
 
 ### Mutlak Konumsal Bilgiler
 
-Kodlama boyutu boyunca monoton olarak azalan frekansın mutlak konumsal bilgilerle nasıl ilişkili olduğunu görmek için $0, 1, \ldots, 7$'nin [**ikilik temsilleri**] yazdıralım. Gördüğümüz gibi, en düşük bit, ikinci en düşük bit ve üçüncü en düşük bit her sayıda, her iki sayı ve her dört sayıda değişiyor.
+Kodlama boyutu boyunca monoton olarak azalan frekansın mutlak konumsal bilgilerle nasıl ilişkili olduğunu görmek için $0, 1, \ldots, 7$'nin [**ikili temsilleri**] yazdıralım. Gördüğümüz gibi, en düşük bit, ikinci en düşük bit ve üçüncü en düşük bit her sayıda, her iki sayı ve her dört sayıda değişiyor.
 
 ```{.python .input}
 #@tab all
@@ -229,7 +229,7 @@ d2l.show_heatmaps(P, xlabel='Column (encoding dimension)',
 
 Mutlak konumsal bilgileri yakalamanın yanı sıra, yukarıdaki konumsal kodlama, bir modelin göreceli pozisyonlara göre dikkat kesilmeyi kolayca öğrenmesini de sağlar. Bunun nedeni, $\delta$ ofset herhangi bir sabit pozisyon için $i + \delta$ konumundaki konumsal kodlamanın $i$ konumundaki doğrusal bir izdüşümle temsil edilebilir olmasıdır. 
 
-Bu izdüşüm matematiksel olarak açıklanabilir. $\omega_j = 1/10000^{2j/d}$, :eqref:`eq_positional-encoding-def` denkleminde herhangi bir $(p_{i, 2j}, p_{i, 2j+1})$ çifti doğrusal olarak  herhangi bir sabit ofset $\delta$ için $(p_{i+\delta, 2j}, p_{i+\delta, 2j+1})$'ye izdüşürülebilir: 
+Bu izdüşüm matematiksel olarak açıklanabilir. $\omega_j = 1/10000^{2j/d}$, :eqref:`eq_positional-encoding-def` içinde  herhangi bir $(p_{i, 2j}, p_{i, 2j+1})$ çifti doğrusal olarak  herhangi bir sabit ofset $\delta$ için $(p_{i+\delta, 2j}, p_{i+\delta, 2j+1})$'ye izdüşürülebilir: 
 
 $$\begin{aligned}
 &\begin{bmatrix} \cos(\delta \omega_j) & \sin(\delta \omega_j) \\  -\sin(\delta \omega_j) & \cos(\delta \omega_j) \\ \end{bmatrix}
@@ -240,7 +240,7 @@ $$\begin{aligned}
 \begin{bmatrix} p_{i+\delta, 2j} \\  p_{i+\delta, 2j+1} \\ \end{bmatrix},
 \end{aligned}$$
 
-$2\times 2$ izdüşüm matrisi herhangi bir $i$ konum endeksine bağlı değildir. 
+$2\times 2$ izdüşüm matrisi herhangi bir $i$ konum endeksine bağlı değildir . 
 
 ## Özet
 

@@ -2,11 +2,11 @@
 
 Önceki bölümlerde, modelleri çeşitli veri kümelerine oturtarak bir dizi uygulamalı makine öğrenmesi üzerinde çalıştık. Yine de, verilerin ilk etapta nereden geldiğini veya modellerimizin çıktılarıyla sonuçta yapmayı planladığımız şeyi düşünmeyi asla bırakmadık. Sıklıkla, verilere sahip olan makine öğrenmesi geliştiricileri, bu temel sorunları dikkate alıp üstlerinde duraklamadan modeller geliştirmek için acele ederler.
 
-Başarısız olan birçok makine öğrenmesi konuşlandırılması bu örüntü ile köklendirilebilir. Bazen modeller, test kümesi doğruluğu ile ölçüldüğünde harika bir performans sergiliyor gibi görünebilir, ancak veri dağılımı aniden değiştiğinde, ürün olarak konuşlandırılınca felaket bir şekilde başarısız olur. Daha sinsi bir şekilde, bazen bir modelin konuşlandırılması, veri dağılımını bozan katalizör olabilir. Örneğin, bir krediyi kimin geri ödeyeceğini tahmin etmek için bir model eğittiğimizi ve başvuranın ayakkabı seçiminin temerrüt (geri ödememe) riskiyle ilişkili olduğunu tespit ettiğimizi varsayalım (Oxfords türü ayakkabılar geri ödemeyi gösterir, spor ayakkabılar temerrüdü gösterir). Daha sonra Oxfords giyen tüm başvuru sahiplerine kredi verme ve spor ayakkabı giyen tüm başvuru sahiplerini reddetme eğiliminde olabiliriz.
+Başarısız olan birçok makine öğrenmesi konuşlandırılması bu desen ile köklendirilebilir. Bazen modeller, test kümesi doğruluğu ile ölçüldüğünde harika bir performans sergiliyor gibi görünebilir, ancak veri dağılımı aniden değiştiğinde, ürün olarak konuşlandırılınca felaket bir şekilde başarısız olur. Daha sinsi bir şekilde, bazen bir modelin konuşlandırılması, veri dağılımını bozan katalizör olabilir. Örneğin, bir krediyi kimin geri ödeyeceğini tahmin etmek için bir model eğittiğimizi ve başvuranın ayakkabı seçiminin temerrüt (geri ödememe) riskiyle ilişkili olduğunu tespit ettiğimizi varsayalım (Oxfords türü ayakkabılar geri ödemeyi gösterir, spor ayakkabılar temerrüdü gösterir). Daha sonra Oxfords giyen tüm başvuru sahiplerine kredi verme ve spor ayakkabı giyen tüm başvuru sahiplerini reddetme eğiliminde olabiliriz.
 
 Bu durumda, örüntü tanımadan karar vermeye yanlış düşünülmüş bir sıçrayışımız ve ortamı eleştirel bir şekilde dikkate almadaki başarısızlığımız feci sonuçlar doğurabilir. Başlangıç olarak, ayakkabı seçimlerine dayalı kararlar almaya başlar başlamaz, müşteriler farkına varır ve davranışlarını değiştirirdi. Çok geçmeden, tüm başvuru sahipleri, kredi güvenirliliğinde herhangi bir tesadüfi gelişme olmaksızın Oxfords giyeceklerdi. Bunu sindirmek için bir dakikanızı ayırın çünkü makine öğrenmesinin pek çok uygulamasında benzer sorunlar bolca bulunur: Modele dayalı kararlarımızı ortama sunarak modeli bozabiliriz.
 
-Bu konuları tek bir bölümde tam olarak ele alamasak da, burada bazı ortak endişeleri ortaya çıkarmayı ve bu durumları erken tespit etmek, hasarı azaltmak ve makine öğrenmesini sorumlu bir şekilde kullanmak için gereken eleştirel düşünmeyi teşvik etmeyi amaçlıyoruz. Çözümlerden bazıları basittir ("doğru" veriyi istemek), bazıları teknik olarak zordur (pekiştirmeli öğrenme sistemi uygulamak) ve diğerleri, istatistiksel tahmin alanının tamamen dışına çıkmamızı ve algoritmaların etik uygulanması gibi konularla ilgili zor felsefi sorularla boğuşmamızı gerektirir.
+Bu konuları tek bir bölümde tam olarak ele alamasak da, burada bazı ortak endişeleri ortaya çıkarmayı ve bu durumları erken tespit etmek, hasarı azaltmak ve makine öğrenmesini sorumlu bir şekilde kullanmak için gereken eleştirel düşünmeyi teşvik etmeyi amaçlıyoruz. Çözümlerden bazıları basittir ("doğru" veriyi isteyin), bazıları teknik olarak zordur (pekiştirmeli öğrenme sistemi uygulamak) ve diğerleri, istatistiksel tahmin alanının tamamen dışına çıkmamızı ve algoritmaların etik uygulanması gibi konularla ilgili zor felsefi sorularla boğuşmamızı gerektirir.
 
 
 ## Dağılım Kayması Türleri
@@ -22,12 +22,12 @@ Neyse ki, verilerimizin gelecekte nasıl değişebileceğine dair bazı kısıtl
 
 Dağılım kayması kategorileri arasında, ortak değişken kayması en yaygın olarak çalışılmışı olabilir. Burada, girdilerin dağılımının zamanla değişebileceğini varsayıyoruz, etiketleme fonksiyonu, yani koşullu dağılım $P(y \mid \mathbf{x})$ değişmez. İstatistikçiler buna *ortak değişken kayması* diyorlar çünkü problem ortak değişkenlerin (öznitelikler) dağılımındaki bir kayma nedeniyle ortaya çıkıyor. Bazen nedenselliğe başvurmadan dağılım kayması hakkında akıl yürütebiliyor olsak da, ortak değişken kaymasının $\mathbf{x}$'in $y$'ye neden olduğuna inandığımız durumlarda çağrılacak doğal varsayım olduğuna dikkat ediyoruz.
 
-Kedileri ve köpekleri ayırt etmenin zorluğunu düşünün. Eğitim verilerimiz :numref:`fig_cat-dog-train` içindeki türden resimlerden oluşabilir:
+Kedileri ve köpekleri ayırt etmenin zorluğunu düşünün. Eğitim verilerimiz :numref:`fig_cat-dog-train`'deki türden resimlerden oluşabilir:
 
 ![Kedi ve köpek ayrımında eğitim kümesi.](../img/cat-dog-train.svg)
 :label:`fig_cat-dog-train`
 
-Test zamanında :numref:`fig_cat-dog-test` içindeki resimleri sınıflandırmamız istenebilir:
+Test zamanında :numref:`fig_cat-dog-test`'deki resimleri sınıflandırmamız istenebilir:
 
 ![Kedi ve köpek ayrımında test kümesi.](../img/cat-dog-test.svg)
 :label:`fig_cat-dog-test`
@@ -36,12 +36,12 @@ Eğitim kümesi fotoğraflardan oluşurken, test kümesi sadece çizimlerden olu
 
 ### Etiket Kayması
 
-*Etiket kayması* ters problemi tanımlar. Burada, etiketin marjinali $P(y)$'nin değişebileceğini varsayıyoruz ancak sınıf koşullu dağılım $P(\mathbf{x} \mid y)$ etki alanları arasında sabit kalır. Etiket kayması, $y$'nin $\mathbf{x}$'e neden olduğuna inandığımızda yaptığımız makul bir varsayımdır. Örneğin, tanıların göreceli yaygınlığı zamanla değişse bile, semptomları (veya diğer belirtileri) verilen tanıları tahmin etmek isteyebiliriz. Etiket kayması burada uygun varsayımdır çünkü hastalıklar semptomlara neden olur. Bazı yozlaşmış durumlarda, etiket kayması ve ortak değişken kayma varsayımları aynı anda geçerli olabilir. Örneğin, etiket belirlenimci olduğunda, $y$ $\mathbf{x}$'e neden olsa bile, ortak değişken kayma varsayımı karşılanacaktır. İlginç bir şekilde, bu durumlarda, etiket kayması varsayımından kaynaklanan yöntemlerle çalışmak genellikle avantajlıdır. Bunun nedeni, derin öğrenmede yüksek boyutlu olma eğiliminde olan girdiye benzeyen nesnelerin aksine, bu yöntemlerin etiketlere benzeyen (genellikle düşük boyutlu) nesnelerde oynama yapmak eğiliminde olmasıdır.
+*Etiket kayması* ters problemi tanımlar. Burada, etiketin marjinali $P(y)$'nin değişebileceğini varsayıyoruz ancak sınıf koşullu dağılım $P(\mathbf{x} \mid y)$ etki alanları arasında sabit kalır. Etiket kayması, $y$'nin $\mathbf{x}$'e neden olduğuna inandığımızda yaptığımız makul bir varsayımdır. Örneğin, tanıların göreceli yaygınlığı zamanla değişse bile, semptomları (veya diğer belirtileri) verilen tanıları tahmin etmek isteyebiliriz. Etiket kayması burada uygun varsayımdır çünkü hastalıklar semptomlara neden olur. Bazı yozlaşmış durumlarda, etiket kayması ve ortak değişken kayma varsayımları aynı anda geçerli olabilir. Örneğin, etiket deterministik olduğunda, $y$ $\mathbf{x}$'e neden olsa bile, ortak değişken kayma varsayımı karşılanacaktır. İlginç bir şekilde, bu durumlarda, etiket kayması varsayımından kaynaklanan yöntemlerle çalışmak genellikle avantajlıdır. Bunun nedeni, derin öğrenmede yüksek boyutlu olma eğiliminde olan girdiye benzeyen nesnelerin aksine, bu yöntemlerin etiketlere benzeyen (genellikle düşük boyutlu) nesnelerde oynama yapmak eğiliminde olmasıdır.
 
 
 ### Kavram Kayması
 
-Ayrıca etiketlerin tanımları değiştiğinde ortaya çıkan ilgili *kavram kayması* sorunuyla da karşılaşabiliriz. Kulağa garip geliyor---bir *kedi* bir *kedi*dir, değil mi? Ancak, diğer kategoriler zaman içinde kullanımda değişikliklere tabidir. Akıl hastalığı için tanı kriterleri, modaya uygun olanlar ve iş unvanları önemli miktarda kavram kaymasına tabidir. Amerika Birleşik Devletleri çevresinde dolaşırsak, verilerimizin kaynağını coğrafyaya göre değiştirirsek, *meşrubat* adlarının dağılımıyla ilgili olarak, :numref:`fig_popvssoda` içinde gösterildiği gibi önemli bir kavram kayması bulacağımız ortaya çıkar.
+Ayrıca etiketlerin tanımları değiştiğinde ortaya çıkan ilgili *kavram kayması* sorunuyla da karşılaşabiliriz. Kulağa garip geliyor---bir *kedi* bir *kedi*dir, değil mi? Ancak, diğer kategoriler zaman içinde kullanımda değişikliklere tabidir. Akıl hastalığı için tanı kriterleri, modaya uygun olanlar ve iş unvanları önemli miktarda kavram kaymasına tabidir. Amerika Birleşik Devletleri çevresinde dolaşırsak, verilerimizin kaynağını coğrafyaya göre değiştirirsek, *meşrubat* adlarının dağılımıyla ilgili olarak, :numref:`fig_popvssoda`'da gösterildiği gibi önemli bir kavram kayması bulacağımız ortaya çıkar.
 
 ![Amerika Birleşik Devletleri'nde meşrubat isimlerinde kavram değişikliği.](../img/popvssoda.png)
 :width:`400px`
@@ -77,9 +77,9 @@ Dağılım yavaş değiştiğinde ve model yeterince güncellenmediğinde çok d
 * Bir yaramaz posta filtresi oluşturuyoruz. Şimdiye kadar gördüğümüz tüm yaramaz postaları tespit etmede iyi çalışıyor. Ancak daha sonra, yaramaz posta gönderenler akıllanıyor ve daha önce gördüğümüz hiçbir şeye benzemeyen yeni mesajlar oluşturuyorlar.
 * Ürün öneri sistemi oluşturuyoruz. Kış boyunca işe yarıyor, ancak Noel'den sonra da Noel Baba şapkalarını önermeye devam ediyor.
 
-### Birkaç Benzer Tecrübe
+### Daha Fazla Kısa Hikaye
 
-* Yüz dedektörü yapıyoruz. Tüm kıyaslamalarda iyi çalışıyor. Ne yazık ki test verilerinde başarısız oluyor---zorlayıcı örnekler, yüzün tüm resmi doldurduğu yakın çekimlerdir (eğitim kümesinde böyle bir veri yoktu).
+* Yüz dedektörü yapıyoruz. Tüm kıyaslamalarda iyi çalışıyor. Ne yazık ki test verilerinde başarısız oluyor---rahatsız edici örnekler, yüzün tüm resmi doldurduğu yakın çekimlerdir (eğitim kümesinde böyle bir veri yoktu).
 * ABD pazarı için bir web arama motoru oluşturuyoruz ve bunu Birleşik Krallık'ta kullanmak istiyoruz.
 * Büyük bir sınıf kümesinin her birinin veri kümesinde eşit olarak temsil edildiği büyük bir veri kümesi derleyerek bir imge sınıflandırıcı eğitiyoruz, örneğin 1000 kategori var ve her biri 1000 görüntü ile temsil ediliyor. Ardından sistemi, fotoğrafların gerçek etiket dağılımının kesinlikle tekdüze olmadığı gerçek dünyada konuşlandırıyoruz.
 
@@ -95,7 +95,7 @@ Daha önce tartıştığımız gibi, $P(\mathbf {x}, y)$ eğitim ve test dağıl
 $$\mathop{\mathrm{minimize}}_f \frac{1}{n} \sum_{i=1}^n l(f(\mathbf{x}_i), y_i),$$
 :eqlabel:`eq_empirical-risk-min`
 
-burada $l$, ilişkili $y_i$ etiketi ile verilen $f(\mathbf{x}_i)$ tahmininin "ne kadar kötü" olduğunu ölçen kayıp işlevidir. İstatistikçiler :eqref:`eq_empirical-risk-min` içindeki bu terimi  *deneysel risk* olarak adlandırır. *Deneysel risk*,  $p(\mathbf{x},y)$ gerçek dağılımından elde edilen tüm veri popülasyonu üzerindeki kaybın beklentisi olan *riske* yaklaştıran eğitim verileri üzerindeki ortalama kayıptır:
+burada $l$, ilişkili $y_i$ etiketi ile verilen $f(\mathbf{x}_i)$ tahmininin "ne kadar kötü" olduğunu ölçen kayıp işlevidir. İstatistikçiler :eqref:`eq_empirical-risk-min`'deki bu terimi  *deneysel risk* olarak adlandırır. *Deneysel risk*,  $p(\mathbf{x},y)$ gerçek dağılımından elde edilen tüm veri popülasyonu üzerindeki kaybın beklentisi olan *riske* yaklaştıran eğitim verileri üzerindeki ortalama kayıptır:
 
 $$E_{p(\mathbf{x}, y)} [l(f(\mathbf{x}), y)] = \int\int l(f(\mathbf{x}), y) p(\mathbf{x}, y) \;d\mathbf{x}dy.$$
 :eqlabel:`eq_true-risk`
@@ -105,7 +105,7 @@ Bununla birlikte, pratikte tipik olarak tüm veri popülasyonunu elde edemeyiz. 
 ### Ortak Değişken Kaymasını Düzeltme
 :label:`subsec_covariate-shift-correction`
 
-Verileri $(\mathbf{x}_i, y_i)$ olarak etiketlediğimiz $P(y \mid \mathbf{x})$ bağımlılığını tahmin etmek istediğimizi varsayalım. Ne yazık ki, $\mathbf{x}_i$ gözlemleri, *hedef dağılımı* $p(\mathbf{x})$ yerine bazı *kaynak dağılımı* $q(\mathbf{x})$'den alınmıştır.
+Verileri $(\mathbf{x}_i, y_i)$ olarak etiketlediğimiz $P(y \mid \mathbf{x})$ bağımlılığını tahmin etmek istediğimizi varsayalım. Ne yazık ki, $\mathbf{x}_i$ gözlemleri, *hedef dağılımı* $p(\mathbf{x})$ yerine bazı *kaynak dağılımı* $q(\mathbf{x})$'dan alınmıştır.
 Neyse ki, bağımlılık varsayımı koşullu dağılımın değişmediği anlamına gelir: $p(y \mid \mathbf{x}) = q(y \mid \mathbf{x})$. $q(\mathbf{x})$ kaynak dağılımı "yanlış" ise, riskte aşağıdaki basit özdeşlik kullanarak bunu düzeltebiliriz:
 
 $$
@@ -140,16 +140,16 @@ $$
 \beta_i = \frac{1/(1 + \exp(-h(\mathbf{x}_i)))}{\exp(-h(\mathbf{x}_i))/(1 + \exp(-h(\mathbf{x}_i)))} = \exp(h(\mathbf{x}_i)).
 $$
 
-Sonuç olarak, iki sorunu çözmemiz gerekiyor: İlk olarak her iki dağılımdan alınan verileri ayırt etme ve ardından terimleri $\beta_i$ ile ağırlıklandırdığımız :eqref:`eq_weighted-empirical-risk-min` içindeki ağırlıklı deneysel risk minimizasyon problemi. 
+Sonuç olarak, iki sorunu çözmemiz gerekiyor: İlk olarak her iki dağılımdan alınan verileri ayırt etme ve ardından terimleri $\beta_i$ ile ağırlıklandırdığımız :eqref:`eq_weighted-empirical-risk-min`'deki ağırlıklı deneysel risk minimizasyon problemi. 
 
-Artık bir düzeltme algoritması tanımlamaya hazırız. $\{(\mathbf{x}_1, y_1), \ldots, (\mathbf{x}_n, y_n)\}$ eğitim kümemiz ve etiketlenmemiş bir $\{\mathbf{u}_1, \ldots, \mathbf{u}_m\}$ test kümemiz olduğunu varsayalım. Ortak değişken kaydırma için, tüm $1 \leq i \leq n$ için $\mathbf{x}_i$'nin bir kaynak dağılımından ve tüm $1 \leq i \leq m$ için $\mathbf{u}_i$'in hedef dağılımdan çekildiğini varsayıyoruz. İşte ortak değişken kaymasını düzeltmek için prototipik bir algoritma:
+Artık bir düzeltme algoritması tanımlamaya hazırız. $\{(\mathbf{x}_1, y_1), \ldots, (\mathbf{x}_n, y_n)\}$ eğitim kümemiz ve etiketlenmemiş bir $\{\mathbf{u}_1, \ldots, \mathbf{u}_m\}$ test kümemiz olduğunu varsayalım. Ortak değişken kaydırma için, tüm $1 \leq i \leq n$ için $\mathbf{x}_i$'nin bazı kaynak dağılımından ve tüm $1 \leq i \leq m$ için $\mathbf{u}_i$'ın hedef dağılımdan çekildiğini varsayıyoruz. İşte ortak değişken kaymasını düzeltmek için prototipik bir algoritma:
 
 1. Bir ikili sınıflandırma eğitim kümesi oluşturun: $\{(\mathbf{x}_1, -1), \ldots, (\mathbf{x}_n, -1), (\mathbf{u}_1, 1) , \ldots, (\mathbf{u}_m, 1)\}$.
 1. $h$ fonksiyonunu elde etmek için lojistik regresyon kullanarak bir ikili sınıflandırıcı eğitin.
 1. $\beta_i = \exp(h(\mathbf{x}_i))$ veya daha iyisi $\beta_i = \min(\exp(h(\mathbf{x}_i)), c)$, $c$ herhangi bir sabittir, kullanarak eğitim verilerini ağırlıklandırın.
-1. $\{(\mathbf{x}_1, y_1), \ldots, (\mathbf{x}_n, y_n)\}$ üzerinde eğitim için :eqref:`eq_weighted-empirical-risk-min` içindeki $\beta_i$ ağırlıklarını kullanın.
+1. $\{(\mathbf{x}_1, y_1), \ldots, (\mathbf{x}_n, y_n)\}$ üzerinde eğitim için :eqref:`eq_weighted-empirical-risk-min`'deki $\beta_i$ ağırlıklarını kullanın.
 
-Yukarıdaki algoritmanın önemli bir varsayıma dayandığını unutmayın. Bu düzenin çalışması için, hedef (örn. test zamanı) dağılımındaki her veri örneğinin eğitim zamanında meydana gelme olasılığının sıfır olmayan bir şekilde olması gerekir. $p(\mathbf{x}) > 0$ ama $q(\mathbf{x}) = 0$ olan bir nokta bulursak, buna karşılık gelen önem ağırlığı sonsuz olmalıdır.
+Yukaridaki algoritmanın önemli bir varsayıma dayandığını unutmayın. Bu düzenin çalışması için, hedef (örn. test zamanı) dağılımındaki her veri örneğinin eğitim zamanında meydana gelme olasılığının sıfır olmayan bir şekilde olması gerekir. $p(\mathbf{x}) > 0$ ama $q(\mathbf{x}) = 0$ olan bir nokta bulursak, buna karşılık gelen önem ağırlığı sonsuz olmalıdır.
 
 
 ### Etiket Kaymasını Düzeltme
@@ -172,11 +172,11 @@ Burada önem ağırlıklarımız etiket olabilirlik oranlarına karşılık gele
 $$\beta_i \stackrel{\mathrm{def}}{=} \frac{p(y_i)}{q(y_i)}.$$
 
 Etiket kayması ile ilgili güzel bir şey, kaynak dağılımı üzerinde oldukça iyi bir modelimiz varsa, ortam boyutuyla hiç uğraşmadan bu ağırlıkların tutarlı tahminlerini elde edebilmemizdir.
-Derin öğrenmede girdiler, imgeler gibi yüksek boyutlu nesneler olma eğilimindeyken, etiketler genellikle kategoriler gibi daha basit nesnelerdir.
+Derin öğrenmede girdiler, görüntüler gibi yüksek boyutlu nesneler olma eğilimindeyken, etiketler genellikle kategoriler gibi daha basit nesnelerdir.
 
 Hedef etiket dağılımını tahmin etmek için, önce makul ölçüde iyi olan kullanıma hazır mevcut sınıflandırıcımızı (tipik olarak eğitim verileri üzerinde eğitilmiştir) alıp geçerleme kümesini kullanarak (o da eğitim dağılımından) hata matrisini hesaplıyoruz. *Hata matrisi*, $\mathbf{C}$, basitçe bir $k \times k$ matrisidir, burada her sütun etiket sınıfına (temel doğru) ve her satır, modelimizce tahmin edilen sınıfa karşılık gelir. Her bir hücrenin değeri $c_ {ij}$, geçerleme kümesinde gerçek etiketin $j$ olduğu ve modelimizin $i$ tahmin ettiği toplam tahminlerin oranıdır.
 
-Şimdi, hedef verilerdeki hata matrisini doğrudan hesaplayamayız, çünkü karmaşık bir gerçek zamanlı açıklama veri işleme hattına yatırım yapmazsak, gerçek hayatta gördüğümüz örneklerin etiketlerini göremeyiz. Ancak yapabileceğimiz şey, birlikte test zamanında tüm model tahminlerimizin ortalamasıdır ve ortalama model çıktılarını $\mu(\hat{\mathbf{y}}) \in \mathbb{R}^k$ verir, ki $i.$ öğesi $\mu(\hat{y}_i)$, modelimizin $i$ tahmin ettiği test kümesindeki toplam tahminlerin oranıdır.
+Şimdi, hedef verilerdeki hata matrisini doğrudan hesaplayamayız, çünkü karmaşık bir gerçek zamanlı açıklama veri işleme hattına yatırım yapmazsak, gerçek hayatta gördüğümüz örneklerin etiketlerini göremeyiz. Ancak yapabileceğimiz şey, birlikte test zamanında tüm model tahminlerimizin ortalamasıdır ve ortalama model çıktılarını $\mu(\hat{\mathbf{y}}) \in \mathbb{R}^k$ verir, ki $i.$ öğesi $\mu(\hat{y}_i)$, modelimizin $i$ tahmin ettiği test kümesindeki toplam tahminlerin kesridir.
 
 Bazı ılımlı koşullar altında --- eğer sınıflandırıcımız ilk etapta makul ölçüde doğruysa ve hedef veriler yalnızca daha önce gördüğümüz kategorileri içeriyorsa ve ilk etapta etiket kayması varsayımı geçerliyse (en güçlü varsayım), o zaman basit bir doğrusal sistemi çözerek test kümesi etiket dağılımını tahmin edebiliriz.
 
@@ -207,7 +207,7 @@ Dağılımlardaki değişikliklerle nasıl başa çıkılacağı hakkında bilgi
 
 ### Çevrimiçi Öğrenme
 
-Şimdi $(\mathbf{x}_i, y_i)$ verisinin her seferinde bir örnek olarak geldiğini hayal edin. Daha belirleyici olarak, önce $\mathbf{x}_i$'i gözlemlediğimizi, ardından bir $f(\mathbf{x}_i)$ tahmini bulmamız gerektiğini ve yalnızca bunu yaptığımızda $y_i$'yi gözlemlediğimizi ve bununla bizim kararımıza göre bir ödül veya bir ceza aldığımızı varsayalım. 
+Şimdi $(\mathbf{x}_i, y_i)$ verisinin her seferinde bir örnek olarak geldiğini hayal edin. Daha belirleyici olarak, önce $\mathbf{x}_i$'i gözlemlediğimizi, ardından bir $f(\mathbf{x}_i)$ tahmini bulmamız gerektiğini ve yalnızca bunu yaptığımızda $y_i$'yi gözlemlediğimizi ve bununla bizim kararımıza göre bir ödül veya bir zarar aldığımızı varsayalım. 
 Birçok gerçek sorun bu kategoriye girer. Örneğin, yarınki hisse senedi fiyatını tahmin etmemiz gerekir, bu, bu tahmine dayalı olarak işlem yapmamızı sağlar ve günün sonunda tahminimizin kâr elde etmemize izin verip vermediğini öğreniriz. Başka bir deyişle, *çevrimiçi öğrenme*de, yeni gözlemlerle modelimizi sürekli iyileştirdiğimiz aşağıdaki döngüye sahibiz.
 
 $$
@@ -221,7 +221,7 @@ $$
 
 ### Kollu Kumar Makinesi
 
-*Kollu kumar makinesi* yukarıdaki problemin özel bir durumudur. Çoğu öğrenme probleminde parametrelerini öğrenmek istediğimiz yerde (örneğin derin bir ağ) sürekli değerlerle parametrize edilmiş bir $f$ fonksiyonumuz varken, bir *kollu kumar makinesi* probleminde çekebileceğimiz sınırlı sayıda kolumuz var, yani, sonlu yapabileceğimiz eylem sayısı. Bu basit problem için optimallik açısından daha güçlü teorik garantilerin elde edilebilmesi çok şaşırtıcı değildir. Onu temel olarak listeliyoruz çünkü bu problem genellikle (kafa karıştırıcı bir şekilde) farklı bir öğrenim ortamı gibi ele alınır.
+*Kollu kumar makinesi* yukarıdaki problemin özel bir durumudur. Çoğu öğrenme probleminde parametrelerini öğrenmek istediğimiz yerde (örneğin derin bir ağ) sürekli değerlerle parametrize edilmiş bir $f$ fonksiyonumuz varken, bir *kollu kumar makinesi* probleminde çekebileceğimiz sınırlı sayıda kolumuz var yani, sonlu yapabileceğimiz eylem sayısı. Bu basit problem için optimallik açısından daha güçlü teorik garantilerin elde edilebilmesi çok şaşırtıcı değildir. Onu temel olarak listeliyoruz çünkü bu problem genellikle (kafa karıştırıcı bir şekilde) farklı bir öğrenim ortamı gibi ele alınır.
 
 ### Kontrol
 
@@ -230,11 +230,11 @@ Son zamanlarda, kontrol teorisi (örneğin, PID varyantları), daha iyi çözme 
 
 ### Pekiştirmeli Öğrenme
 
-Hafızalı bir ortamın daha genel durumu olarak ortamın bizimle işbirliği yapmaya çalıştığı durumlarla karşılaşabiliriz (özellikle sıfır toplamlı olmayan oyunlar için işbirlikçi oyunlar) veya çevrenin kazanmaya çalışacağı diğerler durumlarla. Satranç, Go, Tavla veya StarCraft pekiştirmeli öğrenme vakalardan bazılarıdır. Aynı şekilde, otonom arabalar için iyi bir kontrolör inşa etmek isteyebiliriz. Diğer arabaların otonom arabanın sürüş tarzına önemsiz şekillerde tepki vermesi muhtemeldir; örneğin, ondan kaçınmaya çalışmak, bir kazaya neden olmamaya çalışmak ve onunla işbirliği yapmaya çalışmak.
+Hafızalı bir ortamın daha genel durumu olarak ortamın bizimle işbirliği yapmaya çalıştığı durumlarla karşılaşabiliriz (özellikle sıfır toplamlı olmayan oyunlar için işbirlikçi oyunlar) veya çevrenin kazanmaya çalışacağı diğerler durumlarla. Satranç, Go, Tavla veya StarCraft pekiştirmeli öğrenme vakalardan bazılarıdır. Aynı şekilde, otonom arabalar için iyi bir kontrolör inşa etmek isteyebiliriz. Diğer arabaların otonom arabanın sürüş tarzına önemsiz şekillerde tepki vermesi muhtemeldir; örneğin, ondan kaçınmaya çalışmak, bir kazaya neden olmaya çalışmak ve onunla işbirliği yapmaya çalışmak.
 
 ### Ortamı Düşünmek
 
-Yukarıdaki farklı durumlar arasındaki önemli bir ayrım, sabit bir ortam durumunda baştan sona işe yaramış olabilecek aynı stratejinin, ortam uyum sağlayabildiğinde baştan sona çalışmayabileceğidir. Örneğin, bir tüccar tarafından keşfedilen bir borsada kar fırsatı, onu kullanmaya başladığında muhtemelen ortadan kalkacaktır. Ortamın değiştiği hız ve tarz, büyük ölçüde uygulayabileceğimiz algoritma türlerini belirler. Örneğin, nesnelerin yalnızca yavaş değişebileceğini bilirsek, herhangi bir tahmini de yalnızca yavaşça değişmeye zorlayabiliriz. Ortamın aniden değişebileceğini bilirsek, ancak çok seyrek olarak, buna izin verebiliriz. Bu tür bilgiler, hevesli veri bilimcilerinin kavram kayması, yani çözmeye çalıştığı problem zamanla değişmesi, ile başa çıkması için çok önemlidir.
+Yukarıdaki farklı durumlar arasındaki önemli bir ayrım, sabit bir ortam durumunda baştan sona işe yaramış olabilecek aynı stratejinin, ortam uyum sağlayabildiğinde baştan sona çalışmayabileceğidir. Örneğin, bir tüccar tarafından keşfedilen bir borsada kar fırsatı, onu kullanmaya başladığında muhtemelen ortadan kalkacaktır. Ortamın değiştiği hız ve tarz, büyük ölçüde uygulayabileceğimiz algoritma türlerini belirler. Örneğin, şeylerin yalnızca yavaş değişebileceğini bilirsek, herhangi bir tahmini de yalnızca yavaşça değişmeye zorlayabiliriz. Ortamın aniden değişebileceğini bilirsek, ancak çok seyrek olarak, buna izin verebiliriz. Bu tür bilgiler, hevesli veri bilimcilerinin kavram kayması, yani çözmeye çalıştığı problem zamanla değişmesi, ile başa çıkması için çok önemlidir.
 
 ## Makine Öğrenmesinde Adillik, Hesap Verebilirlik ve Şeffaflık
 
