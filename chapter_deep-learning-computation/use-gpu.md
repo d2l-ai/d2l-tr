@@ -1,7 +1,7 @@
 # GPU (Grafik İşleme Birimi)
 :label:`sec_use_gpu`
 
-:numref:`tab_intro_decade`'de, son yirmi yılda hesaplamanın hızlı büyümesini tartıştık. Özetle, GPU performansı 2000 yılından bu yana her on yılda bir 1000 kat artmıştır. Bu büyük fırsatlar sunarken aynı zamanda bu tür bir performansın sağlanması için önemli bir gereksinim olduğunu da göstermektedir.
+:numref:`tab_intro_decade` için de, son yirmi yılda hesaplamanın hızlı büyümesini tartıştık. Özetle, GPU performansı 2000 yılından bu yana her on yılda bir 1000 kat artmıştır. Bu büyük fırsatlar sunarken aynı zamanda bu tür bir performansın sağlanması için önemli bir gereksinim olduğunu da göstermektedir.
 
 
 Bu bölümde, araştırmanız için bu hesaplamalı performanstan nasıl yararlanılacağını tartışmaya başlıyoruz. Öncelikle tek GPU'ları kullanarak ve daha sonra, birden çok GPU ve birden çok sunucuyu (birden çok GPU ile) nasıl kullanacağınızı tartışacağız.
@@ -86,11 +86,11 @@ len(tf.config.experimental.list_physical_devices('GPU'))
 
 ```{.python .input}
 def try_gpu(i=0):  #@save
-    """Return gpu(i) if exists, otherwise return cpu()."""
+    """Varsa gpu(i) döndürün, aksi takdirde cpu() döndürün."""
     return npx.gpu(i) if npx.num_gpus() >= i + 1 else npx.cpu()
 
 def try_all_gpus():  #@save
-    """Return all available GPUs, or [cpu()] if no GPU exists."""
+    """Mevcut tüm GPU'ları veya GPU yoksa [cpu()] döndürün."""
     devices = [npx.gpu(i) for i in range(npx.num_gpus())]
     return devices if devices else [npx.cpu()]
 
@@ -100,13 +100,13 @@ try_gpu(), try_gpu(10), try_all_gpus()
 ```{.python .input}
 #@tab pytorch
 def try_gpu(i=0):  #@save
-    """Return gpu(i) if exists, otherwise return cpu()."""
+    """Varsa gpu(i) döndürün, aksi takdirde cpu() döndürün."""
     if torch.cuda.device_count() >= i + 1:
         return torch.device(f'cuda:{i}')
     return torch.device('cpu')
 
 def try_all_gpus():  #@save
-    """Return all available GPUs, or [cpu(),] if no GPU exists."""
+    """Mevcut tüm GPU'ları veya GPU yoksa [cpu()] döndürün."""
     devices = [torch.device(f'cuda:{i}')
              for i in range(torch.cuda.device_count())]
     return devices if devices else [torch.device('cpu')]
@@ -117,13 +117,13 @@ try_gpu(), try_gpu(10), try_all_gpus()
 ```{.python .input}
 #@tab tensorflow
 def try_gpu(i=0):  #@save
-    """Return gpu(i) if exists, otherwise return cpu()."""
+    """Varsa gpu(i) döndürün, aksi takdirde cpu() döndürün."""
     if len(tf.config.experimental.list_physical_devices('GPU')) >= i + 1:
         return tf.device(f'/GPU:{i}')
     return tf.device('/CPU:0')
 
 def try_all_gpus():  #@save
-    """Return all available GPUs, or [cpu(),] if no GPU exists."""
+    """Mevcut tüm GPU'ları veya GPU yoksa [cpu()] döndürün."""
     num_gpus = len(tf.config.experimental.list_physical_devices('GPU'))
     devices = [tf.device(f'/GPU:{i}') for i in range(num_gpus)]
     return devices if devices else [tf.device('/CPU:0')]
@@ -198,7 +198,7 @@ Y
 
 ### Kopyalama
 
-[**`X + Y`'yi hesaplamak istiyorsak, bu işlemi nerede gerçekleştireceğimize karar vermemiz gerekir.**] Örneğin :numref:`fig_copyto`'da gösterildiği gibi, `X`'i ikinci GPU'ya aktarabilir ve işlemi orada gerçekleştirebiliriz. Sadece `X` ve `Y`'yi *toplamayın*, çünkü bu bir istisnayla sonuçlanacaktır. Koşma zamanı motoru ne yapacağını bilemez: Veriyi aynı cihazda bulamaz ve başarısız olur. Çünkü `Y` ikinci GPU'da bulunur, ikisini toplamadan önce `X`'i taşımamız gerekir.
+[**`X + Y`'yi hesaplamak istiyorsak, bu işlemi nerede gerçekleştireceğimize karar vermemiz gerekir.**] Örneğin :numref:`fig_copyto` içinde gösterildiği gibi, `X`'i ikinci GPU'ya aktarabilir ve işlemi orada gerçekleştirebiliriz. Sadece `X` ve `Y`'yi *toplamayın*, çünkü bu bir istisnayla sonuçlanacaktır. Koşma zamanı motoru ne yapacağını bilemez: Veriyi aynı cihazda bulamaz ve başarısız olur. Çünkü `Y` ikinci GPU'da bulunur, ikisini toplamadan önce `X`'i taşımamız gerekir.
 
 ![İşlemi yapmadan önce verileri aynı cihaza kopyalayın.](../img/copyto.svg)
 :label:`fig_copyto`
@@ -329,7 +329,7 @@ Kısacası tüm veriler ve parametreler aynı cihazda olduğu sürece modelleri 
 
 1. Büyük matrislerin çarpımı gibi daha büyük bir hesaplama görevi deneyiniz ve CPU ile GPU arasındaki hız farkını görünüz. Az miktarda hesaplama içeren bir göreve ne olur?
 1. GPU'daki model parametrelerini nasıl okuyup yazmalıyız?
-1. $100 \times 100$'lük 1000 matris-matris çarpımını hesaplamak için gereken süreyi ölçünüz ve her seferde bir sonucun çıktı matrisinin Frobenius normunu günlüğe kaydetmeye karşılık GPU'da günlük tutma ve yalnızca son sonucun aktarmayı kıyaslayınız.
+1. $100 \times 100$'lük 1000 matris-matris çarpımını hesaplamak için gereken süreyi ölçünüz ve her seferde bir sonucun çıktı matrisinin Frobenius normunu günlüğe kaydetmeye karşılık GPU'da günlük tutma ve yalnızca son sonucu aktarmayı kıyaslayınız.
 1. İki GPU'da iki matris-matris çarpımını aynı anda gerçekleştirme ile tek bir GPU'da sıralı gerçekleştirmenin ne kadar zaman aldığını ölçerek karşılaştırınız. İpucu: Neredeyse doğrusal bir ölçekleme görmelisiniz.
 
 :begin_tab:`mxnet`

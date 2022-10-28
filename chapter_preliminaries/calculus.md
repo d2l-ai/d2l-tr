@@ -10,7 +10,7 @@ Bir daire gibi kavisli şekillerin alanını bulmak için, eski Yunanlılar bu �
 
 Aslında, tüketme yöntemi *integral hesabının* (şurada açıklanacaktır :numref:`sec_integral_calculus`) kaynaklandığı yerdir.
 2.000 yıldan fazla bir müddetten sonra, diğer kalkülüs alanı, *diferansiyel (türevsel) kalkülüs* icat edildi.
-Diferansiyel kalkülüsün en kritik uygulamaları arasındaki optimizasyon problemleri bir şeyin nasıl *en iyi* şekilde yapılacağını düşünür.
+Diferansiyel kalkülüsün en kritik uygulamaları arasındaki optimizasyon problemleri bir şeyin nasıl *en iyi* şekilde yapılacağına kafa yorar.
 :numref:`subsec_norms_and_objectives`'de tartışıldığı gibi, bu tür sorunlar derin öğrenmede her yerde bulunur.
 
 Derin öğrenmede, modelleri daha fazla veri gördükçe daha iyi ve daha iyi olmaları için arka arkaya güncelleyerek *eğitiyoruz*.
@@ -19,8 +19,8 @@ Bu soru göründüğünden daha zekicedir.
 Sonuçta, gerçekten önemsediğimiz, daha önce hiç görmediğimiz veriler üzerinde iyi performans gösteren bir model üretmektir.
 Ancak modeli yalnızca gerçekten görebildiğimiz verilere uydurabiliriz.
 Böylece modellerin uydurulması görevini iki temel kaygıya ayırabiliriz: 
-(i) *optimizasyon*: Modellerimizi gözlemlenen verilere uydurma süreci;
-(ii) *genelleme*: Geçerliliği onları eğitmek için kullanılan kesin veri örnekleri kümesinin ötesine geçen modellerin nasıl üretileceğinde bize rehberlik eden matematiksel ilkelerin ve uygulayıcılarının bilgeliği.
+(i) *Eniyileme*: Modellerimizi gözlemlenen verilere uydurma süreci;
+(ii) *Genelleme*: Geçerliliği onları eğitmek için kullanılan kesin veri örnekleri kümesinin ötesine geçen modellerin nasıl üretileceğinde bize rehberlik eden matematiksel ilkelerin ve uygulayıcılarının bilgeliği.
 
 Daha sonraki bölümlerde optimizasyon problemlerini ve yöntemlerini anlamanıza yardımcı olmak için burada, derin öğrenmede yaygın olarak kullanılan diferansiyel hesaplama hakkında bir tutam bilgi veriyoruz.
 
@@ -88,7 +88,7 @@ def numerical_lim(f, x, h):
 
 h = 0.1
 for i in range(5):
-    print(f'h={h:.5f}, numerical limit={numerical_lim(f, 1, h):.5f}')
+    print(f'h={h:.5f}, numerik limit={numerical_lim(f, 1, h):.5f}')
     h *= 0.1
 ```
 
@@ -126,7 +126,7 @@ $$\frac{d}{dx} \left[\frac{f(x)}{g(x)}\right] = \frac{g(x) \frac{d}{dx} [f(x)] -
 Bu nedenle, $x = 1$ atadığımız da, $u' = 2$ değerine sahibiz: Sayısal sonucun $2$'ye yaklaştığı, bu bölümdeki önceki denememiz tarafından desteklenmektedir.
 Bu türev aynı zamanda $u = f(x)$ eğrisine $x = 1$'deki teğet doğrusunun eğimidir.
 
-[**Türevlerin bu tür yorumunu görselleştirmek için**] Python'da popüler bir [**çizim kütüphanesi olan `matplotlib`i**] kullanacağız.
+[**Türevlerin bu tür yorumunu görselleştirmek için**] Python'da popüler bir [**çizim kütüphanesi olan `matplotlib`'i**] kullanacağız.
 `matplotlib` tarafından üretilen şekillerin özelliklerini yapılandırmak için birkaç işlev tanımlamamız gerekir.
 Aşağıdaki `use_svg_display` işlevi, daha keskin görüntülü svg şekilleri çıktısı almak için `matplotlib` paketini özelleştirir.
 `#@save` yorumunun, aşağıdaki işlev, sınıf veya ifadelerin `d2l` paketine kaydedildiği ve böylece daha sonra yeniden tanımlanmadan doğrudan çağrılabilecekleri (örneğin, `d2l.use_svg_display()`) özel bir terim olduğuna dikkat edin.
@@ -138,7 +138,7 @@ def use_svg_display():  #@save
     backend_inline.set_matplotlib_formats('svg')
 ```
 
-Şekil boyutlarını belirtmek için `set_figsize` fonksiyonunu tanımlarız. Burada doğrudan `d2l.plt`yi kullandığımıza dikkat edin, çünkü içe aktarma komutu, `from matplotlib import pyplot as plt`, önsöz bölumündeki `d2l` paketine kaydedilmek üzere işaretlenmişti.
+Şekil boyutlarını belirtmek için `set_figsize` fonksiyonunu tanımlarız. Burada doğrudan `d2l.plt`'yi kullandığımıza dikkat edin, çünkü içe aktarma komutu, `from matplotlib import pyplot as plt`, önsöz bölümündeki `d2l` paketine kaydedilmek üzere işaretlenmişti.
 
 ```{.python .input}
 #@tab all
@@ -230,8 +230,8 @@ $$\frac{\partial y}{\partial x_i} = \frac{\partial f}{\partial x_i} = f_{x_i} = 
 ## Gradyanlar (Eğimler)
 :label:`subsec_calculus-grad`
 
-Fonksiyonun *gradyan* vektörünü elde etmek için çok değişkenli bir fonksiyonun tüm değişkenlerine göre kısmi türevlerini art arda birleştirebiliriz.
-$f : \mathbb{R}^n \rightarrow \mathbb{R}$ işlevinin girdisinin $n$ boyutlu bir vektör, $\mathbf{x} = [x_1, x_2, \ldots, x_n]^\top$ olduğunu varsayalım ve çıktı bir skalerdir. $\mathbf{x}$'a göre $f(\mathbf{x})$ fonksiyonunun gradyanı, $n$ kısmi türevli bir vektördür:
+Fonksiyonun *gradyan* vektörünü elde etmek için çok değişkenli bir fonksiyonun tüm değişkenlerine göre kısmi türevlerini art arda bitiştirebiliriz.
+$f : \mathbb{R}^n \rightarrow \mathbb{R}$ işlevinin girdisinin $n$ boyutlu bir vektör, $\mathbf{x} = [x_1, x_2, \ldots, x_n]^\top$ olduğunu varsayalım ve çıktı bir skalerdir. $\mathbf{x}$'e göre $f(\mathbf{x})$ fonksiyonunun gradyanı, $n$ tane kısmi türevli bir vektördür:
 
 $$\nabla_{\mathbf{x}} f(\mathbf{x}) = \bigg[\frac{\partial f(\mathbf{x})}{\partial x_1}, \frac{\partial f(\mathbf{x})}{\partial x_2}, \ldots, \frac{\partial f(\mathbf{x})}{\partial x_n}\bigg]^\top,$$
 

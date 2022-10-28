@@ -1,7 +1,7 @@
 # Bölge tabanlı CNN'ler (R-CNN'ler)
 :label:`sec_rcnn`
 
-:numref:`sec_ssd`'te açıklanan tek atışta çoklu kutu algılamanın yanı sıra, bölge tabanlı CNN'ler veya CNN özniteliklerine (R-CNN) sahip bölgeler de nesne algılama :cite:`Girshick.Donahue.Darrell.ea.2014`'ya derin öğrenmeyi uygulamanın öncü yaklaşımları arasında yer almaktadır. Bu bölümde R-CNN ve onun iyileştirilmiş serilerini tanıtacağız: Hızlı R-CNN :cite:`Girshick.2015`, daha hızlı R-CNN :cite:`Ren.He.Girshick.ea.2015` ve maske R-CNN :cite:`He.Gkioxari.Dollar.ea.2017`. Sınırlı alan nedeniyle, sadece bu modellerin tasarımına odaklanacağız. 
+:numref:`sec_ssd` içinde açıklanan tek atışta çoklu kutu algılamanın yanı sıra, bölge tabanlı CNN'ler veya CNN özniteliklerine (R-CNN) sahip bölgeler de nesne algılamaya :cite:`Girshick.Donahue.Darrell.ea.2014` derin öğrenmeyi uygulamanın öncü yaklaşımları arasında yer almaktadır. Bu bölümde R-CNN ve onun iyileştirilmiş serilerini tanıtacağız: Hızlı R-CNN :cite:`Girshick.2015`, daha hızlı R-CNN :cite:`Ren.He.Girshick.ea.2015` ve maske R-CNN :cite:`He.Gkioxari.Dollar.ea.2017`. Sınırlı alan nedeniyle, sadece bu modellerin tasarımına odaklanacağız. 
 
 ## R-CNN'ler
 
@@ -30,19 +30,19 @@ Bir R-CNN'nin ana performans darboğazı, her bölge önerisi için hesaplamayı
 
 1. R-CNN ile karşılaştırıldığında, hızlı R-CNN'de, öznitelik ayıklama için CNN'nin girdisi, bireysel bölge önerilerinden ziyade tüm imgedir. Dahası, bu CNN eğitilebilir. Bir girdi imgesi göz önüne alındığında, CNN çıktısının şekli $1 \times c \times h_1  \times w_1$ olsun.
 1. Seçici aramanın $n$ bölge önerileri oluşturduğunu varsayalım. Bu bölge önerileri (farklı şekillerde) CNN çıktısındaki ilgi bölgelerini (farklı şekillerdeki) işaretler. Daha sonra kolayca birleştirilebilmesi için ilgili bu bölgelerin aynı şekle sahip öznitelikleri ayıklanır (yükseklik $h_2$ ve genişlik $w_2$ diye belirtilir). Bunu başarmak için hızlı R-CNN, *ilgili bölge (RoI) ortaklama* katmanı sunar: CNN çıktısı ve bölge önerileri bu katmana girilir ve tüm bölge önerileri için daha da ayıklanmış $n \times c \times h_2 \times w_2$ şekilli bitiştirilmiş öznitelikleri ortaya çıkarır.
-1. Tam bağlı bir katman kullanarak, bitiştirilmiş öznitelikleri $n \times d$'ün model tasarımına bağlı olduğu $n \times d$ şeklindeki bir çıktıya dönüştürün.
+1. Tam bağlı bir katman kullanarak, bitiştirilmiş öznitelikleri $n \times d$ şeklinde bir çıktıya dönüştürün; burada $d$ model tasarımına bağlıdır.
 1. $n$ bölge önerilerinin her biri için sınıfı ve kuşatan kutuyu tahmin edin. Daha somut olarak, sınıf ve kuşatan kutu tahmininde, tam bağlı katman çıktısını $n \times q$ şeklinde ($q$ sınıf sayısıdır) ve $n \times 4$ şeklinde çıktıya dönüştürün. Sınıf tahmini softmaks bağlanım kullanır.
 
-Hızlı R-CNN'de önerilen ilgi bölgesi ortaklama katmanı :numref:`sec_pooling`'te tanıtılan ortaklama katmanından farklıdır. Ortaklama katmanında, ortaklama penceresinin, dolgunun ve adımın boyutlarını belirterek çıktı şeklini dolaylı olarak kontrol ediyoruz. Buna karşılık, doğrudan ilgi bölgesi ortaklama katmanı çıktı şeklini belirtebilirsiniz. 
+Hızlı R-CNN'de önerilen ilgi bölgesi ortaklama katmanı :numref:`sec_pooling` içinde tanıtılan ortaklama katmanından farklıdır. Ortaklama katmanında, ortaklama penceresinin, dolgunun ve adımın boyutlarını belirterek çıktı şeklini dolaylı olarak kontrol ediyoruz. Buna karşılık, doğrudan ilgi bölgesi ortaklama katmanı çıktı şeklini belirtebilirsiniz. 
 
 Örneğin, her bölge için çıktı yüksekliğini ve genişliğini sırasıyla $h_2$ ve $w_2$ olarak belirtelim. $h \times w$ şeklindeki herhangi bir ilgi bölgesinin penceresi için, bu pencere, her alt pencerenin şekli yaklaşık $(h/h_2) \times (w/w_2)$ olduğu $h_2 \times w_2$ bir alt pencere ızgarasına ayrılmıştır. Pratikte, herhangi bir alt pencerenin yüksekliği ve genişliği tamsayıya yuvarlanır ve en büyük eleman, alt pencerenin çıktısı olarak kullanılacaktır. Bu nedenle, ilgi bölgeleri farklı şekillere sahip olsa bile ilgi bölgesi ortaklama katmanı aynı şekle sahip öznitelikler ayıklayabilir. 
 
-Açıklayıcı bir örnek olarak, :numref:`fig_roi`'te, $4 \times 4$ girdisinde sol üst $3\times 3$ ilgi bölgesi seçilir. Bu ilgi bölgesinde $2\times 2$'lik çıktı elde etmek için bir $2\times 2$ ilgi bölgesi ortaklama katmanı kullanıyoruz. Dört bölünmüş alt pencerenin her birinin 0, 1, 4 ve 5 (5 maksimumdur) öğelerini içerdiğini unutmayın; 2 ve 6 (6 maksimumdur); 8 ve 9 (maksimum 9) ve 10. 
+Açıklayıcı bir örnek olarak, :numref:`fig_roi` içinde, $4 \times 4$ girdisinde sol üst $3\times 3$ ilgi bölgesi seçilir. Bu ilgi bölgesinde $2\times 2$'lik çıktı elde etmek için bir $2\times 2$ ilgi bölgesi ortaklama katmanı kullanıyoruz. Dört bölünmüş alt pencerenin her birinin 0, 1, 4 ve 5 (5 maksimumdur) öğelerini içerdiğini unutmayın; 2 ve 6 (6 maksimumdur); 8 ve 9 (9 maksimumdur) ve 10. 
 
-![A $2\times 2$ region of interest pooling layer.](../img/roi.svg)
+![$2\times 2$'lik ilgi bölgesi ortaklama katmanı](../img/roi.svg)
 :label:`fig_roi`
 
-Aşağıda ilgi bölgesi ortaklama katmanı hesaplanması gösterilmektedir. CNN çıkarılan özelliklerin, `X`'in, yüksekliğinin ve genişliğinin, her ikisinin de 4 olduğunu ve yalnızca tek bir kanal olduğunu varsayalım.
+Aşağıda ilgi bölgesi ortaklama katmanı hesaplanması gösterilmektedir. CNN çıkarılan özniteliklerin, `X`'in, yüksekliğinin ve genişliğinin, her ikisinin de 4 olduğunu ve yalnızca tek bir kanal olduğunu varsayalım.
 
 ```{.python .input}
 from mxnet import np, npx
@@ -73,7 +73,7 @@ rois = np.array([[0, 0, 0, 20, 20], [0, 0, 10, 30, 30]])
 rois = torch.Tensor([[0, 0, 0, 20, 20], [0, 0, 10, 30, 30]])
 ```
 
-`X`'in yüksekliği ve genişliği, girdi imgesinin yüksekliğinin ve genişliğinin $1/10$ olduğu için, iki bölge önerisinin koordinatları belirtilen `spatial_scale`argümanına göre 0.1 ile çarpılır. Böylece iki ilgi bölgesi `X` üzerinde sırasıyla `X[:, :, 0:3, 0:3]` ve `X[:, :, 1:4, 0:4]` olarak işaretlenmiştir. Son olarak $2\times 2$'lık ilgi bölgesi ortaklamasında, her bir ilgi bölgesi, aynı şekilde $2\times 2$ olan öznitelikleri daha fazla çıkarmak için bir alt pencere ızgarasına bölünür. 
+`X`'in yüksekliği ve genişliği, girdi imgesinin yüksekliğinin ve genişliğinin $1/10$'u olduğu için, iki bölge önerisinin koordinatları belirtilen `spatial_scale` argümanına göre 0.1 ile çarpılır. Böylece iki ilgi bölgesi `X` üzerinde sırasıyla `X[:, :, 0:3, 0:3]` ve `X[:, :, 1:4, 0:4]` olarak işaretlenmiştir. Son olarak $2\times 2$'lık ilgi bölgesi ortaklamasında, her bir ilgi bölgesi, aynı şekilde $2\times 2$ olan öznitelikleri daha fazla çıkarmak için bir alt pencere ızgarasına bölünür. 
 
 ```{.python .input}
 npx.roi_pooling(X, rois, pooled_size=(2, 2), spatial_scale=0.1)
@@ -104,10 +104,10 @@ Daha hızlı R-CNN modelinin bir parçası olarak, bölge önerisi ağının mod
 
 Eğitim veri kümesinde, nesnenin piksel düzeyindeki konumları imgelerde de etiketlenmişse, *mask R-CNN*, nesne algılamanın :cite:`He.Gkioxari.Dollar.ea.2017` doğruluğunu daha da geliştirmek için bu tür ayrıntılı etiketleri etkili bir şekilde kullanabilir. 
 
-![Mask R-CNN modeli.](../img/mask-rcnn.svg)
+![Maske R-CNN modeli.](../img/mask-rcnn.svg)
 :label:`fig_mask_r-cnn`
 
-:numref:`fig_mask_r-cnn`'te gösterildiği gibi, R-CNN maskesi R-CNN daha hızlı R-CNN'den devşirilmiştir. Özellikle, maske R-CNN ilgi bölgesi ortaklama katmanını *ilgi bölgesi (RoI) hizalama* katmanı ile değiştirir. 
+:numref:`fig_mask_r-cnn` içinde gösterildiği gibi, maske R-CNN daha hızlı R-CNN'den devşirilmiştir. Özellikle, maske R-CNN ilgi bölgesi ortaklama katmanını *ilgi bölgesi (RoI) hizalama* katmanı ile değiştirir. 
 Bu ilgi bölgesi hizalama katmanı, öznitellik haritalarındaki uzamsal bilgileri korumak için ikili aradeğerleme kullanır; bu da piksel düzeyinde tahmin için daha uygundur. Bu katmanın çıktısı, tüm ilgi bölgeleri için aynı şekildeki öznitelik haritaları içerir. Bunlar, yalnızca her bir ilgi bölgesi için sınıfı ve kuşatan kutuyu değil, aynı zamanda ek bir tam evrişimli ağ aracılığıyla nesnenin piksel düzeyinde konumunu da tahmin etmek için kullanılırlar. Bir imgenin piksel düzeyinde anlamını tahmin etmek için tam evrişimli bir ağ kullanma hakkında daha fazla ayrıntı, bu ünitenin sonraki bölümlerinde sağlanacaktır. 
 
 ## Özet

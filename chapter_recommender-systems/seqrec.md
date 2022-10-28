@@ -6,7 +6,7 @@ Tanıtacağımız model, Caser :cite:`Tang.Wang.2018`, evrişimli dizi gömme ö
 
 ## Model Mimarileri
 
-Sıraya duyarlı tavsiye sisteminde, her kullanıcı öğe kümesindeki bazı öğelerin dizisiyle ilişkilendirilir. Let $S^u = (S_1^u, ... S_{|S_u|}^u)$ sıralı diziyi göstersin. Caser'in amacı, kullanıcı genel zevklerini ve kısa vadeli niyetini göz önünde bulundurarak öğeyi tavsiye etmektir. Önceki $L$ öğelerini göz önünde bulundurduğumuzu varsayalım, $t$ zaman adımı için eski etkileşimleri temsil eden bir gömme matrisi oluşturulabilir: 
+Sıraya duyarlı tavsiye sisteminde, her kullanıcı öğe kümesindeki bazı öğelerin dizisiyle ilişkilendirilir. $S^u = (S_1^u, ... S_{|S_u|}^u)$ bir sıralı diziyi göstersin. Caser'in amacı, kullanıcı genel zevklerini ve kısa vadeli niyetini göz önünde bulundurarak öğeyi tavsiye etmektir. Önceki $L$ öğelerini göz önünde bulundurduğumuzu varsayalım, $t$ zaman adımı için eski etkileşimleri temsil eden bir gömme matrisi oluşturulabilir: 
 
 $$
 \mathbf{E}^{(u, t)} = [ \mathbf{q}_{S_{t-L}^u} , ..., \mathbf{q}_{S_{t-2}^u}, \mathbf{q}_{S_{t-1}^u} ]^\top,
@@ -37,7 +37,7 @@ $$
 
 burada $\mathbf{V} \in \mathbb{R}^{n \times 2k}$ başka bir öğe gömme matrisidir. $\mathbf{b}' \in \mathbb{R}^n$, öğeye özgü ek girdidir. $\mathbf{P} \in \mathbb{R}^{m \times k}$, kullanıcıların genel zevkleri için kullanıcı gömme matrisidir. $\mathbf{p}_u \in \mathbb{R}^{ k}$, $P$'nin $u.$ satırıdır  ve $\mathbf{v}_i \in \mathbb{R}^{2k}$ $\mathbf{V}$'nin $i.$ satırıdır. 
 
-Model BPR veya Menteşe kaybı ile öğrenilebilir. Caser mimarisi aşağıda gösterilmiştir: 
+Model BPR veya menteşe kaybı ile öğrenilebilir. Caser mimarisi aşağıda gösterilmiştir: 
 
 ![Caser modelinin resimleştirilmesi](../img/rec-caser.svg)
 
@@ -64,15 +64,15 @@ class Caser(nn.Block):
         self.P = nn.Embedding(num_users, num_factors)
         self.Q = nn.Embedding(num_items, num_factors)
         self.d_prime, self.d = d_prime, d
-        # Vertical convolution layer
+        # Dikey evrişim katmanı
         self.conv_v = nn.Conv2D(d_prime, (L, 1), in_channels=1)
-        # Horizontal convolution layer
+        # Yatay evrişim katmanı
         h = [i + 1 for i in range(L)]
         self.conv_h, self.max_pool = nn.Sequential(), nn.Sequential()
         for i in h:
             self.conv_h.add(nn.Conv2D(d, (i, num_factors), in_channels=1))
             self.max_pool.add(nn.MaxPool1D(L - i + 1))
-        # Fully-connected layer
+        # Tam bağlı katman
         self.fc1_dim_v, self.fc1_dim_h = d_prime * num_factors, d * len(h)
         self.fc = nn.Dense(in_units=d_prime * num_factors + d * L,
                            activation='relu', units=num_factors)
@@ -104,7 +104,7 @@ class Caser(nn.Block):
 ```
 
 ## Negatif Örnekleme ile Sıralı Veri Kümesi 
-Sıralı etkileşim verilerini işlemek için Dataset sınıfını yeniden uygulamalıyız. Aşağıdaki kod, `SeqDataset` adlı yeni bir veri kümesi sınıfı oluşturur. Her örneklemde, kullanıcı kimliğini, bir dizi olarak etkileşimli önceki $L$ öğeyi ve hedef olarak etkileşime girdiği sonraki öğeyi çıktılar. Aşağıdaki şekil, bir kullanıcı için veri yükleme işlemini göstermektedir. Bu kullanıcının 9 filmi sevdiğini varsayalım, bu dokuz filmi kronolojik sırayla düzenleriz. En son film test öğesi olarak bırakılır. Kalan sekiz film için, her örnek beş ($L=5$) filmden oluşan bir dizi ve hedef öğe olarak sonraki öğeyi içeren üç eğitim örneklemi elde edebiliriz. Negatif örnekler, Özelleştirilmiş veri kümesine de dahil edilir. 
+Sıralı etkileşim verilerini işlemek için Dataset sınıfını yeniden uygulamalıyız. Aşağıdaki kod, `SeqDataset` adlı yeni bir veri kümesi sınıfı oluşturur. Her örneklemde, kullanıcı kimliğini, bir dizi olarak etkileşimli önceki $L$ öğeyi ve hedef olarak etkileşime girdiği sonraki öğeyi çıktılar. Aşağıdaki şekil, bir kullanıcı için veri yükleme işlemini göstermektedir. Bu kullanıcının 9 filmi sevdiğini varsayalım, bu dokuz filmi kronolojik sırayla düzenleriz. En son film test öğesi olarak bırakılır. Kalan sekiz film için, her örnek beş ($L=5$) filmden oluşan bir dizi ve hedef öğe olarak sonraki öğeyi içeren üç eğitim örneklemi elde edebiliriz. Negatif örnekler, özelleştirilmiş veri kümesine de dahil edilir. 
 
 ![Veri oluşturma sürecinin resimlendirilmesi](../img/rec-seq-data.svg)
 
@@ -210,7 +210,7 @@ d2l.train_ranking(net, train_iter, test_iter, loss, trainer, test_seq_iter,
 ## Alıştırmalar
 
 * Yatay ve dikey evrişimli ağlardan birini kaldırarak bir çıkarma çalışması yapın, hangi bileşen daha önemlidir?
-* Hiperparametre $L$'yi değiştir. Daha uzun tarihsel etkileşimler daha yüksek doğruluk getirir mi?
+* Hiper parametre $L$'yi değiştirin. Daha uzun tarihsel etkileşimler daha yüksek doğruluk getirir mi?
 * Yukarıda tanıttığımız diziye duyarlı tavsiye görevinin yanı sıra, oturum tabanlı tavsiye adı verilen başka bir diziye duyarlı tavsiye görevi türü daha vardır :cite:`Hidasi.Karatzoglou.Baltrunas.ea.2015`. Bu iki görev arasındaki farkları açıklayabilir misiniz?
 
 :begin_tab:`mxnet`

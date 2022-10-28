@@ -26,7 +26,7 @@ $$
  \end{aligned}
 $$
 
-Bu yeniden formülleştirme ile model karmaşıklığı büyük ölçüde azaltılır. Dahası, seyrek öznitelikler için, yalnızca sıfır olmayan elemanların hesaplanması gerekir, böylece genel karmaşıklık sıfır olmayan özniteliklerin sayısına doğrusal olur. 
+Bu yeniden formülleştirme ile model karmaşıklığı büyük ölçüde azaltılır. Dahası, seyrek öznitelikler için, yalnızca sıfır olmayan elemanların hesaplanması gerekir, böylece genel karmaşıklık sıfır olmayan özniteliklerin sayısına doğrusal oranda olur. 
 
 FM modelini öğrenmek için, bağlanım görevi için MSE kaybını, sınıflandırma görevleri için çapraz entropi kaybını ve sıralama görevi için BPR kaybını kullanabiliriz. Rasgele gradyan inişi ve Adam gibi standart eniyileştiriciler eniyileme için uygundur.
 
@@ -79,7 +79,7 @@ test_iter = gluon.data.DataLoader(
 ```
 
 ## Modeli Eğitme
-Sonrasında, modeli eğitiyoruz. Öğrenme oranı 0,02 olarak ayarlanır ve gömme boyutu varsayılan olarak 20'ye ayarlanır. `Adam` eniyileştiricisi ve `SigmoidBinaryCrossEntropyLoss` kaybı model eğitimi için kullanılır.
+Sonrasında, modeli eğitiyoruz. Öğrenme oranı 0.02 olarak ayarlanır ve gömme boyutu varsayılan olarak 20'ye ayarlanır. `Adam` eniyileştiricisi ve `SigmoidBinaryCrossEntropyLoss` kaybı model eğitimi için kullanılır.
 
 ```{.python .input  n=5}
 devices = d2l.try_all_gpus()

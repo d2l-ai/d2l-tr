@@ -1,6 +1,6 @@
 # Belgeler (Dökümantasyon)
 :begin_tab:`mxnet`
-Bu kitabın uzunluğundaki kısıtlamalar nedeniyle, her bir MXNet işlevini ve sınıfını tanıtamayız (ve muhtemelen bizim yapmamızı siz de istemezsiniz). API (Application Programming Interface - Uygulama Programlama Arayüzü) belgeleri ve ek öğreticiler (tutorial) ve örnekler kitabın ötesinde pek çok belge sağlar. Bu bölümde size MXNet API'sini keşfetmeniz için biraz rehberlik sunuyoruz.
+Bu kitabın uzunluğundaki kısıtlamalar nedeniyle, her bir MXNet işlevini ve sınıfını tanıtamayız (ve muhtemelen bizim yapmamızı siz de istemezsiniz). API (Application Programming Interface - Uygulama Programlama Arayüzü) belgeleri ve ek öğreticiler (tutorial) ve örnekler, kitabın ötesinde pek çok belge sağlar. Bu bölümde size MXNet API'sini keşfetmeniz için biraz rehberlik sunuyoruz.
 :end_tab:
 
 :begin_tab:`pytorch`
@@ -52,7 +52,7 @@ help(torch.ones)
 help(tf.ones)
 ```
 
-Dokümantasyondan, `ones` işlevinin belirtilen şekle sahip yeni bir tensör oluşturduğunu ve tüm öğeleri 1 değerine ayarladığını görebiliriz. Mümkün oldukça, yorumunuzu onaylamak için (**hızlı bir test**) yapmalısınız:
+Dökümantasyondan, `ones` işlevinin belirtilen şekle sahip yeni bir tensör oluşturduğunu ve tüm öğeleri 1 değerine ayarladığını görebiliriz. Mümkün oldukça, yorumunuzu onaylamak için (**hızlı bir test**) yapmalısınız:
 
 ```{.python .input}
 np.ones(4)

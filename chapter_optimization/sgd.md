@@ -1,7 +1,7 @@
 # Rasgele Gradyan İnişi
 :label:`sec_sgd`
 
-Daha önceki bölümlerde, eğitim prosedürümüzde rasgele gradyan inişi kullanmaya devam ettik, ancak, neden çalıştığını açıklamadık. Üzerine biraz ışık tutmak için, :numref:`sec_gd`'te gradyan inişinin temel prensiplerini tanımladık. Bu bölümde, *rasgele gradyan iniş*i daha ayrıntılı olarak tartışmaya devam ediyoruz.
+Daha önceki bölümlerde, eğitim prosedürümüzde rasgele gradyan inişi kullanmaya devam ettik, ancak, neden çalıştığını açıklamadık. Üzerine biraz ışık tutmak için, :numref:`sec_gd` içinde gradyan inişinin temel prensiplerini tanımladık. Bu bölümde, *rasgele gradyan iniş*ini daha ayrıntılı olarak tartışmaya devam ediyoruz.
 
 ```{.python .input}
 %matplotlib inline
@@ -39,11 +39,11 @@ $$\nabla f(\mathbf{x}) = \frac{1}{n} \sum_{i = 1}^n \nabla f_i(\mathbf{x}).$$
 
 Gradyan inişi kullanılıyorsa, her bağımsız değişken yineleme için hesaplama maliyeti $\mathcal{O}(n)$'dir ve $n$ ile doğrusal olarak büyür. Bu nedenle, eğitim veri kümesi daha büyük olduğunda, her yineleme için gradyan iniş maliyeti daha yüksek olacaktır. 
 
-Rasgele gradyan iniş (SGD), her yinelemede hesaplama maliyetini düşürür. Rasgele gradyan inişin her yinelemesinde, rastgele veri örnekleri için $i\in\{1,\ldots, n\}$ dizinden eşit olarak örnekleriz ve $\mathbf{x}$'i güncelleştirmek için $\nabla f_i(\mathbf{x})$ gradyanını hesaplarız: 
+Rasgele gradyan iniş (SGD), her yinelemede hesaplama maliyetini düşürür. Rasgele gradyan inişin her yinelemesinde, rastgele veri örnekleri için $i\in\{1,\ldots, n\}$ dizinden eşit olarak örneklemleriz ve $\mathbf{x}$'i güncelleştirmek için $\nabla f_i(\mathbf{x})$ gradyanını hesaplarız: 
 
 $$\mathbf{x} \leftarrow \mathbf{x} - \eta \nabla f_i(\mathbf{x}),$$
 
-burada $\eta$ öğrenme oranıdır. Her yineleme için hesaplama maliyetinin $\mathcal{O}(n)$'den gradyan inişinin $\mathcal{O}(n)$'ten $\mathcal{O}(1)$ sabitine düştüğünü görebiliriz. Dahası, rasgele gradyan $\nabla f_i(\mathbf{x})$'in $\nabla f(\mathbf{x})$'in tam gradyanının tarafsız bir tahmini olduğunu vurgulamak istiyoruz, çünkü 
+burada $\eta$ öğrenme oranıdır. Her yineleme için gradyan inişinin hesaplama maliyetinin $\mathcal{O}(n)$'den $\mathcal{O}(1)$ sabitine düştüğünü görebiliriz. Dahası, rasgele gradyan $\nabla f_i(\mathbf{x})$'in $\nabla f(\mathbf{x})$'in tam gradyanının tarafsız bir tahmini olduğunu vurgulamak istiyoruz, çünkü 
 
 $$\mathbb{E}_i \nabla f_i(\mathbf{x}) = \frac{1}{n} \sum_{i = 1}^n \nabla f_i(\mathbf{x}) = \nabla f(\mathbf{x}).$$
 
@@ -53,10 +53,10 @@ Bu, ortalama olarak rasgele gradyanın, gradyanın iyi bir tahmini olduğu anlam
 
 ```{.python .input}
 #@tab all
-def f(x1, x2):  # Objective function
+def f(x1, x2):  # Amaç fonksiyonu
     return x1 ** 2 + 2 * x2 ** 2
 
-def f_grad(x1, x2):  # Gradient of the objective function
+def f_grad(x1, x2):  # Amaç fonksiyonun gradyanı
     return 2 * x1, 4 * x2
 ```
 
@@ -64,7 +64,7 @@ def f_grad(x1, x2):  # Gradient of the objective function
 #@tab mxnet, pytorch
 def sgd(x1, x2, s1, s2, f_grad):
     g1, g2 = f_grad(x1, x2)
-    # Simulate noisy gradient
+    # Gürültülü gradyan benzetimi
     g1 += d2l.normal(0.0, 1, (1,))
     g2 += d2l.normal(0.0, 1, (1,))
     eta_t = eta * lr()
@@ -75,7 +75,7 @@ def sgd(x1, x2, s1, s2, f_grad):
 #@tab tensorflow
 def sgd(x1, x2, s1, s2, f_grad):
     g1, g2 = f_grad(x1, x2)
-    # Simulate noisy gradient
+    # Gürültülü gradyan benzetimi
     g1 += d2l.normal([1], 0.0, 1)
     g2 += d2l.normal([1], 0.0, 1)
     eta_t = eta * lr()
@@ -88,11 +88,11 @@ def constant_lr():
     return 1
 
 eta = 0.1
-lr = constant_lr  # Constant learning rate
+lr = constant_lr  # Sabit öğrenme oranı
 d2l.show_trace_2d(f, d2l.train_2d(sgd, steps=50, f_grad=f_grad))
 ```
 
-Gördüğümüz gibi, rasgele gradyan inişindeki değişkenlerin yörüngesi, :numref:`sec_gd`'te gradyan inişinde gözlemlediğimizden çok daha gürültülü. Bunun nedeni, gradyanın rasgele doğasından kaynaklanmaktadır. Yani, en düşük seviyeye yaklaştığımızda bile, $\eta \nabla f_i(\mathbf{x})$ aracılığıyla anlık gradyan tarafından aşılanan belirsizliğe hala tabiyiz. 50 adımdan sonra bile kalite hala o kadar iyi değil. Daha da kötüsü, ek adımlardan sonra iyileşmeyecektir (bunu onaylamak için daha fazla sayıda adım denemenizi öneririz). Bu bize tek alternatif bırakır: Öğrenme oranı  $\eta$'yı değiştirmek. Ancak, bunu çok küçük seçersek, ilkin bir ilerleme kaydetmeyeceğiz. Öte yandan, eğer çok büyük alırsak, yukarıda görüldüğü gibi iyi bir çözüm elde edemeyiz. Bu çelişkili hedefleri çözmenin tek yolu, optimizasyon ilerledikçe öğrenme oranını *dinamik* azaltmaktır. 
+Gördüğümüz gibi, rasgele gradyan inişindeki değişkenlerin yörüngesi, :numref:`sec_gd` içinde gradyan inişinde gözlemlediğimizden çok daha gürültülüdür. Bunun nedeni, gradyanın rasgele doğasından kaynaklanmaktadır. Yani, en düşük seviyeye yaklaştığımızda bile, $\eta \nabla f_i(\mathbf{x})$ aracılığıyla anlık gradyan tarafından aşılanan belirsizliğe hala tabiyiz. 50 adımdan sonra bile kalite hala o kadar iyi değil. Daha da kötüsü, ek adımlardan sonra iyileşmeyecektir (bunu onaylamak için daha fazla sayıda adım denemenizi öneririz). Bu bize tek alternatif bırakır: Öğrenme oranı  $\eta$'yı değiştirmek. Ancak, bunu çok küçük seçersek, ilkin bir ilerleme kaydetmeyeceğiz. Öte yandan, eğer çok büyük alırsak, yukarıda görüldüğü gibi iyi bir çözüm elde edemeyiz. Bu çelişkili hedefleri çözmenin tek yolu, optimizasyon ilerledikçe öğrenme oranını *dinamik* azaltmaktır. 
 
 Bu aynı zamanda `sgd` adım işlevine `lr` öğrenme hızı işlevinin eklenmesinin de sebebidir. Yukarıdaki örnekte, ilişkili 'lr' işlevini sabit olarak ayarladığımız için öğrenme hızı planlaması için herhangi bir işlevsellik uykuda kalmaktadır.
 
@@ -102,20 +102,20 @@ $\eta$'nın zamana bağlı öğrenme hızı $\eta(t)$ ile değiştirilmesi, opti
 
 $$
 \begin{aligned}
-    \eta(t) & = \eta_i \text{ if } t_i \leq t \leq t_{i+1}  && \text{piecewise constant} \\
-    \eta(t) & = \eta_0 \cdot e^{-\lambda t} && \text{exponential decay} \\
-    \eta(t) & = \eta_0 \cdot (\beta t + 1)^{-\alpha} && \text{polynomial decay}
+    \eta(t) & = \eta_i \text{ eğer } t_i \leq t \leq t_{i+1}  && \text{parçalı sabit} \\
+    \eta(t) & = \eta_0 \cdot e^{-\lambda t} && \text{üstel sönüm} \\
+    \eta(t) & = \eta_0 \cdot (\beta t + 1)^{-\alpha} && \text{polinomsal sönüm}
 \end{aligned}
 $$
 
-İlk *parçalı sabit* senaryosunda, öğrenme oranını düşürüyoruz, mesela optimizasyondaki ilerleme durduğunda. Bu, derin ağları eğitmek için yaygın bir stratejidir. Alternatif olarak çok daha saldırgan bir *üstel sönme* ile azaltabiliriz. Ne yazık ki bu genellikle algoritma yakınsamadan önce erken durmaya yol açar. Popüler bir seçim, $\alpha = 0.5$ ile *polinom sönmesi*dir. Dışbükey optimizasyon durumunda, bu oranın iyi davrandığını gösteren bir dizi kanıt vardır. 
+İlk *parçalı sabit* senaryosunda, öğrenme oranını düşürüyoruz, mesela optimizasyondaki ilerleme durduğunda. Bu, derin ağları eğitmek için yaygın bir stratejidir. Alternatif olarak çok daha saldırgan bir *üstel sönüm* ile azaltabiliriz. Ne yazık ki bu genellikle algoritma yakınsamadan önce erken durmaya yol açar. Popüler bir seçim, $\alpha = 0.5$ ile *polinom sönüm*dür. Dışbükey optimizasyon durumunda, bu oranın iyi davrandığını gösteren bir dizi kanıt vardır. 
 
 Üstel sönmenin pratikte neye benzediğini görelim.
 
 ```{.python .input}
 #@tab all
 def exponential_lr():
-    # Global variable that is defined outside this function and updated inside
+    # Bu fonksiyonun dışında tanımlanan ve içinde güncellenen global değişken
     global t
     t += 1
     return math.exp(-0.1 * t)
@@ -125,12 +125,12 @@ lr = exponential_lr
 d2l.show_trace_2d(f, d2l.train_2d(sgd, steps=1000, f_grad=f_grad))
 ```
 
-Beklendiği gibi, parametrelerdeki varyans önemli ölçüde azaltılır. Bununla birlikte, bu, $\mathbf{x} = (0, 0)$ eniyi çözümüne yakınsamama pahasına gelir. Hatta sonra 1000 yineleme adımında sonra bile eniyi çözümden hala çok uzaktayız. Gerçekten de, algoritmada yakınsamada tam anlamıyla başarısız. Öte yandan, öğrenme oranının adım sayısının ters karekökü ile söndüğü polinom sönmesi kullanırsak yakınsama sadece 50 adımdan sonra daha iyi olur.
+Beklendiği gibi, parametrelerdeki varyans önemli ölçüde azaltılır. Bununla birlikte, bu, $\mathbf{x} = (0, 0)$ eniyi çözümüne yakınsamama pahasına gelir. Hatta sonra 1000 yineleme adımında sonra bile eniyi çözümden hala çok uzaktayız. Gerçekten de, algoritma yakınsamada tam anlamıyla başarısız. Öte yandan, öğrenme oranının adım sayısının ters karekökü ile söndüğü polinom sönmesi kullanırsak yakınsama sadece 50 adımdan sonra daha iyi olur.
 
 ```{.python .input}
 #@tab all
 def polynomial_lr():
-    # Global variable that is defined outside this function and updated inside
+    # Bu fonksiyonun dışında tanımlanan ve içinde güncellenen global değişken
     global t
     t += 1
     return (1 + 0.1 * t) ** (-0.5)
@@ -140,13 +140,13 @@ lr = polynomial_lr
 d2l.show_trace_2d(f, d2l.train_2d(sgd, steps=50, f_grad=f_grad))
 ```
 
-Öğrenme oranının nasıl ayarlanacağı konusunda çok daha fazla seçenek var. Örneğin, küçük bir hızla başlayabilir, sonra hızlıca yükseltebilir ve daha yavaş da olsa tekrar azaltabiliriz. Hatta daha küçük ve daha büyük öğrenme oranları arasında geçiş yapabiliriz. Bu tür ayarlamaların çok çeşitlisi vardır. Şimdilik kapsamlı bir teorik analizin mümkün olduğu öğrenme oranı ayarlamalarına odaklanalım, yani dışbükey bir ortamda öğrenme oranları üzerine. Genel dışbükey olmayan problemler için anlamlı yakınsama garantileri elde etmek çok zordur, çünkü genel olarak doğrusal olmayan dışbükey problemlerin en aza indirilmesi NP zorludur. Bir araştırma için örneğin, Tibshirani 2015'in mükemmel [ders notları](https://www.stat.cmu.edu/~ryantibs/convexopt-F15/lectures/26-nonconvex.pdf)na bakınız. 
+Öğrenme oranının nasıl ayarlanacağı konusunda çok daha fazla seçenek var. Örneğin, küçük bir hızla başlayabilir, sonra hızlıca yükseltebilir ve daha yavaş da olsa tekrar azaltabiliriz. Hatta daha küçük ve daha büyük öğrenme oranları arasında geçiş yapabiliriz. Bu tür ayarlamaların çok çeşidi vardır. Şimdilik kapsamlı bir teorik analizin mümkün olduğu öğrenme oranı ayarlamalarına odaklanalım, yani dışbükey bir ortamda öğrenme oranları üzerine. Genel dışbükey olmayan problemler için anlamlı yakınsama garantileri elde etmek çok zordur, çünkü genel olarak doğrusal olmayan dışbükey problemlerin en aza indirilmesi NP zorludur. Bir araştırma için örneğin, Tibshirani'nin 2015'teki mükemmel [ders notları](https://www.stat.cmu.edu/~ryantibs/convexopt-F15/lectures/26-nonconvex.pdf)na bakınız. 
 
 ## Dışbükey Amaç İşlevleri için Yakınsaklık Analizi
 
 Dışbükey amaç fonksiyonları için rasgele gradyan inişinin aşağıdaki yakınsama analizi isteğe bağlıdır ve öncelikle problem hakkında daha fazla sezgi iletmek için hizmet vermektedir. Kendimizi en basit kanıtlardan biriyle sınırlıyoruz :cite:`Nesterov.Vial.2000`. Önemli ölçüde daha gelişmiş ispat teknikleri mevcuttur, örn. amaç fonksiyonu özellikle iyi-huyluysa. 
 
-$f(\boldsymbol{\xi}, \mathbf{x})$'in amaç işlevinin $\boldsymbol{\xi}$ tümü için $\mathbf{x}$'de dışbükey olduğunu varsayalım. Daha somut olarak, rasgele gradyan iniş güncellemesini aklımızda bulunduruyoruz: 
+$f(\boldsymbol{\xi}, \mathbf{x})$'in amaç işlevinin $\boldsymbol{\xi}$'nin tümü için $\mathbf{x}$'de dışbükey olduğunu varsayalım. Daha somut olarak, rasgele gradyan iniş güncellemesini aklımızda bulunduruyoruz: 
 
 $$\mathbf{x}_{t+1} = \mathbf{x}_{t} - \eta_t \partial_\mathbf{x} f(\boldsymbol{\xi}_t, \mathbf{x}),$$
 
@@ -154,7 +154,7 @@ burada $f(\boldsymbol{\xi}_t, \mathbf{x})$, bir dağılımdan $t$ adımında çe
 
 $$R(\mathbf{x}) = E_{\boldsymbol{\xi}}[f(\boldsymbol{\xi}, \mathbf{x})]$$
 
-beklenen riski ifade eder ve $R^*$, $\mathbf{x}$'e göre en düşük değeridir. Son olarak $\mathbf{x}^*$  küçültücü (minimizer) olsun ($\mathbf{x}$'ın tanımlandığı etki alanında var olduğunu varsayıyoruz). Bu durumda $t$ zamanında $\mathbf{x}_t$ ve risk küçültücü $\mathbf{x}^*$ arasındaki mesafeyi izleyebilir ve zamanla iyileşip iyileşmediğini görebiliriz: 
+beklenen riski ifade eder ve $R^*$, $\mathbf{x}$'e göre en düşük değerdir. Son olarak $\mathbf{x}^*$  küçültücü (minimizer) olsun ($\mathbf{x}$'in tanımlandığı etki alanında var olduğunu varsayıyoruz). Bu durumda $t$ zamanında $\mathbf{x}_t$ ve risk küçültücü $\mathbf{x}^*$ arasındaki mesafeyi izleyebilir ve zamanla iyileşip iyileşmediğini görebiliriz: 
 
 $$\begin{aligned}    &\|\mathbf{x}_{t+1} - \mathbf{x}^*\|^2 \\ =& \|\mathbf{x}_{t} - \eta_t \partial_\mathbf{x} f(\boldsymbol{\xi}_t, \mathbf{x}) - \mathbf{x}^*\|^2 \\    =& \|\mathbf{x}_{t} - \mathbf{x}^*\|^2 + \eta_t^2 \|\partial_\mathbf{x} f(\boldsymbol{\xi}_t, \mathbf{x})\|^2 - 2 \eta_t    \left\langle \mathbf{x}_t - \mathbf{x}^*, \partial_\mathbf{x} f(\boldsymbol{\xi}_t, \mathbf{x})\right\rangle.   \end{aligned}$$
 :eqlabel:`eq_sgd-xt+1-xstar`
@@ -164,19 +164,19 @@ Rasgele gradyan $\partial_\mathbf{x} f(\boldsymbol{\xi}_t, \mathbf{x})$'in $L_2$
 $$\eta_t^2 \|\partial_\mathbf{x} f(\boldsymbol{\xi}_t, \mathbf{x})\|^2 \leq \eta_t^2 L^2.$$
 :eqlabel:`eq_sgd-L`
 
-Çoğunlukla $\mathbf{x}_t$ ve $\mathbf{x}^*$ arasındaki mesafenin *beklenti*de nasıl değiştiğiyle ilgileniyoruz. Aslında, herhangi bir belirli adım dizisi için, karşılaştığımız $\boldsymbol{\xi}_t$ hangisine bağlı olarak mesafe artabilir. Bu yüzden nokta çarpımını sınırlamamız gerekiyor. Herhangi bir dışbükey fonksiyon $f$ için $f(\mathbf{y}) \geq f(\mathbf{x}) + \langle f'(\mathbf{x}), \mathbf{y} - \mathbf{x} \rangle$'nin tüm $\mathbf{x}$ ve $\mathbf{y}$ için, dışbükeylik ile şuna varırız:
+Çoğunlukla $\mathbf{x}_t$ ve $\mathbf{x}^*$ arasındaki mesafenin *beklenti*de nasıl değiştiğiyle ilgileniyoruz. Aslında, herhangi bir belirli adım dizisi için, karşılaştığımız herhangi $\boldsymbol{\xi}_t$'ye bağlı olarak mesafe artabilir. Bu yüzden nokta çarpımını sınırlamamız gerekiyor. Herhangi bir dışbükey fonksiyon $f$ için $f(\mathbf{y}) \geq f(\mathbf{x}) + \langle f'(\mathbf{x}), \mathbf{y} - \mathbf{x} \rangle$'nin tüm $\mathbf{x}$ ve $\mathbf{y}$ için, dışbükeylik ile şuna varırız:
 
 $$f(\boldsymbol{\xi}_t, \mathbf{x}^*) \geq f(\boldsymbol{\xi}_t, \mathbf{x}_t) + \left\langle \mathbf{x}^* - \mathbf{x}_t, \partial_{\mathbf{x}} f(\boldsymbol{\xi}_t, \mathbf{x}_t) \right\rangle.$$
 :eqlabel:`eq_sgd-f-xi-xstar`
 
-:eqref:`eq_sgd-L` ve :eqref:`eq_sgd-f-xi-xstar`'in her iki eşitsizliği :eqref:`eq_sgd-xt+1-xstar`'e yerleştirerek parametreler arasındaki mesafeye $t+1$ zamanında aşağıdaki gibi sınır koyarız: 
+:eqref:`eq_sgd-L` ve :eqref:`eq_sgd-f-xi-xstar` içindeki her iki eşitsizliği :eqref:`eq_sgd-xt+1-xstar` denklemine yerleştirerek parametreler arasındaki mesafeye $t+1$ zamanında aşağıdaki gibi sınır koyarız: 
 
 $$\|\mathbf{x}_{t} - \mathbf{x}^*\|^2 - \|\mathbf{x}_{t+1} - \mathbf{x}^*\|^2 \geq 2 \eta_t (f(\boldsymbol{\xi}_t, \mathbf{x}_t) - f(\boldsymbol{\xi}_t, \mathbf{x}^*)) - \eta_t^2 L^2.$$
 :eqlabel:`eqref_sgd-xt-diff`
 
 Bu, mevcut kayıp ile optimal kayıp arasındaki fark $\eta_t L^2/2$'ten ağır bastığı sürece ilerleme kaydettiğimiz anlamına gelir. Bu fark sıfıra yakınsamaya bağlı olduğundan, $\eta_t$ öğrenme oranının da *yok olması* gerekir. 
 
-Sonrasında :eqref:`eqref_sgd-xt-diff` üzerinde beklentileri alırız. Şu sonuca varırız: 
+Sonrasında :eqref:`eqref_sgd-xt-diff` üzerinden beklentileri alırız. Şu sonuca varırız: 
 
 $$E\left[\|\mathbf{x}_{t} - \mathbf{x}^*\|^2\right] - E\left[\|\mathbf{x}_{t+1} - \mathbf{x}^*\|^2\right] \geq 2 \eta_t [E[R(\mathbf{x}_t)] - R^*] -  \eta_t^2 L^2.$$
 
@@ -185,7 +185,7 @@ Son adım $t \in \{1, \ldots, T\}$ için eşitsizlikler üzerinde toplamayı iç
 $$\|\mathbf{x}_1 - \mathbf{x}^*\|^2 \geq 2 \left (\sum_{t=1}^T   \eta_t \right) [E[R(\mathbf{x}_t)] - R^*] - L^2 \sum_{t=1}^T \eta_t^2.$$
 :eqlabel:`eq_sgd-x1-xstar`
 
-$\mathbf{x}_1$'in verildiğini ve böylece beklentinin düştüğünü, bizim bunları sömürdüğümüzü unutmayın. Son tanımımız 
+$\mathbf{x}_1$'in verildiğini ve böylece beklentinin düştüğünü unutmayın. Son tanımımız 
 
 $$\bar{\mathbf{x}} \stackrel{\mathrm{def}}{=} \frac{\sum_{t=1}^T \eta_t \mathbf{x}_t}{\sum_{t=1}^T \eta_t}.$$
 
@@ -209,9 +209,9 @@ burada $r^2 \stackrel{\mathrm{def}}{=} \|\mathbf{x}_1 - \mathbf{x}^*\|^2$, param
 
 Şimdiye kadar, rasgele gradyan inişi hakkında konuşurken biraz hızlı ve gevşek hareket ettik. $x_i$ örneklerini, tipik olarak $y_i$ etiketleriyle bazı $p(x, y)$ dağılımlardan çektiğimizi ve bunu model parametrelerini bir şekilde güncellemek için kullandığımızı belirttik. Özellikle, sonlu bir örnek boyutu için $p(x, y) = \frac{1}{n} \sum_{i=1}^n \delta_{x_i}(x) \delta_{y_i}(y)$ ayrık dağılımın olduğunu savunduk. Bazı $\delta_{x_i}$ ve $\delta_{y_i}$ fonksiyonları için üzerinde rasgele gradyan inişini gerçekleştirmemizi sağlar. 
 
-Ancak, gerçekten yaptığımız şey bu değildi. Mevcut bölümdeki basit örneklerde, aksi takdirde rasgele olmayan bir gradyana gürültü ekledik, yani $(x_i, y_i)$ çiftleri varmış gibi davrandık. Bunun burada haklandığı ortaya çıkıyor (ayrıntılı bir tartışma için alıştırmalara bakın). Daha rahatsız edici olan, önceki tüm tartışmalarda bunu açıkça yapmadığımızdır. Bunun neden tercih edilebilir olduğunu görmek için, tersini düşünün, yani ayrık dağılımdan *değiştirmeli*  $n$ gözlemleri örnekliyoruz. Rastgele $i$ elemanını seçme olasılığı $1/n$'dır. Böylece onu *en azından* bir kez seçeriz:
+Ancak, gerçekten yaptığımız şey bu değildi. Mevcut bölümdeki basit örneklerde, aksi takdirde rasgele olmayan bir gradyana gürültü ekledik, yani $(x_i, y_i)$ çiftleri varmış gibi davrandık. Bunun burada haklı olduğu ortaya çıkıyor (ayrıntılı bir tartışma için alıştırmalara bakın). Daha rahatsız edici olan, önceki tüm tartışmalarda bunu açıkça yapmadığımızdır. Bunun neden tercih edilebilir olduğunu görmek için, tersini düşünün, yani ayrık dağılımdan *değiştirmeli*  $n$ gözlemleri örnekliyoruz. Rastgele $i$ elemanını seçme olasılığı $1/n$'dır. Böylece onu *en azından* bir kez seçeriz:
 
-$$P(\mathrm{choose~} i) = 1 - P(\mathrm{omit~} i) = 1 - (1-1/n)^n \approx 1-e^{-1} \approx 0.63.$$
+$$P(\mathrm{seç~} i) = 1 - P(\mathrm{yoksay~} i) = 1 - (1-1/n)^n \approx 1-e^{-1} \approx 0.63.$$
 
 Benzer bir akıl yürütme, bir numunenin (yani eğitim örneği) *tam bir kez* seçme olasılığının şöyle verildiğini göstermektedir: 
 
@@ -222,7 +222,7 @@ Bu, *değiştirmesiz* örneklemeye göreceli oranla artan bir varyansa ve azalan
 ## Özet
 
 * Dışbükey problemler için, geniş bir öğrenme oranları seçeneği için rasgele gradyan inişinin eniyi çözüme yakınsayacağını kanıtlayabiliriz.
-* Derin öğrenme için bu genellikle böyle değildir. bununla birlikte, dışbükey problemlerin analizi, optimizasyona nasıl yaklaşılacağına dair, yani öğrenme oranını çok hızlı olmasa da aşamalı olarak azaltmak için, bize yararlı bilgiler verir.
+* Derin öğrenme için bu genellikle böyle değildir. Bununla birlikte, dışbükey problemlerin analizi, optimizasyona nasıl yaklaşılacağına dair, yani öğrenme oranını çok hızlı olmasa da aşamalı olarak azaltmak için, bize yararlı bilgiler verir.
 * Öğrenme oranı çok küçük veya çok büyük olduğunda sorunlar ortaya çıkar. Pratikte uygun bir öğrenme oranı genellikle sadece birden fazla deneyden sonra bulunur.
 * Eğitim veri kümesinde daha fazla örnek olduğunda, gradyan inişi için her yinelemede hesaplamak daha pahalıya mal olur, bu nedenle bu durumlarda rasgele gradyan inişi tercih edilir.
 * Rasgele gradyan inişi için optimizasyon garantileri genel olarak dışbükey olmayan durumlarda mevcut değildir, çünkü kontrol gerektiren yerel minimum sayısı da üstel olabilir.

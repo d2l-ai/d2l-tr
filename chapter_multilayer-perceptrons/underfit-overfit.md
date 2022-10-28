@@ -14,13 +14,13 @@ Eğitim verilerimizi altta yatan dağılıma uyduğundan daha yakına uydurma ol
 
 ## Eğitim Hatası ve Genelleme Hatası
 
-Bu olguyu daha biçimsel olarak tartışmak için, eğitim hatası ve genelleme hatası arasında ayrım yapmamız gerekir. *Eğitim hatası*, eğitim veri kümesinde hesaplanan modelimizin hatasıdır, *genelleme hatası* ise eğer onu esas örneklemimiz ile aynı temel veri dağılımından alınan sonsuz bir ek veri örneği akışına uygularsak modelimizin gösterecegi hatanın beklentisidir.
+Bu olguyu daha biçimsel olarak tartışmak için, eğitim hatası ve genelleme hatası arasında ayrım yapmamız gerekir. *Eğitim hatası*, eğitim veri kümesinde hesaplanan modelimizin hatasıdır, *genelleme hatası* ise eğer onu esas örneklemimiz ile aynı temel veri dağılımından alınan sonsuz bir ek veri örneği akışına uygularsak modelimizin göstereceği hatanın beklentisidir.
 
 Sorunsal olarak, genelleme hatasını tam olarak hesaplayamayız. Bunun nedeni, sonsuz veri akışının hayali bir nesne olmasıdır. Uygulamada, modelimizi eğitim kümemizden rastgele seçilmiş veri örneklerinden oluşan bağımsız bir test kümesine uygulayarak genelleme hatasını *tahmin etmeliyiz*.
 
 Aşağıdaki üç düşünce deneyi bu durumu daha iyi açıklamaya yardımcı olacaktır. Final sınavına hazırlanmaya çalışan bir üniversite öğrencisini düşünün. Çalışkan bir öğrenci, önceki yılların sınavlarını kullanarak iyi pratik yapmaya ve yeteneklerini test etmeye çalışacaktır. Bununla birlikte, geçmiş sınavlarda başarılı olmak, gerekli olduğunda başarılı olacağının garantisi değildir. Örneğin, öğrenci sınav sorularının cevaplarını ezberleyerek hazırlanmaya çalışabilir. Bu, öğrencinin birçok şeyi ezberlemesini gerektirir. Hatta geçmiş sınavların cevaplarını da mükemmel bir şekilde hatırlayabilir. Başka bir öğrenci, belirli cevapları vermenin nedenlerini anlamaya çalışarak hazırlanabilir. Çoğu durumda, ikinci öğrenci çok daha iyisini yapacaktır.
 
-Benzer şekilde, soruları yanıtlamak için sadece bir arama tablosu kullanan bir model düşünün. İzin verilen girdiler kümesi ayrık ve makul ölçüde küçükse, o zaman belki *birçok* eğitim örneğini gördükten sonra, bu yaklaşım iyi sonuç verecektir. Yine de bu modelin, daha önce hiç görmediği örneklerle karşılaştığında rastgele tahmin etmekten daha iyisini yapma yeteneği yoktur. Gerçekte, girdi uzayları, akla gelebilecek her girdiye karşılık gelen yanıtları ezberlemek için çok büyüktür. Örneğin, $28\times28$'lik siyah beyaz resimleri düşünün. Her piksel $256$ gri tonlama değerlerinden birini alabiliyorsa, $256^{784}$ olası imge vardır. Bu, evrendeki atomlardan çok daha fazla sayıda, düşük çözünürlüklü gri tonlamalı küçük resim boyutunda imge olduğu anlamına gelir. Bu tür verilerle karşılaşsak bile, arama tablosunu asla saklayamayız.
+Benzer şekilde, soruları yanıtlamak için sadece bir arama tablosu kullanan bir model düşünün. İzin verilen girdiler kümesi ayrık ve makul ölçüde küçükse, o zaman belki *birçok* eğitim örneğini gördükten sonra, bu yaklaşım iyi sonuç verecektir. Yine de bu modelin, daha önce hiç görmediği örneklerle karşılaştığında rastgele tahmin etmekten daha iyisini yapma yeteneği yoktur. Gerçekte, girdi uzayları, akla gelebilecek her girdiye karşılık gelen yanıtları ezberlemek için çok büyüktür. Örneğin, $28\times28$'lik siyah beyaz imgeleri düşünün. Her piksel $256$ gri tonlama değerlerinden birini alabiliyorsa, $256^{784}$ olası imge vardır. Bu, evrendeki atomlardan çok daha fazla sayıda, düşük çözünürlüklü gri tonlamalı küçük boyutlu imge olduğu anlamına gelir. Bu tür verilerle karşılaşsak bile, arama tablosunu asla saklayamayız.
 
 Son olarak, yazı tura atmaların sonuçlarını (sınıf 0: tura, sınıf 1: yazı) mevcut olabilecek bazı bağlamsal özniteliklere göre sınıflandırmaya çalışma problemini düşünün. Paranın hilesiz olduğunu varsayalım. Hangi algoritmayı bulursak bulalım, genelleme hatası her zaman $\frac{1}{2}$ olacaktır. Bununla birlikte, çoğu algoritma için, herhangi bir özniteliğimiz olmasa bile, çekiliş şansına bağlı olarak eğitim hatamızın önemli ölçüde daha düşük olmasını beklemeliyiz! {0, 1, 1, 1, 0, 1} veri kümesini düşünün. Özniteliksiz algoritmamız, her zaman sınırlı örneklemimizden *1* olarak görünen *çoğunluk sınıfını* tahmin etmeye başvuracaktır. Bu durumda, sınıf 1'i $\frac{1}{3}$ hata ile her zaman tahmin eden model, bizim genelleme hatamızdan önemli ölçüde daha iyi olacaktır. Veri miktarını artırdıkça, turaların oranının $\frac{1}{2}$'den sapma olasılığı önemli ölçüde azalır ve eğitim hatamız genelleme hatasıyla eşleşir.
 
@@ -32,11 +32,11 @@ Genelleme, makine öğrenmesindeki temel sorun olduğundan, birçok matematikçi
 
 İyi bir makine öğrenmesi bilimcisi olmak eleştirel düşünmeyi gerektirir ve şimdiden bu varsayımda boşluklar açıyor olmalısınız, varsayımın başarısız olduğu yaygın durumlar ortaya çıkar. Ya UCSF Tıp Merkezi'ndeki hastalardan toplanan verilerle bir ölüm riski tahmincisi eğitirsek ve bunu Massachusetts General Hospital'daki hastalara uygularsak? Bu dağılımlar kesinlikle özdeş değildir. Dahası, örneklemler zamanla ilişkilendirilebilir. Ya Tweetlerin konularını sınıflandırıyorsak? Haber döngüsü, tartışılan konularda herhangi bir bağımsızlık varsayımını ihlal ederek zamansal bağımlılıklar yaratacaktır.
 
-Bazen iid varsayımından küçük ihlallerle uzaklaşabiliriz ve modellerimiz oldukça iyi çalışmaya devam edecektir. Sonuçta, neredeyse her gerçek dünya uygulaması, iid varsayımın en azından bazı küçük ihlallerini içerir ama yine de yüz tanıma, konuşma tanıma ve dil çevirisi benzeri uygulamalar için bir çok yararlı araca sahibiz.
+Bazen iid (böd - bağımsız ve özdeşçe dağılmış) varsayımından küçük ihlallerle uzaklaşabiliriz ve modellerimiz oldukça iyi çalışmaya devam edecektir. Sonuçta, neredeyse her gerçek dünya uygulaması, böd (iid) varsayımın en azından bazı küçük ihlallerini içerir ama yine de yüz tanıma, konuşma tanıma ve dil çevirisi benzeri uygulamalar için bir çok yararlı araca sahibiz.
 
 Diğer ihlallerin sorun yaratacağı kesindir. Örneğin, bir yüz tanıma sistemini sadece üniversite öğrencileri ile eğitmeyi denediğimizi ve sonra onu bir huzurevi popülasyonunda yaşlılığı izlemede bir araç olarak kullanmak istediğimizi düşünün. Üniversite öğrencileri yaşlılardan oldukça farklı görünme eğiliminde olduklarından, bunun iyi sonuç vermesi olası değildir.
 
-Sonraki bölümlerde, iid varsayım ihlallerinden kaynaklanan sorunları tartışacağız. Şimdilik, iid varsayımı sayesinde bile genellemeyi anlamak zorlu bir problemdir. Dahası, derin sinir ağlarının neden bu kadar iyi genelleştirdiğini açıklayabilecek kesin teorik temellerin aydınlatılması öğrenme teorisindeki en büyük zihinlerin canını sıkmaya devam ediyor.
+Sonraki bölümlerde, böd (iid) varsayım ihlallerinden kaynaklanan sorunları tartışacağız. Şimdilik, böd (iid) varsayımı sayesinde bile genellemeyi anlamak zorlu bir problemdir. Dahası, derin sinir ağlarının neden bu kadar iyi genelleştirdiğini açıklayabilecek kesin teorik temellerin aydınlatılması öğrenme teorisindeki en büyük zihinlerin canını sıkmaya devam ediyor.
 
 Modellerimizi eğittiğimizde, eğitim verilerine mümkün olduğu kadar uyan bir işlev aramaya çalışırız. İşlev, gerçek ilişkilendirmeler kadar kolay sahte desenleri yakalayabilecek kadar esnekse, görünmeyen verileri iyi genelleyen bir model üretmeden *çok iyi* performans gösterebilir. Bu tam olarak kaçınmak veya en azından kontrol etmek istediğimiz şeydir. Derin öğrenmedeki tekniklerin çoğu, aşırı öğrenmeye karşı korumayı amaçlayan sezgisel yöntemler ve hilelerdir.
 
@@ -55,7 +55,7 @@ Bu bölümde, size biraz sezgi vermek için, bir model sınıfının genelleşti
 
 ## Model Seçimi
 
-Makine öğrenmesinde, genellikle birkaç aday modeli değerlendirdikten sonra son modelimizi seçeriz. Bu işleme *model seçimi* denir. Bazen karşılaştırmaya konu olan modeller doğalari gereği temelden farklıdır (örneğin, karar ağaçları ve doğrusal modeller). Diğer zamanlarda, farklı hiper parametre ayarlarıyla eğitilmiş aynı model sınıfının üyelerini karşılaştırıyoruz.
+Makine öğrenmesinde, genellikle birkaç aday modeli değerlendirdikten sonra son modelimizi seçeriz. Bu işleme *model seçimi* denir. Bazen karşılaştırmaya konu olan modeller doğaları gereği temelden farklıdır (örneğin, karar ağaçları ve doğrusal modeller). Diğer zamanlarda, farklı hiper parametre ayarlarıyla eğitilmiş aynı model sınıfının üyelerini karşılaştırıyoruz.
 
 Örneğin, MLP'de, modelleri farklı sayıda gizli katman, farklı sayıda gizli birim ve her gizli katmana uygulanan çeşitli etkinleştirme işlevleri seçenekleriyle karşılaştırma yapmak isteyebiliriz. Aday modellerimiz arasında en iyisini belirlemek için, genellikle bir geçerleme veri kümesi kullanırız.
 
@@ -75,7 +75,7 @@ Sonuç, geçerleme ve test verileri arasındaki sınırların endişe verici der
 
 Eğitim verisi kıt olduğunda, uygun bir geçerleme kümesi oluşturmak için yeterli veriyi tutmaya bile imkanımız olmayabilir. Bu soruna popüler bir çözüm, $K$*-kat çapraz geçerleme* kullanmaktır. Burada, esas eğitim verileri $K$ tane çakışmayan alt kümeye bölünmüştür. Ardından, model eğitimi ve geçerleme, her seferinde $K-1$ tane alt küme üzerinde eğitim ve farklı bir alt kümede (bu turda eğitim için kullanılmayan) geçerleme olmak üzere, $K$ kez yürütülür. Son olarak, eğitim ve geçerleme hataları $K$ deneyden elde edilen sonuçların ortalaması alınarak tahmin edilir.
 
-## Eksik veya Aşırı Öğrenme?
+## Eksik Öğrenme mi veya Aşırı Öğrenme mi?
 
 Eğitim ve geçerleme hatalarını karşılaştırdığımızda, iki genel duruma dikkat etmek istiyoruz. Birincisi, eğitim hatamızın ve geçerleme hatamızın hem önemli hem de aralarında küçük bir boşluk olduğu durumlara dikkat etmek istiyoruz. Model eğitim hatasını azaltamıyorsa, bu, modelimizin modellemeye çalıştığımız deseni yakalamak için çok basit (yani, yeterince ifade edici değil) olduğu anlamına gelebilir. Dahası, eğitim ve geçerleme hatalarımız arasındaki *genelleme boşluğu* küçük olduğundan, daha karmaşık bir modelle kurtulabileceğimize inanmak için nedenimiz var. Bu olgu, *eksik öğrenme* olarak bilinir.
 
@@ -134,7 +134,7 @@ import math
 
 Önce verilere ihtiyacımız var. $x$ verildiğinde, eğitim ve test verilerinde [**ilgili etiketleri oluşturmak için aşağıdaki kübik polinomu kullanacağız**]:
 
-(**$$y = 5 + 1.2x - 3.4\frac{x^2}{2!} + 5.6 \frac{x^3}{3!} + \epsilon \text{ where }
+(**$$y = 5 + 1.2x - 3.4\frac{x^2}{2!} + 5.6 \frac{x^3}{3!} + \epsilon \text{ öyle ki }
 \epsilon \sim \mathcal{N}(0, 0.1^2).$$**)
 
 Gürültü terimi $\epsilon$, ortalaması 0 ve standart sapması 0.1 olan normal bir dağılıma uyar. Eniyileme için, genellikle çok büyük gradyan değerlerinden veya kayıplardan kaçınırız.
@@ -143,8 +143,8 @@ Bu nedenden *öznitelikler* $x^i$'dan $\frac{x^i}{i!}$'ya ölçeklendirilir. Bu 
 ```{.python .input}
 #@tab all
 max_degree = 20  # Polinomun maksimum derecesi
-n_train, n_test = 100, 100  # Egitim ve test veri kumesi boyutlari
-true_w = np.zeros(max_degree)  # Bos alan tahsisi
+n_train, n_test = 100, 100  # Eğitim ve test veri kumesi boyutları
+true_w = np.zeros(max_degree)  # Boş alan tahsisi
 true_w[0:4] = np.array([5, 1.2, -3.4, 5.6])
 
 features = np.random.normal(size=(n_train + n_test, 1))
@@ -152,7 +152,7 @@ np.random.shuffle(features)
 poly_features = np.power(features, np.arange(max_degree).reshape(1, -1))
 for i in range(max_degree):
     poly_features[:, i] /= math.gamma(i + 1)  # `gamma(n)` = (n-1)!
-# `labels`'in sekli: (`n_train` + `n_test`,)
+# `labels`'in şekli: (`n_train` + `n_test`,)
 labels = np.dot(poly_features, true_w)
 labels += np.random.normal(scale=0.1, size=labels.shape)
 ```
@@ -179,8 +179,8 @@ features[:2], poly_features[:2, :], labels[:2]
 ```{.python .input}
 #@tab mxnet, tensorflow
 def evaluate_loss(net, data_iter, loss):  #@save
-    """Evaluate the loss of a model on the given dataset."""
-    metric = d2l.Accumulator(2)  # Kayiplarin toplami, ornek sayisi
+    """Verilen veri kümesindeki bir modelin kaybını değerlendirin."""
+    metric = d2l.Accumulator(2)  # Kayıpların toplamı, örnek sayısı
     for X, y in data_iter:
         l = loss(net(X), y)
         metric.add(d2l.reduce_sum(l), d2l.size(l))
@@ -190,8 +190,8 @@ def evaluate_loss(net, data_iter, loss):  #@save
 ```{.python .input}
 #@tab pytorch
 def evaluate_loss(net, data_iter, loss):  #@save
-    """Evaluate the loss of a model on the given dataset."""
-    metric = d2l.Accumulator(2)  # Kayiplarin toplami, ornek sayisi
+    """Verilen veri kümesindeki bir modelin kaybını değerlendirin."""
+    metric = d2l.Accumulator(2)  # Kayıpların toplamı, örnek sayısı
     for X, y in data_iter:
         out = net(X)
         y = d2l.reshape(y, out.shape)
@@ -207,7 +207,7 @@ def train(train_features, test_features, train_labels, test_labels,
           num_epochs=400):
     loss = gluon.loss.L2Loss()
     net = nn.Sequential()
-    # Polinomdaki ozniteliklerde zaten sagladigimiz için ek girdiyi yok sayin
+    # Polinomdaki özniteliklerde zaten sağladığımız için ek girdiyi yok sayın
     net.add(nn.Dense(1, use_bias=False))
     net.initialize()
     batch_size = min(10, train_labels.shape[0])
@@ -233,7 +233,7 @@ def train(train_features, test_features, train_labels, test_labels,
           num_epochs=400):
     loss = nn.MSELoss(reduction='none')
     input_shape = train_features.shape[-1]
-    # Polinomdaki ozniteliklerde zaten sagladigimiz için ek girdiyi yok sayin
+    # Polinomdaki özniteliklerde zaten sağladığımız için ek girdiyi yok sayın
     net = nn.Sequential(nn.Linear(input_shape, 1, bias=False))
     batch_size = min(10, train_labels.shape[0])
     train_iter = d2l.load_array((train_features, train_labels.reshape(-1,1)),
@@ -258,7 +258,7 @@ def train(train_features, test_features, train_labels, test_labels,
           num_epochs=400):
     loss = tf.losses.MeanSquaredError()
     input_shape = train_features.shape[-1]
-    # Polinomdaki ozniteliklerde zaten sagladigimiz için ek girdiyi yok sayin
+    # Polinomdaki özniteliklerde zaten sağladığımız için ek girdiyi yok sayın
     net = tf.keras.Sequential()
     net.add(tf.keras.layers.Dense(1, use_bias=False))
     batch_size = min(10, train_labels.shape[0])
@@ -277,29 +277,29 @@ def train(train_features, test_features, train_labels, test_labels,
     print('weight:', net.get_weights()[0].T)
 ```
 
-### [**Üçüncü Dereceden Polinom Fonksiyon Oturtma (Normal)**]
+### [**Üçüncü Dereceden Polinom Fonksiyon Uydurma (Normal)**]
 
 İlk olarak, veri oluşturma işlevi ile aynı dereceye sahip üçüncü dereceden bir polinom işlevini kullanarak başlayacağız. Sonuçlar bu modelin eğitim ve test kaybının, birlikte, etkili biçimde düşürülebildiği göstermektedir. Eğitilen model parametreleri de $w = [5, 1.2, -3.4, 5.6]$ gerçek değerlerine yakındır.
 
 ```{.python .input}
 #@tab all
-# Polinom ozniteliklerden ilk dort boyutu alin, orn., 1, x, x^2/2!, x^3/3!
+# Polinom özniteliklerden ilk dört boyutu alın, örn., 1, x, x^2/2!, x^3/3!
 train(poly_features[:n_train, :4], poly_features[n_train:, :4],
       labels[:n_train], labels[n_train:])
 ```
 
-### [**Doğrusal Fonksiyon Oturtma (Eksik Öğrenme)**]
+### [**Doğrusal Fonksiyon Uydurma (Eksik Öğrenme)**]
 
 Doğrusal fonksiyon oturtmaya başka bir bakış atalım. Erken dönemlerdeki düşüşten sonra, bu modelin eğitim kaybını daha da düşürmek zorlaşır. Son dönem yinelemesi tamamlandıktan sonra, eğitim kaybı hala yüksektir. Doğrusal olmayan desenleri (buradaki üçüncü dereceden polinom işlevi gibi) uydurmak için kullanıldığında doğrusal modeller eksik öğrenme gösterme eğilimindedir.
 
 ```{.python .input}
 #@tab all
-# Polinom ozniteliklerden ilk iki boyutu alin, orn., 1, x.
+# Polinom özniteliklerden ilk iki boyutu alın, örn., 1, x.
 train(poly_features[:n_train, :2], poly_features[n_train:, :2],
       labels[:n_train], labels[n_train:])
 ```
 
-### [**Yüksek Dereceli Polinom İşlevi Oturtmak  (Aşırı Öğrenme)**]
+### [**Yüksek Dereceli Polinom İşlevi Uydurmak (Aşırı Öğrenme)**]
 
 Şimdi modeli çok yüksek dereceli bir polinom kullanarak eğitmeye çalışalım. Burada, daha yüksek dereceli katsayıların sıfıra yakın değerlere sahip olması gerektiğini öğrenmek için yeterli veri yoktur. Sonuç olarak, aşırı karmaşık modelimiz o kadar duyarlıdır ki eğitim verisindeki gürültüden etkilenir. Eğitim kaybı etkili bir şekilde azaltılabilse de, test kaybı hala çok daha yüksektir. Karmaşık modelin verilere fazla uyduğunu gösterir.
 
@@ -310,7 +310,7 @@ train(poly_features[:n_train, :], poly_features[n_train:, :],
       labels[:n_train], labels[n_train:], num_epochs=1500)
 ```
 
-Daha ileriki bölümlerde, aşırı öğrenme problemlerini ve bunlarla başa çıkma yöntemlerini, örneğin ağırlık sönümü ve hattan düşme gibi, tartışmaya devam edeceğiz.
+Daha ileriki bölümlerde, aşırı öğrenme problemlerini ve bunlarla başa çıkma yöntemlerini, örneğin ağırlık sönümü ve hattan düşürme gibi, tartışmaya devam edeceğiz.
 
 ## Özet
 

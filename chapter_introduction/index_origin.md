@@ -870,7 +870,7 @@ But how would we deal with video snippets?
 In this case, each snippet might consist of a different number of frames.
 And our guess of what is going on in each frame might be much stronger
 if we take into account the previous or succeeding frames.
-Same goes for language. One popular deep learning problem	
+Same goes for language. One popular deep learning problem
 is machine translation: the task of ingesting sentences
 in some source language and predicting their translation in another language.
 
@@ -1127,7 +1127,7 @@ Finally, the agent receives a reward from the environment.
 This process is illustrated in :numref:`fig_rl-environment`.
 The agent then receives a subsequent observation,
 and chooses a subsequent action, and so on.
-The behavior of an reinforcement learning agent is governed by a policy.
+The behavior of a reinforcement learning agent is governed by a policy.
 In short, a *policy* is just a function that maps
 from observations of the environment to actions.
 The goal of reinforcement learning is to produce a good policy.

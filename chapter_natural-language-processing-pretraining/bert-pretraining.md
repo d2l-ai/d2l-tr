@@ -1,7 +1,7 @@
 # BERT Ön Eğitimi
 :label:`sec_bert-pretraining`
 
-:numref:`sec_bert`'te uygulanan BERT modeli ve :numref:`sec_bert-dataset`'ten WikiText-2 veri kümesinden oluşturulan ön eğitim örnekleriyle bu bölümde BERT'in WikiText-2 veri kümesi üzerinde ön eğitimini yapacağız.
+:numref:`sec_bert` içinde uygulanan BERT modeli ve :numref:`sec_bert-dataset` içindeki WikiText-2 veri kümesinden oluşturulan ön eğitim örnekleriyle bu bölümde BERT'in WikiText-2 veri kümesi üzerinde ön eğitimini yapacağız.
 
 ```{.python .input}
 from d2l import mxnet as d2l
@@ -63,16 +63,16 @@ def _get_batch_loss_bert(net, loss, vocab_size, tokens_X_shards,
         tokens_X_shards, segments_X_shards, valid_lens_x_shards,
         pred_positions_X_shards, mlm_weights_X_shards, mlm_Y_shards,
         nsp_y_shards):
-        # Forward pass
+        # İleri ilet
         _, mlm_Y_hat, nsp_Y_hat = net(
             tokens_X_shard, segments_X_shard, valid_lens_x_shard.reshape(-1),
             pred_positions_X_shard)
-        # Compute masked language model loss
+        # Hesaplanan maskeli dil modeli kaybı
         mlm_l = loss(
             mlm_Y_hat.reshape((-1, vocab_size)), mlm_Y_shard.reshape(-1),
             mlm_weights_X_shard.reshape((-1, 1)))
         mlm_l = mlm_l.sum() / (mlm_weights_X_shard.sum() + 1e-8)
-        # Compute next sentence prediction loss
+        # Sonraki cümle tahmin kaybını hesapla
         nsp_l = loss(nsp_Y_hat, nsp_y_shard)
         nsp_l = nsp_l.mean()
         mlm_ls.append(mlm_l)
@@ -89,15 +89,15 @@ def _get_batch_loss_bert(net, loss, vocab_size, tokens_X,
                          segments_X, valid_lens_x,
                          pred_positions_X, mlm_weights_X,
                          mlm_Y, nsp_y):
-    # Forward pass
+    # İleri ilet
     _, mlm_Y_hat, nsp_Y_hat = net(tokens_X, segments_X,
                                   valid_lens_x.reshape(-1),
                                   pred_positions_X)
-    # Compute masked language model loss
+    # Hesaplanan maskeli dil modeli kaybı
     mlm_l = loss(mlm_Y_hat.reshape(-1, vocab_size), mlm_Y.reshape(-1)) *\
     mlm_weights_X.reshape(-1, 1)
     mlm_l = mlm_l.sum() / (mlm_weights_X.sum() + 1e-8)
-    # Compute next sentence prediction loss
+    # Sonraki cümle tahmin kaybını hesapla
     nsp_l = loss(nsp_Y_hat, nsp_y)
     l = mlm_l + nsp_l
     return mlm_l, nsp_l, l
@@ -112,8 +112,9 @@ def train_bert(train_iter, net, loss, vocab_size, devices, num_steps):
     step, timer = 0, d2l.Timer()
     animator = d2l.Animator(xlabel='step', ylabel='loss',
                             xlim=[1, num_steps], legend=['mlm', 'nsp'])
-    # Sum of masked language modeling losses, sum of next sentence prediction
-    # losses, no. of sentence pairs, count
+    # Maskeli dil modelleme kayıplarının toplamı,
+    # sonraki cümle tahmin kayıplarının toplamı, 
+    # cümle çiftlerinin sayısı, adet
     metric = d2l.Accumulator(4)
     num_steps_reached = False
     while step < num_steps and not num_steps_reached:
@@ -156,8 +157,9 @@ def train_bert(train_iter, net, loss, vocab_size, devices, num_steps):
     step, timer = 0, d2l.Timer()
     animator = d2l.Animator(xlabel='step', ylabel='loss',
                             xlim=[1, num_steps], legend=['mlm', 'nsp'])
-    # Sum of masked language modeling losses, sum of next sentence prediction
-    # losses, no. of sentence pairs, count
+    # Maskeli dil modelleme kayıplarının toplamı,
+    # sonraki cümle tahmin kayıplarının toplamı, 
+    # cümle çiftlerinin sayısı, adet
     metric = d2l.Accumulator(4)
     num_steps_reached = False
     while step < num_steps and not num_steps_reached:
@@ -224,7 +226,7 @@ def get_bert_encoding(net, tokens_a, tokens_b=None):
     return encoded_X
 ```
 
-"A crane is flying" cümlesini düşünün. :numref:`subsec_bert_input_rep`'te tartışıldığı gibi BERT girdi temsilini hatırlayın. Özel belirteçleri ekledikten sonra “&lt;cls&gt;” (sınıflandırma için kullanılır) ve “&lt;sep&gt;” (ayırma için kullanılır), BERT girdi dizisi altı uzunluğa sahiptir. Sıfır “&lt;cls&gt;” belirteci dizini olduğundan, `encoded_text[:, 0, :]` tüm girdi cümlesinin BERT temsilidir. Çokanlamlılık belirteci "crane" yi değerlendirmek için, belirteçin BERT temsilinin ilk üç öğesini de yazdırıyoruz.
+"A crane is flying" cümlesini düşünün. :numref:`subsec_bert_input_rep` içinde tartışıldığı gibi BERT girdi temsilini hatırlayın. Özel belirteçleri ekledikten sonra “&lt;cls&gt;” (sınıflandırma için kullanılır) ve “&lt;sep&gt;” (ayırma için kullanılır), BERT girdi dizisi altı uzunluğa sahiptir. Sıfır “&lt;cls&gt;” belirteci dizini olduğundan, `encoded_text[:, 0, :]` tüm girdi cümlesinin BERT temsilidir. Çokanlamlılık belirteci "crane"'yi değerlendirmek için, belirteçin BERT temsilinin ilk üç öğesini de yazdırıyoruz.
 
 ```{.python .input}
 #@tab all
@@ -236,20 +238,20 @@ encoded_text_crane = encoded_text[:, 2, :]
 encoded_text.shape, encoded_text_cls.shape, encoded_text_crane[0][:3]
 ```
 
-Şimdi bir cümle çifti düşünün "a crane driver came" ("bir vinç sürücüsü geldi") ve "he just left" ("az önce gitti"). Benzer şekilde, `encoded_pair[:, 0, :]`, önceden eğitilmiş BERT'ten tüm cümle çiftinin kodlanmış sonucudur. Çokanlamlılık belirteci "crane" (vinç veya turna) nin ilk üç öğesinin, bağlam farklı olduğu zamanlardan farklı olduğunu unutmayın. Bu BERT temsillerinin bağlam duyarlı olduğunu destekler.
+Şimdi bir cümle çifti düşünün "a crane driver came" ("bir vinç sürücüsü geldi") ve "he just left" ("az önce gitti"). Benzer şekilde, `encoded_pair[:, 0, :]`, önceden eğitilmiş BERT'ten tüm cümle çiftinin kodlanmış sonucudur. Çokanlamlılık belirteci "crane"'nin (vinç veya turna) ilk üç öğesinin, bağlam farklı olduğu zamanlardan farklı olduğunu unutmayın. Bu BERT temsillerinin bağlam duyarlı olduğunu destekler.
 
 ```{.python .input}
 #@tab all
 tokens_a, tokens_b = ['a', 'crane', 'driver', 'came'], ['he', 'just', 'left']
 encoded_pair = get_bert_encoding(net, tokens_a, tokens_b)
-# Tokens: '<cls>', 'a', 'crane', 'driver', 'came', '<sep>', 'he', 'just',
+# Andıçlar: '<cls>', 'a', 'crane', 'driver', 'came', '<sep>', 'he', 'just',
 # 'left', '<sep>'
 encoded_pair_cls = encoded_pair[:, 0, :]
 encoded_pair_crane = encoded_pair[:, 2, :]
 encoded_pair.shape, encoded_pair_cls.shape, encoded_pair_crane[0][:3]
 ```
 
-:numref:`chap_nlp_app`'te, aşağı akış doğal dil işleme uygulamaları için önceden eğitilmiş bir BERT modelinde ince ayar yapacağız. 
+:numref:`chap_nlp_app` içinde, aşağı akış doğal dil işleme uygulamaları için önceden eğitilmiş bir BERT modelinde ince ayar yapacağız. 
 
 ## Özet
 

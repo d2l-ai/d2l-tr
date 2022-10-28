@@ -15,7 +15,7 @@ tek tek yapay nöronların davranışları hakkında düşünmekten ağları
 tüm katmanlar açısından kavramaya geçtiler ve şimdi genellikle zihindeki 
 çok daha kaba *bloklara* sahip mimariler tasarladılar.
 
-Şimdiye kadar, bazı temel makine öğrenimi kavramlarını tanıtmaktan 
+Şimdiye kadar, bazı temel makine öğrenmesi kavramlarını tanıtmaktan 
 tamamen işlevsel derin öğrenme modellerine yükseliyoruz. Son bölümde, 
 bir MLP'nin her bileşenini sıfırdan uyguladık ve 
 hatta aynı modelleri zahmetsizce kullanıma sunmak için yüksek düzey 
@@ -25,7 +25,7 @@ ile ilgili daha gelişmiş ayrıntıları atladık. Bu bölümde, derin öğrenm
 hesaplamasının temel bileşenlerine daha derinlemesine, yani model oluşturma, 
 parametre erişimi ve ilkleme, ısmarlama (özel kesim) katmanlar ve bloklar 
 tasarlama, modelleri diskten okuma, diske yazma ve çarpıcı bir hızlandırma 
-elde etmek için GPU'lardan yararlanmaya bakacağız. hızlandırmalar. Bu 
+elde etmek için GPU'lardan yararlanmaya bakacağız. Bu 
 içgörüler, sizi *son kullanıcıdan* *güçlü kullanıcıya* taşıyarak, olgun 
 bir derin öğrenme kütüphanesinin faydalarından yararlanmak için gereken 
 araçları sağlarken, kendi icat ettikleriniz de dahil olmak üzere daha karmaşık 
