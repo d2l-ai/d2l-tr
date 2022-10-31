@@ -241,6 +241,8 @@ placeholder; göstermelik değişken
 
 pooling; ortaklama
 
+population; anakütle
+
 posterior; sonsal olasılık
 
 postprocess; sonradan işlemek
