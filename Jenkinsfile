@@ -72,12 +72,13 @@ stage("Build and Publish") {
         d2lbook deploy html pdf pkg --s3 s3://${LANG}.d2l.ai/
         """
 
-        sh label:"Release d2l", script:"""set -ex
-        conda activate ${ENV_NAME}
-        pip install setuptools wheel twine
-        python setup.py bdist_wheel
-        # twine upload dist/*
-        """
+        // Publish d2l pypi package
+        // sh label:"Release d2l", script:"""set -ex
+        // conda activate ${ENV_NAME}
+        // pip install setuptools wheel twine
+        // python setup.py bdist_wheel
+        // twine upload dist/*
+        // """
       } else {
         sh label:"Publish", script:"""set -ex
         conda activate ${ENV_NAME}
